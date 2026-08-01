@@ -16,6 +16,18 @@ inline constexpr double kUnbuyableValue = 2'000'000'000.0;
 // unparseable/empty -> 0.
 double valueToFloat(const QString &valueStr);
 
+// True only when the raw transfer-value string represents an EXPLICIT zero
+// ("€0", "0", "€0 - €0"). An empty/missing value ("", "-") is NOT explicit
+// zero — valueToFloat() collapses both to 0.0, so callers that need to tell a
+// real free transfer apart from missing data must use this.
+bool isExplicitZeroValue(const QString &rawValue);
+
+// A player counts as a free agent when he has no club set (empty or a lone
+// dash placeholder) OR his transfer value is an explicit zero — independent of
+// how the club column is labelled (so it also catches exports that don't use
+// an "FrA"/"Free Agents" club name).
+bool isFreeAgent(const QString &club, const QString &transferValueRaw);
+
 // "Erling Braut Haaland" -> "Haaland"
 QString getLastName(const QString &fullName);
 

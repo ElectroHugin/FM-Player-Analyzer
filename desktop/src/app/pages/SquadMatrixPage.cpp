@@ -167,6 +167,7 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
             rebuildScoutedOnly();
     };
     connect(m_scoutedFilterCombo, &QComboBox::currentIndexChanged, this, scoutedRebuild);
+    connect(m_freeAgentsCheck, &QCheckBox::toggled, this, scoutedRebuild);
     connect(m_dwrsMinSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
     connect(m_dwrsMaxSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
     connect(m_maxAgeSlider, &QSlider::valueChanged, this, [this, scoutedRebuild] {
@@ -201,6 +202,12 @@ void SquadMatrixPage::buildSection(TableSection *section, const QString &title, 
         m_scoutedFilterCombo = new QComboBox(section->box);
         m_scoutedFilterCombo->setMinimumWidth(200);
         filterRow->addWidget(m_scoutedFilterCombo);
+        m_freeAgentsCheck = new QCheckBox(tr("Nur Free Agents"), section->box);
+        m_freeAgentsCheck->setToolTip(
+            tr("Nur ablösefreie Spieler: Marktwert explizit 0 oder kein Verein gesetzt "
+               "(unabhängig davon, wie der Verein benannt ist). Marktwert-Limit wird dabei "
+               "ignoriert; nach Rolle/Talent sortierbar."));
+        filterRow->addWidget(m_freeAgentsCheck);
         filterRow->addWidget(new QLabel(tr("DWRS:"), section->box));
         m_dwrsMinSpin = new QSpinBox(section->box);
         m_dwrsMinSpin->setRange(0, 100);
@@ -588,14 +595,20 @@ void SquadMatrixPage::rebuildScoutedOnly()
     const int minDwrs = m_dwrsMinSpin->value();
     const int maxDwrs = m_dwrsMaxSpin->value();
     const int maxAge = m_maxAgeSlider->value();
+    const bool freeAgentsOnly = m_freeAgentsCheck->isChecked();
     // Slider at the right end = no value cap; otherwise "Not for Sale"
     // players (transferValue = kUnbuyableValue) could never pass the filter.
-    const bool noValueCap = m_maxValueSlider->value() >= m_maxValueSlider->maximum();
+    // The value cap is also meaningless once "free agents only" is on (those
+    // players are defined partly BY their value), so it is bypassed then.
+    const bool noValueCap =
+        freeAgentsOnly || m_maxValueSlider->value() >= m_maxValueSlider->maximum();
     const double maxValue = m_maxValueSlider->value() * 500'000.0;
 
     std::vector<const Player *> rows;
     if (filterKey == QLatin1String("__shortlist")) {
         for (const Player *player : m_scoutedPool) {
+            if (freeAgentsOnly && !isFreeAgent(player->club, player->transferValueRaw))
+                continue;
             if (player->onShortlist)
                 rows.push_back(player);
         }
@@ -604,6 +617,8 @@ void SquadMatrixPage::rebuildScoutedOnly()
         const QHash<QString, double> roleRatings =
             roleFilter ? ratings.value(filterKey) : QHash<QString, double>();
         for (const Player *player : m_scoutedPool) {
+            if (freeAgentsOnly && !isFreeAgent(player->club, player->transferValueRaw))
+                continue;
             if (player->age > maxAge
                 || (!noValueCap && player->transferValue > maxValue))
                 continue;
@@ -617,7 +632,9 @@ void SquadMatrixPage::rebuildScoutedOnly()
         }
     }
 
-    m_scoutedSection.box->setTitle(tr("Gescoutete Spieler (%1)").arg(rows.size()));
+    m_scoutedSection.box->setTitle(freeAgentsOnly
+                                       ? tr("Free Agents (%1)").arg(rows.size())
+                                       : tr("Gescoutete Spieler (%1)").arg(rows.size()));
     m_scoutedSection.model->setColumns(buildColumns(false, true));
     m_scoutedSection.model->setRows(std::move(rows));
 

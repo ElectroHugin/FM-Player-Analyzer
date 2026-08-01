@@ -43,6 +43,39 @@ double valueToFloat(const QString &valueStr)
     return ok ? value * multiplier : 0.0;
 }
 
+bool isExplicitZeroValue(const QString &rawValue)
+{
+    QString s = rawValue.trimmed();
+    if (s.isEmpty())
+        return false; // missing, not an explicit zero
+    if (s.contains(QLatin1String("not for sale"), Qt::CaseInsensitive))
+        return false;
+
+    // Ranges like "€0 - €0": use the lower bound, matching valueToFloat.
+    const int rangeSep = s.indexOf(QLatin1String(" - "));
+    if (rangeSep >= 0)
+        s = s.left(rangeSep);
+
+    s.remove(QChar(0x20AC)); // €
+    s.remove(QLatin1Char('M'));
+    s.remove(QLatin1Char('K'));
+    s = s.trimmed();
+    if (s.isEmpty())
+        return false;
+
+    bool ok = false;
+    const double value = s.toDouble(&ok);
+    return ok && value == 0.0;
+}
+
+bool isFreeAgent(const QString &club, const QString &transferValueRaw)
+{
+    const QString c = club.trimmed();
+    if (c.isEmpty() || c == QLatin1String("-") || c == QString::fromUtf8("–"))
+        return true;
+    return isExplicitZeroValue(transferValueRaw);
+}
+
 QString getLastName(const QString &fullName)
 {
     if (fullName.isEmpty())

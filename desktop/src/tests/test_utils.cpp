@@ -32,6 +32,50 @@ private slots:
         QCOMPARE(fm::valueToFloat(input), expected);
     }
 
+    void isExplicitZeroValue_data()
+    {
+        QTest::addColumn<QString>("input");
+        QTest::addColumn<bool>("expected");
+
+        QTest::newRow("euro zero") << QStringLiteral("€0") << true;
+        QTest::newRow("plain zero") << QStringLiteral("0") << true;
+        QTest::newRow("zero range") << QStringLiteral("€0 - €0") << true;
+        QTest::newRow("empty is not explicit") << QString() << false;
+        QTest::newRow("dash is not explicit") << QStringLiteral("-") << false;
+        QTest::newRow("nonzero") << QStringLiteral("€500K") << false;
+        QTest::newRow("not for sale") << QStringLiteral("Not for Sale") << false;
+    }
+
+    void isExplicitZeroValue()
+    {
+        QFETCH(QString, input);
+        QFETCH(bool, expected);
+        QCOMPARE(fm::isExplicitZeroValue(input), expected);
+    }
+
+    void isFreeAgent_data()
+    {
+        QTest::addColumn<QString>("club");
+        QTest::addColumn<QString>("value");
+        QTest::addColumn<bool>("expected");
+
+        QTest::newRow("no club") << QString() << QStringLiteral("€2M") << true;
+        QTest::newRow("dash club") << QStringLiteral("-") << QStringLiteral("€2M") << true;
+        QTest::newRow("explicit zero value") << QStringLiteral("Real Madrid") << QStringLiteral("€0") << true;
+        QTest::newRow("clubbed and valued") << QStringLiteral("FC Bayern") << QStringLiteral("€65M") << false;
+        QTest::newRow("clubbed, missing value") << QStringLiteral("FC Bayern") << QString() << false;
+        QTest::newRow("free-agent labelled club, zero value")
+            << QStringLiteral("Free Agents") << QStringLiteral("€0") << true;
+    }
+
+    void isFreeAgent()
+    {
+        QFETCH(QString, club);
+        QFETCH(QString, value);
+        QFETCH(bool, expected);
+        QCOMPARE(fm::isFreeAgent(club, value), expected);
+    }
+
     void parsePositionString_complex()
     {
         const auto result = fm::parsePositionString(QStringLiteral("AM (RL), ST (C)"));

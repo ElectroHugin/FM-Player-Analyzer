@@ -74,6 +74,7 @@ private:
 
     // Scouted advanced filter
     QComboBox *m_scoutedFilterCombo = nullptr;
+    QCheckBox *m_freeAgentsCheck = nullptr;
     QSpinBox *m_dwrsMinSpin = nullptr;
     QSpinBox *m_dwrsMaxSpin = nullptr;
     QSlider *m_maxAgeSlider = nullptr;
