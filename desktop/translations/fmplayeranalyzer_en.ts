@@ -3051,7 +3051,6 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="103"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="214"/>
         <source>Max. Alter:</source>
         <translation>Max. Age:</translation>
     </message>
@@ -3072,7 +3071,7 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="133"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="546"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="581"/>
         <source>Mein Verein</source>
         <translation>My Club</translation>
     </message>
@@ -3089,8 +3088,6 @@ The original file is not modified.</translation>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="155"/>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="162"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="173"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="188"/>
         <source>%1 Jahre</source>
         <translation>%1 years</translation>
     </message>
@@ -3100,149 +3097,190 @@ The original file is not modified.</translation>
         <translation>No limit</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="200"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="199"/>
         <source>Filter/Sortierung:</source>
         <translation>Filter/Sorting:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="204"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="203"/>
+        <source>Nur Free Agents</source>
+        <translation>Free agents only</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="205"/>
+        <source>Nur ablösefreie Spieler: Marktwert explizit 0 oder kein Verein gesetzt (unabhängig davon, wie der Verein benannt ist). Marktwert-Limit wird dabei ignoriert; nach Rolle/Talent sortierbar.</source>
+        <translation>Free agents only: transfer value explicitly 0 or no club set (regardless of how the club is labelled). The value cap is ignored; sortable by role/talent.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="209"/>
+        <source>Nation:</source>
+        <translation>Nation:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="213"/>
+        <source>Nach Nationalität einschränken (unabhängig vom Talent-Filter): eigenes Land, Ausländer oder eine bestimmte Nation — hilfreich für Registrierungsregeln.</source>
+        <translation>Restrict by nationality (independent of the talent filter): your own country, foreigners or a specific nation — useful for registration rules.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="216"/>
         <source>DWRS:</source>
         <translation>DWRS:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="222"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="226"/>
+        <source>Alter:</source>
+        <translation>Age:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="236"/>
         <source>Max. Wert:</source>
         <translation>Max. Value:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="236"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="250"/>
         <source>Nach Name suchen…</source>
         <translation>Search by name…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="238"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="669"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="676"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="252"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="739"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="746"/>
         <source>CSV exportieren</source>
         <translation>Export CSV</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="302"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="316"/>
         <source>★</source>
         <translation>★</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="309"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="569"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="323"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="604"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="311"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="325"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="314"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="572"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="628"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="328"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="607"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="698"/>
         <source>Talent</source>
         <translation>Talent</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="325"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="339"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="326"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="340"/>
         <source>Persönlichkeit</source>
         <translation>Personality</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="335"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="349"/>
         <source>Verein</source>
         <translation>Club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="336"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="351"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="350"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="365"/>
         <source>Marktwert</source>
         <translation>Market Value</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="340"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="354"/>
         <source>Gehalt</source>
         <translation>Wage</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="343"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="357"/>
         <source>Linker Fuß</source>
         <translation>Left Foot</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="345"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="359"/>
         <source>Rechter Fuß</source>
         <translation>Right Foot</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="347"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="361"/>
         <source>Größe</source>
         <translation>Height</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="371"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="385"/>
         <source>Ent</source>
         <translation>Det</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="372"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="386"/>
         <source>Arb</source>
         <translation>Wor</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="427"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="441"/>
         <source>Alle Rollen</source>
         <translation>All Roles</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="448"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="471"/>
+        <source>Alle</source>
+        <translation>All</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="474"/>
+        <source>Ausländer</source>
+        <translation>Foreigners</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="483"/>
         <source>Inland (Land fehlt in Einstellungen)</source>
         <translation>Domestic (country missing in settings)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="449"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="473"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="484"/>
         <source>Inland (%1)</source>
         <translation>Domestic (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="549"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="584"/>
         <source>Spieler von %1 &amp; Zweitteam (%2)</source>
         <translation>Players from %1 &amp; Second Team (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="550"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="585"/>
         <source>Spieler von %1 (%2)</source>
         <translation>Players from %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="558"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="593"/>
         <source>Spieler von %1 (Zweitteam, %2)</source>
         <translation>Players from %1 (Second Team, %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="570"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="661"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="605"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="731"/>
         <source>Shortlist</source>
         <translation>Shortlist</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="620"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="689"/>
+        <source>Free Agents (%1)</source>
+        <translation>Free Agents (%1)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="690"/>
         <source>Gescoutete Spieler (%1)</source>
         <translation>Scouted Players (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="671"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="741"/>
         <source>CSV-Dateien (*.csv)</source>
         <translation>CSV files (*.csv)</translation>
     </message>
