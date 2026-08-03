@@ -75,10 +75,11 @@ private:
     // Scouted advanced filter
     QComboBox *m_scoutedFilterCombo = nullptr;
     QCheckBox *m_freeAgentsCheck = nullptr;
+    QComboBox *m_scoutedNatCombo = nullptr; // nationality scope, independent of talent filter
     QSpinBox *m_dwrsMinSpin = nullptr;
     QSpinBox *m_dwrsMaxSpin = nullptr;
-    QSlider *m_maxAgeSlider = nullptr;
-    QLabel *m_maxAgeLabel = nullptr;
+    QSpinBox *m_minAgeSpin = nullptr;
+    QSpinBox *m_maxAgeSpin = nullptr;
     QSlider *m_maxValueSlider = nullptr;
     QLabel *m_maxValueLabel = nullptr;
 

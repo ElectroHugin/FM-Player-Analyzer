@@ -168,12 +168,11 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     };
     connect(m_scoutedFilterCombo, &QComboBox::currentIndexChanged, this, scoutedRebuild);
     connect(m_freeAgentsCheck, &QCheckBox::toggled, this, scoutedRebuild);
+    connect(m_scoutedNatCombo, &QComboBox::currentIndexChanged, this, scoutedRebuild);
     connect(m_dwrsMinSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
     connect(m_dwrsMaxSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
-    connect(m_maxAgeSlider, &QSlider::valueChanged, this, [this, scoutedRebuild] {
-        m_maxAgeLabel->setText(tr("%1 Jahre").arg(m_maxAgeSlider->value()));
-        scoutedRebuild();
-    });
+    connect(m_minAgeSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
+    connect(m_maxAgeSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
     const auto updateMaxValueLabel = [this] {
         // Right end of the slider means "no cap" so that "Not for Sale"
         // players (kUnbuyableValue) stay visible.
@@ -186,7 +185,6 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
                 updateMaxValueLabel();
                 scoutedRebuild();
             });
-    m_maxAgeLabel->setText(tr("%1 Jahre").arg(m_maxAgeSlider->value()));
     updateMaxValueLabel();
 }
 
@@ -208,6 +206,13 @@ void SquadMatrixPage::buildSection(TableSection *section, const QString &title, 
                "(unabhängig davon, wie der Verein benannt ist). Marktwert-Limit wird dabei "
                "ignoriert; nach Rolle/Talent sortierbar."));
         filterRow->addWidget(m_freeAgentsCheck);
+        filterRow->addWidget(new QLabel(tr("Nation:"), section->box));
+        m_scoutedNatCombo = new QComboBox(section->box);
+        m_scoutedNatCombo->setMinimumWidth(150);
+        m_scoutedNatCombo->setToolTip(
+            tr("Nach Nationalität einschränken (unabhängig vom Talent-Filter): eigenes Land, "
+               "Ausländer oder eine bestimmte Nation — hilfreich für Registrierungsregeln."));
+        filterRow->addWidget(m_scoutedNatCombo);
         filterRow->addWidget(new QLabel(tr("DWRS:"), section->box));
         m_dwrsMinSpin = new QSpinBox(section->box);
         m_dwrsMinSpin->setRange(0, 100);
@@ -218,14 +223,16 @@ void SquadMatrixPage::buildSection(TableSection *section, const QString &title, 
         filterRow->addWidget(m_dwrsMinSpin);
         filterRow->addWidget(new QLabel(QStringLiteral("–"), section->box));
         filterRow->addWidget(m_dwrsMaxSpin);
-        filterRow->addWidget(new QLabel(tr("Max. Alter:"), section->box));
-        m_maxAgeSlider = new QSlider(Qt::Horizontal, section->box);
-        m_maxAgeSlider->setRange(15, 40);
-        m_maxAgeSlider->setValue(30);
-        m_maxAgeSlider->setMaximumWidth(140);
-        m_maxAgeLabel = new QLabel(section->box);
-        filterRow->addWidget(m_maxAgeSlider);
-        filterRow->addWidget(m_maxAgeLabel);
+        filterRow->addWidget(new QLabel(tr("Alter:"), section->box));
+        m_minAgeSpin = new QSpinBox(section->box);
+        m_minAgeSpin->setRange(15, 50);
+        m_minAgeSpin->setValue(15); // default: as low as possible
+        m_maxAgeSpin = new QSpinBox(section->box);
+        m_maxAgeSpin->setRange(15, 50);
+        m_maxAgeSpin->setValue(30);
+        filterRow->addWidget(m_minAgeSpin);
+        filterRow->addWidget(new QLabel(QStringLiteral("–"), section->box));
+        filterRow->addWidget(m_maxAgeSpin);
         filterRow->addWidget(new QLabel(tr("Max. Wert:"), section->box));
         m_maxValueSlider = new QSlider(Qt::Horizontal, section->box);
         m_maxValueSlider->setRange(0, 400); // 0.5 Mio € steps
@@ -442,15 +449,36 @@ void SquadMatrixPage::refresh()
     }
 
     QSet<QString> personalitySet;
+    QSet<QString> nationalitySet;
     for (const Player &player : m_context.store().players()) {
         if (!player.personality.trimmed().isEmpty())
             personalitySet.insert(player.personality);
+        if (!player.nationality.trimmed().isEmpty())
+            nationalitySet.insert(player.nationality.trimmed());
     }
     QStringList personalities(personalitySet.cbegin(), personalitySet.cend());
     std::sort(personalities.begin(), personalities.end());
     m_personalityFilter->setAvailablePersonalities(personalities);
 
     const QString clubCountry = m_context.database().setting(QStringLiteral("club_country_code"));
+
+    // Scouted nationality filter combo: Any / Domestic / Foreign, then every
+    // nationality present in the DB. Independent of the talent filter.
+    QStringList nationalities(nationalitySet.cbegin(), nationalitySet.cend());
+    std::sort(nationalities.begin(), nationalities.end());
+    const QString previousNat = m_scoutedNatCombo->currentData().toString();
+    m_scoutedNatCombo->clear();
+    m_scoutedNatCombo->addItem(tr("Alle"), QStringLiteral("__any"));
+    if (!clubCountry.isEmpty())
+        m_scoutedNatCombo->addItem(tr("Inland (%1)").arg(clubCountry), QStringLiteral("__domestic"));
+    m_scoutedNatCombo->addItem(tr("Ausländer"), QStringLiteral("__foreign"));
+    m_scoutedNatCombo->insertSeparator(m_scoutedNatCombo->count());
+    for (const QString &nat : nationalities)
+        m_scoutedNatCombo->addItem(nat, nat);
+    const int previousNatIndex =
+        previousNat.isEmpty() ? 0 : m_scoutedNatCombo->findData(previousNat);
+    m_scoutedNatCombo->setCurrentIndex(previousNatIndex >= 0 ? previousNatIndex : 0);
+
     if (auto *domestic = m_talentScope->button(ScopeDomestic)) {
         domestic->setText(clubCountry.isEmpty() ? tr("Inland (Land fehlt in Einstellungen)")
                                                 : tr("Inland (%1)").arg(clubCountry));
@@ -594,8 +622,11 @@ void SquadMatrixPage::rebuildScoutedOnly()
     const QString filterKey = m_scoutedFilterCombo->currentData().toString();
     const int minDwrs = m_dwrsMinSpin->value();
     const int maxDwrs = m_dwrsMaxSpin->value();
-    const int maxAge = m_maxAgeSlider->value();
+    const int minAge = m_minAgeSpin->value();
+    const int maxAge = m_maxAgeSpin->value();
     const bool freeAgentsOnly = m_freeAgentsCheck->isChecked();
+    const QString natScope = m_scoutedNatCombo->currentData().toString();
+    const QString clubCountry = m_context.database().setting(QStringLiteral("club_country_code"));
     // Slider at the right end = no value cap; otherwise "Not for Sale"
     // players (transferValue = kUnbuyableValue) could never pass the filter.
     // The value cap is also meaningless once "free agents only" is on (those
@@ -604,10 +635,31 @@ void SquadMatrixPage::rebuildScoutedOnly()
         freeAgentsOnly || m_maxValueSlider->value() >= m_maxValueSlider->maximum();
     const double maxValue = m_maxValueSlider->value() * 500'000.0;
 
+    // Identity filters (free agent + nationality scope) applied to every row,
+    // independent of the sort/DWRS/age/value filters below.
+    const auto passesNationality = [&](const Player *p) -> bool {
+        if (natScope.isEmpty() || natScope == QLatin1String("__any"))
+            return true;
+        if (natScope == QLatin1String("__domestic"))
+            return p->nationality == clubCountry || p->secondNationality == clubCountry;
+        if (natScope == QLatin1String("__foreign")) {
+            if (p->nationality.isEmpty())
+                return false;
+            return clubCountry.isEmpty()
+                   || (p->nationality != clubCountry && p->secondNationality != clubCountry);
+        }
+        return p->nationality == natScope || p->secondNationality == natScope;
+    };
+    const auto passesIdentity = [&](const Player *p) -> bool {
+        if (freeAgentsOnly && !isFreeAgent(p->club, p->transferValueRaw))
+            return false;
+        return passesNationality(p);
+    };
+
     std::vector<const Player *> rows;
     if (filterKey == QLatin1String("__shortlist")) {
         for (const Player *player : m_scoutedPool) {
-            if (freeAgentsOnly && !isFreeAgent(player->club, player->transferValueRaw))
+            if (!passesIdentity(player))
                 continue;
             if (player->onShortlist)
                 rows.push_back(player);
@@ -617,9 +669,10 @@ void SquadMatrixPage::rebuildScoutedOnly()
         const QHash<QString, double> roleRatings =
             roleFilter ? ratings.value(filterKey) : QHash<QString, double>();
         for (const Player *player : m_scoutedPool) {
-            if (freeAgentsOnly && !isFreeAgent(player->club, player->transferValueRaw))
+            if (!passesIdentity(player))
                 continue;
-            if (player->age > maxAge
+            // Unknown age (0) is never excluded by the age bounds.
+            if ((player->age > 0 && player->age < minAge) || player->age > maxAge
                 || (!noValueCap && player->transferValue > maxValue))
                 continue;
             if (roleFilter) {
