@@ -501,12 +501,15 @@ void MainWindow::startDwrsRecalc()
 
 void MainWindow::updateHeader()
 {
-    // Optional club logo (user-provided PNG, per database).
-    const QString logoPath = m_context.database().setting(QStringLiteral("club_logo_path"));
-    QPixmap logo;
-    if (!logoPath.isEmpty() && logo.load(logoPath)) {
-        m_headerLogo->setPixmap(logo.scaledToHeight(
-            34, Qt::SmoothTransformation));
+    // Optional header image (user-provided PNG, per database): the national
+    // flag while in national mode, otherwise the club logo.
+    const QString imagePath =
+        m_context.nationalUiMode()
+            ? m_context.database().setting(QStringLiteral("national_flag_path"))
+            : m_context.database().setting(QStringLiteral("club_logo_path"));
+    QPixmap headerImage;
+    if (!imagePath.isEmpty() && headerImage.load(imagePath)) {
+        m_headerLogo->setPixmap(headerImage.scaledToHeight(34, Qt::SmoothTransformation));
         m_headerLogo->show();
     } else {
         m_headerLogo->clear();

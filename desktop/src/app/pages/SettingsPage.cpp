@@ -243,6 +243,23 @@ QWidget *SettingsPage::buildClubTab()
     natForm->addRow(tr("Altersgrenze (99 = keine):"), m_natAgeSpin);
     natForm->addRow(tr("Primäre National-Taktik:"), m_natFav1Combo);
     natForm->addRow(tr("Sekundäre National-Taktik:"), m_natFav2Combo);
+
+    // National flag (PNG) shown in the header while in national mode, mirroring
+    // the club logo. Applied immediately, per database.
+    m_flagPreview = new QLabel;
+    m_flagPreview->setFixedSize(120, 48);
+    m_flagPreview->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    auto *flagButtons = new QHBoxLayout;
+    auto *chooseFlagButton = new QPushButton(tr("Flagge wählen (PNG)…"));
+    m_flagRemoveButton = new QPushButton(tr("Entfernen"));
+    flagButtons->addWidget(m_flagPreview, 1);
+    flagButtons->addWidget(chooseFlagButton);
+    flagButtons->addWidget(m_flagRemoveButton);
+    auto *flagRow = new QWidget;
+    flagRow->setLayout(flagButtons);
+    natForm->addRow(tr("National-Flagge:"), flagRow);
+    connect(chooseFlagButton, &QPushButton::clicked, this, &SettingsPage::chooseFlag);
+    connect(m_flagRemoveButton, &QPushButton::clicked, this, &SettingsPage::removeFlag);
     layout->addWidget(natGroup);
 
     auto *hint = new QLabel(
@@ -315,6 +332,65 @@ void SettingsPage::updateLogoPreview()
         m_logoPreview->setText(tr("(kein Logo)"));
         m_logoPreview->setStyleSheet(QStringLiteral("color: rgba(128,128,128,0.8);"));
         m_logoRemoveButton->setEnabled(false);
+    }
+}
+
+void SettingsPage::chooseFlag()
+{
+    const QString source = QFileDialog::getOpenFileName(
+        this, tr("National-Flagge wählen"), QString(),
+        tr("Bilder (*.png *.jpg *.jpeg *.bmp);;Alle Dateien (*)"));
+    if (source.isEmpty())
+        return;
+
+    QPixmap pixmap;
+    if (!pixmap.load(source)) {
+        QMessageBox::warning(this, tr("National-Flagge"),
+                             tr("Die Datei konnte nicht als Bild geladen werden."));
+        return;
+    }
+
+    // Copy into the data folder's assets dir under a database-specific name so
+    // each save keeps its own flag and the original file can move freely.
+    const QString assetsDir = m_context.paths().assetsDir();
+    QDir().mkpath(assetsDir);
+    const QString dest = QDir(assetsDir).filePath(
+        QStringLiteral("flag_%1.png").arg(m_context.currentDbName()));
+    QFile::remove(dest);
+    if (!pixmap.save(dest, "PNG")) {
+        QMessageBox::warning(this, tr("National-Flagge"),
+                             tr("Die Flagge konnte nicht gespeichert werden."));
+        return;
+    }
+
+    m_context.database().setSetting(QStringLiteral("national_flag_path"), dest);
+    updateFlagPreview();
+    m_context.notifySettingsChanged(); // refreshes the header
+}
+
+void SettingsPage::removeFlag()
+{
+    const QString path = m_context.database().setting(QStringLiteral("national_flag_path"));
+    if (!path.isEmpty())
+        QFile::remove(path);
+    m_context.database().removeSetting(QStringLiteral("national_flag_path"));
+    updateFlagPreview();
+    m_context.notifySettingsChanged();
+}
+
+void SettingsPage::updateFlagPreview()
+{
+    const QString path = m_context.database().setting(QStringLiteral("national_flag_path"));
+    QPixmap pixmap;
+    if (!path.isEmpty() && pixmap.load(path)) {
+        m_flagPreview->setPixmap(
+            pixmap.scaled(m_flagPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        m_flagRemoveButton->setEnabled(true);
+    } else {
+        m_flagPreview->setPixmap(QPixmap());
+        m_flagPreview->setText(tr("(keine Flagge)"));
+        m_flagPreview->setStyleSheet(QStringLiteral("color: rgba(128,128,128,0.8);"));
+        m_flagRemoveButton->setEnabled(false);
     }
 }
 
@@ -635,6 +711,7 @@ void SettingsPage::refresh()
         m_context.database().setting(QStringLiteral("full_club_name")));
     m_stadiumEdit->setText(m_context.database().setting(QStringLiteral("stadium_name")));
     updateLogoPreview();
+    updateFlagPreview();
 
     QStringList tactics = m_context.definitions().tacticNames();
     std::sort(tactics.begin(), tactics.end());

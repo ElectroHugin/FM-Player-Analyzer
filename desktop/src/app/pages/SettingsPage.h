@@ -90,6 +90,11 @@ private:
     QComboBox *m_favTactic1Combo = nullptr;
     QComboBox *m_favTactic2Combo = nullptr;
     QLineEdit *m_natNameEdit = nullptr;
+    QLabel *m_flagPreview = nullptr;
+    QPushButton *m_flagRemoveButton = nullptr;
+    void chooseFlag();
+    void removeFlag();
+    void updateFlagPreview();
     QLineEdit *m_natCodeEdit = nullptr;
     QSpinBox *m_natAgeSpin = nullptr;
     QComboBox *m_natFav1Combo = nullptr;
