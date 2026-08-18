@@ -40,6 +40,13 @@ QString playerLine(const Player &p)
     return QStringLiteral("%1 (%2) — %3 | %4").arg(p.name).arg(p.age).arg(p.club, p.positionRaw);
 }
 
+// The user marks players who have left the game by setting their club to
+// "Retired"; such players must never be proposed for a call-up.
+bool isRetiredClub(const Player &p)
+{
+    return p.club.trimmed().compare(QLatin1String("Retired"), Qt::CaseInsensitive) == 0;
+}
+
 } // namespace
 
 NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
@@ -267,17 +274,24 @@ void NationalCallupPage::refresh()
     showResults(false);
 }
 
+bool NationalCallupPage::isEligible(const Player &player) const
+{
+    if (isRetiredClub(player))
+        return false;
+    const QString code = m_context.nationalTeamCode();
+    if (player.nationality != code && player.secondNationality != code)
+        return false;
+    const int ageLimit = m_context.nationalTeamAgeLimit();
+    if (ageLimit < 99 && (player.age <= 0 || player.age > ageLimit))
+        return false;
+    return true;
+}
+
 std::vector<const Player *> NationalCallupPage::eligiblePool(bool excludeInjured) const
 {
-    const QString code = m_context.nationalTeamCode();
-    const int ageLimit = m_context.nationalTeamAgeLimit();
     std::vector<const Player *> pool;
     for (const Player &player : m_context.store().players()) {
-        const bool eligible =
-            player.nationality == code || player.secondNationality == code;
-        if (!eligible)
-            continue;
-        if (ageLimit < 99 && (player.age <= 0 || player.age > ageLimit))
+        if (!isEligible(player))
             continue;
         if (excludeInjured && m_injuredUids.contains(player.uid))
             continue;
@@ -358,12 +372,17 @@ void NationalCallupPage::uploadSquad()
         return;
     }
 
-    // Resolve rows to players: prefer the stable UID, fall back to an exact
-    // (case-insensitive) name match when the export carries no UID column.
-    QHash<QString, const Player *> byUid, byName;
+    // Resolve rows to players: prefer the stable UID. Only fall back to name
+    // matching when the export carries no UID column — and because two players
+    // can share a name (different UIDs), keep ALL players per name and, on a
+    // collision, prefer the one who is actually eligible for this national team
+    // (a called-up player must be). Genuinely ambiguous names are reported
+    // rather than guessed.
+    QHash<QString, const Player *> byUid;
+    QHash<QString, QList<const Player *>> byName;
     for (const Player &p : m_context.store().players()) {
         byUid.insert(p.uid, &p);
-        byName.insert(p.name.toLower(), &p);
+        byName[p.name.trimmed().toLower()].append(&p);
     }
     QSet<QString> matched;
     QStringList unmatched;
@@ -371,11 +390,28 @@ void NationalCallupPage::uploadSquad()
         const Player *player = nullptr;
         if (uidCol >= 0 && uidCol < row.size())
             player = byUid.value(row.at(uidCol).trimmed());
-        if (!player && nameCol >= 0 && nameCol < row.size())
-            player = byName.value(row.at(nameCol).trimmed().toLower());
+        if (!player && nameCol >= 0 && nameCol < row.size()) {
+            const QList<const Player *> candidates =
+                byName.value(row.at(nameCol).trimmed().toLower());
+            if (candidates.size() == 1) {
+                player = candidates.first();
+            } else if (candidates.size() > 1) {
+                // Disambiguate by eligibility; unique eligible match wins.
+                const Player *eligibleHit = nullptr;
+                int eligibleCount = 0;
+                for (const Player *c : candidates) {
+                    if (isEligible(*c)) {
+                        eligibleHit = c;
+                        ++eligibleCount;
+                    }
+                }
+                if (eligibleCount == 1)
+                    player = eligibleHit;
+            }
+        }
         if (player)
             matched.insert(player->uid);
-        else if (nameCol >= 0 && nameCol < row.size())
+        else if (nameCol >= 0 && nameCol < row.size() && !row.at(nameCol).trimmed().isEmpty())
             unmatched << row.at(nameCol).trimmed();
     }
 
@@ -489,7 +525,9 @@ void NationalCallupPage::compute()
     m_dropList->clear();
     for (const Player *p : rec.drops) {
         QString reason;
-        if (m_injuredUids.contains(p->uid))
+        if (isRetiredClub(*p))
+            reason = tr("Retired");
+        else if (m_injuredUids.contains(p->uid))
             reason = tr("verletzt/gesperrt");
         else if (!eligibleUids.contains(p->uid))
             reason = tr("nicht verfügbar/berechtigt");

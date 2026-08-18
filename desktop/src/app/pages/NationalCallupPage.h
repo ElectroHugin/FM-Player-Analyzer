@@ -35,8 +35,10 @@ public:
     void refresh() override;
 
 private:
-    // Eligible = nationality/second nationality matches the national code and
-    // (age limit disabled or within it). excludeInjured drops the marked ones.
+    // Eligible = not retired, nationality/second nationality matches the
+    // national code, and (age limit disabled or within it).
+    bool isEligible(const Player &player) const;
+    // The eligible pool; excludeInjured also drops the marked players.
     std::vector<const Player *> eligiblePool(bool excludeInjured) const;
     // The baseline the invite/drop diff is measured against (saved squad or the
     // uploaded set), resolved to players in the store.

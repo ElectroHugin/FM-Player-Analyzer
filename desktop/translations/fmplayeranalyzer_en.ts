@@ -1383,269 +1383,274 @@ The original file is not modified.</translation>
 <context>
     <name>fm::NationalCallupPage</name>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="61"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="68"/>
         <source>Nominierungs-Assistent</source>
         <translation>Call-up Assistant</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="69"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="76"/>
         <source>1. Aktueller Kader</source>
         <translation>1. Current squad</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="71"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="78"/>
         <source>Gespeicherten Nationalkader verwenden</source>
         <translation>Use saved national squad</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="72"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="79"/>
         <source>Kader aus FM-HTML-Export hochladen</source>
         <translation>Upload squad from FM HTML export</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="78"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="85"/>
         <source>Kader-Datei wählen…</source>
         <translation>Choose squad file…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="95"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="102"/>
         <source>2. Parameter</source>
         <translation>2. Parameters</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="105"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="112"/>
         <source>Kadergröße gesamt:</source>
         <translation>Total squad size:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="108"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="115"/>
         <source>davon Torhüter:</source>
         <translation>of which goalkeepers:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="111"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="118"/>
         <source>Taktik:</source>
         <translation>Tactic:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="116"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="123"/>
         <source>3. Verletzt / nicht verfügbar (für diesen Durchlauf)</source>
         <translation>3. Injured / unavailable (for this run)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="120"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="127"/>
         <source>Pool nach Name durchsuchen…</source>
         <translation>Search pool by name…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="141"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="325"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="148"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="339"/>
         <source>%1 Spieler als nicht verfügbar markiert.</source>
         <translation>%1 players marked as unavailable.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="148"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="155"/>
         <source>Nominierung berechnen</source>
         <translation>Compute call-up</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="164"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="171"/>
         <source>✅ Einladen</source>
         <translation>✅ Call up</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="170"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="177"/>
         <source>❌ Ausladen</source>
         <translation>❌ Drop</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="181"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="188"/>
         <source>Empfohlenen Kader übernehmen</source>
         <translation>Apply recommended squad</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="204"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="211"/>
         <source>Namen kopieren</source>
         <translation>Copy name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="205"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="212"/>
         <source>Profil öffnen</source>
         <translation>Open profile</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="236"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="243"/>
         <source>⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter Einstellungen → Verein (Name, Länder-Code, Altersgrenze).</source>
         <translation>⚠️ Please fully configure your national team first under Settings → Club (name, country code, age limit).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="243"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="250"/>
         <source>Pool: Spieler mit Nationalität &apos;%1&apos;%2. Der Assistent stellt aus dem gesamten berechtigten Pool den stärksten Kader zusammen und vergleicht ihn mit deinem aktuellen Kader.</source>
         <translation>Pool: players with nationality &apos;%1&apos;%2. The assistant builds the strongest possible squad from the whole eligible pool and compares it with your current squad.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="246"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="253"/>
         <source> bis Alter %1</source>
         <translation> up to age %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="259"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="266"/>
         <source>Hochgeladener Kader: %1 Spieler.</source>
         <translation>Uploaded squad: %1 players.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="260"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="267"/>
         <source>Noch keine Kader-Datei geladen.</source>
         <translation>No squad file loaded yet.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="263"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="270"/>
         <source>Gespeicherter Nationalkader: %1 Spieler.</source>
         <translation>Saved national squad: %1 players.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="332"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="346"/>
         <source>Nationalkader-Export wählen</source>
         <translation>Choose national-squad export</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="333"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="347"/>
         <source>HTML-Dateien (*.html *.htm);;Alle Dateien (*)</source>
         <translation>HTML files (*.html *.htm);;All files (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="339"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="348"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="356"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="383"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="399"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="407"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="411"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="420"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="430"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="515"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="529"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="533"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="353"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="362"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="370"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="419"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="435"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="443"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="447"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="456"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="466"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="553"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="567"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="571"/>
         <source>Nominierung</source>
         <translation>Call-up</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="340"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="354"/>
         <source>Datei konnte nicht geöffnet werden: %1</source>
         <translation>File could not be opened: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="349"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="363"/>
         <source>Kader-Datei konnte nicht gelesen werden: %1</source>
         <translation>Squad file could not be read: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="357"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="371"/>
         <source>Die Datei enthält weder eine &apos;UID&apos;- noch eine &apos;Name&apos;-Spalte.</source>
         <translation>The file contains neither a &apos;UID&apos; nor a &apos;Name&apos; column.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="384"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="420"/>
         <source>Kein Spieler aus der Datei konnte der Datenbank zugeordnet werden. Enthält der Export eine UID-Spalte?</source>
         <translation>No player from the file could be matched to the database. Does the export include a UID column?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="391"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="427"/>
         <source>%1 Spieler aus der Datei als aktueller Kader übernommen.</source>
         <translation>%1 players from the file taken as the current squad.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="395"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="431"/>
         <source>%1 nicht zugeordnet: %2</source>
         <translation>%1 not matched: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="407"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="443"/>
         <source>Keine Taktik ausgewählt.</source>
         <translation>No tactic selected.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="412"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="448"/>
         <source>Bitte zuerst eine Kader-Datei hochladen oder auf den gespeicherten Kader umschalten.</source>
         <translation>Please upload a squad file first or switch to the saved squad.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="421"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="457"/>
         <source>Die Torhüter-Zahl muss kleiner als die Kadergröße sein.</source>
         <translation>The number of goalkeepers must be smaller than the squad size.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="431"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="467"/>
         <source>Kein berechtigter, verfügbarer Spieler im Pool. Prüfe Nationalität/Altersgrenze und die Verletzten-Markierungen.</source>
         <translation>No eligible, available player in the pool. Check nationality/age limit and the injured markings.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="452"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="488"/>
         <source>(nur %1 Torhüter im Pool verfügbar)</source>
         <translation>(only %1 goalkeepers available in the pool)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="455"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="491"/>
         <source>&lt;b&gt;Empfohlener Kader:&lt;/b&gt; %1 Spieler (%2 Torhüter%3) — Taktik %4.&lt;br&gt;&lt;b&gt;%5&lt;/b&gt; einladen, &lt;b&gt;%6&lt;/b&gt; ausladen.</source>
         <translation>&lt;b&gt;Recommended squad:&lt;/b&gt; %1 players (%2 goalkeepers%3) — tactic %4.&lt;br&gt;&lt;b&gt;%5&lt;/b&gt; to call up, &lt;b&gt;%6&lt;/b&gt; to drop.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="466"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="502"/>
         <source>Startelf</source>
         <translation>Starting XI</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="468"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="504"/>
         <source>B-Team</source>
         <translation>B-Team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="469"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="505"/>
         <source>Kadertiefe</source>
         <translation>Squad depth</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="475"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="511"/>
         <source>%1  ·  %2  ·  DWRS %3%</source>
         <translation>%1  ·  %2  ·  DWRS %3%</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="483"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="519"/>
         <source>Keine — der aktuelle Kader ist bereits optimal.</source>
         <translation>None — the current squad is already optimal.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="493"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="529"/>
+        <source>Retired</source>
+        <translation>Retired</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="531"/>
         <source>verletzt/gesperrt</source>
         <translation>injured/blocked</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="495"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="533"/>
         <source>nicht verfügbar/berechtigt</source>
         <translation>unavailable/ineligible</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="497"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="535"/>
         <source>überzählig</source>
         <translation>surplus</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="499"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="537"/>
         <source>%1  ·  %2</source>
         <translation>%1  ·  %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="504"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="542"/>
         <source>Keine — kein aktueller Spieler muss weichen.</source>
         <translation>None — no current player needs to make way.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="516"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="554"/>
         <source>Den empfohlenen Kader (%1 Spieler) als Nationalkader speichern? Der bisherige Nationalkader wird ersetzt.</source>
         <translation>Save the recommended squad (%1 players) as the national squad? The previous national squad will be replaced.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="534"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="572"/>
         <source>%1 Spieler im Nationalkader gespeichert.</source>
         <translation>%1 players saved in the national squad.</translation>
     </message>
