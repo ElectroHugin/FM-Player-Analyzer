@@ -110,7 +110,7 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
 
         if (autoAssign) {
             stage(trRunner("Rollen werden automatisch zugewiesen…"), 58);
-            result.autoAssignedUids = RoleAssignment::autoAssignRolesToUnassigned(
+            result.autoAssignedUids = RoleAssignment::autoAssignMissingRoles(
                 db, players, *definitions, &result.autoAssignError);
         }
 

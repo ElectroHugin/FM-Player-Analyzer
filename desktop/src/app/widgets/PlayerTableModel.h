@@ -24,6 +24,12 @@ struct PlayerColumn {
     Qt::Alignment alignment = Qt::AlignLeft | Qt::AlignVCenter;
 };
 
+// Builds a "Frische" (data-freshness) column: shows how many uploads ago a
+// player was last seen, colored, with "Retired" / "veraltet" / "aktuell"
+// labels. See core/Freshness. Shared by the pages that list scouted players.
+PlayerColumn makeFreshnessColumn(int currentCounter, int retirementAge,
+                                 int staleAfterUploads, const QString &userClub);
+
 // Read-only table over a set of players (pointers into the PlayerStore; rows
 // must be reset whenever the store reloads).
 class PlayerTableModel : public QAbstractTableModel

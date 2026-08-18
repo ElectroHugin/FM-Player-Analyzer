@@ -4,6 +4,7 @@
 #include "../PlayerActions.h"
 #include "../widgets/PersonalityFilterWidget.h"
 #include "../widgets/PlayerTableModel.h"
+#include "core/Freshness.h"
 #include "core/TalentEngine.h"
 #include "core/Utils.h"
 
@@ -350,6 +351,11 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable, bool withShort
         columns.append({tr("Marktwert"), [](const Player &p) { return p.transferValueRaw; },
                         [](const Player &p) { return p.transferValue; }, nullptr,
                         Qt::AlignRight | Qt::AlignVCenter});
+        columns.append(makeFreshnessColumn(
+            m_context.updateCounter(),
+            m_context.config().freshnessSetting(QStringLiteral("retirement_age")),
+            m_context.config().freshnessSetting(QStringLiteral("stale_after_uploads")),
+            m_context.userClub()));
     }
     columns.append({tr("Gehalt"), [](const Player &p) { return p.wageRaw; }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});

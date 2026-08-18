@@ -138,6 +138,64 @@ private slots:
             cols << info.value(1).toString();
         QVERIFY(!cols.contains(QStringLiteral("registration")));
         QVERIFY(!cols.contains(QStringLiteral("information")));
+        // The v2 -> v3 step also ran as part of the chain.
+        QVERIFY(cols.contains(QStringLiteral("last_seen_update")));
+        db.close();
+    }
+
+    void lastSeenUpdateRoundTrips()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("test_lastseen"));
+        QVERIFY2(db.open(dir.filePath(QStringLiteral("t.db"))), qPrintable(db.errorString()));
+
+        std::vector<Player> batch(1);
+        batch[0].uid = QStringLiteral("p1");
+        batch[0].name = QStringLiteral("Stamp");
+        batch[0].lastSeenUpdate = 7;
+        QVERIFY2(db.upsertPlayers(batch), qPrintable(db.errorString()));
+
+        const auto reloaded = db.loadPlayers();
+        QCOMPARE(static_cast<int>(reloaded.size()), 1);
+        QCOMPARE(reloaded[0].lastSeenUpdate, 7);
+    }
+
+    void migratesV2ToV3()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v2.db"));
+
+        // Create a current-shape database, then roll it back to a v2 state by
+        // dropping the freshness column and resetting the schema version.
+        {
+            Database db(QStringLiteral("v2seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(1);
+            batch[0].uid = QStringLiteral("old");
+            batch[0].name = QStringLiteral("Legacy");
+            batch[0].lastSeenUpdate = 3;
+            QVERIFY(db.upsertPlayers(batch));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("ALTER TABLE players DROP COLUMN last_seen_update")));
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 2")));
+            db.close();
+        }
+
+        // Reopening runs the v2 -> v3 migration.
+        Database db(QStringLiteral("v2migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+
+        QSqlQuery info(db.handle());
+        QVERIFY(info.exec(QStringLiteral("PRAGMA table_info(players)")));
+        QStringList cols;
+        while (info.next())
+            cols << info.value(1).toString();
+        QVERIFY(cols.contains(QStringLiteral("last_seen_update")));
+
+        // Pre-existing row defaults to 0 (never stamped).
+        const auto reloaded = db.loadPlayers();
+        QCOMPARE(static_cast<int>(reloaded.size()), 1);
+        QCOMPARE(reloaded[0].lastSeenUpdate, 0);
         db.close();
     }
 };

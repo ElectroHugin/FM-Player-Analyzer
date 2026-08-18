@@ -58,6 +58,10 @@ public:
     double gapAnalysisSetting(const QString &key) const;
     void setGapAnalysisSetting(const QString &key, double value);
 
+    // [Freshness] — "retirement_age" (X) and "stale_after_uploads" (Y).
+    int freshnessSetting(const QString &key) const;
+    void setFreshnessSetting(const QString &key, int value);
+
     // [ThemeSettings] — full key/value map ("current_mode", "night_primary_color", ...).
     QHash<QString, QString> themeSettings() const;
     void saveThemeSettings(const QHash<QString, QString> &settings);

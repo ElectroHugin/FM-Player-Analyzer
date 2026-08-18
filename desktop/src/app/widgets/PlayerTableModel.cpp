@@ -1,6 +1,44 @@
 #include "PlayerTableModel.h"
 
+#include "core/Freshness.h"
+
+#include <QColor>
+
 namespace fm {
+
+PlayerColumn makeFreshnessColumn(int currentCounter, int retirementAge,
+                                 int staleAfterUploads, const QString &userClub)
+{
+    PlayerColumn column;
+    column.header = QObject::tr("Frische");
+    column.value = [=](const Player &p) -> QVariant {
+        const int missed = Freshness::uploadsSinceSeen(p, currentCounter);
+        if (Freshness::isRetired(p, currentCounter, retirementAge, staleAfterUploads, userClub))
+            return QObject::tr("Retired (%1)").arg(missed);
+        if (Freshness::isStale(p, currentCounter, staleAfterUploads))
+            return QObject::tr("veraltet (%1)").arg(missed);
+        if (missed > 0)
+            return QObject::tr("vor %1").arg(missed);
+        return currentCounter > 0 ? QObject::tr("aktuell") : QString();
+    };
+    // Sort by uploads-missed (numeric), so the stalest players group together.
+    column.sortValue = [=](const Player &p) {
+        return Freshness::uploadsSinceSeen(p, currentCounter);
+    };
+    column.style = [=](const Player &p) -> CellStyle {
+        CellStyle style;
+        if (Freshness::isRetired(p, currentCounter, retirementAge, staleAfterUploads, userClub)) {
+            style.background = QColor(QStringLiteral("#c0392b"));
+            style.text = QColorConstants::White;
+        } else if (Freshness::isStale(p, currentCounter, staleAfterUploads)) {
+            style.background = QColor(QStringLiteral("#e67e22"));
+            style.text = QColorConstants::Black;
+        }
+        return style;
+    };
+    column.alignment = Qt::AlignRight | Qt::AlignVCenter;
+    return column;
+}
 
 PlayerTableModel::PlayerTableModel(QObject *parent)
     : QAbstractTableModel(parent)

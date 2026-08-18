@@ -119,6 +119,13 @@ public:
         return value.isEmpty() ? 0 : value.toInt();
     }
 
+    // Per-database upload counter (incremented once per full HTML import).
+    // Drives data-freshness together with each player's lastSeenUpdate.
+    int updateCounter()
+    {
+        return m_database->setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt();
+    }
+
     // Convenience settings accessors (stored in the DB settings table).
     QString userClub() { return m_database->setting(QStringLiteral("user_club")); }
     QString secondTeamClub() { return m_database->setting(QStringLiteral("second_team_club")); }

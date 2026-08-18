@@ -43,6 +43,11 @@ struct ImportResult {
 
     // Final UIDs (after ID unification) of every imported row, in file order.
     QStringList affectedUids;
+
+    // Per-database upload counter value assigned to this import (0 if the
+    // import failed before stamping). Every imported player's lastSeenUpdate is
+    // set to this; drives data-freshness (see Freshness).
+    int updateCounter = 0;
 };
 
 // Parses FM HTML exports and merges them into the database. Port of legacy

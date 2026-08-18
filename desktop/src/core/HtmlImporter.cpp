@@ -290,6 +290,11 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
     ImportResult result;
     const QHash<QString, QString> &mapping = attributeMapping(fmVersionId);
 
+    // Every full import bumps the per-database upload counter; each imported
+    // player is stamped with the new value so data-freshness can be derived.
+    const int newCounter =
+        db.setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt() + 1;
+
     HtmlTable table;
     QString parseError;
     if (!extractTable(html, &table, &parseError, parseProgress)) {
@@ -524,6 +529,7 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
             mergeAppManaged(player, mergedIt.value());
 
         player.uid = ref.uid;
+        player.lastSeenUpdate = newCounter; // present in this upload → fresh
         for (const auto &[column, fullName] : columnTargets)
             applyColumn(player, fullName, cells.at(column).trimmed());
         if (player.name.isEmpty())
@@ -537,6 +543,11 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
     }
     if (!flush())
         return result;
+
+    // Persist the bumped counter only after every player was written, so a
+    // failed import does not advance the freshness clock.
+    db.setSetting(QStringLiteral("update_counter"), QString::number(newCounter));
+    result.updateCounter = newCounter;
 
     result.success = true;
     return result;
@@ -606,6 +617,10 @@ QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,
         applyColumn(player, it.value(), value);
     }
     player.uid = targetUid; // everything is keyed to the confirmed target
+    // Targeted refresh: mark the player fresh as of the latest recorded upload
+    // (does not advance the global counter).
+    player.lastSeenUpdate =
+        db.setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt();
 
     std::vector<Player> batch{std::move(player)};
     if (!db.upsertPlayers(batch))

@@ -18,7 +18,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 2;
+constexpr int kSchemaVersion = 3;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -118,9 +118,18 @@ bool Database::initSchema()
     }
 
     // Fresh database (version 0): create everything at the current shape.
-    // Existing v1 database: transform it in place (add dwrs_latest, drop the
-    // dead columns). The two paths never overlap — version is 0 xor 1 here.
-    const bool ok = version < 1 ? createInitialSchema() : migrateV1ToV2();
+    // Existing database: apply the pending migration steps in order. A fresh DB
+    // is created directly at the current shape, so its create path already
+    // includes everything the incremental migrations would add.
+    bool ok = true;
+    if (version < 1) {
+        ok = createInitialSchema();
+    } else {
+        if (ok && version < 2)
+            ok = migrateV1ToV2();
+        if (ok && version < 3)
+            ok = migrateV2ToV3();
+    }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         m_db.rollback();
         return false;
@@ -163,6 +172,7 @@ bool Database::createInitialSchema()
         "  preferred_side TEXT,\n"
         "  primary_role TEXT,\n"
         "  natural_positions TEXT,\n"
+        "  last_seen_update INTEGER NOT NULL DEFAULT 0,\n"
         "  transfer_status INTEGER NOT NULL DEFAULT 0,\n"
         "  loan_status INTEGER NOT NULL DEFAULT 0,\n"
         "  new_club TEXT%1\n"
@@ -238,6 +248,15 @@ bool Database::migrateV1ToV2()
     return true;
 }
 
+bool Database::migrateV2ToV3()
+{
+    // Data-freshness tracking: stamp of the upload counter at which each player
+    // was last present. Existing rows default to 0 ("never stamped"), which
+    // Freshness treats as fresh until real tracking data accumulates.
+    return exec(QStringLiteral(
+        "ALTER TABLE players ADD COLUMN last_seen_update INTEGER NOT NULL DEFAULT 0"));
+}
+
 std::vector<Player> Database::loadPlayers()
 {
     std::vector<Player> players;
@@ -281,8 +300,9 @@ std::vector<Player> Database::loadPlayers()
               cHeightRaw = col("height_raw"), cHeight = col("height_cm"),
               cLf = col("left_foot"), cRf = col("right_foot"), cPf = col("preferred_foot"),
               cSide = col("preferred_side"), cPrim = col("primary_role"),
-              cNatPos = col("natural_positions"), cTs = col("transfer_status"),
-              cLs = col("loan_status"), cNewClub = col("new_club");
+              cNatPos = col("natural_positions"), cLastSeen = col("last_seen_update"),
+              cTs = col("transfer_status"), cLs = col("loan_status"),
+              cNewClub = col("new_club");
 
     std::array<int, kAttrCount> loCols{}, hiCols{};
     for (int i = 0; i < kAttrCount; ++i) {
@@ -316,6 +336,7 @@ std::vector<Player> Database::loadPlayers()
         p.preferredSide = query.value(cSide).toString();
         p.primaryRole = query.value(cPrim).toString();
         p.naturalPositions = splitRolesFromDb(query.value(cNatPos).toString());
+        p.lastSeenUpdate = query.value(cLastSeen).toInt();
         p.transferStatus = query.value(cTs).toInt() != 0;
         p.loanStatus = query.value(cLs).toInt() != 0;
         p.newClub = query.value(cNewClub).toString();
@@ -350,8 +371,9 @@ bool Database::upsertPlayers(std::vector<Player> &players)
         QStringLiteral("av_rating"), QStringLiteral("height_raw"), QStringLiteral("height_cm"),
         QStringLiteral("left_foot"), QStringLiteral("right_foot"), QStringLiteral("preferred_foot"),
         QStringLiteral("preferred_side"), QStringLiteral("primary_role"),
-        QStringLiteral("natural_positions"), QStringLiteral("transfer_status"),
-        QStringLiteral("loan_status"), QStringLiteral("new_club"),
+        QStringLiteral("natural_positions"), QStringLiteral("last_seen_update"),
+        QStringLiteral("transfer_status"), QStringLiteral("loan_status"),
+        QStringLiteral("new_club"),
     };
     QStringList allColumns = baseColumns;
     for (const QString &name : attrNames()) {
@@ -414,6 +436,7 @@ bool Database::upsertPlayers(std::vector<Player> &players)
         query.bindValue(i++, p.preferredSide);
         query.bindValue(i++, p.primaryRole);
         query.bindValue(i++, joinRolesForDb(p.naturalPositions));
+        query.bindValue(i++, p.lastSeenUpdate);
         query.bindValue(i++, p.transferStatus ? 1 : 0);
         query.bindValue(i++, p.loanStatus ? 1 : 0);
         query.bindValue(i++, p.newClub);

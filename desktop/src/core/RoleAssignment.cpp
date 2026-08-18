@@ -13,8 +13,8 @@ namespace fm {
 
 namespace RoleAssignment {
 
-QStringList autoAssignRolesToUnassigned(Database &db, std::vector<Player> &players,
-                                        const Definitions &definitions, QString *errorOut)
+QStringList autoAssignMissingRoles(Database &db, std::vector<Player> &players,
+                                   const Definitions &definitions, QString *errorOut)
 {
     if (errorOut)
         errorOut->clear();
@@ -24,30 +24,44 @@ QStringList autoAssignRolesToUnassigned(Database &db, std::vector<Player> &playe
     // Position strings repeat heavily across a big scouting database; parse
     // each distinct string only once (mirrors the legacy optimization).
     QHash<QString, QStringList> rolesForPositionStr;
-
-    std::vector<Player *> changed;
-    for (Player &player : players) {
-        if (!player.assignedRoles.isEmpty())
-            continue;
-
-        auto it = rolesForPositionStr.find(player.positionRaw);
+    const auto defaultRolesFor = [&](const QString &positionRaw) -> const QStringList & {
+        auto it = rolesForPositionStr.find(positionRaw);
         if (it == rolesForPositionStr.end()) {
             QSet<QString> roles;
-            const QSet<QString> positions = parsePositionString(player.positionRaw);
+            const QSet<QString> positions = parsePositionString(positionRaw);
             for (const QString &position : positions) {
-                const QStringList mapped = posMap.value(position);
-                for (const QString &role : mapped)
+                for (const QString &role : posMap.value(position))
                     roles.insert(role);
             }
             QStringList sortedRoles(roles.cbegin(), roles.cend());
             std::sort(sortedRoles.begin(), sortedRoles.end());
-            it = rolesForPositionStr.insert(player.positionRaw, sortedRoles);
+            it = rolesForPositionStr.insert(positionRaw, sortedRoles);
         }
+        return it.value();
+    };
 
-        if (!it.value().isEmpty()) {
-            player.assignedRoles = it.value();
-            changed.push_back(&player);
+    // Remember the pre-change roles so a failed write leaves memory == DB.
+    std::vector<std::pair<Player *, QStringList>> changed;
+    for (Player &player : players) {
+        const QStringList &defaults = defaultRolesFor(player.positionRaw);
+        if (defaults.isEmpty())
+            continue;
+
+        QSet<QString> current(player.assignedRoles.cbegin(), player.assignedRoles.cend());
+        bool grew = false;
+        for (const QString &role : defaults) {
+            if (!current.contains(role)) {
+                current.insert(role);
+                grew = true;
+            }
         }
+        if (!grew)
+            continue; // every default role already present
+
+        QStringList merged(current.cbegin(), current.cend());
+        std::sort(merged.begin(), merged.end());
+        changed.push_back({&player, player.assignedRoles});
+        player.assignedRoles = std::move(merged);
     }
 
     if (changed.empty())
@@ -55,20 +69,20 @@ QStringList autoAssignRolesToUnassigned(Database &db, std::vector<Player> &playe
 
     std::vector<Player> batch;
     batch.reserve(changed.size());
-    for (const Player *p : changed)
+    for (const auto &[p, oldRoles] : changed)
         batch.push_back(*p);
     if (!db.upsertPlayers(batch)) {
         if (errorOut)
             *errorOut = db.errorString();
         // Roll the in-memory change back so store and DB stay consistent.
-        for (Player *p : changed)
-            p->assignedRoles.clear();
+        for (auto &[p, oldRoles] : changed)
+            p->assignedRoles = oldRoles;
         return {};
     }
 
     QStringList uids;
     uids.reserve(static_cast<int>(changed.size()));
-    for (const Player *p : changed)
+    for (const auto &[p, oldRoles] : changed)
         uids << p->uid;
     return uids;
 }

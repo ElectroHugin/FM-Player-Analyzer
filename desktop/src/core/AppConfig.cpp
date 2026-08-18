@@ -36,6 +36,19 @@ const QHash<QString, int> &squadManagementDefaults()
     return defaults;
 }
 
+const QHash<QString, int> &freshnessDefaults()
+{
+    static const QHash<QString, int> defaults = {
+        // Auto-retire age (X): player at/above this age who is stale and not in
+        // the user's own club is treated as retired.
+        {QStringLiteral("retirement_age"), 35},
+        // Stale-after uploads (Y): a player missing from this many consecutive
+        // uploads counts as stale (and, if old enough, retired).
+        {QStringLiteral("stale_after_uploads"), 5},
+    };
+    return defaults;
+}
+
 const QHash<QString, QString> &themeDefaults()
 {
     // Club-neutral, professional dark/light base (seven color roles per mode).
@@ -131,6 +144,10 @@ void AppConfig::ensureDefaults()
     const auto &gap = gapAnalysisDefaults();
     for (auto it = gap.constBegin(); it != gap.constEnd(); ++it)
         ensure(QStringLiteral("GapAnalysis/") + it.key(), QString::number(it.value()));
+
+    const auto &freshness = freshnessDefaults();
+    for (auto it = freshness.constBegin(); it != freshness.constEnd(); ++it)
+        ensure(QStringLiteral("Freshness/") + it.key(), QString::number(it.value()));
 
     const auto &theme = themeDefaults();
     for (auto it = theme.constBegin(); it != theme.constEnd(); ++it)
@@ -263,6 +280,18 @@ double AppConfig::gapAnalysisSetting(const QString &key) const
 void AppConfig::setGapAnalysisSetting(const QString &key, double value)
 {
     m_settings->setValue(QStringLiteral("GapAnalysis/") + key, QString::number(value));
+    m_settings->sync();
+}
+
+int AppConfig::freshnessSetting(const QString &key) const
+{
+    const int fallback = freshnessDefaults().value(key, 0);
+    return m_settings->value(QStringLiteral("Freshness/") + key, fallback).toInt();
+}
+
+void AppConfig::setFreshnessSetting(const QString &key, int value)
+{
+    m_settings->setValue(QStringLiteral("Freshness/") + key, QString::number(value));
     m_settings->sync();
 }
 

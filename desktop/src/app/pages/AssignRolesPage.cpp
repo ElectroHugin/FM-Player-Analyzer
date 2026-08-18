@@ -89,17 +89,7 @@ AssignRolesPage::AssignRolesPage(AppContext &context, QWidget *parent)
     auto *splitter = new QSplitter(Qt::Horizontal, this);
 
     m_model = new PlayerTableModel(this);
-    m_model->setColumns({
-        {tr("Name"), [](const Player &p) { return p.name; },
-         [](const Player &p) { return getLastName(p.name); }, nullptr, {}},
-        {tr("Alter"), [](const Player &p) { return p.age; }, nullptr, nullptr,
-         Qt::AlignRight | Qt::AlignVCenter},
-        {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}},
-        {tr("Verein"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}},
-        {tr("Zugewiesene Rollen"),
-         [](const Player &p) { return p.assignedRoles.join(QStringLiteral(", ")); }, nullptr,
-         nullptr, {}},
-    });
+    setupColumns();
     m_proxy = new PlayerFilterProxy(m_model, this);
     m_table = new QTableView(splitter);
     m_table->setModel(m_proxy);
@@ -151,11 +141,32 @@ AssignRolesPage::AssignRolesPage(AppContext &context, QWidget *parent)
             &AssignRolesPage::editorSelectionChanged);
 }
 
+void AssignRolesPage::setupColumns()
+{
+    m_model->setColumns({
+        {tr("Name"), [](const Player &p) { return p.name; },
+         [](const Player &p) { return getLastName(p.name); }, nullptr, {}},
+        {tr("Alter"), [](const Player &p) { return p.age; }, nullptr, nullptr,
+         Qt::AlignRight | Qt::AlignVCenter},
+        {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}},
+        {tr("Verein"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}},
+        makeFreshnessColumn(
+            m_context.updateCounter(),
+            m_context.config().freshnessSetting(QStringLiteral("retirement_age")),
+            m_context.config().freshnessSetting(QStringLiteral("stale_after_uploads")),
+            m_context.userClub()),
+        {tr("Zugewiesene Rollen"),
+         [](const Player &p) { return p.assignedRoles.join(QStringLiteral(", ")); }, nullptr,
+         nullptr, {}},
+    });
+}
+
 void AssignRolesPage::refresh()
 {
     m_pending.clear();
     m_saveButton->setEnabled(false);
     m_pendingLabel->clear();
+    setupColumns(); // pick up the current upload counter / thresholds
     rebuildFilters();
     applyFilters();
     showEditorFor(nullptr);

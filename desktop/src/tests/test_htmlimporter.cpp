@@ -408,33 +408,109 @@ private slots:
         Database db(QStringLiteral("import_test_9"));
         QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
 
-        std::vector<Player> players(2);
+        std::vector<Player> players(4);
+        // (1) No roles yet -> gets the full ST (C) default set.
         players[0].uid = QStringLiteral("1");
         players[0].name = QStringLiteral("Unassigned Striker");
         players[0].positionRaw = QStringLiteral("ST (C)");
+        // (2) The regression: was scouted as M (R) only (WR-S/IWR-S assigned),
+        //     later gained AM (R). Additive top-up must add the AM (R) roles
+        //     (IFR-*, RR-A, AP-*) while keeping the existing winger roles.
         players[1].uid = QStringLiteral("2");
-        players[1].name = QStringLiteral("Already Assigned");
-        players[1].positionRaw = QStringLiteral("D (C)");
-        players[1].assignedRoles = {QStringLiteral("CD-D")};
+        players[1].name = QStringLiteral("Winger Grown Into AM");
+        players[1].positionRaw = QStringLiteral("M/AM (R)");
+        players[1].assignedRoles = {QStringLiteral("IWR-S"), QStringLiteral("WR-S")};
+        // (3) Manual role outside the position mapping must be preserved.
+        players[2].uid = QStringLiteral("3");
+        players[2].name = QStringLiteral("Manual Extra");
+        players[2].positionRaw = QStringLiteral("D (C)");
+        players[2].assignedRoles = {QStringLiteral("CD-D"), QStringLiteral("SK-A")};
+        // (4) Already holds every default for its position -> untouched.
+        players[3].uid = QStringLiteral("4");
+        players[3].name = QStringLiteral("Complete");
+        players[3].positionRaw = QStringLiteral("M (L)");
+        players[3].assignedRoles = {QStringLiteral("WL-S")};
         QVERIFY(db.upsertPlayers(players));
 
         QString error;
         const QStringList changed =
-            RoleAssignment::autoAssignRolesToUnassigned(db, players, definitions, &error);
+            RoleAssignment::autoAssignMissingRoles(db, players, definitions, &error);
         QVERIFY2(error.isEmpty(), qPrintable(error));
-        QCOMPARE(changed, QStringList{QStringLiteral("1")});
-        QVERIFY(!players[0].assignedRoles.isEmpty());
-        // Persisted, sorted, and derived from the ST (C) role mapping.
+
+        // Players 1, 2 and 3 grew; player 4 did not.
+        QStringList changedSorted = changed;
+        changedSorted.sort();
+        QCOMPARE(changedSorted,
+                 (QStringList{QStringLiteral("1"), QStringLiteral("2"), QStringLiteral("3")}));
+
         const auto reloaded = db.loadPlayers();
+        const auto rolesOf = [&](const QString &uid) {
+            for (const Player &p : reloaded)
+                if (p.uid == uid)
+                    return QSet<QString>(p.assignedRoles.cbegin(), p.assignedRoles.cend());
+            return QSet<QString>{};
+        };
+
+        // (1) Non-empty and sorted on disk.
         for (const Player &p : reloaded) {
-            if (p.uid == QStringLiteral("1")) {
-                QCOMPARE(p.assignedRoles, players[0].assignedRoles);
-                QStringList sorted = p.assignedRoles;
-                std::sort(sorted.begin(), sorted.end());
-                QCOMPARE(p.assignedRoles, sorted);
-            } else {
-                QCOMPARE(p.assignedRoles, QStringList{QStringLiteral("CD-D")});
-            }
+            QStringList sorted = p.assignedRoles;
+            std::sort(sorted.begin(), sorted.end());
+            QCOMPARE(p.assignedRoles, sorted);
+        }
+        QVERIFY(!rolesOf(QStringLiteral("1")).isEmpty());
+
+        // (2) Kept the winger roles AND gained the AM (R) roles.
+        const QSet<QString> two = rolesOf(QStringLiteral("2"));
+        QVERIFY(two.contains(QStringLiteral("WR-S")));
+        QVERIFY(two.contains(QStringLiteral("IWR-S")));
+        QVERIFY(two.contains(QStringLiteral("IFR-A")));
+        QVERIFY(two.contains(QStringLiteral("IFR-S")));
+        QVERIFY(two.contains(QStringLiteral("RR-A")));
+
+        // (3) Manual out-of-mapping role preserved, defaults added.
+        const QSet<QString> three = rolesOf(QStringLiteral("3"));
+        QVERIFY(three.contains(QStringLiteral("SK-A"))); // manual, kept
+        QVERIFY(three.contains(QStringLiteral("CD-D")));
+        QVERIFY(three.size() > 2); // D (C) defaults folded in
+
+        // (4) Untouched: still exactly its single role.
+        QCOMPARE(rolesOf(QStringLiteral("4")),
+                 (QSet<QString>{QStringLiteral("WL-S")}));
+    }
+
+    void importStampsFreshnessCounter()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("import_test_fresh"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+
+        const QString html = htmlExport(
+            {playerRow(QStringLiteral("100"), QStringLiteral("Fresh One"),
+                       QStringLiteral("24"), QStringLiteral("Club A")),
+             playerRow(QStringLiteral("101"), QStringLiteral("Fresh Two"),
+                       QStringLiteral("25"), QStringLiteral("Club B"))});
+
+        // First import -> counter 1, both players stamped with 1.
+        ImportResult r1 = HtmlImporter::importHtml(html, db, db.loadPlayers());
+        QVERIFY2(r1.success, qPrintable(r1.error));
+        QCOMPARE(r1.updateCounter, 1);
+        QCOMPARE(db.setting(QStringLiteral("update_counter")), QStringLiteral("1"));
+        for (const Player &p : db.loadPlayers())
+            QCOMPARE(p.lastSeenUpdate, 1);
+
+        // Second import of only ONE player -> counter 2; the absent player
+        // keeps stamp 1 (i.e. now one upload stale).
+        const QString html2 = htmlExport({playerRow(
+            QStringLiteral("100"), QStringLiteral("Fresh One"),
+            QStringLiteral("24"), QStringLiteral("Club A"))});
+        ImportResult r2 = HtmlImporter::importHtml(html2, db, db.loadPlayers());
+        QVERIFY2(r2.success, qPrintable(r2.error));
+        QCOMPARE(r2.updateCounter, 2);
+        for (const Player &p : db.loadPlayers()) {
+            if (p.uid == QStringLiteral("100"))
+                QCOMPARE(p.lastSeenUpdate, 2);
+            else
+                QCOMPARE(p.lastSeenUpdate, 1);
         }
     }
 };

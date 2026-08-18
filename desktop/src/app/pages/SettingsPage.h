@@ -59,6 +59,8 @@ private:
     QDoubleSpinBox *m_displacementSpin = nullptr;
     QDoubleSpinBox *m_dropoffSpin = nullptr;
     QDoubleSpinBox *m_wrongSideSpin = nullptr;
+    QSpinBox *m_retirementAgeSpin = nullptr;   // Freshness X
+    QSpinBox *m_staleUploadsSpin = nullptr;    // Freshness Y
 
     // Theme tab: preset picker + color buttons per mode+role.
     QComboBox *m_modeCombo = nullptr;

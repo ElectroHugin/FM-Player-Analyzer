@@ -5,6 +5,7 @@
 #include "../widgets/Charts.h"
 #include "../widgets/PlayerSearchModel.h"
 #include "core/Constants.h"
+#include "core/Freshness.h"
 #include "core/HtmlImporter.h"
 #include "core/RoleAnalysis.h"
 #include "core/TalentEngine.h"
@@ -390,6 +391,28 @@ void PlayerProfilePage::showPlayer()
                     ? pill(tr("Persönlichkeit"), player->personality,
                            style.background.name(), style.text.name())
                     : pill(tr("Persönlichkeit"), player->personality, QStringLiteral("#555"));
+    }
+
+    // --- Data freshness (see Freshness) ---
+    const int counter = m_context.updateCounter();
+    const int retirementAge =
+        m_context.config().freshnessSetting(QStringLiteral("retirement_age"));
+    const int staleAfter =
+        m_context.config().freshnessSetting(QStringLiteral("stale_after_uploads"));
+    const int missed = Freshness::uploadsSinceSeen(*player, counter);
+    if (Freshness::isRetired(*player, counter, retirementAge, staleAfter,
+                             m_context.userClub())) {
+        tags += pill(tr("Status"),
+                     tr("Retired (seit %1 Uploads nicht dabei)").arg(missed),
+                     QStringLiteral("#c0392b"));
+    } else if (Freshness::isStale(*player, counter, staleAfter)) {
+        tags += pill(tr("Daten"), tr("veraltet (vor %1 Uploads gesehen)").arg(missed),
+                     QStringLiteral("#e67e22"));
+    } else if (missed > 0) {
+        tags += pill(tr("Daten"), tr("vor %1 Uploads gesehen").arg(missed),
+                     QStringLiteral("#7f8c8d"));
+    } else if (counter > 0) {
+        tags += pill(tr("Daten"), tr("aktuell"), QStringLiteral("#0da025"));
     }
     m_tagsLabel->setText(tags);
     m_updateConfirm->setText(

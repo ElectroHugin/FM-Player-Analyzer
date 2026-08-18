@@ -31,6 +31,7 @@ public:
     void releaseStoreRows() override;
 
 private:
+    void setupColumns();
     void rebuildFilters();
     void applyFilters();
     void showEditorFor(const Player *player);

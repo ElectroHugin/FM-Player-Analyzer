@@ -501,6 +501,25 @@ QWidget *SettingsPage::buildThresholdsTab()
     gapForm->addRow(tr("Dropoff-Schwelle:"), m_dropoffSpin);
     gapForm->addRow(tr("Falsche-Seite-Malus:"), m_wrongSideSpin);
     layout->addWidget(gapGroup);
+
+    auto *freshnessGroup = new QGroupBox(tr("Datenfrische / Retired"), content);
+    auto *freshnessForm = new QFormLayout(freshnessGroup);
+    m_retirementAgeSpin = new QSpinBox;
+    m_retirementAgeSpin->setRange(25, 60);
+    m_staleUploadsSpin = new QSpinBox;
+    m_staleUploadsSpin->setRange(1, 50);
+    freshnessForm->addRow(tr("Retired ab Alter (X):"), m_retirementAgeSpin);
+    freshnessForm->addRow(tr("Veraltet/Retired nach Uploads ohne Update (Y):"),
+                          m_staleUploadsSpin);
+    auto *freshnessHint = new QLabel(
+        tr("Jeder Import zählt hoch. Ein Spieler, der seit Y Uploads nicht mehr dabei war, "
+           "gilt als veraltet. Ist er zusätzlich mindestens X Jahre alt und nicht in deinem "
+           "Verein, wird er automatisch als Retired angezeigt."),
+        freshnessGroup);
+    freshnessHint->setWordWrap(true);
+    freshnessHint->setObjectName(QStringLiteral("kpiCaption"));
+    freshnessForm->addRow(freshnessHint);
+    layout->addWidget(freshnessGroup);
     layout->addStretch(1);
 
     return wrapScrollable(content);
@@ -759,6 +778,8 @@ void SettingsPage::refresh()
         config.gapAnalysisSetting(QStringLiteral("displacement_threshold")));
     m_dropoffSpin->setValue(config.gapAnalysisSetting(QStringLiteral("dropoff_threshold")));
     m_wrongSideSpin->setValue(config.gapAnalysisSetting(QStringLiteral("wrong_side_penalty")));
+    m_retirementAgeSpin->setValue(config.freshnessSetting(QStringLiteral("retirement_age")));
+    m_staleUploadsSpin->setValue(config.freshnessSetting(QStringLiteral("stale_after_uploads")));
 
     const auto themeSettings = config.themeSettings();
     m_modeCombo->setCurrentIndex(
@@ -871,6 +892,8 @@ void SettingsPage::saveAll()
                                  m_displacementSpin->value());
     config.setGapAnalysisSetting(QStringLiteral("dropoff_threshold"), m_dropoffSpin->value());
     config.setGapAnalysisSetting(QStringLiteral("wrong_side_penalty"), m_wrongSideSpin->value());
+    config.setFreshnessSetting(QStringLiteral("retirement_age"), m_retirementAgeSpin->value());
+    config.setFreshnessSetting(QStringLiteral("stale_after_uploads"), m_staleUploadsSpin->value());
 
     auto themeSettings = config.themeSettings();
     themeSettings.insert(QStringLiteral("current_mode"),

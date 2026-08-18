@@ -45,6 +45,10 @@ struct Player {
 
     QStringList assignedRoles;
     QStringList naturalPositions;
+    // Value of the per-database upload counter at the last import that
+    // contained this player. 0 = never stamped (legacy row / pre-tracking).
+    // Freshness is derived as (current counter - lastSeenUpdate); see Freshness.
+    int lastSeenUpdate = 0;
     bool inNationalSquad = false;
     bool onShortlist = false;
     bool transferStatus = false; // listed for transfer

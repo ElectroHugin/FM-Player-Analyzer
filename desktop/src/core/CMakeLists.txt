@@ -10,6 +10,8 @@ add_library(fmcore STATIC
     Definitions.cpp
     DwrsEngine.h
     DwrsEngine.cpp
+    Freshness.h
+    Freshness.cpp
     GapAnalysis.h
     GapAnalysis.cpp
     GistRainbowLut.h
