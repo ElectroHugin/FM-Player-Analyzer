@@ -8,6 +8,7 @@
 #include "pages/EditPlayerPage.h"
 #include "pages/GapAnalysisPage.h"
 #include "pages/NationalBestXiPage.h"
+#include "pages/NationalCallupPage.h"
 #include "pages/NationalDashboardPage.h"
 #include "pages/NationalSquadMatrixPage.h"
 #include "pages/NationalSquadSelectionPage.h"
@@ -85,6 +86,7 @@ const QList<MenuEntry> &nationalMenu()
         {QObject::tr("National-Dashboard"), QStringLiteral("national_dashboard")},
         {QObject::tr("Rollen zuweisen"), QStringLiteral("assign_roles")},
         {QObject::tr("Kader-Auswahl"), QStringLiteral("national_squad_selection")},
+        {QObject::tr("Nominierungs-Assistent"), QStringLiteral("national_callup")},
         {QObject::tr("Squad Matrix"), QStringLiteral("national_squad_matrix")},
         {QObject::tr("Best XI"), QStringLiteral("national_best_xi")},
         {QObject::tr("Taktik-Explorer"), QStringLiteral("tactic_explorer")},
@@ -403,6 +405,8 @@ PageBase *MainWindow::createPage(const QString &pageId)
         return new NationalDashboardPage(m_context, m_theme, this);
     if (pageId == QLatin1String("national_squad_selection"))
         return new NationalSquadSelectionPage(m_context, this);
+    if (pageId == QLatin1String("national_callup"))
+        return new NationalCallupPage(m_context, this);
     if (pageId == QLatin1String("national_squad_matrix"))
         return new NationalSquadMatrixPage(m_context, this);
     if (pageId == QLatin1String("national_best_xi"))

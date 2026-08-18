@@ -19,6 +19,8 @@ add_library(fmcore STATIC
     HtmlImporter.cpp
     LegacyMigrator.h
     LegacyMigrator.cpp
+    NationalCallup.h
+    NationalCallup.cpp
     Player.h
     PlayerStore.h
     PlayerStore.cpp

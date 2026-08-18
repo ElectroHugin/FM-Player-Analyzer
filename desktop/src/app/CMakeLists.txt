@@ -31,6 +31,8 @@ add_executable(fmplayeranalyzer WIN32
     pages/GapAnalysisPage.cpp
     pages/NationalBestXiPage.h
     pages/NationalBestXiPage.cpp
+    pages/NationalCallupPage.h
+    pages/NationalCallupPage.cpp
     pages/NationalDashboardPage.h
     pages/NationalDashboardPage.cpp
     pages/NationalSquadMatrixPage.h
