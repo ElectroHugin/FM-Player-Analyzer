@@ -10,6 +10,7 @@
 
 #include <QApplication>
 #include <QButtonGroup>
+#include <QClipboard>
 #include <QComboBox>
 #include <QFile>
 #include <QFileDialog>
@@ -18,10 +19,12 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QScrollArea>
+#include <QShortcut>
 #include <QSpinBox>
 #include <QVBoxLayout>
 
@@ -187,6 +190,33 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
     for (QListWidget *list : {m_inviteList, m_dropList}) {
         connect(list, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *item) {
             PlayerActions::openProfile(m_context, item->data(Qt::UserRole).toString());
+        });
+        // Copy just the bare player name (for pasting into the in-game search)
+        // via right-click or Ctrl+C on the selected row.
+        list->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(list, &QListWidget::customContextMenuRequested, this,
+                [this, list](const QPoint &pos) {
+                    QListWidgetItem *item = list->itemAt(pos);
+                    const QString name = item ? item->data(Qt::UserRole + 1).toString() : QString();
+                    if (name.isEmpty())
+                        return;
+                    QMenu menu(this);
+                    QAction *copyName = menu.addAction(tr("Namen kopieren"));
+                    QAction *openProfile = menu.addAction(tr("Profil öffnen"));
+                    QAction *chosen = menu.exec(list->viewport()->mapToGlobal(pos));
+                    if (chosen == copyName)
+                        QApplication::clipboard()->setText(name);
+                    else if (chosen == openProfile)
+                        PlayerActions::openProfile(m_context, item->data(Qt::UserRole).toString());
+                });
+        auto *copyShortcut = new QShortcut(QKeySequence::Copy, list);
+        copyShortcut->setContext(Qt::WidgetShortcut);
+        connect(copyShortcut, &QShortcut::activated, this, [list] {
+            if (const QListWidgetItem *item = list->currentItem()) {
+                const QString name = item->data(Qt::UserRole + 1).toString();
+                if (!name.isEmpty())
+                    QApplication::clipboard()->setText(name);
+            }
         });
     }
 
@@ -447,6 +477,7 @@ void NationalCallupPage::compute()
                 .arg(qRound(rating)),
             m_inviteList);
         item->setData(Qt::UserRole, p->uid);
+        item->setData(Qt::UserRole + 1, p->name); // bare name for copying
     }
     if (rec.invites.empty())
         new QListWidgetItem(tr("Keine — der aktuelle Kader ist bereits optimal."), m_inviteList);
@@ -467,6 +498,7 @@ void NationalCallupPage::compute()
         auto *item = new QListWidgetItem(
             tr("%1  ·  %2").arg(playerLine(*p), reason), m_dropList);
         item->setData(Qt::UserRole, p->uid);
+        item->setData(Qt::UserRole + 1, p->name); // bare name for copying
     }
     if (rec.drops.empty())
         new QListWidgetItem(tr("Keine — kein aktueller Spieler muss weichen."), m_dropList);
