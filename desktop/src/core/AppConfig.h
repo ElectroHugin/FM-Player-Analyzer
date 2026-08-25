@@ -62,6 +62,11 @@ public:
     int freshnessSetting(const QString &key) const;
     void setFreshnessSetting(const QString &key, int value);
 
+    // [Training] — devFactor age windows: "<group>_peak_age" / "<group>_locked_age"
+    // for groups "explosive", "strength", "technical".
+    int trainingSetting(const QString &key) const;
+    void setTrainingSetting(const QString &key, int value);
+
     // [ThemeSettings] — full key/value map ("current_mode", "night_primary_color", ...).
     QHash<QString, QString> themeSettings() const;
     void saveThemeSettings(const QHash<QString, QString> &settings);

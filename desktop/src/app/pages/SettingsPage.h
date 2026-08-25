@@ -61,6 +61,13 @@ private:
     QDoubleSpinBox *m_wrongSideSpin = nullptr;
     QSpinBox *m_retirementAgeSpin = nullptr;   // Freshness X
     QSpinBox *m_staleUploadsSpin = nullptr;    // Freshness Y
+    // Training age windows (peak/locked per group).
+    QSpinBox *m_explosivePeakSpin = nullptr;
+    QSpinBox *m_explosiveLockedSpin = nullptr;
+    QSpinBox *m_strengthPeakSpin = nullptr;
+    QSpinBox *m_strengthLockedSpin = nullptr;
+    QSpinBox *m_technicalPeakSpin = nullptr;
+    QSpinBox *m_technicalLockedSpin = nullptr;
 
     // Theme tab: preset picker + color buttons per mode+role.
     QComboBox *m_modeCombo = nullptr;

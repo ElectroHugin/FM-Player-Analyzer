@@ -1,7 +1,10 @@
 #pragma once
 
 #include "../AppContext.h"
+#include "core/TrainingAdvice.h"
+#include "core/Utils.h"
 
+#include <QSet>
 #include <QStringList>
 
 #include <algorithm>
@@ -30,6 +33,71 @@ inline QStringList favoritesFirstTactics(AppContext &context, bool national)
             ordered << tactic;
     }
     return ordered;
+}
+
+// Training age windows from config ([Training] section).
+inline TrainingAdvice::AgeWindows trainingWindows(AppContext &context)
+{
+    AppConfig &c = context.config();
+    TrainingAdvice::AgeWindows w;
+    w.explosivePeak = c.trainingSetting(QStringLiteral("explosive_peak_age"));
+    w.explosiveLocked = c.trainingSetting(QStringLiteral("explosive_locked_age"));
+    w.strengthPeak = c.trainingSetting(QStringLiteral("strength_peak_age"));
+    w.strengthLocked = c.trainingSetting(QStringLiteral("strength_locked_age"));
+    w.technicalPeak = c.trainingSetting(QStringLiteral("technical_peak_age"));
+    w.technicalLocked = c.trainingSetting(QStringLiteral("technical_locked_age"));
+    return w;
+}
+
+// Roles a player may train for: intersection of the roles his positions allow
+// (position_to_role_mapping) and the roles the given tactic actually uses,
+// ordered naturally. Usually just a handful.
+inline QStringList trainingRoleChoices(AppContext &context, const Player &player,
+                                       const QString &tactic)
+{
+    const auto posMap = context.definitions().positionToRoleMapping();
+    QSet<QString> playerRoles;
+    for (const QString &pos : parsePositionString(player.positionRaw)) {
+        for (const QString &role : posMap.value(pos))
+            playerRoles.insert(role);
+    }
+    const auto tacticRoles = context.definitions().tacticRoles().value(tactic);
+    QSet<QString> tacticRoleSet;
+    for (auto it = tacticRoles.constBegin(); it != tacticRoles.constEnd(); ++it)
+        tacticRoleSet.insert(it.value());
+
+    QStringList result;
+    for (const QString &role : playerRoles) {
+        if (tacticRoleSet.contains(role))
+            result << role;
+    }
+    return context.definitions().sortRolesNaturally(result);
+}
+
+// The role with the best current DWRS among the choices (empty if none).
+inline QString bestTrainingRole(AppContext &context, const Player &player,
+                                const QStringList &choices)
+{
+    QString best;
+    double bestValue = -1.0;
+    for (const QString &role : choices) {
+        const double v = context.ratings().value(role).value(player.uid, 0.0);
+        if (v > bestValue) {
+            bestValue = v;
+            best = role;
+        }
+    }
+    return best;
+}
+
+// Effective training role: the player's saved choice if still valid, else the
+// best-DWRS role among the choices.
+inline QString effectiveTrainingRole(AppContext &context, const Player &player,
+                                     const QStringList &choices)
+{
+    if (!player.trainingRole.isEmpty() && choices.contains(player.trainingRole))
+        return player.trainingRole;
+    return bestTrainingRole(context, player, choices);
 }
 
 // Uids of the saved national squad (ids live in the DB, uids in the store).

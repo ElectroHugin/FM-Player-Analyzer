@@ -34,6 +34,8 @@ add_library(fmcore STATIC
     SquadBuilder.cpp
     TacticExplorer.h
     TacticExplorer.cpp
+    TrainingAdvice.h
+    TrainingAdvice.cpp
     TalentEngine.h
     TalentEngine.cpp
     Utils.h

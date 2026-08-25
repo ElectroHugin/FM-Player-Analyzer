@@ -18,7 +18,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 3;
+constexpr int kSchemaVersion = 4;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -129,6 +129,8 @@ bool Database::initSchema()
             ok = migrateV1ToV2();
         if (ok && version < 3)
             ok = migrateV2ToV3();
+        if (ok && version < 4)
+            ok = migrateV3ToV4();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         m_db.rollback();
@@ -200,6 +202,9 @@ bool Database::createInitialSchema()
                        " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE)"),
         QStringLiteral("CREATE TABLE IF NOT EXISTS shortlist ("
                        " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE)"),
+        QStringLiteral("CREATE TABLE IF NOT EXISTS training_roles ("
+                       " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE,"
+                       " role TEXT NOT NULL)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_dwrs_history_role_ts ON dwrs_history(role, ts)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_player_roles_role ON player_roles(role)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_players_club ON players(club)"),
@@ -257,6 +262,15 @@ bool Database::migrateV2ToV3()
         "ALTER TABLE players ADD COLUMN last_seen_update INTEGER NOT NULL DEFAULT 0"));
 }
 
+bool Database::migrateV3ToV4()
+{
+    // Per-player training-advice role (id -> role), managed by the training
+    // planner, independent of the FM-import upsert.
+    return exec(QStringLiteral("CREATE TABLE IF NOT EXISTS training_roles ("
+                               " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE,"
+                               " role TEXT NOT NULL)"));
+}
+
 std::vector<Player> Database::loadPlayers()
 {
     std::vector<Player> players;
@@ -271,6 +285,7 @@ std::vector<Player> Database::loadPlayers()
             rolesByPlayer[query.value(0).toInt()].append(query.value(1).toString());
     }
     QSet<int> nationalIds, shortlistIdSet;
+    QHash<int, QString> trainingRoleById;
     {
         QSqlQuery query(m_db);
         query.exec(QStringLiteral("SELECT player_id FROM national_squad"));
@@ -279,6 +294,9 @@ std::vector<Player> Database::loadPlayers()
         query.exec(QStringLiteral("SELECT player_id FROM shortlist"));
         while (query.next())
             shortlistIdSet.insert(query.value(0).toInt());
+        query.exec(QStringLiteral("SELECT player_id, role FROM training_roles"));
+        while (query.next())
+            trainingRoleById.insert(query.value(0).toInt(), query.value(1).toString());
     }
 
     QSqlQuery query(m_db);
@@ -347,6 +365,7 @@ std::vector<Player> Database::loadPlayers()
         p.assignedRoles = rolesByPlayer.value(p.id);
         p.inNationalSquad = nationalIds.contains(p.id);
         p.onShortlist = shortlistIdSet.contains(p.id);
+        p.trainingRole = trainingRoleById.value(p.id);
         players.push_back(std::move(p));
     }
     return players;
@@ -784,6 +803,35 @@ bool Database::setShortlistIds(const QList<int> &ids)
         }
     }
     return m_db.commit();
+}
+
+QHash<int, QString> Database::trainingRoles()
+{
+    QHash<int, QString> result;
+    QSqlQuery query(m_db);
+    query.exec(QStringLiteral("SELECT player_id, role FROM training_roles"));
+    while (query.next())
+        result.insert(query.value(0).toInt(), query.value(1).toString());
+    return result;
+}
+
+bool Database::setTrainingRole(int playerId, const QString &role)
+{
+    QSqlQuery query(m_db);
+    if (role.isEmpty()) {
+        query.prepare(QStringLiteral("DELETE FROM training_roles WHERE player_id = ?"));
+        query.bindValue(0, playerId);
+    } else {
+        query.prepare(QStringLiteral(
+            "INSERT OR REPLACE INTO training_roles (player_id, role) VALUES (?, ?)"));
+        query.bindValue(0, playerId);
+        query.bindValue(1, role);
+    }
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    return true;
 }
 
 bool Database::createBackup(const QString &dbFilePath, const QString &backupsDir, QString *errorOut)

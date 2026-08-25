@@ -83,6 +83,11 @@ public:
     QList<int> shortlistIds();
     bool setShortlistIds(const QList<int> &ids);
 
+    // --- Training roles (player id -> chosen training-advice role) ---
+    QHash<int, QString> trainingRoles();
+    // Empty role removes the row (revert to auto-pick).
+    bool setTrainingRole(int playerId, const QString &role);
+
     // --- Maintenance ---
     // Copies the db file to <backupsDir>/<name>_backup_<ts>.db, keeps newest 3.
     static bool createBackup(const QString &dbFilePath, const QString &backupsDir,
@@ -95,6 +100,7 @@ private:
     bool createInitialSchema();          // fresh DB -> current shape
     bool migrateV1ToV2();                 // add dwrs_latest, drop dead columns
     bool migrateV2ToV3();                 // add last_seen_update (freshness tracking)
+    bool migrateV3ToV4();                 // add training_roles table
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     bool exec(const QString &sql);
 

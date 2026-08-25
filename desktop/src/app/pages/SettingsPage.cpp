@@ -520,6 +520,44 @@ QWidget *SettingsPage::buildThresholdsTab()
     freshnessHint->setObjectName(QStringLiteral("kpiCaption"));
     freshnessForm->addRow(freshnessHint);
     layout->addWidget(freshnessGroup);
+
+    auto *trainingGroup = new QGroupBox(tr("Trainings-Altersfenster"), content);
+    auto *trainingForm = new QFormLayout(trainingGroup);
+    const auto makeAgeSpin = [] {
+        auto *spin = new QSpinBox;
+        spin->setRange(15, 40);
+        return spin;
+    };
+    const auto makeWindowRow = [&](QSpinBox *&peak, QSpinBox *&locked) {
+        peak = makeAgeSpin();
+        locked = makeAgeSpin();
+        auto *row = new QHBoxLayout;
+        row->addWidget(new QLabel(tr("stark bis"), trainingGroup));
+        row->addWidget(peak);
+        row->addSpacing(12);
+        row->addWidget(new QLabel(tr("gesperrt ab"), trainingGroup));
+        row->addWidget(locked);
+        row->addStretch(1);
+        auto *w = new QWidget(trainingGroup);
+        w->setLayout(row);
+        return w;
+    };
+    trainingForm->addRow(tr("Explosiv (Tempo, Antritt, Beweglichkeit):"),
+                         makeWindowRow(m_explosivePeakSpin, m_explosiveLockedSpin));
+    trainingForm->addRow(tr("Kraft (Kraft, Ausdauer, Sprungkraft, Balance):"),
+                         makeWindowRow(m_strengthPeakSpin, m_strengthLockedSpin));
+    trainingForm->addRow(tr("Technik:"),
+                         makeWindowRow(m_technicalPeakSpin, m_technicalLockedSpin));
+    auto *trainingHint = new QLabel(
+        tr("Steuert die Trainingsempfehlung: bis 'stark bis' voll trainierbar, danach "
+           "linear abnehmend bis 'gesperrt ab'. Mentale Attribute gelten immer als "
+           "trainierbar, Charakter-Attribute (Entschlossenheit, Arbeitsrate) nie "
+           "(nur über Mentoring)."),
+        trainingGroup);
+    trainingHint->setWordWrap(true);
+    trainingHint->setObjectName(QStringLiteral("kpiCaption"));
+    trainingForm->addRow(trainingHint);
+    layout->addWidget(trainingGroup);
     layout->addStretch(1);
 
     return wrapScrollable(content);
@@ -780,6 +818,12 @@ void SettingsPage::refresh()
     m_wrongSideSpin->setValue(config.gapAnalysisSetting(QStringLiteral("wrong_side_penalty")));
     m_retirementAgeSpin->setValue(config.freshnessSetting(QStringLiteral("retirement_age")));
     m_staleUploadsSpin->setValue(config.freshnessSetting(QStringLiteral("stale_after_uploads")));
+    m_explosivePeakSpin->setValue(config.trainingSetting(QStringLiteral("explosive_peak_age")));
+    m_explosiveLockedSpin->setValue(config.trainingSetting(QStringLiteral("explosive_locked_age")));
+    m_strengthPeakSpin->setValue(config.trainingSetting(QStringLiteral("strength_peak_age")));
+    m_strengthLockedSpin->setValue(config.trainingSetting(QStringLiteral("strength_locked_age")));
+    m_technicalPeakSpin->setValue(config.trainingSetting(QStringLiteral("technical_peak_age")));
+    m_technicalLockedSpin->setValue(config.trainingSetting(QStringLiteral("technical_locked_age")));
 
     const auto themeSettings = config.themeSettings();
     m_modeCombo->setCurrentIndex(
@@ -894,6 +938,15 @@ void SettingsPage::saveAll()
     config.setGapAnalysisSetting(QStringLiteral("wrong_side_penalty"), m_wrongSideSpin->value());
     config.setFreshnessSetting(QStringLiteral("retirement_age"), m_retirementAgeSpin->value());
     config.setFreshnessSetting(QStringLiteral("stale_after_uploads"), m_staleUploadsSpin->value());
+    config.setTrainingSetting(QStringLiteral("explosive_peak_age"), m_explosivePeakSpin->value());
+    config.setTrainingSetting(QStringLiteral("explosive_locked_age"),
+                              m_explosiveLockedSpin->value());
+    config.setTrainingSetting(QStringLiteral("strength_peak_age"), m_strengthPeakSpin->value());
+    config.setTrainingSetting(QStringLiteral("strength_locked_age"),
+                              m_strengthLockedSpin->value());
+    config.setTrainingSetting(QStringLiteral("technical_peak_age"), m_technicalPeakSpin->value());
+    config.setTrainingSetting(QStringLiteral("technical_locked_age"),
+                              m_technicalLockedSpin->value());
 
     auto themeSettings = config.themeSettings();
     themeSettings.insert(QStringLiteral("current_mode"),

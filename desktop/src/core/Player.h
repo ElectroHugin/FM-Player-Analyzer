@@ -45,6 +45,10 @@ struct Player {
 
     QStringList assignedRoles;
     QStringList naturalPositions;
+    // App-managed role the training advisor optimizes for (empty = auto-pick the
+    // player's best-DWRS role among those his positions and the tactic allow).
+    // Stored in the training_roles table, not part of the FM-import upsert.
+    QString trainingRole;
     // Value of the per-database upload counter at the last import that
     // contained this player. 0 = never stamped (legacy row / pre-tracking).
     // Freshness is derived as (current counter - lastSeenUpdate); see Freshness.

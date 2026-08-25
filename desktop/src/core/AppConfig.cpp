@@ -49,6 +49,23 @@ const QHash<QString, int> &freshnessDefaults()
     return defaults;
 }
 
+const QHash<QString, int> &trainingWindowDefaults()
+{
+    static const QHash<QString, int> defaults = {
+        // devFactor = 1 up to *_peak_age, linear down to 0 at *_locked_age.
+        // Explosive physical (Pace, Acceleration, Agility): the youth spike.
+        {QStringLiteral("explosive_peak_age"), 21},
+        {QStringLiteral("explosive_locked_age"), 24},
+        // Strength/stamina physical: matures a little later.
+        {QStringLiteral("strength_peak_age"), 23},
+        {QStringLiteral("strength_locked_age"), 25},
+        // Technical: trainable young, tapering off toward the mid-20s.
+        {QStringLiteral("technical_peak_age"), 21},
+        {QStringLiteral("technical_locked_age"), 27},
+    };
+    return defaults;
+}
+
 const QHash<QString, QString> &themeDefaults()
 {
     // Club-neutral, professional dark/light base (seven color roles per mode).
@@ -148,6 +165,10 @@ void AppConfig::ensureDefaults()
     const auto &freshness = freshnessDefaults();
     for (auto it = freshness.constBegin(); it != freshness.constEnd(); ++it)
         ensure(QStringLiteral("Freshness/") + it.key(), QString::number(it.value()));
+
+    const auto &training = trainingWindowDefaults();
+    for (auto it = training.constBegin(); it != training.constEnd(); ++it)
+        ensure(QStringLiteral("Training/") + it.key(), QString::number(it.value()));
 
     const auto &theme = themeDefaults();
     for (auto it = theme.constBegin(); it != theme.constEnd(); ++it)
@@ -292,6 +313,18 @@ int AppConfig::freshnessSetting(const QString &key) const
 void AppConfig::setFreshnessSetting(const QString &key, int value)
 {
     m_settings->setValue(QStringLiteral("Freshness/") + key, QString::number(value));
+    m_settings->sync();
+}
+
+int AppConfig::trainingSetting(const QString &key) const
+{
+    const int fallback = trainingWindowDefaults().value(key, 0);
+    return m_settings->value(QStringLiteral("Training/") + key, fallback).toInt();
+}
+
+void AppConfig::setTrainingSetting(const QString &key, int value)
+{
+    m_settings->setValue(QStringLiteral("Training/") + key, QString::number(value));
     m_settings->sync();
 }
 

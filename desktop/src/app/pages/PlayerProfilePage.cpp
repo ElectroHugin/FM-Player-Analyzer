@@ -4,15 +4,19 @@
 #include "../RecalcHelper.h"
 #include "../widgets/Charts.h"
 #include "../widgets/PlayerSearchModel.h"
+#include "PageHelpers.h"
 #include "core/Constants.h"
+#include "core/DwrsEngine.h"
 #include "core/Freshness.h"
 #include "core/HtmlImporter.h"
 #include "core/RoleAnalysis.h"
 #include "core/TalentEngine.h"
+#include "core/TrainingAdvice.h"
 #include "core/Utils.h"
 
 #include <QButtonGroup>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QCompleter>
 #include <QDateTime>
 #include <QFile>
@@ -193,6 +197,28 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_talentLabel->setWordWrap(true);
     talentLayout->addWidget(m_talentLabel);
     detailLayout->addWidget(m_talentBox);
+
+    m_trainingBox = new QGroupBox(tr("🎯 Trainingsempfehlung"), m_detailWidget);
+    auto *trainingLayout = new QVBoxLayout(m_trainingBox);
+    auto *trainingRoleRow = new QHBoxLayout;
+    trainingRoleRow->addWidget(new QLabel(tr("Rolle:"), m_trainingBox));
+    m_trainingRoleCombo = new QComboBox(m_trainingBox);
+    m_trainingRoleCombo->setMinimumWidth(220);
+    trainingRoleRow->addWidget(m_trainingRoleCombo);
+    trainingRoleRow->addStretch(1);
+    trainingLayout->addLayout(trainingRoleRow);
+    m_trainingLabel = new QLabel(m_trainingBox);
+    m_trainingLabel->setWordWrap(true);
+    m_trainingLabel->setTextFormat(Qt::RichText);
+    trainingLayout->addWidget(m_trainingLabel);
+    detailLayout->addWidget(m_trainingBox);
+    connect(m_trainingRoleCombo, &QComboBox::currentIndexChanged, this, [this] {
+        if (m_updating)
+            return;
+        const Player *player = m_context.store().findByUid(m_currentUid);
+        if (player)
+            showTrainingAdvice(player); // preview only; role is set on the plan page
+    });
 
     m_analysisTitle = new QLabel(m_detailWidget);
     m_analysisTitle->setObjectName(QStringLiteral("sectionTitle"));
@@ -418,6 +444,24 @@ void PlayerProfilePage::showPlayer()
     m_updateConfirm->setText(
         tr("Ja, diese Datei ist sicher ein Update für %1.").arg(player->name));
 
+    // --- Training advice: populate the role picker, then render for it. ---
+    {
+        const QString tactic = m_context.database().setting(QStringLiteral("favorite_tactic_1"));
+        const QStringList choices = tactic.isEmpty()
+                                        ? QStringList()
+                                        : trainingRoleChoices(m_context, *player, tactic);
+        const QString effective = effectiveTrainingRole(m_context, *player, choices);
+        const auto roleNames = m_context.definitions().roleDisplayMap();
+        m_updating = true;
+        m_trainingRoleCombo->clear();
+        for (const QString &role : choices)
+            m_trainingRoleCombo->addItem(roleNames.value(role, role), role);
+        const int idx = m_trainingRoleCombo->findData(effective);
+        m_trainingRoleCombo->setCurrentIndex(idx >= 0 ? idx : 0);
+        m_updating = false;
+    }
+    showTrainingAdvice(player);
+
     // --- Top roles ---
     while (QLayoutItem *item = m_topRolesLayout->takeAt(0)) {
         if (item->widget())
@@ -594,6 +638,63 @@ void PlayerProfilePage::runManualUpdate()
             message += tr(" (Name in der Datei: '%1'.)").arg(fileName);
         QMessageBox::information(this, tr("Spieler aktualisieren"), message);
     });
+}
+
+void PlayerProfilePage::showTrainingAdvice(const Player *player)
+{
+    if (!player) {
+        m_trainingBox->setVisible(false);
+        return;
+    }
+    m_trainingBox->setVisible(true);
+
+    const QString role = m_trainingRoleCombo->currentData().toString();
+    if (role.isEmpty()) {
+        m_trainingLabel->setText(
+            tr("Keine trainierbare Rolle aus <i>Positionen ∩ Lieblingstaktik</i>. "
+               "Lege in den Einstellungen eine Lieblings-Taktik fest."));
+        return;
+    }
+
+    const TrainingAdvice::Advice advice = TrainingAdvice::adviseForRole(
+        *player, role, m_context.dwrsEngine(), trainingWindows(m_context));
+    if (!advice.valid || advice.focus.empty()) {
+        m_trainingLabel->setText(
+            tr("Für diese Rolle gibt es aktuell nichts sinnvoll zu trainieren "
+               "(Attribute bereits hoch oder altersbedingt gesperrt)."));
+        return;
+    }
+
+    QString html = QStringLiteral("<b>%1</b><ol>").arg(tr("In dieser Reihenfolge trainieren:"));
+    const int limit = std::min<int>(5, static_cast<int>(advice.focus.size()));
+    for (int i = 0; i < limit; ++i) {
+        const TrainingAdvice::Recommendation &r = advice.focus[i];
+        QString note;
+        if (r.group == TrainingAdvice::Group::Mental)
+            note = tr("mental, lebenslang trainierbar");
+        else if (r.devFactor >= 0.999)
+            note = tr("noch voll trainierbar");
+        else
+            note = tr("nur noch begrenzt trainierbar");
+        html += QStringLiteral("<li><b>%1</b> — %2, %3, aktuell %4</li>")
+                    .arg(r.attrName.toHtmlEscaped(),
+                         TrainingAdvice::groupName(r.group), note)
+                    .arg(r.currentValue);
+    }
+    html += QStringLiteral("</ol>");
+
+    if (!advice.mentoring.empty()) {
+        QStringList names;
+        for (const auto &r : advice.mentoring)
+            names << r.attrName;
+        html += tr("<i>Über Mentoring verbesserbar (kein Fokustraining): %1.</i>")
+                    .arg(names.join(QStringLiteral(", ")).toHtmlEscaped());
+    }
+    if (advice.formLimited) {
+        html += QStringLiteral("<br/>")
+                + tr("⚠ Ø-Note unter 7.0 — entwickelt sich aktuell nur langsam.");
+    }
+    m_trainingLabel->setText(html);
 }
 
 } // namespace fm

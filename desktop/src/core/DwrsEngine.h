@@ -42,6 +42,13 @@ public:
     // Convenience: one player, one role. Returns {absolute, normalized}.
     QPair<double, double> calculate(const Player &player, const QString &role) const;
 
+    // Normalized DWRS points gained per +1 on each attribute for this role
+    // (attr index -> per-point gain). Constant in the linear DWRS model, so it
+    // is exactly the marginal value of training that attribute — the lever the
+    // training advisor optimizes. Only attributes that feed this role's rating
+    // are present.
+    QHash<int, double> attributeDwrsPerPoint(const QString &role) const;
+
     // All ratings for all players and every role each has assigned.
     // Returns per-role results for the row indexes that have the role.
     struct BatchResult {

@@ -3,6 +3,7 @@
 #include "PageBase.h"
 
 class QButtonGroup;
+class QComboBox;
 class QCompleter;
 class QGroupBox;
 class QHBoxLayout;
@@ -61,6 +62,10 @@ private:
     QHBoxLayout *m_topRolesLayout = nullptr;
     QGroupBox *m_talentBox = nullptr;
     QLabel *m_talentLabel = nullptr;
+    QGroupBox *m_trainingBox = nullptr;
+    QComboBox *m_trainingRoleCombo = nullptr;
+    QLabel *m_trainingLabel = nullptr;
+    void showTrainingAdvice(const Player *player);
     QLabel *m_analysisTitle = nullptr;
     QLabel *m_prosLabel = nullptr;
     QLabel *m_consLabel = nullptr;

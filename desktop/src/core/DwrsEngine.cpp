@@ -172,6 +172,26 @@ QPair<double, double> DwrsEngine::calculate(const Player &player, const QString 
     return {result.absolute[0], result.normalized[0]};
 }
 
+QHash<int, double> DwrsEngine::attributeDwrsPerPoint(const QString &role) const
+{
+    const RolePlan &plan = planFor(role);
+    QHash<int, double> result;
+    const double denom = plan.bestPossible - plan.worstPossible;
+    if (denom == 0.0)
+        return result;
+    // d(normalized)/d(attr a) = categoryWeight[c] * roleWeight[a] / count[c] / denom * 100,
+    // mirroring the forward pass in calculateRole() exactly.
+    for (size_t a = 0; a < plan.attrIndexes.size(); ++a) {
+        const int cat = plan.categoryIndexes[a];
+        if (plan.categoryCounts[cat] <= 0)
+            continue;
+        const double perPoint = plan.categoryWeights[cat] * plan.roleWeights[a]
+                                / plan.categoryCounts[cat] / denom * 100.0;
+        result.insert(plan.attrIndexes[a], perPoint);
+    }
+    return result;
+}
+
 DwrsEngine::BatchResult DwrsEngine::calculateAllAssigned(const std::vector<Player> &players,
                                                          const QStringList &validRoles) const
 {
