@@ -4,7 +4,7 @@ namespace fm {
 
 QString appVersion()
 {
-    return QStringLiteral("1.3.10");
+    return QStringLiteral("1.3.11");
 }
 
 QString appName()

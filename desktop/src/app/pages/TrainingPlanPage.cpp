@@ -12,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QPushButton>
 #include <QTableWidget>
 #include <QVBoxLayout>
 
@@ -51,7 +52,12 @@ TrainingPlanPage::TrainingPlanPage(AppContext &context, QWidget *parent)
     m_tacticCombo->setMinimumWidth(240);
     tacticRow->addWidget(m_tacticCombo);
     tacticRow->addStretch(1);
+    auto *refreshButton = new QPushButton(tr("🔄 Aktualisieren"), this);
+    refreshButton->setToolTip(tr("Kader, Rollen und Empfehlungen neu berechnen "
+                                 "(z. B. nach Änderungen an den Rollen)."));
+    tacticRow->addWidget(refreshButton);
     layout->addLayout(tacticRow);
+    connect(refreshButton, &QPushButton::clicked, this, &TrainingPlanPage::refresh);
 
     m_hint = new QLabel(this);
     m_hint->setWordWrap(true);

@@ -3903,67 +3903,77 @@ The original file is not modified.</translation>
 <context>
     <name>fm::TrainingPlanPage</name>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="45"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="46"/>
         <source>Trainingsplan</source>
         <translation>Training Plan</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="49"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="50"/>
         <source>Taktik:</source>
         <translation>Tactic:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="60"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="55"/>
+        <source>🔄 Aktualisieren</source>
+        <translation>🔄 Refresh</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="56"/>
+        <source>Kader, Rollen und Empfehlungen neu berechnen (z. B. nach Änderungen an den Rollen).</source>
+        <translation>Recompute squad, roles and recommendations (e.g. after changing roles).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="66"/>
         <source>Erste Mannschaft</source>
         <translation>First team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="65"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="71"/>
         <source>Zweitteam</source>
         <translation>Second team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="103"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="109"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="103"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="109"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="103"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="109"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="103"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="109"/>
         <source>Trainingsrolle</source>
         <translation>Training role</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="104"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="110"/>
         <source>Trainingsmethoden (in Reihenfolge)</source>
         <translation>Training methods (in order)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="130"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="136"/>
         <source>Rolle wählbar aus &lt;i&gt;Positionen ∩ Taktik&lt;/i&gt; (wird gespeichert). Reihenfolge der Methoden = größter DWRS-Gewinn zuerst; Reha-Methoden werden nicht vorgeschlagen. Spaltenkopf klicken sortiert.</source>
         <translation>Role selectable from &lt;i&gt;positions ∩ tactic&lt;/i&gt; (saved). Method order = biggest DWRS gain first; rehab methods are not suggested. Click a column header to sort.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="152"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="158"/>
         <source>nichts sinnvoll trainierbar</source>
         <translation>nothing worth training</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="133"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="139"/>
         <source>⚠️ Kein Verein gesetzt. Wähle unter Einstellungen → Verein &apos;Mein Verein&apos;, damit dein Kader angezeigt wird.</source>
         <translation>⚠️ No club set. Pick &apos;My club&apos; under Settings → Club so your squad is shown.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="226"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="232"/>
         <source>keine Rolle in dieser Taktik</source>
         <translation>no role in this tactic</translation>
     </message>

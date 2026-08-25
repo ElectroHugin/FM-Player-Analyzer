@@ -180,6 +180,30 @@ private slots:
         QVERIFY(a.focus.front().focus != QStringLiteral("Quickness"));
     }
 
+    void outfieldRoleGetsNoGkMethods()
+    {
+        // Regression: GK methods share mental attributes with outfielders
+        // (GK Reactions -> Anticipation/Concentration) and used to leak in.
+        for (int age : {19, 25, 31}) {
+            const Player p = baseOutfielder(age);
+            const FocusAdvice a =
+                adviseFocusesForRole(p, QStringLiteral("WR-S"), *m_engine, m_windows);
+            for (const FocusRecommendation &f : a.focus)
+                QVERIFY2(!f.focus.startsWith(QStringLiteral("GK")), qPrintable(f.focus));
+        }
+    }
+
+    void gkRoleGetsOnlyGkMethods()
+    {
+        const Player p = baseOutfielder(22);
+        const FocusAdvice a =
+            adviseFocusesForRole(p, QStringLiteral("SK-S"), *m_engine, m_windows);
+        QVERIFY(a.valid);
+        QVERIFY(!a.focus.empty());
+        for (const FocusRecommendation &f : a.focus)
+            QVERIFY2(f.focus.startsWith(QStringLiteral("GK")), qPrintable(f.focus));
+    }
+
     void focusAggregatesMultipleAttributes()
     {
         // Attacking Movement trains Off the Ball + Anticipation + Decisions; for

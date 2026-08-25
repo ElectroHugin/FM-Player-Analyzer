@@ -4,6 +4,7 @@
 #include "DwrsEngine.h"
 
 #include <QHash>
+#include <QSet>
 
 #include <algorithm>
 #include <cmath>
@@ -277,9 +278,30 @@ FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
     for (const Recommendation &r : attrAdvice.focus)
         byName.insert(r.attrName, &r);
 
+    // Detect a goalkeeper role from its rating attributes: GK roles rate the
+    // GK-only attributes, outfield roles never do. GK training methods (name
+    // starts with "GK") apply only to GK roles and vice versa — without this,
+    // GK methods leak onto outfielders through shared mental attributes
+    // (e.g. GK Reactions -> Anticipation/Concentration).
+    static const QSet<QString> kGkMarkers = {
+        QStringLiteral("Aerial Reach"), QStringLiteral("Reflexes"),
+        QStringLiteral("Command of Area"), QStringLiteral("Handling"),
+        QStringLiteral("One vs One")};
+    bool isGkRole = false;
+    {
+        const QHash<int, double> perPoint = engine.attributeDwrsPerPoint(role);
+        for (auto it = perPoint.constBegin(); it != perPoint.constEnd() && !isGkRole; ++it) {
+            if (kGkMarkers.contains(attrNames()[it.key()]))
+                isGkRole = true;
+        }
+    }
+
     for (const TrainingFocus &f : trainingFocuses()) {
         if (f.rehab)
             continue; // rehab focuses are never proposed
+        const bool gkFocus = f.name.startsWith(QStringLiteral("GK"));
+        if (gkFocus != isGkRole)
+            continue; // GK methods only for GK roles, outfield methods only otherwise
 
         double sum = 0.0;
         std::vector<QPair<double, QString>> contribs;

@@ -49,17 +49,23 @@ inline TrainingAdvice::AgeWindows trainingWindows(AppContext &context)
     return w;
 }
 
-// Roles a player may train for: intersection of the roles his positions allow
-// (position_to_role_mapping) and the roles the given tactic actually uses,
-// ordered naturally. Usually just a handful.
+// Roles a player may train for: intersection of the roles he can play and the
+// roles the given tactic actually uses, ordered naturally. "Can play" = his
+// assigned roles (which the user curates on the role pages); only when he has
+// none do we fall back to the roles his positions allow. Usually a handful.
 inline QStringList trainingRoleChoices(AppContext &context, const Player &player,
                                        const QString &tactic)
 {
-    const auto posMap = context.definitions().positionToRoleMapping();
     QSet<QString> playerRoles;
-    for (const QString &pos : parsePositionString(player.positionRaw)) {
-        for (const QString &role : posMap.value(pos))
+    if (!player.assignedRoles.isEmpty()) {
+        for (const QString &role : player.assignedRoles)
             playerRoles.insert(role);
+    } else {
+        const auto posMap = context.definitions().positionToRoleMapping();
+        for (const QString &pos : parsePositionString(player.positionRaw)) {
+            for (const QString &role : posMap.value(pos))
+                playerRoles.insert(role);
+        }
     }
     const auto tacticRoles = context.definitions().tacticRoles().value(tactic);
     QSet<QString> tacticRoleSet;
