@@ -2714,36 +2714,31 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="663"/>
-        <source>Für diese Rolle gibt es aktuell nichts sinnvoll zu trainieren (Attribute bereits hoch oder altersbedingt gesperrt).</source>
-        <translation>Nothing worth training for this role right now (attributes already high or locked by age).</translation>
+        <source>Für diese Rolle gibt es aktuell keine sinnvolle Trainingsmethode (Attribute bereits hoch oder altersbedingt gesperrt).</source>
+        <translation>There is currently no useful training method for this role (attributes already high or locked by age).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="668"/>
-        <source>In dieser Reihenfolge trainieren:</source>
-        <translation>Train in this order:</translation>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="669"/>
+        <source>Trainingsmethoden in dieser Reihenfolge:</source>
+        <translation>Training methods in this order:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="674"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="675"/>
         <source>mental, lebenslang trainierbar</source>
         <translation>mental, trainable lifelong</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="676"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="677"/>
+        <source>altersbedingt nur noch begrenzt</source>
+        <translation>limited by age</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="679"/>
         <source>noch voll trainierbar</source>
         <translation>still fully trainable</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="678"/>
-        <source>nur noch begrenzt trainierbar</source>
-        <translation>only limited trainability left</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="690"/>
-        <source>&lt;i&gt;Über Mentoring verbesserbar (kein Fokustraining): %1.&lt;/i&gt;</source>
-        <translation>&lt;i&gt;Improvable via mentoring (not focus training): %1.&lt;/i&gt;</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="695"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="687"/>
         <source>⚠ Ø-Note unter 7.0 — entwickelt sich aktuell nur langsam.</source>
         <translation>⚠ Average rating below 7.0 — currently develops only slowly.</translation>
     </message>
@@ -3318,7 +3313,7 @@ The original file is not modified.</translation>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="552"/>
         <source>Steuert die Trainingsempfehlung: bis &apos;stark bis&apos; voll trainierbar, danach linear abnehmend bis &apos;gesperrt ab&apos;. Mentale Attribute gelten immer als trainierbar, Charakter-Attribute (Entschlossenheit, Arbeitsrate) nie (nur über Mentoring).</source>
-        <translation>Drives the training recommendation: fully trainable up to 'strong until', then decreasing linearly to 'locked from'. Mental attributes are always considered trainable, character attributes (Determination, Work Rate) never (mentoring only).</translation>
+        <translation>Drives the training recommendation: fully trainable up to &apos;strong until&apos;, then decreasing linearly to &apos;locked from&apos;. Mental attributes are always considered trainable, character attributes (Determination, Work Rate) never (mentoring only).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="572"/>
@@ -3908,57 +3903,67 @@ The original file is not modified.</translation>
 <context>
     <name>fm::TrainingPlanPage</name>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="30"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="45"/>
         <source>Trainingsplan</source>
         <translation>Training Plan</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="34"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="49"/>
         <source>Taktik:</source>
         <translation>Tactic:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="48"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="60"/>
+        <source>Erste Mannschaft</source>
+        <translation>First team</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="65"/>
+        <source>Zweitteam</source>
+        <translation>Second team</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="103"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="48"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="103"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="48"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="103"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="48"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="103"/>
         <source>Trainingsrolle</source>
         <translation>Training role</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="49"/>
-        <source>Trainingsfokus (in Reihenfolge)</source>
-        <translation>Training focus (in order)</translation>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="104"/>
+        <source>Trainingsmethoden (in Reihenfolge)</source>
+        <translation>Training methods (in order)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="87"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="130"/>
+        <source>Rolle wählbar aus &lt;i&gt;Positionen ∩ Taktik&lt;/i&gt; (wird gespeichert). Reihenfolge der Methoden = größter DWRS-Gewinn zuerst; Reha-Methoden werden nicht vorgeschlagen. Spaltenkopf klicken sortiert.</source>
+        <translation>Role selectable from &lt;i&gt;positions ∩ tactic&lt;/i&gt; (saved). Method order = biggest DWRS gain first; rehab methods are not suggested. Click a column header to sort.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="152"/>
         <source>nichts sinnvoll trainierbar</source>
         <translation>nothing worth training</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="101"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="133"/>
         <source>⚠️ Kein Verein gesetzt. Wähle unter Einstellungen → Verein &apos;Mein Verein&apos;, damit dein Kader angezeigt wird.</source>
-        <translation>⚠️ No club set. Pick 'My club' under Settings → Club so your squad is shown.</translation>
+        <translation>⚠️ No club set. Pick &apos;My club&apos; under Settings → Club so your squad is shown.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="107"/>
-        <source>Kader von %1. Rolle wählbar aus &lt;i&gt;Positionen ∩ Taktik&lt;/i&gt;; die Auswahl wird gespeichert. Reihenfolge = größter DWRS-Gewinn zuerst, nur noch trainierbare Attribute.</source>
-        <translation>Squad of %1. Role selectable from &lt;i&gt;positions ∩ tactic&lt;/i&gt;; the choice is saved. Order = biggest DWRS gain first, only still-trainable attributes.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="143"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="226"/>
         <source>keine Rolle in dieser Taktik</source>
         <translation>no role in this tactic</translation>
     </message>

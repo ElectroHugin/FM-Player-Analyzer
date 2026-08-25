@@ -60,6 +60,44 @@ struct Advice {
 Advice adviseForRole(const Player &player, const QString &role,
                      const DwrsEngine &engine, const AgeWindows &windows);
 
+// --- Training focuses (the in-game training methods) --------------------------
+// FM does not train single attributes; the player picks a training focus that
+// maps to one or more attributes. The advisor therefore recommends focuses, and
+// picking the best is an optimization: a focus that trains three role-relevant
+// attributes at once can beat a single-attribute one. Injury-Rehab focuses are
+// never recommended (they only apply to injured players).
+
+struct TrainingFocus {
+    QString name;
+    QString category;       // "Injury Rehab" | "Set Pieces" | "Attributes"
+    QStringList attributes; // attributes this focus trains
+    bool rehab = false;     // Injury-Rehab category -> excluded from advice
+};
+
+// The fixed focus->attributes table (see the mapping list). Placed here beside
+// the attribute-group table, mirroring the other hardcoded game-fact mappings.
+const std::vector<TrainingFocus> &trainingFocuses();
+
+struct FocusRecommendation {
+    QString focus;
+    QString category;
+    QStringList attributes; // contributing attributes, biggest DWRS lever first
+    double priority = 0.0;  // summed DWRS-gain proxy over its attributes
+    bool allMental = false; // every contributor is mental (trainable lifelong)
+    bool anyLimited = false; // some contributor only partly trainable at this age
+};
+
+struct FocusAdvice {
+    std::vector<FocusRecommendation> focus; // ranked desc, priority > 0
+    bool valid = false;
+    bool formLimited = false;
+};
+
+// Ranks the training focuses by how much they would raise the player's DWRS in
+// the given role, honoring age windows and headroom, excluding injury rehab.
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const DwrsEngine &engine, const AgeWindows &windows);
+
 } // namespace TrainingAdvice
 
 } // namespace fm

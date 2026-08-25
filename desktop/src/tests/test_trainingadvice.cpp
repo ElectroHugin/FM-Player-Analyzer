@@ -144,6 +144,58 @@ private slots:
                 determinationNoted = true;
         QVERIFY(determinationNoted);
     }
+
+    // --- Training-focus (in-game method) advice ---
+
+    void youngPlayerTopFocusIsQuickness()
+    {
+        const Player p = baseOutfielder(19);
+        const FocusAdvice a =
+            adviseFocusesForRole(p, QStringLiteral("WR-S"), *m_engine, m_windows);
+        QVERIFY(a.valid);
+        QVERIFY(!a.focus.empty());
+        // Quickness trains Pace+Acceleration (both "Extremely Important") -> top.
+        QCOMPARE(a.focus.front().focus, QStringLiteral("Quickness"));
+    }
+
+    void rehabFocusesAreNeverRecommended()
+    {
+        const Player p = baseOutfielder(19);
+        const FocusAdvice a =
+            adviseFocusesForRole(p, QStringLiteral("WR-S"), *m_engine, m_windows);
+        for (const FocusRecommendation &f : a.focus)
+            QVERIFY2(f.category != QStringLiteral("Injury Rehab"), qPrintable(f.focus));
+    }
+
+    void oldPlayerFocusIsMentalMethod()
+    {
+        const Player p = baseOutfielder(30);
+        const FocusAdvice a =
+            adviseFocusesForRole(p, QStringLiteral("WR-S"), *m_engine, m_windows);
+        QVERIFY(a.valid);
+        QVERIFY(!a.focus.empty());
+        // Physical/technical are locked at 30, so the top method must be a
+        // purely mental one (e.g. Attacking Movement / Final Third).
+        QVERIFY(a.focus.front().allMental);
+        QVERIFY(a.focus.front().focus != QStringLiteral("Quickness"));
+    }
+
+    void focusAggregatesMultipleAttributes()
+    {
+        // Attacking Movement trains Off the Ball + Anticipation + Decisions; for
+        // a 30-year-old (mentals only) it should carry several contributors.
+        const Player p = baseOutfielder(30);
+        const FocusAdvice a =
+            adviseFocusesForRole(p, QStringLiteral("AM-S"), *m_engine, m_windows);
+        bool found = false;
+        for (const FocusRecommendation &f : a.focus) {
+            if (f.focus == QStringLiteral("Attacking Movement")) {
+                found = true;
+                QVERIFY(f.attributes.size() >= 2);
+            }
+        }
+        QVERIFY(found);
+    }
 };
 
 QTEST_APPLESS_MAIN(TestTrainingAdvice)

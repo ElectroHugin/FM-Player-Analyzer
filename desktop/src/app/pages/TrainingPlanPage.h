@@ -2,6 +2,8 @@
 
 #include "PageBase.h"
 
+#include <QString>
+
 class QComboBox;
 class QLabel;
 class QTableWidget;
@@ -10,10 +12,10 @@ namespace fm {
 
 struct Player;
 
-// Squad-wide training plan: every club player with a selectable training role
-// (intersection of his positions and the current tactic) and the ranked
-// attributes that would most improve his DWRS in that role. The chosen role is
-// persisted per player.
+// Squad-wide training plan: first team and second team shown separately, each a
+// freely sortable table (name, age, position, …) of players with a selectable
+// training role (positions ∩ tactic) and the training methods that would most
+// raise their DWRS in that role. The chosen role is persisted per player.
 class TrainingPlanPage : public PageBase
 {
     Q_OBJECT
@@ -24,12 +26,22 @@ public:
     void refresh() override;
 
 private:
-    void rebuild();
+    struct Section {
+        QLabel *title = nullptr;
+        QTableWidget *table = nullptr;
+        QString club;
+        int sortColumn = 0;
+        bool sortDescending = false;
+    };
+
+    QTableWidget *makeTable();
+    void fillSection(Section &section);
     QString focusText(const Player &player, const QString &role) const;
 
     QComboBox *m_tacticCombo = nullptr;
     QLabel *m_hint = nullptr;
-    QTableWidget *m_table = nullptr;
+    Section m_first;
+    Section m_second;
     bool m_updating = false;
 };
 

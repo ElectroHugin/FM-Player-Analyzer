@@ -177,6 +177,153 @@ Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine
     return advice;
 }
 
+const std::vector<TrainingFocus> &trainingFocuses()
+{
+    // Attribute names normalized to the app's attribute set; names that do not
+    // exist here (e.g. "Free Kick Taking", "Communication") simply never match
+    // and contribute nothing — which is fine, they barely feed the DWRS anyway.
+    static const std::vector<TrainingFocus> focuses = {
+        // --- Injury Rehab (never recommended) ---
+        {QStringLiteral("Quickness"), QStringLiteral("Injury Rehab"),
+         {QStringLiteral("Pace"), QStringLiteral("Acceleration")}, true},
+        {QStringLiteral("Agility and Balance"), QStringLiteral("Injury Rehab"),
+         {QStringLiteral("Agility"), QStringLiteral("Balance")}, true},
+        {QStringLiteral("Strength"), QStringLiteral("Injury Rehab"),
+         {QStringLiteral("Strength"), QStringLiteral("Jumping Reach")}, true},
+        {QStringLiteral("Endurance"), QStringLiteral("Injury Rehab"),
+         {QStringLiteral("Stamina")}, true},
+        {QStringLiteral("General Rehab"), QStringLiteral("Injury Rehab"),
+         {QStringLiteral("Acceleration"), QStringLiteral("Agility"), QStringLiteral("Balance"),
+          QStringLiteral("Jumping Reach"), QStringLiteral("Pace"), QStringLiteral("Strength"),
+          QStringLiteral("Stamina")},
+         true},
+        // --- Set Pieces ---
+        {QStringLiteral("Free Kick Taking"), QStringLiteral("Set Pieces"),
+         {QStringLiteral("Free Kick Taking"), QStringLiteral("Technique")}, false},
+        {QStringLiteral("Corner Taking"), QStringLiteral("Set Pieces"),
+         {QStringLiteral("Corner Taking"), QStringLiteral("Technique")}, false},
+        {QStringLiteral("Penalty Taking"), QStringLiteral("Set Pieces"),
+         {QStringLiteral("Penalty Taking"), QStringLiteral("Technique")}, false},
+        {QStringLiteral("Long Throws"), QStringLiteral("Set Pieces"),
+         {QStringLiteral("Long Throws")}, false},
+        // --- Attributes (main category for recommendations) ---
+        {QStringLiteral("Quickness"), QStringLiteral("Attributes"),
+         {QStringLiteral("Pace"), QStringLiteral("Acceleration")}, false},
+        {QStringLiteral("Agility and Balance"), QStringLiteral("Attributes"),
+         {QStringLiteral("Agility"), QStringLiteral("Balance")}, false},
+        {QStringLiteral("Strength"), QStringLiteral("Attributes"),
+         {QStringLiteral("Strength"), QStringLiteral("Jumping Reach")}, false},
+        {QStringLiteral("Endurance"), QStringLiteral("Attributes"),
+         {QStringLiteral("Stamina"), QStringLiteral("Work Rate")}, false},
+        {QStringLiteral("Defensive Positioning"), QStringLiteral("Attributes"),
+         {QStringLiteral("Marking"), QStringLiteral("Positioning"), QStringLiteral("Decisions")},
+         false},
+        {QStringLiteral("Attacking Movement"), QStringLiteral("Attributes"),
+         {QStringLiteral("Off the Ball"), QStringLiteral("Anticipation"),
+          QStringLiteral("Decisions")},
+         false},
+        {QStringLiteral("Final Third"), QStringLiteral("Attributes"),
+         {QStringLiteral("Composure"), QStringLiteral("Decisions")}, false},
+        {QStringLiteral("Shooting"), QStringLiteral("Attributes"),
+         {QStringLiteral("Finishing"), QStringLiteral("Long Shots"), QStringLiteral("Technique")},
+         false},
+        {QStringLiteral("Passing"), QStringLiteral("Attributes"),
+         {QStringLiteral("Vision"), QStringLiteral("Passing"), QStringLiteral("Technique")}, false},
+        {QStringLiteral("Crossing"), QStringLiteral("Attributes"),
+         {QStringLiteral("Crossing"), QStringLiteral("Technique")}, false},
+        {QStringLiteral("Ball Control"), QStringLiteral("Attributes"),
+         {QStringLiteral("First Touch"), QStringLiteral("Dribbling"), QStringLiteral("Technique")},
+         false},
+        {QStringLiteral("Aerial"), QStringLiteral("Attributes"),
+         {QStringLiteral("Heading"), QStringLiteral("Bravery")}, false},
+        {QStringLiteral("GK Reactions"), QStringLiteral("Attributes"),
+         {QStringLiteral("Reflexes"), QStringLiteral("Anticipation"),
+          QStringLiteral("Concentration")},
+         false},
+        {QStringLiteral("GK Tactical"), QStringLiteral("Attributes"),
+         {QStringLiteral("Positioning"), QStringLiteral("Communication"),
+          QStringLiteral("Decisions")},
+         false},
+        {QStringLiteral("GK Technique"), QStringLiteral("Attributes"),
+         {QStringLiteral("Handling"), QStringLiteral("Composure"), QStringLiteral("Technique")},
+         false},
+        {QStringLiteral("GK Sweeping"), QStringLiteral("Attributes"),
+         {QStringLiteral("One vs One"), QStringLiteral("Command of Area"),
+          QStringLiteral("Rushing Out (Tendency)")},
+         false},
+        {QStringLiteral("GK Distribution (Long)"), QStringLiteral("Attributes"),
+         {QStringLiteral("Kicking"), QStringLiteral("Throwing")}, false},
+        {QStringLiteral("GK Distribution (Short)"), QStringLiteral("Attributes"),
+         {QStringLiteral("First Touch"), QStringLiteral("Passing"), QStringLiteral("Vision")},
+         false},
+    };
+    return focuses;
+}
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const DwrsEngine &engine, const AgeWindows &windows)
+{
+    FocusAdvice out;
+    // Reuse the per-attribute optimization: each trainable, role-relevant
+    // attribute already carries its DWRS-gain priority. A focus is then just the
+    // sum of the priorities of the attributes it trains.
+    const Advice attrAdvice = adviseForRole(player, role, engine, windows);
+    if (!attrAdvice.valid)
+        return out;
+    out.valid = true;
+    out.formLimited = attrAdvice.formLimited;
+
+    QHash<QString, const Recommendation *> byName;
+    for (const Recommendation &r : attrAdvice.focus)
+        byName.insert(r.attrName, &r);
+
+    for (const TrainingFocus &f : trainingFocuses()) {
+        if (f.rehab)
+            continue; // rehab focuses are never proposed
+
+        double sum = 0.0;
+        std::vector<QPair<double, QString>> contribs;
+        bool allMental = true;
+        bool anyLimited = false;
+        for (const QString &attr : f.attributes) {
+            const auto it = byName.constFind(attr);
+            if (it == byName.constEnd())
+                continue; // not trainable / not in this role's DWRS / character
+            const Recommendation *r = it.value();
+            sum += r->priority;
+            contribs.push_back({r->priority, attr});
+            if (r->group != Group::Mental)
+                allMental = false;
+            if (r->group != Group::Mental && r->devFactor < 0.999)
+                anyLimited = true;
+        }
+        if (sum <= 0.0)
+            continue;
+
+        std::sort(contribs.begin(), contribs.end(),
+                  [](const QPair<double, QString> &a, const QPair<double, QString> &b) {
+                      return a.first > b.first;
+                  });
+        FocusRecommendation fr;
+        fr.focus = f.name;
+        fr.category = f.category;
+        fr.priority = sum;
+        fr.allMental = allMental;
+        fr.anyLimited = anyLimited;
+        for (const auto &c : contribs)
+            fr.attributes << c.second;
+        out.focus.push_back(fr);
+    }
+
+    std::sort(out.focus.begin(), out.focus.end(),
+              [](const FocusRecommendation &a, const FocusRecommendation &b) {
+                  if (a.priority != b.priority)
+                      return a.priority > b.priority;
+                  return a.focus < b.focus;
+              });
+    return out;
+}
+
 } // namespace TrainingAdvice
 
 } // namespace fm

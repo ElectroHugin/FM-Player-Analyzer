@@ -656,43 +656,35 @@ void PlayerProfilePage::showTrainingAdvice(const Player *player)
         return;
     }
 
-    const TrainingAdvice::Advice advice = TrainingAdvice::adviseForRole(
+    const TrainingAdvice::FocusAdvice advice = TrainingAdvice::adviseFocusesForRole(
         *player, role, m_context.dwrsEngine(), trainingWindows(m_context));
     if (!advice.valid || advice.focus.empty()) {
         m_trainingLabel->setText(
-            tr("Für diese Rolle gibt es aktuell nichts sinnvoll zu trainieren "
+            tr("Für diese Rolle gibt es aktuell keine sinnvolle Trainingsmethode "
                "(Attribute bereits hoch oder altersbedingt gesperrt)."));
         return;
     }
 
-    QString html = QStringLiteral("<b>%1</b><ol>").arg(tr("In dieser Reihenfolge trainieren:"));
+    QString html = QStringLiteral("<b>%1</b><ol>")
+                       .arg(tr("Trainingsmethoden in dieser Reihenfolge:"));
     const int limit = std::min<int>(5, static_cast<int>(advice.focus.size()));
     for (int i = 0; i < limit; ++i) {
-        const TrainingAdvice::Recommendation &r = advice.focus[i];
+        const TrainingAdvice::FocusRecommendation &f = advice.focus[i];
         QString note;
-        if (r.group == TrainingAdvice::Group::Mental)
+        if (f.allMental)
             note = tr("mental, lebenslang trainierbar");
-        else if (r.devFactor >= 0.999)
-            note = tr("noch voll trainierbar");
+        else if (f.anyLimited)
+            note = tr("altersbedingt nur noch begrenzt");
         else
-            note = tr("nur noch begrenzt trainierbar");
-        html += QStringLiteral("<li><b>%1</b> — %2, %3, aktuell %4</li>")
-                    .arg(r.attrName.toHtmlEscaped(),
-                         TrainingAdvice::groupName(r.group), note)
-                    .arg(r.currentValue);
+            note = tr("noch voll trainierbar");
+        html += QStringLiteral("<li><b>%1</b> — %2 <span style='opacity:0.75;'>(%3)</span></li>")
+                    .arg(f.focus.toHtmlEscaped(),
+                         f.attributes.join(QStringLiteral(", ")).toHtmlEscaped(), note);
     }
     html += QStringLiteral("</ol>");
 
-    if (!advice.mentoring.empty()) {
-        QStringList names;
-        for (const auto &r : advice.mentoring)
-            names << r.attrName;
-        html += tr("<i>Über Mentoring verbesserbar (kein Fokustraining): %1.</i>")
-                    .arg(names.join(QStringLiteral(", ")).toHtmlEscaped());
-    }
     if (advice.formLimited) {
-        html += QStringLiteral("<br/>")
-                + tr("⚠ Ø-Note unter 7.0 — entwickelt sich aktuell nur langsam.");
+        html += tr("⚠ Ø-Note unter 7.0 — entwickelt sich aktuell nur langsam.");
     }
     m_trainingLabel->setText(html);
 }
