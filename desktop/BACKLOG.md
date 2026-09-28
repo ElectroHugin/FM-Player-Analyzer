@@ -77,12 +77,19 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: **#23 → #28 → #24/#25 (+#33) → #30 → #26/#27 → #31/#32**.
+Reihenfolge: ~~#23~~ → **#28 → #24/#25 (+#33) → #30 → #26/#27 → #31/#32**.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
 
-### #23 — Entfernte Rollen wirken weiter (stale Ratings + `primaryRole`)
+### ✅ #23 — Entfernte Rollen wirken weiter (stale Ratings + `primaryRole`) — erledigt in v1.3.12
+
+> **Umsetzung:** `RatingsUpdater::roleRatingsForAssigned` baut den Rating-Cache
+> nur noch aus zugewiesenen Rollen (Historie/`dwrs_latest` bleiben unangetastet,
+> wirkt auch auf Altdaten ohne Migration). `SquadBuilder` ignoriert eine nicht
+> mehr zugewiesene `primaryRole`; `AssignRolesPage` leert sie beim Speichern
+> (`RoleAssignment::clearStalePrimaryRole`, Revert bei DB-Fehler).
+> Regressionstest `test_roleratings`.
 
 - **Dateien:** [src/core/RatingsUpdater.cpp](src/core/RatingsUpdater.cpp)
   (Rollen-Gruppierung), [src/core/SquadBuilder.cpp](src/core/SquadBuilder.cpp)

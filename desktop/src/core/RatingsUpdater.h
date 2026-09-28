@@ -1,14 +1,15 @@
 #pragma once
 
+#include "Database.h"
 #include "DwrsEngine.h"
+#include "PlayerStore.h"
+#include "SquadBuilder.h"
 
 #include <QString>
 
 #include <functional>
 
 namespace fm {
-
-class Database;
 
 // Port of legacy update_dwrs_ratings: recompute DWRS for players (all, or a
 // subset) and append a new historical row only where the normalized value is
@@ -28,6 +29,13 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
                          const DwrsEngine &engine, const QStringList &validRoles,
                          const std::vector<int> &playersSubset = {},
                          std::function<void(int, int)> progress = {});
+
+// Uid-keyed normalized ratings (the squad engines' input) built from the latest
+// DWRS rows, restricted to each player's CURRENTLY assigned roles. dwrs_latest
+// keeps the last row of a role that was removed since (history is preserved);
+// without this filter such a frozen rating would still place the player in that
+// role in Best XI, gap analysis, call-ups and transfer suggestions.
+RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings &latest);
 
 } // namespace RatingsUpdater
 

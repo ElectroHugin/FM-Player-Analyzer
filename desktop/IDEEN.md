@@ -48,8 +48,8 @@ einer nicht registriert werden kann.
   Erweiterung.
 - **UI:** Wettbewerb wählen → registrierter Kader, verletzte Quoten, Liste
   „nicht registrierbar“ und die DWRS-Kosten jeder Quote.
-- **Voraussetzung:** Backlog **#23** („entfernte Rollen wirken weiter“) vorher
-  beheben, sonst rechnet der Assistent mit falschen Rollenwerten.
+- **Voraussetzung:** Backlog **#23** („entfernte Rollen wirken weiter“) — seit
+  v1.3.12 erledigt.
 
 ### ⚪ Screenshot → Spontan-DWRS (Bilderkennung)
 

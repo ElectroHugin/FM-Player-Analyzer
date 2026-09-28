@@ -80,5 +80,20 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
     return result;
 }
 
+RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings &latest)
+{
+    RoleRatings ratings;
+    for (auto it = latest.constBegin(); it != latest.constEnd(); ++it) {
+        const int row = store.rowById(it.key().first);
+        if (row < 0)
+            continue;
+        const Player &player = store.at(row);
+        if (!player.assignedRoles.contains(it.key().second))
+            continue; // role removed since this rating was stored
+        ratings[it.key().second].insert(player.uid, it.value().second);
+    }
+    return ratings;
+}
+
 } // namespace RatingsUpdater
 } // namespace fm

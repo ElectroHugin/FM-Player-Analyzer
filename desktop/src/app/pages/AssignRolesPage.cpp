@@ -4,6 +4,7 @@
 #include "../PlayerActions.h"
 #include "../RecalcHelper.h"
 #include "../widgets/PlayerTableModel.h"
+#include "core/RoleAssignment.h"
 #include "core/Utils.h"
 
 #include <QComboBox>
@@ -329,6 +330,15 @@ void AssignRolesPage::releaseStoreRows()
     m_model->setRows({});
 }
 
+void AssignRolesPage::revertRoles(const std::vector<PreviousRoles> &previous)
+{
+    for (const PreviousRoles &prev : previous) {
+        Player &player = m_context.store().at(prev.row);
+        player.assignedRoles = prev.roles;
+        player.primaryRole = prev.primaryRole;
+    }
+}
+
 void AssignRolesPage::savePending()
 {
     if (m_pending.isEmpty()) {
@@ -339,20 +349,20 @@ void AssignRolesPage::savePending()
     std::vector<Player> batch;
     QStringList affectedUids;
     // Remember pre-mutation roles so a failed write leaves the store == DB.
-    std::vector<std::pair<int, QStringList>> previousRoles;
+    std::vector<PreviousRoles> previousRoles;
     for (auto it = m_pending.constBegin(); it != m_pending.constEnd(); ++it) {
         const int row = m_context.store().rowByUid(it.key());
         if (row < 0)
             continue;
         Player &player = m_context.store().at(row);
-        previousRoles.push_back({row, player.assignedRoles});
+        previousRoles.push_back({row, player.assignedRoles, player.primaryRole});
         player.assignedRoles = it.value();
+        RoleAssignment::clearStalePrimaryRole(player);
         batch.push_back(player);
         affectedUids << it.key();
     }
     if (!m_context.database().upsertPlayers(batch)) {
-        for (const auto &prev : previousRoles) // revert: DB unchanged
-            m_context.store().at(prev.first).assignedRoles = prev.second;
+        revertRoles(previousRoles); // DB unchanged
         QMessageBox::critical(this, tr("Rollen"), m_context.database().errorString());
         return;
     }
@@ -399,7 +409,7 @@ void AssignRolesPage::autoAssign(bool allPlayers)
 
     std::vector<Player> batch;
     QStringList affectedUids;
-    std::vector<std::pair<int, QStringList>> previousRoles; // for revert-on-failure
+    std::vector<PreviousRoles> previousRoles; // for revert-on-failure
     for (const Player &player : m_context.store().players()) {
         if (!allPlayers && !player.assignedRoles.isEmpty())
             continue;
@@ -412,8 +422,9 @@ void AssignRolesPage::autoAssign(bool allPlayers)
             continue;
         const int row = m_context.store().rowByUid(player.uid);
         Player &mutablePlayer = m_context.store().at(row);
-        previousRoles.push_back({row, mutablePlayer.assignedRoles});
+        previousRoles.push_back({row, mutablePlayer.assignedRoles, mutablePlayer.primaryRole});
         mutablePlayer.assignedRoles = roles;
+        RoleAssignment::clearStalePrimaryRole(mutablePlayer);
         batch.push_back(mutablePlayer);
         affectedUids << player.uid;
     }
@@ -424,8 +435,7 @@ void AssignRolesPage::autoAssign(bool allPlayers)
         return;
     }
     if (!m_context.database().upsertPlayers(batch)) {
-        for (const auto &prev : previousRoles) // revert: DB unchanged
-            m_context.store().at(prev.first).assignedRoles = prev.second;
+        revertRoles(previousRoles); // DB unchanged
         QMessageBox::critical(this, tr("Auto-Zuweisung"), m_context.database().errorString());
         return;
     }

@@ -87,6 +87,14 @@ QStringList autoAssignMissingRoles(Database &db, std::vector<Player> &players,
     return uids;
 }
 
+bool clearStalePrimaryRole(Player &player)
+{
+    if (player.primaryRole.isEmpty() || player.assignedRoles.contains(player.primaryRole))
+        return false;
+    player.primaryRole.clear();
+    return true;
+}
+
 } // namespace RoleAssignment
 
 } // namespace fm

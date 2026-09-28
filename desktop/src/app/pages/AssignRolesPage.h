@@ -3,7 +3,10 @@
 #include "PageBase.h"
 
 #include <QHash>
+#include <QString>
 #include <QStringList>
+
+#include <vector>
 
 class QComboBox;
 class QLabel;
@@ -31,6 +34,14 @@ public:
     void releaseStoreRows() override;
 
 private:
+    // Pre-save state of one mutated store row, restored if the DB write fails.
+    struct PreviousRoles {
+        int row;
+        QStringList roles;
+        QString primaryRole;
+    };
+    void revertRoles(const std::vector<PreviousRoles> &previous);
+
     void setupColumns();
     void rebuildFilters();
     void applyFilters();

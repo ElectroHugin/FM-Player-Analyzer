@@ -1,5 +1,7 @@
 #include "AppContext.h"
 
+#include "core/RatingsUpdater.h"
+
 #include <QDir>
 
 namespace fm {
@@ -94,12 +96,7 @@ void AppContext::reloadRatings()
 void AppContext::rebuildRatingsCache()
 {
     m_latestRatings = m_database->latestDwrsRatings();
-    m_ratings.clear();
-    for (auto it = m_latestRatings.constBegin(); it != m_latestRatings.constEnd(); ++it) {
-        const int row = m_store.rowById(it.key().first);
-        if (row >= 0)
-            m_ratings[it.key().second].insert(m_store.at(row).uid, it.value().second);
-    }
+    m_ratings = RatingsUpdater::roleRatingsForAssigned(m_store, m_latestRatings);
 }
 
 void AppContext::reloadEngines()

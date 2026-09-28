@@ -110,7 +110,10 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
             const QSet<QString> &playerPositions = parsedPositions[player->uid];
             if (!playerPositions.intersects(allowed))
                 continue;
-            if (!player->primaryRole.isEmpty() && player->primaryRole != role)
+            // A primary role pins the player to that role — but only while it
+            // is still assigned; a stale one must not lock him out everywhere.
+            if (!player->primaryRole.isEmpty() && player->primaryRole != role
+                && player->assignedRoles.contains(player->primaryRole))
                 continue;
             const double rating = roleRatings.value(player->uid, 0.0);
             if (rating <= 0.0)

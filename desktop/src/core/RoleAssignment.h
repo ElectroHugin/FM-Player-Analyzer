@@ -26,6 +26,10 @@ QStringList autoAssignMissingRoles(Database &db, std::vector<Player> &players,
                                    const Definitions &definitions,
                                    QString *errorOut = nullptr);
 
+// Clears the player's primary role if it is no longer among his assigned roles
+// (call after changing assignedRoles). Returns true if it was cleared.
+bool clearStalePrimaryRole(Player &player);
+
 } // namespace RoleAssignment
 
 } // namespace fm

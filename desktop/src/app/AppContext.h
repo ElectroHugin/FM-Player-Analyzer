@@ -40,9 +40,11 @@ public:
     SquadBuilder &squadBuilder() { return *m_squadBuilder; }
     TacticExplorer &tacticExplorer() { return *m_tacticExplorer; }
 
-    // uid-keyed latest normalized ratings (master_role_ratings equivalent).
+    // uid-keyed latest normalized ratings (master_role_ratings equivalent),
+    // limited to each player's currently assigned roles.
     const RoleRatings &ratings() const { return m_ratings; }
-    // id-keyed latest (absolute, normalized).
+    // id-keyed latest (absolute, normalized) — raw, may still contain roles the
+    // player no longer has; look it up via assignedRoles.
     const LatestRatings &latestRatings() const { return m_latestRatings; }
 
     QString currentDbName() const;
