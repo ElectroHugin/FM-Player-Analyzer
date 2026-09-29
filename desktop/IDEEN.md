@@ -10,7 +10,7 @@ Prioritäten: 🔴 hoch · 🟡 mittel · ⚪ niedrig
 
 ## 🆕 Neue Ideen
 
-### 🟡 Registrierungs-Assistent (Premier League + UEFA) — in Arbeit
+### 🟡 Registrierungs-Assistent (Premier League + UEFA) — in Arbeit (Schritt 4 offen)
 
 **Ziel:** Meldeliste so bilden, dass sie **registrierbar** ist und keine Plätze
 verschenkt. Anlass: Mit zu wenigen HG-Spielern wurden oft nur 21 Spieler
@@ -47,8 +47,11 @@ einer nicht registriert werden kann.
 - **Umsetzung in Schritten:**
   1. ✅ v1.3.24: Schema v5, Markierungen (Bearbeiten + Rechtsklick),
      Einstellung „Registrierungsregeln“ (Liga, UEFA, Mindest-Torhüter).
-  2. `core/Registration`-Auswahl mit Tests + Assistenten-Seite für die PL.
-  3. UEFA-Liste A/B im Assistenten.
+  2. ✅ v1.3.25: Auswahl in `core/Registration` (`rankPool`, `propose`,
+     `quotaCosts`) mit Tests + Seite „Registrierung“ (nur sichtbar bei
+     aktiven Regeln): Vorschlag live, Kosten der Quote, Warnungen (freie
+     Plätze, U21 unklar), „Als Meldeliste übernehmen“ mit Abgleich.
+  3. ✅ v1.3.25 (mit Schritt 2): UEFA-Liste A/B im Assistenten.
   4. Best XI nutzt die übernommene Meldeliste (+ U21); optionaler
      UEFA-Best-XI-Tab (Liste A + B).
 - **Später:** La Liga, Serie A, Ligue 1 als weitere Regelwerke (Regeln erst

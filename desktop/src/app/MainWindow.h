@@ -50,6 +50,10 @@ private:
     // selectFirst: also navigate to the first entry (a user mode switch);
     // false when the history restores a page itself.
     void rebuildMenu(bool selectFirst = true);
+    // Rebuilds the sidebar (e.g. a page appeared) and keeps the current page selected.
+    void refreshMenuKeepingPage();
+    // Highlights the sidebar entry of pageId without triggering navigation.
+    void selectMenuEntry(const QString &pageId);
     void navigateTo(const QString &pageId);
     void goBack();
     void goForward();
@@ -91,6 +95,7 @@ private:
     QCompleter *m_searchCompleter = nullptr;
     PlayerSearchModel *m_searchModel = nullptr;
     bool m_searchModelDirty = true;
+    bool m_registrationInMenu = false; // sidebar shows the registration page
 };
 
 } // namespace fm

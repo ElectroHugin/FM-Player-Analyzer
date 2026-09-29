@@ -9,6 +9,7 @@
 #include "pages/GapAnalysisPage.h"
 #include "pages/NationalBestXiPage.h"
 #include "pages/NationalCallupPage.h"
+#include "pages/RegistrationPage.h"
 #include "pages/NationalDashboardPage.h"
 #include "pages/NationalSquadMatrixPage.h"
 #include "pages/NationalSquadSelectionPage.h"
@@ -74,6 +75,7 @@ const QList<MenuEntry> &clubMenu()
         {QObject::tr("Spieler-Profil"), QStringLiteral("player_profile")},
         {QObject::tr("Squad Matrix"), QStringLiteral("squad_matrix")},
         {QObject::tr("Best XI"), QStringLiteral("best_xi")},
+        {QObject::tr("Registrierung"), QStringLiteral("registration")},
         {QObject::tr("Gap-Analyse"), QStringLiteral("gap_analysis")},
         {QObject::tr("Taktik-Explorer"), QStringLiteral("tactic_explorer")},
         {QObject::tr("Trainingsplan"), QStringLiteral("training_plan")},
@@ -207,6 +209,8 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         m_searchModelDirty = true;
         updateDbLabel();
         updateHeader();
+        if (m_context.registrationSettings().active() != m_registrationInMenu)
+            refreshMenuKeepingPage();
         // The store was just replaced; drop stale Player* held by hidden pages
         // before anything can access them (they rebuild on next activation).
         auto *current = qobject_cast<PageBase *>(m_stack->currentWidget());
@@ -344,8 +348,12 @@ void MainWindow::rebuildMenu(bool selectFirst)
         font.setLetterSpacing(QFont::AbsoluteSpacing, 0.8);
         item->setFont(font);
     };
+    // The registration page only exists while registration rules are active.
+    m_registrationInMenu = m_context.registrationSettings().active();
     const auto addEntries = [this](const QList<MenuEntry> &entries) {
         for (const MenuEntry &entry : entries) {
+            if (entry.pageId == QLatin1String("registration") && !m_registrationInMenu)
+                continue;
             auto *item = new QListWidgetItem(entry.label, m_menu);
             item->setData(Qt::UserRole, entry.pageId);
         }
@@ -445,6 +453,8 @@ PageBase *MainWindow::createPage(const QString &pageId)
         return new NationalCallupPage(m_context, this);
     if (pageId == QLatin1String("training_plan"))
         return new TrainingPlanPage(m_context, this);
+    if (pageId == QLatin1String("registration"))
+        return new RegistrationPage(m_context, this);
     if (pageId == QLatin1String("national_squad_matrix"))
         return new NationalSquadMatrixPage(m_context, this);
     if (pageId == QLatin1String("national_best_xi"))
@@ -488,23 +498,38 @@ void MainWindow::navigateTo(const QString &pageId)
     m_stack->setCurrentWidget(page);
 
     // Keep the sidebar selection in sync (e.g. jump from the player search).
-    if (!m_menu->currentItem()
-        || m_menu->currentItem()->data(Qt::UserRole).toString() != pageId) {
-        for (int i = 0; i < m_menu->count(); ++i) {
-            if (m_menu->item(i)->data(Qt::UserRole).toString() == pageId) {
-                m_menu->blockSignals(true);
-                m_menu->setCurrentRow(i);
-                m_menu->blockSignals(false);
-                break;
-            }
-        }
-    }
+    selectMenuEntry(pageId);
 
     page->refresh();
 
     if (!m_restoringHistory)
         pushHistory(pageId, page);
     updateNavButtons();
+}
+
+void MainWindow::selectMenuEntry(const QString &pageId)
+{
+    if (m_menu->currentItem() && m_menu->currentItem()->data(Qt::UserRole).toString() == pageId)
+        return;
+    for (int i = 0; i < m_menu->count(); ++i) {
+        if (m_menu->item(i)->data(Qt::UserRole).toString() == pageId) {
+            m_menu->blockSignals(true);
+            m_menu->setCurrentRow(i);
+            m_menu->blockSignals(false);
+            break;
+        }
+    }
+}
+
+void MainWindow::refreshMenuKeepingPage()
+{
+    rebuildMenu(/*selectFirst*/ false);
+    for (auto it = m_pages.constBegin(); it != m_pages.constEnd(); ++it) {
+        if (it.value() == m_stack->currentWidget()) {
+            selectMenuEntry(it.key());
+            break;
+        }
+    }
 }
 
 void MainWindow::captureHistoryState()
