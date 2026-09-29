@@ -77,7 +77,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → **#30 → #26/#27 → #31/#32**.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → **#26/#27 → #31/#32**.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -209,7 +209,16 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🟡 Performance
 
-### #30 — `Definitions` baut Hashes bei jedem Zugriff aus dem JSON neu
+### ✅ #30 — `Definitions` baut Hashes bei jedem Zugriff aus dem JSON neu — erledigt in v1.3.15
+
+> **Umsetzung:** `Definitions::rebuildCache()` baut alle abgeleiteten Tabellen
+> einmal in `load()`/`setRoot()` (ein fehlgeschlagener `load()` lässt sie
+> unangetastet); die Accessoren geben `const &` zurück, `personalityCategory`
+> nutzt eine vorberechnete Kleinschreibungs-Tabelle statt eines linearen Scans.
+> **Gemessen** (Release, echte definitions.json, identische Ergebnisse):
+> 35k × `personalityCategory` 421 → 4 ms; 2k × `tacticRoles` +
+> `positionToRoleMapping` 116 → 0 ms; 2k × `sortRolesNaturally` 313 → 1 ms.
+> Tests in `test_definitions` (Cache folgt `setRoot`, Fehl-Load, Defaults).
 
 - **Datei:** [src/core/Definitions.cpp](src/core/Definitions.cpp)
   (`personalities`, `personalityCategory`, `tacticRoles`,

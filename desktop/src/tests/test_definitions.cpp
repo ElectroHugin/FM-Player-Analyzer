@@ -1,3 +1,4 @@
+#include <QJsonObject>
 #include <QtTest>
 
 #include "core/Definitions.h"
@@ -111,6 +112,65 @@ private slots:
         QVERIFY(reloaded.load(copyPath));
         QCOMPARE(reloaded.validRoles(), defs.validRoles());
         QCOMPARE(reloaded.tacticNames(), defs.tacticNames());
+    }
+
+    // Backlog #30: the lookup tables are cached — they must follow every change
+    // of the JSON root and survive a failed reload untouched.
+    void cacheFollowsSetRoot()
+    {
+        Definitions edited;
+        QVERIFY(edited.load(legacyDefinitionsPath()));
+        QVERIFY(!edited.validRoles().contains(QStringLiteral("XX-S")));
+
+        QJsonObject root = edited.root();
+        QJsonObject roles = root.value(QLatin1String("player_roles")).toObject();
+        QJsonObject midfield = roles.value(QLatin1String("Midfield")).toObject();
+        midfield.insert(QStringLiteral("XX-S"), QStringLiteral("Test Role (Support)"));
+        roles.insert(QStringLiteral("Midfield"), midfield);
+        root.insert(QStringLiteral("player_roles"), roles);
+        QJsonObject personalities = root.value(QLatin1String("personalities")).toObject();
+        personalities.insert(QStringLiteral("Test Temper"), QStringLiteral("bad"));
+        root.insert(QStringLiteral("personalities"), personalities);
+        QJsonObject tactics = root.value(QLatin1String("tactic_roles")).toObject();
+        tactics.insert(QStringLiteral("Test Tactic"),
+                       QJsonObject{{QStringLiteral("MCL"), QStringLiteral("XX-S")}});
+        root.insert(QStringLiteral("tactic_roles"), tactics);
+        edited.setRoot(root);
+
+        QVERIFY(edited.validRoles().contains(QStringLiteral("XX-S")));
+        QCOMPARE(edited.roleDisplayMap().value(QStringLiteral("XX-S")),
+                 QStringLiteral("Test Role (Support)"));
+        QVERIFY(edited.naturalRoleSorter().contains(QStringLiteral("XX-S")));
+        QCOMPARE(edited.personalityCategory(QStringLiteral(" test temper")), QStringLiteral("bad"));
+        const auto testTactic = edited.tacticRoles().value(QStringLiteral("Test Tactic"));
+        QCOMPARE(testTactic.value(QStringLiteral("MCL")), QStringLiteral("XX-S"));
+        QVERIFY(edited.tacticNames().contains(QStringLiteral("Test Tactic")));
+    }
+
+    void failedLoadKeepsCache()
+    {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString broken = dir.filePath(QStringLiteral("broken.json"));
+        QFile file(broken);
+        QVERIFY(file.open(QIODevice::WriteOnly));
+        file.write("{ not json");
+        file.close();
+
+        Definitions kept;
+        QVERIFY(kept.load(legacyDefinitionsPath()));
+        const QStringList before = kept.validRoles();
+        QVERIFY(!kept.load(broken));
+        QCOMPARE(kept.validRoles(), before);
+        QCOMPARE(kept.personalityCategory(QStringLiteral("Model Citizen")), QStringLiteral("good"));
+    }
+
+    void defaultConstructedFallbacks()
+    {
+        const Definitions empty;
+        QCOMPARE(empty.gkRoles().size(), 4); // legacy fallback list
+        QVERIFY(!empty.personalities().isEmpty()); // built-in defaults
+        QVERIFY(empty.validRoles().isEmpty());
     }
 
     void loadMissingFileFails()

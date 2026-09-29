@@ -39,6 +39,7 @@ bool Definitions::load(const QString &filePath)
     }
 
     m_root = doc.object();
+    rebuildCache();
 
     file.seek(0);
     indexTacticOrder(file.readAll());
@@ -157,111 +158,77 @@ bool Definitions::save()
     return true;
 }
 
-QHash<QString, QHash<QString, QString>> Definitions::playerRoles() const
-{
-    QHash<QString, QHash<QString, QString>> result;
-    const QJsonObject categories = m_root.value(QLatin1String("player_roles")).toObject();
-    for (auto catIt = categories.begin(); catIt != categories.end(); ++catIt) {
-        QHash<QString, QString> roles;
-        const QJsonObject roleObj = catIt.value().toObject();
-        for (auto roleIt = roleObj.begin(); roleIt != roleObj.end(); ++roleIt)
-            roles.insert(roleIt.key(), roleIt.value().toString());
-        result.insert(catIt.key(), roles);
-    }
-    return result;
-}
-
 QStringList Definitions::roleCategoryOrder()
 {
     return {QStringLiteral("Goalkeepers"), QStringLiteral("Defense"),
             QStringLiteral("Midfield"), QStringLiteral("Attack")};
 }
 
-QStringList Definitions::validRoles() const
+void Definitions::rebuildCache()
 {
-    QStringList roles;
+    // Roles: category -> {abbr -> display name}, the flat display map and the
+    // sorted list of valid abbreviations.
+    m_playerRoles.clear();
+    m_roleDisplayMap.clear();
+    m_validRoles.clear();
     const QJsonObject categories = m_root.value(QLatin1String("player_roles")).toObject();
     for (auto catIt = categories.begin(); catIt != categories.end(); ++catIt) {
+        QHash<QString, QString> roles;
         const QJsonObject roleObj = catIt.value().toObject();
-        for (auto roleIt = roleObj.begin(); roleIt != roleObj.end(); ++roleIt)
-            roles.append(roleIt.key());
+        for (auto roleIt = roleObj.begin(); roleIt != roleObj.end(); ++roleIt) {
+            const QString displayName = roleIt.value().toString();
+            roles.insert(roleIt.key(), displayName);
+            m_roleDisplayMap.insert(roleIt.key(), displayName);
+            m_validRoles.append(roleIt.key());
+        }
+        m_playerRoles.insert(catIt.key(), roles);
     }
-    std::sort(roles.begin(), roles.end());
-    return roles;
-}
+    std::sort(m_validRoles.begin(), m_validRoles.end());
 
-QStringList Definitions::gkRoles() const
-{
-    QStringList roles;
-    const QJsonObject gk = m_root.value(QLatin1String("player_roles"))
-                               .toObject()
-                               .value(QLatin1String("Goalkeepers"))
-                               .toObject();
+    m_gkRoles.clear();
+    const QJsonObject gk = categories.value(QLatin1String("Goalkeepers")).toObject();
     for (auto it = gk.begin(); it != gk.end(); ++it)
-        roles.append(it.key());
-    if (roles.isEmpty())
-        roles = {QStringLiteral("GK-D"), QStringLiteral("SK-D"), QStringLiteral("SK-S"),
-                 QStringLiteral("SK-A")};
-    return roles;
-}
+        m_gkRoles.append(it.key());
+    if (m_gkRoles.isEmpty())
+        m_gkRoles = {QStringLiteral("GK-D"), QStringLiteral("SK-D"), QStringLiteral("SK-S"),
+                     QStringLiteral("SK-A")};
 
-RoleWeights Definitions::roleWeights(const QString &role) const
-{
-    RoleWeights weights;
-    const QJsonObject entry = m_root.value(QLatin1String("role_specific_weights"))
-                                  .toObject()
-                                  .value(role)
-                                  .toObject();
-    const QJsonArray key = entry.value(QLatin1String("key")).toArray();
-    for (const QJsonValue &v : key)
-        weights.key.append(v.toString());
-    const QJsonArray preferable = entry.value(QLatin1String("preferable")).toArray();
-    for (const QJsonValue &v : preferable)
-        weights.preferable.append(v.toString());
-    return weights;
-}
+    m_roleWeights.clear();
+    const QJsonObject weights = m_root.value(QLatin1String("role_specific_weights")).toObject();
+    for (auto it = weights.begin(); it != weights.end(); ++it) {
+        RoleWeights entry;
+        const QJsonObject obj = it.value().toObject();
+        const QJsonArray key = obj.value(QLatin1String("key")).toArray();
+        for (const QJsonValue &v : key)
+            entry.key.append(v.toString());
+        const QJsonArray preferable = obj.value(QLatin1String("preferable")).toArray();
+        for (const QJsonValue &v : preferable)
+            entry.preferable.append(v.toString());
+        m_roleWeights.insert(it.key(), entry);
+    }
 
-QStringList Definitions::rolesWithWeights() const
-{
-    return m_root.value(QLatin1String("role_specific_weights")).toObject().keys();
-}
-
-QHash<QString, QStringList> Definitions::positionToRoleMapping() const
-{
-    QHash<QString, QStringList> result;
+    m_positionToRoles.clear();
     const QJsonObject mapping = m_root.value(QLatin1String("position_to_role_mapping")).toObject();
     for (auto it = mapping.begin(); it != mapping.end(); ++it) {
         QStringList roles;
         const QJsonArray arr = it.value().toArray();
         for (const QJsonValue &v : arr)
             roles.append(v.toString());
-        result.insert(it.key(), roles);
+        m_positionToRoles.insert(it.key(), roles);
     }
-    return result;
-}
 
-QHash<QString, QHash<QString, QString>> Definitions::tacticRoles() const
-{
-    QHash<QString, QHash<QString, QString>> result;
+    m_tacticRoles.clear();
     const QJsonObject tactics = m_root.value(QLatin1String("tactic_roles")).toObject();
     for (auto tacticIt = tactics.begin(); tacticIt != tactics.end(); ++tacticIt) {
         QHash<QString, QString> slotMap;
         const QJsonObject slotObj = tacticIt.value().toObject();
         for (auto slotIt = slotObj.begin(); slotIt != slotObj.end(); ++slotIt)
             slotMap.insert(slotIt.key(), slotIt.value().toString());
-        result.insert(tacticIt.key(), slotMap);
+        m_tacticRoles.insert(tacticIt.key(), slotMap);
     }
-    return result;
-}
+    m_tacticNames = tactics.keys();
 
-QStringList Definitions::tacticNames() const
-{
-    return m_root.value(QLatin1String("tactic_roles")).toObject().keys();
-}
-
-QHash<QString, QHash<QString, QStringList>> Definitions::tacticLayouts() const
-{
-    QHash<QString, QHash<QString, QStringList>> result;
+    m_tacticLayouts.clear();
     const QJsonObject layouts = m_root.value(QLatin1String("tactic_layouts")).toObject();
     for (auto tacticIt = layouts.begin(); tacticIt != layouts.end(); ++tacticIt) {
         QHash<QString, QStringList> strata;
@@ -273,57 +240,50 @@ QHash<QString, QHash<QString, QStringList>> Definitions::tacticLayouts() const
                 slotList.append(v.toString());
             strata.insert(stratumIt.key(), slotList);
         }
-        result.insert(tacticIt.key(), strata);
+        m_tacticLayouts.insert(tacticIt.key(), strata);
     }
-    return result;
+
+    if (m_root.contains(QLatin1String("personalities"))) {
+        m_personalities.clear();
+        const QJsonObject obj = m_root.value(QLatin1String("personalities")).toObject();
+        for (auto it = obj.begin(); it != obj.end(); ++it)
+            m_personalities.insert(it.key(), it.value().toString());
+    } else {
+        m_personalities = personalityDefaults();
+    }
+    // Case-insensitive fallback for personalityCategory(), replacing the former
+    // linear scan over the table on every call.
+    m_personalitiesLower.clear();
+    for (auto it = m_personalities.constBegin(); it != m_personalities.constEnd(); ++it) {
+        const QString lower = it.key().toLower();
+        if (!m_personalitiesLower.contains(lower))
+            m_personalitiesLower.insert(lower, it.value());
+    }
+
+    // Last: depends on the position mapping and the valid roles above.
+    m_naturalSorter = buildNaturalRoleSorter();
 }
 
-QHash<QString, QString> Definitions::personalities() const
+QStringList Definitions::rolesWithWeights() const
 {
-    if (!m_root.contains(QLatin1String("personalities")))
-        return personalityDefaults();
-
-    QHash<QString, QString> result;
-    const QJsonObject obj = m_root.value(QLatin1String("personalities")).toObject();
-    for (auto it = obj.begin(); it != obj.end(); ++it)
-        result.insert(it.key(), it.value().toString());
-    return result;
+    return m_root.value(QLatin1String("role_specific_weights")).toObject().keys();
 }
 
 QString Definitions::personalityCategory(const QString &name) const
 {
     if (name.isEmpty())
         return QString();
-    const QHash<QString, QString> table = personalities();
-    const auto exact = table.constFind(name);
-    if (exact != table.constEnd())
+    const auto exact = m_personalities.constFind(name);
+    if (exact != m_personalities.constEnd())
         return exact.value();
-    const QString low = name.trimmed().toLower();
-    for (auto it = table.constBegin(); it != table.constEnd(); ++it) {
-        if (it.key().toLower() == low)
-            return it.value();
-    }
-    return QString();
+    return m_personalitiesLower.value(name.trimmed().toLower());
 }
 
-QHash<QString, QString> Definitions::roleDisplayMap() const
-{
-    QHash<QString, QString> result;
-    const QJsonObject categories = m_root.value(QLatin1String("player_roles")).toObject();
-    for (auto catIt = categories.begin(); catIt != categories.end(); ++catIt) {
-        const QJsonObject roleObj = catIt.value().toObject();
-        for (auto roleIt = roleObj.begin(); roleIt != roleObj.end(); ++roleIt)
-            result.insert(roleIt.key(), roleIt.value().toString());
-    }
-    return result;
-}
-
-QHash<QString, QPair<int, int>> Definitions::naturalRoleSorter() const
+QHash<QString, QPair<int, int>> Definitions::buildNaturalRoleSorter() const
 {
     // role -> game positions it can play (reverse of position_to_role_mapping).
     QHash<QString, QStringList> roleToPositions;
-    const auto posMap = positionToRoleMapping();
-    for (auto it = posMap.constBegin(); it != posMap.constEnd(); ++it) {
+    for (auto it = m_positionToRoles.constBegin(); it != m_positionToRoles.constEnd(); ++it) {
         for (const QString &role : it.value())
             roleToPositions[role].append(it.key());
     }
@@ -333,7 +293,7 @@ QHash<QString, QPair<int, int>> Definitions::naturalRoleSorter() const
     const auto &slotPositions = tacticalSlotToGamePositions();
     const auto &strata = stratumOrder();
 
-    for (const QString &role : validRoles()) {
+    for (const QString &role : m_validRoles) {
         if (role.contains(QLatin1String("GK")) || role.contains(QLatin1String("SK"))) {
             sorter.insert(role, {0, 0});
             continue;
@@ -370,7 +330,7 @@ QHash<QString, QPair<int, int>> Definitions::naturalRoleSorter() const
 
 QStringList Definitions::sortRolesNaturally(QStringList roles) const
 {
-    const auto sorter = naturalRoleSorter();
+    const auto &sorter = m_naturalSorter;
     std::stable_sort(roles.begin(), roles.end(), [&sorter](const QString &a, const QString &b) {
         return sorter.value(a, {99, 99}) < sorter.value(b, {99, 99});
     });
