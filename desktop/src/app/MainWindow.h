@@ -12,12 +12,12 @@ class QLabel;
 class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
-class QProgressDialog;
 class QStackedWidget;
 
 namespace fm {
 
 class AppContext;
+class BusyProgressDialog;
 class PageBase;
 class PlayerSearchModel;
 class ThemeManager;
@@ -58,7 +58,7 @@ private:
     QHash<QString, PageBase *> m_pages; // lazily created
 
     QFutureWatcher<RatingsUpdater::Result> m_recalcWatcher;
-    QProgressDialog *m_recalcDialog = nullptr;
+    BusyProgressDialog *m_recalcDialog = nullptr;
 
     QCompleter *m_searchCompleter = nullptr;
     PlayerSearchModel *m_searchModel = nullptr;

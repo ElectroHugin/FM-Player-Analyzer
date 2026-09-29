@@ -11,7 +11,36 @@ AppContext::AppContext(QObject *parent)
 {
 }
 
-AppContext::~AppContext() = default;
+AppContext::~AppContext()
+{
+    // Last line of defense: a worker must never outlive the engines and
+    // definitions it reads (destroyed right after this body).
+    waitForBackgroundTasks();
+}
+
+void AppContext::registerBackgroundTask(const QFuture<void> &future)
+{
+    m_backgroundTasks.removeIf([](const QFuture<void> &f) { return f.isFinished(); });
+    m_backgroundTasks.append(future);
+}
+
+bool AppContext::hasRunningBackgroundTask() const
+{
+    for (const QFuture<void> &future : m_backgroundTasks) {
+        if (!future.isFinished())
+            return true;
+    }
+    return false;
+}
+
+void AppContext::waitForBackgroundTasks()
+{
+    // Workers never wait on the UI thread (progress is posted, not blocking),
+    // so waiting here cannot deadlock.
+    for (QFuture<void> &future : m_backgroundTasks)
+        future.waitForFinished();
+    m_backgroundTasks.clear();
+}
 
 bool AppContext::initialize(QString *errorOut)
 {
@@ -60,11 +89,14 @@ bool AppContext::openDatabase(const QString &dbName, QString *errorOut)
     if (m_database && m_database->isOpen() && dbName == m_config->dbName())
         return true;
 
-    // A monotonic suffix keeps every connection name unique, so tearing down the
-    // previous Database never removes the connection the new one just opened.
-    static int connectionCounter = 0;
+    // A worker may still hold the current file open (import, recalc): let it
+    // finish before the database it writes to is swapped out.
+    waitForBackgroundTasks();
+
+    // A unique name keeps tearing down the previous Database from removing the
+    // connection the new one just opened.
     auto database = std::make_unique<Database>(
-        QStringLiteral("main_%1_%2").arg(++connectionCounter).arg(dbName));
+        Database::uniqueConnectionName(QStringLiteral("main_%1").arg(dbName)));
     if (!database->open(m_paths.databaseFile(dbName))) {
         if (errorOut)
             *errorOut = database->errorString();
@@ -101,12 +133,15 @@ void AppContext::rebuildRatingsCache()
 
 void AppContext::reloadEngines()
 {
+    // reloadConfig() rebuilds the plan cache a worker may be reading.
+    waitForBackgroundTasks();
     m_dwrsEngine->reloadConfig();
     m_squadBuilder->reloadConfig();
 }
 
 bool AppContext::reloadConfigAndDefinitions()
 {
+    waitForBackgroundTasks(); // workers read the definitions being replaced
     m_config->reload();
     // load() leaves the current definitions untouched if it fails, so a bad
     // file after a migration/edit does not wipe the running configuration.

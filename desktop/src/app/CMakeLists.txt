@@ -66,6 +66,8 @@ add_executable(fmplayeranalyzer WIN32
     theming/ThemeManager.cpp
     theming/ThemePresets.h
     theming/ThemePresets.cpp
+    widgets/BusyProgressDialog.h
+    widgets/BusyProgressDialog.cpp
     widgets/CellStyleDelegate.h
     widgets/CellStyleDelegate.cpp
     widgets/NumericTableItem.h

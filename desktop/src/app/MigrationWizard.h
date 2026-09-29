@@ -29,6 +29,13 @@ public:
     // Name of the migrated database if the user completed a migration.
     QString migratedDbName() const { return m_migratedDbName; }
 
+    // Esc / the title-bar X must not tear the dialog down while the worker is
+    // still posting progress into it (it runs on the caller's stack).
+    void reject() override;
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 private:
     void browseSource();
     void startMigration();

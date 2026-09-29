@@ -3,6 +3,7 @@
 #include "AppContext.h"
 
 #include <QCheckBox>
+#include <QCloseEvent>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QFileDialog>
@@ -131,6 +132,21 @@ void MigrationWizard::startMigration()
         LegacyMigrator migrator;
         return migrator.migrate(source, targetPath, progressHandler);
     }));
+}
+
+void MigrationWizard::reject()
+{
+    if (!m_watcher.isRunning())
+        QDialog::reject();
+}
+
+void MigrationWizard::closeEvent(QCloseEvent *event)
+{
+    if (m_watcher.isRunning()) {
+        event->ignore();
+        return;
+    }
+    QDialog::closeEvent(event);
 }
 
 void MigrationWizard::migrationFinished()

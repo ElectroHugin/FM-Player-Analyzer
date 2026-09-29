@@ -77,7 +77,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → **#28 → #24/#25 (+#33) → #30 → #26/#27 → #31/#32**.
+Reihenfolge: ~~#23~~ → ~~#28~~ → **#24/#25 (+#33) → #30 → #26/#27 → #31/#32**.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -155,7 +155,19 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🟠 Robustheit / Threads
 
-### #28 — Esc schließt Progress-Dialoge, Worker läuft weiter
+### ✅ #28 — Esc schließt Progress-Dialoge, Worker läuft weiter — erledigt in v1.3.13
+
+> **Bestätigt** (Qt 6.8.3): ein `QProgressDialog` ohne Cancel-Knopf schließt
+> bei Esc **und** blendet sich bei Erreichen des Maximums automatisch aus
+> (`autoClose`/`autoReset`) — die Worker melden ihren letzten Schritt aber
+> *vor* dem finalen DB-Schreiben. **Umsetzung:** `widgets/BusyProgressDialog`
+> (ignoriert Esc/Schließen bis `finish()`, kein Auto-Close, kein X-Knopf) in
+> ImportRunner, RecalcHelper und Voll-Recalc; laufende Jobs zentral via
+> `AppContext::registerBackgroundTask`, gewartet wird vor Engine-/Definitions-
+> Reload, DB-Wechsel, `closeEvent` und im `~AppContext`; eindeutige
+> Worker-Verbindungsnamen (`Database::uniqueConnectionName`). Gleiches Muster im
+> Migrations-Assistenten (Esc während der Migration) mit behoben. Tests
+> `test_busydialog` (Widget-Test, offscreen) + `test_database`.
 
 - **Dateien:** [src/app/ImportRunner.cpp](src/app/ImportRunner.cpp),
   [src/app/RecalcHelper.cpp](src/app/RecalcHelper.cpp),

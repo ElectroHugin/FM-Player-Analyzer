@@ -13,6 +13,7 @@
 #include <QVariant>
 
 #include <algorithm>
+#include <atomic>
 
 namespace fm {
 
@@ -49,6 +50,12 @@ QString Database::attrColumnName(const QString &fullAttrName)
 Database::Database(const QString &connectionName)
     : m_connectionName(connectionName)
 {
+}
+
+QString Database::uniqueConnectionName(const QString &prefix)
+{
+    static std::atomic<int> counter{0};
+    return QStringLiteral("%1_%2").arg(prefix).arg(++counter);
 }
 
 Database::~Database()

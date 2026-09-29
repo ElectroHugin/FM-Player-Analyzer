@@ -1,13 +1,13 @@
 #include "ImportRunner.h"
 
 #include "AppContext.h"
+#include "widgets/BusyProgressDialog.h"
 #include "core/Database.h"
 #include "core/RoleAssignment.h"
 
 #include <QCoreApplication>
 #include <QFutureWatcher>
 #include <QPointer>
-#include <QProgressDialog>
 #include <QSet>
 #include <QtConcurrentRun>
 
@@ -25,12 +25,8 @@ QString trRunner(const char *text)
 void runImportPipeline(AppContext &context, QWidget *parent, const QString &filePath,
                        bool autoAssign, std::function<void(ImportPipelineResult)> onDone)
 {
-    auto *dialog = new QProgressDialog(trRunner("Import wird vorbereitet…"), QString(), 0, 100,
-                                       parent);
-    dialog->setWindowModality(Qt::WindowModal);
-    dialog->setMinimumDuration(0);
+    auto *dialog = new BusyProgressDialog(trRunner("Import wird vorbereitet…"), parent);
     dialog->setMinimumWidth(420);
-    dialog->setValue(0);
 
     // Snapshot everything the worker needs; it opens its own DB connection.
     const QString dbFile = context.database().filePath();
@@ -43,8 +39,8 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
     // Guard against the dialog being destroyed (e.g. window closed) while the
     // worker thread is still posting progress. qApp is a stable context object
     // living on the GUI thread; the QPointer is re-checked there before use.
-    const auto stage = [dialogGuard = QPointer<QProgressDialog>(dialog)](const QString &text,
-                                                                         int percent) {
+    const auto stage = [dialogGuard = QPointer<BusyProgressDialog>(dialog)](
+                           const QString &text, int percent) {
         QMetaObject::invokeMethod(
             qApp,
             [dialogGuard, text, percent] {
@@ -61,16 +57,15 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
                      [watcher, dialog, &context, onDone = std::move(onDone)] {
                          const ImportPipelineResult result = watcher->result();
                          watcher->deleteLater();
-                         dialog->close();
-                         dialog->deleteLater();
+                         dialog->finish();
                          if (result.import.success)
                              context.reloadFromDatabase();
                          if (onDone)
                              onDone(result);
                      });
 
-    watcher->setFuture(QtConcurrent::run([filePath, dbFile, backupsDir, autoAssign, validRoles,
-                                          definitions, engine, fmVersion, stage] {
+    const auto future = QtConcurrent::run([filePath, dbFile, backupsDir, autoAssign, validRoles,
+                                           definitions, engine, fmVersion, stage] {
         ImportPipelineResult result;
 
         stage(trRunner("Backup wird erstellt…"), 2);
@@ -78,7 +73,7 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
         if (!Database::createBackup(dbFile, backupsDir, &backupError))
             result.backupError = backupError;
 
-        Database db(QStringLiteral("import_worker"));
+        Database db(Database::uniqueConnectionName(QStringLiteral("import_worker")));
         if (!db.open(dbFile)) {
             result.import.error = db.errorString();
             return result;
@@ -134,7 +129,9 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
                 stage(trRunner("DWRS-Bewertungen werden berechnet…"), percent);
             });
         return result;
-    }));
+    });
+    context.registerBackgroundTask(QFuture<void>(future));
+    watcher->setFuture(future);
 }
 
 QStringList importSummaryLines(const ImportPipelineResult &result)

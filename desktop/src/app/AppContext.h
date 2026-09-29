@@ -10,6 +10,8 @@
 #include "core/SquadBuilder.h"
 #include "core/TacticExplorer.h"
 
+#include <QFuture>
+#include <QList>
 #include <QObject>
 
 #include <memory>
@@ -99,6 +101,15 @@ public:
             m_pendingComparisonUids.append(uid);
     }
 
+    // Background work (HTML import, DWRS recalcs) reads the engines and
+    // definitions owned here from a worker thread. Every such job registers its
+    // future, so nothing that invalidates that state — an engine/definitions
+    // reload, a database switch, shutdown — can run underneath a live worker.
+    void registerBackgroundTask(const QFuture<void> &future);
+    bool hasRunningBackgroundTask() const;
+    // Blocks until every registered job has finished (no-op when idle).
+    void waitForBackgroundTasks();
+
     // Pages/menus ask the main window to switch pages through this.
     void requestNavigation(const QString &pageId) { emit navigationRequested(pageId); }
 
@@ -167,6 +178,7 @@ private:
     QString m_pendingEditUid;
     QStringList m_pendingComparisonUids;
     bool m_nationalUiMode = false;
+    QList<QFuture<void>> m_backgroundTasks;
 };
 
 } // namespace fm

@@ -31,6 +31,11 @@ class Database
 public:
     // connectionName must be unique per open database+thread.
     explicit Database(const QString &connectionName);
+
+    // "<prefix>_<n>" with a process-wide counter (thread-safe). Worker threads
+    // use this so two overlapping jobs never share — and tear down — a
+    // connection name.
+    static QString uniqueConnectionName(const QString &prefix);
     ~Database();
 
     Database(const Database &) = delete;

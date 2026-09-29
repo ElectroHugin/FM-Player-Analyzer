@@ -18,6 +18,16 @@ private slots:
     // Regression for the WAL backup bug: a freshly committed player lives in the
     // -wal sidecar, not yet in the main .db file. createBackup must capture it
     // (VACUUM INTO), which a plain file copy of the .db would not.
+    void uniqueConnectionNames()
+    {
+        // Overlapping worker jobs must never share a connection name (backlog #28).
+        const QString a = Database::uniqueConnectionName(QStringLiteral("import_worker"));
+        const QString b = Database::uniqueConnectionName(QStringLiteral("import_worker"));
+        QVERIFY(a != b);
+        QVERIFY(a.startsWith(QStringLiteral("import_worker_")));
+        QVERIFY(b.startsWith(QStringLiteral("import_worker_")));
+    }
+
     void backupIncludesUncheckpointedWalData()
     {
         QTemporaryDir dir;

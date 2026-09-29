@@ -1,12 +1,12 @@
 #include "RecalcHelper.h"
 
 #include "AppContext.h"
+#include "widgets/BusyProgressDialog.h"
 #include "core/RatingsUpdater.h"
 
 #include <QCoreApplication>
 #include <QFutureWatcher>
 #include <QPointer>
-#include <QProgressDialog>
 #include <QSet>
 #include <QtConcurrentRun>
 
@@ -15,11 +15,8 @@ namespace fm {
 void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affectedUids,
                    std::function<void(QString)> onDone)
 {
-    auto *dialog = new QProgressDialog(QObject::tr("DWRS-Bewertungen werden berechnet…"),
-                                       QString(), 0, 100, parent);
-    dialog->setWindowModality(Qt::WindowModal);
-    dialog->setMinimumDuration(0);
-    dialog->setValue(0);
+    auto *dialog = new BusyProgressDialog(QObject::tr("DWRS-Bewertungen werden berechnet…"),
+                                          parent);
 
     const QString dbFile = context.database().filePath();
     const QStringList validRoles = context.definitions().validRoles();
@@ -32,18 +29,17 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                      [watcher, dialog, &context, onDone = std::move(onDone)] {
                          const RatingsUpdater::Result result = watcher->result();
                          watcher->deleteLater();
-                         dialog->close();
-                         dialog->deleteLater();
+                         dialog->finish();
                          if (result.success)
                              context.reloadRatings();
                          if (onDone)
                              onDone(result.success ? QString() : result.error);
                      });
 
-    watcher->setFuture(QtConcurrent::run(
+    const QFuture<RatingsUpdater::Result> future = QtConcurrent::run(
         [dbFile, players = std::move(players), engine, validRoles, affected,
-         dialogGuard = QPointer<QProgressDialog>(dialog)] {
-            Database db(QStringLiteral("recalc_helper"));
+         dialogGuard = QPointer<BusyProgressDialog>(dialog)] {
+            Database db(Database::uniqueConnectionName(QStringLiteral("recalc_helper")));
             if (!db.open(dbFile)) {
                 RatingsUpdater::Result result;
                 result.error = db.errorString();
@@ -67,7 +63,9 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                         },
                         Qt::QueuedConnection);
                 });
-        }));
+        });
+    context.registerBackgroundTask(QFuture<void>(future));
+    watcher->setFuture(future);
 }
 
 } // namespace fm

@@ -26,3 +26,15 @@ fm_add_test(test_freshness)
 fm_add_test(test_nationalcallup)
 fm_add_test(test_trainingadvice)
 fm_add_test(test_roleratings)
+
+# Widget test for an app-side class: compiles the widget source directly (the
+# app is an executable, not a library) and runs headless on the offscreen QPA.
+add_executable(test_busydialog test_busydialog.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/widgets/BusyProgressDialog.cpp)
+target_include_directories(test_busydialog PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_busydialog PRIVATE Qt6::Widgets Qt6::Test)
+add_test(NAME test_busydialog COMMAND test_busydialog)
+set_tests_properties(test_busydialog PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+    ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
+)

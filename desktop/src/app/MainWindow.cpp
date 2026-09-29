@@ -24,6 +24,7 @@
 #include "pages/TacticExplorerPage.h"
 #include "pages/TransfersPage.h"
 #include "theming/ThemeManager.h"
+#include "widgets/BusyProgressDialog.h"
 #include "widgets/PlayerSearchModel.h"
 #include "core/Database.h"
 #include "core/Version.h"
@@ -45,7 +46,6 @@
 #include <QListWidget>
 #include <QMessageBox>
 #include <QPointer>
-#include <QProgressDialog>
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStatusBar>
@@ -187,8 +187,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     connect(&m_recalcWatcher, &QFutureWatcher<RatingsUpdater::Result>::finished, this, [this] {
         const RatingsUpdater::Result result = m_recalcWatcher.result();
         if (m_recalcDialog) {
-            m_recalcDialog->close();
-            m_recalcDialog->deleteLater();
+            m_recalcDialog->finish();
             m_recalcDialog = nullptr;
         }
         if (!result.success) {
@@ -466,14 +465,12 @@ void MainWindow::navigateTo(const QString &pageId)
 
 void MainWindow::startDwrsRecalc()
 {
-    if (m_recalcWatcher.isRunning())
+    // Never stack a full recalc on top of another background job (import,
+    // partial recalc) — both would append to the same rating tables.
+    if (m_recalcWatcher.isRunning() || m_context.hasRunningBackgroundTask())
         return;
 
-    m_recalcDialog = new QProgressDialog(tr("DWRS-Bewertungen werden neu berechnet…"),
-                                         QString(), 0, 100, this);
-    m_recalcDialog->setWindowModality(Qt::WindowModal);
-    m_recalcDialog->setMinimumDuration(0);
-    m_recalcDialog->setValue(0);
+    m_recalcDialog = new BusyProgressDialog(tr("DWRS-Bewertungen werden neu berechnet…"), this);
 
     // Snapshot everything the worker needs; it opens its own DB connection.
     const QString dbFile = m_context.database().filePath();
@@ -483,10 +480,10 @@ void MainWindow::startDwrsRecalc()
     // ran on the UI thread; calculateRole afterwards touches cached plans only.
     const DwrsEngine *engine = &m_context.dwrsEngine();
 
-    m_recalcWatcher.setFuture(QtConcurrent::run(
+    const QFuture<RatingsUpdater::Result> future = QtConcurrent::run(
         [dbFile, players = std::move(players), engine, validRoles,
-         dialogGuard = QPointer<QProgressDialog>(m_recalcDialog)] {
-            Database db(QStringLiteral("recalc_worker"));
+         dialogGuard = QPointer<BusyProgressDialog>(m_recalcDialog)] {
+            Database db(Database::uniqueConnectionName(QStringLiteral("recalc_worker")));
             if (!db.open(dbFile)) {
                 RatingsUpdater::Result result;
                 result.error = db.errorString();
@@ -504,7 +501,9 @@ void MainWindow::startDwrsRecalc()
                         },
                         Qt::QueuedConnection);
                 });
-        }));
+        });
+    m_context.registerBackgroundTask(QFuture<void>(future));
+    m_recalcWatcher.setFuture(future);
 }
 
 void MainWindow::updateHeader()
@@ -575,10 +574,9 @@ void MainWindow::updateDbLabel()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    // A background DWRS recalc still holds pointers into AppContext (the engine)
-    // and its progress dialog. Let it finish before teardown destroys them.
-    if (m_recalcWatcher.isRunning())
-        m_recalcWatcher.waitForFinished();
+    // Background jobs (import, recalcs) still hold pointers into AppContext (the
+    // engine, the definitions). Let every one of them finish before teardown.
+    m_context.waitForBackgroundTasks();
     m_context.paths().setWindowGeometry(saveGeometry());
     QMainWindow::closeEvent(event);
 }
