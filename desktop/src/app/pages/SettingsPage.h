@@ -4,8 +4,10 @@
 
 #include <QHash>
 
+class QCheckBox;
 class QComboBox;
 class QDoubleSpinBox;
+class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
@@ -98,6 +100,10 @@ private:
     void updateLogoPreview();
     QComboBox *m_favTactic1Combo = nullptr;
     QComboBox *m_favTactic2Combo = nullptr;
+    QGroupBox *m_registrationGroup = nullptr;
+    QComboBox *m_registrationLeagueCombo = nullptr;
+    QCheckBox *m_registrationUefaCheck = nullptr;
+    QSpinBox *m_registrationMinGkSpin = nullptr;
     QLineEdit *m_natNameEdit = nullptr;
     QLabel *m_flagPreview = nullptr;
     QPushButton *m_flagRemoveButton = nullptr;

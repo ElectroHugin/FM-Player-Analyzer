@@ -7,6 +7,7 @@
 #include "core/Constants.h"
 #include "core/Utils.h"
 
+#include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QDesktopServices>
@@ -220,6 +221,30 @@ QWidget *SettingsPage::buildClubTab()
     tacticForm->addRow(tr("Primäre Taktik:"), m_favTactic1Combo);
     tacticForm->addRow(tr("Sekundäre Taktik:"), m_favTactic2Combo);
     layout->addWidget(tacticGroup);
+
+    m_registrationGroup = new QGroupBox(tr("Registrierungsregeln"), content);
+    auto *registrationForm = new QFormLayout(m_registrationGroup);
+    m_registrationLeagueCombo = new QComboBox;
+    m_registrationLeagueCombo->setMinimumWidth(260);
+    m_registrationUefaCheck =
+        new QCheckBox(tr("Champions League / Europa League / Conference League"));
+    m_registrationMinGkSpin = new QSpinBox;
+    m_registrationMinGkSpin->setRange(0, 5);
+    m_registrationMinGkSpin->setToolTip(
+        tr("Kein Regelwerk schreibt das vor, aber ohne zwei Torhüter zu melden ist riskant."));
+    registrationForm->addRow(tr("Liga:"), m_registrationLeagueCombo);
+    registrationForm->addRow(tr("Europapokal:"), m_registrationUefaCheck);
+    registrationForm->addRow(tr("Mindestens Torhüter in der Meldeliste:"),
+                             m_registrationMinGkSpin);
+    auto *registrationHint = new QLabel(
+        tr("Aktiviert die Home-Grown-/Club-Grown-/U21-Markierungen (Spieler bearbeiten, "
+           "Rechtsklick → Registrierung) und den Registrierungs-Assistenten. Ligen ohne "
+           "wirksame Beschränkung (z. B. Bundesliga) brauchen keine Regeln."),
+        m_registrationGroup);
+    registrationHint->setWordWrap(true);
+    registrationHint->setObjectName(QStringLiteral("kpiCaption"));
+    registrationForm->addRow(registrationHint);
+    layout->addWidget(m_registrationGroup);
 
     auto *natGroup = new QGroupBox(tr("Nationalteam"), content);
     auto *natForm = new QFormLayout(natGroup);
@@ -784,6 +809,27 @@ void SettingsPage::refresh()
     fillTacticCombo(m_favTactic2Combo,
                     m_context.database().setting(QStringLiteral("favorite_tactic_2")));
 
+    // Rule sets exist per FM version; hide the group when there are none.
+    const QString fmVersion = m_context.fmVersionId();
+    const auto leagues = Registration::leagueRulesFor(fmVersion);
+    const bool uefaAvailable = Registration::uefaRulesFor(fmVersion);
+    const Registration::Settings registration = m_context.registrationSettings();
+    m_registrationGroup->setVisible(!leagues.isEmpty() || uefaAvailable);
+    m_registrationLeagueCombo->clear();
+    m_registrationLeagueCombo->addItem(tr("Keine"),
+                                       Registration::leagueRulesKey(Registration::LeagueRules::None));
+    for (const Registration::LeagueRules league : leagues) {
+        m_registrationLeagueCombo->addItem(league == Registration::LeagueRules::PremierLeague
+                                               ? tr("Premier League")
+                                               : Registration::leagueRulesKey(league),
+                                           Registration::leagueRulesKey(league));
+    }
+    m_registrationLeagueCombo->setCurrentIndex(std::max(
+        0, m_registrationLeagueCombo->findData(Registration::leagueRulesKey(registration.league))));
+    m_registrationUefaCheck->setEnabled(uefaAvailable);
+    m_registrationUefaCheck->setChecked(registration.uefa);
+    m_registrationMinGkSpin->setValue(registration.minGoalkeepers);
+
     m_natNameEdit->setText(m_context.nationalTeamName());
     m_natCodeEdit->setText(m_context.nationalTeamCode());
     const int natAge = m_context.nationalTeamAgeLimit();
@@ -892,6 +938,15 @@ void SettingsPage::saveAll()
     saveSetting(QStringLiteral("stadium_name"), m_stadiumEdit->text().trimmed());
     saveSetting(QStringLiteral("favorite_tactic_1"), m_favTactic1Combo->currentText());
     saveSetting(QStringLiteral("favorite_tactic_2"), m_favTactic2Combo->currentText());
+    const QString leagueKey = m_registrationLeagueCombo->currentData().toString();
+    saveSetting(QStringLiteral("registration_league"),
+                leagueKey == Registration::leagueRulesKey(Registration::LeagueRules::None)
+                    ? QString()
+                    : leagueKey);
+    saveSetting(QStringLiteral("registration_uefa"),
+                m_registrationUefaCheck->isChecked() ? QStringLiteral("true") : QString());
+    saveSetting(QStringLiteral("registration_min_goalkeepers"),
+                QString::number(m_registrationMinGkSpin->value()));
     saveSetting(QStringLiteral("national_team_name"), m_natNameEdit->text().trimmed());
     saveSetting(QStringLiteral("national_team_country_code"),
                 m_natCodeEdit->text().trimmed().toUpper());

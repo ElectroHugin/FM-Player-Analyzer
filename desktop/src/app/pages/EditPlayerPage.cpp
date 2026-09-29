@@ -2,8 +2,10 @@
 
 #include "../AppContext.h"
 #include "core/Constants.h"
+#include "core/Registration.h"
 #include "core/Utils.h"
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
 #include <QFrame>
@@ -89,6 +91,44 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     m_aptLabel = new QLabel(tr("Spielzeit (Agreed Playing Time):"), m_editorBox);
     adminForm->addRow(m_aptLabel, m_aptCombo);
     adminColumn->addLayout(adminForm);
+
+    // Squad registration (only while registration rules are active).
+    m_registrationBox = new QWidget(m_editorBox);
+    auto *registrationLayout = new QVBoxLayout(m_registrationBox);
+    registrationLayout->setContentsMargins(0, 8, 0, 0);
+    auto *registrationTitle = new QLabel(tr("Registrierung"), m_registrationBox);
+    registrationTitle->setObjectName(QStringLiteral("sectionTitle"));
+    registrationLayout->addWidget(registrationTitle);
+    m_homeGrownCheck =
+        new QCheckBox(tr("Home-Grown (im Verband ausgebildet)"), m_registrationBox);
+    m_homeGrownCheck->setToolTip(
+        tr("Vor dem 21. Geburtstag mindestens drei Spielzeiten bei Vereinen des Verbands "
+           "(z. B. England/Wales) registriert."));
+    m_clubTrainedCheck =
+        new QCheckBox(tr("Club-Grown (im Verein ausgebildet)"), m_registrationBox);
+    m_clubTrainedCheck->setToolTip(
+        tr("Zwischen 15 und 21 mindestens drei Spielzeiten beim eigenen Verein. "
+           "Zählt automatisch auch als Home-Grown."));
+    registrationLayout->addWidget(m_homeGrownCheck);
+    registrationLayout->addWidget(m_clubTrainedCheck);
+    auto *u21Form = new QFormLayout;
+    m_u21Combo = new QComboBox(m_registrationBox);
+    m_u21Combo->setToolTip(
+        tr("U21-Spieler brauchen keinen Platz in der Meldeliste. Automatisch: bis 20 ja, "
+           "ab 22 nein, mit 21 unklar (zählt vorsichtshalber als nicht U21)."));
+    u21Form->addRow(tr("U21:"), m_u21Combo);
+    registrationLayout->addLayout(u21Form);
+    adminColumn->addWidget(m_registrationBox);
+    // Club-trained implies home-grown; unticking home-grown drops club-trained.
+    connect(m_clubTrainedCheck, &QCheckBox::toggled, this, [this](bool on) {
+        if (on)
+            m_homeGrownCheck->setChecked(true);
+    });
+    connect(m_homeGrownCheck, &QCheckBox::toggled, this, [this](bool on) {
+        if (!on)
+            m_clubTrainedCheck->setChecked(false);
+    });
+
     adminColumn->addStretch(1);
     editorLayout->addLayout(adminColumn, 1);
 
@@ -237,6 +277,22 @@ void EditPlayerPage::showEditor()
     m_aptCombo->setVisible(isClubPlayer);
     m_aptLabel->setVisible(isClubPlayer);
 
+    // Registration status for every player (transfer targets need it too).
+    m_registrationBox->setVisible(m_context.registrationSettings().active());
+    m_homeGrownCheck->setChecked(Registration::isHomeGrown(*player));
+    m_clubTrainedCheck->setChecked(player->registration.clubTrained);
+    const Registration::U21Status autoU21 = Registration::u21StatusByAge(player->age);
+    m_u21Combo->clear();
+    m_u21Combo->addItem(autoU21 == Registration::U21Status::Yes ? tr("Automatisch (ja)")
+                        : autoU21 == Registration::U21Status::No
+                            ? tr("Automatisch (nein)")
+                            : tr("Automatisch (unklar)"),
+                        static_cast<int>(PlayerRegistration::U21::Auto));
+    m_u21Combo->addItem(tr("Ja"), static_cast<int>(PlayerRegistration::U21::Yes));
+    m_u21Combo->addItem(tr("Nein"), static_cast<int>(PlayerRegistration::U21::No));
+    m_u21Combo->setCurrentIndex(
+        std::max(0, m_u21Combo->findData(static_cast<int>(player->registration.u21))));
+
     // Tactical profile only for own club players (legacy).
     m_tacticalColumn->setVisible(isClubPlayer);
     if (isClubPlayer) {
@@ -298,10 +354,21 @@ void EditPlayerPage::save()
         updated.preferredSide = m_preferredSideCombo->currentData().toString();
     }
 
+    if (!m_registrationBox->isHidden()) {
+        updated.registration.homeGrown = m_homeGrownCheck->isChecked();
+        updated.registration.clubTrained = m_clubTrainedCheck->isChecked();
+        updated.registration.u21 =
+            static_cast<PlayerRegistration::U21>(m_u21Combo->currentData().toInt());
+        Registration::normalize(updated.registration);
+    }
+
+    Database &db = m_context.database();
     std::vector<Player> batch{updated};
-    if (!m_context.database().upsertPlayers(batch)) {
-        QMessageBox::critical(this, tr("Spieler bearbeiten"),
-                              m_context.database().errorString());
+    ScopedTransaction transaction(db);
+    if (!transaction.isActive() || !db.upsertPlayers(batch)
+        || !db.setRegistrations({{batch.front().id, updated.registration}})
+        || !transaction.commit()) {
+        QMessageBox::critical(this, tr("Spieler bearbeiten"), db.errorString());
         return;
     }
     const QString name = updated.name;

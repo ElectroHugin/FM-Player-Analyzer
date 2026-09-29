@@ -123,6 +123,11 @@ public:
     // Empty role removes the row (revert to auto-pick).
     bool setTrainingRole(int playerId, const QString &role);
 
+    // --- Squad registration (player id -> hand-maintained status) ---
+    // Writes all given players in one transaction; a default status removes
+    // the row.
+    bool setRegistrations(const std::vector<std::pair<int, PlayerRegistration>> &byId);
+
     // --- Maintenance ---
     // Copies the db file to <backupsDir>/<name>_backup_<ts>.db, keeps newest 3.
     static bool createBackup(const QString &dbFilePath, const QString &backupsDir,
@@ -136,7 +141,9 @@ private:
     bool migrateV1ToV2();                 // add dwrs_latest, drop dead columns
     bool migrateV2ToV3();                 // add last_seen_update (freshness tracking)
     bool migrateV3ToV4();                 // add training_roles table
+    bool migrateV4ToV5();                 // add player_registration table
     static QString createDwrsLatestSql(); // shared by create + migrate paths
+    static QString createPlayerRegistrationSql(); // ditto
     std::vector<Player> loadPlayersImpl(const QList<int> *ids); // nullptr = all
     bool exec(const QString &sql);
     // Runs `sqlTemplate` (with one "%1" for a "?,?,…" id placeholder list) for

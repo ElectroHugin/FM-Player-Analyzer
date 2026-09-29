@@ -2,6 +2,7 @@
 
 #include "PageBase.h"
 
+class QCheckBox;
 class QComboBox;
 class QGroupBox;
 class QLabel;
@@ -14,7 +15,8 @@ namespace fm {
 struct Player;
 
 // Edit app-managed player data: club, agreed playing time, natural positions,
-// primary role and preferred side. Port of legacy edit_player.py.
+// primary role, preferred side and (with registration rules active) the
+// home-grown / club-trained / U21 status. Port of legacy edit_player.py.
 class EditPlayerPage : public PageBase
 {
     Q_OBJECT
@@ -43,6 +45,10 @@ private:
     QComboBox *m_primaryRoleCombo = nullptr;
     QComboBox *m_preferredSideCombo = nullptr;
     QWidget *m_tacticalColumn = nullptr;
+    QWidget *m_registrationBox = nullptr;
+    QCheckBox *m_homeGrownCheck = nullptr;
+    QCheckBox *m_clubTrainedCheck = nullptr;
+    QComboBox *m_u21Combo = nullptr;
     QPushButton *m_saveButton = nullptr;
 
     QString m_currentUid;

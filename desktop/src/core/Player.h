@@ -11,6 +11,22 @@
 
 namespace fm {
 
+// Squad-registration status the user maintains by hand (FM exports none of it).
+// Stored in the player_registration table, not part of the FM-import upsert.
+struct PlayerRegistration {
+    // Manual override of the automatic, age-based U21 decision.
+    enum class U21 : int8_t { Auto = -1, No = 0, Yes = 1 };
+
+    bool homeGrown = false;   // trained in the club's association (e.g. England/Wales)
+    bool clubTrained = false; // trained at the club itself; implies homeGrown
+    U21 u21 = U21::Auto;
+    bool leagueListed = false; // on the saved league squad list
+    bool uefaListed = false;   // on the saved UEFA list A
+
+    bool isDefault() const { return *this == PlayerRegistration{}; }
+    bool operator==(const PlayerRegistration &) const = default;
+};
+
 // One player, fully typed. Attribute values are 1-20; FM masks unscoutend
 // attributes as ranges like "12-15", stored losslessly as lo/hi (lo == hi for
 // exact values, 0 = missing). The DWRS engine uses (lo + hi) / 2.0, matching
@@ -49,6 +65,7 @@ struct Player {
     // player's best-DWRS role among those his positions and the tactic allow).
     // Stored in the training_roles table, not part of the FM-import upsert.
     QString trainingRole;
+    PlayerRegistration registration;
     // Value of the per-database upload counter at the last import that
     // contained this player. 0 = never stamped (legacy row / pre-tracking).
     // Freshness is derived as (current counter - lastSeenUpdate); see Freshness.

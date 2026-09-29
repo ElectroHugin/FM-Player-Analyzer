@@ -98,12 +98,18 @@ private slots:
         QVERIFY(db.setNationalSquadIds({players[5].id, players[650].id}));
         QVERIFY(db.setShortlistIds({players[6].id}));
         QVERIFY(db.setTrainingRole(players[7].id, QStringLiteral("W-S")));
+        PlayerRegistration registration;
+        registration.clubTrained = true;
+        registration.homeGrown = true;
+        registration.u21 = PlayerRegistration::U21::No;
+        registration.uefaListed = true;
+        QVERIFY(db.setRegistrations({{players[8].id, registration}}));
 
         const auto all = db.loadPlayers();
         QList<int> ids;
         for (int i = 0; i < 700; i += 3) // > 500 ids -> several chunks
             ids << players[i].id;
-        ids << players[5].id << players[6].id << players[7].id << players[650].id
+        ids << players[5].id << players[6].id << players[7].id << players[8].id << players[650].id
             << 999999 /* unknown -> skipped */;
         const auto subset = db.loadPlayers(ids);
 
@@ -126,7 +132,9 @@ private slots:
             QCOMPARE(a.inNationalSquad, b.inNationalSquad);
             QCOMPARE(a.onShortlist, b.onShortlist);
             QCOMPARE(a.trainingRole, b.trainingRole);
+            QVERIFY(a.registration == b.registration);
         }
+        QVERIFY(byId.value(players[8].id)->registration == registration);
         QVERIFY(db.loadPlayers(QList<int>{}).empty());
     }
 
@@ -370,6 +378,88 @@ private slots:
         const auto reloaded = db.loadPlayers();
         QCOMPARE(static_cast<int>(reloaded.size()), 1);
         QCOMPARE(reloaded[0].lastSeenUpdate, 0);
+        db.close();
+    }
+
+    void registrationDefaultRemovesRow()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("test_registration_rows"));
+        QVERIFY2(db.open(dir.filePath(QStringLiteral("t.db"))), qPrintable(db.errorString()));
+        std::vector<Player> batch(1);
+        batch[0].uid = QStringLiteral("p1");
+        batch[0].name = QStringLiteral("P1");
+        QVERIFY(db.upsertPlayers(batch));
+
+        PlayerRegistration r;
+        r.homeGrown = true;
+        QVERIFY(db.setRegistrations({{batch[0].id, r}}));
+        QVERIFY(db.loadPlayers()[0].registration.homeGrown);
+
+        QVERIFY(db.setRegistrations({{batch[0].id, PlayerRegistration{}}}));
+        QSqlQuery q(db.handle());
+        QVERIFY(q.exec(QStringLiteral("SELECT COUNT(*) FROM player_registration")));
+        QVERIFY(q.next());
+        QCOMPARE(q.value(0).toInt(), 0);
+        QVERIFY(db.loadPlayers()[0].registration.isDefault());
+    }
+
+    void mergeMovesRegistration()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("test_registration_merge"));
+        QVERIFY2(db.open(dir.filePath(QStringLiteral("t.db"))), qPrintable(db.errorString()));
+        std::vector<Player> batch(3);
+        batch[0].uid = QStringLiteral("bad");
+        batch[1].uid = QStringLiteral("good");
+        batch[2].uid = QStringLiteral("flagged");
+        for (Player &p : batch)
+            p.name = p.uid;
+        QVERIFY(db.upsertPlayers(batch));
+
+        PlayerRegistration moved;
+        moved.clubTrained = true;
+        moved.homeGrown = true;
+        QVERIFY(db.setRegistrations({{batch[0].id, moved}}));
+        QVERIFY(db.mergePlayerInto(batch[0].id, batch[1].id));
+        const auto afterFirst = db.loadPlayers(QList<int>{batch[1].id});
+        QVERIFY(afterFirst.front().registration == moved);
+
+        // A player that already has a status keeps his own.
+        PlayerRegistration own;
+        own.u21 = PlayerRegistration::U21::Yes;
+        QVERIFY(db.setRegistrations({{batch[2].id, own}}));
+        QVERIFY(db.mergePlayerInto(batch[1].id, batch[2].id));
+        const auto afterSecond = db.loadPlayers(QList<int>{batch[2].id});
+        QVERIFY(afterSecond.front().registration == own);
+    }
+
+    void migratesV4ToV5()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v4.db"));
+        {
+            Database db(QStringLiteral("v4seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(1);
+            batch[0].uid = QStringLiteral("old");
+            batch[0].name = QStringLiteral("Legacy");
+            QVERIFY(db.upsertPlayers(batch));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("DROP TABLE player_registration")));
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 4")));
+            db.close();
+        }
+
+        Database db(QStringLiteral("v4migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        const auto reloaded = db.loadPlayers();
+        QCOMPARE(static_cast<int>(reloaded.size()), 1);
+        QVERIFY(reloaded[0].registration.isDefault());
+        PlayerRegistration r;
+        r.leagueListed = true;
+        QVERIFY2(db.setRegistrations({{reloaded[0].id, r}}), qPrintable(db.errorString()));
+        QVERIFY(db.loadPlayers()[0].registration.leagueListed);
         db.close();
     }
 };

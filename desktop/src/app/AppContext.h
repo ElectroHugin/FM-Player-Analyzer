@@ -8,6 +8,7 @@
 #include "core/DwrsEngine.h"
 #include "core/PlayerStatus.h"
 #include "core/PlayerStore.h"
+#include "core/Registration.h"
 #include "core/SquadBuilder.h"
 #include "core/TacticExplorer.h"
 
@@ -172,6 +173,15 @@ public:
     {
         return m_database->setting(QStringLiteral("national_mode_enabled")) == QLatin1String("true");
     }
+
+    // Squad-registration rules chosen for this database, limited to what the
+    // active FM version models (an unsupported choice reads as None).
+    Registration::Settings registrationSettings();
+
+    // Persists one player's registration status (normalized) and patches the
+    // store in place. false (DB error, errorString via database()) changes
+    // nothing.
+    bool setPlayerRegistration(const QString &uid, PlayerRegistration registration);
 
     // Current freshness thresholds + upload counter + user club, for
     // PlayerStatus::isRetired. Build once per pool, not per player.

@@ -4,6 +4,7 @@
 #include "widgets/CellStyleDelegate.h"
 #include "widgets/PlayerTableModel.h"
 
+#include <QActionGroup>
 #include <QCoreApplication>
 #include <QMenu>
 #include <QMessageBox>
@@ -61,6 +62,66 @@ void toggleShortlist(AppContext &context, QWidget *parent, const QString &uid)
         return;
     }
     context.notifySettingsChanged();
+}
+
+// "Registrierung" submenu: quick edit of the hand-maintained home-grown /
+// club-trained / U21 status, so the squad-registration assistant can be fed
+// from any player list.
+void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
+                         const Player &player)
+{
+    using U21 = PlayerRegistration::U21;
+    const QString uid = player.uid;
+    const PlayerRegistration current = player.registration;
+    const auto store = [&context, parent, uid](const PlayerRegistration &r) {
+        if (!context.setPlayerRegistration(uid, r))
+            QMessageBox::critical(parent, ActionText::tr("Registrierung"),
+                                  context.database().errorString());
+    };
+
+    QMenu *sub = menu.addMenu(ActionText::tr("Registrierung"));
+    auto *homeGrown = sub->addAction(ActionText::tr("Home-Grown (im Verband ausgebildet)"));
+    homeGrown->setCheckable(true);
+    homeGrown->setChecked(Registration::isHomeGrown(player));
+    QObject::connect(homeGrown, &QAction::triggered, parent, [current, store](bool on) {
+        PlayerRegistration r = current;
+        r.homeGrown = on;
+        if (!on)
+            r.clubTrained = false; // club-trained implies home-grown
+        store(r);
+    });
+    auto *clubTrained = sub->addAction(ActionText::tr("Club-Grown (im Verein ausgebildet)"));
+    clubTrained->setCheckable(true);
+    clubTrained->setChecked(current.clubTrained);
+    QObject::connect(clubTrained, &QAction::triggered, parent, [current, store](bool on) {
+        PlayerRegistration r = current;
+        r.clubTrained = on;
+        store(r);
+    });
+
+    sub->addSeparator();
+    // Show what "automatic" currently resolves to for this player.
+    const Registration::U21Status autoStatus = Registration::u21StatusByAge(player.age);
+    const QString autoText = autoStatus == Registration::U21Status::Yes
+                                 ? ActionText::tr("ja")
+                             : autoStatus == Registration::U21Status::No
+                                 ? ActionText::tr("nein")
+                                 : ActionText::tr("unklar");
+    auto *u21Group = new QActionGroup(sub);
+    const auto addU21 = [&](const QString &text, U21 value) {
+        auto *action = sub->addAction(text);
+        action->setCheckable(true);
+        action->setChecked(current.u21 == value);
+        u21Group->addAction(action);
+        QObject::connect(action, &QAction::triggered, parent, [current, store, value] {
+            PlayerRegistration r = current;
+            r.u21 = value;
+            store(r);
+        });
+    };
+    addU21(ActionText::tr("U21 automatisch nach Alter (%1)").arg(autoText), U21::Auto);
+    addU21(ActionText::tr("U21: ja"), U21::Yes);
+    addU21(ActionText::tr("U21: nein"), U21::No);
 }
 
 } // namespace
@@ -121,6 +182,9 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
     shortlistAction->setChecked(player->onShortlist);
     QObject::connect(shortlistAction, &QAction::triggered, parent,
                      [&context, parent, uid] { toggleShortlist(context, parent, uid); });
+
+    if (context.registrationSettings().active())
+        addRegistrationMenu(context, parent, menu, *player);
 
     menu.exec(globalPos);
 }

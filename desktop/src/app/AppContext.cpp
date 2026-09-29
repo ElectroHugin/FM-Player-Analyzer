@@ -214,6 +214,37 @@ PlayerStatus::NationalCriteria AppContext::nationalCriteria()
     return criteria;
 }
 
+Registration::Settings AppContext::registrationSettings()
+{
+    const QString version = fmVersionId();
+    Registration::Settings settings;
+    const Registration::LeagueRules league = Registration::leagueRulesFromKey(
+        m_database->setting(QStringLiteral("registration_league")));
+    if (Registration::leagueRulesFor(version).contains(league))
+        settings.league = league;
+    settings.uefa = Registration::uefaRulesFor(version)
+                    && m_database->setting(QStringLiteral("registration_uefa"))
+                           == QLatin1String("true");
+    settings.minGoalkeepers =
+        m_database->setting(QStringLiteral("registration_min_goalkeepers"), QStringLiteral("2"))
+            .toInt();
+    return settings;
+}
+
+bool AppContext::setPlayerRegistration(const QString &uid, PlayerRegistration registration)
+{
+    const int row = m_store.rowByUid(uid);
+    if (row < 0)
+        return false;
+    Registration::normalize(registration);
+    Player &player = m_store.at(row);
+    if (!m_database->setRegistrations({{player.id, registration}}))
+        return false;
+    player.registration = registration;
+    emit dataChanged();
+    return true;
+}
+
 void AppContext::reloadEngines()
 {
     // reloadConfig() rebuilds the plan cache a worker may be reading.

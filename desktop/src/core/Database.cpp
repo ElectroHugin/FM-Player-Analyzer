@@ -20,7 +20,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 4;
+constexpr int kSchemaVersion = 5;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -33,6 +33,22 @@ QStringList splitRolesFromDb(const QString &value)
     if (value.isEmpty())
         return {};
     return value.split(QLatin1Char('\x1f'), Qt::SkipEmptyParts);
+}
+
+// Reads home_grown, club_trained, u21, league_listed, uefa_listed starting at
+// column `first`.
+PlayerRegistration registrationFromRow(const QSqlQuery &q, int first)
+{
+    PlayerRegistration r;
+    r.homeGrown = q.value(first).toInt() != 0;
+    r.clubTrained = q.value(first + 1).toInt() != 0;
+    const int u21 = q.value(first + 2).toInt();
+    r.u21 = u21 == 1   ? PlayerRegistration::U21::Yes
+            : u21 == 0 ? PlayerRegistration::U21::No
+                       : PlayerRegistration::U21::Auto;
+    r.leagueListed = q.value(first + 3).toInt() != 0;
+    r.uefaListed = q.value(first + 4).toInt() != 0;
+    return r;
 }
 
 } // namespace
@@ -195,6 +211,8 @@ bool Database::initSchema()
             ok = migrateV2ToV3();
         if (ok && version < 4)
             ok = migrateV3ToV4();
+        if (ok && version < 5)
+            ok = migrateV4ToV5();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -269,6 +287,7 @@ bool Database::createInitialSchema()
         QStringLiteral("CREATE TABLE IF NOT EXISTS training_roles ("
                        " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE,"
                        " role TEXT NOT NULL)"),
+        createPlayerRegistrationSql(),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_dwrs_history_role_ts ON dwrs_history(role, ts)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_player_roles_role ON player_roles(role)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_players_club ON players(club)"),
@@ -336,6 +355,24 @@ bool Database::migrateV3ToV4()
                                " role TEXT NOT NULL)"));
 }
 
+QString Database::createPlayerRegistrationSql()
+{
+    // Hand-maintained squad-registration status (home-grown, club-trained, U21
+    // override, saved squad lists). Only non-default players have a row.
+    return QStringLiteral("CREATE TABLE IF NOT EXISTS player_registration ("
+                          " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE,"
+                          " home_grown INTEGER NOT NULL DEFAULT 0,"
+                          " club_trained INTEGER NOT NULL DEFAULT 0,"
+                          " u21 INTEGER NOT NULL DEFAULT -1,"
+                          " league_listed INTEGER NOT NULL DEFAULT 0,"
+                          " uefa_listed INTEGER NOT NULL DEFAULT 0)");
+}
+
+bool Database::migrateV4ToV5()
+{
+    return exec(createPlayerRegistrationSql());
+}
+
 std::vector<Player> Database::loadPlayers()
 {
     return loadPlayersImpl(nullptr);
@@ -389,6 +426,14 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             QStringLiteral("SELECT player_id, role FROM training_roles WHERE player_id IN (%1)"),
             [&](const QSqlQuery &q) {
                 trainingRoleById.insert(q.value(0).toInt(), q.value(1).toString());
+            });
+    QHash<int, PlayerRegistration> registrationById;
+    forRows(QStringLiteral("SELECT player_id, home_grown, club_trained, u21, league_listed, "
+                           "uefa_listed FROM player_registration"),
+            QStringLiteral("SELECT player_id, home_grown, club_trained, u21, league_listed, "
+                           "uefa_listed FROM player_registration WHERE player_id IN (%1)"),
+            [&](const QSqlQuery &q) {
+                registrationById.insert(q.value(0).toInt(), registrationFromRow(q, 1));
             });
 
     // Column indexes, resolved once from the first result row's record.
@@ -479,6 +524,7 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             p.inNationalSquad = nationalIds.contains(p.id);
             p.onShortlist = shortlistIdSet.contains(p.id);
             p.trainingRole = trainingRoleById.value(p.id);
+            p.registration = registrationById.value(p.id);
             players.push_back(std::move(p));
         });
     if (!ok)
@@ -684,6 +730,21 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
         "WHERE h.player_id = ?"));
     query.bindValue(0, goodPlayerId);
     query.bindValue(1, goodPlayerId);
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+
+    // Registration flags move over only when the good player has none (the
+    // importer's fill-empty merge does the same in memory).
+    query.prepare(QStringLiteral(
+        "INSERT OR IGNORE INTO player_registration "
+        "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed) "
+        "SELECT ?, home_grown, club_trained, u21, league_listed, uefa_listed "
+        "FROM player_registration WHERE player_id = ?"));
+    query.bindValue(0, goodPlayerId);
+    query.bindValue(1, badPlayerId);
     if (!query.exec()) {
         m_error = query.lastError().text();
         rollbackTransaction();
@@ -1035,6 +1096,38 @@ bool Database::setTrainingRole(int playerId, const QString &role)
         return false;
     }
     return true;
+}
+
+bool Database::setRegistrations(const std::vector<std::pair<int, PlayerRegistration>> &byId)
+{
+    if (byId.empty())
+        return true;
+    if (!beginTransaction())
+        return false;
+    QSqlQuery remove(m_db);
+    remove.prepare(QStringLiteral("DELETE FROM player_registration WHERE player_id = ?"));
+    QSqlQuery upsert(m_db);
+    upsert.prepare(QStringLiteral(
+        "INSERT OR REPLACE INTO player_registration "
+        "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed) "
+        "VALUES (?, ?, ?, ?, ?, ?)"));
+    for (const auto &[playerId, r] : byId) {
+        QSqlQuery &query = r.isDefault() ? remove : upsert;
+        query.bindValue(0, playerId);
+        if (!r.isDefault()) {
+            query.bindValue(1, r.homeGrown ? 1 : 0);
+            query.bindValue(2, r.clubTrained ? 1 : 0);
+            query.bindValue(3, static_cast<int>(r.u21));
+            query.bindValue(4, r.leagueListed ? 1 : 0);
+            query.bindValue(5, r.uefaListed ? 1 : 0);
+        }
+        if (!query.exec()) {
+            m_error = query.lastError().text();
+            rollbackTransaction();
+            return false;
+        }
+    }
+    return commitTransaction();
 }
 
 bool Database::createBackup(const QString &dbFilePath, const QString &backupsDir, QString *errorOut)

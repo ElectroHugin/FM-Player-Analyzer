@@ -10,46 +10,49 @@ Prioritäten: 🔴 hoch · 🟡 mittel · ⚪ niedrig
 
 ## 🆕 Neue Ideen
 
-### 🟡 Registrierungs-Assistent für restriktive Ligen/Wettbewerbe
+### 🟡 Registrierungs-Assistent (Premier League + UEFA) — in Arbeit
 
-**Ziel:** Best XI und Kader so bilden, dass sie **registrierbar** sind. Ein
-registrierbarer Allrounder soll zwei Spezialisten vorgezogen werden, von denen
+**Ziel:** Meldeliste so bilden, dass sie **registrierbar** ist und keine Plätze
+verschenkt. Anlass: Mit zu wenigen HG-Spielern wurden oft nur 21 Spieler
+gemeldet, obwohl talentierte Jugendspieler die freien Plätze hätten füllen
+können. Ein registrierbarer Allrounder geht vor zwei Spezialisten, von denen
 einer nicht registriert werden kann.
 
-- **Beispiele:**
-  - Premier League: 25er-Kader, begrenzte Zahl Nicht-Home-Grown über 21,
-    U21 frei.
-  - Champions League: Liste A mit Pflichtplätzen für „Home Grown“, davon ein
-    Teil vereinsausgebildet (HGC). Die übrigen HG-Plätze dürfen
-    verbandsausgebildet (HGN) sein.
-  - Bundesliga-Regeln: relevant für den Bayern-Spielstand.
-- **Daten:**
-  - pro Spieler Flags *HG-Club* und *HG-Nation*, pflegbar auf „Spieler
-    bearbeiten“. Dafür ist eine Schema-Migration v4→v5 nötig.
-  - Zu prüfen: Ob FM24 den Home-Grown-Status als Spalte exportieren kann
-    (dann automatisch importieren). Die heute ignorierten Export-Spalten
-    `Reg`/`Inf` darauf ansehen.
-  - Alter nur als ganze Jahre vorhanden: U21-Grenzen sind eine Annäherung,
-    da das Geburtsdatum fehlt.
-- **Regeln:** als konfigurierbare Presets (z. B. Abschnitt
-  `registration_rules` in `definitions.json`: Kadergröße, HG-Mindestzahl,
-  davon HGC, Altersausnahmen). Die konkreten Zahlen vor der Umsetzung gegen die
-  FM24-Regeln prüfen, nicht aus dem Gedächtnis übernehmen.
-- **Algorithmus:**
-  1. Normale Auswahl (`SquadBuilder`, „weakest link first“).
-  2. Quoten prüfen.
-  3. Bei Verstoß den Tausch mit dem **geringsten DWRS-Verlust** wählen
-     (Nicht-HG raus, bester HG-Kandidat rein).
-  4. Wiederholen, bis alle Quoten erfüllt sind.
-
-  Das ergibt genau den gewünschten „Kompromiss statt Spezialist“. Der
-  Nominierungs-Assistent (`core/NationalCallup`) löst schon „bester Kader aus
-  N Spielern mit G Torhütern“; die Quoten sind dort eine natürliche
-  Erweiterung.
-- **UI:** Wettbewerb wählen → registrierter Kader, verletzte Quoten, Liste
-  „nicht registrierbar“ und die DWRS-Kosten jeder Quote.
-- **Voraussetzung:** Backlog **#23** („entfernte Rollen wirken weiter“) — seit
-  v1.3.12 erledigt.
+- **Regeln** (mit dem User abgestimmt, 2026-09-29; fest im Core pro FM-Version,
+  `core/Registration`, nur FM24):
+  - **Premier League:** höchstens 25 gemeldete Spieler, davon höchstens 17
+    Nicht-Home-Grown. U21 (Stichtag: geboren ab 1.1. des Saisonstartjahres − 21)
+    braucht keinen Platz. Home-Grown = drei Spielzeiten vor dem 21. Geburtstag
+    bei Vereinen des Verbands; eine Club-trained-Quote gibt es in der PL nicht.
+  - **UEFA (CL/EL/ECL, gleiche Regeln):** Liste A mit höchstens 25 Spielern,
+    davon höchstens 17 nicht lokal ausgebildet. 4 der 8 reservierten Plätze nur
+    für Club-trained, also höchstens 21 ohne Club-trained. Mindestens 2
+    Torhüter. Liste B (unbegrenzt) = U21 und Club-trained (Näherung für „2 Jahre
+    am Stück im Verein“, keine eigene Pflege).
+  - **Bundesliga:** nicht relevant, keine wirksame Beschränkung (99 Plätze).
+  - Mindestzahl Torhüter in der Meldeliste als Einstellung (Default 2). Die PL
+    schreibt keine vor, ohne zwei ist es aber albern.
+- **Daten:** FM24 exportiert keinen HG-Status, also ist alles Handpflege.
+  Tabelle `player_registration` (Schema v5): `home_grown`, `club_trained`
+  (schließt HG ein), `u21` (auto/ja/nein), `league_listed`, `uefa_listed`.
+  U21 automatisch: bis 20 ja, ab 22 nein, mit 21 unklar (zählt vorsichtshalber
+  als nicht U21, Hinweis). Pflege auf „Spieler bearbeiten“ und per Rechtsklick →
+  Registrierung.
+- **Algorithmus:** Pool = Erste Mannschaft + Zweitteam ohne Retired.
+  `SquadBuilder` über den ganzen Pool und **alle Lieblingstaktiken** (max. 2)
+  ergibt die Rangfolge Stamm-XI > B-Team > Tiefe > DWRS. Dann die Quoten in
+  dieser Rangfolge füllen. Freie HG-/Club-trained-Plätze werden **immer**
+  aufgefüllt, auch mit Jugend und Zweitteam. Anzeige der DWRS-Kosten der Quote
+  (Best XI mit gegen ohne Regeln).
+- **Umsetzung in Schritten:**
+  1. ✅ v1.3.24: Schema v5, Markierungen (Bearbeiten + Rechtsklick),
+     Einstellung „Registrierungsregeln“ (Liga, UEFA, Mindest-Torhüter).
+  2. `core/Registration`-Auswahl mit Tests + Assistenten-Seite für die PL.
+  3. UEFA-Liste A/B im Assistenten.
+  4. Best XI nutzt die übernommene Meldeliste (+ U21); optionaler
+     UEFA-Best-XI-Tab (Liste A + B).
+- **Später:** La Liga, Serie A, Ligue 1 als weitere Regelwerke (Regeln erst
+  recherchieren).
 
 ### ⚪ Screenshot → Spontan-DWRS (Bilderkennung)
 

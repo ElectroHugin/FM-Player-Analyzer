@@ -537,6 +537,14 @@ private slots:
         QVERIFY(db.setNationalSquadIds({seed[0].id}));
         QVERIFY(db.setShortlistIds({seed[2].id}));
         QVERIFY(db.setTrainingRole(seed[0].id, QStringLiteral("W-S")));
+        // Registration survives the import and follows a merged-away duplicate
+        // (numeric 77 -> r-77).
+        PlayerRegistration homeGrown;
+        homeGrown.homeGrown = true;
+        PlayerRegistration clubTrained;
+        clubTrained.homeGrown = true;
+        clubTrained.clubTrained = true;
+        QVERIFY(db.setRegistrations({{seed[0].id, homeGrown}, {seed[3].id, clubTrained}}));
 
         const QString html = htmlExport({
             playerRow(QStringLiteral("1001"), QStringLiteral("Keeps Roles"),
@@ -574,13 +582,18 @@ private slots:
             QVERIFY2(a.assignedRoles == b.assignedRoles, where.constData());
             QVERIFY2(a.lastSeenUpdate == b.lastSeenUpdate, where.constData());
             QVERIFY2(a.inNationalSquad == b.inNationalSquad && a.onShortlist == b.onShortlist
-                         && a.trainingRole == b.trainingRole,
+                         && a.trainingRole == b.trainingRole
+                         && a.registration == b.registration,
                      where.constData());
         }
         for (const Player &p : reloaded) {
             // The merged roles really reached the database.
-            if (p.uid == QStringLiteral("r-77"))
+            if (p.uid == QStringLiteral("r-77")) {
                 QCOMPARE(p.assignedRoles, QStringList{QStringLiteral("CM-S")});
+                QVERIFY(p.registration == clubTrained);
+            }
+            if (p.uid == QStringLiteral("1001"))
+                QVERIFY(p.registration == homeGrown);
             // The id-reuse case actually happened (first new row got the
             // merged-away row's id).
             if (p.uid == QStringLiteral("5000"))

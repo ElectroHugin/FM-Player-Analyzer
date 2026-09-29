@@ -466,6 +466,9 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
             good.preferredSide = bad.preferredSide;
         if (good.agreedPlayingTime.isEmpty())
             good.agreedPlayingTime = bad.agreedPlayingTime;
+        // Mirrors Database::mergePlayerInto, which moved the row already.
+        if (good.registration.isDefault())
+            good.registration = bad.registration;
     };
 
     // uid -> merged-away duplicate whose app-managed data must be folded in.
