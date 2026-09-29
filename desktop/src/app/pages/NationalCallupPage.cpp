@@ -5,6 +5,7 @@
 #include "PageHelpers.h"
 #include "core/HtmlImporter.h"
 #include "core/NationalCallup.h"
+#include "core/PlayerStatus.h"
 #include "core/SquadBuilder.h"
 #include "core/Utils.h"
 
@@ -38,13 +39,6 @@ namespace {
 QString playerLine(const Player &p)
 {
     return QStringLiteral("%1 (%2) — %3 | %4").arg(p.name).arg(p.age).arg(p.club, p.positionRaw);
-}
-
-// The user marks players who have left the game by setting their club to
-// "Retired"; such players must never be proposed for a call-up.
-bool isRetiredClub(const Player &p)
-{
-    return p.club.trimmed().compare(QLatin1String("Retired"), Qt::CaseInsensitive) == 0;
 }
 
 } // namespace
@@ -274,24 +268,12 @@ void NationalCallupPage::refresh()
     showResults(false);
 }
 
-bool NationalCallupPage::isEligible(const Player &player) const
-{
-    if (isRetiredClub(player))
-        return false;
-    const QString code = m_context.nationalTeamCode();
-    if (player.nationality != code && player.secondNationality != code)
-        return false;
-    const int ageLimit = m_context.nationalTeamAgeLimit();
-    if (ageLimit < 99 && (player.age <= 0 || player.age > ageLimit))
-        return false;
-    return true;
-}
-
 std::vector<const Player *> NationalCallupPage::eligiblePool(bool excludeInjured) const
 {
+    const PlayerStatus::NationalCriteria criteria = m_context.nationalCriteria();
     std::vector<const Player *> pool;
     for (const Player &player : m_context.store().players()) {
-        if (!isEligible(player))
+        if (!PlayerStatus::isAvailableForNation(player, criteria))
             continue;
         if (excludeInjured && m_injuredUids.contains(player.uid))
             continue;
@@ -384,6 +366,7 @@ void NationalCallupPage::uploadSquad()
         byUid.insert(p.uid, &p);
         byName[p.name.trimmed().toLower()].append(&p);
     }
+    const PlayerStatus::NationalCriteria criteria = m_context.nationalCriteria();
     QSet<QString> matched;
     QStringList unmatched;
     for (const QStringList &row : table.rows) {
@@ -400,7 +383,7 @@ void NationalCallupPage::uploadSquad()
                 const Player *eligibleHit = nullptr;
                 int eligibleCount = 0;
                 for (const Player *c : candidates) {
-                    if (isEligible(*c)) {
+                    if (PlayerStatus::isAvailableForNation(*c, criteria)) {
                         eligibleHit = c;
                         ++eligibleCount;
                     }
@@ -519,13 +502,14 @@ void NationalCallupPage::compute()
         new QListWidgetItem(tr("Keine — der aktuelle Kader ist bereits optimal."), m_inviteList);
 
     // Drop list with a reason: injured, ineligible/absent from pool, or surplus.
+    const PlayerStatus::FreshnessContext freshness = m_context.freshnessContext();
     QSet<QString> eligibleUids;
     for (const Player *p : eligiblePool(false))
         eligibleUids.insert(p->uid);
     m_dropList->clear();
     for (const Player *p : rec.drops) {
         QString reason;
-        if (isRetiredClub(*p))
+        if (PlayerStatus::isRetired(*p, freshness))
             reason = tr("Retired");
         else if (m_injuredUids.contains(p->uid))
             reason = tr("verletzt/gesperrt");

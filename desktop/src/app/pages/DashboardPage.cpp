@@ -6,6 +6,7 @@
 #include "../widgets/NumericTableItem.h"
 #include "../widgets/StrengthGridWidget.h"
 #include "core/Database.h"
+#include "core/PlayerStatus.h"
 #include "core/Utils.h"
 
 #include <QCheckBox>
@@ -51,8 +52,8 @@ struct DepartureChoice {
 };
 
 // The most common outcome for a departed player: released as a free agent.
-inline QString freeAgentTag() { return QStringLiteral("FrA"); }
-inline QString retiredTag() { return QStringLiteral("Retired"); }
+inline QString freeAgentTag() { return PlayerStatus::freeAgentClubTag(); }
+inline QString retiredTag() { return PlayerStatus::retiredClubTag(); }
 
 // Modal dialog to resolve players missing from a full squad export
 // (legacy "Action Required: Player Departures" form). Every detected player
@@ -647,6 +648,7 @@ void DashboardPage::rebuildSuggestions()
     const QHash<QString, QString> roleNames = m_context.definitions().roleDisplayMap();
     const int maxAge = m_ageSlider->value();
     const double maxValue = maxValueFilter();
+    const PlayerStatus::FreshnessContext freshness = m_context.freshnessContext();
 
     struct Suggestion {
         QString role;
@@ -688,6 +690,8 @@ void DashboardPage::rebuildSuggestions()
                 continue;
             if (player->transferValue > maxValue)
                 continue;
+            if (PlayerStatus::isRetired(*player, freshness))
+                continue; // left the game — never a transfer target
             bestUpgrade = player;
             bestUpgradeRating = rating;
         }
@@ -845,7 +849,7 @@ void DashboardPage::resolveDepartures(const QSet<QString> &affectedUids)
         if (destination == player->club)
             continue;
         Player updated = *player;
-        updated.club = destination;
+        PlayerStatus::applyDeparture(updated, destination);
         updates.push_back(std::move(updated));
     }
     if (updates.empty())

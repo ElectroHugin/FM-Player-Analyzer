@@ -7,6 +7,7 @@
 #include "../widgets/StrengthGridWidget.h"
 #include "PageHelpers.h"
 #include "core/Database.h"
+#include "core/PlayerStatus.h"
 #include "core/Utils.h"
 
 #include <QCheckBox>
@@ -347,7 +348,6 @@ void NationalDashboardPage::rebuildCallUps()
     clearCards();
 
     const QString code = m_context.nationalTeamCode();
-    const int ageLimit = m_context.nationalTeamAgeLimit();
     const QString tactic = m_tacticCombo->currentText();
     if (code.isEmpty() || tactic.isEmpty())
         return;
@@ -362,6 +362,7 @@ void NationalDashboardPage::rebuildCallUps()
     const RoleRatings &ratings = m_context.ratings();
     const auto roleNames = m_context.definitions().roleDisplayMap();
     const int maxAge = m_maxAgeSlider->value();
+    const PlayerStatus::NationalCriteria criteria = m_context.nationalCriteria();
 
     struct Suggestion {
         QString role;
@@ -388,10 +389,9 @@ void NationalDashboardPage::rebuildCallUps()
         for (const Player &player : players) {
             if (player.inNationalSquad)
                 continue;
-            if (player.nationality != code && player.secondNationality != code)
-                continue;
-            if (player.age <= 0 || player.age > maxAge
-                || (ageLimit < 99 && player.age > ageLimit))
+            if (!PlayerStatus::isAvailableForNation(player, criteria))
+                continue; // wrong nation, over the age limit or retired
+            if (player.age <= 0 || player.age > maxAge)
                 continue;
             const auto ratingIt = roleRatings.value().constFind(player.uid);
             if (ratingIt == roleRatings.value().constEnd())

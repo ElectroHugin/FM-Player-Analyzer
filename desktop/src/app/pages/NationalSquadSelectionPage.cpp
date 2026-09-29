@@ -2,6 +2,7 @@
 
 #include "../AppContext.h"
 #include "PageHelpers.h"
+#include "core/PlayerStatus.h"
 #include "core/Utils.h"
 
 #include <QHBoxLayout>
@@ -137,6 +138,7 @@ void NationalSquadSelectionPage::rebuildLists()
                                                  : QString()));
 
     const QString query = m_searchEdit->text().trimmed();
+    const PlayerStatus::NationalCriteria criteria = m_context.nationalCriteria();
 
     std::vector<const Player *> available, squad;
     for (const Player &player : m_context.store().players()) {
@@ -146,10 +148,7 @@ void NationalSquadSelectionPage::rebuildLists()
             squad.push_back(&player);
             continue;
         }
-        const bool eligible = player.nationality == code || player.secondNationality == code;
-        if (!eligible)
-            continue;
-        if (ageLimit < 99 && (player.age <= 0 || player.age > ageLimit))
+        if (!PlayerStatus::isAvailableForNation(player, criteria))
             continue;
         if (!query.isEmpty() && !player.name.contains(query, Qt::CaseInsensitive))
             continue;

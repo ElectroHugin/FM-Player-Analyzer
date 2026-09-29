@@ -66,6 +66,10 @@ private slots:
         QTest::newRow("clubbed, missing value") << QStringLiteral("FC Bayern") << QString() << false;
         QTest::newRow("free-agent labelled club, zero value")
             << QStringLiteral("Free Agents") << QStringLiteral("€0") << true;
+        // Written by the departure dialog; the old value may still be set.
+        QTest::newRow("departure tag FrA") << QStringLiteral("FrA") << QStringLiteral("€2M") << true;
+        QTest::newRow("departure tag, other case")
+            << QStringLiteral(" fra ") << QStringLiteral("€2M") << true;
     }
 
     void isFreeAgent()

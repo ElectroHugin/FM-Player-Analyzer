@@ -6,6 +6,7 @@
 #include "../widgets/PlayerTableModel.h"
 #include "core/Freshness.h"
 #include "core/TalentEngine.h"
+#include "core/PlayerStatus.h"
 #include "core/Utils.h"
 
 #include <QButtonGroup>
@@ -70,6 +71,9 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     m_extraDetailsCheck = new QCheckBox(tr("Extra-Details"), content);
     m_secondTeamCheck = new QCheckBox(tr("Zweitteam separat anzeigen"), content);
     m_hideRetiredCheck = new QCheckBox(tr("'Retired' ausblenden"), content);
+    m_hideRetiredCheck->setToolTip(
+        tr("Blendet Spieler aus, deren Verein auf 'Retired' steht oder die laut "
+           "Datenfrische als Retired gelten (Alter und fehlende Uploads)."));
     m_hideRetiredCheck->setChecked(true);
     optionsRow->addWidget(m_extraDetailsCheck);
     optionsRow->addWidget(m_secondTeamCheck);
@@ -540,10 +544,10 @@ void SquadMatrixPage::rebuildAll()
         return true;
     };
 
+    const PlayerStatus::FreshnessContext freshness = m_context.freshnessContext();
     std::vector<const Player *> mine, second, scouted;
     for (const Player &player : m_context.store().players()) {
-        if (hideRetired
-            && player.club.compare(QLatin1String("retired"), Qt::CaseInsensitive) == 0)
+        if (hideRetired && PlayerStatus::isRetired(player, freshness))
             continue;
         if (!m_personalityFilter->allows(player.personality))
             continue;

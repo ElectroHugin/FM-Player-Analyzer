@@ -131,6 +131,25 @@ void AppContext::rebuildRatingsCache()
     m_ratings = RatingsUpdater::roleRatingsForAssigned(m_store, m_latestRatings);
 }
 
+PlayerStatus::FreshnessContext AppContext::freshnessContext()
+{
+    PlayerStatus::FreshnessContext freshness;
+    freshness.currentCounter = updateCounter();
+    freshness.retirementAge = m_config->freshnessSetting(QStringLiteral("retirement_age"));
+    freshness.staleAfterUploads = m_config->freshnessSetting(QStringLiteral("stale_after_uploads"));
+    freshness.userClub = userClub();
+    return freshness;
+}
+
+PlayerStatus::NationalCriteria AppContext::nationalCriteria()
+{
+    PlayerStatus::NationalCriteria criteria;
+    criteria.countryCode = nationalTeamCode();
+    criteria.ageLimit = nationalTeamAgeLimit();
+    criteria.freshness = freshnessContext();
+    return criteria;
+}
+
 void AppContext::reloadEngines()
 {
     // reloadConfig() rebuilds the plan cache a worker may be reading.

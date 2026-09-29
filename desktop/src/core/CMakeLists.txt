@@ -22,6 +22,8 @@ add_library(fmcore STATIC
     NationalCallup.h
     NationalCallup.cpp
     Player.h
+    PlayerStatus.h
+    PlayerStatus.cpp
     PlayerStore.h
     PlayerStore.cpp
     RatingsUpdater.h

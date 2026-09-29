@@ -6,6 +6,7 @@
 #include "core/Database.h"
 #include "core/Definitions.h"
 #include "core/DwrsEngine.h"
+#include "core/PlayerStatus.h"
 #include "core/PlayerStore.h"
 #include "core/SquadBuilder.h"
 #include "core/TacticExplorer.h"
@@ -151,6 +152,12 @@ public:
     {
         return m_database->setting(QStringLiteral("national_mode_enabled")) == QLatin1String("true");
     }
+
+    // Current freshness thresholds + upload counter + user club, for
+    // PlayerStatus::isRetired. Build once per pool, not per player.
+    PlayerStatus::FreshnessContext freshnessContext();
+    // National code, age limit and freshness, for PlayerStatus::isAvailableForNation.
+    PlayerStatus::NationalCriteria nationalCriteria();
 
 signals:
     // Player data or ratings changed — pages must refresh.

@@ -1,6 +1,7 @@
 #include "Utils.h"
 
 #include "GistRainbowLut.h"
+#include "PlayerStatus.h"
 
 #include <QRegularExpression>
 
@@ -72,6 +73,9 @@ bool isFreeAgent(const QString &club, const QString &transferValueRaw)
 {
     const QString c = club.trimmed();
     if (c.isEmpty() || c == QLatin1String("-") || c == QString::fromUtf8("–"))
+        return true;
+    // Tag the departure dialog writes for released players.
+    if (c.compare(PlayerStatus::freeAgentClubTag(), Qt::CaseInsensitive) == 0)
         return true;
     return isExplicitZeroValue(transferValueRaw);
 }

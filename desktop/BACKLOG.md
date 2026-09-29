@@ -77,7 +77,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → **#24/#25 (+#33) → #30 → #26/#27 → #31/#32**.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → **#30 → #26/#27 → #31/#32**.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -109,7 +109,16 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
   `primaryRole` leeren; alternativ `rebuildRatingsCache` nur zugewiesene Rollen
   übernehmen lassen. Regressionstest.
 
-### #24 — „Retired"/veraltete Spieler in Vorschlägen
+### ✅ #24 — „Retired"/veraltete Spieler in Vorschlägen — erledigt in v1.3.14
+
+> **Umsetzung:** Neues Core-Modul `core/PlayerStatus` (`isRetiredClub`,
+> `isRetired` = Club „Retired" **oder** Freshness-Retired, `isNationalEligible`,
+> `isAvailableForNation`). Ausgeschlossen werden Retired-Spieler jetzt aus den
+> Dashboard-Transferzielen, den National-Transferzielen, der Kader-Auswahl
+> (verfügbare Spieler) und dem Nominierungs-Assistenten; die „'Retired'
+> ausblenden"-Checkbox beider Matrizen blendet auch Freshness-Retired aus.
+> **Bewusst nicht** ausgeschlossen: nur *veraltete* (stale) Spieler — alte
+> Scouting-Daten heißen nicht, dass der Spieler weg ist.
 
 - **Dateien:** [src/app/pages/DashboardPage.cpp](src/app/pages/DashboardPage.cpp)
   `rebuildSuggestions`, NationalDashboardPage (Transferziele),
@@ -121,7 +130,14 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 - **Vorschlag:** Zentrale Verfügbarkeits-Prüfung im Core (siehe #33) und in
   allen Vorschlags-Pools nutzen.
 
-### #25 — Abgang-Dialog: drei Lücken
+### ✅ #25 — Abgang-Dialog: drei Lücken — erledigt in v1.3.14
+
+> **Umsetzung:** (1) `isFreeAgent` erkennt „FrA" (case-insensitive).
+> (2) `PlayerStatus::applyDeparture` leert Transfer-/Leihliste und `newClub`.
+> (3) **Entfällt:** Die Transfers-Seite übernimmt einen eingetragenen
+> „Neuen Verein" sofort als Club (Legacy-Verhalten) — ein Spieler mit
+> geplantem Ziel steht nie mehr beim eigenen Verein und erscheint daher nicht
+> im Abgang-Dialog.
 
 - **Dateien:** [src/app/pages/DashboardPage.cpp](src/app/pages/DashboardPage.cpp)
   `resolveDepartures`, [src/core/Utils.cpp](src/core/Utils.cpp) `isFreeAgent`.
@@ -227,7 +243,7 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## ⚪ Tech-Debt / Konsistenz
 
-- **#33 — National-Berechtigung 5× dupliziert, inkonsistent.** Callup,
+- ✅ **#33 (v1.3.14, via `PlayerStatus`) — National-Berechtigung 5× dupliziert, inkonsistent.** Callup,
   Kader-Auswahl, National-Squad-Matrix und National-Dashboard behandeln
   `age <= 0` und Age-Limit 0 unterschiedlich. → Eine Core-Funktion (inkl.
   Retired-Check, siehe #24).

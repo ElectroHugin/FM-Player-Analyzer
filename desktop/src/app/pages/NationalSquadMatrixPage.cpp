@@ -5,6 +5,7 @@
 #include "../widgets/PersonalityFilterWidget.h"
 #include "../widgets/PlayerTableModel.h"
 #include "PageHelpers.h"
+#include "core/PlayerStatus.h"
 #include "core/Utils.h"
 
 #include <QCheckBox>
@@ -49,6 +50,9 @@ NationalSquadMatrixPage::NationalSquadMatrixPage(AppContext &context, QWidget *p
     optionsRow->addWidget(m_tacticCombo);
     m_extraDetailsCheck = new QCheckBox(tr("Extra-Details (Fuß, Größe)"), content);
     m_hideRetiredCheck = new QCheckBox(tr("'Retired' ausblenden"), content);
+    m_hideRetiredCheck->setToolTip(
+        tr("Blendet Spieler aus, deren Verein auf 'Retired' steht oder die laut "
+           "Datenfrische als Retired gelten (Alter und fehlende Uploads)."));
     m_hideRetiredCheck->setChecked(true);
     optionsRow->addWidget(m_extraDetailsCheck);
     optionsRow->addWidget(m_hideRetiredCheck);
@@ -215,19 +219,15 @@ void NationalSquadMatrixPage::rebuild()
     const QString code = m_context.nationalTeamCode();
     const int ageLimit = m_context.nationalTeamAgeLimit();
     const bool hideRetired = m_hideRetiredCheck->isChecked();
+    const PlayerStatus::FreshnessContext freshness = m_context.freshnessContext();
 
     std::vector<const Player *> squad, pool;
     for (const Player &player : m_context.store().players()) {
-        if (hideRetired
-            && player.club.compare(QLatin1String("retired"), Qt::CaseInsensitive) == 0)
+        if (hideRetired && PlayerStatus::isRetired(player, freshness))
             continue;
         if (!m_personalityFilter->allows(player.personality))
             continue;
-        const bool eligible = !code.isEmpty()
-                              && (player.nationality == code
-                                  || player.secondNationality == code)
-                              && (ageLimit >= 99 || ageLimit <= 0
-                                  || (player.age > 0 && player.age <= ageLimit));
+        const bool eligible = PlayerStatus::isNationalEligible(player, code, ageLimit);
         if (player.inNationalSquad)
             squad.push_back(&player);
         else if (eligible)
