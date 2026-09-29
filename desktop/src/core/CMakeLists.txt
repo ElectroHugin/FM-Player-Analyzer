@@ -17,6 +17,8 @@ add_library(fmcore STATIC
     GistRainbowLut.h
     HtmlImporter.h
     HtmlImporter.cpp
+    ImportPipeline.h
+    ImportPipeline.cpp
     LegacyMigrator.h
     LegacyMigrator.cpp
     NationalCallup.h

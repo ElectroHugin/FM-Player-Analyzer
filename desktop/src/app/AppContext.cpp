@@ -117,6 +117,13 @@ void AppContext::reloadFromDatabase()
     emit dataChanged();
 }
 
+void AppContext::adoptPlayers(std::vector<Player> players)
+{
+    m_store.reset(std::move(players));
+    rebuildRatingsCache();
+    emit dataChanged();
+}
+
 void AppContext::reloadRatings()
 {
     // Only the ratings changed (e.g. after a DWRS recalc) — the player rows are

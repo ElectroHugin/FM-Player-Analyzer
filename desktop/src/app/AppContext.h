@@ -63,6 +63,11 @@ public:
     // reload after a recalc, and keeps existing Player* references valid.
     void reloadRatings();
 
+    // Replaces the store with a player list that already mirrors the database
+    // (e.g. the import pipeline's result, same content/order as loadPlayers()),
+    // then refreshes the ratings — a full reload minus reading every player.
+    void adoptPlayers(std::vector<Player> players);
+
     // Re-reads config-dependent engine state (after settings changes).
     void reloadEngines();
 

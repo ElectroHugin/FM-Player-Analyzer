@@ -63,22 +63,30 @@ public:
     static bool extractTable(const QString &html, HtmlTable *out, QString *errorOut = nullptr,
                              const std::function<void(int, int)> &progress = {});
 
-    // Full import into db. existingPlayers must reflect the current DB state
-    // (ids matching); the caller reloads its stores afterwards.
-    // progress(done, total) is called per processed row batch. fmVersionId
-    // selects the export layout (empty = default version).
+    // Full import into db, atomic (one transaction). existingPlayers must
+    // reflect the current DB state (ids matching). progress(done, total) is
+    // called per processed row batch. fmVersionId selects the export layout
+    // (empty = default version).
+    //
+    // updatedPlayers (optional): on success receives the complete post-import
+    // player list — same content and order as a fresh Database::loadPlayers() —
+    // so the caller can skip a full reload. It may point to the very vector
+    // passed as existingPlayers (updated in place). Untouched on failure.
     static ImportResult importHtml(const QString &html, Database &db,
                                    const std::vector<Player> &existingPlayers,
                                    std::function<void(int, int)> progress = {},
                                    const QString &fmVersionId = QString(),
-                                   const std::function<void(int, int)> &parseProgress = {});
+                                   const std::function<void(int, int)> &parseProgress = {},
+                                   std::vector<Player> *updatedPlayers = nullptr);
 
-    // Convenience: reads the file (UTF-8, lenient) and calls importHtml.
+    // Reads the file (UTF-8, lenient) and imports it like importHtml; the
+    // decoded file is released right after parsing, before the DB work.
     static ImportResult importFile(const QString &filePath, Database &db,
                                    const std::vector<Player> &existingPlayers,
                                    std::function<void(int, int)> progress = {},
                                    const QString &fmVersionId = QString(),
-                                   const std::function<void(int, int)> &parseProgress = {});
+                                   const std::function<void(int, int)> &parseProgress = {},
+                                   std::vector<Player> *updatedPlayers = nullptr);
 
     // Manual, user-confirmed update of ONE player from an HTML export that
     // contains exactly one row. Writes the file's data onto targetUid
@@ -92,6 +100,14 @@ public:
     // Applies one HTML column value (full column name, e.g. "Acceleration",
     // "Transfer Value") to a player. Unknown columns are ignored.
     static void applyColumn(Player &player, const QString &fullColumnName, const QString &value);
+
+private:
+    // Shared import body once the table is extracted.
+    static ImportResult importTable(const HtmlTable &table, Database &db,
+                                    const std::vector<Player> &existingPlayers,
+                                    const std::function<void(int, int)> &progress,
+                                    const QString &fmVersionId,
+                                    std::vector<Player> *updatedPlayers);
 };
 
 } // namespace fm

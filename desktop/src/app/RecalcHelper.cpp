@@ -21,8 +21,13 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
     const QString dbFile = context.database().filePath();
     const QStringList validRoles = context.definitions().validRoles();
     const DwrsEngine *engine = &context.dwrsEngine();
-    std::vector<Player> players = context.store().players();
-    const QSet<QString> affected(affectedUids.cbegin(), affectedUids.cend());
+    // Copy only the affected players (often one), not the whole store.
+    std::vector<Player> players;
+    players.reserve(static_cast<size_t>(affectedUids.size()));
+    for (const QString &uid : affectedUids) {
+        if (const Player *player = context.store().findByUid(uid))
+            players.push_back(*player);
+    }
 
     auto *watcher = new QFutureWatcher<RatingsUpdater::Result>(parent);
     QObject::connect(watcher, &QFutureWatcher<RatingsUpdater::Result>::finished, parent,
@@ -37,7 +42,7 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                      });
 
     const QFuture<RatingsUpdater::Result> future = QtConcurrent::run(
-        [dbFile, players = std::move(players), engine, validRoles, affected,
+        [dbFile, players = std::move(players), engine, validRoles,
          dialogGuard = QPointer<BusyProgressDialog>(dialog)] {
             Database db(Database::uniqueConnectionName(QStringLiteral("recalc_helper")));
             if (!db.open(dbFile)) {
@@ -45,12 +50,10 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                 result.error = db.errorString();
                 return result;
             }
-            std::vector<int> subset;
-            subset.reserve(affected.size());
-            for (size_t i = 0; i < players.size(); ++i) {
-                if (affected.contains(players[i].uid))
-                    subset.push_back(static_cast<int>(i));
-            }
+            // Every copied player is affected: the whole (small) list is the subset.
+            std::vector<int> subset(players.size());
+            for (size_t i = 0; i < players.size(); ++i)
+                subset[i] = static_cast<int>(i);
             return RatingsUpdater::updateDwrsRatings(
                 db, players, *engine, validRoles, subset,
                 [dialogGuard](int current, int total) {

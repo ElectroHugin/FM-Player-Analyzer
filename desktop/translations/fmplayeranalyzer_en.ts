@@ -45,6 +45,144 @@
     </message>
 </context>
 <context>
+    <name>ImportRunner</name>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="30"/>
+        <source>Import wird vorbereitet…</source>
+        <translation>Preparing import…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="73"/>
+        <source>Backup wird erstellt…</source>
+        <translation>Creating backup…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="84"/>
+        <location filename="../src/app/ImportRunner.cpp" line="101"/>
+        <source>Datei wird analysiert…</source>
+        <translation>Analyzing file…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="92"/>
+        <source>Spieler werden importiert… (%1/%2)</source>
+        <translation>Importing players… (%1/%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="109"/>
+        <source>Rollen werden automatisch zugewiesen…</source>
+        <translation>Assigning roles automatically…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="126"/>
+        <location filename="../src/app/ImportRunner.cpp" line="131"/>
+        <source>DWRS-Bewertungen werden berechnet…</source>
+        <translation>Calculating DWRS ratings…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="142"/>
+        <source>%1 Spieler importiert (davon %2 neu).</source>
+        <translation>%1 players imported (%2 of them new).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="146"/>
+        <source>%1 Spielern wurden automatisch Rollen zugewiesen.</source>
+        <translation>Roles were assigned automatically to %1 players.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="149"/>
+        <source>DWRS: %1 Bewertungen berechnet, %2 geänderte Einträge gespeichert.</source>
+        <translation>DWRS: %1 ratings calculated, %2 changed entries saved.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="159"/>
+        <source>Backup fehlgeschlagen: %1</source>
+        <translation>Backup failed: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="161"/>
+        <source>%1 fehlerhafte Zeile(n) übersprungen (Zellenzahl passte nicht zur Kopfzeile). Exportiere die Datei ggf. neu aus FM.</source>
+        <translation>%1 malformed row(s) skipped (cell count did not match the header). Re-export the file from FM if needed.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="165"/>
+        <source>%1 Zeile(n) ohne UID übersprungen.</source>
+        <translation>%1 row(s) without UID skipped.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="168"/>
+        <source>Doppelte UIDs in der Datei — nur die letzte Zeile wurde übernommen: %1</source>
+        <translation>Duplicate UIDs in the file — only the last row was used: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="173"/>
+        <source>Unbekannte Spalten (werden ignoriert): %1</source>
+        <translation>Unknown columns (ignored): %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="176"/>
+        <source>ID/Namens-Konflikt übersprungen: %1. Eine numerische UID entspricht einer bekannten Newgen-ID, aber die Namen unterscheiden sich.</source>
+        <translation>ID/name conflict skipped: %1. A numeric UID matches a known newgen ID, but the names differ.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="182"/>
+        <source>Name unter bekannter UID geändert: %1. FM hat die ID evtl. an einen neuen Newgen vergeben — zugewiesene Rollen und DWRS-Historie gehören ggf. noch zum alten Spieler.</source>
+        <translation>Name changed under a known UID: %1. FM may have reissued the ID to a new newgen — assigned roles and DWRS history may still belong to the old player.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="188"/>
+        <source>Automatische Rollen-Zuweisung fehlgeschlagen: %1</source>
+        <translation>Automatic role assignment failed: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="191"/>
+        <source>DWRS-Berechnung fehlgeschlagen: %1</source>
+        <translation>DWRS calculation failed: %1</translation>
+    </message>
+</context>
+<context>
+    <name>PlayerActions</name>
+    <message>
+        <location filename="../src/app/PlayerActions.cpp" line="38"/>
+        <source>Spieler</source>
+        <translation>Player</translation>
+    </message>
+    <message>
+        <location filename="../src/app/PlayerActions.cpp" line="59"/>
+        <source>Shortlist</source>
+        <translation>Shortlist</translation>
+    </message>
+    <message>
+        <location filename="../src/app/PlayerActions.cpp" line="88"/>
+        <source>👤 Profil öffnen</source>
+        <translation>👤 Open profile</translation>
+    </message>
+    <message>
+        <location filename="../src/app/PlayerActions.cpp" line="91"/>
+        <source>⚖️ Zum Vergleich hinzufügen</source>
+        <translation>⚖️ Add to comparison</translation>
+    </message>
+    <message>
+        <location filename="../src/app/PlayerActions.cpp" line="95"/>
+        <source>✏️ Bearbeiten</source>
+        <translation>✏️ Edit</translation>
+    </message>
+    <message>
+        <location filename="../src/app/PlayerActions.cpp" line="101"/>
+        <source>Zum Verkauf anbieten</source>
+        <translation>Offer for sale</translation>
+    </message>
+    <message>
+        <location filename="../src/app/PlayerActions.cpp" line="111"/>
+        <source>Zum Verleih anbieten</source>
+        <translation>Offer for loan</translation>
+    </message>
+    <message>
+        <location filename="../src/app/PlayerActions.cpp" line="119"/>
+        <source>★ Auf der Shortlist</source>
+        <translation>★ On the shortlist</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../src/app/main.cpp" line="50"/>

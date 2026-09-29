@@ -64,7 +64,10 @@ Kurzfassung der Umsetzung:
 
 ---
 
-## ⚪ Offen: #22 — `dwrsHistory` baut unbegrenzte `IN (…)`-Klausel
+## ✅ #22 — `dwrsHistory` baut unbegrenzte `IN (…)`-Klausel — erledigt in v1.3.17
+
+> `Database::forEachIdChunk` (500er-Blöcke, sortiert → global geordnet), genutzt von
+> `dwrsHistory` und dem neuen `latestDwrsRatings(ids)`.
 
 - **Datei:** [src/core/Database.cpp](src/core/Database.cpp) `dwrsHistory`.
 - **Problem:** Bei sehr großen id-Listen theoretisch > Platzhalter-Limit
@@ -77,7 +80,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → **#31/#32**.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). Offen: #11-Rest, #29, #34–#38.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -246,7 +249,30 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 - **Vorschlag:** Geparste Strukturen in `load()`/`setRoot()` einmal aufbauen,
   Accessoren geben `const &` zurück. Größter bisher unerkannter Perf-Hebel.
 
-### #31 — Import schreibt/lädt unnötig viel
+### ✅ #31 — Import schreibt/lädt unnötig viel — erledigt in v1.3.17
+
+> **Umsetzung:** `upsertPlayers(…, RoleWrite::Keep)` im Import (Rollen nur bei
+> Merge-Übernahme via neuem `replacePlayerRoles`); Auto-Rollen schreiben nur Rollen.
+> Importer aktualisiert die Spielerliste in-place (`updatedPlayers`, gleiche
+> Reihenfolge wie `loadPlayers()`, inkl. ID-Wiederverwendung nach Merge) → kein
+> zweites Laden im Worker; die UI übernimmt sie per `AppContext::adoptPlayers`
+> statt Voll-Reload. HTML-String wird nach dem Parsen freigegeben. Pipeline liegt
+> jetzt UI-frei in `core/ImportPipeline` (App und `fmbench` nutzen denselben Code).
+> Zusätzlich gefunden: das DWRS-Schreiben war der größte Posten → mehrzeilige
+> INSERTs + `PRAGMA cache_size = 64 MB` (8,1 → 3,5 s allein durch den Cache).
+> **Gemessen** mit `fmbench <db> --import` (neu: Import-Modus auf einer Dateikopie),
+> Snapshot von bayern2026-2-0 (34.951 Spieler) + `Wrexham_Scouting.html` (11.121 Zeilen,
+> 7.757 neu, 164.631 DWRS-Zeilen geschrieben):
+>
+> | Phase | vorher | nachher |
+> |---|---|---|
+> | Worker gesamt | 19,2 s | 8,3 s |
+> | davon DWRS schreiben | 11,6 s | 3,7 s |
+> | davon Import-DB + Nachladen | ~2,7 s | 0,9 s |
+> | davon Auto-Rollen | 1,5 s | 0,8 s |
+> | UI-Thread (Freeze) nach Import | 1,9 s | 1,1 s |
+> Tests: `updatedPlayersMatchReload` (Feld-für-Feld + Reihenfolge vs. Reload),
+> `bulkRatingsAndChunkedReads`.
 
 - **Dateien:** [src/core/Database.cpp](src/core/Database.cpp) `upsertPlayers`,
   [src/app/ImportRunner.cpp](src/app/ImportRunner.cpp).
@@ -258,7 +284,11 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 - **Vorschlag:** Rollen nur bei Änderung schreiben (Flag/eigener Pfad),
   Worker-Reload auf betroffene Spieler begrenzen, Zeilen streamend verarbeiten.
 
-### #32 — Recalc-Pfade laden/kopieren zu viel
+### ✅ #32 — Recalc-Pfade laden/kopieren zu viel — erledigt in v1.3.17
+
+> Voll-Recalc endet mit `reloadRatings()`; `recalcDwrsFor` kopiert nur die
+> betroffenen Spieler; `RatingsUpdater` lädt bei einer Teilmenge nur deren
+> `dwrs_latest`-Zeilen (`latestDwrsRatings(ids)`) statt aller ~400k.
 
 - **Dateien:** [src/app/MainWindow.cpp](src/app/MainWindow.cpp) (Voll-Recalc-
   Finish), [src/app/RecalcHelper.cpp](src/app/RecalcHelper.cpp).
@@ -284,6 +314,14 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
   deutschem Excel nicht (`;` oder `sep=`-Zeile); `valueToFloat` kennt nur €
   (£/$ → Marktwert 0); `DwrsEngine::planFor` befüllt den Cache lazy für
   unbekannte Rollen (Race, falls parallel zu einem Worker).
+
+## ⚪ Offen: #38 — Verbleibende Import-Kosten (aus der Messung zu #31)
+
+- **HTML-Parser:** `HtmlImporter::extractTable` braucht ~2,3 s für 11 MB
+  (~670k Zellen, je QString + Entity-Decoding). Vorschlag: auf `QStringView`
+  arbeiten, Zellen erst beim Anwenden materialisieren.
+- **UI-Übernahme ~1,1 s:** Großteil ist `latestDwrsRatings()` (~580k Zeilen) für den
+  Rating-Cache — gehört zum Rest von **#11** (gezielt patchen statt neu aufbauen).
 
 ## ⚪ Testlücken
 

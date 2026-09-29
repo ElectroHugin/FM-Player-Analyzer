@@ -7,8 +7,13 @@
 #include <QSqlDatabase>
 #include <QString>
 #include <QStringList>
+#include <QVariantList>
 
+#include <functional>
+#include <utility>
 #include <vector>
+
+class QSqlQuery;
 
 namespace fm {
 
@@ -63,9 +68,20 @@ public:
     // --- Players ---
     std::vector<Player> loadPlayers();
 
+    // What upsertPlayers does with the player_roles junction table.
+    enum class RoleWrite {
+        Replace, // rewrite each player's roles from Player::assignedRoles
+        Keep,    // leave player_roles untouched (caller guarantees roles are unchanged,
+                 // e.g. an FM import, which never alters assigned roles)
+    };
+
     // Inserts new players (id == 0) and updates existing ones (id != 0), in
     // one transaction. Assigns fresh ids to inserted players.
-    bool upsertPlayers(std::vector<Player> &players);
+    bool upsertPlayers(std::vector<Player> &players, RoleWrite roles = RoleWrite::Replace);
+
+    // Rewrites only the assigned roles of the given players (id -> roles), in one
+    // transaction — far cheaper than a full upsert when nothing else changed.
+    bool replacePlayerRoles(const std::vector<std::pair<int, QStringList>> &rolesById);
 
     bool deletePlayers(const QList<int> &playerIds);
 
@@ -81,6 +97,8 @@ public:
     // --- DWRS history ---
     bool appendDwrsRatings(const std::vector<DwrsEntry> &entries);
     LatestRatings latestDwrsRatings();
+    // Latest ratings of just these players (queried in id chunks).
+    LatestRatings latestDwrsRatings(const QList<int> &playerIds);
     // Full history for a set of players (optionally one role), ordered by
     // player, role, timestamp.
     std::vector<DwrsEntry> dwrsHistory(const QList<int> &playerIds,
@@ -117,6 +135,12 @@ private:
     bool migrateV3ToV4();                 // add training_roles table
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     bool exec(const QString &sql);
+    // Runs `sqlTemplate` (with one "%1" for a "?,?,…" id placeholder list) for
+    // the ids in chunks, keeping every statement below SQLite's bound-variable
+    // limit; onRow is called for each result row.
+    bool forEachIdChunk(const QList<int> &ids, const QString &sqlTemplate,
+                        const QVariantList &trailingBinds,
+                        const std::function<void(const QSqlQuery &)> &onRow);
 
     QSqlDatabase m_db;
     QString m_connectionName;

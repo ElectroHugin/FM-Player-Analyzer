@@ -479,6 +479,92 @@ private slots:
                  (QSet<QString>{QStringLiteral("WL-S")}));
     }
 
+    void updatedPlayersMatchReload()
+    {
+        // Backlog #31: the pipeline adopts the importer's in-memory result
+        // instead of reloading. It must equal a fresh loadPlayers() exactly —
+        // content AND order — across every ID-unification path.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("import_test_inplace"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+
+        const auto seedPlayer = [](const QString &uid, const QString &name,
+                                   const QStringList &roles) {
+            Player p;
+            p.uid = uid;
+            p.name = name;
+            p.assignedRoles = roles;
+            return p;
+        };
+        std::vector<Player> seed{
+            seedPlayer(QStringLiteral("1001"), QStringLiteral("Keeps Roles"),
+                       {QStringLiteral("W-S")}),
+            seedPlayer(QStringLiteral("2000"), QStringLiteral("Not In File"), {}),
+            // Scenario 1 merge: r-77 (no roles) absorbs numeric 77 (has roles).
+            seedPlayer(QStringLiteral("r-77"), QStringLiteral("Regen A"), {}),
+            seedPlayer(QStringLiteral("77"), QStringLiteral("Regen A"), {QStringLiteral("CM-S")}),
+            // Scenario 2 rename: numeric 99, file brings r-99.
+            seedPlayer(QStringLiteral("99"), QStringLiteral("Regen B"), {}),
+            // Scenario 2 merge; the merged-away row has the HIGHEST id, so a new
+            // row reuses it — the in-memory order must still match the DB.
+            seedPlayer(QStringLiteral("r-55"), QStringLiteral("Regen C"), {}),
+            seedPlayer(QStringLiteral("55"), QStringLiteral("Regen C"), {}),
+        };
+        QVERIFY(db.upsertPlayers(seed));
+        QVERIFY(db.setNationalSquadIds({seed[0].id}));
+        QVERIFY(db.setShortlistIds({seed[2].id}));
+        QVERIFY(db.setTrainingRole(seed[0].id, QStringLiteral("W-S")));
+
+        const QString html = htmlExport({
+            playerRow(QStringLiteral("1001"), QStringLiteral("Keeps Roles"),
+                      QStringLiteral("23"), QStringLiteral("FC A")),
+            playerRow(QStringLiteral("77"), QStringLiteral("Regen A"), QStringLiteral("19"),
+                      QStringLiteral("FC B")),
+            playerRow(QStringLiteral("r-99"), QStringLiteral("Regen B"), QStringLiteral("20"),
+                      QStringLiteral("FC C")),
+            playerRow(QStringLiteral("r-55"), QStringLiteral("Regen C"), QStringLiteral("18"),
+                      QStringLiteral("FC D")),
+            playerRow(QStringLiteral("5000"), QStringLiteral("New One"), QStringLiteral("24"),
+                      QStringLiteral("FC E")),
+            playerRow(QStringLiteral("5001"), QStringLiteral("New Two"), QStringLiteral("25"),
+                      QStringLiteral("FC E")),
+        });
+        std::vector<Player> players = db.loadPlayers();
+        const ImportResult result =
+            HtmlImporter::importHtml(html, db, players, {}, {}, {}, &players);
+        QVERIFY2(result.success, qPrintable(result.error));
+
+        const std::vector<Player> reloaded = db.loadPlayers();
+        QCOMPARE(players.size(), reloaded.size());
+        for (size_t i = 0; i < players.size(); ++i) {
+            const Player &a = players[i];
+            const Player &b = reloaded[i];
+            const QByteArray where = QStringLiteral("row %1 (%2)").arg(i).arg(b.uid).toUtf8();
+            QVERIFY2(a.id == b.id && a.uid == b.uid, where.constData());
+            QVERIFY2(a.name == b.name && a.age == b.age && a.club == b.club, where.constData());
+            QVERIFY2(a.positionRaw == b.positionRaw && a.personality == b.personality,
+                     where.constData());
+            QVERIFY2(a.transferValueRaw == b.transferValueRaw
+                         && a.transferValue == b.transferValue && a.heightCm == b.heightCm,
+                     where.constData());
+            QVERIFY2(a.attrLo == b.attrLo && a.attrHi == b.attrHi, where.constData());
+            QVERIFY2(a.assignedRoles == b.assignedRoles, where.constData());
+            QVERIFY2(a.lastSeenUpdate == b.lastSeenUpdate, where.constData());
+            QVERIFY2(a.inNationalSquad == b.inNationalSquad && a.onShortlist == b.onShortlist
+                         && a.trainingRole == b.trainingRole,
+                     where.constData());
+        }
+        for (const Player &p : reloaded) {
+            // The merged roles really reached the database.
+            if (p.uid == QStringLiteral("r-77"))
+                QCOMPARE(p.assignedRoles, QStringList{QStringLiteral("CM-S")});
+            // The id-reuse case actually happened (first new row got the
+            // merged-away row's id).
+            if (p.uid == QStringLiteral("5000"))
+                QCOMPARE(p.id, seed[6].id);
+        }
+    }
+
     void failedImportRollsBackEverything()
     {
         // Backlog #27: a failure in the SECOND upsert batch used to leave the

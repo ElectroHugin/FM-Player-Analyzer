@@ -199,7 +199,8 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
                                      .arg(result.computed)
                                      .arg(result.inserted),
                                  10000);
-        m_context.reloadFromDatabase();
+        // A recalc only writes ratings; the players are unchanged.
+        m_context.reloadRatings();
     });
 
     navigateTo(QStringLiteral("dashboard"));

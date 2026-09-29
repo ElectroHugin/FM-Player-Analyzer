@@ -10,6 +10,9 @@
 #include <QHash>
 #include <QSet>
 
+#include <algorithm>
+#include <iterator>
+
 namespace fm {
 
 namespace {
@@ -285,7 +288,24 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
                                       const std::vector<Player> &existingPlayers,
                                       std::function<void(int, int)> progress,
                                       const QString &fmVersionId,
-                                      const std::function<void(int, int)> &parseProgress)
+                                      const std::function<void(int, int)> &parseProgress,
+                                      std::vector<Player> *updatedPlayers)
+{
+    HtmlTable table;
+    QString parseError;
+    if (!extractTable(html, &table, &parseError, parseProgress)) {
+        ImportResult result;
+        result.error = parseError;
+        return result;
+    }
+    return importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers);
+}
+
+ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
+                                       const std::vector<Player> &existingPlayers,
+                                       const std::function<void(int, int)> &progress,
+                                       const QString &fmVersionId,
+                                       std::vector<Player> *updatedPlayers)
 {
     ImportResult result;
     const QHash<QString, QString> &mapping = attributeMapping(fmVersionId);
@@ -295,12 +315,6 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
     const int newCounter =
         db.setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt() + 1;
 
-    HtmlTable table;
-    QString parseError;
-    if (!extractTable(html, &table, &parseError, parseProgress)) {
-        result.error = parseError;
-        return result;
-    }
     if (table.headers.size() < 10) {
         result.error = QStringLiteral("Too few columns (%1), expected at least 10.")
                            .arg(table.headers.size());
@@ -405,6 +419,7 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
 
     // uid -> merged-away duplicate whose app-managed data must be folded in.
     QHash<QString, Player> mergedSources;
+    QList<int> removedIds; // ids of the merged-away duplicates (deleted rows)
 
     // Everything from here on — ID unification, every player batch and the
     // upload counter — is ONE transaction: an error anywhere (early return)
@@ -449,6 +464,7 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
                                 return result;
                             }
                             mergedSources.insert(candidate, existingPlayers[badIdx]);
+                            removedIds << existingPlayers[badIdx].id;
                             existingByUid.remove(numericUid);
                             numericIdToName.remove(numericUid);
                         }
@@ -475,6 +491,7 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
                             return result;
                         }
                         mergedSources.insert(ref.uid, existingPlayers[badIdx]);
+                        removedIds << existingPlayers[badIdx].id;
                     } else {
                         // No r-record yet: rename keeps history and every
                         // app-managed column intact.
@@ -507,15 +524,21 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
     int done = 0;
     std::vector<Player> batch;
     batch.reserve(kUpsertBatchSize);
+    std::vector<Player> written; // final rows (with ids), only if updatedPlayers
+    // Roles filled in from a merged-away duplicate — the only way an import
+    // changes assigned roles; everything else keeps player_roles untouched.
+    std::vector<std::pair<int, QStringList>> mergedRoles;
 
     const auto flush = [&]() -> bool {
         if (batch.empty())
             return true;
-        if (!db.upsertPlayers(batch)) {
+        if (!db.upsertPlayers(batch, Database::RoleWrite::Keep)) {
             result.error = db.errorString();
             return false;
         }
         result.playersImported += static_cast<int>(batch.size());
+        if (updatedPlayers)
+            std::move(batch.begin(), batch.end(), std::back_inserter(written));
         batch.clear();
         if (progress)
             progress(done, total);
@@ -534,8 +557,12 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
             ++result.newPlayers;
         }
         const auto mergedIt = mergedSources.constFind(ref.uid);
-        if (mergedIt != mergedSources.constEnd())
+        if (mergedIt != mergedSources.constEnd()) {
+            const QStringList rolesBefore = player.assignedRoles;
             mergeAppManaged(player, mergedIt.value());
+            if (player.assignedRoles != rolesBefore)
+                mergedRoles.push_back({player.id, player.assignedRoles});
+        }
 
         player.uid = ref.uid;
         player.lastSeenUpdate = newCounter; // present in this upload → fresh
@@ -552,6 +579,10 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
     }
     if (!flush())
         return result;
+    if (!db.replacePlayerRoles(mergedRoles)) {
+        result.error = db.errorString();
+        return result;
+    }
 
     // The bumped counter is part of the same transaction, so a failed import
     // never advances the freshness clock.
@@ -561,8 +592,35 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
         return result;
     }
     result.updateCounter = newCounter;
-
     result.success = true;
+
+    if (updatedPlayers) {
+        // Bring the caller's list to the post-import DB state without a full
+        // reload. existingPlayers may alias *updatedPlayers; it is no longer
+        // read from here on. Order mirrors Database::loadPlayers() (rowid order):
+        // updated rows keep their position, new rows (ascending fresh ids) are
+        // appended. Merged-away rows go first — a new row may reuse their id.
+        std::vector<Player> &players = *updatedPlayers;
+        if (!removedIds.isEmpty()) {
+            const QSet<int> removed(removedIds.cbegin(), removedIds.cend());
+            players.erase(std::remove_if(players.begin(), players.end(),
+                                         [&removed](const Player &p) {
+                                             return removed.contains(p.id);
+                                         }),
+                          players.end());
+        }
+        QHash<int, size_t> rowById;
+        rowById.reserve(static_cast<int>(players.size()));
+        for (size_t i = 0; i < players.size(); ++i)
+            rowById.insert(players[i].id, i);
+        for (Player &player : written) {
+            const auto it = rowById.constFind(player.id);
+            if (it != rowById.constEnd())
+                players[it.value()] = std::move(player);
+            else
+                players.push_back(std::move(player));
+        }
+    }
     return result;
 }
 
@@ -570,16 +628,28 @@ ImportResult HtmlImporter::importFile(const QString &filePath, Database &db,
                                       const std::vector<Player> &existingPlayers,
                                       std::function<void(int, int)> progress,
                                       const QString &fmVersionId,
-                                      const std::function<void(int, int)> &parseProgress)
+                                      const std::function<void(int, int)> &parseProgress,
+                                      std::vector<Player> *updatedPlayers)
 {
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        ImportResult result;
-        result.error = QStringLiteral("Could not open file: %1").arg(file.errorString());
-        return result;
+    HtmlTable table;
+    {
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly)) {
+            ImportResult result;
+            result.error = QStringLiteral("Could not open file: %1").arg(file.errorString());
+            return result;
+        }
+        // The decoded file (2 bytes per char) is only needed for parsing; it is
+        // released at the end of this scope, before the database work starts.
+        const QString html = QString::fromUtf8(file.readAll());
+        QString parseError;
+        if (!extractTable(html, &table, &parseError, parseProgress)) {
+            ImportResult result;
+            result.error = parseError;
+            return result;
+        }
     }
-    const QString html = QString::fromUtf8(file.readAll());
-    return importHtml(html, db, existingPlayers, std::move(progress), fmVersionId, parseProgress);
+    return importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers);
 }
 
 QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,

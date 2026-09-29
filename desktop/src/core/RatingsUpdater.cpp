@@ -31,7 +31,18 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
         return result;
     }
 
-    const LatestRatings latest = db.latestDwrsRatings();
+    // The 1% gate compares against the stored latest rating. For a subset only
+    // those players' rows are needed — not the whole table (~400k rows).
+    LatestRatings latest;
+    if (playersSubset.empty()) {
+        latest = db.latestDwrsRatings();
+    } else {
+        QList<int> ids;
+        ids.reserve(static_cast<int>(rows.size()));
+        for (const int row : rows)
+            ids << players[row].id;
+        latest = db.latestDwrsRatings(ids);
+    }
     const QString timestamp =
         QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
 

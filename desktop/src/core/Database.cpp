@@ -163,6 +163,10 @@ bool Database::initSchema()
     exec(QStringLiteral("PRAGMA journal_mode = WAL"));
     exec(QStringLiteral("PRAGMA synchronous = NORMAL"));
     exec(QStringLiteral("PRAGMA foreign_keys = ON"));
+    // 64 MB page cache per connection (SQLite default: ~2 MB). Large imports
+    // and recalcs insert 100k+ rows into indexes of a 100+ MB database; with
+    // the default cache most of those b-tree pages are re-read from disk.
+    exec(QStringLiteral("PRAGMA cache_size = -65536"));
 
     QSqlQuery versionQuery(m_db);
     versionQuery.exec(QStringLiteral("PRAGMA user_version"));
@@ -431,7 +435,7 @@ std::vector<Player> Database::loadPlayers()
     return players;
 }
 
-bool Database::upsertPlayers(std::vector<Player> &players)
+bool Database::upsertPlayers(std::vector<Player> &players, RoleWrite roles)
 {
     if (players.empty())
         return true;
@@ -537,6 +541,8 @@ bool Database::upsertPlayers(std::vector<Player> &players)
             p.id = idQuery.value(0).toInt();
         }
 
+        if (roles == RoleWrite::Keep)
+            continue;
         deleteRoles.bindValue(0, p.id);
         if (!deleteRoles.exec()) {
             m_error = deleteRoles.lastError().text();
@@ -643,51 +649,158 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     return commitTransaction();
 }
 
+bool Database::replacePlayerRoles(const std::vector<std::pair<int, QStringList>> &rolesById)
+{
+    if (rolesById.empty())
+        return true;
+    if (!beginTransaction())
+        return false;
+    QSqlQuery deleteRoles(m_db);
+    deleteRoles.prepare(QStringLiteral("DELETE FROM player_roles WHERE player_id = ?"));
+    QSqlQuery insertRole(m_db);
+    insertRole.prepare(
+        QStringLiteral("INSERT OR IGNORE INTO player_roles (player_id, role) VALUES (?, ?)"));
+    for (const auto &[playerId, roles] : rolesById) {
+        deleteRoles.bindValue(0, playerId);
+        if (!deleteRoles.exec()) {
+            m_error = deleteRoles.lastError().text();
+            rollbackTransaction();
+            return false;
+        }
+        for (const QString &role : roles) {
+            insertRole.bindValue(0, playerId);
+            insertRole.bindValue(1, role);
+            if (!insertRole.exec()) {
+                m_error = insertRole.lastError().text();
+                rollbackTransaction();
+                return false;
+            }
+        }
+    }
+    return commitTransaction();
+}
+
 bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries)
 {
     if (entries.empty())
         return true;
     if (!beginTransaction())
         return false;
-    QSqlQuery query(m_db);
-    query.prepare(QStringLiteral(
-        "INSERT OR REPLACE INTO dwrs_history (player_id, role, absolute, normalized, ts) "
-        "VALUES (?, ?, ?, ?, ?)"));
 
+    // Multi-row statements: one exec per chunk instead of two per rating. The
+    // per-exec overhead of QSqlQuery dominated a big recalc (~160k ratings took
+    // >10 s); the SQL work itself is unchanged. 5 binds per row keeps a chunk
+    // far below SQLite's bound-variable limit.
+    constexpr int kChunkRows = 200;
+    const auto rowsSql = [](int rows) {
+        QStringList values;
+        values.reserve(rows);
+        for (int i = 0; i < rows; ++i)
+            values << QStringLiteral("(?, ?, ?, ?, ?)");
+        return values.join(QStringLiteral(", "));
+    };
+    const auto historySql = [&](int rows) {
+        return QStringLiteral("INSERT OR REPLACE INTO dwrs_history "
+                              "(player_id, role, absolute, normalized, ts) VALUES ")
+               + rowsSql(rows);
+    };
     // Keep the materialized latest table in sync: overwrite the (player, role)
-    // row only when this entry is at least as new as the stored one, so an
-    // out-of-order append can never make dwrs_latest go backwards.
-    QSqlQuery latest(m_db);
-    latest.prepare(QStringLiteral(
-        "INSERT INTO dwrs_latest (player_id, role, absolute, normalized, ts) "
-        "VALUES (?, ?, ?, ?, ?) "
-        "ON CONFLICT(player_id, role) DO UPDATE SET "
-        "  absolute = excluded.absolute, normalized = excluded.normalized, ts = excluded.ts "
-        "WHERE excluded.ts >= dwrs_latest.ts"));
+    // row only when the entry is at least as new as the stored one, so an
+    // out-of-order append can never make dwrs_latest go backwards. Rows of one
+    // statement are applied in order, exactly like the former per-row upsert.
+    const auto latestSql = [&](int rows) {
+        return QStringLiteral("INSERT INTO dwrs_latest "
+                              "(player_id, role, absolute, normalized, ts) VALUES ")
+               + rowsSql(rows)
+               + QStringLiteral(" ON CONFLICT(player_id, role) DO UPDATE SET "
+                                "  absolute = excluded.absolute, "
+                                "  normalized = excluded.normalized, ts = excluded.ts "
+                                "WHERE excluded.ts >= dwrs_latest.ts");
+    };
 
-    for (const DwrsEntry &entry : entries) {
-        query.bindValue(0, entry.playerId);
-        query.bindValue(1, entry.role);
-        query.bindValue(2, entry.absolute);
-        query.bindValue(3, entry.normalized);
-        query.bindValue(4, entry.timestamp);
-        if (!query.exec()) {
-            m_error = query.lastError().text();
-            rollbackTransaction();
-            return false;
+    QSqlQuery fullHistory(m_db), fullLatest(m_db);
+    fullHistory.prepare(historySql(kChunkRows));
+    fullLatest.prepare(latestSql(kChunkRows));
+
+    const int total = static_cast<int>(entries.size());
+    for (int start = 0; start < total; start += kChunkRows) {
+        const int rows = std::min(kChunkRows, total - start);
+        QSqlQuery partialHistory(m_db), partialLatest(m_db);
+        if (rows != kChunkRows) {
+            partialHistory.prepare(historySql(rows));
+            partialLatest.prepare(latestSql(rows));
         }
-        latest.bindValue(0, entry.playerId);
-        latest.bindValue(1, entry.role);
-        latest.bindValue(2, entry.absolute);
-        latest.bindValue(3, entry.normalized);
-        latest.bindValue(4, entry.timestamp);
-        if (!latest.exec()) {
-            m_error = latest.lastError().text();
-            rollbackTransaction();
-            return false;
+        QSqlQuery &history = rows == kChunkRows ? fullHistory : partialHistory;
+        QSqlQuery &latest = rows == kChunkRows ? fullLatest : partialLatest;
+        for (QSqlQuery *statement : {&history, &latest}) {
+            int bind = 0;
+            for (int r = start; r < start + rows; ++r) {
+                const DwrsEntry &entry = entries[static_cast<size_t>(r)];
+                statement->bindValue(bind++, entry.playerId);
+                statement->bindValue(bind++, entry.role);
+                statement->bindValue(bind++, entry.absolute);
+                statement->bindValue(bind++, entry.normalized);
+                statement->bindValue(bind++, entry.timestamp);
+            }
+            if (!statement->exec()) {
+                m_error = statement->lastError().text();
+                rollbackTransaction();
+                return false;
+            }
         }
     }
     return commitTransaction();
+}
+
+bool Database::forEachIdChunk(const QList<int> &ids, const QString &sqlTemplate,
+                              const QVariantList &trailingBinds,
+                              const std::function<void(const QSqlQuery &)> &onRow)
+{
+    // Sorted + unique, so per-chunk "ORDER BY player_id, …" results concatenate
+    // into one globally ordered result.
+    QList<int> sorted = ids;
+    std::sort(sorted.begin(), sorted.end());
+    sorted.erase(std::unique(sorted.begin(), sorted.end()), sorted.end());
+
+    constexpr int kChunkIds = 500;
+    for (int start = 0; start < sorted.size(); start += kChunkIds) {
+        const int count = std::min(kChunkIds, static_cast<int>(sorted.size()) - start);
+        QStringList placeholders;
+        placeholders.reserve(count);
+        for (int i = 0; i < count; ++i)
+            placeholders << QStringLiteral("?");
+        QSqlQuery query(m_db);
+        query.setForwardOnly(true);
+        if (!query.prepare(sqlTemplate.arg(placeholders.join(QLatin1Char(','))))) {
+            m_error = query.lastError().text();
+            return false;
+        }
+        int bind = 0;
+        for (int i = start; i < start + count; ++i)
+            query.bindValue(bind++, sorted.at(i));
+        for (const QVariant &value : trailingBinds)
+            query.bindValue(bind++, value);
+        if (!query.exec()) {
+            m_error = query.lastError().text();
+            return false;
+        }
+        while (query.next())
+            onRow(query);
+    }
+    return true;
+}
+
+LatestRatings Database::latestDwrsRatings(const QList<int> &playerIds)
+{
+    LatestRatings result;
+    forEachIdChunk(playerIds,
+                   QStringLiteral("SELECT player_id, role, absolute, normalized "
+                                  "FROM dwrs_latest WHERE player_id IN (%1)"),
+                   {}, [&result](const QSqlQuery &query) {
+                       result.insert({query.value(0).toInt(), query.value(1).toString()},
+                                     {query.value(2).toDouble(), query.value(3).toDouble()});
+                   });
+    return result;
 }
 
 LatestRatings Database::latestDwrsRatings()
@@ -711,36 +824,25 @@ std::vector<DwrsEntry> Database::dwrsHistory(const QList<int> &playerIds, const 
     if (playerIds.isEmpty())
         return result;
 
-    QStringList placeholders;
-    for (int i = 0; i < playerIds.size(); ++i)
-        placeholders << QStringLiteral("?");
-
+    // Chunked IN (…) lists: an unbounded list could exceed SQLite's
+    // bound-variable limit for very large id sets.
+    const bool oneRole = !role.isEmpty() && role != QLatin1String("All Roles");
     QString sql = QStringLiteral("SELECT player_id, role, absolute, normalized, ts "
-                                 "FROM dwrs_history WHERE player_id IN (%1)")
-                      .arg(placeholders.join(QLatin1Char(',')));
-    if (!role.isEmpty() && role != QLatin1String("All Roles"))
+                                 "FROM dwrs_history WHERE player_id IN (%1)");
+    if (oneRole)
         sql += QStringLiteral(" AND role = ?");
     sql += QStringLiteral(" ORDER BY player_id, role, ts");
 
-    QSqlQuery query(m_db);
-    query.setForwardOnly(true);
-    query.prepare(sql);
-    int bindIndex = 0;
-    for (const int id : playerIds)
-        query.bindValue(bindIndex++, id);
-    if (!role.isEmpty() && role != QLatin1String("All Roles"))
-        query.bindValue(bindIndex, role);
-    query.exec();
-
-    while (query.next()) {
-        DwrsEntry entry;
-        entry.playerId = query.value(0).toInt();
-        entry.role = query.value(1).toString();
-        entry.absolute = query.value(2).toDouble();
-        entry.normalized = query.value(3).toDouble();
-        entry.timestamp = query.value(4).toString();
-        result.push_back(std::move(entry));
-    }
+    forEachIdChunk(playerIds, sql, oneRole ? QVariantList{role} : QVariantList{},
+                   [&result](const QSqlQuery &query) {
+                       DwrsEntry entry;
+                       entry.playerId = query.value(0).toInt();
+                       entry.role = query.value(1).toString();
+                       entry.absolute = query.value(2).toDouble();
+                       entry.normalized = query.value(3).toDouble();
+                       entry.timestamp = query.value(4).toString();
+                       result.push_back(std::move(entry));
+                   });
     return result;
 }
 

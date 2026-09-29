@@ -67,11 +67,12 @@ QStringList autoAssignMissingRoles(Database &db, std::vector<Player> &players,
     if (changed.empty())
         return {};
 
-    std::vector<Player> batch;
-    batch.reserve(changed.size());
+    // Only the roles changed: write just those instead of full player rows.
+    std::vector<std::pair<int, QStringList>> rolesById;
+    rolesById.reserve(changed.size());
     for (const auto &[p, oldRoles] : changed)
-        batch.push_back(*p);
-    if (!db.upsertPlayers(batch)) {
+        rolesById.push_back({p->id, p->assignedRoles});
+    if (!db.replacePlayerRoles(rolesById)) {
         if (errorOut)
             *errorOut = db.errorString();
         // Roll the in-memory change back so store and DB stay consistent.

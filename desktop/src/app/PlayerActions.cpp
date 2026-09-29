@@ -16,10 +16,11 @@ namespace PlayerActions {
 
 namespace {
 
-QString trActions(const char *text)
-{
-    return QCoreApplication::translate("PlayerActions", text);
-}
+// Translation context "PlayerActions" (see ImportRunner.cpp: a const char*
+// helper hid the strings from lupdate).
+struct ActionText {
+    Q_DECLARE_TR_FUNCTIONS(PlayerActions)
+};
 
 // Persists a single mutated store player; rolls back and reports on failure.
 template <typename Mutator>
@@ -34,7 +35,7 @@ void togglePlayerFlag(AppContext &context, QWidget *parent, const QString &uid,
     std::vector<Player> batch{player};
     if (!context.database().upsertPlayers(batch)) {
         mutate(player); // toggle back
-        QMessageBox::critical(parent, trActions("Spieler"),
+        QMessageBox::critical(parent, ActionText::tr("Spieler"),
                               context.database().errorString());
         return;
     }
@@ -55,7 +56,7 @@ void toggleShortlist(AppContext &context, QWidget *parent, const QString &uid)
     }
     if (!context.database().setShortlistIds(ids)) {
         player.onShortlist = !player.onShortlist;
-        QMessageBox::critical(parent, trActions("Shortlist"),
+        QMessageBox::critical(parent, ActionText::tr("Shortlist"),
                               context.database().errorString());
         return;
     }
@@ -84,20 +85,20 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
     title->setEnabled(false);
     menu.addSeparator();
 
-    menu.addAction(trActions("👤 Profil öffnen"), [&context, uid] {
+    menu.addAction(ActionText::tr("👤 Profil öffnen"), [&context, uid] {
         openProfile(context, uid);
     });
-    menu.addAction(trActions("⚖️ Zum Vergleich hinzufügen"), [&context, uid] {
+    menu.addAction(ActionText::tr("⚖️ Zum Vergleich hinzufügen"), [&context, uid] {
         context.addPendingComparisonUid(uid);
         context.requestNavigation(QStringLiteral("player_comparison"));
     });
-    menu.addAction(trActions("✏️ Bearbeiten"), [&context, uid] {
+    menu.addAction(ActionText::tr("✏️ Bearbeiten"), [&context, uid] {
         context.setPendingEditUid(uid);
         context.requestNavigation(QStringLiteral("edit_player"));
     });
     menu.addSeparator();
 
-    auto *transferAction = menu.addAction(trActions("Zum Verkauf anbieten"));
+    auto *transferAction = menu.addAction(ActionText::tr("Zum Verkauf anbieten"));
     transferAction->setCheckable(true);
     transferAction->setChecked(player->transferStatus);
     QObject::connect(transferAction, &QAction::triggered, parent,
@@ -107,7 +108,7 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
                          });
                      });
 
-    auto *loanAction = menu.addAction(trActions("Zum Verleih anbieten"));
+    auto *loanAction = menu.addAction(ActionText::tr("Zum Verleih anbieten"));
     loanAction->setCheckable(true);
     loanAction->setChecked(player->loanStatus);
     QObject::connect(loanAction, &QAction::triggered, parent, [&context, parent, uid] {
@@ -115,7 +116,7 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
                          [](Player &p) { p.loanStatus = !p.loanStatus; });
     });
 
-    auto *shortlistAction = menu.addAction(trActions("★ Auf der Shortlist"));
+    auto *shortlistAction = menu.addAction(ActionText::tr("★ Auf der Shortlist"));
     shortlistAction->setCheckable(true);
     shortlistAction->setChecked(player->onShortlist);
     QObject::connect(shortlistAction, &QAction::triggered, parent,

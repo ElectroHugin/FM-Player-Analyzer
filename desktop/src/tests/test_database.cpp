@@ -18,6 +18,66 @@ private slots:
     // Regression for the WAL backup bug: a freshly committed player lives in the
     // -wal sidecar, not yet in the main .db file. createBackup must capture it
     // (VACUUM INTO), which a plain file copy of the .db would not.
+    void bulkRatingsAndChunkedReads()
+    {
+        // Backlog #31/#32/#22: multi-row rating writes across chunk boundaries,
+        // role-only writes, and id-chunked reads beyond 500 ids.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("bulk_test"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+
+        std::vector<Player> players(620);
+        for (int i = 0; i < 620; ++i) {
+            players[i].uid = QString::number(i + 1);
+            players[i].name = players[i].uid;
+            players[i].assignedRoles = {QStringLiteral("CM-S")};
+        }
+        QVERIFY(db.upsertPlayers(players));
+
+        // 620 rows at ts B (spans 4 chunks incl. a partial one) ...
+        const QString tsA = QStringLiteral("2026-01-01 10:00:00");
+        const QString tsB = QStringLiteral("2026-02-01 10:00:00");
+        std::vector<DwrsEntry> newer;
+        for (const Player &p : players)
+            newer.push_back({p.id, QStringLiteral("CM-S"), 1.0, 70.0, tsB});
+        QVERIFY(db.appendDwrsRatings(newer));
+        // ... then an OLDER append must not move dwrs_latest backwards, while
+        // the history keeps both rows.
+        std::vector<DwrsEntry> older;
+        for (const Player &p : players)
+            older.push_back({p.id, QStringLiteral("CM-S"), 1.0, 50.0, tsA});
+        QVERIFY(db.appendDwrsRatings(older));
+
+        QList<int> ids;
+        for (const Player &p : players)
+            ids << p.id;
+        const LatestRatings all = db.latestDwrsRatings();
+        const LatestRatings some = db.latestDwrsRatings(ids); // > 500 ids -> chunked
+        QCOMPARE(all.size(), 620);
+        QCOMPARE(some.size(), 620);
+        for (const int id : ids)
+            QCOMPARE(some.value({id, QStringLiteral("CM-S")}).second, 70.0);
+
+        const auto history = db.dwrsHistory(ids);
+        QCOMPARE(static_cast<int>(history.size()), 1240);
+        for (size_t i = 1; i < history.size(); ++i) { // globally ordered across chunks
+            QVERIFY(history[i - 1].playerId < history[i].playerId
+                    || (history[i - 1].playerId == history[i].playerId
+                        && history[i - 1].timestamp <= history[i].timestamp));
+        }
+
+        // Role-only write and a role-preserving upsert.
+        QVERIFY(db.replacePlayerRoles({{players[0].id, {QStringLiteral("AP-S")}}}));
+        players[1].assignedRoles.clear(); // must NOT reach the DB with RoleWrite::Keep
+        players[1].age = 30;
+        std::vector<Player> update{players[1]};
+        QVERIFY(db.upsertPlayers(update, Database::RoleWrite::Keep));
+        const auto reloaded = db.loadPlayers();
+        QCOMPARE(reloaded[0].assignedRoles, QStringList{QStringLiteral("AP-S")});
+        QCOMPARE(reloaded[1].assignedRoles, QStringList{QStringLiteral("CM-S")});
+        QCOMPARE(reloaded[1].age, 30);
+    }
+
     void nestedTransactions()
     {
         // Backlog #27: write methods nest as savepoints inside an outer
