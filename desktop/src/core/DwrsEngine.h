@@ -71,7 +71,10 @@ private:
     };
 
     RolePlan buildPlan(const QString &role) const;
-    const RolePlan &planFor(const QString &role) const;
+    // Cached plan, or a freshly built one for a role outside validRoles(). By
+    // value: the cache is never written outside reloadConfig(), so worker
+    // threads can read it while the UI thread computes ad-hoc roles.
+    RolePlan planFor(const QString &role) const;
 
     const Definitions &m_definitions;
     const AppConfig &m_config;
@@ -82,7 +85,7 @@ private:
     double m_prefMult = 1.2;
     QSet<QString> m_gkRoles;
 
-    mutable QHash<QString, RolePlan> m_planCache;
+    QHash<QString, RolePlan> m_planCache; // filled only in reloadConfig()
 };
 
 } // namespace fm

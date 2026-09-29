@@ -2,6 +2,7 @@
 
 #include <QColor>
 #include <QDateTime>
+#include <QLocale>
 #include <QSet>
 #include <QString>
 
@@ -13,7 +14,8 @@ namespace fm {
 inline constexpr double kUnbuyableValue = 2'000'000'000.0;
 
 // "€1.2M" -> 1200000, "€500K - €800K" -> 500000, "Not for Sale" -> 2e9,
-// unparseable/empty -> 0.
+// unparseable/empty -> 0. The currency symbol may be €, £ or $ (FM exports in
+// the save's chosen currency).
 double valueToFloat(const QString &valueStr);
 
 // True only when the raw transfer-value string represents an EXPLICIT zero
@@ -34,6 +36,22 @@ QString getLastName(const QString &fullName);
 // Accent-/umlaut-insensitive, lowercased search key for fuzzy name matching:
 // "Müller"/"Muller" -> "muller", "Håland" -> "haland", "Gießen" -> "giessen".
 QString foldForSearch(const QString &text);
+
+// "text contains the query", accent-/umlaut-insensitive like the player search.
+// foldedQuery must already be foldForSearch()-ed (fold once per keystroke, not
+// per row); empty matches everything. Pure-ASCII text skips the Unicode
+// normalization — most names — so filtering 35k rows stays cheap.
+bool containsFolded(const QString &text, const QString &foldedQuery);
+
+// --- CSV export ---
+
+// Field separator Excel expects for this locale: ';' where the decimal
+// separator is ',' (e.g. German), otherwise ','.
+QChar csvSeparator(const QLocale &locale);
+
+// One CSV field, quoted (with doubled quotes) when it contains the separator,
+// a quote or a line break.
+QString csvField(const QString &value, QChar separator);
 
 // 'AM (RL), ST (C)' -> {"AM (R)", "AM (L)", "ST (C)"}. Handles "D/WB (R)"
 // and side-less bases ("DM" stays "DM", bare "ST" becomes "ST (C)").

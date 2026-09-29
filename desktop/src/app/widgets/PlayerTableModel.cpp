@@ -1,6 +1,7 @@
 #include "PlayerTableModel.h"
 
 #include "core/Freshness.h"
+#include "core/Utils.h"
 
 #include <QColor>
 
@@ -120,28 +121,21 @@ QVariant PlayerTableModel::headerData(int section, Qt::Orientation orientation, 
     return QAbstractTableModel::headerData(section, orientation, role);
 }
 
-QString PlayerTableModel::toCsv(const std::vector<const Player *> &orderedRows) const
+QString PlayerTableModel::toCsv(const std::vector<const Player *> &orderedRows,
+                                QChar separator) const
 {
-    const auto quote = [](QString value) {
-        if (value.contains(QLatin1Char(',')) || value.contains(QLatin1Char('"'))
-            || value.contains(QLatin1Char('\n'))) {
-            value.replace(QLatin1Char('"'), QStringLiteral("\"\""));
-            return QStringLiteral("\"%1\"").arg(value);
-        }
-        return value;
-    };
-
     QStringList lines;
     QStringList header;
     for (const PlayerColumn &column : m_columns)
-        header << quote(column.header);
-    lines << header.join(QLatin1Char(','));
+        header << csvField(column.header, separator);
+    lines << header.join(separator);
 
     for (const Player *player : orderedRows) {
         QStringList cells;
         for (const PlayerColumn &column : m_columns)
-            cells << quote(column.value ? column.value(*player).toString() : QString());
-        lines << cells.join(QLatin1Char(','));
+            cells << csvField(column.value ? column.value(*player).toString() : QString(),
+                              separator);
+        lines << cells.join(separator);
     }
     return lines.join(QLatin1Char('\n')) + QLatin1Char('\n');
 }
@@ -157,7 +151,7 @@ PlayerFilterProxy::PlayerFilterProxy(PlayerTableModel *source, QObject *parent)
 
 void PlayerFilterProxy::setNameFilter(const QString &text)
 {
-    m_nameFilter = text.trimmed();
+    m_nameFilter = foldForSearch(text.trimmed()); // folded once, not per row
     invalidateRowsFilter();
 }
 
@@ -183,7 +177,7 @@ bool PlayerFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &) con
     if (m_nameFilter.isEmpty())
         return true;
     const Player *player = m_model->playerAt(sourceRow);
-    return player && player->name.contains(m_nameFilter, Qt::CaseInsensitive);
+    return player && containsFolded(player->name, m_nameFilter);
 }
 
 } // namespace fm

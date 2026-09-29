@@ -51,7 +51,8 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
     // Exports the current columns for the given (proxy-ordered) players.
-    QString toCsv(const std::vector<const Player *> &orderedRows) const;
+    // separator: see csvSeparator() - ';' for locales Excel reads that way.
+    QString toCsv(const std::vector<const Player *> &orderedRows, QChar separator) const;
 
 private:
     QList<PlayerColumn> m_columns;

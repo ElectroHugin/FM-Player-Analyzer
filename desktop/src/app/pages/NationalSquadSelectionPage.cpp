@@ -137,7 +137,7 @@ void NationalSquadSelectionPage::rebuildLists()
                         .arg(code, ageLimit < 99 ? tr(" bis Alter %1").arg(ageLimit)
                                                  : QString()));
 
-    const QString query = m_searchEdit->text().trimmed();
+    const QString query = foldForSearch(m_searchEdit->text().trimmed());
     const PlayerStatus::NationalCriteria criteria = m_context.nationalCriteria();
 
     std::vector<const Player *> available, squad;
@@ -150,7 +150,7 @@ void NationalSquadSelectionPage::rebuildLists()
         }
         if (!PlayerStatus::isAvailableForNation(player, criteria))
             continue;
-        if (!query.isEmpty() && !player.name.contains(query, Qt::CaseInsensitive))
+        if (!containsFolded(player.name, query))
             continue;
         available.push_back(&player);
     }

@@ -18,6 +18,10 @@ private slots:
         QTest::newRow("thousands") << QStringLiteral("€500K") << 500'000.0;
         QTest::newRow("plain") << QStringLiteral("€750") << 750.0;
         QTest::newRow("range takes lower") << QStringLiteral("€500K - €800K") << 500'000.0;
+        // Backlog #36: saves in other currencies must not collapse to 0.
+        QTest::newRow("pounds") << QStringLiteral("£15M") << 15'000'000.0;
+        QTest::newRow("dollars") << QStringLiteral("$500K") << 500'000.0;
+        QTest::newRow("pound range") << QStringLiteral("£36M - £43M") << 36'000'000.0;
         QTest::newRow("not for sale") << QStringLiteral("Not for Sale") << 2'000'000'000.0;
         QTest::newRow("not for sale lowercase") << QStringLiteral("not for sale") << 2'000'000'000.0;
         QTest::newRow("empty") << QString() << 0.0;
@@ -78,6 +82,36 @@ private slots:
         QFETCH(QString, value);
         QFETCH(bool, expected);
         QCOMPARE(fm::isFreeAgent(club, value), expected);
+    }
+
+    void containsFolded()
+    {
+        // Backlog #36: table name filters match like the player search.
+        const QString muller = fm::foldForSearch(QStringLiteral("muller"));
+        QVERIFY(fm::containsFolded(QStringLiteral("Thomas Müller"), muller));
+        QVERIFY(fm::containsFolded(QStringLiteral("Thomas Muller"), muller)); // ASCII fast path
+        QVERIFY(fm::containsFolded(QStringLiteral("THOMAS MULLER"), muller));
+        QVERIFY(fm::containsFolded(QStringLiteral("Erling Håland"),
+                                   fm::foldForSearch(QStringLiteral("haland"))));
+        QVERIFY(fm::containsFolded(QStringLiteral("Gießen"),
+                                   fm::foldForSearch(QStringLiteral("giessen"))));
+        QVERIFY(!fm::containsFolded(QStringLiteral("Thomas Müller"),
+                                    fm::foldForSearch(QStringLiteral("meier"))));
+        QVERIFY(fm::containsFolded(QStringLiteral("anyone"), QString())); // empty = all
+    }
+
+    void csvHelpers()
+    {
+        // Backlog #36: Excel's list separator follows the regional settings.
+        QCOMPARE(fm::csvSeparator(QLocale(QLocale::German, QLocale::Germany)), QLatin1Char(';'));
+        QCOMPARE(fm::csvSeparator(QLocale(QLocale::English, QLocale::UnitedStates)),
+                 QLatin1Char(','));
+        QCOMPARE(fm::csvField(QStringLiteral("plain"), QLatin1Char(';')), QStringLiteral("plain"));
+        QCOMPARE(fm::csvField(QStringLiteral("7,39"), QLatin1Char(';')), QStringLiteral("7,39"));
+        QCOMPARE(fm::csvField(QStringLiteral("7,39"), QLatin1Char(',')), QStringLiteral("\"7,39\""));
+        QCOMPARE(fm::csvField(QStringLiteral("a;b"), QLatin1Char(';')), QStringLiteral("\"a;b\""));
+        QCOMPARE(fm::csvField(QStringLiteral("say \"hi\""), QLatin1Char(',')),
+                 QStringLiteral("\"say \"\"hi\"\"\""));
     }
 
     void parsePositionString_complex()

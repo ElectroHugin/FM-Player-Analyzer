@@ -347,27 +347,27 @@
         <translation>Calculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="13"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="14"/>
         <source>Frische</source>
         <translation>Freshness</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="17"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="18"/>
         <source>Retired (%1)</source>
         <translation>Retired (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="19"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="20"/>
         <source>veraltet (%1)</source>
         <translation>stale (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="21"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="22"/>
         <source>vor %1</source>
         <translation>%1 ago</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="22"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="23"/>
         <source>aktuell</source>
         <translation>current</translation>
     </message>
@@ -1029,8 +1029,8 @@ Possible causes: no &lt;table&gt; element, no &apos;UID&apos; column, or not a v
     <name>fm::EditPlayerPage</name>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="40"/>
-        <location filename="../src/app/pages/EditPlayerPage.cpp" line="302"/>
-        <location filename="../src/app/pages/EditPlayerPage.cpp" line="308"/>
+        <location filename="../src/app/pages/EditPlayerPage.cpp" line="303"/>
+        <location filename="../src/app/pages/EditPlayerPage.cpp" line="309"/>
         <source>Spieler bearbeiten</source>
         <translation>Edit Player</translation>
     </message>
@@ -1091,8 +1091,8 @@ Possible causes: no &lt;table&gt; element, no &apos;UID&apos; column, or not a v
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="112"/>
-        <location filename="../src/app/pages/EditPlayerPage.cpp" line="232"/>
-        <location filename="../src/app/pages/EditPlayerPage.cpp" line="255"/>
+        <location filename="../src/app/pages/EditPlayerPage.cpp" line="233"/>
+        <location filename="../src/app/pages/EditPlayerPage.cpp" line="256"/>
         <source>Keine</source>
         <translation>None</translation>
     </message>
@@ -1127,12 +1127,12 @@ Possible causes: no &lt;table&gt; element, no &apos;UID&apos; column, or not a v
         <translation>— Select player —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/EditPlayerPage.cpp" line="221"/>
+        <location filename="../src/app/pages/EditPlayerPage.cpp" line="222"/>
         <source>Bearbeite: %1 (%2)</source>
         <translation>Editing: %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/EditPlayerPage.cpp" line="309"/>
+        <location filename="../src/app/pages/EditPlayerPage.cpp" line="310"/>
         <source>Änderungen für %1 gespeichert.</source>
         <translation>Changes for %1 saved.</translation>
     </message>

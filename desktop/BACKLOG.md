@@ -92,7 +92,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~ → ~~#34~~ → ~~#35~~. Offen: #29, #36, #37.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~ → ~~#34~~ → ~~#35~~ → ~~#36~~. Offen: #29, #37.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -321,7 +321,7 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 - ✅ **#35 (v1.3.22) — Drei GK-Erkennungen.** Umgesetzt: `Player::isGoalkeeper()` wird von SquadBuilder, TalentEngine, NationalCallup und Spieler bearbeiten genutzt; Test in `test_nationalcallup`. `SquadBuilder` (`contains("GK")`),
   `NationalCallup::isGoalkeeper` (Positionen), `TalentEngine::ageCapForPlayer`.
   → Eine Funktion.
-- **#36 — Kleinkram:** Tabellen-Namensfilter (`PlayerFilterProxy`) ohne
+- ✅ **#36 (v1.3.23) — Kleinkram:** Umgesetzt: `containsFolded` (Tabellenfilter, Spieler bearbeiten, Kader-Auswahl, Verletztenliste), CSV-Trennzeichen nach Ländereinstellung (`csvSeparator`/`csvField`), £/$ in `valueToFloat`, `DwrsEngine::planFor` ohne Lazy-Insert. Ursprünglich: Tabellen-Namensfilter (`PlayerFilterProxy`) ohne
   Umlaut-Faltung (anders als die Sidebar-Suche); CSV-Export mit Komma trennt in
   deutschem Excel nicht (`;` oder `sep=`-Zeile); `valueToFloat` kennt nur €
   (£/$ → Marktwert 0); `DwrsEngine::planFor` befüllt den Cache lazy für

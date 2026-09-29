@@ -117,16 +117,13 @@ DwrsEngine::RolePlan DwrsEngine::buildPlan(const QString &role) const
     return plan;
 }
 
-const DwrsEngine::RolePlan &DwrsEngine::planFor(const QString &role) const
+DwrsEngine::RolePlan DwrsEngine::planFor(const QString &role) const
 {
-    // Every valid role is pre-built in reloadConfig(), so this is a pure lookup
-    // for anything a worker computes. The lazy insert only fires for a role
-    // outside validRoles() — an ad-hoc single-player calculate() on the UI
-    // thread, never concurrent with a worker.
-    auto it = m_planCache.find(role);
-    if (it == m_planCache.end())
-        it = m_planCache.insert(role, buildPlan(role));
-    return it.value();
+    // Every valid role is pre-built in reloadConfig(). A role outside
+    // validRoles() gets a throwaway plan instead of a lazy cache insert: that
+    // insert could rehash the table while a worker thread reads it.
+    const auto it = m_planCache.constFind(role);
+    return it != m_planCache.constEnd() ? it.value() : buildPlan(role);
 }
 
 DwrsRoleResult DwrsEngine::calculateRole(const std::vector<Player> &players,

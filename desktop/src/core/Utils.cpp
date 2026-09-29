@@ -10,6 +10,18 @@
 
 namespace fm {
 
+namespace {
+
+// FM prints values in the save's currency: €, £ or $.
+void removeCurrencySymbols(QString &s)
+{
+    s.remove(QChar(0x20AC)); // €
+    s.remove(QChar(0x00A3)); // £
+    s.remove(QLatin1Char('$'));
+}
+
+} // namespace
+
 double valueToFloat(const QString &valueStr)
 {
     if (valueStr.isEmpty())
@@ -24,7 +36,7 @@ double valueToFloat(const QString &valueStr)
     if (rangeSep >= 0)
         s = s.left(rangeSep);
 
-    s.remove(QChar(0x20AC)); // €
+    removeCurrencySymbols(s);
     s = s.trimmed();
 
     double multiplier = 1.0;
@@ -57,7 +69,7 @@ bool isExplicitZeroValue(const QString &rawValue)
     if (rangeSep >= 0)
         s = s.left(rangeSep);
 
-    s.remove(QChar(0x20AC)); // €
+    removeCurrencySymbols(s);
     s.remove(QLatin1Char('M'));
     s.remove(QLatin1Char('K'));
     s = s.trimmed();
@@ -110,6 +122,39 @@ QString foldForSearch(const QString &text)
     out.replace(QChar(0x00E6), QStringLiteral("ae")); // æ
     out.replace(QChar(0x0153), QStringLiteral("oe")); // œ
     return out;
+}
+
+bool containsFolded(const QString &text, const QString &foldedQuery)
+{
+    if (foldedQuery.isEmpty())
+        return true;
+    // Folding pure-ASCII text is just lower-casing, so a case-insensitive
+    // search is equivalent and avoids the NFD normalization per row.
+    bool ascii = true;
+    for (const QChar ch : text) {
+        if (ch.unicode() >= 0x80) {
+            ascii = false;
+            break;
+        }
+    }
+    if (ascii)
+        return text.contains(foldedQuery, Qt::CaseInsensitive);
+    return foldForSearch(text).contains(foldedQuery);
+}
+
+QChar csvSeparator(const QLocale &locale)
+{
+    return locale.decimalPoint() == QLatin1String(",") ? QLatin1Char(';') : QLatin1Char(',');
+}
+
+QString csvField(const QString &value, QChar separator)
+{
+    if (!value.contains(separator) && !value.contains(QLatin1Char('"'))
+        && !value.contains(QLatin1Char('\n')) && !value.contains(QLatin1Char('\r')))
+        return value;
+    QString quoted = value;
+    quoted.replace(QLatin1Char('"'), QStringLiteral("\"\""));
+    return QLatin1Char('"') + quoted + QLatin1Char('"');
 }
 
 QSet<QString> parsePositionString(const QString &posStr)

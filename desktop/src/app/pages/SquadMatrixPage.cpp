@@ -757,7 +757,11 @@ void SquadMatrixPage::exportCsv(const TableSection &section)
         return;
     }
     file.write("\xEF\xBB\xBF", 3); // UTF-8 BOM for Excel
-    file.write(section.model->toCsv(section.proxy->orderedPlayers()).toUtf8());
+    // Separator follows the Windows regional settings like Excel does (';' on a
+    // German system), so the file opens in columns with a double-click.
+    file.write(section.model
+                   ->toCsv(section.proxy->orderedPlayers(), csvSeparator(QLocale::system()))
+                   .toUtf8());
 }
 
 } // namespace fm

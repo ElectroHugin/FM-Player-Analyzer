@@ -198,9 +198,10 @@ void EditPlayerPage::runSearch()
     const QString query = m_searchEdit->text().trimmed();
     if (query.length() < 2)
         return;
+    const QString folded = foldForSearch(query); // "muller" also finds "Müller"
     int count = 0;
     for (const Player &player : m_context.store().players()) {
-        if (!player.name.contains(query, Qt::CaseInsensitive))
+        if (!containsFolded(player.name, folded))
             continue;
         m_searchResultCombo->addItem(
             QStringLiteral("%1 (%2)").arg(player.name, player.club), player.uid);

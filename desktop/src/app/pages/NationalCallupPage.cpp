@@ -303,14 +303,14 @@ void NationalCallupPage::rebuildInjuredList()
 {
     m_updatingInjured = true;
     m_injuredList->clear();
-    const QString query = m_injuredSearch->text().trimmed();
+    const QString query = foldForSearch(m_injuredSearch->text().trimmed());
 
     auto pool = eligiblePool(false);
     std::sort(pool.begin(), pool.end(), [](const Player *a, const Player *b) {
         return getLastName(a->name).localeAwareCompare(getLastName(b->name)) < 0;
     });
     for (const Player *player : pool) {
-        if (!query.isEmpty() && !player->name.contains(query, Qt::CaseInsensitive))
+        if (!containsFolded(player->name, query))
             continue;
         auto *item = new QListWidgetItem(playerLine(*player), m_injuredList);
         item->setData(Qt::UserRole, player->uid);
