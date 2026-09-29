@@ -368,6 +368,13 @@ void PlayerProfilePage::rebuildSearchModel()
     m_searchModelDirty = false;
 }
 
+void PlayerProfilePage::restoreHistoryState(const QString &state)
+{
+    // Same one-shot handoff the player search uses; refresh() consumes it.
+    if (!state.isEmpty())
+        m_context.setPendingProfileUid(state);
+}
+
 void PlayerProfilePage::selectPlayer(const QString &uid)
 {
     m_currentUid = uid;

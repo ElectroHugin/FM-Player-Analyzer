@@ -111,6 +111,11 @@ passenden Rollen, ohne HTML-Export.
 
 ## ✅ Im C++-Port bereits erledigt
 
+- **Browser-Navigation (v1.3.20):** Zurück / Vorwärts / Startseite in der
+  Kopfzeile jeder Seite, dazu Alt+← / Alt+→ / Alt+Pos1 und die Maus-Seitentasten;
+  der Verlauf merkt sich auch den Modus (Verein/National) und den Spieler der
+  Profilseite.
+
 Globale Spielersuche (mit Umlaut-Faltung), Klick/Doppelklick/Rechtsklick auf
 Spielernamen → Profil/Vergleich/Bearbeiten (In-Context-Editing), Pros & Cons,
 Profilseite, Jugend-/Zweitteam, Tabs, bedingte Formatierung, erweiterte Suche

@@ -212,6 +212,11 @@ QFrame#sidebar QListWidget::item:disabled {
 /* ===== Header bar ===== */
 QFrame#headerBar { background-color: %HEADER%; border-bottom: 1px solid %BORDER%; }
 QFrame#headerBar QLabel { color: %HEADERTEXT%; }
+QFrame#headerBar QToolButton#navButton {
+    font-size: 13pt; font-weight: 600; padding: 1px 10px; min-width: 16px; }
+QFrame#headerBar QToolButton#navButton:pressed { background-color: %INTERACTIVESUBTLE%; }
+QFrame#headerBar QToolButton#navButton:disabled {
+    color: %MUTED%; background: transparent; border-color: %BORDER%; }
 
 /* ===== Cards ===== */
 QFrame#kpiTile, QFrame#suggestionCard {

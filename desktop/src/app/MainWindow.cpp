@@ -45,10 +45,13 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPointer>
 #include <QPushButton>
+#include <QShortcut>
 #include <QStackedWidget>
 #include <QStatusBar>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QtConcurrentRun>
 
@@ -142,6 +145,33 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     auto *headerLayout = new QHBoxLayout(headerBar);
     headerLayout->setContentsMargins(18, 8, 18, 8);
     headerLayout->setSpacing(12);
+
+    // Browser-style navigation, present above every page: Back / Forward / Home.
+    auto *navLayout = new QHBoxLayout;
+    navLayout->setSpacing(4);
+    const auto makeNavButton = [&](const QString &glyph, const QString &toolTip,
+                                   void (MainWindow::*slot)()) {
+        auto *button = new QToolButton(headerBar);
+        button->setObjectName(QStringLiteral("navButton"));
+        button->setText(glyph);
+        button->setToolTip(toolTip);
+        button->setCursor(Qt::PointingHandCursor);
+        button->setFocusPolicy(Qt::NoFocus); // never steal focus from page inputs
+        connect(button, &QToolButton::clicked, this, slot);
+        navLayout->addWidget(button);
+        return button;
+    };
+    m_backButton = makeNavButton(QStringLiteral("←"), tr("Zurück (Alt+←)"), &MainWindow::goBack);
+    m_forwardButton =
+        makeNavButton(QStringLiteral("→"), tr("Vorwärts (Alt+→)"), &MainWindow::goForward);
+    m_homeButton =
+        makeNavButton(QStringLiteral("⌂"), tr("Startseite (Alt+Pos1)"), &MainWindow::goHome);
+    headerLayout->addLayout(navLayout);
+    new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Left), this, this, &MainWindow::goBack);
+    new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Right), this, this, &MainWindow::goForward);
+    new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Home), this, this, &MainWindow::goHome);
+    qApp->installEventFilter(this);
+
     m_headerLogo = new QLabel(headerBar);
     m_headerLogo->setFixedHeight(34);
     m_headerLogo->hide();
@@ -169,6 +199,9 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         m_searchModelDirty = true;
         for (PageBase *page : std::as_const(m_pages))
             page->refresh();
+        // Another database: earlier steps (e.g. a player's profile) may not
+        // exist here, so the history starts over.
+        resetHistory();
     });
     connect(&m_context, &AppContext::dataChanged, this, [this] {
         m_searchModelDirty = true;
@@ -238,7 +271,7 @@ void MainWindow::buildSidebar()
         // their pools by this flag; the menu decides which pages are shown.
         m_context.setNationalUiMode(m_modeCombo->currentData().toString()
                                     == QLatin1String("national"));
-        rebuildMenu();
+        rebuildMenu(); // navigates to the mode's first page (a history step)
         updateHeader();
     });
 
@@ -295,7 +328,7 @@ void MainWindow::buildSidebar()
     rebuildMenu();
 }
 
-void MainWindow::rebuildMenu()
+void MainWindow::rebuildMenu(bool selectFirst)
 {
     const bool national = m_modeCombo->currentData().toString() == QLatin1String("national");
 
@@ -324,7 +357,8 @@ void MainWindow::rebuildMenu()
     addEntries(globalMenu());
 
     m_menu->blockSignals(false);
-    m_menu->setCurrentRow(1); // first real entry below the section header
+    if (selectFirst)
+        m_menu->setCurrentRow(1); // first real entry below the section header
 }
 
 void MainWindow::buildMenuBar()
@@ -440,6 +474,11 @@ PageBase *MainWindow::createPage(const QString &pageId)
 
 void MainWindow::navigateTo(const QString &pageId)
 {
+    // Remember what the page being left shows (e.g. the profile's player) so
+    // Back returns to exactly that — unless the history itself is navigating.
+    if (!m_restoringHistory)
+        captureHistoryState();
+
     PageBase *page = m_pages.value(pageId);
     if (!page) {
         page = createPage(pageId);
@@ -462,6 +501,121 @@ void MainWindow::navigateTo(const QString &pageId)
     }
 
     page->refresh();
+
+    if (!m_restoringHistory)
+        pushHistory(pageId, page);
+    updateNavButtons();
+}
+
+void MainWindow::captureHistoryState()
+{
+    if (m_historyIndex < 0 || m_historyIndex >= m_history.size())
+        return;
+    HistoryEntry &entry = m_history[m_historyIndex];
+    auto *current = qobject_cast<PageBase *>(m_stack->currentWidget());
+    if (current && m_pages.value(entry.pageId) == current)
+        entry.state = current->historyState();
+}
+
+void MainWindow::pushHistory(const QString &pageId, PageBase *page)
+{
+    const HistoryEntry entry{pageId, m_context.nationalUiMode(), page->historyState()};
+    if (m_historyIndex >= 0) {
+        const HistoryEntry &current = m_history[m_historyIndex];
+        if (current.pageId == entry.pageId && current.national == entry.national
+            && current.state == entry.state) {
+            return; // same place again (e.g. the active menu entry re-clicked)
+        }
+    }
+    // A new step discards the forward branch, like a browser.
+    while (m_history.size() > m_historyIndex + 1)
+        m_history.removeLast();
+    m_history.append(entry);
+    constexpr int kMaxHistory = 100;
+    while (m_history.size() > kMaxHistory)
+        m_history.removeFirst();
+    m_historyIndex = static_cast<int>(m_history.size()) - 1;
+}
+
+void MainWindow::resetHistory()
+{
+    m_history.clear();
+    m_historyIndex = -1;
+    if (auto *current = qobject_cast<PageBase *>(m_stack->currentWidget()))
+        pushHistory(m_pages.key(current), current);
+    updateNavButtons();
+}
+
+void MainWindow::goToHistory(int index)
+{
+    if (index < 0 || index >= m_history.size() || index == m_historyIndex)
+        return;
+    captureHistoryState(); // keep the state of the step being left
+    const HistoryEntry entry = m_history[index];
+    m_historyIndex = index;
+
+    m_restoringHistory = true;
+    // The step may belong to the other management mode: switch the sidebar
+    // without letting the mode switch navigate on its own.
+    if (entry.national != m_context.nationalUiMode()) {
+        const int modeIndex = m_modeCombo->findData(entry.national ? QStringLiteral("national")
+                                                                   : QStringLiteral("club"));
+        m_modeCombo->blockSignals(true);
+        m_modeCombo->setCurrentIndex(modeIndex);
+        m_modeCombo->blockSignals(false);
+        m_context.setNationalUiMode(entry.national);
+        rebuildMenu(/*selectFirst*/ false);
+        updateHeader();
+    }
+    if (PageBase *page = m_pages.value(entry.pageId))
+        page->restoreHistoryState(entry.state);
+    navigateTo(entry.pageId);
+    m_restoringHistory = false;
+    updateNavButtons();
+}
+
+void MainWindow::goBack()
+{
+    goToHistory(m_historyIndex - 1);
+}
+
+void MainWindow::goForward()
+{
+    goToHistory(m_historyIndex + 1);
+}
+
+void MainWindow::goHome()
+{
+    navigateTo(m_context.nationalUiMode() ? QStringLiteral("national_dashboard")
+                                          : QStringLiteral("dashboard"));
+}
+
+void MainWindow::updateNavButtons()
+{
+    if (!m_backButton)
+        return;
+    m_backButton->setEnabled(m_historyIndex > 0);
+    m_forwardButton->setEnabled(m_historyIndex >= 0 && m_historyIndex < m_history.size() - 1);
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    // Mouse side buttons (back/forward) like in a browser — anywhere inside
+    // this window, but never while a modal dialog is up.
+    if (event->type() == QEvent::MouseButtonPress && watched->isWidgetType()
+        && !QApplication::activeModalWidget()) {
+        auto *widget = static_cast<QWidget *>(watched);
+        const auto button = static_cast<QMouseEvent *>(event)->button();
+        if (widget->window() == this
+            && (button == Qt::BackButton || button == Qt::ForwardButton)) {
+            if (button == Qt::BackButton)
+                goBack();
+            else
+                goForward();
+            return true;
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
 }
 
 void MainWindow::startDwrsRecalc()

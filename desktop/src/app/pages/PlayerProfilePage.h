@@ -31,6 +31,9 @@ public:
     PlayerProfilePage(AppContext &context, ThemeManager &theme, QWidget *parent = nullptr);
 
     void refresh() override;
+    // History: the shown player, so Back from profile B returns to profile A.
+    QString historyState() const override { return m_currentUid; }
+    void restoreHistoryState(const QString &state) override;
 
 private:
     void updateScopeAvailability();

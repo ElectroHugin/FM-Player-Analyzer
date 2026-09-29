@@ -29,6 +29,14 @@ public:
     // instead, so it is not asked to release.
     virtual void releaseStoreRows() {}
 
+    // Back/Forward history (MainWindow): page-specific state worth restoring
+    // when the user navigates back — e.g. which player the profile page shows.
+    // Empty = the page itself is enough.
+    virtual QString historyState() const { return {}; }
+    // Called right before the page is re-shown from the history, with the
+    // state historyState() returned back then.
+    virtual void restoreHistoryState(const QString &state) { Q_UNUSED(state); }
+
 protected:
     AppContext &m_context;
 };

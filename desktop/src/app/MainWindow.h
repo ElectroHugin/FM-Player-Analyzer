@@ -13,6 +13,7 @@ class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
+class QToolButton;
 
 namespace fm {
 
@@ -31,13 +32,33 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    // Mouse back/forward side buttons anywhere in this window drive the history.
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
+    // One Back/Forward history step: the page, the management mode it was
+    // shown in, and page-specific state (PageBase::historyState()).
+    struct HistoryEntry {
+        QString pageId;
+        bool national = false;
+        QString state;
+    };
+
     void buildSidebar();
     void buildMenuBar();
     void changeLanguage(const QString &language);
-    void rebuildMenu();
+    // selectFirst: also navigate to the first entry (a user mode switch);
+    // false when the history restores a page itself.
+    void rebuildMenu(bool selectFirst = true);
     void navigateTo(const QString &pageId);
+    void goBack();
+    void goForward();
+    void goHome();
+    void goToHistory(int index);
+    void captureHistoryState();
+    void pushHistory(const QString &pageId, PageBase *page);
+    void resetHistory();
+    void updateNavButtons();
     PageBase *createPage(const QString &pageId);
     void startDwrsRecalc();
     void updateDbLabel();
@@ -59,6 +80,13 @@ private:
 
     QFutureWatcher<RatingsUpdater::Result> m_recalcWatcher;
     BusyProgressDialog *m_recalcDialog = nullptr;
+
+    QToolButton *m_backButton = nullptr;
+    QToolButton *m_forwardButton = nullptr;
+    QToolButton *m_homeButton = nullptr;
+    QList<HistoryEntry> m_history;
+    int m_historyIndex = -1;
+    bool m_restoringHistory = false; // navigateTo() must not record a new step
 
     QCompleter *m_searchCompleter = nullptr;
     PlayerSearchModel *m_searchModel = nullptr;
