@@ -70,8 +70,13 @@ AssignRolesPage::AssignRolesPage(AppContext &context, QWidget *parent)
 
     // --- Auto-assign row ---
     auto *autoRow = new QHBoxLayout;
-    auto *autoUnassigned = new QPushButton(tr("Auto-Zuweisung (nur Spieler ohne Rollen)"), this);
+    auto *autoUnassigned = new QPushButton(tr("Fehlende Standardrollen ergänzen"), this);
+    autoUnassigned->setToolTip(
+        tr("Ergänzt bei allen Spielern die Standardrollen ihrer aktuellen Positionen "
+           "(wie beim Import). Vorhandene und manuell gesetzte Rollen bleiben erhalten."));
     auto *autoAll = new QPushButton(tr("⚠️ Auto-Zuweisung (ALLE Spieler)"), this);
+    autoAll->setToolTip(tr("Setzt die Rollen ALLER Spieler neu auf die Standardrollen ihrer "
+                           "Positionen — manuell angepasste Rollen gehen verloren."));
     m_pendingLabel = new QLabel(this);
     m_saveButton = new QPushButton(tr("Änderungen speichern"), this);
     m_saveButton->setEnabled(false);
@@ -82,8 +87,9 @@ AssignRolesPage::AssignRolesPage(AppContext &context, QWidget *parent)
     autoRow->addWidget(m_pendingLabel);
     autoRow->addWidget(m_saveButton);
     layout->addLayout(autoRow);
-    connect(autoUnassigned, &QPushButton::clicked, this, [this] { autoAssign(false); });
-    connect(autoAll, &QPushButton::clicked, this, [this] { autoAssign(true); });
+    connect(autoUnassigned, &QPushButton::clicked, this,
+            &AssignRolesPage::addMissingDefaultRoles);
+    connect(autoAll, &QPushButton::clicked, this, &AssignRolesPage::resetAllRoles);
     connect(m_saveButton, &QPushButton::clicked, this, &AssignRolesPage::savePending);
 
     // --- Table + role editor ---
@@ -379,53 +385,73 @@ void AssignRolesPage::savePending()
     });
 }
 
-void AssignRolesPage::autoAssign(bool allPlayers)
+void AssignRolesPage::addMissingDefaultRoles()
 {
-    if (allPlayers
-        && QMessageBox::question(
-               this, tr("Auto-Zuweisung"),
-               tr("Wirklich die Rollen ALLER Spieler anhand ihrer Positionen neu setzen? "
-                  "Manuell angepasste Rollen gehen dabei verloren."))
-               != QMessageBox::Yes) {
+    // Same additive rule as the HTML import (RoleAssignment): every player gets
+    // the default roles of his current positions that he is still missing;
+    // existing and manually set roles are never removed.
+    const auto additions = RoleAssignment::missingRoleAdditions(m_context.store().players(),
+                                                                m_context.definitions());
+    if (additions.empty()) {
+        QMessageBox::information(this, tr("Auto-Zuweisung"),
+                                 tr("Alle Spieler haben bereits die Standardrollen ihrer "
+                                    "Positionen."));
         return;
     }
 
-    const auto posMap = m_context.definitions().positionToRoleMapping();
-    QHash<QString, QStringList> rolesForPosition;
-    const auto defaultRolesFor = [&](const Player &player) {
-        auto it = rolesForPosition.find(player.positionRaw);
-        if (it == rolesForPosition.end()) {
-            QSet<QString> roles;
-            for (const QString &position : parsePositionString(player.positionRaw)) {
-                for (const QString &role : posMap.value(position))
-                    roles.insert(role);
-            }
-            QStringList sorted(roles.cbegin(), roles.cend());
-            std::sort(sorted.begin(), sorted.end());
-            it = rolesForPosition.insert(player.positionRaw, sorted);
-        }
-        return it.value();
-    };
+    std::vector<std::pair<int, QStringList>> rolesById;
+    QStringList affectedUids;
+    std::vector<PreviousRoles> previousRoles; // for revert-on-failure
+    for (const auto &[row, roles] : additions) {
+        Player &player = m_context.store().at(row);
+        previousRoles.push_back({row, player.assignedRoles, player.primaryRole});
+        player.assignedRoles = roles; // additive: a primary role can't go stale
+        rolesById.push_back({player.id, roles});
+        affectedUids << player.uid;
+    }
+    if (!m_context.database().replacePlayerRoles(rolesById)) {
+        revertRoles(previousRoles); // DB unchanged
+        QMessageBox::critical(this, tr("Auto-Zuweisung"), m_context.database().errorString());
+        return;
+    }
+    const int count = static_cast<int>(rolesById.size());
+    recalcDwrsFor(m_context, this, affectedUids, [this, count](const QString &error) {
+        if (!error.isEmpty())
+            QMessageBox::critical(this, tr("Auto-Zuweisung"), error);
+        else
+            QMessageBox::information(
+                this, tr("Auto-Zuweisung"),
+                tr("%1 Spielern Rollen zugewiesen und DWRS neu berechnet.").arg(count));
+    });
+}
 
+void AssignRolesPage::resetAllRoles()
+{
+    if (QMessageBox::question(
+            this, tr("Auto-Zuweisung"),
+            tr("Wirklich die Rollen ALLER Spieler anhand ihrer Positionen neu setzen? "
+               "Manuell angepasste Rollen gehen dabei verloren."))
+        != QMessageBox::Yes) {
+        return;
+    }
+
+    RoleAssignment::DefaultRoles defaultRoles(m_context.definitions());
     std::vector<Player> batch;
     QStringList affectedUids;
     std::vector<PreviousRoles> previousRoles; // for revert-on-failure
-    for (const Player &player : m_context.store().players()) {
-        if (!allPlayers && !player.assignedRoles.isEmpty())
-            continue;
-        const QStringList roles = defaultRolesFor(player);
+    for (int row = 0; row < m_context.store().size(); ++row) {
+        Player &player = m_context.store().at(row);
+        const QStringList roles = defaultRoles.forPosition(player.positionRaw);
         if (roles.isEmpty())
             continue;
         QStringList oldRoles = player.assignedRoles;
         std::sort(oldRoles.begin(), oldRoles.end());
         if (roles == oldRoles)
             continue;
-        const int row = m_context.store().rowByUid(player.uid);
-        Player &mutablePlayer = m_context.store().at(row);
-        previousRoles.push_back({row, mutablePlayer.assignedRoles, mutablePlayer.primaryRole});
-        mutablePlayer.assignedRoles = roles;
-        RoleAssignment::clearStalePrimaryRole(mutablePlayer);
-        batch.push_back(mutablePlayer);
+        previousRoles.push_back({row, player.assignedRoles, player.primaryRole});
+        player.assignedRoles = roles;
+        RoleAssignment::clearStalePrimaryRole(player);
+        batch.push_back(player);
         affectedUids << player.uid;
     }
 

@@ -92,7 +92,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~. Offen: #29, #34–#37.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~ → ~~#34~~. Offen: #29, #35–#37.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -314,7 +314,7 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
   Kader-Auswahl, National-Squad-Matrix und National-Dashboard behandeln
   `age <= 0` und Age-Limit 0 unterschiedlich. → Eine Core-Funktion (inkl.
   Retired-Check, siehe #24).
-- **#34 — Zwei Auto-Assign-Semantiken.** Der Import nutzt das additive
+- ✅ **#34 (v1.3.21) — Zwei Auto-Assign-Semantiken.** Umgesetzt: Knopf heißt jetzt „Fehlende Standardrollen ergänzen" und nutzt wie der Import `RoleAssignment::missingRoleAdditions` (additiv, schreibt nur Rollen); der Reset-Knopf nutzt `RoleAssignment::DefaultRoles`, Duplikat entfernt. Der Import nutzt das additive
   `RoleAssignment::autoAssignMissingRoles`; der Knopf „nur Unzugeordnete" in
   [AssignRolesPage.cpp](src/app/pages/AssignRolesPage.cpp) `autoAssign` hat
   duplizierte Legacy-Logik. → Auf `RoleAssignment` zusammenführen.

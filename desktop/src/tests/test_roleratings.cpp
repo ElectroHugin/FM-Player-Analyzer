@@ -169,6 +169,36 @@ private slots:
         QCOMPARE(store.rowByUid(QStringLiteral("a")), -1);
     }
 
+    void missingRoleAdditionsAreAdditive()
+    {
+        // Backlog #34: the Assign Roles button and the import share this rule —
+        // top up missing position defaults, never drop existing/manual roles.
+        RoleAssignment::DefaultRoles defaults(*m_definitions);
+        const QStringList dc = defaults.forPosition(QStringLiteral("D (C)"));
+        QVERIFY(dc.size() >= 2);
+        const QString manual = QStringLiteral("W-S"); // not a D (C) default
+        QVERIFY(!dc.contains(manual));
+
+        std::vector<Player> players(4);
+        players[0].positionRaw = QStringLiteral("D (C)");              // no roles yet
+        players[1].positionRaw = QStringLiteral("D (C)");              // complete + manual
+        players[1].assignedRoles = dc;
+        players[1].assignedRoles << manual;
+        players[2].positionRaw = QStringLiteral("D (C)");              // partial + manual
+        players[2].assignedRoles = {dc.first(), manual};
+        players[3].positionRaw = QStringLiteral("unknown");            // no defaults at all
+
+        const auto additions = RoleAssignment::missingRoleAdditions(players, *m_definitions);
+        QCOMPARE(static_cast<int>(additions.size()), 2);
+        QCOMPARE(additions[0].first, 0);
+        QCOMPARE(additions[0].second, dc);
+        QCOMPARE(additions[1].first, 2);
+        QVERIFY(additions[1].second.contains(manual)); // manual role kept
+        for (const QString &role : dc)
+            QVERIFY(additions[1].second.contains(role));
+        QVERIFY(std::is_sorted(additions[1].second.cbegin(), additions[1].second.cend()));
+    }
+
     void clearStalePrimaryRole()
     {
         Player stale = makePlayer(1, QStringLiteral("a"), {kCm}, kBwm);

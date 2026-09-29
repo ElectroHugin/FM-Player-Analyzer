@@ -428,101 +428,121 @@
         <translation>Position:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="73"/>
-        <source>Auto-Zuweisung (nur Spieler ohne Rollen)</source>
-        <translation>Auto-assign (only players without roles)</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="74"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="77"/>
         <source>⚠️ Auto-Zuweisung (ALLE Spieler)</source>
         <translation>⚠️ Auto-assign (ALL players)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="76"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="81"/>
         <source>Änderungen speichern</source>
         <translation>Save Changes</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="148"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="154"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="150"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="156"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="152"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="158"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="153"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="159"/>
         <source>Verein</source>
         <translation>Club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="159"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="165"/>
         <source>Zugewiesene Rollen</source>
         <translation>Assigned Roles</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="111"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="251"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="117"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="257"/>
         <source>Spieler in der Tabelle auswählen, um Rollen zu bearbeiten.</source>
         <translation>Select a player in the table to edit roles.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="195"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="200"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="73"/>
+        <source>Fehlende Standardrollen ergänzen</source>
+        <translation>Add missing default roles</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="75"/>
+        <source>Ergänzt bei allen Spielern die Standardrollen ihrer aktuellen Positionen (wie beim Import). Vorhandene und manuell gesetzte Rollen bleiben erhalten.</source>
+        <translation>Adds the default roles of their current positions to all players (like the import). Existing and manually set roles are kept.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="78"/>
+        <source>Setzt die Rollen ALLER Spieler neu auf die Standardrollen ihrer Positionen — manuell angepasste Rollen gehen verloren.</source>
+        <translation>Resets the roles of ALL players to the default roles of their positions — manually adjusted roles are lost.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="201"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="206"/>
         <source>Alle</source>
         <translation>All</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="325"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="331"/>
         <source>%1 Spieler mit ungespeicherten Änderungen</source>
         <translation>%1 players with unsaved changes</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="345"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="366"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="374"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="377"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="351"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="372"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="380"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="383"/>
         <source>Rollen</source>
         <translation>Roles</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="345"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="351"/>
         <source>Keine Änderungen zum Speichern.</source>
         <translation>No changes to save.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="378"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="384"/>
         <source>Rollen für %1 Spieler aktualisiert und DWRS neu berechnet.</source>
         <translation>Updated roles for %1 players and recalculated DWRS.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="386"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="433"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="439"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="445"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="448"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="396"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="414"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="420"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="423"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="431"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="459"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="465"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="471"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="474"/>
         <source>Auto-Zuweisung</source>
         <translation>Auto-assign</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="387"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="397"/>
+        <source>Alle Spieler haben bereits die Standardrollen ihrer Positionen.</source>
+        <translation>All players already have the default roles of their positions.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="432"/>
         <source>Wirklich die Rollen ALLER Spieler anhand ihrer Positionen neu setzen? Manuell angepasste Rollen gehen dabei verloren.</source>
         <translation>Really reset the roles of ALL players based on their positions? Manually adjusted roles will be lost.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="434"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="460"/>
         <source>Keine Spieler zu aktualisieren.</source>
         <translation>No players to update.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="449"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="424"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="475"/>
         <source>%1 Spielern Rollen zugewiesen und DWRS neu berechnet.</source>
         <translation>Assigned roles to %1 players and recalculated DWRS.</translation>
     </message>

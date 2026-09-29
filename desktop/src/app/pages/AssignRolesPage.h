@@ -49,7 +49,10 @@ private:
     void editorSelectionChanged();
     void stagePendingFromEditor();
     void savePending();
-    void autoAssign(bool allPlayers);
+    // Additive top-up, same rule as the HTML import (RoleAssignment).
+    void addMissingDefaultRoles();
+    // Destructive reset of every player's roles to his position defaults.
+    void resetAllRoles();
     QStringList editorRoles() const;
 
     QComboBox *m_filterCombo = nullptr;
