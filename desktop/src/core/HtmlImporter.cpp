@@ -87,13 +87,18 @@ QString decodeEntities(const QString &text)
 
 // Text content of an HTML fragment: nested tags stripped, entities decoded,
 // whitespace trimmed.
-QString cellText(const QString &html, int from, int to)
+QString cellText(QStringView html, qsizetype from, qsizetype to)
 {
+    const QStringView raw = html.sliced(from, to - from);
+    // Fast path — virtually every FM cell is plain text ("15", a name, ...):
+    // no tags, no entities -> one trimmed copy instead of three strings.
+    if (!raw.contains(u'<') && !raw.contains(u'&'))
+        return raw.trimmed().toString();
+
     QString out;
-    out.reserve(to - from);
+    out.reserve(raw.size());
     bool inTag = false;
-    for (int i = from; i < to; ++i) {
-        const QChar ch = html.at(i);
+    for (const QChar ch : raw) {
         if (inTag) {
             if (ch == QLatin1Char('>'))
                 inTag = false;
@@ -106,28 +111,79 @@ QString cellText(const QString &html, int from, int to)
     return decodeEntities(out).trimmed();
 }
 
-// Finds the next "<tag" (case-insensitive) at a tag boundary within [pos, end).
-// Returns the index of '<', or -1. Bounding the search to `end` is essential
-// for performance: without it, searching for a tag that does not recur — e.g.
-// <th> once the header row is past — scans to end-of-file on EVERY cell, which
-// on a large export (tens of thousands of rows) turns parsing into an O(n²)
-// crawl that never appears to finish.
-int findTag(const QString &html, const QString &tag, int pos, int end)
+// ASCII lower-casing for tag-name comparison (tag names are ASCII).
+inline char16_t asciiLower(QChar ch)
 {
-    const QString needle = QLatin1Char('<') + tag;
-    const QStringView haystack = QStringView(html).left(end);
-    while (true) {
-        const qsizetype at = haystack.indexOf(needle, pos, Qt::CaseInsensitive);
-        if (at < 0)
-            return -1;
-        const qsizetype after = at + needle.size();
-        if (after >= end)
-            return -1;
-        const QChar next = html.at(after);
-        if (next == QLatin1Char('>') || next.isSpace() || next == QLatin1Char('/'))
-            return static_cast<int>(at);
-        pos = static_cast<int>(at) + 1;
+    const char16_t c = ch.unicode();
+    return (c >= u'A' && c <= u'Z') ? char16_t(c + (u'a' - u'A')) : c;
+}
+
+// html[at...] starts with the lowercase ASCII word `name`, case-insensitively.
+bool startsWithCi(QStringView html, qsizetype at, QLatin1StringView name)
+{
+    if (at < 0 || at + name.size() > html.size())
+        return false;
+    for (qsizetype i = 0; i < name.size(); ++i) {
+        if (asciiLower(html[at + i]) != char16_t(name[i].unicode()))
+            return false;
     }
+    return true;
+}
+
+inline bool isTagBoundary(QChar ch)
+{
+    return ch == QLatin1Char('>') || ch.isSpace() || ch == QLatin1Char('/');
+}
+
+// Finds the next "<name" markup within [pos, end): the index of its '<', or -1.
+// With requireBoundary the name must be followed (still before `end`) by '>',
+// whitespace or '/', so "<th" does not match "<thead". Scans '<' to '<' with a
+// plain character search — far cheaper than a case-insensitive substring
+// search per candidate — and never looks past `end` (unbounded searches for a
+// tag that does not recur made large exports O(n²) once, see v1.1.0).
+qsizetype findMarkup(QStringView html, QLatin1StringView name, qsizetype pos, qsizetype end,
+                     bool requireBoundary)
+{
+    const QStringView scope = html.first(end);
+    while (pos < end) {
+        const qsizetype lt = scope.indexOf(u'<', pos);
+        if (lt < 0)
+            return -1;
+        const qsizetype after = lt + 1 + name.size();
+        if (startsWithCi(html, lt + 1, name)
+            && (!requireBoundary || (after < end && isTagBoundary(html[after])))) {
+            return lt;
+        }
+        pos = lt + 1;
+    }
+    return -1;
+}
+
+qsizetype findTag(QStringView html, QLatin1StringView name, qsizetype pos, qsizetype end)
+{
+    return findMarkup(html, name, pos, end, /*requireBoundary*/ true);
+}
+
+// Next table cell tag ("<td" or "<th") within [pos, end), in ONE scan (instead
+// of one search per tag type); *isHeader tells which one.
+qsizetype findCell(QStringView html, qsizetype pos, qsizetype end, bool *isHeader)
+{
+    const QStringView scope = html.first(end);
+    while (pos < end) {
+        const qsizetype lt = scope.indexOf(u'<', pos);
+        if (lt < 0)
+            return -1;
+        const qsizetype after = lt + 3;
+        if (after < end && asciiLower(html[lt + 1]) == u't') {
+            const char16_t kind = asciiLower(html[lt + 2]);
+            if ((kind == u'd' || kind == u'h') && isTagBoundary(html[after])) {
+                *isHeader = kind == u'h';
+                return lt;
+            }
+        }
+        pos = lt + 1;
+    }
+    return -1;
 }
 
 // True if the player uid is a newgen id ("r-" prefix).
@@ -147,11 +203,13 @@ bool HtmlImporter::extractTable(const QString &html, HtmlTable *out, QString *er
         return false;
     };
 
-    const int htmlSize = html.size();
-    const int tableStart = findTag(html, QStringLiteral("table"), 0, htmlSize);
+    const QStringView view(html);
+    const qsizetype htmlSize = view.size();
+    const qsizetype tableStart = findTag(view, QLatin1StringView("table"), 0, htmlSize);
     if (tableStart < 0)
         return fail(QStringLiteral("No <table> element found in file."));
-    int tableEnd = html.indexOf(QLatin1String("</table"), tableStart, Qt::CaseInsensitive);
+    qsizetype tableEnd = findMarkup(view, QLatin1StringView("/table"), tableStart, htmlSize,
+                                    /*requireBoundary*/ false);
     if (tableEnd < 0)
         tableEnd = htmlSize;
 
@@ -159,50 +217,43 @@ bool HtmlImporter::extractTable(const QString &html, HtmlTable *out, QString *er
     out->rows.clear();
     out->malformedRows = 0;
 
-    int pos = tableStart;
+    qsizetype pos = tableStart;
     bool haveHeader = false;
     int rowCounter = 0;
     while (true) {
-        const int rowStart = findTag(html, QStringLiteral("tr"), pos, tableEnd);
+        const qsizetype rowStart = findTag(view, QLatin1StringView("tr"), pos, tableEnd);
         if (rowStart < 0 || rowStart >= tableEnd)
             break;
-        int rowEnd = html.indexOf(QLatin1String("</tr"), rowStart, Qt::CaseInsensitive);
-        if (rowEnd < 0 || rowEnd > tableEnd)
+        // The row ends at "</tr" (no boundary check), or at the table end.
+        qsizetype rowEnd = findMarkup(view, QLatin1StringView("/tr"), rowStart, tableEnd,
+                                      /*requireBoundary*/ false);
+        if (rowEnd < 0)
             rowEnd = tableEnd;
 
         QStringList cells;
-        int cellPos = rowStart;
+        if (haveHeader)
+            cells.reserve(out->headers.size());
+        qsizetype cellPos = rowStart;
         bool headerRow = false;
         while (true) {
-            const int th = findTag(html, QStringLiteral("th"), cellPos, rowEnd);
-            const int td = findTag(html, QStringLiteral("td"), cellPos, rowEnd);
-            int cellStart = -1;
             bool isTh = false;
-            if (th >= 0 && (td < 0 || th < td)) {
-                cellStart = th;
-                isTh = true;
-            } else if (td >= 0) {
-                cellStart = td;
-            }
+            const qsizetype cellStart = findCell(view, cellPos, rowEnd, &isTh);
             if (cellStart < 0)
                 break;
 
-            const int contentStart = html.indexOf(QLatin1Char('>'), cellStart);
+            const qsizetype contentStart = view.indexOf(u'>', cellStart);
             if (contentStart < 0 || contentStart >= rowEnd)
                 break;
-            const QString closeTag = isTh ? QStringLiteral("</th") : QStringLiteral("</td");
-            int contentEnd = html.indexOf(closeTag, contentStart, Qt::CaseInsensitive);
-            if (contentEnd < 0 || contentEnd > rowEnd) {
+            qsizetype contentEnd =
+                findMarkup(view, isTh ? QLatin1StringView("/th") : QLatin1StringView("/td"),
+                           contentStart, rowEnd, /*requireBoundary*/ false);
+            if (contentEnd < 0) {
                 // Unclosed cell: ends at the next cell or the row end.
-                const int nextTh = findTag(html, QStringLiteral("th"), contentStart + 1, rowEnd);
-                const int nextTd = findTag(html, QStringLiteral("td"), contentStart + 1, rowEnd);
-                contentEnd = rowEnd;
-                if (nextTh >= 0 && nextTh < contentEnd)
-                    contentEnd = nextTh;
-                if (nextTd >= 0 && nextTd < contentEnd)
-                    contentEnd = nextTd;
+                bool nextIsTh = false;
+                const qsizetype next = findCell(view, contentStart + 1, rowEnd, &nextIsTh);
+                contentEnd = next >= 0 ? next : rowEnd;
             }
-            cells << cellText(html, contentStart + 1, contentEnd);
+            cells << cellText(view, contentStart + 1, contentEnd);
             if (isTh)
                 headerRow = true;
             cellPos = contentEnd;
@@ -211,7 +262,7 @@ bool HtmlImporter::extractTable(const QString &html, HtmlTable *out, QString *er
         // Report parse progress by byte position every few thousand rows so a
         // very large export does not look frozen while it is being scanned.
         if (progress && (++rowCounter & 0x1FFF) == 0)
-            progress(rowEnd, tableEnd);
+            progress(static_cast<int>(rowEnd), static_cast<int>(tableEnd));
 
         if (!haveHeader) {
             // The first row must be the header row (legacy takes trs[0] <th>s).
@@ -221,7 +272,7 @@ bool HtmlImporter::extractTable(const QString &html, HtmlTable *out, QString *er
             haveHeader = true;
         } else if (!cells.isEmpty()) {
             if (cells.size() == out->headers.size())
-                out->rows.append(cells);
+                out->rows.append(std::move(cells));
             else
                 ++out->malformedRows;
         }

@@ -9,6 +9,9 @@
 //       auto-assign, DWRS recalc for the affected players) plus the UI-side
 //       adoption, phase by phase. Works on a plain file copy of <db> in a temp
 //       dir; SQLite never opens the given file.
+//
+//   fmbench --parse <export.html>
+//       Parser only: file read, UTF-8 decode, HtmlImporter::extractTable.
 
 #include "core/AppConfig.h"
 #include "core/Database.h"
@@ -19,6 +22,7 @@
 #include "core/RatingsUpdater.h"
 
 #include <QCoreApplication>
+#include <QCryptographicHash>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QTemporaryDir>
@@ -86,8 +90,9 @@ int benchImport(const QString &sourceDb, const QString &htmlPath, const QString 
     request.dbFile = dbPath;
     request.autoAssign = true; // backupsDir empty: no backup (not part of the measurement)
 
-    const char *names[] = {"Backup", "Laden + Parsen", "Import (DB)", "Auto-Rollen", "DWRS"};
-    qint64 stageMs[5] = {0, 0, 0, 0, 0};
+    const char *names[] = {"Backup",      "Laden + Parsen", "Import (DB)",
+                           "Auto-Rollen", "DWRS",           "Ergebnis/Caches"};
+    qint64 stageMs[6] = {0, 0, 0, 0, 0, 0};
     int current = -1;
     QElapsedTimer timer;
     timer.start();
@@ -112,29 +117,66 @@ int benchImport(const QString &sourceDb, const QString &htmlPath, const QString 
         return 1;
     }
 
-    // UI thread afterwards: AppContext::adoptPlayers (store + ratings cache).
+    // UI thread afterwards: AppContext::adoptState — only moves.
     timer.restart();
-    fm::Database db(QStringLiteral("bench_ui"));
-    if (!db.open(dbPath)) {
-        std::fprintf(stderr, "FEHLER: %s\n", qUtf8Printable(db.errorString()));
-        return 1;
-    }
-    fm::PlayerStore store;
-    store.reset(std::move(result.players));
-    const fm::RoleRatings ratings =
-        fm::RatingsUpdater::roleRatingsForAssigned(store, db.latestDwrsRatings());
+    fm::PlayerStore store = std::move(result.store);
+    fm::LatestRatings latest = std::move(result.latestRatings);
+    fm::RoleRatings ratings = std::move(result.ratings);
     const qint64 uiMs = timer.restart();
 
     std::printf("Import von %d Zeilen -> DB mit %d Spielern (%d neu)\n",
                 result.import.rowsParsed, store.size(), result.import.newPlayers);
-    for (int i = 1; i < 5; ++i)
+    for (int i = 1; i < 6; ++i)
         std::printf("  [Worker] %-15s %6lld ms\n", names[i], stageMs[i]);
     std::printf("  = Worker gesamt:         %6lld ms  (Auto-Rollen: %d, DWRS: %d berechnet, "
                 "%d geschrieben)\n",
                 workerMs, static_cast<int>(result.autoAssignedUids.size()),
                 result.recalc.computed, result.recalc.inserted);
-    std::printf("  [UI-Thread] Uebernahme:  %6lld ms  (%d Rollen)\n", uiMs,
-                static_cast<int>(ratings.size()));
+    std::printf("  [UI-Thread] Uebernahme:  %6lld ms  (%lld Ratings, %d Rollen)\n", uiMs,
+                static_cast<long long>(latest.size()), static_cast<int>(ratings.size()));
+    return 0;
+}
+
+int benchParse(const QString &htmlPath)
+{
+    QElapsedTimer timer;
+    timer.start();
+    QFile file(htmlPath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        std::fprintf(stderr, "FEHLER: %s\n", qUtf8Printable(file.errorString()));
+        return 1;
+    }
+    const QByteArray bytes = file.readAll();
+    const qint64 readMs = timer.restart();
+    const QString html = QString::fromUtf8(bytes);
+    const qint64 decodeMs = timer.restart();
+    fm::HtmlTable table;
+    QString error;
+    if (!fm::HtmlImporter::extractTable(html, &table, &error)) {
+        std::fprintf(stderr, "FEHLER: %s\n", qUtf8Printable(error));
+        return 1;
+    }
+    const qint64 extractMs = timer.restart();
+
+    // Content checksum over every header and cell (with separators), to prove
+    // a parser change yields byte-identical tables on real exports.
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    const auto feed = [&hash](const QStringList &cells) {
+        for (const QString &cell : cells) {
+            hash.addData(cell.toUtf8());
+            hash.addData(QByteArrayView("\x1f"));
+        }
+        hash.addData(QByteArrayView("\x1e"));
+    };
+    feed(table.headers);
+    for (const QStringList &row : std::as_const(table.rows))
+        feed(row);
+
+    std::printf("%lld Bytes: lesen %lld ms, UTF-8 %lld ms, extractTable %lld ms "
+                "(%d Zeilen x %d Spalten, %d fehlerhaft) SHA1 %s\n",
+                static_cast<long long>(bytes.size()), readMs, decodeMs, extractMs,
+                static_cast<int>(table.rows.size()), static_cast<int>(table.headers.size()),
+                table.malformedRows, hash.result().toHex().constData());
     return 0;
 }
 
@@ -144,11 +186,14 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     const QStringList args = app.arguments();
+    if (args.size() == 3 && args[1] == QLatin1String("--parse"))
+        return benchParse(args[2]);
     if (args.size() == 2)
         return benchLoad(args[1]);
     if (args.size() == 5 && args[2] == QLatin1String("--import"))
         return benchImport(args[1], args[3], args[4]);
     std::fprintf(stderr, "Usage: fmbench <db>\n"
-                         "       fmbench <db> --import <export.html> <definitions.json>\n");
+                         "       fmbench <db> --import <export.html> <definitions.json>\n"
+                         "       fmbench --parse <export.html>\n");
     return 2;
 }

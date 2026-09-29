@@ -70,6 +70,29 @@ private slots:
             QStringLiteral("<table><tr><td>no header</td></tr></table>"), &table, &error));
     }
 
+    void extractTableEdgeCases()
+    {
+        // Backlog #38: the rewritten tag scanner must keep every quirk of the
+        // old parser — mixed case, attributes, <thead> not mistaken for <th>,
+        // unclosed cells, nested tags/entities, empty rows, no </table>.
+        HtmlTable table;
+        QString error;
+        QVERIFY2(HtmlImporter::extractTable(
+                     QStringLiteral("<p>intro</p><TABLE border=1><THEAD>"
+                                    "<TR class=\"h\"><TH>A</TH><Th\tclass=x>B</Th></TR></THEAD>"
+                                    "<tr><td>1<td>2</tr>"
+                                    "<tr><TD> <span>x</span>&amp;y </TD><td>&lt;z&gt;</td></TR>"
+                                    "<tr><td>only</td></tr>"
+                                    "<tr></tr>"),
+                     &table, &error),
+                 qPrintable(error));
+        QCOMPARE(table.headers, (QStringList{QStringLiteral("A"), QStringLiteral("B")}));
+        QCOMPARE(table.rows.size(), 2);
+        QCOMPARE(table.rows.at(0), (QStringList{QStringLiteral("1"), QStringLiteral("2")}));
+        QCOMPARE(table.rows.at(1), (QStringList{QStringLiteral("x&y"), QStringLiteral("<z>")}));
+        QCOMPARE(table.malformedRows, 1);
+    }
+
     void extractTableEntitiesAndNesting()
     {
         HtmlTable table;

@@ -69,7 +69,12 @@ ImportPipelineResult run(const Request &request, const Definitions &definitions,
         db, players, engine, definitions.validRoles(), subset,
         [&report](int current, int total) { report(Stage::Dwrs, current, total); });
 
-    result.players = std::move(players);
+    // Build the UI's post-import state here, off the UI thread (reading ~500k
+    // latest ratings and mapping them took ~1.1 s on the UI thread).
+    report(Stage::Finalize, 0, 0);
+    result.store.reset(std::move(players));
+    result.latestRatings = db.latestDwrsRatings();
+    result.ratings = RatingsUpdater::roleRatingsForAssigned(result.store, result.latestRatings);
     return result;
 }
 

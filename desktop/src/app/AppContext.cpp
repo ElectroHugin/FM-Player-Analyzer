@@ -117,10 +117,11 @@ void AppContext::reloadFromDatabase()
     emit dataChanged();
 }
 
-void AppContext::adoptPlayers(std::vector<Player> players)
+void AppContext::adoptState(PlayerStore store, LatestRatings latestRatings, RoleRatings ratings)
 {
-    m_store.reset(std::move(players));
-    rebuildRatingsCache();
+    m_store = std::move(store);
+    m_latestRatings = std::move(latestRatings);
+    m_ratings = std::move(ratings);
     emit dataChanged();
 }
 

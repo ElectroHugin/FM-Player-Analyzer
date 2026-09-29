@@ -47,94 +47,97 @@
 <context>
     <name>ImportRunner</name>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="30"/>
+        <location filename="../src/app/ImportRunner.cpp" line="27"/>
         <source>Import wird vorbereitet…</source>
         <translation>Preparing import…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="73"/>
+        <location filename="../src/app/ImportRunner.cpp" line="53"/>
         <source>Backup wird erstellt…</source>
         <translation>Creating backup…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="84"/>
-        <location filename="../src/app/ImportRunner.cpp" line="101"/>
+        <location filename="../src/app/ImportRunner.cpp" line="57"/>
         <source>Datei wird analysiert…</source>
         <translation>Analyzing file…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="92"/>
+        <location filename="../src/app/ImportRunner.cpp" line="61"/>
         <source>Spieler werden importiert… (%1/%2)</source>
         <translation>Importing players… (%1/%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="109"/>
+        <location filename="../src/app/ImportRunner.cpp" line="65"/>
         <source>Rollen werden automatisch zugewiesen…</source>
         <translation>Assigning roles automatically…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="126"/>
-        <location filename="../src/app/ImportRunner.cpp" line="131"/>
+        <location filename="../src/app/ImportRunner.cpp" line="69"/>
         <source>DWRS-Bewertungen werden berechnet…</source>
         <translation>Calculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="142"/>
+        <location filename="../src/app/ImportRunner.cpp" line="73"/>
+        <source>Ergebnis wird vorbereitet…</source>
+        <translation>Preparing results…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="114"/>
         <source>%1 Spieler importiert (davon %2 neu).</source>
         <translation>%1 players imported (%2 of them new).</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="146"/>
+        <location filename="../src/app/ImportRunner.cpp" line="118"/>
         <source>%1 Spielern wurden automatisch Rollen zugewiesen.</source>
         <translation>Roles were assigned automatically to %1 players.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="149"/>
+        <location filename="../src/app/ImportRunner.cpp" line="121"/>
         <source>DWRS: %1 Bewertungen berechnet, %2 geänderte Einträge gespeichert.</source>
         <translation>DWRS: %1 ratings calculated, %2 changed entries saved.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="159"/>
+        <location filename="../src/app/ImportRunner.cpp" line="131"/>
         <source>Backup fehlgeschlagen: %1</source>
         <translation>Backup failed: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="161"/>
+        <location filename="../src/app/ImportRunner.cpp" line="133"/>
         <source>%1 fehlerhafte Zeile(n) übersprungen (Zellenzahl passte nicht zur Kopfzeile). Exportiere die Datei ggf. neu aus FM.</source>
         <translation>%1 malformed row(s) skipped (cell count did not match the header). Re-export the file from FM if needed.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="165"/>
+        <location filename="../src/app/ImportRunner.cpp" line="137"/>
         <source>%1 Zeile(n) ohne UID übersprungen.</source>
         <translation>%1 row(s) without UID skipped.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="168"/>
+        <location filename="../src/app/ImportRunner.cpp" line="140"/>
         <source>Doppelte UIDs in der Datei — nur die letzte Zeile wurde übernommen: %1</source>
         <translation>Duplicate UIDs in the file — only the last row was used: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="173"/>
+        <location filename="../src/app/ImportRunner.cpp" line="145"/>
         <source>Unbekannte Spalten (werden ignoriert): %1</source>
         <translation>Unknown columns (ignored): %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="176"/>
+        <location filename="../src/app/ImportRunner.cpp" line="148"/>
         <source>ID/Namens-Konflikt übersprungen: %1. Eine numerische UID entspricht einer bekannten Newgen-ID, aber die Namen unterscheiden sich.</source>
         <translation>ID/name conflict skipped: %1. A numeric UID matches a known newgen ID, but the names differ.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="182"/>
+        <location filename="../src/app/ImportRunner.cpp" line="154"/>
         <source>Name unter bekannter UID geändert: %1. FM hat die ID evtl. an einen neuen Newgen vergeben — zugewiesene Rollen und DWRS-Historie gehören ggf. noch zum alten Spieler.</source>
         <translation>Name changed under a known UID: %1. FM may have reissued the ID to a new newgen — assigned roles and DWRS history may still belong to the old player.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="188"/>
+        <location filename="../src/app/ImportRunner.cpp" line="160"/>
         <source>Automatische Rollen-Zuweisung fehlgeschlagen: %1</source>
         <translation>Automatic role assignment failed: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="191"/>
+        <location filename="../src/app/ImportRunner.cpp" line="163"/>
         <source>DWRS-Berechnung fehlgeschlagen: %1</source>
         <translation>DWRS calculation failed: %1</translation>
     </message>
@@ -1270,77 +1273,77 @@ You can change the folder later in the settings.</translation>
         <translation>DWRS recalculated: %1 ratings, %2 changed entries saved.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="232"/>
+        <location filename="../src/app/MainWindow.cpp" line="233"/>
         <source>🏟 Vereins-Management</source>
         <translation>🏟 Club Management</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="233"/>
+        <location filename="../src/app/MainWindow.cpp" line="234"/>
         <source>🌍 National-Management</source>
         <translation>🌍 National Management</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="245"/>
+        <location filename="../src/app/MainWindow.cpp" line="246"/>
         <source>🔎 Spieler suchen…</source>
         <translation>🔎 Search players…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="290"/>
+        <location filename="../src/app/MainWindow.cpp" line="291"/>
         <source>🌓 Tag/Nacht wechseln</source>
         <translation>🌓 Toggle Day/Night</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="320"/>
+        <location filename="../src/app/MainWindow.cpp" line="321"/>
         <source>NATIONALTEAM</source>
         <translation>NATIONAL TEAM</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="320"/>
+        <location filename="../src/app/MainWindow.cpp" line="321"/>
         <source>VEREIN</source>
         <translation>CLUB</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="322"/>
+        <location filename="../src/app/MainWindow.cpp" line="323"/>
         <source>ALLGEMEIN</source>
         <translation>GENERAL</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="334"/>
+        <location filename="../src/app/MainWindow.cpp" line="335"/>
         <source>&amp;Sprache</source>
         <translation>&amp;Language</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="363"/>
+        <location filename="../src/app/MainWindow.cpp" line="364"/>
         <source>Sprache</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="364"/>
+        <location filename="../src/app/MainWindow.cpp" line="365"/>
         <source>Die Sprache wird nach einem Neustart geändert. Jetzt neu starten?</source>
         <translation>The language will change after a restart. Restart now?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="473"/>
+        <location filename="../src/app/MainWindow.cpp" line="474"/>
         <source>DWRS-Bewertungen werden neu berechnet…</source>
         <translation>Recalculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="531"/>
+        <location filename="../src/app/MainWindow.cpp" line="532"/>
         <source>Nationalteam</source>
         <translation>National Team</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="541"/>
+        <location filename="../src/app/MainWindow.cpp" line="542"/>
         <source>FM Dashboard</source>
         <translation>FM Dashboard</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="548"/>
+        <location filename="../src/app/MainWindow.cpp" line="549"/>
         <source>Aktiver Spielstand: &lt;b&gt;%1.db&lt;/b&gt; · %2 Spieler</source>
         <translation>Active save: &lt;b&gt;%1.db&lt;/b&gt; · %2 players</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="570"/>
+        <location filename="../src/app/MainWindow.cpp" line="571"/>
         <source>Datenbank: &lt;b&gt;%1&lt;/b&gt; · %2 Spieler</source>
         <translation>Database: &lt;b&gt;%1&lt;/b&gt; · %2 players</translation>
     </message>

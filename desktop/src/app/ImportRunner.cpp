@@ -67,7 +67,11 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
             break;
         case ImportPipeline::Stage::Dwrs:
             text = ImportText::tr("DWRS-Bewertungen werden berechnet…");
-            percent = scaled(62, 38);
+            percent = scaled(62, 36);
+            break;
+        case ImportPipeline::Stage::Finalize:
+            text = ImportText::tr("Ergebnis wird vorbereitet…");
+            percent = 99;
             break;
         }
         QMetaObject::invokeMethod(
@@ -84,13 +88,15 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
     auto *watcher = new QFutureWatcher<ImportPipelineResult>(parent);
     QObject::connect(watcher, &QFutureWatcher<ImportPipelineResult>::finished, parent,
                      [watcher, dialog, &context, onDone = std::move(onDone)] {
-                         // takeResult(): move the (large) player list out instead
-                         // of copying it.
+                         // takeResult(): move the (large) state out instead of
+                         // copying it.
                          ImportPipelineResult result = watcher->future().takeResult();
                          watcher->deleteLater();
                          dialog->finish();
                          if (result.import.success)
-                             context.adoptPlayers(std::move(result.players));
+                             context.adoptState(std::move(result.store),
+                                                std::move(result.latestRatings),
+                                                std::move(result.ratings));
                          if (onDone)
                              onDone(result);
                      });

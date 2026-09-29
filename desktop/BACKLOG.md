@@ -80,7 +80,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). Offen: #11-Rest, #29, #34–#38.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~. Offen: #11-Rest, #29, #34–#37.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -315,13 +315,24 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
   (£/$ → Marktwert 0); `DwrsEngine::planFor` befüllt den Cache lazy für
   unbekannte Rollen (Race, falls parallel zu einem Worker).
 
-## ⚪ Offen: #38 — Verbleibende Import-Kosten (aus der Messung zu #31)
+## ✅ #38 — Verbleibende Import-Kosten — erledigt in v1.3.18
 
-- **HTML-Parser:** `HtmlImporter::extractTable` braucht ~2,3 s für 11 MB
-  (~670k Zellen, je QString + Entity-Decoding). Vorschlag: auf `QStringView`
-  arbeiten, Zellen erst beim Anwenden materialisieren.
-- **UI-Übernahme ~1,1 s:** Großteil ist `latestDwrsRatings()` (~580k Zeilen) für den
-  Rating-Cache — gehört zum Rest von **#11** (gezielt patchen statt neu aufbauen).
+> **HTML-Parser:** `extractTable` sucht Tags jetzt per `<`-Zeichensuche +
+> ASCII-Vergleich (statt case-insensitiver Teilstring-Suche), findet `<td`/`<th`
+> in einem Durchgang und übernimmt reine Textzellen als eine Kopie. Belegt
+> identisch: SHA1 über alle Zellen aller 15 echten Exporte unverändert
+> (`fmbench --parse`). Tempo: `bayern_allplayers.html` (86 MB) 16,0 → 1,3 s,
+> `Wrexham_Scouting.html` (11 MB) 2,0 → 0,15 s. Randfall-Test
+> `extractTableEdgeCases`.
+>
+> **UI-Übernahme:** Store + beide Rating-Caches baut jetzt der Import-Worker
+> (`ImportPipelineResult::store/latestRatings/ratings`, Stufe „Ergebnis wird
+> vorbereitet…"); die UI tauscht nur noch per `AppContext::adoptState`.
+> UI-Freeze nach dem Import 1,1 s → 0 ms; Worker gesamt 8,3 → 7,0 s.
+>
+> Hinweis: Andere Speichervorgänge bauen die Rating-Caches weiterhin auf dem
+> UI-Thread neu (`reloadFromDatabase`/`reloadRatings`, je ~1 s bei 35k
+> Spielern) — das bleibt der Rest von **#11**.
 
 ## ⚪ Testlücken
 

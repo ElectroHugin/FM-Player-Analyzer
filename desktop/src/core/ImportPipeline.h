@@ -1,8 +1,11 @@
 #pragma once
 
+#include "Database.h"
 #include "HtmlImporter.h"
 #include "Player.h"
+#include "PlayerStore.h"
 #include "RatingsUpdater.h"
+#include "SquadBuilder.h"
 
 #include <QString>
 #include <QStringList>
@@ -24,10 +27,14 @@ struct ImportPipelineResult {
     QString autoAssignError; // non-fatal
     bool recalcRan = false;
     RatingsUpdater::Result recalc;
-    // Complete player list after import and auto-assign — same content and
-    // order as Database::loadPlayers(). Valid when import.success; lets the UI
-    // adopt the result instead of reloading every player on its own thread.
-    std::vector<Player> players;
+
+    // Post-import state, built entirely on the worker so the UI thread only
+    // swaps it in (valid when import.success): the player store — same content
+    // and order as Database::loadPlayers() — and both rating caches, exactly
+    // as AppContext would rebuild them from the database.
+    PlayerStore store;
+    LatestRatings latestRatings;
+    RoleRatings ratings;
 };
 
 // The HTML-import pipeline as run on the worker thread: backup, parse+import,
@@ -43,7 +50,7 @@ struct Request {
     QString fmVersionId;
 };
 
-enum class Stage { Backup, Parse, Import, AutoAssign, Dwrs };
+enum class Stage { Backup, Parse, Import, AutoAssign, Dwrs, Finalize };
 
 // done/total: bytes (Parse), rows (Import), role batches (Dwrs); 0/0 marks the
 // start of a stage. Called on the worker thread.
