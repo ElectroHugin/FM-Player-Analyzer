@@ -77,7 +77,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → **#26/#27 → #31/#32**.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → **#31/#32**.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -150,7 +150,14 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 - **Vorschlag:** „FrA" in `isFreeAgent` aufnehmen, Flags beim Abgang leeren,
   Ziel mit `newClub` vorbelegen, falls gesetzt.
 
-### #26 — Ungestempelte Alt-Spieler werden nie veraltet
+### ✅ #26 — Ungestempelte Alt-Spieler werden nie veraltet — erledigt in v1.3.16
+
+> **Umsetzung:** `Freshness::uploadsSinceSeen` wertet `lastSeenUpdate == 0` als
+> „zuletzt bei Upload 0 gesehen"; solange der Zähler 0 ist, bleibt alles frisch.
+> Keine Sofort-Flut: Der Zähler startet mit der Frische-Erfassung bei 0
+> (bayern2026-2-0 am 2026-09-29: Zähler 0, alle 34.951 Spieler ungestempelt →
+> erst nach 5 künftigen Imports ohne den Spieler greift „veraltet").
+> Tests in `test_freshness`.
 
 - **Datei:** [src/core/Freshness.cpp](src/core/Freshness.cpp) `uploadsSinceSeen`.
 - **Problem:** `lastSeenUpdate == 0` (vor v1.3.5 importiert, seither nie
@@ -159,7 +166,16 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 - **Vorschlag:** Ungestempelte Zeilen als „zuletzt bei Upload 0 gesehen"
   behandeln (nach Y Uploads veraltet). Tests in `test_freshness` anpassen.
 
-### #27 — HTML-Import ist nicht atomar
+### ✅ #27 — HTML-Import ist nicht atomar — erledigt in v1.3.16
+
+> **Umsetzung:** Verschachtelbare Transaktionen in `Database`
+> (`beginTransaction`/`commitTransaction`/`rollbackTransaction`: äußere Ebene
+> echte Transaktion, innere Ebenen SAVEPOINTs; alle Schreibmethoden nutzen sie)
+> plus RAII `ScopedTransaction`. `importHtml` klammert ID-Unification, alle
+> Batches und den Upload-Zähler in eine Transaktion; ein Rollback verwirft
+> auch den Settings-Cache. Gegenprobe: alter Importer ließ nach Fehler im
+> 2. Batch 2.000 Spieler zurück, neuer keinen. Tests: `test_htmlimporter`
+> (`failedImportRollsBackEverything`), `test_database` (`nestedTransactions`).
 
 - **Datei:** [src/core/HtmlImporter.cpp](src/core/HtmlImporter.cpp) `importHtml`
   (Merges/Renames + `flush` je 2000er-Batch).

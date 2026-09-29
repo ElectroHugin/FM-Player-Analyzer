@@ -18,9 +18,9 @@ namespace Freshness {
 
 // Number of uploads that have happened since the player was last present.
 // 0 when the player was in the most recent import (fresh). Never negative.
-// Returns 0 while no upload has been recorded yet (currentCounter <= 0) or for
-// never-stamped legacy rows, so nothing is flagged before real tracking data
-// exists.
+// Returns 0 while no upload has been recorded yet (currentCounter <= 0).
+// Never-stamped legacy rows (lastSeenUpdate 0) count as last seen at upload 0,
+// so they age like everyone else once tracking has started.
 int uploadsSinceSeen(const Player &player, int currentCounter);
 
 // Data considered stale: missing from the last Y (>=1) uploads.

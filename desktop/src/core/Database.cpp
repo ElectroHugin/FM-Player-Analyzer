@@ -93,6 +93,60 @@ bool Database::isOpen() const
     return m_db.isOpen();
 }
 
+bool Database::beginTransaction()
+{
+    if (m_transactionDepth == 0) {
+        if (!m_db.transaction()) {
+            m_error = m_db.lastError().text();
+            return false;
+        }
+    } else if (!exec(QStringLiteral("SAVEPOINT sp_%1").arg(m_transactionDepth))) {
+        return false;
+    }
+    ++m_transactionDepth;
+    return true;
+}
+
+bool Database::commitTransaction()
+{
+    if (m_transactionDepth <= 0)
+        return false;
+    --m_transactionDepth;
+    if (m_transactionDepth == 0) {
+        if (!m_db.commit()) {
+            m_error = m_db.lastError().text();
+            // A failed COMMIT leaves the transaction open; undo it so the
+            // connection is usable and memory matches the DB again.
+            m_db.rollback();
+            m_settingsCache.clear();
+            m_settingsLoaded.clear();
+            return false;
+        }
+        return true;
+    }
+    return exec(QStringLiteral("RELEASE SAVEPOINT sp_%1").arg(m_transactionDepth));
+}
+
+void Database::rollbackTransaction()
+{
+    if (m_transactionDepth <= 0)
+        return;
+    --m_transactionDepth;
+    if (m_transactionDepth == 0) {
+        m_db.rollback();
+        // setSetting() inside the rolled-back transaction updated the cache;
+        // drop it so the next read comes from the (restored) table.
+        m_settingsCache.clear();
+        m_settingsLoaded.clear();
+        return;
+    }
+    // Keep m_error from the failure that caused the rollback.
+    const QString error = m_error;
+    exec(QStringLiteral("ROLLBACK TO SAVEPOINT sp_%1").arg(m_transactionDepth));
+    exec(QStringLiteral("RELEASE SAVEPOINT sp_%1").arg(m_transactionDepth));
+    m_error = error;
+}
+
 bool Database::exec(const QString &sql)
 {
     QSqlQuery query(m_db);
@@ -119,10 +173,8 @@ bool Database::initSchema()
     if (version >= kSchemaVersion)
         return true;
 
-    if (!m_db.transaction()) {
-        m_error = m_db.lastError().text();
+    if (!beginTransaction())
         return false;
-    }
 
     // Fresh database (version 0): create everything at the current shape.
     // Existing database: apply the pending migration steps in order. A fresh DB
@@ -140,10 +192,10 @@ bool Database::initSchema()
             ok = migrateV3ToV4();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
-        m_db.rollback();
+        rollbackTransaction();
         return false;
     }
-    return m_db.commit();
+    return commitTransaction();
 }
 
 bool Database::createInitialSchema()
@@ -264,7 +316,8 @@ bool Database::migrateV2ToV3()
 {
     // Data-freshness tracking: stamp of the upload counter at which each player
     // was last present. Existing rows default to 0 ("never stamped"), which
-    // Freshness treats as fresh until real tracking data accumulates.
+    // Freshness treats as last seen at upload 0 — they age from the first
+    // tracked upload on.
     return exec(QStringLiteral(
         "ALTER TABLE players ADD COLUMN last_seen_update INTEGER NOT NULL DEFAULT 0"));
 }
@@ -383,10 +436,8 @@ bool Database::upsertPlayers(std::vector<Player> &players)
     if (players.empty())
         return true;
 
-    if (!m_db.transaction()) {
-        m_error = m_db.lastError().text();
+    if (!beginTransaction())
         return false;
-    }
 
     QStringList baseColumns = {
         QStringLiteral("uid"), QStringLiteral("name"), QStringLiteral("age"),
@@ -425,7 +476,7 @@ bool Database::upsertPlayers(std::vector<Player> &players)
                                 placeholders.join(QStringLiteral(", ")),
                                 updateClauses.join(QStringLiteral(", "))))) {
         m_error = query.lastError().text();
-        m_db.rollback();
+        rollbackTransaction();
         return false;
     }
 
@@ -472,7 +523,7 @@ bool Database::upsertPlayers(std::vector<Player> &players)
         }
         if (!query.exec()) {
             m_error = query.lastError().text();
-            m_db.rollback();
+            rollbackTransaction();
             return false;
         }
 
@@ -480,7 +531,7 @@ bool Database::upsertPlayers(std::vector<Player> &players)
             idQuery.bindValue(0, p.uid);
             if (!idQuery.exec() || !idQuery.next()) {
                 m_error = idQuery.lastError().text();
-                m_db.rollback();
+                rollbackTransaction();
                 return false;
             }
             p.id = idQuery.value(0).toInt();
@@ -489,7 +540,7 @@ bool Database::upsertPlayers(std::vector<Player> &players)
         deleteRoles.bindValue(0, p.id);
         if (!deleteRoles.exec()) {
             m_error = deleteRoles.lastError().text();
-            m_db.rollback();
+            rollbackTransaction();
             return false;
         }
         for (const QString &role : p.assignedRoles) {
@@ -497,20 +548,20 @@ bool Database::upsertPlayers(std::vector<Player> &players)
             insertRole.bindValue(1, role);
             if (!insertRole.exec()) {
                 m_error = insertRole.lastError().text();
-                m_db.rollback();
+                rollbackTransaction();
                 return false;
             }
         }
     }
 
-    return m_db.commit();
+    return commitTransaction();
 }
 
 bool Database::deletePlayers(const QList<int> &playerIds)
 {
     if (playerIds.isEmpty())
         return true;
-    if (!m_db.transaction())
+    if (!beginTransaction())
         return false;
     QSqlQuery query(m_db);
     query.prepare(QStringLiteral("DELETE FROM players WHERE id = ?"));
@@ -518,11 +569,11 @@ bool Database::deletePlayers(const QList<int> &playerIds)
         query.bindValue(0, id);
         if (!query.exec()) {
             m_error = query.lastError().text();
-            m_db.rollback();
+            rollbackTransaction();
             return false;
         }
     }
-    return m_db.commit();
+    return commitTransaction();
 }
 
 bool Database::renamePlayerUid(int playerId, const QString &newUid)
@@ -542,10 +593,8 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
 {
     if (badPlayerId == goodPlayerId)
         return true;
-    if (!m_db.transaction()) {
-        m_error = m_db.lastError().text();
+    if (!beginTransaction())
         return false;
-    }
     // OR IGNORE skips history rows that would collide on (player, role, ts);
     // leftovers under the bad id are removed with the player row (CASCADE).
     QSqlQuery query(m_db);
@@ -555,7 +604,7 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     query.bindValue(1, badPlayerId);
     if (!query.exec()) {
         m_error = query.lastError().text();
-        m_db.rollback();
+        rollbackTransaction();
         return false;
     }
 
@@ -566,7 +615,7 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     query.bindValue(0, goodPlayerId);
     if (!query.exec()) {
         m_error = query.lastError().text();
-        m_db.rollback();
+        rollbackTransaction();
         return false;
     }
     query.prepare(QStringLiteral(
@@ -580,7 +629,7 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     query.bindValue(1, goodPlayerId);
     if (!query.exec()) {
         m_error = query.lastError().text();
-        m_db.rollback();
+        rollbackTransaction();
         return false;
     }
 
@@ -588,20 +637,18 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     query.bindValue(0, badPlayerId);
     if (!query.exec()) {
         m_error = query.lastError().text();
-        m_db.rollback();
+        rollbackTransaction();
         return false;
     }
-    return m_db.commit();
+    return commitTransaction();
 }
 
 bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries)
 {
     if (entries.empty())
         return true;
-    if (!m_db.transaction()) {
-        m_error = m_db.lastError().text();
+    if (!beginTransaction())
         return false;
-    }
     QSqlQuery query(m_db);
     query.prepare(QStringLiteral(
         "INSERT OR REPLACE INTO dwrs_history (player_id, role, absolute, normalized, ts) "
@@ -626,7 +673,7 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries)
         query.bindValue(4, entry.timestamp);
         if (!query.exec()) {
             m_error = query.lastError().text();
-            m_db.rollback();
+            rollbackTransaction();
             return false;
         }
         latest.bindValue(0, entry.playerId);
@@ -636,11 +683,11 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries)
         latest.bindValue(4, entry.timestamp);
         if (!latest.exec()) {
             m_error = latest.lastError().text();
-            m_db.rollback();
+            rollbackTransaction();
             return false;
         }
     }
-    return m_db.commit();
+    return commitTransaction();
 }
 
 LatestRatings Database::latestDwrsRatings()
@@ -756,14 +803,12 @@ QList<int> Database::nationalSquadIds()
 
 bool Database::setNationalSquadIds(const QList<int> &ids)
 {
-    if (!m_db.transaction()) {
-        m_error = m_db.lastError().text();
+    if (!beginTransaction())
         return false;
-    }
     QSqlQuery query(m_db);
     if (!query.exec(QStringLiteral("DELETE FROM national_squad"))) {
         m_error = query.lastError().text();
-        m_db.rollback();
+        rollbackTransaction();
         return false;
     }
     query.prepare(QStringLiteral("INSERT OR IGNORE INTO national_squad (player_id) VALUES (?)"));
@@ -771,11 +816,11 @@ bool Database::setNationalSquadIds(const QList<int> &ids)
         query.bindValue(0, id);
         if (!query.exec()) {
             m_error = query.lastError().text();
-            m_db.rollback();
+            rollbackTransaction();
             return false;
         }
     }
-    return m_db.commit();
+    return commitTransaction();
 }
 
 QList<int> Database::shortlistIds()
@@ -790,14 +835,12 @@ QList<int> Database::shortlistIds()
 
 bool Database::setShortlistIds(const QList<int> &ids)
 {
-    if (!m_db.transaction()) {
-        m_error = m_db.lastError().text();
+    if (!beginTransaction())
         return false;
-    }
     QSqlQuery query(m_db);
     if (!query.exec(QStringLiteral("DELETE FROM shortlist"))) {
         m_error = query.lastError().text();
-        m_db.rollback();
+        rollbackTransaction();
         return false;
     }
     query.prepare(QStringLiteral("INSERT OR IGNORE INTO shortlist (player_id) VALUES (?)"));
@@ -805,11 +848,11 @@ bool Database::setShortlistIds(const QList<int> &ids)
         query.bindValue(0, id);
         if (!query.exec()) {
             m_error = query.lastError().text();
-            m_db.rollback();
+            rollbackTransaction();
             return false;
         }
     }
-    return m_db.commit();
+    return commitTransaction();
 }
 
 QHash<int, QString> Database::trainingRoles()

@@ -35,9 +35,10 @@ private slots:
     {
         // No upload recorded yet -> nothing is stale.
         QCOMPARE(Freshness::uploadsSinceSeen(playerAt(0), 0), 0);
-        // Legacy row (lastSeen 0) while uploads exist -> treated as fresh, not
-        // flagged with a huge miss count.
-        QCOMPARE(Freshness::uploadsSinceSeen(playerAt(0), 7), 0);
+        // Legacy row (lastSeen 0) counts as seen at upload 0 (backlog #26): it
+        // ages with every tracked upload it misses instead of staying fresh.
+        QCOMPARE(Freshness::uploadsSinceSeen(playerAt(0), 1), 1);
+        QCOMPARE(Freshness::uploadsSinceSeen(playerAt(0), 7), 7);
         // Never negative even if a stamp is somehow ahead of the counter.
         QCOMPARE(Freshness::uploadsSinceSeen(playerAt(9), 4), 0);
     }
@@ -65,6 +66,20 @@ private slots:
         // Empty userClub means no player is "own club".
         QVERIFY(Freshness::isRetired(playerAt(1, 40, QStringLiteral("Anything")), 6, 35, 5,
                                      QString()));
+    }
+
+    void legacyRowAgesAfterTrackingStarts()
+    {
+        // Backlog #26: a pre-tracking veteran who never shows up again is
+        // flagged once he has missed Y tracked uploads — not before.
+        const QString myClub = QStringLiteral("My United");
+        const Player vanished = playerAt(0, 37, QStringLiteral("Old Club"));
+        QVERIFY(!Freshness::isStale(vanished, 4, 5));
+        QVERIFY(!Freshness::isRetired(vanished, 4, 35, 5, myClub));
+        QVERIFY(Freshness::isStale(vanished, 5, 5));
+        QVERIFY(Freshness::isRetired(vanished, 5, 35, 5, myClub));
+        // Own-club legacy rows still never auto-retire.
+        QVERIFY(!Freshness::isRetired(playerAt(0, 37, myClub), 9, 35, 5, myClub));
     }
 };
 

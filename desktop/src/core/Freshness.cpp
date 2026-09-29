@@ -1,17 +1,23 @@
 #include "Freshness.h"
 
+#include <algorithm>
+
 namespace fm {
 
 namespace Freshness {
 
 int uploadsSinceSeen(const Player &player, int currentCounter)
 {
-    // Before any upload is tracked, or for rows that were never stamped, treat
-    // the data as fresh so legacy databases are not flooded with "stale" flags
-    // until real tracking data has accumulated.
-    if (currentCounter <= 0 || player.lastSeenUpdate <= 0)
+    // Before any upload is tracked nothing can be stale.
+    if (currentCounter <= 0)
         return 0;
-    const int delta = currentCounter - player.lastSeenUpdate;
+    // A never-stamped row (imported before tracking began) counts as last seen
+    // at upload 0: it ages with every tracked upload it is missing from, so a
+    // player who vanished before tracking started eventually turns stale /
+    // auto-retired instead of looking fresh forever. The counter starts at 0
+    // when tracking begins, so this never floods an existing database at once.
+    const int lastSeen = std::max(player.lastSeenUpdate, 0);
+    const int delta = currentCounter - lastSeen;
     return delta > 0 ? delta : 0;
 }
 

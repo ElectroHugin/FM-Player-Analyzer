@@ -48,6 +48,15 @@ public:
     QString errorString() const { return m_error; }
     QString filePath() const { return m_filePath; }
 
+    // --- Transactions ---
+    // Nestable: the outermost level is a real transaction, inner levels are
+    // SAVEPOINTs. Every write method below manages its own level, so when a
+    // caller opens an outer transaction (e.g. a whole HTML import) all of them
+    // compose into one atomic unit: a failure anywhere rolls everything back.
+    bool beginTransaction();
+    bool commitTransaction();
+    void rollbackTransaction();
+
     // Snake_case DB column base name for an attribute ("Off the Ball" -> "off_the_ball").
     static QString attrColumnName(const QString &fullAttrName);
 
@@ -113,6 +122,7 @@ private:
     QString m_connectionName;
     QString m_filePath;
     QString m_error;
+    int m_transactionDepth = 0; // 0 = none, 1 = outer, >1 = savepoints
 
     // In-memory cache of the settings table (queried several times per page
     // refresh). m_settingsLoaded marks keys whose DB state is known; a loaded
@@ -121,6 +131,37 @@ private:
     // and therefore per-connection/thread, so no locking is needed.
     QHash<QString, QString> m_settingsCache;
     QSet<QString> m_settingsLoaded;
+};
+
+// RAII outer transaction: rolls back on scope exit unless commit() succeeded.
+class ScopedTransaction
+{
+public:
+    explicit ScopedTransaction(Database &db)
+        : m_db(db)
+        , m_active(db.beginTransaction())
+    {
+    }
+    ~ScopedTransaction()
+    {
+        if (m_active)
+            m_db.rollbackTransaction();
+    }
+    ScopedTransaction(const ScopedTransaction &) = delete;
+    ScopedTransaction &operator=(const ScopedTransaction &) = delete;
+
+    bool isActive() const { return m_active; }
+    bool commit()
+    {
+        if (!m_active)
+            return false;
+        m_active = false;
+        return m_db.commitTransaction();
+    }
+
+private:
+    Database &m_db;
+    bool m_active;
 };
 
 } // namespace fm

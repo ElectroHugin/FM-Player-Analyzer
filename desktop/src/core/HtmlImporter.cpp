@@ -406,6 +406,15 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
     // uid -> merged-away duplicate whose app-managed data must be folded in.
     QHash<QString, Player> mergedSources;
 
+    // Everything from here on — ID unification, every player batch and the
+    // upload counter — is ONE transaction: an error anywhere (early return)
+    // rolls the whole import back instead of leaving a partial one behind.
+    ScopedTransaction transaction(db);
+    if (!transaction.isActive()) {
+        result.error = db.errorString();
+        return result;
+    }
+
     // --- ID-unification engine (legacy scenarios 1 + 2). ---
     for (RowRef &ref : rowRefs) {
         const QString incomingName = table.rows.at(ref.rowIndex).at(nameCol).trimmed();
@@ -544,9 +553,13 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
     if (!flush())
         return result;
 
-    // Persist the bumped counter only after every player was written, so a
-    // failed import does not advance the freshness clock.
-    db.setSetting(QStringLiteral("update_counter"), QString::number(newCounter));
+    // The bumped counter is part of the same transaction, so a failed import
+    // never advances the freshness clock.
+    if (!db.setSetting(QStringLiteral("update_counter"), QString::number(newCounter))
+        || !transaction.commit()) {
+        result.error = db.errorString();
+        return result;
+    }
     result.updateCounter = newCounter;
 
     result.success = true;

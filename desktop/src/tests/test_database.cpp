@@ -18,6 +18,58 @@ private slots:
     // Regression for the WAL backup bug: a freshly committed player lives in the
     // -wal sidecar, not yet in the main .db file. createBackup must capture it
     // (VACUUM INTO), which a plain file copy of the .db would not.
+    void nestedTransactions()
+    {
+        // Backlog #27: write methods nest as savepoints inside an outer
+        // transaction, so a caller can make several of them atomic.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("tx_test"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+        QSqlQuery trigger(db.handle());
+        QVERIFY(trigger.exec(QStringLiteral(
+            "CREATE TRIGGER boom BEFORE INSERT ON players WHEN NEW.uid = 'boom' "
+            "BEGIN SELECT RAISE(ABORT, 'boom'); END")));
+
+        const auto onePlayer = [](const QString &uid) {
+            std::vector<Player> batch(1);
+            batch[0].uid = uid;
+            batch[0].name = uid;
+            return batch;
+        };
+
+        // 1) Outer rollback discards inner work that "succeeded".
+        {
+            ScopedTransaction tx(db);
+            QVERIFY(tx.isActive());
+            auto a = onePlayer(QStringLiteral("a"));
+            QVERIFY(db.upsertPlayers(a));
+            QVERIFY(db.setSetting(QStringLiteral("k"), QStringLiteral("v")));
+        } // no commit -> rollback
+        QVERIFY(db.loadPlayers().empty());
+        // The settings cache must not keep the rolled-back value.
+        QCOMPARE(db.setting(QStringLiteral("k"), QStringLiteral("default")),
+                 QStringLiteral("default"));
+
+        // 2) A failing inner step only undoes itself; the outer can go on.
+        {
+            ScopedTransaction tx(db);
+            auto b = onePlayer(QStringLiteral("b"));
+            QVERIFY(db.upsertPlayers(b));
+            auto bad = onePlayer(QStringLiteral("boom"));
+            QVERIFY(!db.upsertPlayers(bad));
+            QVERIFY(db.errorString().contains(QStringLiteral("boom")));
+            QVERIFY(tx.commit());
+        }
+        const auto players = db.loadPlayers();
+        QCOMPARE(static_cast<int>(players.size()), 1);
+        QCOMPARE(players[0].uid, QStringLiteral("b"));
+
+        // 3) Without an outer transaction every method is still atomic alone.
+        auto c = onePlayer(QStringLiteral("c"));
+        QVERIFY(db.upsertPlayers(c));
+        QCOMPARE(static_cast<int>(db.loadPlayers().size()), 2);
+    }
+
     void uniqueConnectionNames()
     {
         // Overlapping worker jobs must never share a connection name (backlog #28).

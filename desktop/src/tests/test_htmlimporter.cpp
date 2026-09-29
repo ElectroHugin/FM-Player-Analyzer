@@ -1,6 +1,7 @@
 #include <QtTest>
 
 #include <QElapsedTimer>
+#include <QSqlQuery>
 
 #include "core/Database.h"
 #include "core/Definitions.h"
@@ -476,6 +477,54 @@ private slots:
         // (4) Untouched: still exactly its single role.
         QCOMPARE(rolesOf(QStringLiteral("4")),
                  (QSet<QString>{QStringLiteral("WL-S")}));
+    }
+
+    void failedImportRollsBackEverything()
+    {
+        // Backlog #27: a failure in the SECOND upsert batch used to leave the
+        // first 2000 players and a preceding ID rename committed.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("import_test_atomic"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+
+        std::vector<Player> seed(1);
+        seed[0].uid = QStringLiteral("99");
+        seed[0].name = QStringLiteral("Corrupt Regen");
+        QVERIFY(db.upsertPlayers(seed));
+
+        // Make one specific row fail at insert time.
+        QSqlQuery trigger(db.handle());
+        QVERIFY(trigger.exec(QStringLiteral(
+            "CREATE TRIGGER boom BEFORE INSERT ON players WHEN NEW.uid = 'boom' "
+            "BEGIN SELECT RAISE(ABORT, 'boom'); END")));
+
+        QStringList rows;
+        rows << playerRow(QStringLiteral("r-99"), QStringLiteral("Corrupt Regen"),
+                          QStringLiteral("21"), QStringLiteral("FC Test")); // -> rename
+        for (int i = 0; i < 2100; ++i)
+            rows << playerRow(QString::number(10000 + i), QStringLiteral("Bulk %1").arg(i),
+                              QStringLiteral("20"), QStringLiteral("FC Bulk"));
+        rows << playerRow(QStringLiteral("boom"), QStringLiteral("Boom"), QStringLiteral("20"),
+                          QStringLiteral("FC Bulk"));
+        const ImportResult failed = HtmlImporter::importHtml(htmlExport(rows), db,
+                                                             db.loadPlayers());
+        QVERIFY(!failed.success);
+        QVERIFY(!failed.error.isEmpty());
+
+        // Nothing of the failed import survived: no bulk rows, no rename, no
+        // advanced freshness counter.
+        const auto after = db.loadPlayers();
+        QCOMPARE(static_cast<int>(after.size()), 1);
+        QCOMPARE(after[0].uid, QStringLiteral("99"));
+        QCOMPARE(db.setting(QStringLiteral("update_counter"), QStringLiteral("0")),
+                 QStringLiteral("0"));
+
+        // The connection is still usable: the same import minus the bad row works.
+        rows.removeLast();
+        const ImportResult ok = HtmlImporter::importHtml(htmlExport(rows), db, db.loadPlayers());
+        QVERIFY2(ok.success, qPrintable(ok.error));
+        QCOMPARE(static_cast<int>(db.loadPlayers().size()), 2101);
+        QCOMPARE(db.setting(QStringLiteral("update_counter")), QStringLiteral("1"));
     }
 
     void importStampsFreshnessCounter()
