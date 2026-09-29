@@ -91,6 +91,20 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
     return result;
 }
 
+void patchRoleRatings(RoleRatings &ratings, const Player &player, const QString &previousUid,
+                      const LatestRatings &latest)
+{
+    for (auto it = ratings.begin(); it != ratings.end(); ++it) {
+        it->remove(previousUid);
+        it->remove(player.uid);
+    }
+    for (const QString &role : player.assignedRoles) {
+        const auto rating = latest.constFind({player.id, role});
+        if (rating != latest.constEnd())
+            ratings[role].insert(player.uid, rating.value().second);
+    }
+}
+
 RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings &latest)
 {
     RoleRatings ratings;

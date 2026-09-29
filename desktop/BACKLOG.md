@@ -48,7 +48,19 @@ Kurzfassung der Umsetzung:
 
 ---
 
-## 🟡 Offen: Rest von #11 — Voll-Reload bei jedem kleinen Save
+## ✅ Rest von #11 — Voll-Reload bei jedem kleinen Save — erledigt in v1.3.19
+
+> **Umsetzung:** `Database::loadPlayers(ids)` (id-gechunkt, inkl. Rollen/Kader/
+> Shortlist/Trainingsrolle), `PlayerStore::replace` (in-place, Indizes bleiben
+> konsistent, `Player*` bleiben gültig), `RatingsUpdater::patchRoleRatings`
+> (inkrementell = Voll-Neuaufbau, getestet). `AppContext::refreshPlayers(ids)` /
+> `refreshRatings(ids)` / `setNationalSquad(ids)` ersetzen `reloadFromDatabase`
+> in Transfers, Spieler bearbeiten, Abgängen, Nominierungs-Assistent,
+> Kader-Auswahl, National-Import, manuellem Einzel-Update und nach jeder
+> Teil-Neuberechnung (Rollen zuweisen). Fallback auf Voll-Reload, falls ein
+> Spieler fehlt/neu ist. **Gemessen** (Snapshot, 35k Spieler): Voll-Reload
+> 1.458 ms → gezielt 20 Spieler 15 ms. Voll-Reload bleibt nur beim DB-Wechsel.
+> Tests: `loadPlayersSubsetMatchesFullLoad`, `patchEqualsFullRebuild`.
 
 - **Datei:** [src/app/AppContext.cpp](src/app/AppContext.cpp) `reloadFromDatabase`;
   Aufrufer u. a. TransfersPage, EditPlayerPage, DashboardPage (Abgänge),
@@ -80,7 +92,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~. Offen: #11-Rest, #29, #34–#37.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~. Offen: #29, #34–#37.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs

@@ -37,6 +37,13 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
 // role in Best XI, gap analysis, call-ups and transfer suggestions.
 RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings &latest);
 
+// Incremental form of roleRatingsForAssigned for ONE changed player: drops his
+// entries (under previousUid and his current uid) and re-adds those of his
+// currently assigned roles from `latest`. Afterwards `ratings` holds the same
+// values a full rebuild would (roles may keep an empty inner hash).
+void patchRoleRatings(RoleRatings &ratings, const Player &player, const QString &previousUid,
+                      const LatestRatings &latest);
+
 } // namespace RatingsUpdater
 
 } // namespace fm

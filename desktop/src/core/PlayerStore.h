@@ -38,6 +38,10 @@ public:
     // Appends a player and indexes it; returns its row.
     int add(Player player);
 
+    // Overwrites the player at `row` in place (the row, and every Player* to
+    // it, stays valid) and keeps the uid/id indexes in sync.
+    void replace(int row, Player player);
+
     // Removes by row indexes (descending-safe); rebuilds indexes.
     void removeRows(std::vector<int> rows);
 

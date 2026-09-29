@@ -547,11 +547,10 @@ void NationalCallupPage::applyRecommendation()
         if (const Player *player = m_context.store().findByUid(uid))
             ids << player->id;
     }
-    if (!m_context.database().setNationalSquadIds(ids)) {
+    if (!m_context.setNationalSquad(ids)) {
         QMessageBox::critical(this, tr("Nominierung"), m_context.database().errorString());
         return;
     }
-    m_context.reloadFromDatabase();
     QMessageBox::information(this, tr("Nominierung"),
                              tr("%1 Spieler im Nationalkader gespeichert.").arg(ids.size()));
     // Baseline is now the applied squad, so re-running shows no pending changes.

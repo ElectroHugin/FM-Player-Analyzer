@@ -134,6 +134,41 @@ private slots:
         QVERIFY(xiPick(store, ratings, positions, QStringLiteral("MCL")).isEmpty());
     }
 
+    void patchEqualsFullRebuild()
+    {
+        // Backlog #11: the incremental cache patch after a targeted save must
+        // give exactly what a full rebuild gives (empty inner hashes aside).
+        PlayerStore store;
+        store.reset({makePlayer(1, QStringLiteral("a"), {kCm, kBwm}),
+                     makePlayer(2, QStringLiteral("b"), {kCm})});
+        LatestRatings latest;
+        latest.insert({1, kCm}, {10.0, 70.0});
+        latest.insert({1, kBwm}, {12.0, 80.0});
+        latest.insert({2, kCm}, {9.0, 60.0});
+        latest.insert({2, kBwm}, {9.0, 55.0}); // not assigned to b (yet)
+        RoleRatings ratings = RatingsUpdater::roleRatingsForAssigned(store, latest);
+
+        const auto withoutEmpty = [](RoleRatings r) {
+            r.removeIf([](const auto &it) { return it.value().isEmpty(); });
+            return r;
+        };
+        const auto change = [&](int row, auto mutate) {
+            Player p = store.at(row);
+            const QString previousUid = p.uid;
+            mutate(p);
+            store.replace(row, p);
+            RatingsUpdater::patchRoleRatings(ratings, store.at(row), previousUid, latest);
+            QCOMPARE(withoutEmpty(ratings),
+                     withoutEmpty(RatingsUpdater::roleRatingsForAssigned(store, latest)));
+        };
+        change(0, [&](Player &p) { p.assignedRoles = {kCm}; });              // role removed
+        change(1, [&](Player &p) { p.assignedRoles = {kCm, kBwm}; });        // role added
+        change(0, [&](Player &p) { p.uid = QStringLiteral("r-a"); });         // uid renamed
+        change(1, [&](Player &p) { p.club = QStringLiteral("Somewhere"); }); // unrelated field
+        QCOMPARE(store.rowByUid(QStringLiteral("r-a")), 0);
+        QCOMPARE(store.rowByUid(QStringLiteral("a")), -1);
+    }
+
     void clearStalePrimaryRole()
     {
         Player stale = makePlayer(1, QStringLiteral("a"), {kCm}, kBwm);

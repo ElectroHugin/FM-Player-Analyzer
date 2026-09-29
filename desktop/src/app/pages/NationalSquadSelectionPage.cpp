@@ -195,13 +195,15 @@ void NationalSquadSelectionPage::save()
         if (const Player *player = m_context.store().findByUid(uid))
             ids << player->id;
     }
-    if (!m_context.database().setNationalSquadIds(ids)) {
+    // Clear the dirty flag first: the refresh below re-runs refresh(), which
+    // must then mirror the freshly saved squad.
+    m_dirty = false;
+    if (!m_context.setNationalSquad(ids)) {
+        m_dirty = true;
         QMessageBox::critical(this, tr("Nationalkader"), m_context.database().errorString());
         return;
     }
     const int count = static_cast<int>(ids.size());
-    m_dirty = false;
-    m_context.reloadFromDatabase();
     QMessageBox::information(this, tr("Nationalkader"),
                              tr("%1 Spieler im Nationalkader gespeichert.").arg(count));
 }

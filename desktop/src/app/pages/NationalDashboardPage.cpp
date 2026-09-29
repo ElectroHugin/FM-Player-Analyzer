@@ -487,13 +487,12 @@ void NationalDashboardPage::importFinished(const ImportPipelineResult &result)
             if (const Player *player = m_context.store().findByUid(uid))
                 ids << player->id;
         }
-        if (!m_context.database().setNationalSquadIds(ids)) {
+        if (!m_context.setNationalSquad(ids)) {
             QMessageBox::critical(this, tr("Nationalkader"),
                                   m_context.database().errorString());
         } else {
             summary << tr("🔁 Nationalkader durch %1 Spieler aus der Datei ersetzt.")
                            .arg(ids.size());
-            m_context.reloadFromDatabase();
         }
     }
 

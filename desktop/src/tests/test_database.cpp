@@ -78,6 +78,58 @@ private slots:
         QCOMPARE(reloaded[1].age, 30);
     }
 
+    void loadPlayersSubsetMatchesFullLoad()
+    {
+        // Backlog #11: the targeted re-read must return exactly what the full
+        // load returns for those players, side tables included.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("subset_test"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+        std::vector<Player> players(700);
+        for (int i = 0; i < 700; ++i) {
+            players[i].uid = QString::number(i + 1);
+            players[i].name = QStringLiteral("P%1").arg(i);
+            players[i].age = 18 + i % 20;
+            players[i].assignedRoles = {QStringLiteral("CM-S"), QStringLiteral("W-S")};
+            players[i].attrLo[3] = static_cast<uint8_t>(1 + i % 20);
+            players[i].attrHi[3] = static_cast<uint8_t>(1 + i % 20);
+        }
+        QVERIFY(db.upsertPlayers(players));
+        QVERIFY(db.setNationalSquadIds({players[5].id, players[650].id}));
+        QVERIFY(db.setShortlistIds({players[6].id}));
+        QVERIFY(db.setTrainingRole(players[7].id, QStringLiteral("W-S")));
+
+        const auto all = db.loadPlayers();
+        QList<int> ids;
+        for (int i = 0; i < 700; i += 3) // > 500 ids -> several chunks
+            ids << players[i].id;
+        ids << players[5].id << players[6].id << players[7].id << players[650].id
+            << 999999 /* unknown -> skipped */;
+        const auto subset = db.loadPlayers(ids);
+
+        QHash<int, const Player *> byId;
+        for (const Player &p : all)
+            byId.insert(p.id, &p);
+        QSet<int> expected(ids.cbegin(), ids.cend());
+        expected.remove(999999);
+        QCOMPARE(static_cast<int>(subset.size()), expected.size());
+        for (size_t i = 0; i < subset.size(); ++i) {
+            const Player &a = subset[i];
+            const Player &b = *byId.value(a.id);
+            if (i > 0)
+                QVERIFY(subset[i - 1].id < a.id); // ordered by id
+            QCOMPARE(a.uid, b.uid);
+            QCOMPARE(a.name, b.name);
+            QCOMPARE(a.age, b.age);
+            QVERIFY(a.attrLo == b.attrLo && a.attrHi == b.attrHi);
+            QCOMPARE(a.assignedRoles, b.assignedRoles);
+            QCOMPARE(a.inNationalSquad, b.inNationalSquad);
+            QCOMPARE(a.onShortlist, b.onShortlist);
+            QCOMPARE(a.trainingRole, b.trainingRole);
+        }
+        QVERIFY(db.loadPlayers(QList<int>{}).empty());
+    }
+
     void nestedTransactions()
     {
         // Backlog #27: write methods nest as savepoints inside an outer

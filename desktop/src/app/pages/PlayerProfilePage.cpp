@@ -624,9 +624,10 @@ void PlayerProfilePage::runManualUpdate()
     }
 
     const QString playerName = player->name;
+    const int playerId = player->id;
     m_updateFileEdit->clear();
     m_updateConfirm->setChecked(false);
-    m_context.reloadFromDatabase();
+    m_context.refreshPlayers({playerId});
 
     recalcDwrsFor(m_context, this, {uid}, [this, playerName, fileName](const QString &recalcError) {
         if (!recalcError.isEmpty()) {

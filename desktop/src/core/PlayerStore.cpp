@@ -40,6 +40,21 @@ int PlayerStore::add(Player player)
     return row;
 }
 
+void PlayerStore::replace(int row, Player player)
+{
+    Player &slot = m_players[static_cast<size_t>(row)];
+    if (slot.uid != player.uid) {
+        m_uidIndex.remove(slot.uid);
+        m_uidIndex.insert(player.uid, row);
+    }
+    if (slot.id != player.id) {
+        m_idIndex.remove(slot.id);
+        if (player.id != 0)
+            m_idIndex.insert(player.id, row);
+    }
+    slot = std::move(player);
+}
+
 void PlayerStore::removeRows(std::vector<int> rows)
 {
     std::sort(rows.begin(), rows.end(), std::greater<int>());

@@ -859,7 +859,10 @@ void DashboardPage::resolveDepartures(const QSet<QString> &affectedUids)
         QMessageBox::critical(this, tr("Abgänge"), m_context.database().errorString());
         return;
     }
-    m_context.reloadFromDatabase();
+    QList<int> ids;
+    for (const Player &player : updates)
+        ids << player.id;
+    m_context.refreshPlayers(ids);
     QMessageBox::information(this, tr("Abgänge"),
                              tr("%1 Spieler-Datensätze aktualisiert.").arg(updates.size()));
 }

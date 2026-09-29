@@ -279,7 +279,7 @@ void EditPlayerPage::save()
                               && player->club == m_context.userClub();
 
     // Work on a copy: the in-memory store must not diverge from the database if
-    // the write fails. On success reloadFromDatabase() refreshes it.
+    // the write fails. On success refreshPlayers() re-reads it.
     Player updated = m_context.store().at(row);
     const QString newClub = m_clubEdit->text().trimmed();
     if (!newClub.isEmpty())
@@ -304,7 +304,7 @@ void EditPlayerPage::save()
         return;
     }
     const QString name = updated.name;
-    m_context.reloadFromDatabase();
+    m_context.refreshPlayers({batch.front().id});
     QMessageBox::information(this, tr("Spieler bearbeiten"),
                              tr("Änderungen für %1 gespeichert.").arg(name));
 }

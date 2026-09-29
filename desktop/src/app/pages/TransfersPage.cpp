@@ -280,7 +280,7 @@ void TransfersPage::saveSection(const Section &section)
             continue;
 
         // Mutate a copy so the store stays in sync with the DB even if the
-        // write below fails; reloadFromDatabase() refreshes it on success.
+        // write below fails; refreshPlayers() re-reads it on success.
         Player updated = current;
         updated.transferStatus = transfer;
         updated.loanStatus = loan;
@@ -299,7 +299,10 @@ void TransfersPage::saveSection(const Section &section)
         return;
     }
     const int count = static_cast<int>(batch.size());
-    m_context.reloadFromDatabase();
+    QList<int> ids;
+    for (const Player &player : batch)
+        ids << player.id;
+    m_context.refreshPlayers(ids);
     QMessageBox::information(this, tr("Transfers"),
                              tr("%1 Spieler-Datensätze gespeichert.").arg(count));
 }

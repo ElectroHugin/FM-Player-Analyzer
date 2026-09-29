@@ -3,6 +3,7 @@
 #include "core/RatingsUpdater.h"
 
 #include <QDir>
+#include <QSet>
 
 namespace fm {
 
@@ -115,6 +116,61 @@ void AppContext::reloadFromDatabase()
     m_store.reset(m_database->loadPlayers());
     rebuildRatingsCache();
     emit dataChanged();
+}
+
+void AppContext::refreshPlayers(const QList<int> &playerIds)
+{
+    if (playerIds.isEmpty())
+        return;
+    std::vector<Player> fresh = m_database->loadPlayers(playerIds);
+    const QSet<int> wanted(playerIds.cbegin(), playerIds.cend());
+    bool complete = static_cast<int>(fresh.size()) == wanted.size();
+    for (const Player &player : fresh)
+        complete = complete && m_store.rowById(player.id) >= 0;
+    if (!complete) {
+        reloadFromDatabase(); // rows appeared/disappeared: rebuild everything
+        return;
+    }
+    for (Player &player : fresh) {
+        const int row = m_store.rowById(player.id);
+        const QString previousUid = m_store.at(row).uid;
+        m_store.replace(row, std::move(player));
+        RatingsUpdater::patchRoleRatings(m_ratings, m_store.at(row), previousUid,
+                                         m_latestRatings);
+    }
+    emit dataChanged();
+}
+
+void AppContext::refreshRatings(const QList<int> &playerIds)
+{
+    if (playerIds.isEmpty())
+        return;
+    // dwrs_latest rows are only ever added or overwritten (merges aside, which
+    // go through a full import), so merging the fresh rows in is exact.
+    const LatestRatings fresh = m_database->latestDwrsRatings(playerIds);
+    for (auto it = fresh.constBegin(); it != fresh.constEnd(); ++it)
+        m_latestRatings.insert(it.key(), it.value());
+    for (const int id : playerIds) {
+        const int row = m_store.rowById(id);
+        if (row >= 0) {
+            const Player &player = m_store.at(row);
+            RatingsUpdater::patchRoleRatings(m_ratings, player, player.uid, m_latestRatings);
+        }
+    }
+    emit dataChanged();
+}
+
+bool AppContext::setNationalSquad(const QList<int> &playerIds)
+{
+    QList<int> touched = playerIds;
+    for (const Player &player : m_store.players()) {
+        if (player.inNationalSquad)
+            touched << player.id;
+    }
+    if (!m_database->setNationalSquadIds(playerIds))
+        return false;
+    refreshPlayers(touched);
+    return true;
 }
 
 void AppContext::adoptState(PlayerStore store, LatestRatings latestRatings, RoleRatings ratings)

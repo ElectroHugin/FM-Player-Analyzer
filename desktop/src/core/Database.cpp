@@ -13,6 +13,7 @@
 #include <QVariant>
 
 #include <algorithm>
+#include <optional>
 #include <atomic>
 
 namespace fm {
@@ -337,101 +338,151 @@ bool Database::migrateV3ToV4()
 
 std::vector<Player> Database::loadPlayers()
 {
+    return loadPlayersImpl(nullptr);
+}
+
+std::vector<Player> Database::loadPlayers(const QList<int> &playerIds)
+{
+    if (playerIds.isEmpty())
+        return {};
+    return loadPlayersImpl(&playerIds);
+}
+
+std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
+{
     std::vector<Player> players;
 
-    // Roles first: player_id -> roles.
-    QHash<int, QStringList> rolesByPlayer;
-    {
+    // Runs `sql` over everything (ids == nullptr) or over the id subset; the
+    // subset form must contain "%1" for the chunked "IN (…)" placeholder list.
+    const auto forRows = [this, ids](const QString &allSql, const QString &subsetSql,
+                                     const std::function<void(const QSqlQuery &)> &onRow) {
+        if (ids)
+            return forEachIdChunk(*ids, subsetSql, {}, onRow);
         QSqlQuery query(m_db);
         query.setForwardOnly(true);
-        query.exec(QStringLiteral("SELECT player_id, role FROM player_roles ORDER BY player_id, role"));
+        if (!query.exec(allSql)) {
+            m_error = query.lastError().text();
+            return false;
+        }
         while (query.next())
-            rolesByPlayer[query.value(0).toInt()].append(query.value(1).toString());
-    }
+            onRow(query);
+        return true;
+    };
+
+    // App-managed side tables first: player_id -> roles / flags / training role.
+    QHash<int, QStringList> rolesByPlayer;
+    forRows(QStringLiteral("SELECT player_id, role FROM player_roles ORDER BY player_id, role"),
+            QStringLiteral("SELECT player_id, role FROM player_roles WHERE player_id IN (%1) "
+                           "ORDER BY player_id, role"),
+            [&](const QSqlQuery &q) {
+                rolesByPlayer[q.value(0).toInt()].append(q.value(1).toString());
+            });
     QSet<int> nationalIds, shortlistIdSet;
     QHash<int, QString> trainingRoleById;
-    {
-        QSqlQuery query(m_db);
-        query.exec(QStringLiteral("SELECT player_id FROM national_squad"));
-        while (query.next())
-            nationalIds.insert(query.value(0).toInt());
-        query.exec(QStringLiteral("SELECT player_id FROM shortlist"));
-        while (query.next())
-            shortlistIdSet.insert(query.value(0).toInt());
-        query.exec(QStringLiteral("SELECT player_id, role FROM training_roles"));
-        while (query.next())
-            trainingRoleById.insert(query.value(0).toInt(), query.value(1).toString());
-    }
+    forRows(QStringLiteral("SELECT player_id FROM national_squad"),
+            QStringLiteral("SELECT player_id FROM national_squad WHERE player_id IN (%1)"),
+            [&](const QSqlQuery &q) { nationalIds.insert(q.value(0).toInt()); });
+    forRows(QStringLiteral("SELECT player_id FROM shortlist"),
+            QStringLiteral("SELECT player_id FROM shortlist WHERE player_id IN (%1)"),
+            [&](const QSqlQuery &q) { shortlistIdSet.insert(q.value(0).toInt()); });
+    forRows(QStringLiteral("SELECT player_id, role FROM training_roles"),
+            QStringLiteral("SELECT player_id, role FROM training_roles WHERE player_id IN (%1)"),
+            [&](const QSqlQuery &q) {
+                trainingRoleById.insert(q.value(0).toInt(), q.value(1).toString());
+            });
 
-    QSqlQuery query(m_db);
-    query.setForwardOnly(true);
-    if (!query.exec(QStringLiteral("SELECT * FROM players"))) {
-        m_error = query.lastError().text();
-        return players;
-    }
-
-    // Resolve column indexes once.
-    const QSqlRecord record = query.record();
-    const auto col = [&](const char *name) { return record.indexOf(QLatin1String(name)); };
-    const int cId = col("id"), cUid = col("uid"), cName = col("name"), cAge = col("age"),
-              cClub = col("club"), cNat = col("nationality"), cNat2 = col("second_nationality"),
-              cPos = col("position_raw"), cPers = col("personality"),
-              cMedia = col("media_handling"), cApt = col("agreed_playing_time"),
-              cWage = col("wage_raw"), cTvRaw = col("transfer_value_raw"),
-              cTv = col("transfer_value"), cAvr = col("av_rating"),
-              cHeightRaw = col("height_raw"), cHeight = col("height_cm"),
-              cLf = col("left_foot"), cRf = col("right_foot"), cPf = col("preferred_foot"),
-              cSide = col("preferred_side"), cPrim = col("primary_role"),
-              cNatPos = col("natural_positions"), cLastSeen = col("last_seen_update"),
-              cTs = col("transfer_status"), cLs = col("loan_status"),
-              cNewClub = col("new_club");
-
-    std::array<int, kAttrCount> loCols{}, hiCols{};
-    for (int i = 0; i < kAttrCount; ++i) {
-        const QString base = attrColumnName(attrNames()[i]);
-        loCols[i] = record.indexOf(base + QStringLiteral("_lo"));
-        hiCols[i] = record.indexOf(base + QStringLiteral("_hi"));
-    }
-
-    while (query.next()) {
-        Player p;
-        p.id = query.value(cId).toInt();
-        p.uid = query.value(cUid).toString();
-        p.name = query.value(cName).toString();
-        p.age = query.value(cAge).toInt();
-        p.club = query.value(cClub).toString();
-        p.nationality = query.value(cNat).toString();
-        p.secondNationality = query.value(cNat2).toString();
-        p.positionRaw = query.value(cPos).toString();
-        p.personality = query.value(cPers).toString();
-        p.mediaHandling = query.value(cMedia).toString();
-        p.agreedPlayingTime = query.value(cApt).toString();
-        p.wageRaw = query.value(cWage).toString();
-        p.transferValueRaw = query.value(cTvRaw).toString();
-        p.transferValue = query.value(cTv).toDouble();
-        p.averageRating = query.value(cAvr).toDouble();
-        p.heightRaw = query.value(cHeightRaw).toString();
-        p.heightCm = query.value(cHeight).toInt();
-        p.leftFoot = query.value(cLf).toString();
-        p.rightFoot = query.value(cRf).toString();
-        p.preferredFoot = query.value(cPf).toString();
-        p.preferredSide = query.value(cSide).toString();
-        p.primaryRole = query.value(cPrim).toString();
-        p.naturalPositions = splitRolesFromDb(query.value(cNatPos).toString());
-        p.lastSeenUpdate = query.value(cLastSeen).toInt();
-        p.transferStatus = query.value(cTs).toInt() != 0;
-        p.loanStatus = query.value(cLs).toInt() != 0;
-        p.newClub = query.value(cNewClub).toString();
+    // Column indexes, resolved once from the first result row's record.
+    struct Columns {
+        int id, uid, name, age, club, nat, nat2, pos, pers, media, apt, wage, tvRaw, tv, avr,
+            heightRaw, height, lf, rf, pf, side, prim, natPos, lastSeen, ts, ls, newClub;
+        std::array<int, kAttrCount> lo, hi;
+    };
+    std::optional<Columns> columns;
+    const auto resolve = [](const QSqlRecord &record) {
+        const auto col = [&](const char *name) { return record.indexOf(QLatin1String(name)); };
+        Columns c{};
+        c.id = col("id");
+        c.uid = col("uid");
+        c.name = col("name");
+        c.age = col("age");
+        c.club = col("club");
+        c.nat = col("nationality");
+        c.nat2 = col("second_nationality");
+        c.pos = col("position_raw");
+        c.pers = col("personality");
+        c.media = col("media_handling");
+        c.apt = col("agreed_playing_time");
+        c.wage = col("wage_raw");
+        c.tvRaw = col("transfer_value_raw");
+        c.tv = col("transfer_value");
+        c.avr = col("av_rating");
+        c.heightRaw = col("height_raw");
+        c.height = col("height_cm");
+        c.lf = col("left_foot");
+        c.rf = col("right_foot");
+        c.pf = col("preferred_foot");
+        c.side = col("preferred_side");
+        c.prim = col("primary_role");
+        c.natPos = col("natural_positions");
+        c.lastSeen = col("last_seen_update");
+        c.ts = col("transfer_status");
+        c.ls = col("loan_status");
+        c.newClub = col("new_club");
         for (int i = 0; i < kAttrCount; ++i) {
-            p.attrLo[i] = static_cast<uint8_t>(query.value(loCols[i]).toInt());
-            p.attrHi[i] = static_cast<uint8_t>(query.value(hiCols[i]).toInt());
+            const QString base = attrColumnName(attrNames()[i]);
+            c.lo[i] = record.indexOf(base + QStringLiteral("_lo"));
+            c.hi[i] = record.indexOf(base + QStringLiteral("_hi"));
         }
-        p.assignedRoles = rolesByPlayer.value(p.id);
-        p.inNationalSquad = nationalIds.contains(p.id);
-        p.onShortlist = shortlistIdSet.contains(p.id);
-        p.trainingRole = trainingRoleById.value(p.id);
-        players.push_back(std::move(p));
-    }
+        return c;
+    };
+
+    const bool ok = forRows(
+        QStringLiteral("SELECT * FROM players"),
+        QStringLiteral("SELECT * FROM players WHERE id IN (%1) ORDER BY id"),
+        [&](const QSqlQuery &query) {
+            if (!columns)
+                columns = resolve(query.record());
+            const Columns &c = *columns;
+            Player p;
+            p.id = query.value(c.id).toInt();
+            p.uid = query.value(c.uid).toString();
+            p.name = query.value(c.name).toString();
+            p.age = query.value(c.age).toInt();
+            p.club = query.value(c.club).toString();
+            p.nationality = query.value(c.nat).toString();
+            p.secondNationality = query.value(c.nat2).toString();
+            p.positionRaw = query.value(c.pos).toString();
+            p.personality = query.value(c.pers).toString();
+            p.mediaHandling = query.value(c.media).toString();
+            p.agreedPlayingTime = query.value(c.apt).toString();
+            p.wageRaw = query.value(c.wage).toString();
+            p.transferValueRaw = query.value(c.tvRaw).toString();
+            p.transferValue = query.value(c.tv).toDouble();
+            p.averageRating = query.value(c.avr).toDouble();
+            p.heightRaw = query.value(c.heightRaw).toString();
+            p.heightCm = query.value(c.height).toInt();
+            p.leftFoot = query.value(c.lf).toString();
+            p.rightFoot = query.value(c.rf).toString();
+            p.preferredFoot = query.value(c.pf).toString();
+            p.preferredSide = query.value(c.side).toString();
+            p.primaryRole = query.value(c.prim).toString();
+            p.naturalPositions = splitRolesFromDb(query.value(c.natPos).toString());
+            p.lastSeenUpdate = query.value(c.lastSeen).toInt();
+            p.transferStatus = query.value(c.ts).toInt() != 0;
+            p.loanStatus = query.value(c.ls).toInt() != 0;
+            p.newClub = query.value(c.newClub).toString();
+            for (int i = 0; i < kAttrCount; ++i) {
+                p.attrLo[i] = static_cast<uint8_t>(query.value(c.lo[i]).toInt());
+                p.attrHi[i] = static_cast<uint8_t>(query.value(c.hi[i]).toInt());
+            }
+            p.assignedRoles = rolesByPlayer.value(p.id);
+            p.inNationalSquad = nationalIds.contains(p.id);
+            p.onShortlist = shortlistIdSet.contains(p.id);
+            p.trainingRole = trainingRoleById.value(p.id);
+            players.push_back(std::move(p));
+        });
+    if (!ok)
+        players.clear();
     return players;
 }
 

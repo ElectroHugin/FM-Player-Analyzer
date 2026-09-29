@@ -63,6 +63,21 @@ public:
     // reload after a recalc, and keeps existing Player* references valid.
     void reloadRatings();
 
+    // Targeted refresh after a save that touched a handful of players: re-reads
+    // just those rows and patches them into the store IN PLACE (rows and Player*
+    // stay valid) plus their rating-cache entries — instead of reloading ~35k
+    // players and ~500k ratings on the UI thread. Falls back to a full reload
+    // when an id is unknown to the store or gone from the database.
+    void refreshPlayers(const QList<int> &playerIds);
+
+    // Same for ratings only (after a partial DWRS recalc of these players).
+    void refreshRatings(const QList<int> &playerIds);
+
+    // Replaces the national squad in the database and refreshes exactly the
+    // players whose membership can have changed (old + new members).
+    // false (DB error, errorString via database()) leaves everything unchanged.
+    bool setNationalSquad(const QList<int> &playerIds);
+
     // Swaps in a complete state that already mirrors the database — the import
     // pipeline builds it on its worker thread (store in loadPlayers() order plus
     // both rating caches) — so the UI thread does no loading at all.

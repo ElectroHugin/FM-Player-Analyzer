@@ -23,20 +23,23 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
     const DwrsEngine *engine = &context.dwrsEngine();
     // Copy only the affected players (often one), not the whole store.
     std::vector<Player> players;
+    QList<int> ids;
     players.reserve(static_cast<size_t>(affectedUids.size()));
     for (const QString &uid : affectedUids) {
-        if (const Player *player = context.store().findByUid(uid))
+        if (const Player *player = context.store().findByUid(uid)) {
             players.push_back(*player);
+            ids << player->id;
+        }
     }
 
     auto *watcher = new QFutureWatcher<RatingsUpdater::Result>(parent);
     QObject::connect(watcher, &QFutureWatcher<RatingsUpdater::Result>::finished, parent,
-                     [watcher, dialog, &context, onDone = std::move(onDone)] {
+                     [watcher, dialog, &context, ids, onDone = std::move(onDone)] {
                          const RatingsUpdater::Result result = watcher->result();
                          watcher->deleteLater();
                          dialog->finish();
                          if (result.success)
-                             context.reloadRatings();
+                             context.refreshRatings(ids);
                          if (onDone)
                              onDone(result.success ? QString() : result.error);
                      });

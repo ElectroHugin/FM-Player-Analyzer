@@ -59,6 +59,23 @@ int benchLoad(const QString &dbPath)
                 static_cast<long long>(roleRatings.size()), mappingMs);
     std::printf("Gesamt (inkl. Open %lld ms): %lld ms\n", openMs,
                 openMs + playersMs + ratingsMs + mappingMs);
+
+    // Targeted refresh after a small save (AppContext::refreshPlayers): re-read
+    // 20 players and patch store + rating cache in place.
+    fm::RoleRatings patched = roleRatings;
+    QList<int> ids;
+    for (int row = 0; row < store.size() && ids.size() < 20; row += 997)
+        ids << store.at(row).id;
+    timer.restart();
+    std::vector<fm::Player> fresh = db.loadPlayers(ids);
+    for (fm::Player &player : fresh) {
+        const int row = store.rowById(player.id);
+        const QString previousUid = store.at(row).uid;
+        store.replace(row, std::move(player));
+        fm::RatingsUpdater::patchRoleRatings(patched, store.at(row), previousUid, latest);
+    }
+    std::printf("Gezielt %lld Spieler neu lesen + patchen: %lld ms\n",
+                static_cast<long long>(ids.size()), timer.elapsed());
     return 0;
 }
 

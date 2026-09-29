@@ -67,6 +67,9 @@ public:
 
     // --- Players ---
     std::vector<Player> loadPlayers();
+    // Just these players (ordered by id; unknown ids are skipped) — the
+    // targeted re-read after a save touching a handful of rows.
+    std::vector<Player> loadPlayers(const QList<int> &playerIds);
 
     // What upsertPlayers does with the player_roles junction table.
     enum class RoleWrite {
@@ -134,6 +137,7 @@ private:
     bool migrateV2ToV3();                 // add last_seen_update (freshness tracking)
     bool migrateV3ToV4();                 // add training_roles table
     static QString createDwrsLatestSql(); // shared by create + migrate paths
+    std::vector<Player> loadPlayersImpl(const QList<int> *ids); // nullptr = all
     bool exec(const QString &sql);
     // Runs `sqlTemplate` (with one "%1" for a "?,?,…" id placeholder list) for
     // the ids in chunks, keeping every statement below SQLite's bound-variable
