@@ -10,7 +10,7 @@ namespace NationalCallup {
 
 bool isGoalkeeper(const Player &player)
 {
-    return parsePositionString(player.positionRaw).contains(QStringLiteral("GK"));
+    return player.isGoalkeeper();
 }
 
 namespace {

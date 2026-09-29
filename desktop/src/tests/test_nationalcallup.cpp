@@ -3,6 +3,8 @@
 #include "core/NationalCallup.h"
 #include "core/Player.h"
 #include "core/SquadBuilder.h"
+#include "core/TalentEngine.h"
+#include "core/Utils.h"
 
 #include <QTemporaryDir>
 #include <QtTest>
@@ -88,6 +90,19 @@ private slots:
         Player field;
         field.positionRaw = QStringLiteral("D/WB (R), M (R)");
         QVERIFY(!NationalCallup::isGoalkeeper(field));
+
+        // Backlog #35: one rule app-wide — squad builder, talent age cap and the
+        // call-up all agree, also for mixed and full-coverage position strings.
+        for (const QString &position :
+             {QStringLiteral("GK"), QStringLiteral("GK, D (C)"), QStringLiteral("DM, M (C)"),
+              QStringLiteral("AM (RLC), ST (C)"), QString()}) {
+            Player p;
+            p.positionRaw = position;
+            const bool expected = parsePositionString(position).contains(QStringLiteral("GK"));
+            QCOMPARE(p.isGoalkeeper(), expected);
+            QCOMPARE(NationalCallup::isGoalkeeper(p), expected);
+            QCOMPARE(TalentEngine::ageCapForPlayer(p, 20, 25), expected ? 25 : 20);
+        }
     }
 
     // With an empty tactic every player lands in the depth tier, so the

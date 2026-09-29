@@ -23,7 +23,8 @@ class Definitions;
 // shows before an international window.
 namespace NationalCallup {
 
-// A player counts as a goalkeeper when his game positions include GK.
+// A player counts as a goalkeeper when his game positions include GK
+// (delegates to Player::isGoalkeeper, the app-wide rule).
 bool isGoalkeeper(const Player &player);
 
 struct Recommendation {

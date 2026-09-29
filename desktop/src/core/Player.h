@@ -68,6 +68,12 @@ struct Player {
 
     // Parsed set of individual game positions (from positionRaw).
     QSet<QString> parsedPositions() const;
+
+    // The one goalkeeper test used everywhere (squad builder, talent age cap,
+    // call-up, edit page). FM writes the keeper position as "GK" and no other
+    // position code contains those letters, so a substring test is exact —
+    // and cheap enough for per-player loops over 35k rows.
+    bool isGoalkeeper() const { return positionRaw.contains(QLatin1String("GK")); }
 };
 
 } // namespace fm

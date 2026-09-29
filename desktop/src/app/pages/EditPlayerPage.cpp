@@ -225,7 +225,7 @@ void EditPlayerPage::showEditor()
                               && player->club == m_context.userClub();
 
     // APT options depend on GK vs field player (legacy).
-    const bool isGk = player->positionRaw.contains(QLatin1String("GK"));
+    const bool isGk = player->isGoalkeeper();
     const QStringList aptOptions = isGk ? gkAptOptions() : fieldPlayerAptOptions();
     m_aptCombo->clear();
     for (const QString &option : aptOptions)

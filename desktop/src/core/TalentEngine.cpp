@@ -40,7 +40,7 @@ double talentForPlayer(const Definitions &definitions, const Player &player, dou
 
 double ageCapForPlayer(const Player &player, int outfielderCap, int goalkeeperCap)
 {
-    return player.positionRaw.contains(QLatin1String("GK")) ? goalkeeperCap : outfielderCap;
+    return player.isGoalkeeper() ? goalkeeperCap : outfielderCap;
 }
 
 } // namespace TalentEngine

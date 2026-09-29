@@ -27,11 +27,6 @@ inline int effectiveAge(const Player &p)
     return p.age > 0 ? p.age : 99;
 }
 
-inline bool isGoalkeeper(const Player &p)
-{
-    return p.positionRaw.contains(QLatin1String("GK"));
-}
-
 } // namespace
 
 SquadBuilder::SquadBuilder(const Definitions &definitions, const AppConfig &config)
@@ -350,7 +345,7 @@ DevelopmentSquads SquadBuilder::calculateDevelopmentSquads(
         if (secondTeamUids.contains(p->uid))
             continue;
         const int age = effectiveAge(*p);
-        const int cap = isGoalkeeper(*p) ? m_goalkeeperCap : m_outfielderCap;
+        const int cap = p->isGoalkeeper() ? m_goalkeeperCap : m_outfielderCap;
         if (age <= cap)
             youthPool.push_back(p);
     }
@@ -379,7 +374,7 @@ DevelopmentSquads SquadBuilder::calculateDevelopmentSquads(
     std::vector<std::pair<double, const Player *>> loanWithTalent;
     for (const Player *p : surplus) {
         const int age = effectiveAge(*p);
-        const bool gk = isGoalkeeper(*p);
+        const bool gk = p->isGoalkeeper();
         const int cap = gk ? m_goalkeeperCap : m_outfielderCap;
         const bool young = age <= cap;
         if (!young) {
@@ -407,7 +402,7 @@ DevelopmentSquads SquadBuilder::calculateDevelopmentSquads(
         const int age = effectiveAge(*p);
         if (age <= m_youthLoanOverAge) // strictly older ("über 18")
             continue;
-        const bool gk = isGoalkeeper(*p);
+        const bool gk = p->isGoalkeeper();
         const int cap = gk ? m_goalkeeperCap : m_outfielderCap;
         const double bestDwrs = bestDwrsForPlayer(*p, ratings);
         const double talent = TalentEngine::talentForPlayer(m_definitions, *p, bestDwrs, cap);
