@@ -10,7 +10,7 @@ Prioritäten: 🔴 hoch · 🟡 mittel · ⚪ niedrig
 
 ## 🆕 Neue Ideen
 
-### 🟡 Registrierungs-Assistent (Premier League + UEFA) — in Arbeit (Schritt 4 offen)
+### ✅ Registrierungs-Assistent (Premier League + UEFA) — fertig mit v1.4.1
 
 **Ziel:** Meldeliste so bilden, dass sie **registrierbar** ist und keine Plätze
 verschenkt. Anlass: Mit zu wenigen HG-Spielern wurden oft nur 21 Spieler
@@ -29,7 +29,10 @@ einer nicht registriert werden kann.
     für Club-trained, also höchstens 21 ohne Club-trained. Mindestens 2
     Torhüter. Liste B (unbegrenzt) = U21 und Club-trained (Näherung für „2 Jahre
     am Stück im Verein“, keine eigene Pflege).
-  - **Bundesliga:** nicht relevant, keine wirksame Beschränkung (99 Plätze).
+  - **Bundesliga:** keine wirksame Beschränkung (99 Plätze). Als Liga wählbar,
+    verhält sich aber wie „Standard (keine Beschränkung)": keine Liga-Meldeliste,
+    alle Spieler spielberechtigt. „Standard" gilt für jede Liga, deren Regeln
+    noch nicht hinterlegt sind.
   - Mindestzahl Torhüter in der Meldeliste als Einstellung (Default 2). Die PL
     schreibt keine vor, ohne zwei ist es aber albern.
 - **Daten:** FM24 exportiert keinen HG-Status, also ist alles Handpflege.
@@ -52,8 +55,18 @@ einer nicht registriert werden kann.
      aktiven Regeln): Vorschlag live, Kosten der Quote, Warnungen (freie
      Plätze, U21 unklar), „Als Meldeliste übernehmen“ mit Abgleich.
   3. ✅ v1.3.25 (mit Schritt 2): UEFA-Liste A/B im Assistenten.
-  4. Best XI nutzt die übernommene Meldeliste (+ U21); optionaler
-     UEFA-Best-XI-Tab (Liste A + B).
+  4. ✅ v1.4.1: Best XI hat eine Wettbewerbs-Auswahl — Liga, Champions /
+     Europa / Conference League und Pokal (DFB-Pokal bzw. FA Cup / League Cup,
+     ohne Registrierung) — und rechnet die erste Mannschaft nur mit den
+     Spielberechtigten (gespeicherte Meldeliste + U21 bzw. Liste B; gemeldete
+     Zweitteam-Spieler zählen mit). Die UEFA-Liste ist unabhängig von der Liga,
+     gilt also auch bei Bundesliga. Jugend/Zweitteam
+     und Leih-/Verkaufslisten bleiben beim ganzen Verein. Auf der Seite
+     „Registrierung" hakt man an, wen man im Spiel wirklich gemeldet hat
+     (vorbelegt: Empfehlung, nach dem Speichern die eigene Liste); Torhüter und
+     Feldspieler getrennt, Standardsortierung nach Position
+     (`positionSortKey`: Tor → Sturm, rechts vor links), per Spaltenkopf
+     umsortierbar.
 - **Später:** La Liga, Serie A, Ligue 1 als weitere Regelwerke (Regeln erst
   recherchieren).
 
@@ -128,7 +141,7 @@ Profilseite, Jugend-/Zweitteam, Tabs, bedingte Formatierung, erweiterte Suche
 (Squad-Matrix-Filter: Nationalität, Mindestalter, Free Agents, Talent,
 Persönlichkeit), CSV-Export (Squad Matrix), Trennung von Logik und UI
 (`fmcore` ohne Widgets, Transfer-Logik in `SquadBuilder`), Test-Harness
-(ctest, 12 Suiten), Persönlichkeits-System, Vereins-Header/Theme/Logo,
+(ctest, 16 Suiten), Persönlichkeits-System, Vereins-Header/Theme/Logo,
 Taktik-Explorer.
 
 ## ❌ Verworfen / Grundsätze

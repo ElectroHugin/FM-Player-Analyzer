@@ -19,13 +19,25 @@ class Definitions;
 // (PlayerRegistration); this module holds the rule sets and the derived checks.
 namespace Registration {
 
-// League rule set. Only leagues whose registration actually restricts the
-// squad are modelled; everything else is None.
-enum class LeagueRules { None, PremierLeague };
+// League rule set. None is the default for every league whose rules are not
+// modelled (yet): no restriction. Bundesliga is selectable by name but has no
+// effective restriction either (99 places, no quota), so it behaves like None.
+enum class LeagueRules { None, Bundesliga, PremierLeague };
 
-// Stable settings keys ("none", "premier_league").
+// Stable settings keys ("none", "bundesliga", "premier_league").
 QString leagueRulesKey(LeagueRules rules);
 LeagueRules leagueRulesFromKey(const QString &key); // unknown -> None
+
+// The league's own name (a proper noun, not translated); empty for None.
+QString leagueDisplayName(LeagueRules rules);
+
+// The domestic cup(s) that go with the league (proper nouns); empty for None.
+// Cups need no registration: every player may play.
+QString cupDisplayName(LeagueRules rules);
+
+// Whether the league's registration limits who may play at all. Without that
+// there is no squad list to build: every player is eligible.
+bool restrictsSquad(LeagueRules rules);
 
 // League rule sets available for an FM version (rules are per game release).
 QList<LeagueRules> leagueRulesFor(const QString &fmVersionId);
@@ -38,7 +50,8 @@ struct Settings {
     bool uefa = false;
     int minGoalkeepers = 2; // not a rule anywhere — a sane-squad floor
 
-    bool active() const { return league != LeagueRules::None || uefa; }
+    // Some competition needs a squad list (markings + assistant are in use).
+    bool active() const { return restrictsSquad(league) || uefa; }
 };
 
 // U21 per the PL/UEFA cut-off (born on/after 1 Jan of season start year − 21).
@@ -128,6 +141,41 @@ struct Proposal {
 // quotas are nested limits.
 Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competition,
                  const Quota &quota);
+
+// --- Saved squad list ---
+
+// On the saved list of the competition (league squad list / UEFA list A).
+bool isListed(const Player &player, Competition competition);
+
+// May play in the competition: on its saved list, or eligible without a slot.
+bool isEligible(const Player &player, Competition competition);
+
+// Whether a list has been saved for the competition at all (someone is listed).
+bool hasSavedList(const std::vector<const Player *> &players, Competition competition);
+
+// A hand-picked list measured against the quota — the user ticks who is really
+// registered, which need not be the proposal.
+struct ListCheck {
+    int size = 0;
+    int nonHomeGrown = 0;
+    int homeGrownOnly = 0; // home-grown but not club-trained
+    int clubTrained = 0;
+    int goalkeepers = 0;   // counted towards the minimum (see Quota)
+
+    bool tooMany = false;              // more players than places
+    bool tooManyNonHomeGrown = false;
+    bool tooManyNonClubTrained = false;
+    bool tooFewGoalkeepers = false;
+
+    bool valid() const
+    {
+        return !tooMany && !tooManyNonHomeGrown && !tooManyNonClubTrained && !tooFewGoalkeepers;
+    }
+};
+// listed: the players taking a slot; exempt: those eligible without one (their
+// keepers count towards the minimum only where the quota says so).
+ListCheck checkList(const std::vector<const Player *> &listed,
+                    const std::vector<const Player *> &exempt, const Quota &quota);
 
 // Average rating of the starting XI (filled slots) per tactic: without any
 // registration restriction versus with only the eligible players.

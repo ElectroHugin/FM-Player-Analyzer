@@ -25,6 +25,10 @@ struct DepthOption;
 // Best XI calculator: starting XI, B-team, depth options plus the youth /
 // second-team development squads and surplus lists.
 // Port of legacy best_position.py.
+//
+// With registration rules active the first team can be limited to the players
+// who may play in a competition (its saved squad list plus those eligible
+// without a slot); the development squads always look at the whole club.
 class BestXiPage : public PageBase
 {
     Q_OBJECT
@@ -43,6 +47,9 @@ private:
     ThemeManager &m_theme;
 
     QComboBox *m_tacticCombo = nullptr;
+    QLabel *m_competitionLabel = nullptr;
+    QComboBox *m_competitionCombo = nullptr; // only with registration rules
+    QLabel *m_registrationNote = nullptr;    // who is left out, or why nobody is
     QLabel *m_hint = nullptr;
     QTabWidget *m_tabs = nullptr;
 

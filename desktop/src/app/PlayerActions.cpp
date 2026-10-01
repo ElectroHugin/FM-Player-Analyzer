@@ -215,7 +215,7 @@ void attachToView(AppContext &context, QTableView *view, PlayerFilterProxy *prox
 }
 
 void attachToTableWidget(AppContext &context, QTableWidget *table, int uidColumn,
-                         bool doubleClickOpensProfile)
+                         bool doubleClickOpensProfile, int ignoreDoubleClickColumn)
 {
     CellStyleDelegate::install(table); // keep model DWRS/attribute colors visible
     const auto uidForRow = [table, uidColumn](int row) {
@@ -236,7 +236,9 @@ void attachToTableWidget(AppContext &context, QTableWidget *table, int uidColumn
                      });
     if (doubleClickOpensProfile) {
         QObject::connect(table, &QTableWidget::cellDoubleClicked, table,
-                         [&context, uidForRow](int row, int) {
+                         [&context, uidForRow, ignoreDoubleClickColumn](int row, int column) {
+                             if (column == ignoreDoubleClickColumn)
+                                 return;
                              const QString uid = uidForRow(row);
                              if (!uid.isEmpty())
                                  openProfile(context, uid);

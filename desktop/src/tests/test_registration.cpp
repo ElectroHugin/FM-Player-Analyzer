@@ -110,11 +110,122 @@ private slots:
 
     void rulesPerFmVersion()
     {
+        using L = Registration::LeagueRules;
         QVERIFY(Registration::leagueRulesFor(QStringLiteral("fm24"))
-                == QList<Registration::LeagueRules>{Registration::LeagueRules::PremierLeague});
+                == (QList<L>{L::Bundesliga, L::PremierLeague}));
         QVERIFY(Registration::uefaRulesFor(QStringLiteral("fm24")));
         QVERIFY(Registration::leagueRulesFor(QStringLiteral("fm99")).isEmpty());
         QVERIFY(!Registration::uefaRulesFor(QStringLiteral("fm99")));
+    }
+
+    void bundesligaBehavesLikeDefault()
+    {
+        using L = Registration::LeagueRules;
+        QVERIFY(!Registration::restrictsSquad(L::None));
+        QVERIFY(!Registration::restrictsSquad(L::Bundesliga));
+        QVERIFY(Registration::restrictsSquad(L::PremierLeague));
+        QCOMPARE(Registration::leagueDisplayName(L::Bundesliga), QStringLiteral("Bundesliga"));
+        QVERIFY(Registration::leagueDisplayName(L::None).isEmpty());
+        QCOMPARE(Registration::cupDisplayName(L::Bundesliga), QStringLiteral("DFB-Pokal"));
+        QVERIFY(!Registration::cupDisplayName(L::PremierLeague).isEmpty());
+        QVERIFY(Registration::cupDisplayName(L::None).isEmpty());
+
+        // Nothing to register in the league — the assistant stays off unless
+        // the UEFA rules are switched on.
+        Registration::Settings settings;
+        settings.league = L::Bundesliga;
+        QVERIFY(!settings.active());
+        settings.uefa = true;
+        QVERIFY(settings.active());
+
+        Registration::Settings none;
+        const auto bundesliga =
+            Registration::quotaFor(Registration::Competition::League, settings);
+        const auto standard = Registration::quotaFor(Registration::Competition::League, none);
+        QCOMPARE(bundesliga.maxNonHomeGrown, standard.maxNonHomeGrown);
+        QCOMPARE(bundesliga.maxNonHomeGrown, bundesliga.maxSize); // no home-grown quota
+        QCOMPARE(bundesliga.maxNonClubTrained, standard.maxNonClubTrained);
+    }
+
+    void eligibilityFromSavedList()
+    {
+        using C = Registration::Competition;
+        Player senior = playerAged(27);
+        Player youngster = playerAged(19);
+        Player academy = playerAged(19);
+        academy.registration.clubTrained = true;
+
+        // Nobody listed yet: no saved list; only the exempt may "play".
+        std::vector<const Player *> squad = {&senior, &youngster, &academy};
+        QVERIFY(!Registration::hasSavedList(squad, C::League));
+        QVERIFY(!Registration::isEligible(senior, C::League));
+        QVERIFY(Registration::isEligible(youngster, C::League)); // U21 needs no slot
+        QVERIFY(!Registration::isEligible(youngster, C::Uefa));  // list B needs club-trained
+        QVERIFY(Registration::isEligible(academy, C::Uefa));
+
+        // The two lists are independent.
+        senior.registration.leagueListed = true;
+        QVERIFY(Registration::hasSavedList(squad, C::League));
+        QVERIFY(!Registration::hasSavedList(squad, C::Uefa));
+        QVERIFY(Registration::isEligible(senior, C::League));
+        QVERIFY(!Registration::isEligible(senior, C::Uefa));
+        youngster.registration.uefaListed = true;
+        QVERIFY(Registration::isEligible(youngster, C::Uefa));
+    }
+
+    void checkListFlagsViolations()
+    {
+        using C = Registration::Competition;
+        Squad s;
+        for (int i = 0; i < 18; ++i)
+            s.add(QStringLiteral("n%1").arg(i), 25);
+        for (int i = 0; i < 5; ++i)
+            s.add(QStringLiteral("h%1").arg(i), 25, Home);
+        s.add(QStringLiteral("c0"), 25, Club);
+        s.add(QStringLiteral("gk0"), 30, Club, true);
+        s.add(QStringLiteral("ygk"), 19, Club, true); // exempt keeper
+        std::vector<const Player *> listed;
+        for (int i = 0; i < 25; ++i)
+            listed.push_back(&s.players[static_cast<size_t>(i)]);
+        const std::vector<const Player *> exempt = {&s.players.back()};
+
+        // League: 18 non-home-grown is one too many; the U21 keeper counts.
+        auto check =
+            Registration::checkList(listed, exempt, Registration::quotaFor(C::League, plSettings(2)));
+        QCOMPARE(check.size, 25);
+        QCOMPARE(check.nonHomeGrown, 18);
+        QCOMPARE(check.homeGrownOnly, 5);
+        QCOMPARE(check.clubTrained, 2);
+        QCOMPARE(check.goalkeepers, 2);
+        QVERIFY(check.tooManyNonHomeGrown);
+        QVERIFY(!check.tooMany && !check.tooManyNonClubTrained && !check.tooFewGoalkeepers);
+        QVERIFY(!check.valid());
+
+        // UEFA: additionally 23 without club-trained (max 21) and only one
+        // keeper on list A itself.
+        check = Registration::checkList(listed, exempt, Registration::quotaFor(C::Uefa, plSettings(2)));
+        QVERIFY(check.tooManyNonHomeGrown);
+        QVERIFY(check.tooManyNonClubTrained);
+        QVERIFY(check.tooFewGoalkeepers);
+        QCOMPARE(check.goalkeepers, 1);
+
+        // One player over the limit.
+        listed.push_back(&s.players.back());
+        check = Registration::checkList(listed, {}, Registration::quotaFor(C::League, plSettings(0)));
+        QVERIFY(check.tooMany);
+
+        // The proposal itself always passes its own check.
+        const auto quota = Registration::quotaFor(C::Uefa, plSettings(2));
+        const auto proposal = Registration::propose(s.ranked(), C::Uefa, quota);
+        std::vector<const Player *> proposed, free;
+        for (const auto &entry : proposal.listed)
+            proposed.push_back(entry.player);
+        for (const auto &entry : proposal.exempt)
+            free.push_back(entry.player);
+        check = Registration::checkList(proposed, free, quota);
+        QCOMPARE(check.size, static_cast<int>(proposal.listed.size()));
+        QCOMPARE(check.goalkeepers, proposal.goalkeepers);
+        QVERIFY(!check.tooMany && !check.tooManyNonHomeGrown && !check.tooManyNonClubTrained);
     }
 
     void initTestCase()
@@ -267,7 +378,7 @@ private slots:
     void keysRoundTrip()
     {
         using L = Registration::LeagueRules;
-        for (const L rules : {L::None, L::PremierLeague})
+        for (const L rules : {L::None, L::Bundesliga, L::PremierLeague})
             QCOMPARE(Registration::leagueRulesFromKey(Registration::leagueRulesKey(rules)), rules);
         QCOMPARE(Registration::leagueRulesFromKey(QStringLiteral("bogus")), L::None);
     }

@@ -5,6 +5,7 @@
 #include "../widgets/NumericTableItem.h"
 #include "../widgets/TacticPitchWidget.h"
 #include "PageHelpers.h"
+#include "core/Registration.h"
 #include "core/TalentEngine.h"
 #include "core/Utils.h"
 
@@ -21,6 +22,16 @@
 #include <algorithm>
 
 namespace fm {
+
+namespace {
+
+// Value behind each competition combo entry. An empty combo (no registration
+// rules active) reads as 0: no competition, hence no restriction.
+constexpr int kLeague = 1; // restricted only if the league has a squad list
+constexpr int kUefa = 2;   // list A + B
+constexpr int kCup = 3;    // domestic cups: no registration
+
+} // namespace
 
 BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent)
     : PageBase(context, parent)
@@ -46,8 +57,23 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     m_tacticCombo = new QComboBox(content);
     m_tacticCombo->setMinimumWidth(260);
     tacticRow->addWidget(m_tacticCombo);
+    m_competitionLabel = new QLabel(tr("Wettbewerb:"), content);
+    tacticRow->addSpacing(16);
+    tacticRow->addWidget(m_competitionLabel);
+    m_competitionCombo = new QComboBox(content);
+    m_competitionCombo->setMinimumWidth(260);
+    m_competitionCombo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    m_competitionCombo->setToolTip(
+        tr("Beschränkt die erste Mannschaft auf die Spieler, die im Wettbewerb spielberechtigt "
+           "sind: die gespeicherte Meldeliste (Seite 'Registrierung') plus alle, die ohne "
+           "Platz spielen dürfen. Im Pokal dürfen alle spielen."));
+    tacticRow->addWidget(m_competitionCombo);
     tacticRow->addStretch(1);
     layout->addLayout(tacticRow);
+
+    m_registrationNote = new QLabel(content);
+    m_registrationNote->setWordWrap(true);
+    layout->addWidget(m_registrationNote);
 
     m_hint = new QLabel(
         tr("Der Rechner nutzt einen 'Schwächstes-Glied-zuerst'-Algorithmus: Statt Position "
@@ -172,10 +198,12 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
     layout->addWidget(m_tabs, 1);
 
-    connect(m_tacticCombo, &QComboBox::currentIndexChanged, this, [this] {
-        if (!m_updating)
-            rebuild();
-    });
+    for (QComboBox *combo : {m_tacticCombo, m_competitionCombo}) {
+        connect(combo, &QComboBox::currentIndexChanged, this, [this] {
+            if (!m_updating)
+                rebuild();
+        });
+    }
 
     // Player boxes on the pitches are interactive (M13).
     for (TacticPitchWidget *pitch :
@@ -201,6 +229,32 @@ void BestXiPage::refresh()
     m_tacticCombo->addItems(favoritesFirstTactics(m_context, false));
     if (!previous.isEmpty() && m_tacticCombo->findText(previous) >= 0)
         m_tacticCombo->setCurrentText(previous);
+
+    // Competition choice — league, UEFA competitions, domestic cup. Each has
+    // its own eligibility: the league and UEFA lists are independent of each
+    // other, the cups need no registration at all.
+    const Registration::Settings registration = m_context.registrationSettings();
+    const QVariant previousCompetition = m_competitionCombo->currentData();
+    m_competitionCombo->clear();
+    if (registration.active()) {
+        const QString league = Registration::leagueDisplayName(registration.league);
+        const QString cup = Registration::cupDisplayName(registration.league);
+        if (Registration::restrictsSquad(registration.league))
+            m_competitionCombo->addItem(tr("%1 (Meldeliste)").arg(league), kLeague);
+        else
+            m_competitionCombo->addItem(
+                tr("%1 (alle Spieler)").arg(league.isEmpty() ? tr("Liga") : league), kLeague);
+        if (registration.uefa)
+            m_competitionCombo->addItem(
+                tr("Champions / Europa / Conference League (Liste A + B)"), kUefa);
+        m_competitionCombo->addItem(
+            tr("%1 (alle Spieler)").arg(cup.isEmpty() ? tr("Pokal") : cup), kCup);
+        if (previousCompetition.isValid())
+            m_competitionCombo->setCurrentIndex(
+                std::max(0, m_competitionCombo->findData(previousCompetition)));
+    }
+    m_competitionLabel->setVisible(registration.active());
+    m_competitionCombo->setVisible(registration.active());
     m_updating = false;
     rebuild();
 }
@@ -213,6 +267,7 @@ void BestXiPage::rebuild()
 
     if (userClub.isEmpty() || tactic.isEmpty()) {
         m_hint->setText(tr("Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen)."));
+        m_registrationNote->setVisible(false);
         m_xiPitch->clearData();
         m_bTeamPitch->clearData();
         m_secondXiPitch->clearData();
@@ -234,10 +289,74 @@ void BestXiPage::rebuild()
             secondPlayers.push_back(&player);
     }
 
-    const SquadResult first = m_context.squadBuilder().calculateSquadAndSurplus(
+    // Registration: with a competition chosen, the first team is built only
+    // from the players who may play in it. Second-team players count when they
+    // are on the list themselves — the assistant fills free places with them.
+    // The development squads (second team, youth, loan/sell lists) are about
+    // the whole club, so they always start from the unrestricted first team.
+    const SquadResult full = m_context.squadBuilder().calculateSquadAndSurplus(
         clubPlayers, positions, slotOrder, ratings);
+
+    std::vector<const Player *> eligiblePlayers;
+    bool restricted = false;
+    QString note;
+    const int competitionMode = m_competitionCombo->currentData().toInt();
+    const bool leagueList =
+        competitionMode == kLeague
+        && Registration::restrictsSquad(m_context.registrationSettings().league);
+    if (leagueList || competitionMode == kUefa) {
+        const Registration::Competition competition = competitionMode == kUefa
+                                                          ? Registration::Competition::Uefa
+                                                          : Registration::Competition::League;
+        std::vector<const Player *> registrationPool = clubPlayers;
+        registrationPool.insert(registrationPool.end(), secondPlayers.begin(),
+                                secondPlayers.end());
+        if (!Registration::hasSavedList(registrationPool, competition)) {
+            note = tr("⚠️ Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
+                      "rechnet mit allen Spielern. Speichere sie auf der Seite 'Registrierung'.");
+        } else {
+            restricted = true;
+            // Who the list costs: the players a free choice would line up.
+            QSet<QString> unrestrictedTeams;
+            for (const auto &team : {full.startingXi, full.bTeam})
+                for (const XiCell &cell : team)
+                    if (cell.isFilled())
+                        unrestrictedTeams.insert(cell.playerUid);
+            int leftOut = 0;
+            QStringList missed;
+            for (const Player *player : registrationPool) {
+                const bool firstTeam = player->club == userClub;
+                if (firstTeam ? Registration::isEligible(*player, competition)
+                              : Registration::isListed(*player, competition)) {
+                    eligiblePlayers.push_back(player);
+                } else if (firstTeam) {
+                    ++leftOut;
+                    if (unrestrictedTeams.contains(player->uid))
+                        missed << player->name;
+                }
+            }
+            if (leftOut == 0) {
+                note = tr("Alle Spieler der ersten Mannschaft sind spielberechtigt.");
+            } else {
+                note = tr("%1 Spieler der ersten Mannschaft sind nicht gemeldet und bleiben "
+                          "außen vor.")
+                           .arg(leftOut);
+                if (!missed.isEmpty())
+                    note += QLatin1Char(' ')
+                            + tr("Ohne Meldeliste stünden davon in Startelf oder B-Team: %1")
+                                  .arg(missed.join(QStringLiteral(", ")));
+            }
+        }
+    }
+    m_registrationNote->setText(note);
+    m_registrationNote->setVisible(!note.isEmpty());
+
+    const SquadResult first = restricted
+                                  ? m_context.squadBuilder().calculateSquadAndSurplus(
+                                        eligiblePlayers, positions, slotOrder, ratings)
+                                  : full;
     const DevelopmentSquads dev = m_context.squadBuilder().calculateDevelopmentSquads(
-        secondPlayers, first.depthPool, positions, slotOrder, ratings, first.depthPlayerUids);
+        secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);
 
     m_xiPitch->setTeam(first.startingXi, positions, layout, roleNames);
     m_bTeamPitch->setTeam(first.bTeam, positions, layout, roleNames);

@@ -3,6 +3,7 @@
 #include "GistRainbowLut.h"
 #include "PlayerStatus.h"
 
+#include <QHash>
 #include <QRegularExpression>
 
 #include <algorithm>
@@ -186,6 +187,37 @@ QSet<QString> parsePositionString(const QString &posStr)
         }
     }
     return result;
+}
+
+int positionSortKey(const QString &posStr)
+{
+    static const QHash<QString, int> lines = {
+        {QStringLiteral("GK"), 0}, {QStringLiteral("D"), 1},  {QStringLiteral("WB"), 2},
+        {QStringLiteral("DM"), 3}, {QStringLiteral("M"), 4},  {QStringLiteral("AM"), 5},
+        {QStringLiteral("ST"), 6},
+    };
+    constexpr int kUnknown = 99;
+
+    int minLine = kUnknown;
+    int maxLine = -1;
+    double sideSum = 0.0;
+    int count = 0;
+    for (const QString &position : parsePositionString(posStr)) {
+        // "D (R)" -> base "D", side 'R'; sideless "DM"/"GK" count as central.
+        const int open = position.indexOf(QLatin1Char('('));
+        const QString base = (open < 0 ? position : position.left(open)).trimmed();
+        const auto line = lines.constFind(base);
+        if (line == lines.constEnd())
+            continue;
+        const QChar side = open < 0 ? QLatin1Char('C') : position.at(open + 1);
+        minLine = std::min(minLine, line.value());
+        maxLine = std::max(maxLine, line.value());
+        sideSum += side == QLatin1Char('R') ? 0.0 : side == QLatin1Char('L') ? 2.0 : 1.0;
+        ++count;
+    }
+    if (count == 0)
+        return kUnknown * 10000;
+    return minLine * 10000 + maxLine * 1000 + static_cast<int>(std::lround(sideSum / count * 100));
 }
 
 QDateTime parseDwrsTimestamp(const QString &timestamp)

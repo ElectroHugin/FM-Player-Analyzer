@@ -147,6 +147,40 @@ private slots:
         QVERIFY(fm::parsePositionString(QString()).isEmpty());
     }
 
+    void positionSortKey_pitchOrder()
+    {
+        // Goalkeeper to striker, right before left; a wider range of lines
+        // sorts after the pure position of its most defensive line.
+        const QStringList ordered = {
+            QStringLiteral("GK"),
+            QStringLiteral("D (R)"),
+            QStringLiteral("D (RC)"),
+            QStringLiteral("D (C)"),
+            QStringLiteral("D (LC)"),
+            QStringLiteral("D (L)"),
+            QStringLiteral("D (RL), WB (L)"),
+            QStringLiteral("D (C), DM"),
+            QStringLiteral("D (RL), AM (R)"),
+            QStringLiteral("D/WB/AM (L)"),
+            QStringLiteral("DM, M (C)"),
+            QStringLiteral("M/AM (R)"),
+            QStringLiteral("M/AM (C)"),
+            QStringLiteral("M/AM (L)"),
+            QStringLiteral("M (L), AM (RL), ST (C)"),
+            QStringLiteral("AM (R), ST (C)"),
+            QStringLiteral("AM (C), ST (C)"),
+            QStringLiteral("ST (C)"),
+            QString(), // unknown position last
+        };
+        for (int i = 1; i < ordered.size(); ++i) {
+            QVERIFY2(fm::positionSortKey(ordered[i - 1]) < fm::positionSortKey(ordered[i]),
+                     qPrintable(ordered[i - 1] + QStringLiteral(" !< ") + ordered[i]));
+        }
+        QCOMPARE(fm::positionSortKey(QStringLiteral("ST")),
+                 fm::positionSortKey(QStringLiteral("ST (C)")));
+        QCOMPARE(fm::positionSortKey(QStringLiteral("???")), fm::positionSortKey(QString()));
+    }
+
     void getLastName()
     {
         QCOMPARE(fm::getLastName(QStringLiteral("Erling Braut Haaland")),

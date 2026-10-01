@@ -238,8 +238,10 @@ QWidget *SettingsPage::buildClubTab()
                              m_registrationMinGkSpin);
     auto *registrationHint = new QLabel(
         tr("Aktiviert die Home-Grown-/Club-Grown-/U21-Markierungen (Spieler bearbeiten, "
-           "Rechtsklick → Registrierung) und den Registrierungs-Assistenten. Ligen ohne "
-           "wirksame Beschränkung (z. B. Bundesliga) brauchen keine Regeln."),
+           "Rechtsklick → Registrierung) und den Registrierungs-Assistenten, sobald ein "
+           "Wettbewerb eine Meldeliste verlangt. 'Standard' und Bundesliga kennen keine "
+           "Beschränkung: dort sind alle Spieler spielberechtigt. 'Standard' gilt auch "
+           "für alle Ligen, deren Regeln noch nicht hinterlegt sind."),
         m_registrationGroup);
     registrationHint->setWordWrap(true);
     registrationHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -816,12 +818,10 @@ void SettingsPage::refresh()
     const Registration::Settings registration = m_context.registrationSettings();
     m_registrationGroup->setVisible(!leagues.isEmpty() || uefaAvailable);
     m_registrationLeagueCombo->clear();
-    m_registrationLeagueCombo->addItem(tr("Keine"),
+    m_registrationLeagueCombo->addItem(tr("Standard (keine Beschränkung)"),
                                        Registration::leagueRulesKey(Registration::LeagueRules::None));
     for (const Registration::LeagueRules league : leagues) {
-        m_registrationLeagueCombo->addItem(league == Registration::LeagueRules::PremierLeague
-                                               ? tr("Premier League")
-                                               : Registration::leagueRulesKey(league),
+        m_registrationLeagueCombo->addItem(Registration::leagueDisplayName(league),
                                            Registration::leagueRulesKey(league));
     }
     m_registrationLeagueCombo->setCurrentIndex(std::max(

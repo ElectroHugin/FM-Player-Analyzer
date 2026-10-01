@@ -57,6 +57,13 @@ QString csvField(const QString &value, QChar separator);
 // and side-less bases ("DM" stays "DM", bare "ST" becomes "ST (C)").
 QSet<QString> parsePositionString(const QString &posStr);
 
+// Pitch-order sort key of an FM position string for squad lists — goalkeeper to
+// striker, right before left, the way FM's own registration screen reads:
+// first the most defensive line the player covers (GK, D, WB, DM, M, AM, ST),
+// then the most advanced one, then the mean side (right, centre, left).
+// Smaller sorts first; an empty/unparseable string sorts last.
+int positionSortKey(const QString &posStr);
+
 // Parses a DWRS-history timestamp ("yyyy-MM-dd HH:mm:ss") into a QDateTime;
 // returns an invalid QDateTime for unparseable/empty input.
 QDateTime parseDwrsTimestamp(const QString &timestamp);

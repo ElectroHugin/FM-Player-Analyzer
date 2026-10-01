@@ -14,6 +14,8 @@ namespace Registration {
 QString leagueRulesKey(LeagueRules rules)
 {
     switch (rules) {
+    case LeagueRules::Bundesliga:
+        return QStringLiteral("bundesliga");
     case LeagueRules::PremierLeague:
         return QStringLiteral("premier_league");
     case LeagueRules::None:
@@ -24,15 +26,48 @@ QString leagueRulesKey(LeagueRules rules)
 
 LeagueRules leagueRulesFromKey(const QString &key)
 {
+    if (key == QLatin1String("bundesliga"))
+        return LeagueRules::Bundesliga;
     if (key == QLatin1String("premier_league"))
         return LeagueRules::PremierLeague;
     return LeagueRules::None;
 }
 
+QString leagueDisplayName(LeagueRules rules)
+{
+    switch (rules) {
+    case LeagueRules::Bundesliga:
+        return QStringLiteral("Bundesliga");
+    case LeagueRules::PremierLeague:
+        return QStringLiteral("Premier League");
+    case LeagueRules::None:
+        break;
+    }
+    return {};
+}
+
+QString cupDisplayName(LeagueRules rules)
+{
+    switch (rules) {
+    case LeagueRules::Bundesliga:
+        return QStringLiteral("DFB-Pokal");
+    case LeagueRules::PremierLeague:
+        return QStringLiteral("FA Cup / League Cup");
+    case LeagueRules::None:
+        break;
+    }
+    return {};
+}
+
+bool restrictsSquad(LeagueRules rules)
+{
+    return rules == LeagueRules::PremierLeague;
+}
+
 QList<LeagueRules> leagueRulesFor(const QString &fmVersionId)
 {
     if (fmVersionId == QLatin1String("fm24"))
-        return {LeagueRules::PremierLeague};
+        return {LeagueRules::Bundesliga, LeagueRules::PremierLeague};
     return {};
 }
 
@@ -102,7 +137,9 @@ Quota quotaFor(Competition competition, const Settings &settings)
     case LeagueRules::PremierLeague:
         // 25-man list, at most 17 non-home-grown; no club-trained quota.
         break;
+    case LeagueRules::Bundesliga:
     case LeagueRules::None:
+        // No list is built for these (see restrictsSquad); no quota applies.
         quota.maxNonHomeGrown = quota.maxSize;
         break;
     }
@@ -238,6 +275,57 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
                      });
     result.emptySlots = quota.maxSize - listedCount();
     return result;
+}
+
+bool isListed(const Player &player, Competition competition)
+{
+    return competition == Competition::Uefa ? player.registration.uefaListed
+                                            : player.registration.leagueListed;
+}
+
+bool isEligible(const Player &player, Competition competition)
+{
+    return isListed(player, competition) || isExempt(player, competition);
+}
+
+bool hasSavedList(const std::vector<const Player *> &players, Competition competition)
+{
+    return std::any_of(players.begin(), players.end(), [competition](const Player *p) {
+        return isListed(*p, competition);
+    });
+}
+
+ListCheck checkList(const std::vector<const Player *> &listed,
+                    const std::vector<const Player *> &exempt, const Quota &quota)
+{
+    ListCheck check;
+    check.size = static_cast<int>(listed.size());
+    for (const Player *p : listed) {
+        switch (category(*p)) {
+        case Category::NonHomeGrown:
+            ++check.nonHomeGrown;
+            break;
+        case Category::HomeGrown:
+            ++check.homeGrownOnly;
+            break;
+        case Category::ClubTrained:
+            ++check.clubTrained;
+            break;
+        }
+        if (p->isGoalkeeper())
+            ++check.goalkeepers;
+    }
+    if (quota.exemptKeepersCount) {
+        for (const Player *p : exempt)
+            if (p->isGoalkeeper())
+                ++check.goalkeepers;
+    }
+    check.tooMany = check.size > quota.maxSize;
+    check.tooManyNonHomeGrown = check.nonHomeGrown > quota.maxNonHomeGrown;
+    check.tooManyNonClubTrained =
+        check.nonHomeGrown + check.homeGrownOnly > quota.maxNonClubTrained;
+    check.tooFewGoalkeepers = check.goalkeepers < quota.minGoalkeepers;
+    return check;
 }
 
 std::vector<QuotaCost> quotaCosts(const SquadBuilder &builder, const Definitions &definitions,
