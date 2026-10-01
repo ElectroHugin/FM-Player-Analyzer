@@ -26,23 +26,24 @@ namespace {
 
 using CategoryList = QList<QPair<QString, QStringList>>;
 
-// Legacy gameplay-area groupings (player_comparison.py).
+// Legacy gameplay-area groupings (player_comparison.py). The area names are
+// chart labels; the attribute names are data keys and stay untranslated.
 CategoryList outfieldGameplayAreas()
 {
     return {
-        {QStringLiteral("Tempo"),
+        {PlayerComparisonPage::tr("Tempo"),
          {QStringLiteral("Acceleration"), QStringLiteral("Pace")}},
-        {QStringLiteral("Abschluss"),
+        {PlayerComparisonPage::tr("Abschluss"),
          {QStringLiteral("Finishing"), QStringLiteral("Long Shots")}},
-        {QStringLiteral("Passspiel"),
+        {PlayerComparisonPage::tr("Passspiel"),
          {QStringLiteral("Passing"), QStringLiteral("Crossing"), QStringLiteral("Vision")}},
-        {QStringLiteral("Dribbling"),
+        {PlayerComparisonPage::tr("Dribbling"),
          {QStringLiteral("Dribbling"), QStringLiteral("First Touch"), QStringLiteral("Flair")}},
-        {QStringLiteral("Verteidigung"),
+        {PlayerComparisonPage::tr("Verteidigung"),
          {QStringLiteral("Tackling"), QStringLiteral("Marking"), QStringLiteral("Positioning")}},
-        {QStringLiteral("Physis"),
+        {PlayerComparisonPage::tr("Physis"),
          {QStringLiteral("Strength"), QStringLiteral("Stamina"), QStringLiteral("Balance")}},
-        {QStringLiteral("Mentalität"),
+        {PlayerComparisonPage::tr("Mentalität"),
          {QStringLiteral("Work Rate"), QStringLiteral("Determination"),
           QStringLiteral("Teamwork"), QStringLiteral("Decisions")}},
     };
@@ -51,19 +52,19 @@ CategoryList outfieldGameplayAreas()
 CategoryList gkGameplayAreas()
 {
     return {
-        {QStringLiteral("Paraden"),
+        {PlayerComparisonPage::tr("Paraden"),
          {QStringLiteral("Reflexes"), QStringLiteral("One vs One"), QStringLiteral("Handling"),
           QStringLiteral("Agility")}},
-        {QStringLiteral("Luftkontrolle"),
+        {PlayerComparisonPage::tr("Luftkontrolle"),
          {QStringLiteral("Aerial Reach"), QStringLiteral("Command of Area"),
           QStringLiteral("Jumping Reach")}},
-        {QStringLiteral("Abschlag/Abwurf"),
+        {PlayerComparisonPage::tr("Abschlag/Abwurf"),
          {QStringLiteral("Kicking"), QStringLiteral("Throwing"), QStringLiteral("Passing"),
           QStringLiteral("Vision")}},
-        {QStringLiteral("Mitspielen"),
+        {PlayerComparisonPage::tr("Mitspielen"),
          {QStringLiteral("Rushing Out (Tendency)"), QStringLiteral("Acceleration"),
           QStringLiteral("Pace")}},
-        {QStringLiteral("Mentalität"),
+        {PlayerComparisonPage::tr("Mentalität"),
          {QStringLiteral("Composure"), QStringLiteral("Concentration"),
           QStringLiteral("Decisions"), QStringLiteral("Anticipation")}},
     };

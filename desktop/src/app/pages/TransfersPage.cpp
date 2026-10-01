@@ -53,7 +53,7 @@ TransfersPage::TransfersPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading = new QLabel(
-        QStringLiteral("<h2>%1</h2>").arg(tr("Transfer- && Leih-Management")), content);
+        QStringLiteral("<h2>%1</h2>").arg(tr("Transfer- und Leih-Management")), content);
     layout->addWidget(heading);
 
     m_hint = new QLabel(

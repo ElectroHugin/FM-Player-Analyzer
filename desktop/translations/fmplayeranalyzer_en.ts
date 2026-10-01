@@ -1432,12 +1432,12 @@ You can change the folder later in the settings.</translation>
 <context>
     <name>fm::LineChartWidget</name>
     <message>
-        <location filename="../src/app/widgets/Charts.cpp" line="82"/>
+        <location filename="../src/app/widgets/Charts.cpp" line="88"/>
         <source>Keine Daten</source>
         <translation>No data</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/Charts.cpp" line="88"/>
+        <location filename="../src/app/widgets/Charts.cpp" line="94"/>
         <source>Noch keine historischen DWRS-Daten vorhanden.</source>
         <translation>No historical DWRS data available yet.</translation>
     </message>
@@ -2631,175 +2631,231 @@ The original file is not modified.</translation>
 <context>
     <name>fm::PlayerComparisonPage</name>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="103"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="34"/>
+        <source>Tempo</source>
+        <translation>Pace</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="36"/>
+        <source>Abschluss</source>
+        <translation>Finishing</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="38"/>
+        <source>Passspiel</source>
+        <translation>Passing</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="40"/>
+        <source>Dribbling</source>
+        <translation>Dribbling</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="42"/>
+        <source>Verteidigung</source>
+        <translation>Defending</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="44"/>
+        <source>Physis</source>
+        <translation>Physique</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="46"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="67"/>
+        <source>Mentalität</source>
+        <translation>Mentality</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="55"/>
+        <source>Paraden</source>
+        <translation>Shot stopping</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="58"/>
+        <source>Luftkontrolle</source>
+        <translation>Aerial control</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="61"/>
+        <source>Abschlag/Abwurf</source>
+        <translation>Distribution</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="64"/>
+        <source>Mitspielen</source>
+        <translation>Sweeping</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="104"/>
         <source>Spieler-Vergleich</source>
         <translation>Player Comparison</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="108"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="109"/>
         <source>Taktik:</source>
         <translation>Tactic:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="112"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="113"/>
         <source>Rolle:</source>
         <translation>Role:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="116"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="117"/>
         <source>Pool:</source>
         <translation>Pool:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="118"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="119"/>
         <source>Mein Verein</source>
         <translation>My Club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="119"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="120"/>
         <source>Nationalkader</source>
         <translation>National Squad</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="120"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="121"/>
         <source>Alle Spieler</source>
         <translation>All Players</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="125"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="126"/>
         <source>Bis zu 5 Spieler ankreuzen, um sie zu vergleichen.</source>
         <translation>Check up to 5 players to compare them.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="136"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="137"/>
         <source>Spielbereiche</source>
         <translation>Playing Areas</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="142"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="143"/>
         <source>Meta-Attribut-Profil</source>
         <translation>Meta Attribute Profile</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="152"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="153"/>
         <source>Detaillierter Attribut-Vergleich</source>
         <translation>Detailed Attribute Comparison</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="211"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="212"/>
         <source>Alle Rollen</source>
         <translation>All Roles</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="301"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="302"/>
         <source>Keine Spieler mit dieser Rolle im gewählten Pool gefunden.</source>
         <translation>No players with this role found in the selected pool.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="302"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="303"/>
         <source>Bis zu 5 Spieler ankreuzen, um sie zu vergleichen (%1 verfügbar).</source>
         <translation>Check up to 5 players to compare them (%1 available).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="337"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="338"/>
         <source>Höchste Prio</source>
         <translation>Highest Prio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="339"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="340"/>
         <source>Hohe Prio</source>
         <translation>High Prio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="341"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="342"/>
         <source>Mittlere Prio</source>
         <translation>Medium Prio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="343"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="352"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="344"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="353"/>
         <source>Schlüssel</source>
         <translation>Key</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="344"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="353"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="345"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="354"/>
         <source>Bevorzugt</source>
         <translation>Preferred</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="345"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="346"/>
         <source>Torwart Meta-Attribut-Profil</source>
         <translation>Goalkeeper Meta Attribute Profile</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="347"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="348"/>
         <source>Extrem wichtig</source>
         <translation>Extremely important</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="349"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="350"/>
         <source>Wichtig</source>
         <translation>Important</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="351"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="352"/>
         <source>Gut</source>
         <translation>Good</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="354"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="355"/>
         <source>Feldspieler Meta-Attribut-Profil</source>
         <translation>Outfield Meta Attribute Profile</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="401"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="402"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="402"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="403"/>
         <source>Verein</source>
         <translation>Club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="403"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="404"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="404"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="428"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="405"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="429"/>
         <source>Persönlichkeit</source>
         <translation>Personality</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="405"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="406"/>
         <source>Größe</source>
         <translation>Height</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="406"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="407"/>
         <source>Bevorzugter Fuß</source>
         <translation>Preferred Foot</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="407"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="408"/>
         <source>Gehalt</source>
         <translation>Wage</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="408"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="409"/>
         <source>Marktwert</source>
         <translation>Market Value</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="409"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="410"/>
         <source>Spielzeit</source>
         <translation>Playing Time</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="410"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="411"/>
         <source>Zugewiesene Rollen</source>
         <translation>Assigned Roles</translation>
     </message>
@@ -3094,7 +3150,7 @@ The original file is not modified.</translation>
 <context>
     <name>fm::RadarChartWidget</name>
     <message>
-        <location filename="../src/app/widgets/Charts.cpp" line="186"/>
+        <location filename="../src/app/widgets/Charts.cpp" line="192"/>
         <source>Spieler auswählen, um den Vergleich zu sehen.</source>
         <translation>Select a player to see the comparison.</translation>
     </message>
@@ -3590,8 +3646,8 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="276"/>
-        <source>Stärken &amp;&amp; Schwächen als %1</source>
-        <translation>Strengths &amp;&amp; Weaknesses as %1</translation>
+        <source>Stärken und Schwächen als %1</source>
+        <translation>Strengths and weaknesses as %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="317"/>
@@ -4749,8 +4805,8 @@ The original file is not modified.</translation>
     <name>fm::TransfersPage</name>
     <message>
         <location filename="../src/app/pages/TransfersPage.cpp" line="56"/>
-        <source>Transfer- &amp;&amp; Leih-Management</source>
-        <translation>Transfer &amp;&amp; Loan Management</translation>
+        <source>Transfer- und Leih-Management</source>
+        <translation>Transfer and Loan Management</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TransfersPage.cpp" line="60"/>

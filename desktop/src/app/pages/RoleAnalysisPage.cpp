@@ -273,7 +273,7 @@ void RoleAnalysisPage::rebuildTables()
 
     const auto roleNames = m_context.definitions().roleDisplayMap();
     m_prosConsTitle->setText(
-        tr("Stärken && Schwächen als %1").arg(roleNames.value(role, role)));
+        tr("Stärken und Schwächen als %1").arg(roleNames.value(role, role)));
 }
 
 void RoleAnalysisPage::rebuildPlayerCombo()

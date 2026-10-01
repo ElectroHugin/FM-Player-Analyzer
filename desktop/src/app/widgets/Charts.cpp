@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QDateTimeAxis>
 #include <QGraphicsSimpleTextItem>
+#include <QLegendMarker>
 #include <QLineSeries>
 #include <QPolarChart>
 #include <QVBoxLayout>
@@ -22,8 +23,13 @@ namespace fm {
 namespace {
 
 // QChartView::setChart does not delete the previous chart.
-void swapChart(QChartView *view, QChart *chart)
+void swapChart(QChartView *view, QChart *chart, const ThemeManager &theme)
 {
+    // The chart itself is transparent, so the view behind it must carry the
+    // theme's page color: its own default is the system's (light) base color,
+    // on which the night theme's light legend and axis labels are unreadable.
+    view->setBackgroundBrush(theme.background());
+    view->setFrameShape(QFrame::NoFrame);
     QChart *old = view->chart();
     view->setChart(chart);
     delete old;
@@ -104,7 +110,7 @@ void LineChartWidget::rebuild()
     if (m_series.isEmpty()) {
         chart->setTitle(m_emptyMessage);
         chart->setTitleBrush(m_theme.text());
-        swapChart(m_view, chart);
+        swapChart(m_view, chart, m_theme);
         return;
     }
 
@@ -147,7 +153,7 @@ void LineChartWidget::rebuild()
         series->attachAxis(yAxis);
     }
 
-    swapChart(m_view, chart);
+    swapChart(m_view, chart, m_theme);
 }
 
 // --- RadarChartWidget ---
@@ -185,7 +191,7 @@ void RadarChartWidget::rebuild()
     if (n == 0 || m_traces.isEmpty()) {
         chart->setTitle(tr("Spieler auswählen, um den Vergleich zu sehen."));
         chart->setTitleBrush(m_theme.text());
-        swapChart(m_view, chart);
+        swapChart(m_view, chart, m_theme);
         return;
     }
 
@@ -223,12 +229,17 @@ void RadarChartWidget::rebuild()
         area->setPen(pen);
 
         chart->addSeries(area);
+        // The legend swatch would take the faint fill; show the line color.
+        for (QLegendMarker *marker : chart->legend()->markers(area)) {
+            marker->setBrush(color);
+            marker->setPen(QPen(color));
+        }
         area->attachAxis(angularAxis);
         area->attachAxis(radialAxis);
         ++index;
     }
 
-    swapChart(m_view, chart);
+    swapChart(m_view, chart, m_theme);
 }
 
 } // namespace fm
