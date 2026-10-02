@@ -3,7 +3,8 @@ name: Release
 # On every push to main: build + test. If the version in Version.cpp is new
 # (no release/tag for it yet), build the installer and publish a GitHub release
 # automatically. Bump the number in desktop/src/core/Version.cpp and push —
-# that's it. A second, independent job builds and tests on Linux.
+# that's it. Independent Linux jobs build, test and package the AppImage and
+# attach it to a new release.
 on:
   push:
     branches: [main]
@@ -14,6 +15,9 @@ permissions:
 jobs:
   release:
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      is_new: ${{ steps.version.outputs.is_new }}
     steps:
       - uses: actions/checkout@v4
 
@@ -110,41 +114,28 @@ jobs:
             --title "FM Player Analyzer $version (Windows 64-bit)" `
             --generate-notes
 
-  # Build + test on Linux (same job as in ci.yml). Deliberately independent of
-  # the release job: a Linux failure must not hold back the Windows release.
-  build-test-linux:
-    runs-on: ubuntu-latest
+  # Build + tests on Linux and the AppImage (same job as in ci.yml).
+  # Deliberately independent of the release job: a Linux failure must not hold
+  # back the Windows release.
+  linux:
     permissions:
       contents: read
-    defaults:
-      run:
-        working-directory: desktop
-    env:
-      # No display on the runner: every Qt test runs on the offscreen platform.
-      QT_QPA_PLATFORM: offscreen
+    uses: ./.github/workflows/linux.yml
+
+  # New version only: attach the AppImage to the release the Windows job made.
+  linux-release-asset:
+    needs: [release, linux]
+    if: needs.release.outputs.is_new == 'true'
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      # Also installs the system libraries Qt needs (OpenGL, xkbcommon, xcb).
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v4
+      - uses: actions/download-artifact@v4
         with:
-          version: '6.8.3'
-          host: linux
-          target: desktop
-          arch: linux_gcc_64
-          modules: qtcharts
-          cache: true
+          name: FMPlayerAnalyzer-Linux-AppImage
+          path: appimage
 
-      - name: Setup Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v5
-
-      - name: Configure
-        run: cmake --preset linux-release
-
-      # -k 0: keep going, so one run reports every compile error.
-      - name: Build
-        run: cmake --build --preset linux-release -- -k 0
-
-      - name: Test
-        run: ctest --preset linux-release
+      - name: Upload AppImage to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "v${{ needs.release.outputs.version }}" appimage/*.AppImage \
+            --repo "$GITHUB_REPOSITORY" --clobber
