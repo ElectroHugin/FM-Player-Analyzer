@@ -39,3 +39,38 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build --output-on-failure
+
+  build-test-linux:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: desktop
+    env:
+      # No display on the runner: every Qt test runs on the offscreen platform.
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+
+      # Also installs the system libraries Qt needs (OpenGL, xkbcommon, xcb).
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtcharts
+          cache: true
+
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v5
+
+      - name: Configure
+        run: cmake --preset linux-release
+
+      # -k 0: keep going, so one run reports every compile error.
+      - name: Build
+        run: cmake --build --preset linux-release -- -k 0
+
+      - name: Test
+        run: ctest --preset linux-release

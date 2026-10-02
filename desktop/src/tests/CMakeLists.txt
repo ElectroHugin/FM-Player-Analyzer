@@ -8,6 +8,7 @@ function(fm_add_test name)
     target_compile_definitions(${name} PRIVATE LEGACY_DIR="${LEGACY_DIR}")
     add_test(NAME ${name} COMMAND ${name})
     # Qt DLLs are not on PATH on Windows; point the test at the Qt bin directory.
+    # (Harmless elsewhere: the Qt libraries are found via RPATH.)
     set_tests_properties(${name} PROPERTIES
         ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
     )

@@ -3,7 +3,7 @@ name: Release
 # On every push to main: build + test. If the version in Version.cpp is new
 # (no release/tag for it yet), build the installer and publish a GitHub release
 # automatically. Bump the number in desktop/src/core/Version.cpp and push —
-# that's it.
+# that's it. A second, independent job builds and tests on Linux.
 on:
   push:
     branches: [main]
@@ -109,3 +109,42 @@ jobs:
             --target $env:GITHUB_SHA `
             --title "FM Player Analyzer $version (Windows 64-bit)" `
             --generate-notes
+
+  # Build + test on Linux (same job as in ci.yml). Deliberately independent of
+  # the release job: a Linux failure must not hold back the Windows release.
+  build-test-linux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: desktop
+    env:
+      # No display on the runner: every Qt test runs on the offscreen platform.
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+
+      # Also installs the system libraries Qt needs (OpenGL, xkbcommon, xcb).
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtcharts
+          cache: true
+
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v5
+
+      - name: Configure
+        run: cmake --preset linux-release
+
+      # -k 0: keep going, so one run reports every compile error.
+      - name: Build
+        run: cmake --build --preset linux-release -- -k 0
+
+      - name: Test
+        run: ctest --preset linux-release

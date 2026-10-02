@@ -1,5 +1,4 @@
-add_executable(fmplayeranalyzer WIN32
-    app.rc
+add_executable(fmplayeranalyzer
     main.cpp
     AppContext.h
     AppContext.cpp
@@ -86,6 +85,12 @@ add_executable(fmplayeranalyzer WIN32
     widgets/TacticPitchWidget.cpp
     resources/app.qrc
 )
+
+# Windows only: GUI subsystem (no console window) and the exe icon resource.
+if(WIN32)
+    target_sources(fmplayeranalyzer PRIVATE app.rc)
+    set_target_properties(fmplayeranalyzer PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
 
 target_include_directories(fmplayeranalyzer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 

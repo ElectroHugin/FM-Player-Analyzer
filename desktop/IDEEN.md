@@ -95,6 +95,23 @@ passenden Rollen, ohne HTML-Export.
   Einzel-Update im Profil).
 - Unabhängig vom restlichen Code; kann jederzeit als eigenes Modul entstehen.
 
+### 🟡 Linux-Version
+
+**Ziel:** Die App läuft auch unter Linux. macOS ist nicht geplant.
+
+- **Schritte:**
+  1. ✅ 2026-10-02 (ohne Versionsänderung): Linux-Build in CI. CMake ist
+     portabel (`WIN32`/`app.rc` nur unter Windows), Presets `linux-debug` /
+     `linux-release` (Qt-Pfad aus `QT_ROOT_DIR`), Linux-Job in `ci.yml` und als
+     unabhängiger Job in `release.yml`. Baut mit GCC 13 ohne Code-Änderung,
+     alle 16 Test-Suiten grün.
+  2. Offen: AppImage im Release-Workflow neben dem Windows-Installer (z. B.
+     `linuxdeploy` + Qt-Plugin); braucht ein PNG-Icon und eine `.desktop`-Datei.
+  3. Offen: Feinschliff nach dem ersten echten Test unter Linux — Schrift
+     („Segoe UI" ist fest gesetzt), Standard-Importordner (FM24 läuft über
+     Steam/Proton, der Dokumente-Ordner liegt im Proton-Präfix), Emojis in
+     Überschriften, Knopf „Im Explorer öffnen", README („Windows 10 / 11 only").
+
 ---
 
 ## 🟢 Offen aus der Legacy-Liste (weiterhin relevant)
