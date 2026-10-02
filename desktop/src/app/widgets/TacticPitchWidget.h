@@ -46,10 +46,18 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
     bool hasHeightForWidth() const override { return true; }
-    int heightForWidth(int width) const override { return width * 105 / 68; }
-    QSize sizeHint() const override { return {480, 480 * 105 / 68}; }
+    // Every page centres the pitch at its size hint, so it never gets wider
+    // than that — but the layout asks for the height at the full cell width.
+    // Answering with the plain ratio reserved an empty band below the pitch.
+    int heightForWidth(int width) const override
+    {
+        return qMin(width, kHintWidth) * 105 / 68;
+    }
+    QSize sizeHint() const override { return {kHintWidth, kHintWidth * 105 / 68}; }
 
 private:
+    static constexpr int kHintWidth = 480;
+
     QString uidAt(const QPoint &pos) const;
 
     ThemeManager &m_theme;

@@ -39,6 +39,8 @@ public:
     void refresh() override;
 
 private:
+    // How the team selection works, shown under the tactic choice.
+    static QString algorithmHint();
     void rebuild();
     void fillSurplusTable(QTableWidget *table, const std::vector<const Player *> &players,
                           bool includeTalent);

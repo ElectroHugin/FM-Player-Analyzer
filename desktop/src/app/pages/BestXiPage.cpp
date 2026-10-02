@@ -75,12 +75,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     m_registrationNote->setWordWrap(true);
     layout->addWidget(m_registrationNote);
 
-    m_hint = new QLabel(
-        tr("Der Rechner nutzt einen 'Schwächstes-Glied-zuerst'-Algorithmus: Statt Position "
-           "für Position den besten Spieler zu wählen, wird immer zuerst die Position "
-           "besetzt, auf der der beste verfügbare Spieler die geringste Verbesserung "
-           "bringt — das ergibt insgesamt ausgewogenere und stärkere Teams."),
-        content);
+    m_hint = new QLabel(algorithmHint(), content);
     m_hint->setWordWrap(true);
     m_hint->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(m_hint);
@@ -221,6 +216,15 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     PlayerActions::attachToTableWidget(m_context, m_depthTable, 1);
 }
 
+QString BestXiPage::algorithmHint()
+{
+    return tr("Der Rechner nutzt einen 'Schwächstes-Glied-zuerst'-Algorithmus: Statt Position "
+              "für Position den besten Spieler zu wählen, wird immer zuerst die Position "
+              "besetzt, auf der der Abstand zwischen dem besten und dem zweitbesten "
+              "verfügbaren Spieler am größten ist — dort entstünde sonst die größte Lücke. "
+              "Das ergibt insgesamt ausgewogenere und stärkere Teams.");
+}
+
 void BestXiPage::refresh()
 {
     m_updating = true;
@@ -274,6 +278,7 @@ void BestXiPage::rebuild()
         m_youthXiPitch->clearData();
         return;
     }
+    m_hint->setText(algorithmHint()); // back from the "choose your club" notice
 
     const auto positions = m_context.definitions().tacticRoles().value(tactic);
     const QStringList slotOrder = m_context.definitions().tacticSlotOrder(tactic);
