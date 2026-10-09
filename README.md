@@ -171,7 +171,7 @@ colours and your club's logo in the header.
 ### And there is more
 
 - **National-team mode** — its own dashboard, squad selection, matrix and Best XI, plus a call-up assistant that tells you who to invite and who to drop.
-- **Squad Matrix** — every player against every role of a tactic in one colour-coded table, with a talent filter, free-agent search and CSV export.
+- **Squad Matrix** — every player against every role of a tactic in one colour-coded table. The *Scouting* tab adds talent, personality and attribute-threshold filters (e.g. Decisions ≥ 15 for an AM(C)), a free-agent search and a Δ to your best player in the chosen role; *My Squad* shows your first team, second team or youth. CSV export on both.
 - **Gap analysis** — flags slots that drop off against the team and players pulled away from their best position or onto the wrong side.
 - **Transfers and loans** — suggests promising talents to loan out and surplus players to sell.
 - **Your own roles and tactics** — built-in editors; new entries are available everywhere immediately.

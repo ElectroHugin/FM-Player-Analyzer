@@ -176,7 +176,7 @@ Farben und das Logo deines Vereins in der Kopfzeile.
 ### Und es gibt noch mehr
 
 - **Nationalmannschafts-Modus** — eigenes Dashboard, Kader-Auswahl, Matrix und Best XI, dazu ein Nominierungs-Assistent, der sagt, wen du einladen und wen du streichen solltest.
-- **Squad Matrix** — jeder Spieler gegen jede Rolle einer Taktik in einer farbcodierten Tabelle, mit Talent-Filter, Free-Agent-Suche und CSV-Export.
+- **Squad Matrix** — jeder Spieler gegen jede Rolle einer Taktik in einer farbcodierten Tabelle. Der Tab *Scouting* bietet Talent-, Persönlichkeits- und Attribut-Schwellen-Filter (z. B. Decisions ≥ 15 für einen AM(C)), Free-Agent-Suche und ein Δ zu deinem besten Spieler auf der gewählten Rolle; *Mein Kader* zeigt erste Mannschaft, Zweitteam oder Jugend. CSV-Export in beiden.
 - **Gap-Analyse** — markiert Positionen, die gegenüber dem Team abfallen, und Spieler, die von ihrer besten Position weggezogen sind oder auf der falschen Seite spielen.
 - **Transfers und Leihen** — schlägt vielversprechende Talente zum Verleihen und überzählige Spieler zum Verkauf vor.
 - **Eigene Rollen und Taktiken** — eingebaute Editoren; Neues ist sofort überall verfügbar.
