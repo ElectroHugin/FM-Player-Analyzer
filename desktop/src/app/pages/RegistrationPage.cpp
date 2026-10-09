@@ -35,6 +35,14 @@ enum Column { ColListed, ColAdvice, ColName, ColAge, ColPosition, ColCategory, C
 constexpr int kLeague = 0;
 constexpr int kUefa = 1;
 
+// Exempt players as of the last save, per competition (see exemptSnapshot).
+QString exemptSnapshotKey(Registration::Competition competition)
+{
+    return competition == Registration::Competition::Uefa
+               ? QStringLiteral("registration_exempt_uefa")
+               : QStringLiteral("registration_exempt_league");
+}
+
 // The "registered" cell: a checkbox for players who need a slot, a plain label
 // for those eligible without one. Sorts ticked first, then the exempt, then
 // the unticked.
@@ -125,6 +133,22 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     m_hint->setWordWrap(true);
     layout->addWidget(m_hint);
 
+    // What changed since the last save (lost / gained exemption).
+    m_changesBox = new QFrame(content);
+    m_changesBox->setObjectName(QStringLiteral("registrationChanges"));
+    m_changesBox->setStyleSheet(QStringLiteral(
+        "#registrationChanges { border: 2px solid #e67e22; border-radius: 6px; }"));
+    auto *changesLayout = new QHBoxLayout(m_changesBox);
+    m_changesLabel = new QLabel(m_changesBox);
+    m_changesLabel->setWordWrap(true);
+    m_ackButton = new QPushButton(tr("Gesehen"), m_changesBox);
+    m_ackButton->setToolTip(
+        tr("Nimmt den aktuellen Stand als neuen Vergleichspunkt, ohne die Liste zu speichern."));
+    changesLayout->addWidget(m_changesLabel, 1);
+    changesLayout->addWidget(m_ackButton, 0, Qt::AlignTop);
+    layout->addWidget(m_changesBox);
+    m_changesBox->hide();
+
     m_summaryLabel = new QLabel(content);
     m_summaryLabel->setWordWrap(true);
     layout->addWidget(m_summaryLabel);
@@ -139,8 +163,9 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     m_usageHint = new QLabel(
         tr("Setze das Häkchen bei jedem Spieler, den du im Spiel wirklich gemeldet hast, und "
            "speichere die Liste — Best XI rechnet dann mit ihr. Vorbelegt ist die Empfehlung, "
-           "nach dem Speichern deine Liste. Sortieren: Klick auf einen Spaltenkopf "
-           "(Standard: Position, vom Tor zum Sturm, rechts vor links)."),
+           "nach dem Speichern deine Liste. Orange markiert: Häkchen und Empfehlung weichen ab. "
+           "Sortieren: Klick auf einen Spaltenkopf (Standard: Position, vom Tor zum Sturm, "
+           "rechts vor links)."),
         content);
     m_usageHint->setWordWrap(true);
     m_usageHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -183,6 +208,10 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     });
     connect(m_adoptButton, &QPushButton::clicked, this, &RegistrationPage::adoptProposal);
     connect(m_saveButton, &QPushButton::clicked, this, &RegistrationPage::saveList);
+    connect(m_ackButton, &QPushButton::clicked, this, [this] {
+        storeExemptSnapshot(competition(), currentExempt());
+        refresh();
+    });
 }
 
 void RegistrationPage::releaseStoreRows()
@@ -260,6 +289,7 @@ void RegistrationPage::refresh()
     for (QWidget *w : {m_controls, static_cast<QWidget *>(m_keeperBox),
                        static_cast<QWidget *>(m_outfieldBox),
                        static_cast<QWidget *>(m_summaryLabel), static_cast<QWidget *>(m_costLabel),
+                       static_cast<QWidget *>(m_changesBox),
                        static_cast<QWidget *>(m_warningLabel), static_cast<QWidget *>(m_usageHint)})
         w->setVisible(ready);
     if (!ready) {
@@ -312,6 +342,16 @@ void RegistrationPage::refresh()
     else
         m_checkedUids = m_savedUids.isEmpty() ? m_proposedUids : m_savedUids;
     m_checkedUids.intersect(m_checkableUids);
+
+    // Exemption changes since the last save (e.g. a player who turned 22).
+    seedExemptSnapshots();
+    const QSet<QString> exemptNow = currentExempt();
+    QSet<QString> poolUids;
+    for (const Player *p : m_pool)
+        poolUids.insert(p->uid);
+    const QSet<QString> exemptBefore = exemptSnapshot(comp);
+    m_lostExempt = (exemptBefore & poolUids) - exemptNow;
+    m_gainedExempt = exemptNow - exemptBefore;
 
     fillTables();
     updateSelection();
@@ -463,6 +503,11 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         QStringList notes;
         if (!entry.note.isEmpty())
             notes << entry.note;
+        if (m_lostExempt.contains(p.uid))
+            notes.prepend(uefa ? tr("⚠️ nicht mehr Liste B – braucht einen Platz")
+                               : tr("⚠️ kein U21 mehr – braucht einen Platz"));
+        if (m_gainedExempt.contains(p.uid))
+            notes.prepend(uefa ? tr("jetzt Liste B") : tr("jetzt U21"));
         if (Registration::u21Status(p) == Registration::U21Status::Uncertain)
             notes << tr("U21 unklar");
         table->setItem(row, ColNote, new QTableWidgetItem(notes.join(QStringLiteral(" · "))));
@@ -683,6 +728,9 @@ void RegistrationPage::updateSelection()
                                       + warnings.join(QStringLiteral("<br>⚠️ ")));
     m_warningLabel->setVisible(!warnings.isEmpty());
 
+    updateChanges();
+    markAdviceMismatches();
+
     m_adoptButton->setEnabled(!asProposed);
     m_saveButton->setEnabled(m_checkedUids != m_savedUids);
 }
@@ -727,9 +775,134 @@ void RegistrationPage::saveList()
     }
     const int count = static_cast<int>(m_checkedUids.size());
     m_pendingTicks.remove(m_competitionCombo->currentData().toInt());
+    // The saved list is the new reference for later changes.
+    storeExemptSnapshot(comp, currentExempt());
     m_context.refreshPlayers(ids); // re-reads the rows and refreshes the pages
     QMessageBox::information(this, tr("Registrierung"),
                              tr("Meldeliste gespeichert (%1 Spieler).").arg(count));
+}
+
+QSet<QString> RegistrationPage::exemptSnapshot(Registration::Competition competition) const
+{
+    // Stored with a leading '#', so an empty snapshot differs from none.
+    const QString value = m_context.database().setting(exemptSnapshotKey(competition));
+    QSet<QString> uids;
+    for (const QString &uid : value.mid(1).split(QLatin1Char(','), Qt::SkipEmptyParts))
+        uids.insert(uid);
+    return uids;
+}
+
+void RegistrationPage::storeExemptSnapshot(Registration::Competition competition,
+                                           const QSet<QString> &uids)
+{
+    QStringList sorted(uids.cbegin(), uids.cend());
+    sorted.sort();
+    m_context.database().setSetting(exemptSnapshotKey(competition),
+                                    QLatin1Char('#') + sorted.join(QLatin1Char(',')));
+}
+
+void RegistrationPage::seedExemptSnapshots()
+{
+    // First use: take the current state as the reference. Players whose U21
+    // decision expired before the page took stock (import, migration) were
+    // still exempt then, so they show up as changed.
+    Database &db = m_context.database();
+    const QStringList expired =
+        db.setting(Registration::expiredU21SettingKey()).split(QLatin1Char(','),
+                                                               Qt::SkipEmptyParts);
+    for (const auto comp : {Registration::Competition::League, Registration::Competition::Uefa}) {
+        if (!db.setting(exemptSnapshotKey(comp)).isEmpty())
+            continue;
+        QSet<QString> exempt;
+        for (const Player *p : m_pool) {
+            const bool wasU21 = expired.contains(p->uid);
+            if (Registration::isExempt(*p, comp)
+                || (wasU21
+                    && (comp == Registration::Competition::League
+                        || Registration::isClubTrained(*p))))
+                exempt.insert(p->uid);
+        }
+        storeExemptSnapshot(comp, exempt);
+    }
+    if (!expired.isEmpty())
+        db.removeSetting(Registration::expiredU21SettingKey());
+}
+
+QSet<QString> RegistrationPage::currentExempt() const
+{
+    QSet<QString> uids;
+    for (const auto &entry : m_proposal.exempt)
+        uids.insert(entry.player->uid);
+    return uids;
+}
+
+void RegistrationPage::updateChanges()
+{
+    const bool uefa = competition() == Registration::Competition::Uefa;
+    const QString exemptLabel = uefa ? tr("Liste B") : tr("U21");
+    const auto namesOf = [this](const QSet<QString> &uids) {
+        QStringList names;
+        for (const Player *p : m_pool)
+            if (uids.contains(p->uid))
+                names << p->name;
+        names.sort();
+        return names.join(QStringLiteral(", "));
+    };
+
+    QStringList lines;
+    if (!m_lostExempt.isEmpty()) {
+        QStringList unticked;
+        for (const QString &uid : m_lostExempt)
+            if (!m_checkedUids.contains(uid))
+                unticked << uid;
+        lines << tr("<b>Braucht jetzt einen Platz</b> (kein %1 mehr): %2")
+                     .arg(exemptLabel, namesOf(m_lostExempt));
+        if (!unticked.isEmpty())
+            lines << tr("Ohne Häkchen nicht spielberechtigt: anmelden und dafür jemand anderen "
+                        "streichen, oder bewusst draußen lassen.");
+    }
+    if (!m_gainedExempt.isEmpty())
+        lines << tr("<b>Jetzt ohne Platz spielberechtigt</b> (%1): %2 — dadurch werden Plätze frei.")
+                     .arg(exemptLabel, namesOf(m_gainedExempt));
+    if (lines.isEmpty()) {
+        m_changesBox->hide();
+        return;
+    }
+    lines << tr("Die Empfehlung rechnet das schon ein. Wo Häkchen und Empfehlung "
+                "auseinanderliegen, ist die Empfehlung in der Tabelle orange markiert.");
+    m_changesLabel->setText(tr("🔔 <b>Seit dem letzten Speichern geändert</b>") + QStringLiteral("<br>")
+                            + lines.join(QStringLiteral("<br>")));
+    m_changesBox->show();
+}
+
+void RegistrationPage::markAdviceMismatches()
+{
+    const bool wasUpdating = m_updating;
+    m_updating = true; // styling items must not count as ticking them
+    for (QTableWidget *table : {m_keeperTable, m_outfieldTable}) {
+        for (int row = 0; row < table->rowCount(); ++row) {
+            const QTableWidgetItem *listed = table->item(row, ColListed);
+            QTableWidgetItem *advice = table->item(row, ColAdvice);
+            const QTableWidgetItem *name = table->item(row, ColName);
+            if (!listed || !advice || !name)
+                continue;
+            const QString uid = name->data(Qt::UserRole).toString();
+            const bool checkable = listed->flags().testFlag(Qt::ItemIsUserCheckable);
+            const bool ticked = m_checkedUids.contains(uid);
+            const bool advised = m_proposedUids.contains(uid);
+            if (checkable && ticked != advised) {
+                advice->setBackground(QColor(QStringLiteral("#e67e22")));
+                advice->setForeground(QColorConstants::Black);
+                advice->setToolTip(ticked ? tr("Gemeldet, aber nicht empfohlen")
+                                          : tr("Empfohlen, aber nicht gemeldet"));
+            } else {
+                advice->setBackground(QBrush());
+                advice->setForeground(QBrush());
+                advice->setToolTip(QString());
+            }
+        }
+    }
+    m_updating = wasUpdating;
 }
 
 } // namespace fm

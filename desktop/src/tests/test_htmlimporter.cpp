@@ -6,6 +6,7 @@
 #include "core/Database.h"
 #include "core/Definitions.h"
 #include "core/HtmlImporter.h"
+#include "core/Registration.h"
 #include "core/RoleAssignment.h"
 #include "core/Utils.h"
 
@@ -683,6 +684,43 @@ private slots:
             else
                 QCOMPARE(p.lastSeenUpdate, 1);
         }
+    }
+
+    void importExpiresU21OverrideAt22()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("import_test_u21"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+
+        const QString first = htmlExport(
+            {playerRow(QStringLiteral("300"), QStringLiteral("Young One"), QStringLiteral("21"),
+                       QStringLiteral("Club A")),
+             playerRow(QStringLiteral("301"), QStringLiteral("Young Two"), QStringLiteral("21"),
+                       QStringLiteral("Club A"))});
+        QVERIFY(HtmlImporter::importHtml(first, db, db.loadPlayers()).success);
+        std::vector<std::pair<int, PlayerRegistration>> regs;
+        for (const Player &p : db.loadPlayers()) {
+            PlayerRegistration r;
+            r.u21 = PlayerRegistration::U21::Yes; // the user settled the ambiguous 21
+            regs.push_back({p.id, r});
+        }
+        QVERIFY(db.setRegistrations(regs));
+
+        // A season later one of them is 22: his decision expires, the other's stays.
+        const QString second = htmlExport(
+            {playerRow(QStringLiteral("300"), QStringLiteral("Young One"), QStringLiteral("22"),
+                       QStringLiteral("Club A")),
+             playerRow(QStringLiteral("301"), QStringLiteral("Young Two"), QStringLiteral("21"),
+                       QStringLiteral("Club A"))});
+        const ImportResult result = HtmlImporter::importHtml(second, db, db.loadPlayers());
+        QVERIFY2(result.success, qPrintable(result.error));
+        QCOMPARE(result.expiredU21Names, QStringList{QStringLiteral("Young One")});
+        for (const Player &p : db.loadPlayers()) {
+            QCOMPARE(p.registration.u21, p.uid == QStringLiteral("300")
+                                             ? PlayerRegistration::U21::Auto
+                                             : PlayerRegistration::U21::Yes);
+        }
+        QCOMPARE(db.setting(Registration::expiredU21SettingKey()), QStringLiteral("300"));
     }
 
     void partialImportKeepsFreshnessCounter()

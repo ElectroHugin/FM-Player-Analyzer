@@ -89,6 +89,30 @@ private slots:
         QVERIFY(!Registration::isU21(p));
     }
 
+    void u21OverrideExpiresAt22()
+    {
+        using U = PlayerRegistration::U21;
+        PlayerRegistration r;
+        r.u21 = U::Yes;
+        // Same age, or still 21 after an update: the decision stands.
+        QVERIFY(!Registration::expireU21Override(r, 21, 21));
+        QVERIFY(!Registration::expireU21Override(r, 20, 21));
+        QCOMPARE(r.u21, U::Yes);
+        // Turned 22: back to the automatic rule (not U21).
+        QVERIFY(Registration::expireU21Override(r, 21, 22));
+        QCOMPARE(r.u21, U::Auto);
+        // Nothing to expire without an override.
+        QVERIFY(!Registration::expireU21Override(r, 22, 23));
+        // A decision made at 22+ holds until the next birthday.
+        r.u21 = U::Yes;
+        QVERIFY(!Registration::expireU21Override(r, 22, 22));
+        QVERIFY(Registration::expireU21Override(r, 22, 23));
+        // Unknown age before: expires once a 22+ age shows up.
+        r.u21 = U::No;
+        QVERIFY(Registration::expireU21Override(r, 0, 24));
+        QCOMPARE(r.u21, U::Auto);
+    }
+
     void clubTrainedImpliesHomeGrown()
     {
         Player p = playerAged(25);

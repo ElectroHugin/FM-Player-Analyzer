@@ -41,6 +41,10 @@ struct ImportResult {
     // "123: 'Old Name' -> 'New Name'" — FM likely re-issued the ID.
     QStringList identityChanges;
 
+    // Players whose manual U21 decision expired because they turned 22
+    // (Registration::expireU21Override).
+    QStringList expiredU21Names;
+
     // Final UIDs (after ID unification) of every imported row, in file order.
     QStringList affectedUids;
 

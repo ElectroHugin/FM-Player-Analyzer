@@ -11,6 +11,7 @@
 #include <vector>
 
 class QComboBox;
+class QFrame;
 class QGroupBox;
 class QLabel;
 class QPushButton;
@@ -31,6 +32,11 @@ namespace fm {
 // with it). The ticks start as the proposal and afterwards show the saved
 // list. Goalkeepers and outfield players are listed separately, in pitch order
 // by default (goalkeeper to striker, right before left).
+//
+// What changed since the list was last saved stays visible: who needs a slot
+// now that his U21 / list-B status is gone (or no longer needs one), and every
+// row whose tick differs from the advice is marked — so a change never forces
+// the user to compare the whole list with the game again.
 class RegistrationPage : public PageBase
 {
     Q_OBJECT
@@ -66,6 +72,16 @@ private:
     void storePendingTicks();
     void adoptProposal();
     void saveList();
+    // Exempt players (U21 / list B) as of the last save or acknowledgement,
+    // per competition. Seeded on first use, then compared with the current
+    // state to report who gained or lost the exemption.
+    QSet<QString> exemptSnapshot(Registration::Competition competition) const;
+    void storeExemptSnapshot(Registration::Competition competition, const QSet<QString> &uids);
+    void seedExemptSnapshots();
+    QSet<QString> currentExempt() const; // of the current proposal
+    void updateChanges();
+    // Marks the advice cells whose tick disagrees with the advice.
+    void markAdviceMismatches();
 
     // Fixed head above the scrolling part.
     QWidget *m_controls = nullptr; // competition row + counters
@@ -76,6 +92,9 @@ private:
     QWidget *m_content = nullptr;
     QLabel *m_hint = nullptr;
     QLabel *m_usageHint = nullptr;
+    QFrame *m_changesBox = nullptr; // what changed since the last save
+    QLabel *m_changesLabel = nullptr;
+    QPushButton *m_ackButton = nullptr;
     QLabel *m_summaryLabel = nullptr;
     QLabel *m_costLabel = nullptr;
     QLabel *m_warningLabel = nullptr;
@@ -98,6 +117,8 @@ private:
     QSet<QString> m_savedUids;     // on the saved list (database)
     QSet<QString> m_checkableUids; // pool players who need a slot
     QSet<QString> m_checkedUids;   // currently ticked
+    QSet<QString> m_lostExempt;    // exempt at the last save, needs a slot now
+    QSet<QString> m_gainedExempt;  // needed a slot at the last save, exempt now
     // Unsaved ticks per competition (combo value), kept across the live
     // refreshes a flag change triggers; reset when another database is opened.
     QHash<int, QSet<QString>> m_pendingTicks;

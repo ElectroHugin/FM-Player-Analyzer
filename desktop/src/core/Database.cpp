@@ -2,6 +2,7 @@
 
 #include "Constants.h"
 #include "Freshness.h"
+#include "Registration.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -21,7 +22,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 6;
+constexpr int kSchemaVersion = 7;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -216,6 +217,8 @@ bool Database::initSchema()
             ok = migrateV4ToV5();
         if (ok && version < 6)
             ok = migrateV5ToV6();
+        if (ok && version < 7)
+            ok = migrateV6ToV7();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -424,6 +427,41 @@ bool Database::migrateV5ToV6()
               + QStringLiteral(" WHERE last_seen_update > 0")))
         return false;
     return setSetting(QStringLiteral("update_counter"), QString::number(fullUploads.size()));
+}
+
+bool Database::migrateV6ToV7()
+{
+    // Manual U21 decisions now expire when the player turns 22 (see
+    // Registration::expireU21Override). Apply that to the ones set before: reset
+    // overrides of players who are 22+ by now and queue them for the
+    // registration page's one-time report.
+    QSqlQuery query(m_db);
+    if (!query.exec(QStringLiteral("SELECT COUNT(*) FROM player_registration WHERE u21 != -1"))
+        || !query.next()) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    if (query.value(0).toInt() == 0)
+        return true; // no manual decision at all
+    if (!query.exec(QStringLiteral("SELECT p.uid FROM player_registration r "
+                                   "JOIN players p ON p.id = r.player_id "
+                                   "WHERE r.u21 != -1 AND p.age >= 22"))) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    QStringList uids;
+    while (query.next())
+        uids << query.value(0).toString();
+    query.finish();
+    if (uids.isEmpty())
+        return true;
+    return exec(QStringLiteral("UPDATE player_registration SET u21 = -1 WHERE u21 != -1 "
+                               "AND player_id IN (SELECT id FROM players WHERE age >= 22)"))
+           // Rows left at all defaults are not kept (see setRegistrations).
+           && exec(QStringLiteral("DELETE FROM player_registration WHERE home_grown = 0 "
+                                  "AND club_trained = 0 AND u21 = -1 AND league_listed = 0 "
+                                  "AND uefa_listed = 0"))
+           && setSetting(Registration::expiredU21SettingKey(), uids.join(QLatin1Char(',')));
 }
 
 std::vector<Player> Database::loadPlayers()

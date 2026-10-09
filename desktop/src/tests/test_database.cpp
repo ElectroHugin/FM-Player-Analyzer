@@ -7,6 +7,7 @@
 
 #include "core/Database.h"
 #include "core/Player.h"
+#include "core/Registration.h"
 
 using namespace fm;
 
@@ -493,6 +494,54 @@ private slots:
         const QHash<int, int> expected{{0, 0}, {5, 1}, {7, 1}, {10, 2}, {12, 2}};
         for (const Player &p : db.loadPlayers())
             QCOMPARE(p.lastSeenUpdate, expected.value(oldStamps.at(p.uid.toInt())));
+        db.close();
+    }
+
+    void migratesV6ToV7ExpiresStaleU21Overrides()
+    {
+        // Manual U21 decisions of players who are 22+ by now are reset; one at
+        // 21 stays. A reset row that is all defaults then is dropped.
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v6.db"));
+        {
+            Database db(QStringLiteral("v6seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(3);
+            const int ages[] = {21, 22, 23};
+            for (int i = 0; i < 3; ++i) {
+                batch[static_cast<size_t>(i)].uid = QString::number(i);
+                batch[static_cast<size_t>(i)].name = QStringLiteral("P%1").arg(i);
+                batch[static_cast<size_t>(i)].age = ages[i];
+            }
+            QVERIFY(db.upsertPlayers(batch));
+            const auto stored = db.loadPlayers();
+            std::vector<std::pair<int, PlayerRegistration>> regs;
+            for (const Player &p : stored) {
+                PlayerRegistration r;
+                r.u21 = PlayerRegistration::U21::Yes;
+                r.homeGrown = p.uid == QStringLiteral("2"); // keeps its row
+                regs.push_back({p.id, r});
+            }
+            QVERIFY(db.setRegistrations(regs));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 6")));
+            db.close();
+        }
+
+        Database db(QStringLiteral("v6migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        for (const Player &p : db.loadPlayers()) {
+            const auto expected = p.age == 21 ? PlayerRegistration::U21::Yes
+                                              : PlayerRegistration::U21::Auto;
+            QCOMPARE(p.registration.u21, expected);
+        }
+        QSqlQuery q(db.handle());
+        QVERIFY(q.exec(QStringLiteral("SELECT COUNT(*) FROM player_registration")) && q.next());
+        QCOMPARE(q.value(0).toInt(), 2); // P0 (still Yes) + P2 (home-grown)
+        QStringList expired =
+            db.setting(Registration::expiredU21SettingKey()).split(QLatin1Char(','));
+        expired.sort();
+        QCOMPARE(expired, (QStringList{QStringLiteral("1"), QStringLiteral("2")}));
         db.close();
     }
 

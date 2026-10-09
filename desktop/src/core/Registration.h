@@ -61,6 +61,16 @@ enum class U21Status { Yes, No, Uncertain };
 U21Status u21StatusByAge(int age);         // the automatic rule alone
 U21Status u21Status(const Player &player); // honours the manual override
 
+// A manual U21 decision settles the player's current age (typically the
+// ambiguous 21). Once an import shows him older and 22+, it expires and the
+// automatic rule (not U21) applies again — set it anew if FM still counts him.
+// Returns whether the override was reset.
+bool expireU21Override(PlayerRegistration &registration, int oldAge, int newAge);
+
+// Settings key listing (comma-separated uids) players whose U21 override
+// expired since the registration page last took stock; it reports them once.
+QString expiredU21SettingKey();
+
 // Free of a registration slot: definitely U21. Uncertain counts as not U21 —
 // registering him is always legal, leaving him off may not be.
 bool isU21(const Player &player);

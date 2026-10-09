@@ -119,6 +119,10 @@ QStringList importSummaryLines(const ImportPipelineResult &result)
                                      "Export.")
                     : ImportText::tr("Teil-Export: nur die enthaltenen Spieler wurden "
                                      "aufgefrischt, niemand altert."));
+    if (!result.import.expiredU21Names.isEmpty())
+        summary << ImportText::tr("Jetzt 22, manuelle U21-Einstufung aufgehoben (braucht einen "
+                                  "Registrierungsplatz): %1")
+                       .arg(result.import.expiredU21Names.join(QStringLiteral(", ")));
     if (!result.autoAssignedUids.isEmpty())
         summary << ImportText::tr("%1 Spielern wurden automatisch Rollen zugewiesen.")
                        .arg(result.autoAssignedUids.size());

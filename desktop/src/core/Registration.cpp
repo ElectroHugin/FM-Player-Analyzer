@@ -96,6 +96,20 @@ U21Status u21Status(const Player &player)
     return u21StatusByAge(player.age);
 }
 
+bool expireU21Override(PlayerRegistration &registration, int oldAge, int newAge)
+{
+    if (registration.u21 == PlayerRegistration::U21::Auto || newAge <= oldAge
+        || u21StatusByAge(newAge) != U21Status::No)
+        return false;
+    registration.u21 = PlayerRegistration::U21::Auto;
+    return true;
+}
+
+QString expiredU21SettingKey()
+{
+    return QStringLiteral("registration_u21_expired");
+}
+
 bool isU21(const Player &player)
 {
     return u21Status(player) == U21Status::Yes;

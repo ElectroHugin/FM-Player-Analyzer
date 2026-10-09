@@ -5,6 +5,7 @@
 #include "Database.h"
 #include "Freshness.h"
 #include "LegacyMigrator.h"
+#include "Registration.h"
 #include "Utils.h"
 
 #include <QFile>
@@ -19,6 +20,22 @@ namespace fm {
 namespace {
 
 constexpr int kUpsertBatchSize = 2000;
+
+// Stores expired U21 decisions and queues the players for the registration
+// page's one-time report (see Registration::expiredU21SettingKey).
+bool storeExpiredU21(Database &db,
+                     const std::vector<std::pair<int, PlayerRegistration>> &registrations,
+                     const QStringList &uids)
+{
+    if (registrations.empty())
+        return true;
+    QStringList pending = db.setting(Registration::expiredU21SettingKey())
+                              .split(QLatin1Char(','), Qt::SkipEmptyParts);
+    pending << uids;
+    pending.removeDuplicates();
+    return db.setRegistrations(registrations)
+           && db.setSetting(Registration::expiredU21SettingKey(), pending.join(QLatin1Char(',')));
+}
 
 // Columns FM routinely exports that the app intentionally ignores (legacy
 // IGNORED_EXPORT_COLUMNS) — listed so the unknown-column warning does not cry
@@ -592,6 +609,9 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
     // Roles filled in from a merged-away duplicate — the only way an import
     // changes assigned roles; everything else keeps player_roles untouched.
     std::vector<std::pair<int, QStringList>> mergedRoles;
+    // Manual U21 decisions that expired because the player turned 22.
+    std::vector<std::pair<int, PlayerRegistration>> expiredU21;
+    QStringList expiredU21Uids;
 
     const auto flush = [&]() -> bool {
         if (batch.empty())
@@ -630,10 +650,17 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
 
         player.uid = ref.uid;
         player.lastSeenUpdate = newCounter; // present in this upload → fresh
+        const int ageBefore = player.age;
         for (const auto &[column, fullName] : columnTargets)
             applyColumn(player, fullName, cells.at(column).trimmed());
         if (player.name.isEmpty())
             player.name = cells.at(nameCol).trimmed();
+        if (player.id > 0
+            && Registration::expireU21Override(player.registration, ageBefore, player.age)) {
+            expiredU21.push_back({player.id, player.registration});
+            expiredU21Uids << player.uid;
+            result.expiredU21Names << player.name;
+        }
 
         result.affectedUids << ref.uid;
         batch.push_back(std::move(player));
@@ -644,6 +671,10 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
     if (!flush())
         return result;
     if (!db.replacePlayerRoles(mergedRoles)) {
+        result.error = db.errorString();
+        return result;
+    }
+    if (!storeExpiredU21(db, expiredU21, expiredU21Uids)) {
         result.error = db.errorString();
         return result;
     }
@@ -769,9 +800,13 @@ QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,
     // (does not advance the global counter).
     player.lastSeenUpdate =
         db.setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt();
+    // A birthday shown by the refresh ends a manual U21 decision, as on import.
+    std::vector<std::pair<int, PlayerRegistration>> expiredU21;
+    if (Registration::expireU21Override(player.registration, existing->age, player.age))
+        expiredU21.push_back({player.id, player.registration});
 
     std::vector<Player> batch{std::move(player)};
-    if (!db.upsertPlayers(batch))
+    if (!db.upsertPlayers(batch) || !storeExpiredU21(db, expiredU21, {targetUid}))
         return fail(db.errorString());
     return fileName;
 }

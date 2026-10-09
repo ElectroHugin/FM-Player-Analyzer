@@ -143,6 +143,7 @@ private:
     bool migrateV3ToV4();                 // add training_roles table
     bool migrateV4ToV5();                 // add player_registration table
     bool migrateV5ToV6();                 // re-base freshness stamps on full exports
+    bool migrateV6ToV7();                 // expire stale manual U21 decisions
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     static QString createPlayerRegistrationSql(); // ditto
     std::vector<Player> loadPlayersImpl(const QList<int> *ids); // nullptr = all
