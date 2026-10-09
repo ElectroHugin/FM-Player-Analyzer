@@ -217,7 +217,7 @@ void TrainingPlanPage::fillSection(Section &section)
         const RowData &rd = rows[static_cast<size_t>(row)];
         const Player *player = rd.player;
 
-        auto *nameItem = new QTableWidgetItem(player->name);
+        auto *nameItem = new NameItem(player->name);
         nameItem->setData(Qt::UserRole, player->uid);
         table->setItem(row, ColName, nameItem);
         table->setItem(row, ColAge,

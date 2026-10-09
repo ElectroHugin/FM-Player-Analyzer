@@ -443,7 +443,7 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         table->setItem(row, ColListed, listedItem);
         table->setItem(row, ColAdvice,
                        new NumericItem(adviceText(entry.advice), static_cast<int>(entry.advice)));
-        auto *nameItem = new QTableWidgetItem(p.name);
+        auto *nameItem = new NameItem(p.name);
         nameItem->setData(Qt::UserRole, p.uid);
         table->setItem(row, ColName, nameItem);
         table->setItem(row, ColAge, new NumericItem(QString::number(p.age), p.age));

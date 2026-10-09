@@ -406,7 +406,7 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
         }
 
         int column = 0;
-        auto *nameItem = new QTableWidgetItem(player->name);
+        auto *nameItem = new NameItem(player->name);
         nameItem->setData(Qt::UserRole, player->uid);
         table->setItem(row, column++, nameItem);
         table->setItem(row, column++,
@@ -492,7 +492,7 @@ void BestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>> &option
             m_depthTable->setItem(row, column++,
                                   new QTableWidgetItem(roleNames.value(role, role)));
 
-            auto *nameItem = new QTableWidgetItem(option.name);
+            auto *nameItem = new NameItem(option.name);
             nameItem->setData(Qt::UserRole, option.playerUid);
             m_depthTable->setItem(row, column++, nameItem);
 

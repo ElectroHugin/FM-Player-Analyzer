@@ -277,7 +277,7 @@ void NationalDashboardPage::rebuildAnalysis()
     m_squadTable->setRowCount(static_cast<int>(squadPlayers.size()));
     int row = 0;
     for (const Player *player : squadPlayers) {
-        auto *nameItem = new QTableWidgetItem(player->name);
+        auto *nameItem = new NameItem(player->name);
         nameItem->setData(Qt::UserRole, player->uid);
         m_squadTable->setItem(row, 0, nameItem);
         m_squadTable->setItem(row, 1,

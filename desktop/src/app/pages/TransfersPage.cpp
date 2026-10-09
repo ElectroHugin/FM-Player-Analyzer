@@ -2,6 +2,7 @@
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
+#include "../widgets/NumericTableItem.h"
 #include "core/Utils.h"
 
 #include <QComboBox>
@@ -196,7 +197,7 @@ void TransfersPage::fillTable(Section &section, const std::vector<const Player *
             }
         }
 
-        auto *nameItem = new QTableWidgetItem(player->name);
+        auto *nameItem = new NameItem(player->name);
         nameItem->setData(Qt::UserRole, player->uid);
         nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
         table->setItem(row, ColName, nameItem);

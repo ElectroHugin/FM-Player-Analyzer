@@ -587,7 +587,7 @@ void DashboardPage::updateClubTable(const std::vector<const Player *> &clubPlaye
     m_clubTable->setRowCount(static_cast<int>(clubPlayers.size()));
     int row = 0;
     for (const Player *player : clubPlayers) {
-        auto *nameItem = new QTableWidgetItem(player->name);
+        auto *nameItem = new NameItem(player->name);
         nameItem->setData(Qt::UserRole, player->uid);
         m_clubTable->setItem(row, 0, nameItem);
         m_clubTable->setItem(row, 1,
