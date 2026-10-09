@@ -160,7 +160,7 @@ void AssignRolesPage::setupColumns()
         makeFreshnessColumn(
             m_context.updateCounter(),
             m_context.config().freshnessSetting(QStringLiteral("retirement_age")),
-            m_context.config().freshnessSetting(QStringLiteral("stale_after_uploads")),
+            m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads")),
             m_context.userClub()),
         {tr("Zugewiesene Rollen"),
          [](const Player &p) { return p.assignedRoles.join(QStringLiteral(", ")); }, nullptr,

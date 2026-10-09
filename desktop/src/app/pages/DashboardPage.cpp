@@ -690,7 +690,7 @@ void DashboardPage::rebuildSuggestions()
                 continue;
             if (player->transferValue > maxValue)
                 continue;
-            if (PlayerStatus::isRetired(*player, freshness))
+            if (PlayerStatus::isInactive(*player, freshness))
                 continue; // left the game — never a transfer target
             bestUpgrade = player;
             bestUpgradeRating = rating;

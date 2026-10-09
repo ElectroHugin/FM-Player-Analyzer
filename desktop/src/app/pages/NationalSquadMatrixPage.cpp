@@ -49,10 +49,10 @@ NationalSquadMatrixPage::NationalSquadMatrixPage(AppContext &context, QWidget *p
     m_tacticCombo->setMinimumWidth(240);
     optionsRow->addWidget(m_tacticCombo);
     m_extraDetailsCheck = new QCheckBox(tr("Extra-Details (Fuß, Größe)"), content);
-    m_hideRetiredCheck = new QCheckBox(tr("'Retired' ausblenden"), content);
+    m_hideRetiredCheck = new QCheckBox(tr("Retired/veraltete ausblenden"), content);
     m_hideRetiredCheck->setToolTip(
-        tr("Blendet Spieler aus, deren Verein auf 'Retired' steht oder die laut "
-           "Datenfrische als Retired gelten (Alter und fehlende Uploads)."));
+        tr("Blendet Spieler aus, deren Verein auf 'Retired' steht oder die in den "
+           "letzten Komplett-Exporten fehlten (außer eigenem Verein und Shortlist)."));
     m_hideRetiredCheck->setChecked(true);
     optionsRow->addWidget(m_extraDetailsCheck);
     optionsRow->addWidget(m_hideRetiredCheck);
@@ -223,7 +223,7 @@ void NationalSquadMatrixPage::rebuild()
 
     std::vector<const Player *> squad, pool;
     for (const Player &player : m_context.store().players()) {
-        if (hideRetired && PlayerStatus::isRetired(player, freshness))
+        if (hideRetired && PlayerStatus::isInactive(player, freshness))
             continue;
         if (!m_personalityFilter->allows(player.personality))
             continue;

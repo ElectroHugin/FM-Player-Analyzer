@@ -684,6 +684,44 @@ private slots:
                 QCOMPARE(p.lastSeenUpdate, 1);
         }
     }
+
+    void partialImportKeepsFreshnessCounter()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("import_test_partial"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+
+        QStringList rows;
+        for (int i = 0; i < 8; ++i)
+            rows << playerRow(QString::number(200 + i), QStringLiteral("Player %1").arg(i),
+                              QStringLiteral("24"), QStringLiteral("Club A"));
+        const ImportResult full = HtmlImporter::importHtml(htmlExport(rows), db, db.loadPlayers());
+        QVERIFY2(full.success, qPrintable(full.error));
+        QVERIFY(full.fullUpload);
+        QCOMPARE(full.updateCounter, 1);
+
+        // One of eight players (< 25 %): a partial export, e.g. a shortlist.
+        // It refreshes that player without aging anybody else.
+        const ImportResult partial =
+            HtmlImporter::importHtml(htmlExport({rows.at(0)}), db, db.loadPlayers());
+        QVERIFY2(partial.success, qPrintable(partial.error));
+        QVERIFY(!partial.fullUpload);
+        QCOMPARE(partial.updateCounter, 1);
+        QCOMPARE(db.setting(QStringLiteral("update_counter")), QStringLiteral("1"));
+        for (const Player &p : db.loadPlayers())
+            QCOMPARE(p.lastSeenUpdate, 1);
+
+        // Two of eight (25 %) is a full export again: the absent players age.
+        const ImportResult next =
+            HtmlImporter::importHtml(htmlExport({rows.at(0), rows.at(1)}), db, db.loadPlayers());
+        QVERIFY2(next.success, qPrintable(next.error));
+        QVERIFY(next.fullUpload);
+        QCOMPARE(next.updateCounter, 2);
+        for (const Player &p : db.loadPlayers()) {
+            const bool present = p.uid == QStringLiteral("200") || p.uid == QStringLiteral("201");
+            QCOMPARE(p.lastSeenUpdate, present ? 2 : 1);
+        }
+    }
 };
 
 QTEST_GUILESS_MAIN(TestHtmlImporter)

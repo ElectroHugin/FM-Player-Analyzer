@@ -1,6 +1,7 @@
 #include "Database.h"
 
 #include "Constants.h"
+#include "Freshness.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -20,7 +21,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 5;
+constexpr int kSchemaVersion = 6;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -213,6 +214,8 @@ bool Database::initSchema()
             ok = migrateV3ToV4();
         if (ok && version < 5)
             ok = migrateV4ToV5();
+        if (ok && version < 6)
+            ok = migrateV5ToV6();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -371,6 +374,56 @@ QString Database::createPlayerRegistrationSql()
 bool Database::migrateV4ToV5()
 {
     return exec(createPlayerRegistrationSql());
+}
+
+bool Database::migrateV5ToV6()
+{
+    // The upload counter used to advance on every import, so a few small
+    // exports (squad, shortlist, scouting) made almost the whole database look
+    // stale. It now advances only on full exports (Freshness::isFullUpload).
+    // Re-base the existing stamps onto that clock: an earlier upload counts as
+    // full when it is still the last-seen stamp of a full-export share of all
+    // players; each stamp becomes the number of such uploads at or before it.
+    const int counter =
+        setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt();
+    if (counter <= 0)
+        return true;
+
+    QSqlQuery query(m_db);
+    if (!query.exec(QStringLiteral("SELECT COUNT(*) FROM players")) || !query.next()) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    const int total = query.value(0).toInt();
+    if (!query.exec(QStringLiteral("SELECT last_seen_update, COUNT(*) FROM players "
+                                   "WHERE last_seen_update > 0 "
+                                   "GROUP BY last_seen_update ORDER BY last_seen_update"))) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    QList<int> fullUploads; // ascending
+    while (query.next()) {
+        if (Freshness::isFullUpload(query.value(1).toInt(), total))
+            fullUploads << query.value(0).toInt();
+    }
+    query.finish();
+
+    // CASE WHEN last_seen_update >= newest THEN n ... WHEN >= oldest THEN 1 ELSE 0
+    // (plain 0 when no full upload is left: the clock starts over).
+    QString rebased = QStringLiteral("0");
+    if (!fullUploads.isEmpty()) {
+        rebased = QStringLiteral("CASE");
+        for (qsizetype i = fullUploads.size() - 1; i >= 0; --i) {
+            rebased += QStringLiteral(" WHEN last_seen_update >= %1 THEN %2")
+                           .arg(fullUploads.at(i))
+                           .arg(i + 1);
+        }
+        rebased += QStringLiteral(" ELSE 0 END");
+    }
+    if (!exec(QStringLiteral("UPDATE players SET last_seen_update = ") + rebased
+              + QStringLiteral(" WHERE last_seen_update > 0")))
+        return false;
+    return setSetting(QStringLiteral("update_counter"), QString::number(fullUploads.size()));
 }
 
 std::vector<Player> Database::loadPlayers()

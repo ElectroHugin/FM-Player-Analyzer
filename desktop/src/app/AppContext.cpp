@@ -200,7 +200,7 @@ PlayerStatus::FreshnessContext AppContext::freshnessContext()
     PlayerStatus::FreshnessContext freshness;
     freshness.currentCounter = updateCounter();
     freshness.retirementAge = m_config->freshnessSetting(QStringLiteral("retirement_age"));
-    freshness.staleAfterUploads = m_config->freshnessSetting(QStringLiteral("stale_after_uploads"));
+    freshness.staleAfterUploads = m_config->freshnessSetting(QStringLiteral("stale_after_full_uploads"));
     freshness.userClub = userClub();
     return freshness;
 }

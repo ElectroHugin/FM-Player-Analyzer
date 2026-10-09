@@ -114,6 +114,11 @@ QStringList importSummaryLines(const ImportPipelineResult &result)
     summary << ImportText::tr("%1 Spieler importiert (davon %2 neu).")
                    .arg(result.import.playersImported)
                    .arg(result.import.newPlayers);
+    summary << (result.import.fullUpload
+                    ? ImportText::tr("Komplett-Export: Spieler, die fehlen, altern um einen "
+                                     "Export.")
+                    : ImportText::tr("Teil-Export: nur die enthaltenen Spieler wurden "
+                                     "aufgefrischt, niemand altert."));
     if (!result.autoAssignedUids.isEmpty())
         summary << ImportText::tr("%1 Spielern wurden automatisch Rollen zugewiesen.")
                        .arg(result.autoAssignedUids.size());

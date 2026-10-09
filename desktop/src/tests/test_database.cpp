@@ -462,6 +462,68 @@ private slots:
         QVERIFY(db.loadPlayers()[0].registration.leagueListed);
         db.close();
     }
+
+    void migratesV5ToV6RebasesFreshnessOnFullUploads()
+    {
+        // Before v6 every import advanced the counter. Of uploads 1..12 only 5
+        // (3 of 8 players) and 10 (2 of 8) still hold a full-export share
+        // (>= 25 %) of the stamps, so they become full uploads 1 and 2.
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v5.db"));
+        const QList<int> oldStamps{0, 5, 5, 5, 7, 10, 10, 12};
+        {
+            Database db(QStringLiteral("v5seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(static_cast<size_t>(oldStamps.size()));
+            for (qsizetype i = 0; i < oldStamps.size(); ++i) {
+                batch[static_cast<size_t>(i)].uid = QString::number(i);
+                batch[static_cast<size_t>(i)].name = QStringLiteral("P%1").arg(i);
+                batch[static_cast<size_t>(i)].lastSeenUpdate = oldStamps.at(i);
+            }
+            QVERIFY(db.upsertPlayers(batch));
+            QVERIFY(db.setSetting(QStringLiteral("update_counter"), QStringLiteral("12")));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 5")));
+            db.close();
+        }
+
+        Database db(QStringLiteral("v5migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        QCOMPARE(db.setting(QStringLiteral("update_counter")), QStringLiteral("2"));
+        const QHash<int, int> expected{{0, 0}, {5, 1}, {7, 1}, {10, 2}, {12, 2}};
+        for (const Player &p : db.loadPlayers())
+            QCOMPARE(p.lastSeenUpdate, expected.value(oldStamps.at(p.uid.toInt())));
+        db.close();
+    }
+
+    void migratesV5ToV6WithoutFullUpload()
+    {
+        // No upload holds a full-export share any more: the clock starts over.
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v5small.db"));
+        {
+            Database db(QStringLiteral("v5smallseed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(5);
+            for (int i = 0; i < 5; ++i) {
+                batch[static_cast<size_t>(i)].uid = QString::number(i);
+                batch[static_cast<size_t>(i)].name = QStringLiteral("P%1").arg(i);
+                batch[static_cast<size_t>(i)].lastSeenUpdate = i == 0 ? 3 : 0;
+            }
+            QVERIFY(db.upsertPlayers(batch));
+            QVERIFY(db.setSetting(QStringLiteral("update_counter"), QStringLiteral("3")));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 5")));
+            db.close();
+        }
+
+        Database db(QStringLiteral("v5smallmigrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        QCOMPARE(db.setting(QStringLiteral("update_counter")), QStringLiteral("0"));
+        for (const Player &p : db.loadPlayers())
+            QCOMPARE(p.lastSeenUpdate, 0);
+        db.close();
+    }
 };
 
 QTEST_GUILESS_MAIN(TestDatabase)

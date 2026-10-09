@@ -536,12 +536,15 @@ QWidget *SettingsPage::buildThresholdsTab()
     m_staleUploadsSpin = new QSpinBox;
     m_staleUploadsSpin->setRange(1, 50);
     freshnessForm->addRow(tr("Retired ab Alter (X):"), m_retirementAgeSpin);
-    freshnessForm->addRow(tr("Veraltet/Retired nach Uploads ohne Update (Y):"),
+    freshnessForm->addRow(tr("Veraltet nach verpassten Komplett-Exporten (Y):"),
                           m_staleUploadsSpin);
     auto *freshnessHint = new QLabel(
-        tr("Jeder Import zählt hoch. Ein Spieler, der seit Y Uploads nicht mehr dabei war, "
-           "gilt als veraltet. Ist er zusätzlich mindestens X Jahre alt und nicht in deinem "
-           "Verein, wird er automatisch als Retired angezeigt."),
+        tr("Ein Import mit mindestens einem Viertel so vielen Spielern wie der letzte "
+           "Komplett-Export zählt selbst als Komplett-Export. Kleinere Exporte (Kader, "
+           "Shortlist, Scouting) aktualisieren nur ihre Spieler. Wer in den letzten Y "
+           "Komplett-Exporten fehlte, gilt als veraltet und wird in Matrizen, Vorschlägen und "
+           "Pools ausgeblendet – außer Spielern deines Vereins und der Shortlist. Ist er "
+           "zusätzlich mindestens X Jahre alt, heißt er Retired."),
         freshnessGroup);
     freshnessHint->setWordWrap(true);
     freshnessHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -863,7 +866,7 @@ void SettingsPage::refresh()
     m_dropoffSpin->setValue(config.gapAnalysisSetting(QStringLiteral("dropoff_threshold")));
     m_wrongSideSpin->setValue(config.gapAnalysisSetting(QStringLiteral("wrong_side_penalty")));
     m_retirementAgeSpin->setValue(config.freshnessSetting(QStringLiteral("retirement_age")));
-    m_staleUploadsSpin->setValue(config.freshnessSetting(QStringLiteral("stale_after_uploads")));
+    m_staleUploadsSpin->setValue(config.freshnessSetting(QStringLiteral("stale_after_full_uploads")));
     m_explosivePeakSpin->setValue(config.trainingSetting(QStringLiteral("explosive_peak_age")));
     m_explosiveLockedSpin->setValue(config.trainingSetting(QStringLiteral("explosive_locked_age")));
     m_strengthPeakSpin->setValue(config.trainingSetting(QStringLiteral("strength_peak_age")));
@@ -992,7 +995,7 @@ void SettingsPage::saveAll()
     config.setGapAnalysisSetting(QStringLiteral("dropoff_threshold"), m_dropoffSpin->value());
     config.setGapAnalysisSetting(QStringLiteral("wrong_side_penalty"), m_wrongSideSpin->value());
     config.setFreshnessSetting(QStringLiteral("retirement_age"), m_retirementAgeSpin->value());
-    config.setFreshnessSetting(QStringLiteral("stale_after_uploads"), m_staleUploadsSpin->value());
+    config.setFreshnessSetting(QStringLiteral("stale_after_full_uploads"), m_staleUploadsSpin->value());
     config.setTrainingSetting(QStringLiteral("explosive_peak_age"), m_explosivePeakSpin->value());
     config.setTrainingSetting(QStringLiteral("explosive_locked_age"),
                               m_explosiveLockedSpin->value());

@@ -511,6 +511,8 @@ void NationalCallupPage::compute()
         QString reason;
         if (PlayerStatus::isRetired(*p, freshness))
             reason = tr("Retired");
+        else if (PlayerStatus::isInactive(*p, freshness))
+            reason = tr("veraltet");
         else if (m_injuredUids.contains(p->uid))
             reason = tr("verletzt/gesperrt");
         else if (!eligibleUids.contains(p->uid))

@@ -71,6 +71,41 @@ private slots:
         QVERIFY(!PlayerStatus::isRetired(ownVeteran, freshness(10, QStringLiteral("FC Bayern"))));
     }
 
+    void inactiveHidesStalePlayersAtAnyAge()
+    {
+        const QString myClub = QStringLiteral("Wrexham");
+        // Stale (missed 9 of the last full exports) and young: no longer relevant.
+        Player staleYoung = makePlayer(QStringLiteral("Some Club"), 22);
+        staleYoung.lastSeenUpdate = 1;
+        QVERIFY(PlayerStatus::isInactive(staleYoung, freshness(10, myClub)));
+
+        // Missed fewer than Y full exports: still shown.
+        Player recent = makePlayer(QStringLiteral("Some Club"), 22);
+        recent.lastSeenUpdate = 6;
+        QVERIFY(!PlayerStatus::isInactive(recent, freshness(10, myClub)));
+
+        // Shortlisted players stay until retired.
+        Player shortlisted = staleYoung;
+        shortlisted.onShortlist = true;
+        QVERIFY(!PlayerStatus::isInactive(shortlisted, freshness(10, myClub)));
+        Player shortlistedVeteran = makePlayer(QStringLiteral("Some Club"), 36);
+        shortlistedVeteran.lastSeenUpdate = 1;
+        shortlistedVeteran.onShortlist = true;
+        QVERIFY(PlayerStatus::isInactive(shortlistedVeteran, freshness(10, myClub)));
+
+        // Own-club players are never hidden by freshness.
+        Player own = makePlayer(myClub, 22);
+        own.lastSeenUpdate = 1;
+        QVERIFY(!PlayerStatus::isInactive(own, freshness(10, myClub)));
+
+        // The national pool applies the same rule.
+        PlayerStatus::NationalCriteria criteria;
+        criteria.countryCode = QStringLiteral("GER");
+        criteria.ageLimit = 99;
+        criteria.freshness = freshness();
+        QVERIFY(!PlayerStatus::isAvailableForNation(staleYoung, criteria));
+    }
+
     void nationalEligibility_data()
     {
         QTest::addColumn<QString>("nat");
@@ -110,7 +145,9 @@ private slots:
         criteria.ageLimit = 99;
         criteria.freshness = freshness();
 
-        QVERIFY(PlayerStatus::isAvailableForNation(makePlayer(QStringLiteral("Club")), criteria));
+        Player current = makePlayer(QStringLiteral("Club"));
+        current.lastSeenUpdate = 10; // in the latest full export
+        QVERIFY(PlayerStatus::isAvailableForNation(current, criteria));
         QVERIFY(!PlayerStatus::isAvailableForNation(makePlayer(QStringLiteral("Retired")),
                                                     criteria));
         QVERIFY(!PlayerStatus::isAvailableForNation(

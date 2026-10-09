@@ -48,6 +48,9 @@ struct ImportResult {
     // import failed before stamping). Every imported player's lastSeenUpdate is
     // set to this; drives data-freshness (see Freshness).
     int updateCounter = 0;
+    // The import counted as a full export and advanced the counter; a partial
+    // export only refreshed its own players (Freshness::isFullUpload).
+    bool fullUpload = false;
 };
 
 // Parses FM HTML exports and merges them into the database. Port of legacy

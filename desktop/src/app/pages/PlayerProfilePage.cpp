@@ -431,18 +431,18 @@ void PlayerProfilePage::showPlayer()
     const int retirementAge =
         m_context.config().freshnessSetting(QStringLiteral("retirement_age"));
     const int staleAfter =
-        m_context.config().freshnessSetting(QStringLiteral("stale_after_uploads"));
+        m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads"));
     const int missed = Freshness::uploadsSinceSeen(*player, counter);
     if (Freshness::isRetired(*player, counter, retirementAge, staleAfter,
                              m_context.userClub())) {
         tags += pill(tr("Status"),
-                     tr("Retired (seit %1 Uploads nicht dabei)").arg(missed),
+                     tr("Retired (verpasste Komplett-Exporte: %1)").arg(missed),
                      QStringLiteral("#c0392b"));
     } else if (Freshness::isStale(*player, counter, staleAfter)) {
-        tags += pill(tr("Daten"), tr("veraltet (vor %1 Uploads gesehen)").arg(missed),
+        tags += pill(tr("Daten"), tr("veraltet (verpasste Komplett-Exporte: %1)").arg(missed),
                      QStringLiteral("#e67e22"));
     } else if (missed > 0) {
-        tags += pill(tr("Daten"), tr("vor %1 Uploads gesehen").arg(missed),
+        tags += pill(tr("Daten"), tr("verpasste Komplett-Exporte: %1").arg(missed),
                      QStringLiteral("#7f8c8d"));
     } else if (counter > 0) {
         tags += pill(tr("Daten"), tr("aktuell"), QStringLiteral("#0da025"));

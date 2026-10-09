@@ -42,9 +42,10 @@ const QHash<QString, int> &freshnessDefaults()
         // Auto-retire age (X): player at/above this age who is stale and not in
         // the user's own club is treated as retired.
         {QStringLiteral("retirement_age"), 35},
-        // Stale-after uploads (Y): a player missing from this many consecutive
-        // uploads counts as stale (and, if old enough, retired).
-        {QStringLiteral("stale_after_uploads"), 5},
+        // Stale-after full exports (Y): a player missing from this many
+        // consecutive full exports counts as stale (and, if old enough, retired).
+        // Replaces "stale_after_uploads", which counted every import.
+        {QStringLiteral("stale_after_full_uploads"), 2},
     };
     return defaults;
 }
@@ -165,6 +166,11 @@ void AppConfig::ensureDefaults()
     const auto &freshness = freshnessDefaults();
     for (auto it = freshness.constBegin(); it != freshness.constEnd(); ++it)
         ensure(QStringLiteral("Freshness/") + it.key(), QString::number(it.value()));
+    // Old threshold counted every import, partial exports included (v1.4.5).
+    if (s.contains(QStringLiteral("Freshness/stale_after_uploads"))) {
+        s.remove(QStringLiteral("Freshness/stale_after_uploads"));
+        modified = true;
+    }
 
     const auto &training = trainingWindowDefaults();
     for (auto it = training.constBegin(); it != training.constEnd(); ++it)

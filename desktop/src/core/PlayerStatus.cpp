@@ -28,6 +28,15 @@ bool isRetired(const Player &player, const FreshnessContext &freshness)
                                    freshness.staleAfterUploads, freshness.userClub);
 }
 
+bool isInactive(const Player &player, const FreshnessContext &freshness)
+{
+    if (isRetired(player, freshness))
+        return true;
+    if (player.onShortlist || (!freshness.userClub.isEmpty() && player.club == freshness.userClub))
+        return false;
+    return Freshness::isStale(player, freshness.currentCounter, freshness.staleAfterUploads);
+}
+
 bool isNationalEligible(const Player &player, const QString &countryCode, int ageLimit)
 {
     if (countryCode.isEmpty())
@@ -42,7 +51,7 @@ bool isNationalEligible(const Player &player, const QString &countryCode, int ag
 bool isAvailableForNation(const Player &player, const NationalCriteria &criteria)
 {
     return isNationalEligible(player, criteria.countryCode, criteria.ageLimit)
-           && !isRetired(player, criteria.freshness);
+           && !isInactive(player, criteria.freshness);
 }
 
 void applyDeparture(Player &player, const QString &destination)

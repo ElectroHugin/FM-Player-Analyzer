@@ -70,10 +70,10 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     optionsRow->addWidget(m_tacticCombo);
     m_extraDetailsCheck = new QCheckBox(tr("Extra-Details"), content);
     m_secondTeamCheck = new QCheckBox(tr("Zweitteam separat anzeigen"), content);
-    m_hideRetiredCheck = new QCheckBox(tr("'Retired' ausblenden"), content);
+    m_hideRetiredCheck = new QCheckBox(tr("Retired/veraltete ausblenden"), content);
     m_hideRetiredCheck->setToolTip(
-        tr("Blendet Spieler aus, deren Verein auf 'Retired' steht oder die laut "
-           "Datenfrische als Retired gelten (Alter und fehlende Uploads)."));
+        tr("Blendet Spieler aus, deren Verein auf 'Retired' steht oder die in den "
+           "letzten Komplett-Exporten fehlten (außer eigenem Verein und Shortlist)."));
     m_hideRetiredCheck->setChecked(true);
     optionsRow->addWidget(m_extraDetailsCheck);
     optionsRow->addWidget(m_secondTeamCheck);
@@ -358,7 +358,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable, bool withShort
         columns.append(makeFreshnessColumn(
             m_context.updateCounter(),
             m_context.config().freshnessSetting(QStringLiteral("retirement_age")),
-            m_context.config().freshnessSetting(QStringLiteral("stale_after_uploads")),
+            m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads")),
             m_context.userClub()));
     }
     columns.append({tr("Gehalt"), [](const Player &p) { return p.wageRaw; }, nullptr, nullptr,
@@ -547,7 +547,7 @@ void SquadMatrixPage::rebuildAll()
     const PlayerStatus::FreshnessContext freshness = m_context.freshnessContext();
     std::vector<const Player *> mine, second, scouted;
     for (const Player &player : m_context.store().players()) {
-        if (hideRetired && PlayerStatus::isRetired(player, freshness))
+        if (hideRetired && PlayerStatus::isInactive(player, freshness))
             continue;
         if (!m_personalityFilter->allows(player.personality))
             continue;

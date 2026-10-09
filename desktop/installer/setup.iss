@@ -4,7 +4,7 @@
 
 #define MyAppName "FM Player Analyzer"
 #ifndef MyAppVersion
-  #define MyAppVersion "1.4.4"
+  #define MyAppVersion "1.4.5"
 #endif
 #define MyAppExeName "fmplayeranalyzer.exe"
 

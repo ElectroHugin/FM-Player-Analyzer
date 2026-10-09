@@ -88,56 +88,66 @@
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="118"/>
+        <source>Komplett-Export: Spieler, die fehlen, altern um einen Export.</source>
+        <translation>Full export: players missing from it age by one export.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="120"/>
+        <source>Teil-Export: nur die enthaltenen Spieler wurden aufgefrischt, niemand altert.</source>
+        <translation>Partial export: only the players it contains were refreshed, nobody ages.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="123"/>
         <source>%1 Spielern wurden automatisch Rollen zugewiesen.</source>
         <translation>Roles were assigned automatically to %1 players.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="121"/>
+        <location filename="../src/app/ImportRunner.cpp" line="126"/>
         <source>DWRS: %1 Bewertungen berechnet, %2 geänderte Einträge gespeichert.</source>
         <translation>DWRS: %1 ratings calculated, %2 changed entries saved.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="131"/>
+        <location filename="../src/app/ImportRunner.cpp" line="136"/>
         <source>Backup fehlgeschlagen: %1</source>
         <translation>Backup failed: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="133"/>
+        <location filename="../src/app/ImportRunner.cpp" line="138"/>
         <source>%1 fehlerhafte Zeile(n) übersprungen (Zellenzahl passte nicht zur Kopfzeile). Exportiere die Datei ggf. neu aus FM.</source>
         <translation>%1 malformed row(s) skipped (cell count did not match the header). Re-export the file from FM if needed.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="137"/>
+        <location filename="../src/app/ImportRunner.cpp" line="142"/>
         <source>%1 Zeile(n) ohne UID übersprungen.</source>
         <translation>%1 row(s) without UID skipped.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="140"/>
+        <location filename="../src/app/ImportRunner.cpp" line="145"/>
         <source>Doppelte UIDs in der Datei — nur die letzte Zeile wurde übernommen: %1</source>
         <translation>Duplicate UIDs in the file — only the last row was used: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="145"/>
+        <location filename="../src/app/ImportRunner.cpp" line="150"/>
         <source>Unbekannte Spalten (werden ignoriert): %1</source>
         <translation>Unknown columns (ignored): %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="148"/>
+        <location filename="../src/app/ImportRunner.cpp" line="153"/>
         <source>ID/Namens-Konflikt übersprungen: %1. Eine numerische UID entspricht einer bekannten Newgen-ID, aber die Namen unterscheiden sich.</source>
         <translation>ID/name conflict skipped: %1. A numeric UID matches a known newgen ID, but the names differ.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="154"/>
+        <location filename="../src/app/ImportRunner.cpp" line="159"/>
         <source>Name unter bekannter UID geändert: %1. FM hat die ID evtl. an einen neuen Newgen vergeben — zugewiesene Rollen und DWRS-Historie gehören ggf. noch zum alten Spieler.</source>
         <translation>Name changed under a known UID: %1. FM may have reissued the ID to a new newgen — assigned roles and DWRS history may still belong to the old player.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="160"/>
+        <location filename="../src/app/ImportRunner.cpp" line="165"/>
         <source>Automatische Rollen-Zuweisung fehlgeschlagen: %1</source>
         <translation>Automatic role assignment failed: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="163"/>
+        <location filename="../src/app/ImportRunner.cpp" line="168"/>
         <source>DWRS-Berechnung fehlgeschlagen: %1</source>
         <translation>DWRS calculation failed: %1</translation>
     </message>
@@ -1871,9 +1881,9 @@ The original file is not modified.</translation>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="430"/>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="439"/>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="449"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="537"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="551"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="554"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="539"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="553"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="556"/>
         <source>Nominierung</source>
         <translation>Call-up</translation>
     </message>
@@ -1969,36 +1979,41 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="515"/>
+        <source>veraltet</source>
+        <translation>stale</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="517"/>
         <source>verletzt/gesperrt</source>
         <translation>injured/blocked</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="517"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="519"/>
         <source>nicht verfügbar/berechtigt</source>
         <translation>unavailable/ineligible</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="519"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="521"/>
         <source>überzählig</source>
         <translation>surplus</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="521"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="523"/>
         <source>%1  ·  %2</source>
         <translation>%1  ·  %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="526"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="528"/>
         <source>Keine — kein aktueller Spieler muss weichen.</source>
         <translation>None — no current player needs to make way.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="538"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="540"/>
         <source>Den empfohlenen Kader (%1 Spieler) als Nationalkader speichern? Der bisherige Nationalkader wird ersetzt.</source>
         <translation>Save the recommended squad (%1 players) as the national squad? The previous national squad will be replaced.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="555"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="557"/>
         <source>%1 Spieler im Nationalkader gespeichert.</source>
         <translation>%1 players saved in the national squad.</translation>
     </message>
@@ -2210,13 +2225,13 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="52"/>
-        <source>&apos;Retired&apos; ausblenden</source>
-        <translation>Hide &apos;Retired&apos;</translation>
+        <source>Retired/veraltete ausblenden</source>
+        <translation>Hide retired/stale</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="54"/>
-        <source>Blendet Spieler aus, deren Verein auf &apos;Retired&apos; steht oder die laut Datenfrische als Retired gelten (Alter und fehlende Uploads).</source>
-        <translation>Hides players whose club is set to &apos;Retired&apos; or who count as retired by data freshness (age and missed uploads).</translation>
+        <source>Blendet Spieler aus, deren Verein auf &apos;Retired&apos; steht oder die in den letzten Komplett-Exporten fehlten (außer eigenem Verein und Shortlist).</source>
+        <translation>Hides players whose club is set to &apos;Retired&apos; or who were missing from the latest full exports (except your own club and the shortlist).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="65"/>
@@ -3019,8 +3034,18 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="439"/>
-        <source>Retired (seit %1 Uploads nicht dabei)</source>
-        <translation>Retired (not seen for %1 uploads)</translation>
+        <source>Retired (verpasste Komplett-Exporte: %1)</source>
+        <translation>Retired (missed full exports: %1)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="442"/>
+        <source>veraltet (verpasste Komplett-Exporte: %1)</source>
+        <translation>stale (missed full exports: %1)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="445"/>
+        <source>verpasste Komplett-Exporte: %1</source>
+        <translation>missed full exports: %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="442"/>
@@ -3028,16 +3053,6 @@ The original file is not modified.</translation>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="448"/>
         <source>Daten</source>
         <translation>Data</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="442"/>
-        <source>veraltet (vor %1 Uploads gesehen)</source>
-        <translation>stale (last seen %1 uploads ago)</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="445"/>
-        <source>vor %1 Uploads gesehen</source>
-        <translation>seen %1 uploads ago</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="448"/>
@@ -3681,7 +3696,7 @@ The original file is not modified.</translation>
     <name>fm::SettingsPage</name>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="85"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1024"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1027"/>
         <source>Einstellungen</source>
         <translation>Settings</translation>
     </message>
@@ -3707,9 +3722,9 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="93"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="719"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="737"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="751"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="722"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="740"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="754"/>
         <source>Datenbank</source>
         <translation>Database</translation>
     </message>
@@ -4085,208 +4100,208 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="539"/>
-        <source>Veraltet/Retired nach Uploads ohne Update (Y):</source>
-        <translation>Stale/Retired after uploads without update (Y):</translation>
+        <source>Veraltet nach verpassten Komplett-Exporten (Y):</source>
+        <translation>Stale after missed full exports (Y):</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="542"/>
-        <source>Jeder Import zählt hoch. Ein Spieler, der seit Y Uploads nicht mehr dabei war, gilt als veraltet. Ist er zusätzlich mindestens X Jahre alt und nicht in deinem Verein, wird er automatisch als Retired angezeigt.</source>
-        <translation>Every import increments the counter. A player missing from the last Y uploads counts as stale. If he is also at least X years old and not in your club, he is shown as Retired automatically.</translation>
+        <source>Ein Import mit mindestens einem Viertel so vielen Spielern wie der letzte Komplett-Export zählt selbst als Komplett-Export. Kleinere Exporte (Kader, Shortlist, Scouting) aktualisieren nur ihre Spieler. Wer in den letzten Y Komplett-Exporten fehlte, gilt als veraltet und wird in Matrizen, Vorschlägen und Pools ausgeblendet – außer Spielern deines Vereins und der Shortlist. Ist er zusätzlich mindestens X Jahre alt, heißt er Retired.</source>
+        <translation>An import with at least a quarter as many players as the last full export counts as a full export itself. Smaller exports (squad, shortlist, scouting) only refresh their own players. Anyone missing from the last Y full exports counts as stale and is hidden from matrices, suggestions and pools, except players of your club and the shortlist. If they are also at least X years old, they are shown as Retired.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="551"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="554"/>
         <source>Trainings-Altersfenster</source>
         <translation>Training Age Windows</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="562"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="565"/>
         <source>stark bis</source>
         <translation>strong until</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="565"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="568"/>
         <source>gesperrt ab</source>
         <translation>locked from</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="572"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="575"/>
         <source>Explosiv (Tempo, Antritt, Beweglichkeit):</source>
         <translation>Explosive (Pace, Acceleration, Agility):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="574"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="577"/>
         <source>Kraft (Kraft, Ausdauer, Sprungkraft, Balance):</source>
         <translation>Strength (Strength, Stamina, Jumping Reach, Balance):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="576"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="579"/>
         <source>Technik:</source>
         <translation>Technical:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="579"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="582"/>
         <source>Steuert die Trainingsempfehlung: bis &apos;stark bis&apos; voll trainierbar, danach linear abnehmend bis &apos;gesperrt ab&apos;. Mentale Attribute gelten immer als trainierbar, Charakter-Attribute (Entschlossenheit, Arbeitsrate) nie (nur über Mentoring).</source>
         <translation>Drives the training recommendation: fully trainable up to &apos;strong until&apos;, then decreasing linearly to &apos;locked from&apos;. Mental attributes are always considered trainable, character attributes (Determination, Work Rate) never (mentoring only).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="599"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="602"/>
         <source>Farbschema</source>
         <translation>Colour Scheme</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="606"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="609"/>
         <source>Benutzerdefiniert</source>
         <translation>Custom</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="608"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="611"/>
         <source>Nacht (dunkel)</source>
         <translation>Night (dark)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="609"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="612"/>
         <source>Tag (hell)</source>
         <translation>Day (light)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="610"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="613"/>
         <source>Vereins-/Farbvorlage:</source>
         <translation>Club / colour preset:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="611"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="614"/>
         <source>Aktiver Modus:</source>
         <translation>Active mode:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="613"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="616"/>
         <source>Eine Vorlage setzt eine ruhige Anthrazit-Basis und nur die Vereinsfarben als Akzent (Kopfzeile, Buttons, Interaktion). Farben unten lassen sich danach frei anpassen — das schaltet auf &apos;Benutzerdefiniert&apos;.</source>
         <translation>A preset sets a calm anthracite base and uses only the club colours as accents (header, buttons, interaction). Colours below can then be freely adjusted — that switches to &apos;Custom&apos;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="631"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="634"/>
         <source>Hintergrund</source>
         <translation>Background</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="632"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="635"/>
         <source>Panel / Karten</source>
         <translation>Panel / Cards</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="633"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="636"/>
         <source>Sidebar</source>
         <translation>Sidebar</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="634"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="637"/>
         <source>Kopfzeile</source>
         <translation>Header</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="635"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="638"/>
         <source>Primär / Buttons</source>
         <translation>Primary / Buttons</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="636"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="639"/>
         <source>Interaktion (Tabs, Slider)</source>
         <translation>Interaction (tabs, sliders)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="637"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="640"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="641"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="644"/>
         <source>Nacht-Farben</source>
         <translation>Night Colours</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="642"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="645"/>
         <source>Tag-Farben</source>
         <translation>Day Colours</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="653"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="656"/>
         <source>Farbe wählen</source>
         <translation>Choose colour</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="705"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="708"/>
         <source>Aktive Datenbank</source>
         <translation>Active Database</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="708"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="711"/>
         <source>Wechseln</source>
         <translation>Switch</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="723"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="726"/>
         <source>Neue Datenbank anlegen…</source>
         <translation>Create new database…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="724"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="727"/>
         <source>Legacy-Datenbank importieren…</source>
         <translation>Import legacy database…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="731"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="734"/>
         <source>Neue Datenbank</source>
         <translation>New Database</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="732"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="735"/>
         <source>Name (ohne .db):</source>
         <translation>Name (without .db):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="745"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="748"/>
         <source>Import</source>
         <translation>Import</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="746"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="749"/>
         <source>Importierte Datenbank &apos;%1&apos; jetzt aktivieren?</source>
         <translation>Activate imported database &apos;%1&apos; now?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="758"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="761"/>
         <source>Datenordner: %1
 (Änderbar über bootstrap.ini; Verschiebe-Assistent folgt in einem späteren Meilenstein.)</source>
         <translation>Data folder: %1
 (Changeable via bootstrap.ini; a move assistant will follow in a later milestone.)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="821"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="824"/>
         <source>Standard (keine Beschränkung)</source>
         <translation>Default (no restriction)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="909"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="912"/>
         <source>⚠ %1: Kontrast Text/Hintergrund nur %2:1 (WCAG empfiehlt ≥ 4,5:1)</source>
         <translation>⚠ %1: text/background contrast only %2:1 (WCAG recommends ≥ 4.5:1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="910"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="913"/>
         <source>Nacht</source>
         <translation>Night</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="910"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="913"/>
         <source>Tag</source>
         <translation>Day</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="915"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="918"/>
         <source>✓ Kontrastwerte in Ordnung</source>
         <translation>✓ Contrast values OK</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1024"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1027"/>
         <source>Einstellungen gespeichert.</source>
         <translation>Settings saved.</translation>
     </message>
@@ -4312,16 +4327,6 @@ The original file is not modified.</translation>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="72"/>
         <source>Zweitteam separat anzeigen</source>
         <translation>Show second team separately</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="73"/>
-        <source>&apos;Retired&apos; ausblenden</source>
-        <translation>Hide &apos;Retired&apos;</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="75"/>
-        <source>Blendet Spieler aus, deren Verein auf &apos;Retired&apos; steht oder die laut Datenfrische als Retired gelten (Alter und fehlende Uploads).</source>
-        <translation>Hides players whose club is set to &apos;Retired&apos; or who count as retired by data freshness (age and missed uploads).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="88"/>
@@ -4546,6 +4551,16 @@ The original file is not modified.</translation>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="494"/>
         <source>Inland (%1)</source>
         <translation>Domestic (%1)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="73"/>
+        <source>Retired/veraltete ausblenden</source>
+        <translation>Hide retired/stale</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="75"/>
+        <source>Blendet Spieler aus, deren Verein auf &apos;Retired&apos; steht oder die in den letzten Komplett-Exporten fehlten (außer eigenem Verein und Shortlist).</source>
+        <translation>Hides players whose club is set to &apos;Retired&apos; or who were missing from the latest full exports (except your own club and the shortlist).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="594"/>
@@ -4804,99 +4819,99 @@ The original file is not modified.</translation>
 <context>
     <name>fm::TransfersPage</name>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="56"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="57"/>
         <source>Transfer- und Leih-Management</source>
         <translation>Transfer and Loan Management</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="60"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="61"/>
         <source>Verwaltet die überzähligen Spieler für die gewählte Taktik — Spieler, die es weder in die Erste Elf noch in B-, Zweit- oder Jugendteam geschafft haben. Häkchen setzen, optional neuen Verein eintragen, dann speichern.</source>
         <translation>Manages the surplus players for the selected tactic — players who made neither the first eleven nor the B-, second- or youth team. Tick the boxes, optionally enter a new club, then save.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="69"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="70"/>
         <source>Taktik:</source>
         <translation>Tactic:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="76"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="77"/>
         <source>Zum Verleihen (vielversprechende Talente)</source>
         <translation>To loan out (promising talents)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="79"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="80"/>
         <source>Zum Verkauf / zur Freigabe</source>
         <translation>For sale / release</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="98"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="99"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="98"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="99"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="98"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="99"/>
         <source>Bester DWRS (Rolle)</source>
         <translation>Best DWRS (Role)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="100"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="101"/>
         <source>Ent</source>
         <translation>Det</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="100"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="101"/>
         <source>Arb</source>
         <translation>Wor</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="101"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="102"/>
         <source>Transfer</source>
         <translation>Transfer</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="101"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="102"/>
         <source>Leihe</source>
         <translation>Loan</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="101"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="102"/>
         <source>Neuer Verein</source>
         <translation>New Club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="115"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="116"/>
         <source>Alle Änderungen dieser Liste speichern</source>
         <translation>Save all changes in this list</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="149"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="150"/>
         <source>Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen).</source>
         <translation>Please select your club first (Dashboard or Settings).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="251"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="252"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="294"/>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="298"/>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="306"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="295"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="299"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="307"/>
         <source>Transfers</source>
         <translation>Transfers</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="294"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="295"/>
         <source>Keine Änderungen zum Speichern.</source>
         <translation>No changes to save.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TransfersPage.cpp" line="307"/>
+        <location filename="../src/app/pages/TransfersPage.cpp" line="308"/>
         <source>%1 Spieler-Datensätze gespeichert.</source>
         <translation>%1 player records saved.</translation>
     </message>

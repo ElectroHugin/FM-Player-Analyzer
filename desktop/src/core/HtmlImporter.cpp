@@ -3,6 +3,7 @@
 #include "Attributes.h"
 #include "Constants.h"
 #include "Database.h"
+#include "Freshness.h"
 #include "LegacyMigrator.h"
 #include "Utils.h"
 
@@ -361,11 +362,6 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
     ImportResult result;
     const QHash<QString, QString> &mapping = attributeMapping(fmVersionId);
 
-    // Every full import bumps the per-database upload counter; each imported
-    // player is stamped with the new value so data-freshness can be derived.
-    const int newCounter =
-        db.setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt() + 1;
-
     if (table.headers.size() < 10) {
         result.error = QStringLiteral("Too few columns (%1), expected at least 10.")
                            .arg(table.headers.size());
@@ -441,6 +437,20 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
         return result;
     }
     result.rowsParsed = static_cast<int>(rowRefs.size());
+
+    // A full export bumps the per-database upload counter; a partial one
+    // (squad, shortlist, scouting) keeps it, so it refreshes its own players
+    // without aging everybody else. Each imported player is stamped with the
+    // resulting value so data-freshness can be derived.
+    const int currentCounter =
+        db.setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt();
+    const auto currentPlayers = std::count_if(
+        existingPlayers.cbegin(), existingPlayers.cend(), [currentCounter](const Player &p) {
+            return Freshness::uploadsSinceSeen(p, currentCounter) == 0;
+        });
+    const bool fullUpload =
+        Freshness::isFullUpload(result.rowsParsed, static_cast<int>(currentPlayers));
+    const int newCounter = currentCounter + (fullUpload ? 1 : 0);
 
     // --- Lookup maps over the existing database state. ---
     QHash<QString, int> existingByUid; // uid -> index into existingPlayers
@@ -646,6 +656,7 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
         return result;
     }
     result.updateCounter = newCounter;
+    result.fullUpload = fullUpload;
     result.success = true;
 
     if (updatedPlayers) {

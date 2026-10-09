@@ -58,7 +58,7 @@ public:
     double gapAnalysisSetting(const QString &key) const;
     void setGapAnalysisSetting(const QString &key, double value);
 
-    // [Freshness] — "retirement_age" (X) and "stale_after_uploads" (Y).
+    // [Freshness] — "retirement_age" (X) and "stale_after_full_uploads" (Y).
     int freshnessSetting(const QString &key) const;
     void setFreshnessSetting(const QString &key, int value);
 

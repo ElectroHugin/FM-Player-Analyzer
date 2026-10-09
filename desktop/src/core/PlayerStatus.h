@@ -22,14 +22,19 @@ bool isRetiredClub(const Player &player);
 struct FreshnessContext {
     int currentCounter = 0;
     int retirementAge = 35;
-    int staleAfterUploads = 5;
+    int staleAfterUploads = 2;
     QString userClub;
 };
 
 // Out of the game: club marked "Retired" OR auto-retired by data freshness
-// (old enough, missing from the last uploads, not in the user's club). Only
-// retirement counts — merely stale scouting data does not exclude a player.
+// (old enough, missing from the last full exports, not in the user's club).
+// Drives the "Retired" label; filters use isInactive.
 bool isRetired(const Player &player, const FreshnessContext &freshness);
+
+// No longer relevant, so left out of matrices, pools and suggestions: retired,
+// or stale at any age (missing from the last Y full exports) — except players
+// of the user's club and shortlisted players, who stay until retired.
+bool isInactive(const Player &player, const FreshnessContext &freshness);
 
 // Nationality or second nationality matches countryCode (non-empty). The age
 // limit applies when 0 < ageLimit < 99 and then requires a known age within
@@ -43,7 +48,8 @@ struct NationalCriteria {
     FreshnessContext freshness;
 };
 
-// Eligible for the national team and not retired — the call-up/suggestion pool.
+// Eligible for the national team and still active (see isInactive) — the
+// call-up/suggestion pool.
 bool isAvailableForNation(const Player &player, const NationalCriteria &criteria);
 
 // Records that a player left the user's club for `destination` (club name,

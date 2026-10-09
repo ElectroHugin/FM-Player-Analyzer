@@ -6,13 +6,18 @@ namespace fm {
 
 namespace Freshness {
 
+bool isFullUpload(int importedRows, int currentPlayers)
+{
+    return currentPlayers <= 0 || importedRows >= currentPlayers * kFullUploadShare;
+}
+
 int uploadsSinceSeen(const Player &player, int currentCounter)
 {
-    // Before any upload is tracked nothing can be stale.
+    // Before any full export is tracked nothing can be stale.
     if (currentCounter <= 0)
         return 0;
     // A never-stamped row (imported before tracking began) counts as last seen
-    // at upload 0: it ages with every tracked upload it is missing from, so a
+    // at upload 0: it ages with every full export it is missing from, so a
     // player who vanished before tracking started eventually turns stale /
     // auto-retired instead of looking fresh forever. The counter starts at 0
     // when tracking begins, so this never floods an existing database at once.

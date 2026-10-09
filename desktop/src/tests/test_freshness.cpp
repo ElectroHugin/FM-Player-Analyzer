@@ -23,6 +23,19 @@ class TestFreshness : public QObject
     Q_OBJECT
 
 private slots:
+    void fullUploadShare()
+    {
+        // Empty database: the first import always starts the clock.
+        QVERIFY(Freshness::isFullUpload(30, 0));
+        // At least a quarter of the current players counts as a full export.
+        QVERIFY(Freshness::isFullUpload(25, 100));
+        QVERIFY(!Freshness::isFullUpload(24, 100));
+        // Real case: after an 83k-player database export, a 275-player
+        // scouting export is partial, the next database export is full.
+        QVERIFY(!Freshness::isFullUpload(275, 83352));
+        QVERIFY(Freshness::isFullUpload(82960, 83352));
+    }
+
     void uploadsSinceSeen_basics()
     {
         // Present in the latest upload -> fresh.
