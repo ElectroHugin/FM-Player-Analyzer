@@ -6,6 +6,7 @@
 #include "../widgets/NumericTableItem.h"
 #include "../widgets/TacticPitchWidget.h"
 #include "PageHelpers.h"
+#include "SigningAdvisorTab.h"
 #include "core/Registration.h"
 #include "core/TalentEngine.h"
 #include "core/Utils.h"
@@ -259,6 +260,10 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_tabs->addTab(tab, tr("Jugend && Zweitteam"));
     }
 
+    // --- Tab 3: where buying really improves the line-up ---
+    m_signingTab = new SigningAdvisorTab(m_context);
+    m_tabs->addTab(m_signingTab, tr("🛒 Kaufberatung"));
+
     layout->addWidget(m_tabs, 1);
 
     for (QComboBox *combo : {m_tacticCombo, m_competitionCombo}) {
@@ -282,6 +287,11 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     PlayerActions::attachToTableWidget(m_context, m_sellTable);
     // The depth options carry a player uid in column 1 (Name).
     PlayerActions::attachToTableWidget(m_context, m_depthTable, 1);
+}
+
+void BestXiPage::releaseStoreRows()
+{
+    m_signingTab->clear();
 }
 
 QString BestXiPage::algorithmHint()
@@ -346,6 +356,8 @@ void BestXiPage::rebuild()
         m_bTeamPitch->clearData();
         m_secondXiPitch->clearData();
         m_youthXiPitch->clearData();
+        m_injuryBox->setVisible(false);
+        m_signingTab->setSquad(QString(), {});
         return;
     }
     m_clubNotice->setVisible(false);
@@ -399,15 +411,19 @@ void BestXiPage::rebuild()
     const bool restricted =
         listedCompetition && Registration::hasSavedList(registrationPool, competition);
 
-    // The first team of one pool; *full receives the unrestricted squad and
-    // *note (optional) who the competition leaves out.
+    // The first team of one pool; *full receives the unrestricted squad,
+    // *note (optional) who the competition leaves out and *pool (optional) the
+    // players the first team was chosen from.
     const auto firstTeamOf = [&](const std::vector<const Player *> &club,
                                  const std::vector<const Player *> &second, SquadResult *full,
-                                 QString *note) {
+                                 QString *note, std::vector<const Player *> *pool) {
         *full = m_context.squadBuilder().calculateSquadAndSurplus(club, positions, slotOrder,
                                                                   ratings);
-        if (!restricted)
+        if (!restricted) {
+            if (pool)
+                *pool = club;
             return *full;
+        }
         // Who the list costs: the players a free choice would line up.
         QSet<QString> unrestrictedTeams;
         for (const auto &team : {full->startingXi, full->bTeam})
@@ -443,8 +459,11 @@ void BestXiPage::rebuild()
                                    .arg(missed.join(QStringLiteral(", ")));
             }
         }
-        return m_context.squadBuilder().calculateSquadAndSurplus(eligiblePlayers, positions,
-                                                                 slotOrder, ratings);
+        SquadResult first = m_context.squadBuilder().calculateSquadAndSurplus(
+            eligiblePlayers, positions, slotOrder, ratings);
+        if (pool)
+            *pool = std::move(eligiblePlayers);
+        return first;
     };
 
     QString note;
@@ -452,7 +471,9 @@ void BestXiPage::rebuild()
         note = tr("⚠️ Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
                   "rechnet mit allen Spielern. Speichere sie auf der Seite 'Registrierung'.");
     SquadResult full;
-    const SquadResult first = firstTeamOf(clubPlayers, secondPlayers, &full, &note);
+    std::vector<const Player *> firstPool;
+    const SquadResult first =
+        firstTeamOf(clubPlayers, secondPlayers, &full, &note, &firstPool);
     m_registrationNote->setText(note);
     m_registrationNote->setVisible(!note.isEmpty());
 
@@ -463,11 +484,15 @@ void BestXiPage::rebuild()
     } else {
         SquadResult otherFull;
         const SquadResult other = planInjured
-                                      ? firstTeamOf(clubFit, secondFit, &otherFull, nullptr)
-                                      : firstTeamOf(clubAll, secondAll, &otherFull, nullptr);
+                                      ? firstTeamOf(clubFit, secondFit, &otherFull, nullptr,
+                                                    nullptr)
+                                      : firstTeamOf(clubAll, secondAll, &otherFull, nullptr,
+                                                    nullptr);
         fillInjuryBox(injured, planInjured ? first : other, planInjured ? other : first,
                       slotOrder, positions);
     }
+
+    m_signingTab->setSquad(tactic, std::move(firstPool));
 
     const DevelopmentSquads dev = m_context.squadBuilder().calculateDevelopmentSquads(
         secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);

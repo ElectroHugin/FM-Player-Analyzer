@@ -116,14 +116,16 @@ passenden Rollen, ohne HTML-Export.
 
 ## 🟢 Offen aus der Legacy-Liste (weiterhin relevant)
 
-- **🟡 Gap-Analyse → Transfer-Shortlist-Brücke.** Aus einer erkannten Lücke
-  direkt die besten gescouteten Kandidaten für die Rolle zeigen und per Klick
-  auf die Shortlist setzen. Im C++-Port noch nicht vorhanden. Teilt sich die
-  Kandidatenlogik mit den Dashboard-Transferzielen (Backlog **#24**: dort fehlt
-  der Retired-/Frische-Ausschluss).
-- **🟡 Gap-Übersicht über mehrere Taktiken.** Gap-Analyse über die
-  Lieblingstaktiken gleichzeitig; Positionen, die in *allen* schwach sind, sind
-  die sichersten Transferziele.
+- **✅ Gap-Analyse → Transfer-Shortlist-Brücke** — erledigt mit v1.4.11: Tab
+  „Kaufberatung“ in Best XI (`core/SigningAdvisor`). Statt Median-Vergleich
+  werden die besten Spieler des gefilterten Markts (Budget, Höchstalter, nur
+  Shortlist) testweise in den Kader geholt und Startelf + B-Team exakt neu
+  gelöst; Rangfolge der Positionen nach gemessenem Startelf-Gewinn, inkl.
+  Folgeeffekten. Kandidaten per Rechtsklick auf die Shortlist. Die alte
+  Gap-Analyse steht eingeklappt darunter, ihr Sidebar-Eintrag ist weg.
+- **🟡 Kaufberatung über mehrere Taktiken.** Die Kaufberatung über die
+  Lieblingstaktiken gleichzeitig; ein Kauf, der in *allen* die Startelf hebt,
+  ist das sicherste Transferziel.
 - **🟡 Rollen & Taktiken bearbeiten/löschen.** Heute gibt es nur „Neue Rolle“
   und „Neue Taktik“. Achtung: Löschen/Ändern einer Rolle erzeugt dieselben
   veralteten DWRS-Werte wie das Entfernen einer Rollenzuweisung (Backlog **#23**) und

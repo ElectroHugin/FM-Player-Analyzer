@@ -26,8 +26,6 @@ add_executable(fmplayeranalyzer
     pages/DwrsProgressPage.cpp
     pages/EditPlayerPage.h
     pages/EditPlayerPage.cpp
-    pages/GapAnalysisPage.h
-    pages/GapAnalysisPage.cpp
     pages/NationalBestXiPage.h
     pages/NationalBestXiPage.cpp
     pages/NationalCallupPage.h
@@ -55,6 +53,8 @@ add_executable(fmplayeranalyzer
     pages/PlayerProfilePage.cpp
     pages/RoleAnalysisPage.h
     pages/RoleAnalysisPage.cpp
+    pages/SigningAdvisorTab.h
+    pages/SigningAdvisorTab.cpp
     pages/SettingsPage.h
     pages/SettingsPage.cpp
     pages/SquadMatrixPage.h

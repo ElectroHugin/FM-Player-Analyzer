@@ -30,6 +30,7 @@ fm_add_test(test_roleratings)
 fm_add_test(test_playerstatus)
 fm_add_test(test_registration)
 fm_add_test(test_squadbuilder)
+fm_add_test(test_signingadvisor)
 
 # Widget test for an app-side class: compiles the widget source directly (the
 # app is an executable, not a library) and runs headless on the offscreen QPA.

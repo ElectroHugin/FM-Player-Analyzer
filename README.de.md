@@ -46,7 +46,7 @@ und Rolle** und baut alles Weitere darauf auf.
 |---|---|
 | *„Wer ist mein bester Spieler für genau diese Rolle?"* | Ein Rollen-Score von 0–100 (**DWRS**) für jeden Spieler in jeder Rolle: farbcodiert, sortierbar, über Positionen hinweg vergleichbar. |
 | *„Was ist meine stärkste Elf?"* | Die mathematisch optimale Best XI samt B-Team auf dem Taktik-Spielfeld, dazu Jugend und Zweitteam, je Wettbewerb. |
-| *„Wo ist mein Team wirklich schwach?"* | Eine Gap-Analyse, die offensichtliche Lücken findet *und* versteckte, etwa einen Star, der nicht auf seiner besten Position spielt. |
+| *„Wo muss ich wirklich kaufen?"* | Eine Kaufberatung, die die besten Spieler deines Budgets testweise in den Kader holt und misst, wie sehr jeder die optimale Startelf verbessert — damit du den fehlenden Ball-Playing Defender kaufst statt noch eines DMs. |
 | *„Welche Taktik passt zu diesem Kader?"* | Jede mitgelieferte Taktik, sortiert danach, wie gut deine Spieler sie ausfüllen. Ideal, wenn du einen neuen Verein übernimmst. |
 | *„Wen soll ich holen?"* | Deine ganze Scouting-Datenbank, gerankt für die Rolle, die du brauchst, mit Filtern für Alter, Marktwert, Nationalität und Persönlichkeit. |
 | *„Wird aus dem Jungen ein Star?"* | Ein Talent-Score aus aktueller Stärke, verbleibenden Entwicklungsjahren, Mentalität und Persönlichkeit. |
@@ -211,7 +211,8 @@ Farben und das Logo deines Vereins in der Kopfzeile.
 
 - **Nationalmannschafts-Modus** — eigenes Dashboard, Kader-Auswahl, Matrix und Best XI, dazu ein Nominierungs-Assistent, der sagt, wen du einladen und wen du streichen solltest.
 - **Squad Matrix** — jeder Spieler gegen jede Rolle einer Taktik in einer farbcodierten Tabelle. Der Tab *Scouting* bietet Talent-, Persönlichkeits- und Attribut-Schwellen-Filter (z. B. Decisions ≥ 15 für einen AM(C)), Free-Agent-Suche und ein Δ zu deinem besten Spieler auf der gewählten Rolle; *Mein Kader* zeigt erste Mannschaft, Zweitteam oder Jugend. CSV-Export in beiden.
-- **Gap-Analyse** — markiert Positionen, die gegenüber dem Team abfallen, und Spieler, die von ihrer besten Position weggezogen sind oder auf der falschen Seite spielen.
+- **Langzeitverletzte** — markiere einen Spieler, der monatelang ausfällt, und Best XI plant ohne ihn: Der Kader wird wieder optimal aufgestellt, und eine Tabelle zeigt Slot für Slot, wer übernimmt.
+- **Gap-Analyse** — eingeklappt im Tab Kaufberatung: markiert Positionen, die gegenüber dem Team abfallen, und Spieler, die von ihrer besten Position weggezogen sind oder auf der falschen Seite spielen.
 - **Transfers und Leihen** — schlägt vielversprechende Talente zum Verleihen und überzählige Spieler zum Verkauf vor.
 - **Eigene Rollen und Taktiken** — eingebaute Editoren; Neues ist sofort überall verfügbar.
 - **Kluger Import** — Newgens behalten über Exporte hinweg ihre Identität, Abgänge werden erkannt, und neue Spieler bekommen ihre Rollen automatisch.
@@ -257,7 +258,7 @@ Meldeliste verlangt, die Registrierungsregeln eintragen.
 
 **6 · Loslegen**
 
-Fang mit **Best XI** an, schau dann in die **Gap-Analyse** und den
+Fang mit **Best XI** und dem Tab **Kaufberatung** an, schau dann in den
 **Taktik-Explorer**. Importiere einen großen Scouting-Export und öffne die
 **Rollen-Analyse**, um zu sehen, wen du wirklich kaufen solltest.
 

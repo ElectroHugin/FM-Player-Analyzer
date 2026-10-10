@@ -45,7 +45,7 @@ and builds everything else on top of it.
 |---|---|
 | *"Who is my best player for this exact role?"* | A 0–100 role-fit score (**DWRS**) for every player in every role, colour-coded, sortable, comparable across positions. |
 | *"What is my strongest eleven?"* | The mathematically optimal Best XI and B-team on a tactical pitch — plus youth and second team, per competition. |
-| *"Where is my team really weak?"* | Gap analysis that finds the obvious holes *and* the hidden ones, such as a star playing out of his best slot. |
+| *"Where do I really need to buy?"* | A signing advisor that tries the best players your budget affords in your squad and measures how much each one lifts the optimal XI — so you buy the ball-playing defender you lack, not yet another DM. |
 | *"Which tactic suits this squad?"* | Every bundled tactic ranked by how well your players fill it. Ideal when you take over a new club. |
 | *"Who should I sign?"* | Your whole scouting database ranked for the role you need, with filters for age, value, nationality and personality. |
 | *"Is this kid a future star?"* | A talent score that combines current ability, years left to develop, mentality and personality. |
@@ -202,7 +202,8 @@ colours and your club's logo in the header.
 
 - **National-team mode** — its own dashboard, squad selection, matrix and Best XI, plus a call-up assistant that tells you who to invite and who to drop.
 - **Squad Matrix** — every player against every role of a tactic in one colour-coded table. The *Scouting* tab adds talent, personality and attribute-threshold filters (e.g. Decisions ≥ 15 for an AM(C)), a free-agent search and a Δ to your best player in the chosen role; *My Squad* shows your first team, second team or youth. CSV export on both.
-- **Gap analysis** — flags slots that drop off against the team and players pulled away from their best position or onto the wrong side.
+- **Long-term injuries** — mark a player as out for months and Best XI plans without him: the squad is lined up optimally again, and a table shows slot by slot who takes over.
+- **Gap analysis** — in the signing advisor's tab, collapsed: flags slots that drop off against the team and players pulled away from their best position or onto the wrong side.
 - **Transfers and loans** — suggests promising talents to loan out and surplus players to sell.
 - **Your own roles and tactics** — built-in editors; new entries are available everywhere immediately.
 - **Smart imports** — newgens keep their identity across exports, departures are detected, and new players get their roles assigned automatically.
@@ -246,8 +247,8 @@ registration — the registration rules.
 
 **6 · Explore**
 
-Start with **Best XI**, then look at **Gap Analysis** and the **Tactic
-Explorer**. Import a big scouting export and open **Role Analysis** to see who
+Start with **Best XI** and its **Signing advisor** tab, then look at the
+**Tactic Explorer**. Import a big scouting export and open **Role Analysis** to see who
 you should really be buying.
 
 > **Tips**

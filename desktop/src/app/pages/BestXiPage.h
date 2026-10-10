@@ -18,6 +18,7 @@ class QToolButton;
 namespace fm {
 
 struct Player;
+class SigningAdvisorTab;
 class TacticPitchWidget;
 class ThemeManager;
 struct SquadResult;
@@ -34,6 +35,8 @@ struct DepthOption;
 //
 // Players marked as long-term injured are left out of every squad unless the
 // user plans them in; a table shows how the optimal line-up closes the gap.
+//
+// The tab "Signing advisor" (SigningAdvisorTab) starts from the same squad.
 class BestXiPage : public PageBase
 {
     Q_OBJECT
@@ -42,6 +45,7 @@ public:
     BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent = nullptr);
 
     void refresh() override;
+    void releaseStoreRows() override;
 
 private:
     // How the team selection works, shown under the tactic choice.
@@ -83,6 +87,8 @@ private:
     QTableWidget *m_loanTable = nullptr;
     QGroupBox *m_sellBox = nullptr;
     QTableWidget *m_sellTable = nullptr;
+
+    SigningAdvisorTab *m_signingTab = nullptr;
 
     bool m_updating = false;
 };

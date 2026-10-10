@@ -6,7 +6,6 @@
 #include "pages/DashboardPage.h"
 #include "pages/DwrsProgressPage.h"
 #include "pages/EditPlayerPage.h"
-#include "pages/GapAnalysisPage.h"
 #include "pages/NationalBestXiPage.h"
 #include "pages/NationalCallupPage.h"
 #include "pages/RegistrationPage.h"
@@ -76,7 +75,6 @@ const QList<MenuEntry> &clubMenu()
         {QObject::tr("Squad Matrix"), QStringLiteral("squad_matrix")},
         {QObject::tr("Best XI"), QStringLiteral("best_xi")},
         {QObject::tr("Registrierung"), QStringLiteral("registration")},
-        {QObject::tr("Gap-Analyse"), QStringLiteral("gap_analysis")},
         {QObject::tr("Taktik-Explorer"), QStringLiteral("tactic_explorer")},
         {QObject::tr("Trainingsplan"), QStringLiteral("training_plan")},
         {QObject::tr("Transfers"), QStringLiteral("transfers")},
@@ -441,8 +439,6 @@ PageBase *MainWindow::createPage(const QString &pageId)
         return new EditPlayerPage(m_context, this);
     if (pageId == QLatin1String("best_xi"))
         return new BestXiPage(m_context, m_theme, this);
-    if (pageId == QLatin1String("gap_analysis"))
-        return new GapAnalysisPage(m_context, m_theme, this);
     if (pageId == QLatin1String("tactic_explorer"))
         return new TacticExplorerPage(m_context, this);
     if (pageId == QLatin1String("national_dashboard"))

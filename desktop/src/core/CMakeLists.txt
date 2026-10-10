@@ -38,6 +38,8 @@ add_library(fmcore STATIC
     RoleAnalysis.cpp
     RoleAssignment.h
     RoleAssignment.cpp
+    SigningAdvisor.h
+    SigningAdvisor.cpp
     SquadBuilder.h
     SquadBuilder.cpp
     TacticExplorer.h
