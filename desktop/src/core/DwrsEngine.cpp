@@ -78,9 +78,23 @@ DwrsEngine::RolePlan DwrsEngine::buildPlan(const QString &role) const
     QHash<QString, int> categoryIndex;
     std::vector<double> worstSums, bestSums;
 
-    for (auto it = statCategories.constBegin(); it != statCategories.constEnd(); ++it) {
-        const QString &attr = it.key();
-        const QString &category = it.value();
+    // Role-listed attributes outside the importance tiers form the "Key" and
+    // "Preferable" categories — but only where the weight table has them
+    // (goalkeepers). Outfield weight tables have neither, so outfield ratings
+    // are unaffected.
+    QList<QPair<QString, QString>> attrCategories;
+    for (auto it = statCategories.constBegin(); it != statCategories.constEnd(); ++it)
+        attrCategories.append({it.key(), it.value()});
+    for (const QString &attr : roleWeights.key) {
+        if (!statCategories.contains(attr))
+            attrCategories.append({attr, QStringLiteral("Key")});
+    }
+    for (const QString &attr : roleWeights.preferable) {
+        if (!statCategories.contains(attr) && !keyAttrs.contains(attr))
+            attrCategories.append({attr, QStringLiteral("Preferable")});
+    }
+
+    for (const auto &[attr, category] : attrCategories) {
         const auto weightIt = weights.constFind(category);
         if (weightIt == weights.constEnd())
             continue; // category not in the weight table -> attribute ignored

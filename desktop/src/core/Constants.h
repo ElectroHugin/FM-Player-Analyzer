@@ -51,6 +51,13 @@ const QHash<QString, QString> &gkStatCategories(const QString &versionId);
 const QHash<QString, double> &weightDefaults(const QString &versionId);   // field players
 const QHash<QString, double> &gkWeightDefaults(const QString &versionId); // goalkeepers
 
+// Version of the DWRS formula. Bump it whenever a change makes the ratings
+// stored in a database outdated; each database records the version its
+// ratings were computed with ("dwrs_scheme"), and the app offers a full
+// recalculation when it is older. 2 = goalkeepers rate all 13 goalkeeping
+// attributes, role lists count as Key/Preferable (v1.4.13).
+inline constexpr int kDwrsSchemeVersion = 2;
+
 // Default role multipliers.
 inline constexpr double kKeyMultiplierDefault = 1.5;
 inline constexpr double kPreferableMultiplierDefault = 1.2;

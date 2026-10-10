@@ -68,6 +68,33 @@ FM27. Abgestimmt am 2026-10-10.
      `Constants.cpp`).
   5. **Danach:** Gewichte nachziehen, sobald Engine-Tests vorliegen.
 
+### 🟡 Statistik-Labor: Attributgewichte aus Spielstatistiken prüfen
+
+**Ziel:** Mit echten Spielstatistiken aus einem FM-Export prüfen, welche
+Attribute wirklich zu guter Leistung führen, und die DWRS-Gewichte daraus
+ableiten oder bestätigen. Für FM27 wichtig, weil es dort anfangs keine
+Engine-Tests gibt (FM27-Plan, Schritt 5).
+
+- **Vorbild Torhüter (2026-10-10):** Export „Goalkeeper_Analysis.html“ mit
+  8070 Torhütern (Spieljahr 2043), 335 davon mit mindestens 10 Einsätzen und
+  Detailstatistik. Maß: xGP/90 (erwartete verhinderte Tore). Die Note eignet
+  sich nicht, sie hängt mit −0,91 an den Gegentoren, misst also die Abwehr.
+  Ergebnis: Der alte Torwart-DWRS rechnete nur mit 6 Attributen (r = 0,43);
+  das neue Schema aus der Analyse erreicht r = 0,58 (v1.4.13).
+- **Verfahren:** Spannen als Mitte rechnen; Korrelation je Attribut, auch
+  bereinigt um das Gesamtniveau (sonst korreliert alles mit allem); Prüfung
+  immer an ungesehenen Daten (wiederholte Halbierung), damit keine
+  Scheingenauigkeit entsteht.
+- **Feldspieler:** schwieriger, weil fast jede Statistik von Mannschaft und
+  Taktik abhängt. Brauchbar sind Kennzahlen, die gegen einen Erwartungswert
+  rechnen (z. B. Tore − xG für den Abschluss). Je Positionsgruppe eine
+  passende Kennzahl wählen.
+- **Mögliche Umsetzung:** eigene Seite: Statistik-Export laden, Kennzahl
+  wählen, Attribut-Zusammenhänge und Treffsicherheit des aktuellen DWRS
+  anzeigen, Gewichtsvorschlag als Option übernehmen.
+- **Hinweis:** Communication, Eccentricity und Punching importiert die App
+  nicht (nicht unter den 40 Attributen). Für eine Auswertung müssten sie dazu.
+
 ### ✅ Registrierungs-Assistent (Premier League + UEFA) — fertig mit v1.4.1
 
 **Ziel:** Meldeliste so bilden, dass sie **registrierbar** ist und keine Plätze

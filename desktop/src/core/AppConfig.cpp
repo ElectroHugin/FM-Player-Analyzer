@@ -11,6 +11,9 @@ namespace fm {
 
 namespace {
 
+// Version of the goalkeeper weight scheme the [GKWeights] values belong to.
+constexpr int kGkWeightsScheme = 2;
+
 const QHash<QString, double> &gapAnalysisDefaults()
 {
     static const QHash<QString, double> defaults = {
@@ -141,6 +144,19 @@ void AppConfig::ensureDefaults()
         const auto &gkWeights = gkWeightDefaults(version.id);
         for (auto it = gkWeights.constBegin(); it != gkWeights.constEnd(); ++it)
             ensure(gkSection + iniKey(it.key()), QString::number(it.value()));
+    }
+
+    // Goalkeeper scheme 2 (v1.4.13): FM24 goalkeeper weights tuned for the old
+    // formula — six attributes, Key/Preferable/Other without effect — do not
+    // fit the new tiers, so they are reset once to the new defaults.
+    if (s.value(QStringLiteral("Migrations/gk_weights_scheme"), 1).toInt() < kGkWeightsScheme) {
+        const QString fm24 = defaultFmVersionId();
+        const QString gkSection = weightsSection(fm24, true) + QLatin1Char('/');
+        const auto &gkWeights = gkWeightDefaults(fm24);
+        for (auto it = gkWeights.constBegin(); it != gkWeights.constEnd(); ++it)
+            s.setValue(gkSection + iniKey(it.key()), QString::number(it.value()));
+        s.setValue(QStringLiteral("Migrations/gk_weights_scheme"), kGkWeightsScheme);
+        modified = true;
     }
 
     ensure(QStringLiteral("RoleMultipliers/key_multiplier"), QStringLiteral("1.5"));

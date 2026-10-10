@@ -477,6 +477,21 @@ QWidget *SettingsPage::buildWeightsTab()
         aptForm->addRow(apt + QStringLiteral(":"), spin);
     }
     layout->addWidget(aptGroup);
+
+    auto *recalcGroup = new QGroupBox(tr("Neuberechnung"), content);
+    auto *recalcLayout = new QVBoxLayout(recalcGroup);
+    auto *recalcButton = new QPushButton(tr("Alle DWRS-Bewertungen neu berechnen"), recalcGroup);
+    auto *recalcHint = new QLabel(
+        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit den "
+           "gespeicherten Gewichten neu. Nicht gespeicherte Änderungen auf dieser Seite "
+           "werden dabei nicht berücksichtigt."),
+        recalcGroup);
+    recalcHint->setWordWrap(true);
+    recalcHint->setObjectName(QStringLiteral("kpiCaption"));
+    recalcLayout->addWidget(recalcButton, 0, Qt::AlignLeft);
+    recalcLayout->addWidget(recalcHint);
+    layout->addWidget(recalcGroup);
+    connect(recalcButton, &QPushButton::clicked, this, &SettingsPage::recalcRequested);
     layout->addStretch(1);
 
     return wrapScrollable(content);

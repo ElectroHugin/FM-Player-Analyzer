@@ -71,7 +71,7 @@ private slots:
     void gkRoleIgnoresOutfieldAttributes()
     {
         // Changing a pure outfield attribute (Finishing) must not affect a GK
-        // role, which rates only the 6 GK stat categories.
+        // role: it is neither a goalkeeping tier nor on the role's lists.
         Player p = playerWithAllAttrs(10);
         const QString gkRole = QStringLiteral("GK-D");
         const auto [absBefore, normBefore] = engine->calculate(p, gkRole);
@@ -85,6 +85,63 @@ private slots:
                                                        QStringLiteral("AF-A"));
         const auto [outAfter, n2] = engine->calculate(p, QStringLiteral("AF-A"));
         QVERIFY(outAfter > outBefore);
+    }
+
+    void gkRoleRatesAllGoalkeepingTiers()
+    {
+        // Scheme 2: every goalkeeping attribute the app imports takes part,
+        // not only the legacy six (Positioning used to be ignored).
+        const auto &tiers = gkStatCategories(defaultFmVersionId());
+        QCOMPARE(tiers.size(), 13);
+        QCOMPARE(tiers.value(QStringLiteral("Positioning")), QStringLiteral("Top Importance"));
+        for (auto it = tiers.constBegin(); it != tiers.constEnd(); ++it)
+            QVERIFY2(attrIndexByName(it.key()) >= 0, qPrintable(it.key()));
+
+        for (const QString &attr : tiers.keys()) {
+            Player p = playerWithAllAttrs(10);
+            const auto [before, n1] = engine->calculate(p, QStringLiteral("GK-D"));
+            const int idx = attrIndexByName(attr);
+            p.attrLo[idx] = 20;
+            p.attrHi[idx] = 20;
+            const auto [after, n2] = engine->calculate(p, QStringLiteral("GK-D"));
+            QVERIFY2(after > before, qPrintable(attr));
+        }
+    }
+
+    void gkRoleListsCountOutsideTiers()
+    {
+        // A role-listed outfield attribute (SK-D prefers First Touch) counts
+        // through the "Preferable" category — before scheme 2 it was ignored.
+        Player p = playerWithAllAttrs(10);
+        const QString role = QStringLiteral("SK-D");
+        QVERIFY(defs.roleWeights(role).preferable.contains(QStringLiteral("First Touch")));
+        const auto [before, n1] = engine->calculate(p, role);
+        const int firstTouch = attrIndexByName(QStringLiteral("First Touch"));
+        p.attrLo[firstTouch] = 20;
+        p.attrHi[firstTouch] = 20;
+        const auto [after, n2] = engine->calculate(p, role);
+        QVERIFY(after > before);
+        // GK-D does not list First Touch, so it stays unaffected.
+        const auto [gkBefore, n3] = engine->calculate(playerWithAllAttrs(10), QStringLiteral("GK-D"));
+        const auto [gkAfter, n4] = engine->calculate(p, QStringLiteral("GK-D"));
+        QCOMPARE(gkAfter, gkBefore);
+    }
+
+    void outfieldRoleListsOutsideTiersStayIgnored()
+    {
+        // Outfield weight tables have no Key/Preferable category: a key
+        // attribute outside the outfield tiers (WCB-S keys Heading) keeps not
+        // counting, exactly as in the legacy formula.
+        const QString role = QStringLiteral("WCB-S");
+        QVERIFY(defs.roleWeights(role).key.contains(QStringLiteral("Heading")));
+        QVERIFY(!globalStatCategories(defaultFmVersionId()).contains(QStringLiteral("Heading")));
+        Player p = playerWithAllAttrs(10);
+        const auto [before, n1] = engine->calculate(p, role);
+        const int heading = attrIndexByName(QStringLiteral("Heading"));
+        p.attrLo[heading] = 20;
+        p.attrHi[heading] = 20;
+        const auto [after, n2] = engine->calculate(p, role);
+        QCOMPARE(after, before);
     }
 
     void keyAttributesRaiseRating()

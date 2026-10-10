@@ -30,6 +30,7 @@
 #include "core/Version.h"
 
 #include <QAction>
+#include <QTimer>
 #include <QActionGroup>
 #include <QApplication>
 #include <QCloseEvent>
@@ -202,6 +203,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         // Another database: earlier steps (e.g. a player's profile) may not
         // exist here, so the history starts over.
         resetHistory();
+        offerRecalcIfOutdated();
     });
     connect(&m_context, &AppContext::dataChanged, this, [this] {
         m_searchModelDirty = true;
@@ -234,11 +236,39 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
                                      .arg(result.computed)
                                      .arg(result.inserted),
                                  10000);
+        // Every stored rating now follows the current formula.
+        m_context.database().setSetting(QStringLiteral("dwrs_scheme"),
+                                        QString::number(kDwrsSchemeVersion));
         // A recalc only writes ratings; the players are unchanged.
         m_context.reloadRatings();
     });
 
     navigateTo(QStringLiteral("dashboard"));
+    // After the window is up, so the question appears on top of it.
+    QTimer::singleShot(0, this, &MainWindow::offerRecalcIfOutdated);
+}
+
+void MainWindow::offerRecalcIfOutdated()
+{
+    Database &db = m_context.database();
+    // Databases without the setting predate it: their ratings are scheme 1.
+    if (db.setting(QStringLiteral("dwrs_scheme"), QStringLiteral("1")).toInt()
+        >= kDwrsSchemeVersion)
+        return;
+    if (m_context.store().size() == 0) {
+        // Nothing stored yet: every future rating uses the current formula.
+        db.setSetting(QStringLiteral("dwrs_scheme"), QString::number(kDwrsSchemeVersion));
+        return;
+    }
+    const auto answer = QMessageBox::question(
+        this, tr("DWRS-Berechnung verbessert"),
+        tr("Die DWRS-Berechnung wurde verbessert: Torhüter werden jetzt nach allen "
+           "Torwart-Attributen bewertet, einschließlich der Schlüssel- und bevorzugten "
+           "Attribute ihrer Rolle.\n\nDie gespeicherten Bewertungen dieses Spielstands "
+           "stammen noch aus der alten Berechnung. Jetzt alle neu berechnen?\n\n"
+           "(Später jederzeit unter Einstellungen → DWRS-Gewichte möglich.)"));
+    if (answer == QMessageBox::Yes)
+        startDwrsRecalc();
 }
 
 void MainWindow::buildSidebar()

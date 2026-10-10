@@ -22,7 +22,8 @@ private slots:
         QCOMPARE(config.dbName(), QStringLiteral("default"));
         QCOMPARE(config.weight(kFm24, QStringLiteral("Extremely Important")), 8.0);
         QCOMPARE(config.weight(kFm24, QStringLiteral("Almost Irrelevant")), 0.2);
-        QCOMPARE(config.gkWeight(kFm24, QStringLiteral("Top Importance")), 10.0);
+        QCOMPARE(config.gkWeight(kFm24, QStringLiteral("Top Importance")), 3.0);
+        QCOMPARE(config.gkWeight(kFm24, QStringLiteral("Preferable")), 0.25);
         QCOMPARE(config.roleMultiplier(QStringLiteral("key")), 1.5);
         QCOMPARE(config.roleMultiplier(QStringLiteral("preferable")), 1.2);
         QCOMPARE(config.aptWeight(QStringLiteral("Star Player")), 1.0);
@@ -114,6 +115,36 @@ private slots:
         QCOMPARE(config.roleMultiplier(QStringLiteral("key")), 8.0);
         // Sections missing from the file get seeded with defaults.
         QCOMPARE(config.ageThreshold(QStringLiteral("goalkeeper")), 25);
+    }
+
+    void resetsOldGoalkeeperWeightsOnce()
+    {
+        // Goalkeeper weights tuned for the old six-attribute formula are
+        // replaced once by the scheme-2 defaults; the outfield weights stay.
+        QTemporaryDir dir;
+        const QString path = dir.filePath(QStringLiteral("config.ini"));
+        {
+            QFile f(path);
+            QVERIFY(f.open(QIODevice::WriteOnly));
+            f.write("[Weights]\n"
+                    "extremely_important = 10.0\n"
+                    "\n"
+                    "[GKWeights]\n"
+                    "top_importance = 4.0\n"
+                    "key = 8.0\n"
+                    "other = 0.4\n");
+        }
+        {
+            AppConfig config(path);
+            QCOMPARE(config.gkWeight(kFm24, QStringLiteral("Top Importance")), 3.0);
+            QCOMPARE(config.gkWeight(kFm24, QStringLiteral("Key")), 0.5);
+            QCOMPARE(config.gkWeight(kFm24, QStringLiteral("Other")), 0.2);
+            QCOMPARE(config.weight(kFm24, QStringLiteral("Extremely Important")), 10.0);
+            // Tuning after the reset must survive later starts.
+            config.setGkWeight(kFm24, QStringLiteral("Top Importance"), 5.0);
+        }
+        AppConfig reloaded(path);
+        QCOMPARE(reloaded.gkWeight(kFm24, QStringLiteral("Top Importance")), 5.0);
     }
 
     void weightSectionsPerFmVersion()

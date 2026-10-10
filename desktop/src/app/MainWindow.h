@@ -65,6 +65,9 @@ private:
     void updateNavButtons();
     PageBase *createPage(const QString &pageId);
     void startDwrsRecalc();
+    // Asks for a full recalculation when the active database's ratings were
+    // computed with an older DWRS formula (kDwrsSchemeVersion).
+    void offerRecalcIfOutdated();
     void updateDbLabel();
     void updateHeader();
     void rebuildSearchModel();

@@ -30,7 +30,7 @@ public:
     void refresh() override;
 
 signals:
-    void recalcRequested(); // weights changed -> MainWindow runs the recalc
+    void recalcRequested(); // weights changed or asked for -> MainWindow runs the recalc
 
 private:
     QWidget *buildClubTab();

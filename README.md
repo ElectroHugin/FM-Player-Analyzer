@@ -295,9 +295,24 @@ these values and multiplies by the tier weight; the sum over all tiers is the
 "absolute" score. It is then scaled between the same calculation for a player
 with 1 in every attribute (0 %) and one with 20 in every attribute (100 %).
 
-Goalkeepers have their own tiers and weights. The tier weights, the multipliers
-and the key/preferred attributes of every role can be changed under
-**Settings** — tune them to your philosophy and every rating updates.
+Goalkeepers have their own tiers and weights, derived from the season
+statistics of 335 keepers: which attributes go with more goals prevented than
+expected (xGP/90), even at the same overall level. This weighting predicts
+goalkeeper performance clearly better than the previous one (correlation 0.58
+instead of 0.43).
+
+| Tier | Default weight | Attributes |
+|---|---|---|
+| Top Importance | 3.0 | Positioning, Aerial Reach, Handling |
+| High Importance | 2.0 | Agility, Anticipation, Kicking |
+| Medium Importance | 1.0 | Reflexes, Command of Area, Concentration, Throwing |
+| Key | 0.5 | other key attributes of the role (e.g. Composure for a Sweeper Keeper) |
+| Preferable | 0.25 | other preferred attributes of the role (e.g. Passing, Vision) |
+| Other | 0.2 | Bravery, One vs One, Rushing Out |
+
+The tier weights, the multipliers and the key/preferred attributes of every
+role can be changed under **Settings** — tune them to your philosophy and start
+the recalculation under **DWRS Weights**.
 
 </details>
 

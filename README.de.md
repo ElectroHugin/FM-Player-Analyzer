@@ -308,10 +308,24 @@ mittelt die App diese Werte und multipliziert mit dem Stufengewicht; die Summe
 Rechnung für einen Spieler mit 1 in jedem Attribut (0 %) und einen mit 20 in
 jedem Attribut (100 %) skaliert.
 
-Torhüter haben eigene Stufen und Gewichte. Die Stufengewichte, die
-Multiplikatoren und die Schlüssel- bzw. bevorzugten Attribute jeder Rolle
-lassen sich unter **Einstellungen** ändern. Passe sie an deine Spielidee an,
-und jede Bewertung aktualisiert sich.
+Torhüter haben eigene Stufen und Gewichte. Abgeleitet sind sie aus den
+Saisonstatistiken von 335 Torhütern: Gemessen wurde, welche Attribute mit
+mehr verhinderten Toren gegenüber der Erwartung (xGP/90) einhergehen, auch bei
+gleichem Gesamtniveau. Diese Gewichtung sagt die Torwartleistung deutlich
+besser voraus als die frühere (Korrelation 0,58 statt 0,43).
+
+| Stufe | Standardgewicht | Attribute |
+|---|---|---|
+| Top Importance | 3,0 | Positioning, Aerial Reach, Handling |
+| High Importance | 2,0 | Agility, Anticipation, Kicking |
+| Medium Importance | 1,0 | Reflexes, Command of Area, Concentration, Throwing |
+| Key | 0,5 | weitere Schlüssel-Attribute der Rolle (z. B. Composure beim Sweeper Keeper) |
+| Preferable | 0,25 | weitere bevorzugte Attribute der Rolle (z. B. Passing, Vision) |
+| Other | 0,2 | Bravery, One vs One, Rushing Out |
+
+Die Stufengewichte, die Multiplikatoren und die Schlüssel- bzw. bevorzugten
+Attribute jeder Rolle lassen sich unter **Einstellungen** ändern. Passe sie an
+deine Spielidee an und starte dort unter **DWRS-Gewichte** die Neuberechnung.
 
 </details>
 
