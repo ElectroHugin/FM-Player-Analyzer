@@ -6,6 +6,18 @@
 
 namespace fm {
 
+namespace {
+
+// Horizontal text padding on each side of a self-painted cell.
+constexpr int kTextPadding = 9;
+
+bool paintedByBase(const QModelIndex &index)
+{
+    return index.data(Qt::CheckStateRole).isValid() || !index.data(Qt::DecorationRole).isNull();
+}
+
+} // namespace
+
 void CellStyleDelegate::install(QAbstractItemView *view)
 {
     view->setItemDelegate(new CellStyleDelegate(view));
@@ -16,8 +28,7 @@ void CellStyleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 {
     // Checkboxes / icons: let the base delegate handle them (the stylesheet no
     // longer owns `::item`, so model background colors still come through).
-    if (index.data(Qt::CheckStateRole).isValid()
-        || !index.data(Qt::DecorationRole).isNull()) {
+    if (paintedByBase(index)) {
         QStyledItemDelegate::paint(painter, option, index);
         return;
     }
@@ -72,7 +83,7 @@ void CellStyleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         if (alignData.isValid())
             align = alignData.toInt();
 
-        const QRect textRect = opt.rect.adjusted(9, 0, -9, 0);
+        const QRect textRect = opt.rect.adjusted(kTextPadding, 0, -kTextPadding, 0);
         const QString elided =
             opt.fontMetrics.elidedText(text, Qt::ElideRight, textRect.width());
         painter->setPen(fg);
@@ -88,6 +99,15 @@ QSize CellStyleDelegate::sizeHint(const QStyleOptionViewItem &option,
 {
     QSize hint = QStyledItemDelegate::sizeHint(option, index);
     hint.setHeight(qMax(hint.height() + 8, 30));
+    // The base hint reserves only the style's small text margin; paint() pads
+    // more, so "resize to contents" would otherwise elide the longest text.
+    if (!paintedByBase(index)) {
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+        const int textWidth =
+            opt.fontMetrics.horizontalAdvance(index.data(Qt::DisplayRole).toString());
+        hint.setWidth(qMax(hint.width(), textWidth + 2 * kTextPadding + 1));
+    }
     return hint;
 }
 
