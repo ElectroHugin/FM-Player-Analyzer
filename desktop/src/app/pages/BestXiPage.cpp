@@ -2,6 +2,7 @@
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
+#include "../theming/ThemeManager.h"
 #include "../widgets/NumericTableItem.h"
 #include "../widgets/TacticPitchWidget.h"
 #include "PageHelpers.h"
@@ -9,7 +10,9 @@
 #include "core/TalentEngine.h"
 #include "core/Utils.h"
 
+#include <QCheckBox>
 #include <QComboBox>
+#include <QCursor>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -99,6 +102,51 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_hint->setVisible(shown);
         m_hintToggle->setArrowType(shown ? Qt::DownArrow : Qt::RightArrow);
     });
+
+    // Long-term injuries: who is missing and who takes over.
+    m_injuryBox = new QGroupBox(content);
+    m_injuryBox->setVisible(false);
+    {
+        auto *injuryLayout = new QVBoxLayout(m_injuryBox);
+        auto *noteRow = new QHBoxLayout;
+        m_injuryNote = new QLabel(m_injuryBox);
+        m_injuryNote->setWordWrap(true);
+        m_injuryNote->setTextFormat(Qt::RichText);
+        m_injuryNote->setToolTip(tr("Klick auf einen Namen öffnet das Spieler-Menü "
+                                    "(z. B. um ihn wieder als fit zu markieren)."));
+        noteRow->addWidget(m_injuryNote, 1);
+        m_planInjuredCheck = new QCheckBox(tr("Trotzdem einplanen"), m_injuryBox);
+        m_planInjuredCheck->setToolTip(
+            tr("Zeigt die Aufstellung, als wären alle fit. Die Tabelle bleibt der Vergleich "
+               "mit allen fit gegen ohne die Verletzten."));
+        noteRow->addWidget(m_planInjuredCheck, 0, Qt::AlignTop);
+        injuryLayout->addLayout(noteRow);
+        m_injuryTable = new QTableWidget(m_injuryBox);
+        m_injuryTable->setColumnCount(8);
+        m_injuryTable->setHorizontalHeaderLabels({tr("Team"), tr("Slot"), tr("Rolle"),
+                                                  tr("Alle fit"), tr("DWRS"),
+                                                  tr("Ohne Verletzte"), tr("DWRS"), tr("Δ")});
+        m_injuryTable->verticalHeader()->setVisible(false);
+        m_injuryTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        m_injuryTable->setAlternatingRowColors(true);
+        m_injuryTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+        // Columns follow their content even when the page is polished later.
+        m_injuryTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        m_injuryTable->horizontalHeader()->setStretchLastSection(true);
+        m_injuryTable->setWordWrap(false);
+        m_injuryTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        injuryLayout->addWidget(m_injuryTable);
+    }
+    layout->addWidget(m_injuryBox);
+    connect(m_planInjuredCheck, &QCheckBox::toggled, this, [this] {
+        if (!m_updating)
+            rebuild();
+    });
+    connect(m_injuryNote, &QLabel::linkActivated, this, [this](const QString &uid) {
+        PlayerActions::showContextMenu(m_context, this, uid, QCursor::pos());
+    });
+    // Both player columns carry their own uid.
+    PlayerActions::attachToTableWidget(m_context, m_injuryTable, -1);
 
     m_tabs = new QTabWidget(content);
 
@@ -308,51 +356,70 @@ void BestXiPage::rebuild()
     const auto roleNames = m_context.definitions().roleDisplayMap();
     const RoleRatings &ratings = m_context.ratings();
 
-    std::vector<const Player *> clubPlayers, secondPlayers;
+    // Long-term injured players are left out of every squad unless the user
+    // plans them in anyway.
+    const bool planInjured = m_planInjuredCheck->isChecked();
+    std::vector<const Player *> clubAll, secondAll, injured;
     for (const Player &player : m_context.store().players()) {
-        if (player.club == userClub)
-            clubPlayers.push_back(&player);
-        else if (!secondClub.isEmpty() && player.club == secondClub)
-            secondPlayers.push_back(&player);
+        const bool firstTeam = player.club == userClub;
+        if (!firstTeam && (secondClub.isEmpty() || player.club != secondClub))
+            continue;
+        (firstTeam ? clubAll : secondAll).push_back(&player);
+        if (player.longTermInjured)
+            injured.push_back(&player);
     }
+    const auto fitOnly = [](const std::vector<const Player *> &players) {
+        std::vector<const Player *> fit;
+        for (const Player *player : players) {
+            if (!player->longTermInjured)
+                fit.push_back(player);
+        }
+        return fit;
+    };
+    const std::vector<const Player *> clubFit = fitOnly(clubAll);
+    const std::vector<const Player *> secondFit = fitOnly(secondAll);
+    const std::vector<const Player *> &clubPlayers = planInjured ? clubAll : clubFit;
+    const std::vector<const Player *> &secondPlayers = planInjured ? secondAll : secondFit;
 
     // Registration: with a competition chosen, the first team is built only
     // from the players who may play in it. Second-team players count when they
     // are on the list themselves — the assistant fills free places with them.
     // The development squads (second team, youth, loan/sell lists) are about
     // the whole club, so they always start from the unrestricted first team.
-    const SquadResult full = m_context.squadBuilder().calculateSquadAndSurplus(
-        clubPlayers, positions, slotOrder, ratings);
-
-    std::vector<const Player *> eligiblePlayers;
-    bool restricted = false;
-    QString note;
     const int competitionMode = m_competitionCombo->currentData().toInt();
     const bool leagueList =
         competitionMode == kLeague
         && Registration::restrictsSquad(m_context.registrationSettings().league);
-    if (leagueList || competitionMode == kUefa) {
-        const Registration::Competition competition = competitionMode == kUefa
-                                                          ? Registration::Competition::Uefa
-                                                          : Registration::Competition::League;
-        std::vector<const Player *> registrationPool = clubPlayers;
-        registrationPool.insert(registrationPool.end(), secondPlayers.begin(),
-                                secondPlayers.end());
-        if (!Registration::hasSavedList(registrationPool, competition)) {
-            note = tr("⚠️ Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
-                      "rechnet mit allen Spielern. Speichere sie auf der Seite 'Registrierung'.");
-        } else {
-            restricted = true;
-            // Who the list costs: the players a free choice would line up.
-            QSet<QString> unrestrictedTeams;
-            for (const auto &team : {full.startingXi, full.bTeam})
-                for (const XiCell &cell : team)
-                    if (cell.isFilled())
-                        unrestrictedTeams.insert(cell.playerUid);
-            int leftOut = 0;
-            QStringList missed;
-            for (const Player *player : registrationPool) {
-                const bool firstTeam = player->club == userClub;
+    const bool listedCompetition = leagueList || competitionMode == kUefa;
+    const Registration::Competition competition = competitionMode == kUefa
+                                                      ? Registration::Competition::Uefa
+                                                      : Registration::Competition::League;
+    std::vector<const Player *> registrationPool = clubAll;
+    registrationPool.insert(registrationPool.end(), secondAll.begin(), secondAll.end());
+    const bool restricted =
+        listedCompetition && Registration::hasSavedList(registrationPool, competition);
+
+    // The first team of one pool; *full receives the unrestricted squad and
+    // *note (optional) who the competition leaves out.
+    const auto firstTeamOf = [&](const std::vector<const Player *> &club,
+                                 const std::vector<const Player *> &second, SquadResult *full,
+                                 QString *note) {
+        *full = m_context.squadBuilder().calculateSquadAndSurplus(club, positions, slotOrder,
+                                                                  ratings);
+        if (!restricted)
+            return *full;
+        // Who the list costs: the players a free choice would line up.
+        QSet<QString> unrestrictedTeams;
+        for (const auto &team : {full->startingXi, full->bTeam})
+            for (const XiCell &cell : team)
+                if (cell.isFilled())
+                    unrestrictedTeams.insert(cell.playerUid);
+        std::vector<const Player *> eligiblePlayers;
+        int leftOut = 0;
+        QStringList missed;
+        for (const auto *pool : {&club, &second}) {
+            for (const Player *player : *pool) {
+                const bool firstTeam = pool == &club;
                 if (firstTeam ? Registration::isEligible(*player, competition)
                               : Registration::isListed(*player, competition)) {
                     eligiblePlayers.push_back(player);
@@ -362,26 +429,46 @@ void BestXiPage::rebuild()
                         missed << player->name;
                 }
             }
+        }
+        if (note) {
             if (leftOut == 0) {
-                note = tr("Alle Spieler der ersten Mannschaft sind spielberechtigt.");
+                *note = tr("Alle Spieler der ersten Mannschaft sind spielberechtigt.");
             } else {
-                note = tr("%1 Spieler der ersten Mannschaft sind nicht gemeldet und bleiben "
-                          "außen vor.")
-                           .arg(leftOut);
+                *note = tr("%1 Spieler der ersten Mannschaft sind nicht gemeldet und bleiben "
+                           "außen vor.")
+                            .arg(leftOut);
                 if (!missed.isEmpty())
-                    note += QLatin1Char(' ')
-                            + tr("Ohne Meldeliste stünden davon in Startelf oder B-Team: %1")
-                                  .arg(missed.join(QStringLiteral(", ")));
+                    *note += QLatin1Char(' ')
+                             + tr("Ohne Meldeliste stünden davon in Startelf oder B-Team: %1")
+                                   .arg(missed.join(QStringLiteral(", ")));
             }
         }
-    }
+        return m_context.squadBuilder().calculateSquadAndSurplus(eligiblePlayers, positions,
+                                                                 slotOrder, ratings);
+    };
+
+    QString note;
+    if (listedCompetition && !restricted)
+        note = tr("⚠️ Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
+                  "rechnet mit allen Spielern. Speichere sie auf der Seite 'Registrierung'.");
+    SquadResult full;
+    const SquadResult first = firstTeamOf(clubPlayers, secondPlayers, &full, &note);
     m_registrationNote->setText(note);
     m_registrationNote->setVisible(!note.isEmpty());
 
-    const SquadResult first = restricted
-                                  ? m_context.squadBuilder().calculateSquadAndSurplus(
-                                        eligiblePlayers, positions, slotOrder, ratings)
-                                  : full;
+    // The injury comparison is always "all fit" against "without the injured",
+    // whichever of the two is on the pitches.
+    if (injured.empty()) {
+        m_injuryBox->setVisible(false);
+    } else {
+        SquadResult otherFull;
+        const SquadResult other = planInjured
+                                      ? firstTeamOf(clubFit, secondFit, &otherFull, nullptr)
+                                      : firstTeamOf(clubAll, secondAll, &otherFull, nullptr);
+        fillInjuryBox(injured, planInjured ? first : other, planInjured ? other : first,
+                      slotOrder, positions);
+    }
+
     const DevelopmentSquads dev = m_context.squadBuilder().calculateDevelopmentSquads(
         secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);
 
@@ -400,6 +487,140 @@ void BestXiPage::rebuild()
     fillSurplusTable(m_sellTable, dev.sellCandidates, false);
     m_loanBox->setVisible(!dev.loanCandidates.empty());
     m_sellBox->setVisible(!dev.sellCandidates.empty());
+}
+
+void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
+                               const SquadResult &allFit, const SquadResult &withoutInjured,
+                               const QStringList &slotOrder,
+                               const QHash<QString, QString> &positions)
+{
+    const auto roleNames = m_context.definitions().roleDisplayMap();
+    const auto total = [](const QHash<QString, XiCell> &team) {
+        double sum = 0.0;
+        for (const XiCell &cell : team)
+            sum += cell.rating;
+        return sum;
+    };
+
+    QStringList names;
+    for (const Player *player : injured)
+        names << QStringLiteral("<a href=\"%1\" style=\"color:%3\">%2</a>")
+                     .arg(player->uid.toHtmlEscaped(), player->name.toHtmlEscaped(),
+                          m_theme.text().name());
+    const int xiLoss = qRound(total(allFit.startingXi) - total(withoutInjured.startingXi));
+    const int bLoss = qRound(total(allFit.bTeam) - total(withoutInjured.bTeam));
+    QString text = (m_planInjuredCheck->isChecked() ? tr("Trotz Verletzung eingeplant: %1.")
+                                                    : tr("Nicht eingeplant: %1."))
+                       .arg(names.join(QStringLiteral(", ")));
+    if (xiLoss == 0 && bLoss == 0)
+        text += QLatin1Char(' ') + tr("Startelf und B-Team bleiben gleich stark.");
+    else
+        text += QLatin1Char(' ')
+                + tr("Der Kader gleicht das so aus — Startelf %1, B-Team %2 DWRS-Punkte "
+                     "(Summe über alle Positionen):")
+                      .arg(xiLoss > 0 ? QStringLiteral("−%1").arg(xiLoss)
+                                      : QStringLiteral("±0"))
+                      .arg(bLoss > 0 ? QStringLiteral("−%1").arg(bLoss)
+                                     : bLoss < 0 ? QStringLiteral("+%1").arg(-bLoss)
+                                                 : QStringLiteral("±0"));
+    m_injuryNote->setText(text);
+    m_injuryBox->setTitle(tr("🚑 Langzeitverletzt (%1)").arg(injured.size()));
+
+    struct Change {
+        QString team;
+        QString slot;
+        XiCell before;
+        XiCell after;
+    };
+    QList<Change> changes;
+    // Slots sharing a role are compared as a group, so a player who merely
+    // switches sides (DMCL <-> DMCR) is no change: only who left the group is
+    // paired with who joined it.
+    const auto collect = [&](const QString &team, const QHash<QString, XiCell> &before,
+                             const QHash<QString, XiCell> &after) {
+        QStringList done;
+        for (const QString &slot : slotOrder) {
+            const QString role = positions.value(slot);
+            if (done.contains(role))
+                continue;
+            done << role;
+            QStringList groupSlots;
+            for (const QString &s : slotOrder)
+                if (positions.value(s) == role)
+                    groupSlots << s;
+            QList<QPair<QString, XiCell>> left;
+            QList<XiCell> joined;
+            for (const QString &s : groupSlots) {
+                const XiCell a = before.value(s);
+                const bool stays = std::any_of(groupSlots.cbegin(), groupSlots.cend(),
+                                               [&](const QString &o) {
+                                                   return after.value(o).playerUid == a.playerUid;
+                                               });
+                if (!stays)
+                    left.append({s, a});
+                const XiCell b = after.value(s);
+                const bool was = std::any_of(groupSlots.cbegin(), groupSlots.cend(),
+                                             [&](const QString &o) {
+                                                 return before.value(o).playerUid == b.playerUid;
+                                             });
+                if (!was)
+                    joined.append(b);
+            }
+            for (qsizetype i = 0; i < left.size() && i < joined.size(); ++i)
+                changes.append({team, left.at(i).first, left.at(i).second, joined.at(i)});
+        }
+    };
+    collect(tr("Startelf"), allFit.startingXi, withoutInjured.startingXi);
+    collect(tr("B-Team"), allFit.bTeam, withoutInjured.bTeam);
+
+    // Visible before filling, so the columns are measured with the final style.
+    m_injuryBox->setVisible(true);
+    m_injuryTable->setVisible(!changes.isEmpty());
+    m_injuryTable->clearContents();
+    m_injuryTable->setRowCount(static_cast<int>(changes.size()));
+    const auto playerItem = [](const XiCell &cell) {
+        auto *item = new QTableWidgetItem(cell.isFilled() ? cell.name : tr("— unbesetzt —"));
+        item->setData(Qt::UserRole, cell.playerUid);
+        return item;
+    };
+    const auto dwrsItem = [](const XiCell &cell) {
+        auto *item = new NumericItem(cell.isFilled() ? QStringLiteral("%1%").arg(qRound(cell.rating))
+                                                     : QStringLiteral("–"),
+                                     cell.rating);
+        const CellStyle style = dwrsCellStyle(cell.rating);
+        if (cell.isFilled() && style.isValid()) {
+            item->setBackground(style.background);
+            item->setForeground(style.text);
+        }
+        return item;
+    };
+    int row = 0;
+    for (const Change &change : changes) {
+        const QString role = positions.value(change.slot);
+        m_injuryTable->setItem(row, 0, new QTableWidgetItem(change.team));
+        m_injuryTable->setItem(row, 1, new QTableWidgetItem(change.slot));
+        m_injuryTable->setItem(row, 2, new QTableWidgetItem(roleNames.value(role, role)));
+        auto *before = playerItem(change.before);
+        if (const Player *p = m_context.store().findByUid(change.before.playerUid);
+            p && p->longTermInjured)
+            before->setText(QStringLiteral("🚑 ") + before->text());
+        m_injuryTable->setItem(row, 3, before);
+        m_injuryTable->setItem(row, 4, dwrsItem(change.before));
+        m_injuryTable->setItem(row, 5, playerItem(change.after));
+        m_injuryTable->setItem(row, 6, dwrsItem(change.after));
+        const int delta = qRound(change.after.rating - change.before.rating);
+        m_injuryTable->setItem(row, 7,
+                               new NumericItem(delta > 0 ? QStringLiteral("+%1").arg(delta)
+                                                         : QString::number(delta),
+                                               delta));
+        ++row;
+    }
+    // Size the table to its rows: no inner scrollbar, no dead space.
+    int height = m_injuryTable->horizontalHeader()->sizeHint().height()
+                 + 2 * m_injuryTable->frameWidth();
+    for (int r = 0; r < row; ++r)
+        height += m_injuryTable->rowHeight(r);
+    m_injuryTable->setFixedHeight(height);
 }
 
 void BestXiPage::fillSurplusTable(QTableWidget *table,

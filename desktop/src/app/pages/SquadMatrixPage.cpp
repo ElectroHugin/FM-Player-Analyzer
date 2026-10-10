@@ -590,13 +590,16 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
         }
     }
 
-    // Scouting by role: delta to the first team's best player in that role.
+    // Scouting by role: delta to the first team's best available player in
+    // that role (a long-term injured one is no benchmark).
     const QString focusRole = clubTable ? QString() : m_scoutedFilterCombo->currentData().toString();
     double benchmark = -1.0;
     QString benchmarkName;
     if (!focusRole.isEmpty() && !focusRole.startsWith(QLatin1String("__"))) {
         const QHash<QString, double> roleRatings = ratings.value(focusRole);
         for (const Player *player : m_firstTeam) {
+            if (player->longTermInjured)
+                continue;
             const auto it = roleRatings.constFind(player->uid);
             if (it != roleRatings.constEnd() && it.value() > benchmark) {
                 benchmark = it.value();

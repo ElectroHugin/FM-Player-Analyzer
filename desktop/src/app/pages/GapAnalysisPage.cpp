@@ -177,7 +177,7 @@ void GapAnalysisPage::rebuild()
     std::vector<const Player *> clubPlayers;
     QHash<QString, const Player *> playersByUid;
     for (const Player &player : m_context.store().players()) {
-        if (player.club == userClub) {
+        if (player.club == userClub && !player.longTermInjured) {
             clubPlayers.push_back(&player);
             playersByUid.insert(player.uid, &player);
         }

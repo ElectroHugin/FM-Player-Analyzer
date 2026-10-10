@@ -245,6 +245,19 @@ bool AppContext::setPlayerRegistration(const QString &uid, PlayerRegistration re
     return true;
 }
 
+bool AppContext::setLongTermInjured(const QString &uid, bool injured)
+{
+    const int row = m_store.rowByUid(uid);
+    if (row < 0)
+        return false;
+    Player &player = m_store.at(row);
+    if (!m_database->setLongTermInjured(player.id, injured))
+        return false;
+    player.longTermInjured = injured;
+    emit dataChanged();
+    return true;
+}
+
 void AppContext::reloadEngines()
 {
     // reloadConfig() rebuilds the plan cache a worker may be reading.

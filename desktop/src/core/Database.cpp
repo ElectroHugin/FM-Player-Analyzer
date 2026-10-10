@@ -22,7 +22,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 7;
+constexpr int kSchemaVersion = 8;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -219,6 +219,8 @@ bool Database::initSchema()
             ok = migrateV5ToV6();
         if (ok && version < 7)
             ok = migrateV6ToV7();
+        if (ok && version < 8)
+            ok = migrateV7ToV8();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -294,6 +296,7 @@ bool Database::createInitialSchema()
                        " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE,"
                        " role TEXT NOT NULL)"),
         createPlayerRegistrationSql(),
+        createLongTermInjuriesSql(),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_dwrs_history_role_ts ON dwrs_history(role, ts)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_player_roles_role ON player_roles(role)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_players_club ON players(club)"),
@@ -464,6 +467,19 @@ bool Database::migrateV6ToV7()
            && setSetting(Registration::expiredU21SettingKey(), uids.join(QLatin1Char(',')));
 }
 
+QString Database::createLongTermInjuriesSql()
+{
+    // Players the user marked as out for a long time; the squad pages plan
+    // without them.
+    return QStringLiteral("CREATE TABLE IF NOT EXISTS long_term_injuries ("
+                          " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE)");
+}
+
+bool Database::migrateV7ToV8()
+{
+    return exec(createLongTermInjuriesSql());
+}
+
 std::vector<Player> Database::loadPlayers()
 {
     return loadPlayersImpl(nullptr);
@@ -505,7 +521,7 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             [&](const QSqlQuery &q) {
                 rolesByPlayer[q.value(0).toInt()].append(q.value(1).toString());
             });
-    QSet<int> nationalIds, shortlistIdSet;
+    QSet<int> nationalIds, shortlistIdSet, injuredIdSet;
     QHash<int, QString> trainingRoleById;
     forRows(QStringLiteral("SELECT player_id FROM national_squad"),
             QStringLiteral("SELECT player_id FROM national_squad WHERE player_id IN (%1)"),
@@ -513,6 +529,9 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
     forRows(QStringLiteral("SELECT player_id FROM shortlist"),
             QStringLiteral("SELECT player_id FROM shortlist WHERE player_id IN (%1)"),
             [&](const QSqlQuery &q) { shortlistIdSet.insert(q.value(0).toInt()); });
+    forRows(QStringLiteral("SELECT player_id FROM long_term_injuries"),
+            QStringLiteral("SELECT player_id FROM long_term_injuries WHERE player_id IN (%1)"),
+            [&](const QSqlQuery &q) { injuredIdSet.insert(q.value(0).toInt()); });
     forRows(QStringLiteral("SELECT player_id, role FROM training_roles"),
             QStringLiteral("SELECT player_id, role FROM training_roles WHERE player_id IN (%1)"),
             [&](const QSqlQuery &q) {
@@ -614,6 +633,7 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             p.assignedRoles = rolesByPlayer.value(p.id);
             p.inNationalSquad = nationalIds.contains(p.id);
             p.onShortlist = shortlistIdSet.contains(p.id);
+            p.longTermInjured = injuredIdSet.contains(p.id);
             p.trainingRole = trainingRoleById.value(p.id);
             p.registration = registrationById.value(p.id);
             players.push_back(std::move(p));
@@ -1182,6 +1202,20 @@ bool Database::setTrainingRole(int playerId, const QString &role)
         query.bindValue(0, playerId);
         query.bindValue(1, role);
     }
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+bool Database::setLongTermInjured(int playerId, bool injured)
+{
+    QSqlQuery query(m_db);
+    query.prepare(injured
+                      ? QStringLiteral("INSERT OR IGNORE INTO long_term_injuries (player_id) VALUES (?)")
+                      : QStringLiteral("DELETE FROM long_term_injuries WHERE player_id = ?"));
+    query.bindValue(0, playerId);
     if (!query.exec()) {
         m_error = query.lastError().text();
         return false;

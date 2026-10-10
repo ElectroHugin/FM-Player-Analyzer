@@ -31,7 +31,8 @@ void attachToView(AppContext &context, QTableView *view, PlayerFilterProxy *prox
                   int ignoreDoubleClickColumn = -1);
 
 // Wires a QTableWidget whose rows carry the player uid in
-// item(row, uidColumn)->data(Qt::UserRole). doubleClickOpensProfile = false
+// item(row, uidColumn)->data(Qt::UserRole); uidColumn = -1 takes the uid of
+// the clicked cell itself (tables with several players per row). doubleClickOpensProfile = false
 // for editable tables where double-click must keep starting the editor.
 // ignoreDoubleClickColumn: column whose double-click is left alone (e.g. a
 // checkbox column, where two quick clicks are two toggles).

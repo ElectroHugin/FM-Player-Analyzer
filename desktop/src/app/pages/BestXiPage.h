@@ -7,6 +7,7 @@
 
 #include <vector>
 
+class QCheckBox;
 class QComboBox;
 class QGroupBox;
 class QLabel;
@@ -30,6 +31,9 @@ struct DepthOption;
 // With registration rules active the first team can be limited to the players
 // who may play in a competition (its saved squad list plus those eligible
 // without a slot); the development squads always look at the whole club.
+//
+// Players marked as long-term injured are left out of every squad unless the
+// user plans them in; a table shows how the optimal line-up closes the gap.
 class BestXiPage : public PageBase
 {
     Q_OBJECT
@@ -43,6 +47,10 @@ private:
     // How the team selection works, shown under the tactic choice.
     static QString algorithmHint();
     void rebuild();
+    // Who replaces the long-term injured: slot by slot, all fit vs without them.
+    void fillInjuryBox(const std::vector<const Player *> &injured,
+                       const SquadResult &allFit, const SquadResult &withoutInjured,
+                       const QStringList &slotOrder, const QHash<QString, QString> &positions);
     void fillSurplusTable(QTableWidget *table, const std::vector<const Player *> &players,
                           bool includeTalent);
     void fillDepthTable(const QHash<QString, QList<DepthOption>> &options);
@@ -56,6 +64,10 @@ private:
     QLabel *m_hint = nullptr;         // algorithm explanation, shown on demand
     QToolButton *m_hintToggle = nullptr;
     QLabel *m_clubNotice = nullptr;   // "choose your club first"
+    QGroupBox *m_injuryBox = nullptr; // only while someone is marked injured
+    QLabel *m_injuryNote = nullptr;   // names (clickable) + what it costs
+    QCheckBox *m_planInjuredCheck = nullptr;
+    QTableWidget *m_injuryTable = nullptr;
     QTabWidget *m_tabs = nullptr;
 
     TacticPitchWidget *m_xiPitch = nullptr;

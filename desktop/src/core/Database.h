@@ -123,6 +123,9 @@ public:
     // Empty role removes the row (revert to auto-pick).
     bool setTrainingRole(int playerId, const QString &role);
 
+    // --- Long-term injuries (set of player ids, hand-maintained) ---
+    bool setLongTermInjured(int playerId, bool injured);
+
     // --- Squad registration (player id -> hand-maintained status) ---
     // Writes all given players in one transaction; a default status removes
     // the row.
@@ -144,8 +147,10 @@ private:
     bool migrateV4ToV5();                 // add player_registration table
     bool migrateV5ToV6();                 // re-base freshness stamps on full exports
     bool migrateV6ToV7();                 // expire stale manual U21 decisions
+    bool migrateV7ToV8();                 // long-term injuries table
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     static QString createPlayerRegistrationSql(); // ditto
+    static QString createLongTermInjuriesSql();   // ditto
     std::vector<Player> loadPlayersImpl(const QList<int> *ids); // nullptr = all
     bool exec(const QString &sql);
     // Runs `sqlTemplate` (with one "%1" for a "?,?,…" id placeholder list) for

@@ -183,6 +183,23 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
     QObject::connect(shortlistAction, &QAction::triggered, parent,
                      [&context, parent, uid] { toggleShortlist(context, parent, uid); });
 
+    // Only meaningful for the own squads; a stale mark stays removable.
+    const QString userClub = context.userClub();
+    const QString secondClub = context.secondTeamClub();
+    const bool ownPlayer = (!userClub.isEmpty() && player->club == userClub)
+                           || (!secondClub.isEmpty() && player->club == secondClub);
+    if (ownPlayer || player->longTermInjured) {
+        auto *injuryAction = menu.addAction(ActionText::tr("🚑 Langzeitverletzt"));
+        injuryAction->setCheckable(true);
+        injuryAction->setChecked(player->longTermInjured);
+        QObject::connect(injuryAction, &QAction::triggered, parent,
+                         [&context, parent, uid, injured = !player->longTermInjured] {
+                             if (!context.setLongTermInjured(uid, injured))
+                                 QMessageBox::critical(parent, ActionText::tr("Spieler"),
+                                                       context.database().errorString());
+                         });
+    }
+
     if (context.registrationSettings().active())
         addRegistrationMenu(context, parent, menu, *player);
 
@@ -218,17 +235,17 @@ void attachToTableWidget(AppContext &context, QTableWidget *table, int uidColumn
                          bool doubleClickOpensProfile, int ignoreDoubleClickColumn)
 {
     CellStyleDelegate::install(table); // keep model DWRS/attribute colors visible
-    const auto uidForRow = [table, uidColumn](int row) {
-        const QTableWidgetItem *item = table->item(row, uidColumn);
+    const auto uidForCell = [table, uidColumn](int row, int column) {
+        const QTableWidgetItem *item = table->item(row, uidColumn >= 0 ? uidColumn : column);
         return item ? item->data(Qt::UserRole).toString() : QString();
     };
     table->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(table, &QTableWidget::customContextMenuRequested, table,
-                     [&context, table, uidForRow](const QPoint &pos) {
+                     [&context, table, uidForCell](const QPoint &pos) {
                          const QModelIndex index = table->indexAt(pos);
                          if (!index.isValid())
                              return;
-                         const QString uid = uidForRow(index.row());
+                         const QString uid = uidForCell(index.row(), index.column());
                          if (!uid.isEmpty()) {
                              showContextMenu(context, table, uid,
                                              table->viewport()->mapToGlobal(pos));
@@ -236,10 +253,10 @@ void attachToTableWidget(AppContext &context, QTableWidget *table, int uidColumn
                      });
     if (doubleClickOpensProfile) {
         QObject::connect(table, &QTableWidget::cellDoubleClicked, table,
-                         [&context, uidForRow, ignoreDoubleClickColumn](int row, int column) {
+                         [&context, uidForCell, ignoreDoubleClickColumn](int row, int column) {
                              if (column == ignoreDoubleClickColumn)
                                  return;
-                             const QString uid = uidForRow(row);
+                             const QString uid = uidForCell(row, column);
                              if (!uid.isEmpty())
                                  openProfile(context, uid);
                          });

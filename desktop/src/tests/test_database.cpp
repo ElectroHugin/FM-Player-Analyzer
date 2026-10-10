@@ -105,12 +105,14 @@ private slots:
         registration.u21 = PlayerRegistration::U21::No;
         registration.uefaListed = true;
         QVERIFY(db.setRegistrations({{players[8].id, registration}}));
+        QVERIFY(db.setLongTermInjured(players[9].id, true));
 
         const auto all = db.loadPlayers();
         QList<int> ids;
         for (int i = 0; i < 700; i += 3) // > 500 ids -> several chunks
             ids << players[i].id;
-        ids << players[5].id << players[6].id << players[7].id << players[8].id << players[650].id
+        ids << players[5].id << players[6].id << players[7].id << players[8].id << players[9].id
+            << players[650].id
             << 999999 /* unknown -> skipped */;
         const auto subset = db.loadPlayers(ids);
 
@@ -132,6 +134,7 @@ private slots:
             QCOMPARE(a.assignedRoles, b.assignedRoles);
             QCOMPARE(a.inNationalSquad, b.inNationalSquad);
             QCOMPARE(a.onShortlist, b.onShortlist);
+            QCOMPARE(a.longTermInjured, b.longTermInjured);
             QCOMPARE(a.trainingRole, b.trainingRole);
             QVERIFY(a.registration == b.registration);
         }
@@ -494,6 +497,42 @@ private slots:
         const QHash<int, int> expected{{0, 0}, {5, 1}, {7, 1}, {10, 2}, {12, 2}};
         for (const Player &p : db.loadPlayers())
             QCOMPARE(p.lastSeenUpdate, expected.value(oldStamps.at(p.uid.toInt())));
+        db.close();
+    }
+
+    void longTermInjuryRoundTripAndV7Migration()
+    {
+        // A v7 database gains the injuries table; marking and clearing a
+        // player round-trips through loadPlayers.
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v7.db"));
+        {
+            Database db(QStringLiteral("v7seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(2);
+            for (int i = 0; i < 2; ++i) {
+                batch[static_cast<size_t>(i)].uid = QString::number(i + 1);
+                batch[static_cast<size_t>(i)].name = QStringLiteral("P%1").arg(i);
+            }
+            QVERIFY(db.upsertPlayers(batch));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("DROP TABLE long_term_injuries")));
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 7")));
+            db.close();
+        }
+
+        Database db(QStringLiteral("v7migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        auto players = db.loadPlayers();
+        QCOMPARE(static_cast<int>(players.size()), 2);
+        QVERIFY(!players[0].longTermInjured && !players[1].longTermInjured);
+        QVERIFY(db.setLongTermInjured(players[1].id, true));
+        QVERIFY(db.setLongTermInjured(players[1].id, true)); // idempotent
+        players = db.loadPlayers();
+        QVERIFY(!players[0].longTermInjured);
+        QVERIFY(players[1].longTermInjured);
+        QVERIFY(db.setLongTermInjured(players[1].id, false));
+        QVERIFY(!db.loadPlayers()[1].longTermInjured);
         db.close();
     }
 

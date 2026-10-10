@@ -72,6 +72,9 @@ struct Player {
     int lastSeenUpdate = 0;
     bool inNationalSquad = false;
     bool onShortlist = false;
+    // Out for a long time (e.g. the rest of the season): the squad pages plan
+    // without him. Set by hand, stored in the long_term_injuries table.
+    bool longTermInjured = false;
     bool transferStatus = false; // listed for transfer
     bool loanStatus = false;     // listed for loan
     QString newClub;             // planned destination (Transfers page)

@@ -183,6 +183,10 @@ public:
     // nothing.
     bool setPlayerRegistration(const QString &uid, PlayerRegistration registration);
 
+    // Marks a player as out long-term (or fit again) and patches the store in
+    // place. false (DB error, errorString via database()) changes nothing.
+    bool setLongTermInjured(const QString &uid, bool injured);
+
     // Current freshness thresholds + upload counter + user club, for
     // PlayerStatus::isRetired. Build once per pool, not per player.
     PlayerStatus::FreshnessContext freshnessContext();
