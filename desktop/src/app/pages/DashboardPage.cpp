@@ -759,7 +759,7 @@ void DashboardPage::rebuildSuggestions()
 void DashboardPage::chooseImportFile()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("FM-HTML-Export auswählen"), m_context.config().effectiveHtmlExportDir(),
+        this, tr("FM-HTML-Export auswählen"), m_context.htmlExportDir(),
         tr("HTML-Dateien (*.html *.htm);;Alle Dateien (*)"));
     if (path.isEmpty())
         return;

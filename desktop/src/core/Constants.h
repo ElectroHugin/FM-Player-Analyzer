@@ -12,17 +12,28 @@ namespace fm {
 // Dynamic definition accessors (roles, tactics, ...) live in Definitions.
 
 // A supported Football Manager release, identified by a stable id stored in
-// the per-database settings ("fm_version").
+// the per-database settings ("fm_version"). Each release has its own profile:
+// export layout, roles/tactics (definitions file) and attribute importance.
 struct FmDataVersion {
-    QString id;          // stable settings key, e.g. "fm24"
-    QString displayName; // e.g. "Football Manager 2024"
-    bool supported;      // false = shown in the picker but not yet importable
+    QString id;                  // stable settings key, e.g. "fm24"
+    QString displayName;         // e.g. "Football Manager 2024"
+    bool supported;              // false = shown in the picker but not yet importable
+    QString definitionsFileName; // roles/tactics in the data dir, e.g. "definitions.json"
+    QString exportFolderName;    // game folder under "Documents/Sports Interactive"
 };
 
-// All FM releases the app knows how to import (newest handling first). Add a
-// version here plus its mapping in attributeMapping() to support a new game.
+// All FM releases the app knows (newest first). To add a release: an entry
+// here plus its branches in attributeMapping(), globalStatCategories(),
+// gkStatCategories(), weightDefaults() and gkWeightDefaults(), and a bundled
+// ":/defaults/<definitionsFileName>".
 const QList<FmDataVersion> &fmDataVersions();
+// Version of databases that carry no "fm_version" setting: those predate the
+// setting and are always FM24. Never change this, or old saves get misread.
 QString defaultFmVersionId();
+// Newest supported version: preselected for newly created databases.
+QString newestFmVersionId();
+// Registry entry for an id; unknown/empty ids fall back to the default version.
+const FmDataVersion &fmDataVersion(const QString &versionId);
 
 // FM HTML export header abbreviation -> full column name (~59 entries) for the
 // given FM version; the schema contract between HTML exports and the database.
@@ -31,14 +42,14 @@ const QHash<QString, QString> &attributeMapping(const QString &versionId);
 // Convenience overload for the default version.
 const QHash<QString, QString> &attributeMapping();
 
-// DWRS importance category per attribute (field players / goalkeepers).
-// Key: full attribute name, value: category name.
-const QHash<QString, QString> &globalStatCategories();
-const QHash<QString, QString> &gkStatCategories();
+// DWRS importance category per attribute (field players / goalkeepers) for the
+// given FM version. Key: full attribute name, value: category name.
+const QHash<QString, QString> &globalStatCategories(const QString &versionId);
+const QHash<QString, QString> &gkStatCategories(const QString &versionId);
 
-// Default category weights (overridable via config.ini).
-const QHash<QString, double> &weightDefaults();     // field players
-const QHash<QString, double> &gkWeightDefaults();   // goalkeepers
+// Default category weights per FM version (overridable via config.ini).
+const QHash<QString, double> &weightDefaults(const QString &versionId);   // field players
+const QHash<QString, double> &gkWeightDefaults(const QString &versionId); // goalkeepers
 
 // Default role multipliers.
 inline constexpr double kKeyMultiplierDefault = 1.5;

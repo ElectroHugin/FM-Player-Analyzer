@@ -65,12 +65,12 @@ int attrIndexByName(const QString &fullName)
 
 const QList<FmDataVersion> &fmDataVersions()
 {
-    // Registry of Football Manager releases whose HTML export layout the app
-    // understands. To add a new release: add an entry here (supported = true)
-    // and a matching branch in attributeMapping() below. Nothing else in the
-    // app needs to change — every screen is version-agnostic.
+    // Registry of Football Manager releases, newest first. FM24 keeps the
+    // unsuffixed "definitions.json" its users already have; later releases get
+    // "definitions_<id>.json". See Constants.h for what a new release needs.
     static const QList<FmDataVersion> versions = {
-        {QStringLiteral("fm24"), QStringLiteral("Football Manager 2024"), true},
+        {QStringLiteral("fm24"), QStringLiteral("Football Manager 2024"), true,
+         QStringLiteral("definitions.json"), QStringLiteral("Football Manager 2024")},
     };
     return versions;
 }
@@ -78,6 +78,29 @@ const QList<FmDataVersion> &fmDataVersions()
 QString defaultFmVersionId()
 {
     return QStringLiteral("fm24");
+}
+
+QString newestFmVersionId()
+{
+    for (const FmDataVersion &version : fmDataVersions()) {
+        if (version.supported)
+            return version.id;
+    }
+    return defaultFmVersionId();
+}
+
+const FmDataVersion &fmDataVersion(const QString &versionId)
+{
+    const QList<FmDataVersion> &versions = fmDataVersions();
+    for (const FmDataVersion &version : versions) {
+        if (version.id == versionId)
+            return version;
+    }
+    for (const FmDataVersion &version : versions) {
+        if (version.id == defaultFmVersionId())
+            return version;
+    }
+    return versions.first();
 }
 
 // FM24 export-header -> internal-column mapping. The internal names on the
@@ -162,7 +185,9 @@ const QHash<QString, QString> &attributeMapping()
     return attributeMapping(defaultFmVersionId());
 }
 
-const QHash<QString, QString> &globalStatCategories()
+// FM24 importance tiers (legacy constants.py). A new release starts from these
+// as an assumption until its match engine has been tested.
+static const QHash<QString, QString> &fm24StatCategories()
 {
     static const QHash<QString, QString> categories = {
         {QStringLiteral("Pace"), QStringLiteral("Extremely Important")},
@@ -194,7 +219,7 @@ const QHash<QString, QString> &globalStatCategories()
     return categories;
 }
 
-const QHash<QString, QString> &gkStatCategories()
+static const QHash<QString, QString> &fm24GkStatCategories()
 {
     static const QHash<QString, QString> categories = {
         {QStringLiteral("Agility"), QStringLiteral("Top Importance")},
@@ -207,7 +232,7 @@ const QHash<QString, QString> &gkStatCategories()
     return categories;
 }
 
-const QHash<QString, double> &weightDefaults()
+static const QHash<QString, double> &fm24WeightDefaults()
 {
     static const QHash<QString, double> defaults = {
         {QStringLiteral("Extremely Important"), 8.0},
@@ -219,7 +244,7 @@ const QHash<QString, double> &weightDefaults()
     return defaults;
 }
 
-const QHash<QString, double> &gkWeightDefaults()
+static const QHash<QString, double> &fm24GkWeightDefaults()
 {
     static const QHash<QString, double> defaults = {
         {QStringLiteral("Top Importance"), 10.0},
@@ -230,6 +255,32 @@ const QHash<QString, double> &gkWeightDefaults()
         {QStringLiteral("Other"), 0.5},
     };
     return defaults;
+}
+
+// Dispatch on the FM version like attributeMapping(): new releases get another
+// branch; unknown or empty ids fall back to the default version.
+const QHash<QString, QString> &globalStatCategories(const QString &versionId)
+{
+    Q_UNUSED(versionId); // only FM24 exists today
+    return fm24StatCategories();
+}
+
+const QHash<QString, QString> &gkStatCategories(const QString &versionId)
+{
+    Q_UNUSED(versionId);
+    return fm24GkStatCategories();
+}
+
+const QHash<QString, double> &weightDefaults(const QString &versionId)
+{
+    Q_UNUSED(versionId);
+    return fm24WeightDefaults();
+}
+
+const QHash<QString, double> &gkWeightDefaults(const QString &versionId)
+{
+    Q_UNUSED(versionId);
+    return fm24GkWeightDefaults();
 }
 
 const QHash<QString, QString> &personalityDefaults()

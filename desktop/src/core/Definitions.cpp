@@ -11,9 +11,8 @@
 
 namespace fm {
 
-bool Definitions::load(const QString &filePath)
+bool Definitions::load(const QString &filePath, const QString &fmVersionId)
 {
-    m_filePath = filePath;
     m_error.clear();
 
     QFile file(filePath);
@@ -38,6 +37,10 @@ bool Definitions::load(const QString &filePath)
         return false;
     }
 
+    // Path and version only change on success: after a failed load, save()
+    // must still write to the file the live definitions came from.
+    m_filePath = filePath;
+    m_fmVersionId = fmVersionId;
     m_root = doc.object();
     rebuildCache();
 

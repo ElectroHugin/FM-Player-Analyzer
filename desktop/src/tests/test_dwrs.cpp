@@ -96,7 +96,7 @@ private slots:
         QVERIFY(!rw.key.isEmpty());
 
         // Find a key attribute and a non-key attribute in the same category.
-        const auto &categories = globalStatCategories();
+        const auto &categories = globalStatCategories(defaultFmVersionId());
         QString keyAttr, plainAttr;
         for (const QString &candidate : rw.key) {
             if (!categories.contains(candidate))

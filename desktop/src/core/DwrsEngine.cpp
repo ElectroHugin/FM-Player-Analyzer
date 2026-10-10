@@ -29,15 +29,18 @@ DwrsEngine::DwrsEngine(const Definitions &definitions, const AppConfig &config)
 
 void DwrsEngine::reloadConfig()
 {
+    // Importance tiers and their weights belong to the FM version of the
+    // loaded definitions.
+    const QString version = m_definitions.fmVersionId();
     m_weights.clear();
-    const auto &fieldDefaults = weightDefaults();
+    const auto &fieldDefaults = weightDefaults(version);
     for (auto it = fieldDefaults.constBegin(); it != fieldDefaults.constEnd(); ++it)
-        m_weights.insert(it.key(), m_config.weight(it.key()));
+        m_weights.insert(it.key(), m_config.weight(version, it.key()));
 
     m_gkWeights.clear();
-    const auto &gkDefaults = gkWeightDefaults();
+    const auto &gkDefaults = gkWeightDefaults(version);
     for (auto it = gkDefaults.constBegin(); it != gkDefaults.constEnd(); ++it)
-        m_gkWeights.insert(it.key(), m_config.gkWeight(it.key()));
+        m_gkWeights.insert(it.key(), m_config.gkWeight(version, it.key()));
 
     m_keyMult = m_config.roleMultiplier(QStringLiteral("key"));
     m_prefMult = m_config.roleMultiplier(QStringLiteral("preferable"));
@@ -59,8 +62,9 @@ void DwrsEngine::reloadConfig()
 DwrsEngine::RolePlan DwrsEngine::buildPlan(const QString &role) const
 {
     const bool isGk = m_gkRoles.contains(role);
-    const QHash<QString, QString> &statCategories = isGk ? gkStatCategories()
-                                                         : globalStatCategories();
+    const QString version = m_definitions.fmVersionId();
+    const QHash<QString, QString> &statCategories = isGk ? gkStatCategories(version)
+                                                         : globalStatCategories(version);
     const QHash<QString, double> &weights = isGk ? m_gkWeights : m_weights;
 
     const RoleWeights roleWeights = m_definitions.roleWeights(role);

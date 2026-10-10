@@ -164,11 +164,19 @@ public:
     // Convenience settings accessors (stored in the DB settings table).
     QString userClub() { return m_database->setting(QStringLiteral("user_club")); }
     QString secondTeamClub() { return m_database->setting(QStringLiteral("second_team_club")); }
-    // FM release whose export layout this database was imported with.
+    // FM release of this database: selects export layout, roles/tactics and
+    // attribute weights. Chosen when the save is created.
     QString fmVersionId()
     {
         return m_database->setting(QStringLiteral("fm_version"), defaultFmVersionId());
     }
+    // Switches the active database to another FM version and loads its
+    // profile. Only allowed while the database holds no players; false (with
+    // a message) otherwise or on failure.
+    bool setFmVersion(const QString &versionId, QString *errorOut = nullptr);
+
+    // Start folder for the FM export file dialogs.
+    QString htmlExportDir() { return m_config->effectiveHtmlExportDir(fmVersionId()); }
     bool nationalModeEnabled()
     {
         return m_database->setting(QStringLiteral("national_mode_enabled")) == QLatin1String("true");
@@ -202,6 +210,11 @@ signals:
     void navigationRequested(const QString &pageId);
 
 private:
+    // Loads the version's definitions (seeding them on first use) and rebuilds
+    // the engines. No-op if they are already loaded. On failure the current
+    // definitions stay untouched.
+    bool activateFmVersion(const QString &versionId, QString *errorOut);
+
     // Rebuilds m_latestRatings/m_ratings from dwrs_latest against the store.
     void rebuildRatingsCache();
 

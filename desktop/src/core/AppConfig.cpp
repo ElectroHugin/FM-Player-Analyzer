@@ -129,13 +129,19 @@ void AppConfig::ensureDefaults()
 
     ensure(QStringLiteral("Database/db_name"), QStringLiteral("default"));
 
-    const auto &weights = weightDefaults();
-    for (auto it = weights.constBegin(); it != weights.constEnd(); ++it)
-        ensure(QStringLiteral("Weights/") + iniKey(it.key()), QString::number(it.value()));
+    for (const FmDataVersion &version : fmDataVersions()) {
+        if (!version.supported)
+            continue;
+        const QString fieldSection = weightsSection(version.id, false) + QLatin1Char('/');
+        const auto &weights = weightDefaults(version.id);
+        for (auto it = weights.constBegin(); it != weights.constEnd(); ++it)
+            ensure(fieldSection + iniKey(it.key()), QString::number(it.value()));
 
-    const auto &gkWeights = gkWeightDefaults();
-    for (auto it = gkWeights.constBegin(); it != gkWeights.constEnd(); ++it)
-        ensure(QStringLiteral("GKWeights/") + iniKey(it.key()), QString::number(it.value()));
+        const QString gkSection = weightsSection(version.id, true) + QLatin1Char('/');
+        const auto &gkWeights = gkWeightDefaults(version.id);
+        for (auto it = gkWeights.constBegin(); it != gkWeights.constEnd(); ++it)
+            ensure(gkSection + iniKey(it.key()), QString::number(it.value()));
+    }
 
     ensure(QStringLiteral("RoleMultipliers/key_multiplier"), QStringLiteral("1.5"));
     ensure(QStringLiteral("RoleMultipliers/preferable_multiplier"), QStringLiteral("1.2"));
@@ -196,27 +202,40 @@ void AppConfig::setDbName(const QString &name)
     m_settings->sync();
 }
 
-double AppConfig::weight(const QString &category) const
+QString AppConfig::weightsSection(const QString &fmVersionId, bool goalkeeper)
 {
-    const double fallback = weightDefaults().value(category, 1.0);
-    return m_settings->value(QStringLiteral("Weights/") + iniKey(category), fallback).toDouble();
+    const QString base = goalkeeper ? QStringLiteral("GKWeights") : QStringLiteral("Weights");
+    const QString id = fmDataVersion(fmVersionId).id;
+    return id == defaultFmVersionId() ? base : base + QLatin1Char('_') + id;
 }
 
-void AppConfig::setWeight(const QString &category, double value)
+double AppConfig::weight(const QString &fmVersionId, const QString &category) const
 {
-    m_settings->setValue(QStringLiteral("Weights/") + iniKey(category), QString::number(value));
+    const double fallback = weightDefaults(fmVersionId).value(category, 1.0);
+    return m_settings
+        ->value(weightsSection(fmVersionId, false) + QLatin1Char('/') + iniKey(category), fallback)
+        .toDouble();
+}
+
+void AppConfig::setWeight(const QString &fmVersionId, const QString &category, double value)
+{
+    m_settings->setValue(weightsSection(fmVersionId, false) + QLatin1Char('/') + iniKey(category),
+                         QString::number(value));
     m_settings->sync();
 }
 
-double AppConfig::gkWeight(const QString &category) const
+double AppConfig::gkWeight(const QString &fmVersionId, const QString &category) const
 {
-    const double fallback = gkWeightDefaults().value(category, 1.0);
-    return m_settings->value(QStringLiteral("GKWeights/") + iniKey(category), fallback).toDouble();
+    const double fallback = gkWeightDefaults(fmVersionId).value(category, 1.0);
+    return m_settings
+        ->value(weightsSection(fmVersionId, true) + QLatin1Char('/') + iniKey(category), fallback)
+        .toDouble();
 }
 
-void AppConfig::setGkWeight(const QString &category, double value)
+void AppConfig::setGkWeight(const QString &fmVersionId, const QString &category, double value)
 {
-    m_settings->setValue(QStringLiteral("GKWeights/") + iniKey(category), QString::number(value));
+    m_settings->setValue(weightsSection(fmVersionId, true) + QLatin1Char('/') + iniKey(category),
+                         QString::number(value));
     m_settings->sync();
 }
 
@@ -370,21 +389,21 @@ void AppConfig::setHtmlExportDir(const QString &dir)
     m_settings->sync();
 }
 
-QString AppConfig::defaultHtmlExportDir()
+QString AppConfig::defaultHtmlExportDir(const QString &fmVersionId)
 {
     const QString documents =
         QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    const QString fmDir =
-        documents + QStringLiteral("/Sports Interactive/Football Manager 2024");
+    const QString fmDir = documents + QStringLiteral("/Sports Interactive/")
+                          + fmDataVersion(fmVersionId).exportFolderName;
     return QDir(fmDir).exists() ? fmDir : documents;
 }
 
-QString AppConfig::effectiveHtmlExportDir() const
+QString AppConfig::effectiveHtmlExportDir(const QString &fmVersionId) const
 {
     const QString configured = htmlExportDir();
     if (!configured.isEmpty() && QDir(configured).exists())
         return configured;
-    return defaultHtmlExportDir();
+    return defaultHtmlExportDir(fmVersionId);
 }
 
 } // namespace fm

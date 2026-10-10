@@ -195,8 +195,9 @@ void MigrationWizard::migrationFinished()
         };
         copyIfExists(QDir(legacyConfigDir).filePath(QStringLiteral("config.ini")),
                      m_context.paths().configFile());
+        // The legacy app only knew FM24 (= the version of unmarked databases).
         copyIfExists(QDir(legacyConfigDir).filePath(QStringLiteral("definitions.json")),
-                     m_context.paths().definitionsFile());
+                     m_context.paths().definitionsFile(defaultFmVersionId()));
         const QString assetsDir = QDir(legacyConfigDir).filePath(QStringLiteral("assets"));
         copyIfExists(QDir(assetsDir).filePath(QStringLiteral("logo.png")),
                      QDir(m_context.paths().assetsDir()).filePath(QStringLiteral("logo.png")));

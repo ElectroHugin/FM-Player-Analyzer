@@ -330,26 +330,29 @@ void PlayerComparisonPage::rebuildComparison()
 
     const bool isGk = m_context.definitions().gkRoles().contains(role);
     const RoleWeights weights = m_context.definitions().roleWeights(role);
+    const QString version = m_context.definitions().fmVersionId();
+    const QHash<QString, QString> &fieldTiers = globalStatCategories(version);
+    const QHash<QString, QString> &gkTiers = gkStatCategories(version);
 
     // Meta categories: global tiers + the role's key/preferable lists.
     CategoryList gameplay = isGk ? gkGameplayAreas() : outfieldGameplayAreas();
     CategoryList meta;
     if (isGk) {
         meta = {{tr("Höchste Prio"),
-                 attrsInCategory(gkStatCategories(), QStringLiteral("Top Importance"))},
+                 attrsInCategory(gkTiers, QStringLiteral("Top Importance"))},
                 {tr("Hohe Prio"),
-                 attrsInCategory(gkStatCategories(), QStringLiteral("High Importance"))},
+                 attrsInCategory(gkTiers, QStringLiteral("High Importance"))},
                 {tr("Mittlere Prio"),
-                 attrsInCategory(gkStatCategories(), QStringLiteral("Medium Importance"))},
+                 attrsInCategory(gkTiers, QStringLiteral("Medium Importance"))},
                 {tr("Schlüssel"), weights.key},
                 {tr("Bevorzugt"), weights.preferable}};
         m_metaTitle->setText(tr("Torwart Meta-Attribut-Profil"));
     } else {
         meta = {{tr("Extrem wichtig"),
-                 attrsInCategory(globalStatCategories(), QStringLiteral("Extremely Important"))},
+                 attrsInCategory(fieldTiers, QStringLiteral("Extremely Important"))},
                 {tr("Wichtig"),
-                 attrsInCategory(globalStatCategories(), QStringLiteral("Important"))},
-                {tr("Gut"), attrsInCategory(globalStatCategories(), QStringLiteral("Good"))},
+                 attrsInCategory(fieldTiers, QStringLiteral("Important"))},
+                {tr("Gut"), attrsInCategory(fieldTiers, QStringLiteral("Good"))},
                 {tr("Schlüssel"), weights.key},
                 {tr("Bevorzugt"), weights.preferable}};
         m_metaTitle->setText(tr("Feldspieler Meta-Attribut-Profil"));

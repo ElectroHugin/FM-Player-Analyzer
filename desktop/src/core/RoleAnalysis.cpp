@@ -79,7 +79,9 @@ RoleReport analyzePlayerForRole(const Definitions &definitions, const Player &pl
             already.insert(attr);
 
         const bool isGk = gkRolesHardcoded().contains(role);
-        const auto &categories = isGk ? gkStatCategories() : globalStatCategories();
+        const QString version = definitions.fmVersionId();
+        const auto &categories =
+            isGk ? gkStatCategories(version) : globalStatCategories(version);
         const QStringList wantedTiers =
             isGk ? QStringList{QStringLiteral("Top Importance"), QStringLiteral("High Importance")}
                  : QStringList{QStringLiteral("Extremely Important"), QStringLiteral("Important")};

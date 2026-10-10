@@ -160,9 +160,24 @@ private slots:
         Definitions kept;
         QVERIFY(kept.load(legacyDefinitionsPath()));
         const QStringList before = kept.validRoles();
-        QVERIFY(!kept.load(broken));
+        QVERIFY(!kept.load(broken, QStringLiteral("fm99")));
         QCOMPARE(kept.validRoles(), before);
         QCOMPARE(kept.personalityCategory(QStringLiteral("Model Citizen")), QStringLiteral("good"));
+        // save() must still target the live file, and the version must still
+        // match the live roles.
+        QCOMPARE(kept.filePath(), legacyDefinitionsPath());
+        QCOMPARE(kept.fmVersionId(), defaultFmVersionId());
+    }
+
+    void loadRecordsFmVersion()
+    {
+        Definitions defaults;
+        QVERIFY(defaults.load(legacyDefinitionsPath()));
+        QCOMPARE(defaults.fmVersionId(), defaultFmVersionId());
+
+        Definitions tagged;
+        QVERIFY(tagged.load(legacyDefinitionsPath(), QStringLiteral("fm27")));
+        QCOMPARE(tagged.fmVersionId(), QStringLiteral("fm27"));
     }
 
     void defaultConstructedFallbacks()

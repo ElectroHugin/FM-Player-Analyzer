@@ -325,7 +325,7 @@ void NationalCallupPage::rebuildInjuredList()
 void NationalCallupPage::uploadSquad()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("Nationalkader-Export wählen"), m_context.config().effectiveHtmlExportDir(),
+        this, tr("Nationalkader-Export wählen"), m_context.htmlExportDir(),
         tr("HTML-Dateien (*.html *.htm);;Alle Dateien (*)"));
     if (path.isEmpty())
         return;

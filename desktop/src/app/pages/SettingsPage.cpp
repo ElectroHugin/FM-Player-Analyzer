@@ -123,11 +123,12 @@ QWidget *SettingsPage::buildClubTab()
             m_fmVersionCombo->setItemData(m_fmVersionCombo->count() - 1, false,
                                           Qt::UserRole - 1); // disable row
     }
-    versionForm->addRow(tr("Version für den Import:"), m_fmVersionCombo);
+    versionForm->addRow(tr("Version dieses Spielstands:"), m_fmVersionCombo);
     auto *versionHint = new QLabel(
-        tr("Bestimmt, wie die Spielerattribute aus dem HTML-Export gelesen werden. "
-           "Aktuell wird Football Manager 2024 unterstützt; weitere Versionen können "
-           "später ergänzt werden."),
+        tr("Bestimmt, wie die Spielerattribute aus dem Export gelesen werden, welche "
+           "Rollen und Taktiken gelten und wie die Attribute gewichtet werden. Die "
+           "Version wird beim Anlegen eines Spielstands gewählt und steht fest, sobald "
+           "er Spieler enthält. Aktuell wird Football Manager 2024 unterstützt."),
         versionGroup);
     versionHint->setWordWrap(true);
     versionHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -135,8 +136,6 @@ QWidget *SettingsPage::buildClubTab()
 
     m_importDirEdit = new QLineEdit;
     m_importDirEdit->setMinimumWidth(260);
-    m_importDirEdit->setPlaceholderText(
-        QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir()));
     auto *importDirBrowse = new QPushButton(tr("Durchsuchen…"));
     auto *importDirOpen = new QPushButton(tr("Im Explorer öffnen"));
     auto *importDirButtons = new QHBoxLayout;
@@ -148,8 +147,9 @@ QWidget *SettingsPage::buildClubTab()
     versionForm->addRow(tr("Standardordner für HTML-Import:"), importDirRow);
     auto *importDirHint = new QLabel(
         tr("Startordner der Dateiauswahl beim Hochladen von HTML-Exporten. Leer = "
-           "automatisch: 'Sports Interactive\\Football Manager 2024' im "
-           "Dokumentenordner des aktuellen Nutzers (falls vorhanden)."),
+           "automatisch: der Spielordner der Football-Manager-Version unter "
+           "'Sports Interactive' im Dokumentenordner des aktuellen Nutzers (falls "
+           "vorhanden)."),
         versionGroup);
     importDirHint->setWordWrap(true);
     importDirHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -159,8 +159,9 @@ QWidget *SettingsPage::buildClubTab()
     // it points to an existing folder, otherwise the automatic default.
     const auto currentImportDir = [this] {
         const QString text = m_importDirEdit->text().trimmed();
-        return (!text.isEmpty() && QDir(text).exists()) ? text
-                                                        : AppConfig::defaultHtmlExportDir();
+        return (!text.isEmpty() && QDir(text).exists())
+                   ? text
+                   : AppConfig::defaultHtmlExportDir(m_context.fmVersionId());
     };
     connect(importDirBrowse, &QPushButton::clicked, this, [this, currentImportDir] {
         const QString dir = QFileDialog::getExistingDirectory(
@@ -433,6 +434,10 @@ QWidget *SettingsPage::buildWeightsTab()
         spin->setSingleStep(0.1);
         return spin;
     };
+
+    m_weightsVersionLabel = new QLabel(content);
+    m_weightsVersionLabel->setObjectName(QStringLiteral("kpiCaption"));
+    layout->addWidget(m_weightsVersionLabel);
 
     auto *fieldGroup = new QGroupBox(tr("Feldspieler-Kategorien"), content);
     auto *fieldForm = new QFormLayout(fieldGroup);
@@ -735,8 +740,29 @@ QWidget *SettingsPage::buildDatabaseTab()
                                                    tr("Name (ohne .db):"));
         if (name.trimmed().isEmpty())
             return;
+        // The FM version is fixed with the save; ask only when there is a choice.
+        QString versionId = newestFmVersionId();
+        QStringList versionNames;
+        QStringList versionIds;
+        for (const FmDataVersion &version : fmDataVersions()) {
+            if (version.supported) {
+                versionNames << version.displayName;
+                versionIds << version.id;
+            }
+        }
+        if (versionIds.size() > 1) {
+            bool ok = false;
+            const QString chosen = QInputDialog::getItem(
+                this, tr("Neue Datenbank"), tr("Football-Manager-Version:"), versionNames,
+                versionIds.indexOf(versionId), false, &ok);
+            if (!ok)
+                return;
+            versionId = versionIds.at(versionNames.indexOf(chosen));
+        }
+        const bool existed = m_context.availableDatabases().contains(name.trimmed());
         QString error;
-        if (!m_context.openDatabase(name.trimmed(), &error))
+        if (!m_context.openDatabase(name.trimmed(), &error)
+            || (!existed && !m_context.setFmVersion(versionId, &error)))
             QMessageBox::critical(this, tr("Datenbank"), error);
         refresh();
     });
@@ -774,7 +800,16 @@ void SettingsPage::refresh()
     // --- Club tab ---
     const int versionIndex = m_fmVersionCombo->findData(m_context.fmVersionId());
     m_fmVersionCombo->setCurrentIndex(versionIndex >= 0 ? versionIndex : 0);
+    // Roles, ratings and history refer to the version's roles once players exist.
+    const bool versionLocked = m_context.store().size() > 0;
+    m_fmVersionCombo->setEnabled(!versionLocked);
+    m_fmVersionCombo->setToolTip(
+        versionLocked ? tr("Der Spielstand enthält Spieler. Für eine andere Version bitte "
+                           "einen neuen Spielstand anlegen.")
+                      : QString());
     m_importDirEdit->setText(QDir::toNativeSeparators(config.htmlExportDir()));
+    m_importDirEdit->setPlaceholderText(
+        QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir(m_context.fmVersionId())));
 
     QSet<QString> clubSet;
     for (const Player &player : m_context.store().players()) {
@@ -842,10 +877,13 @@ void SettingsPage::refresh()
     fillTacticCombo(m_natFav2Combo,
                     m_context.database().setting(QStringLiteral("national_fav_tactic_2")));
 
+    const QString weightsVersion = m_context.fmVersionId();
+    m_weightsVersionLabel->setText(tr("Gewichte für Spielstände von %1.")
+                                       .arg(fmDataVersion(weightsVersion).displayName));
     for (auto it = m_weightSpins.begin(); it != m_weightSpins.end(); ++it)
-        it.value()->setValue(config.weight(it.key()));
+        it.value()->setValue(config.weight(weightsVersion, it.key()));
     for (auto it = m_gkWeightSpins.begin(); it != m_gkWeightSpins.end(); ++it)
-        it.value()->setValue(config.gkWeight(it.key()));
+        it.value()->setValue(config.gkWeight(weightsVersion, it.key()));
     m_keyMultSpin->setValue(config.roleMultiplier(QStringLiteral("key")));
     m_prefMultSpin->setValue(config.roleMultiplier(QStringLiteral("preferable")));
     for (auto it = m_aptSpins.begin(); it != m_aptSpins.end(); ++it)
@@ -931,7 +969,12 @@ void SettingsPage::saveAll()
         else
             db.setSetting(key, value);
     };
-    saveSetting(QStringLiteral("fm_version"), m_fmVersionCombo->currentData().toString());
+    // The weight spins show the version the page was refreshed for; a version
+    // switch below must not redirect them to the new one.
+    const QString weightsVersion = m_context.fmVersionId();
+    QString versionError;
+    if (!m_context.setFmVersion(m_fmVersionCombo->currentData().toString(), &versionError))
+        QMessageBox::warning(this, tr("Football-Manager-Version"), versionError);
     config.setHtmlExportDir(m_importDirEdit->text().trimmed());
     saveSetting(QStringLiteral("user_club"), m_userClubCombo->currentText());
     saveSetting(QStringLiteral("second_team_club"), m_secondClubCombo->currentText());
@@ -966,12 +1009,12 @@ void SettingsPage::saveAll()
     };
 
     for (auto it = m_weightSpins.begin(); it != m_weightSpins.end(); ++it) {
-        noteChange(config.weight(it.key()), it.value()->value());
-        config.setWeight(it.key(), it.value()->value());
+        noteChange(config.weight(weightsVersion, it.key()), it.value()->value());
+        config.setWeight(weightsVersion, it.key(), it.value()->value());
     }
     for (auto it = m_gkWeightSpins.begin(); it != m_gkWeightSpins.end(); ++it) {
-        noteChange(config.gkWeight(it.key()), it.value()->value());
-        config.setGkWeight(it.key(), it.value()->value());
+        noteChange(config.gkWeight(weightsVersion, it.key()), it.value()->value());
+        config.setGkWeight(weightsVersion, it.key(), it.value()->value());
     }
     noteChange(config.roleMultiplier(QStringLiteral("key")), m_keyMultSpin->value());
     config.setRoleMultiplier(QStringLiteral("key"), m_keyMultSpin->value());

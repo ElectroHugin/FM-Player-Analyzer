@@ -10,6 +10,64 @@ Prioritäten: 🔴 hoch · 🟡 mittel · ⚪ niedrig
 
 ## 🆕 Neue Ideen
 
+### 🔴 Vorbereitung auf Football Manager 2027
+
+**Ziel:** Wenn FM27 erscheint, soll die App schnell einsatzfähig sein. FM25
+gab es nie, FM26 hat der User ausgelassen; der Sprung geht also von FM24 auf
+FM27. Abgestimmt am 2026-10-10.
+
+- **Annahmen:** Die 40 Attribute bleiben gleich. Sind die Spieler einmal
+  importiert, passt der Rest der App. Offen bleiben neue Rollen, Positionen und
+  Taktiken.
+- **Export:** Laut offizieller Bestätigung hat FM27 keinen Spielerexport im
+  Basisspiel. Für FM26 gibt es den BepInEx-Mod „FM26 Player Export“ (CSV +
+  HTML per F9). Da FM27 vermutlich weiter auf Unity läuft, ist eine schnelle
+  Portierung realistisch. Ein eigener Mod ist Plan B, falls nach dem Release
+  ein paar Wochen nichts kommt.
+- **Rollensystem (größtes Risiko):** FM26 hat Defend/Support/Attack abgeschafft.
+  Jeder Feldspieler hat eine Rolle **mit Ball** und eine **ohne Ball**, dazu
+  getrennte Formationen für beide Phasen; laut Drittquellen über 70 Rollen
+  (weg: Mezzala, Trequartista, Enganche; neu u. a. Channel Midfielder,
+  Overlapping Centre-Back, Screener, Presser). Unser Modell kennt **eine**
+  Rolle pro Slot. Für FM27 braucht ein Slot zwei Rollen.
+  - **Bewertung eines Slots:** gewichteter Mittelwert aus DWRS mit Ball und
+    DWRS ohne Ball. Anteil **einstellbar, Standard 50 %** (User, 2026-10-10:
+    beide Phasen gleich wichtig, im Sinne von „der Stürmer ist der erste
+    Verteidiger, der Innenverteidiger der erste Angreifer“).
+  - **Position bei Doppel-Formation:** Maßgeblich ist die Position **ohne
+    Ball** (Grundordnung); sie entscheidet, ob ein Spieler den Slot spielen
+    kann.
+  - Betroffen: DWRS, Best XI, Trainingsberater, Kaufberatung,
+    Taktik-Explorer, Rollen-Editor. Erst bauen, wenn die FM27-Rollenliste
+    feststeht.
+- **Attributgewichte ohne Testdaten:** FM27 startet mit den FM24-Kategorien
+  als Annahme, in der App als „vorläufig“ gekennzeichnet. Idee: aus vielen
+  exportierten Spielern pro Liga und Rolle prüfen, welche Attribute mit guten
+  Durchschnittsnoten (`Av Rat`) zusammenhängen. Nur Anhaltspunkte (gute
+  Spieler spielen oft in guten Teams), bis Engine-Tests der Community
+  vorliegen.
+- **Umsetzung in Schritten:**
+  1. ✅ **Versionsprofile** (v1.4.12): Jede FM-Version hat ihr eigenes Profil.
+     Dazu gehören die Rollen-Datei (Rollen, Rollengewichte, Position → Rolle,
+     Taktiken; FM24 `definitions.json`, später `definitions_<id>.json`), die
+     Attributkategorien, die Kategorie-Gewichte in config.ini (FM24
+     `[Weights]`/`[GKWeights]`, später `[Weights_<id>]`) und der Spielordner
+     für den Import. Der Spielstand bestimmt das Profil (`fm_version`; ohne
+     Eintrag = FM24). Neue Spielstände werden mit der neuesten Version
+     markiert; wählbar beim Anlegen, sobald es mehrere gibt. Fest, sobald der
+     Spielstand Spieler enthält. FM24 verhält sich unverändert. Neue Version
+     einbauen: siehe Kommentar an `fmDataVersions()` in `core/Constants.h`.
+  2. **Flexibler Import:** CSV-Import, Spaltenzuordnung pro Version, klare
+     Meldung bei unbekannten oder fehlenden Spalten.
+  3. **Konzept zwei Rollen pro Slot** (siehe oben) ausarbeiten: Datenformat
+     von `definitions.json`, Datenbank (`player_roles`, `dwrs_history`,
+     `training_roles`), Oberfläche.
+  4. **Zum Release:** echten Export einlesen, Zuordnung anpassen, Rollen mit
+     Schlüsselattributen aus dem Spiel übernehmen, Positionen prüfen
+     (Slot-Geometrie und Slot → Spielposition liegen noch fest im Code,
+     `Constants.cpp`).
+  5. **Danach:** Gewichte nachziehen, sobald Engine-Tests vorliegen.
+
 ### ✅ Registrierungs-Assistent (Premier League + UEFA) — fertig mit v1.4.1
 
 **Ziel:** Meldeliste so bilden, dass sie **registrierbar** ist und keine Plätze

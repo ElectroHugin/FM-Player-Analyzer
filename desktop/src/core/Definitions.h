@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Constants.h"
+
 #include <QHash>
 #include <QJsonObject>
 #include <QPair>
@@ -28,9 +30,11 @@ class Definitions
 public:
     Definitions() { rebuildCache(); }
 
-    // Loads from the given JSON file. Returns false and sets errorString() on
-    // missing/invalid file.
-    bool load(const QString &filePath);
+    // Loads from the given JSON file, which holds the roles/tactics of the
+    // given FM version. Returns false and sets errorString() on missing/invalid
+    // file; the previously loaded definitions (path and version included) stay
+    // intact in that case.
+    bool load(const QString &filePath, const QString &fmVersionId = defaultFmVersionId());
 
     // Saves back to the file given to load(). Creates a .bak first, restores
     // it on failure (same semantics as legacy save_definitions).
@@ -38,6 +42,9 @@ public:
 
     QString errorString() const { return m_error; }
     QString filePath() const { return m_filePath; }
+    // FM version these definitions belong to; selects the matching attribute
+    // importance tiers and weights (globalStatCategories() & co.).
+    QString fmVersionId() const { return m_fmVersionId; }
 
     // --- Accessors (mirroring constants.py dynamic getters) ---
 
@@ -113,6 +120,7 @@ private:
 
     QJsonObject m_root;
     QString m_filePath;
+    QString m_fmVersionId = defaultFmVersionId();
     QString m_error;
     QStringList m_tacticOrder;                    // tactic names in file order
     QHash<QString, QStringList> m_slotOrder;      // tactic -> slots in file order

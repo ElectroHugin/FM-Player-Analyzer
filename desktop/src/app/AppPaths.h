@@ -30,12 +30,17 @@ public:
     QString backupsDir() const;
     QString assetsDir() const;
     QString configFile() const;      // <dataDir>/config.ini
-    QString definitionsFile() const; // <dataDir>/definitions.json
+    // Roles/tactics of one FM version: <dataDir>/definitions.json for FM24,
+    // <dataDir>/definitions_<id>.json for later releases.
+    QString definitionsFile(const QString &fmVersionId) const;
     QString databaseFile(const QString &dbName) const;
 
-    // Creates the directory skeleton and seeds definitions.json from the
-    // bundled default if missing. Returns false on IO failure.
+    // Creates the directory skeleton. Returns false on IO failure.
     bool ensureDataDirInitialized();
+
+    // Seeds the version's definitions file from the bundled default if it is
+    // missing. Returns false if there is no bundled default or on IO failure.
+    bool ensureDefinitionsFile(const QString &fmVersionId);
 
     QByteArray windowGeometry() const;
     void setWindowGeometry(const QByteArray &geometry);

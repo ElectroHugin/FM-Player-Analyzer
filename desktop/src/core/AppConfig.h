@@ -27,12 +27,15 @@ public:
     QString dbName() const;
     void setDbName(const QString &name);
 
-    // [Weights] / [GKWeights] — category name as in constants ("Extremely
-    // Important", "Top Importance", ...).
-    double weight(const QString &category) const;
-    void setWeight(const QString &category, double value);
-    double gkWeight(const QString &category) const;
-    void setGkWeight(const QString &category, double value);
+    // [Weights] / [GKWeights] — category weights per FM version, category name
+    // as in constants ("Extremely Important", "Top Importance", ...). FM24 uses
+    // the legacy section names, later versions "Weights_<id>"/"GKWeights_<id>",
+    // so tuning one game's weights never leaks into another.
+    double weight(const QString &fmVersionId, const QString &category) const;
+    void setWeight(const QString &fmVersionId, const QString &category, double value);
+    double gkWeight(const QString &fmVersionId, const QString &category) const;
+    void setGkWeight(const QString &fmVersionId, const QString &category, double value);
+    static QString weightsSection(const QString &fmVersionId, bool goalkeeper);
 
     // [RoleMultipliers] — type "key" | "preferable".
     double roleMultiplier(const QString &type) const;
@@ -75,11 +78,12 @@ public:
     // dialogs. Empty = automatic default (see defaultHtmlExportDir).
     QString htmlExportDir() const;
     void setHtmlExportDir(const QString &dir);
-    // "<Documents>/Sports Interactive/Football Manager 2024" of the current
-    // user when that folder exists, otherwise the Documents folder itself.
-    static QString defaultHtmlExportDir();
+    // "<Documents>/Sports Interactive/<game folder>" of the given FM version
+    // for the current user when that folder exists, otherwise the Documents
+    // folder itself.
+    static QString defaultHtmlExportDir(const QString &fmVersionId);
     // Configured folder if set and existing, otherwise defaultHtmlExportDir().
-    QString effectiveHtmlExportDir() const;
+    QString effectiveHtmlExportDir(const QString &fmVersionId) const;
 
 private:
     void ensureDefaults();

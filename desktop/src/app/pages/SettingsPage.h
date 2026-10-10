@@ -87,6 +87,7 @@ private:
 
     // Club tab (settings table keys, same as legacy).
     QComboBox *m_fmVersionCombo = nullptr;
+    QLabel *m_weightsVersionLabel = nullptr;
     QLineEdit *m_importDirEdit = nullptr; // app-wide (config.ini), not per save
     QComboBox *m_userClubCombo = nullptr;
     QComboBox *m_secondClubCombo = nullptr;

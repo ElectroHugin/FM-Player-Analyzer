@@ -1,5 +1,7 @@
 #include "AppPaths.h"
 
+#include "core/Constants.h"
+
 #include <QDir>
 #include <QFile>
 #include <QStandardPaths>
@@ -68,9 +70,9 @@ QString AppPaths::configFile() const
     return QDir(dataDir()).filePath(QStringLiteral("config.ini"));
 }
 
-QString AppPaths::definitionsFile() const
+QString AppPaths::definitionsFile(const QString &fmVersionId) const
 {
-    return QDir(dataDir()).filePath(QStringLiteral("definitions.json"));
+    return QDir(dataDir()).filePath(fmDataVersion(fmVersionId).definitionsFileName);
 }
 
 QString AppPaths::databaseFile(const QString &dbName) const
@@ -81,20 +83,22 @@ QString AppPaths::databaseFile(const QString &dbName) const
 bool AppPaths::ensureDataDirInitialized()
 {
     QDir dir(dataDir());
-    if (!dir.mkpath(QStringLiteral(".")) || !dir.mkpath(QStringLiteral("databases"))
-        || !dir.mkpath(QStringLiteral("backups")) || !dir.mkpath(QStringLiteral("assets")))
-        return false;
+    return dir.mkpath(QStringLiteral(".")) && dir.mkpath(QStringLiteral("databases"))
+           && dir.mkpath(QStringLiteral("backups")) && dir.mkpath(QStringLiteral("assets"));
+}
 
-    // Seed the shipped role/tactic definitions on first use.
-    if (!QFile::exists(definitionsFile())) {
-        QFile bundled(QStringLiteral(":/defaults/definitions.json"));
-        if (!bundled.copy(definitionsFile()))
-            return false;
-        // Resource copies are read-only; the user edits this file via the app.
-        QFile::setPermissions(definitionsFile(),
-                              QFile::ReadOwner | QFile::WriteOwner | QFile::ReadUser
-                                  | QFile::WriteUser);
-    }
+bool AppPaths::ensureDefinitionsFile(const QString &fmVersionId)
+{
+    // Seed the shipped role/tactic definitions on first use of a version.
+    const QString target = definitionsFile(fmVersionId);
+    if (QFile::exists(target))
+        return true;
+    QFile bundled(QStringLiteral(":/defaults/") + fmDataVersion(fmVersionId).definitionsFileName);
+    if (!bundled.copy(target))
+        return false;
+    // Resource copies are read-only; the user edits this file via the app.
+    QFile::setPermissions(target, QFile::ReadOwner | QFile::WriteOwner | QFile::ReadUser
+                                      | QFile::WriteUser);
     return true;
 }
 

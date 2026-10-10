@@ -3,6 +3,7 @@
 #include "core/RatingsUpdater.h"
 
 #include <QDir>
+#include <QFile>
 #include <QSet>
 
 namespace fm {
@@ -53,12 +54,9 @@ bool AppContext::initialize(QString *errorOut)
 
     m_config = std::make_unique<AppConfig>(m_paths.configFile());
 
+    // Stays empty until openDatabase() loads the profile of the database's
+    // FM version.
     m_definitions = std::make_unique<Definitions>();
-    if (!m_definitions->load(m_paths.definitionsFile())) {
-        if (errorOut)
-            *errorOut = m_definitions->errorString();
-        return false;
-    }
 
     m_dwrsEngine = std::make_unique<DwrsEngine>(*m_definitions, *m_config);
     m_squadBuilder = std::make_unique<SquadBuilder>(*m_definitions, *m_config);
@@ -96,18 +94,73 @@ bool AppContext::openDatabase(const QString &dbName, QString *errorOut)
 
     // A unique name keeps tearing down the previous Database from removing the
     // connection the new one just opened.
+    const QString path = m_paths.databaseFile(dbName);
+    const bool isNew = !QFile::exists(path);
     auto database = std::make_unique<Database>(
         Database::uniqueConnectionName(QStringLiteral("main_%1").arg(dbName)));
-    if (!database->open(m_paths.databaseFile(dbName))) {
+    if (!database->open(path)) {
         if (errorOut)
             *errorOut = database->errorString();
         return false;
     }
+    // New saves are marked explicitly; unmarked ones predate the setting and
+    // are FM24 (defaultFmVersionId).
+    if (isNew)
+        database->setSetting(QStringLiteral("fm_version"), newestFmVersionId());
+
+    // Load the database's version profile before switching: if it fails, the
+    // previous database stays active with its own definitions.
+    if (!activateFmVersion(
+            database->setting(QStringLiteral("fm_version"), defaultFmVersionId()), errorOut))
+        return false;
     m_database = std::move(database);
     m_config->setDbName(dbName);
 
     reloadFromDatabase();
     emit databaseChanged(dbName);
+    return true;
+}
+
+bool AppContext::activateFmVersion(const QString &versionId, QString *errorOut)
+{
+    if (!m_definitions->filePath().isEmpty() && m_definitions->fmVersionId() == versionId)
+        return true;
+    if (!m_paths.ensureDefinitionsFile(versionId)) {
+        if (errorOut)
+            *errorOut = tr("Rollen und Taktiken für %1 konnten nicht angelegt werden (%2).")
+                            .arg(fmDataVersion(versionId).displayName,
+                                 QDir::toNativeSeparators(m_paths.definitionsFile(versionId)));
+        return false;
+    }
+    if (!m_definitions->load(m_paths.definitionsFile(versionId), versionId)) {
+        if (errorOut)
+            *errorOut = m_definitions->errorString();
+        return false;
+    }
+    reloadEngines();
+    return true;
+}
+
+bool AppContext::setFmVersion(const QString &versionId, QString *errorOut)
+{
+    if (versionId == fmVersionId())
+        return true;
+    // Role assignments, ratings and history refer to the old version's roles.
+    if (m_store.size() > 0) {
+        if (errorOut)
+            *errorOut = tr("Die Football-Manager-Version ist an den Spielstand gebunden, "
+                           "sobald er Spieler enthält. Für eine andere Version bitte einen "
+                           "neuen Spielstand anlegen.");
+        return false;
+    }
+    if (!activateFmVersion(versionId, errorOut))
+        return false;
+    if (!m_database->setSetting(QStringLiteral("fm_version"), versionId)) {
+        if (errorOut)
+            *errorOut = m_database->errorString();
+        return false;
+    }
+    emit dataChanged();
     return true;
 }
 
@@ -272,7 +325,8 @@ bool AppContext::reloadConfigAndDefinitions()
     m_config->reload();
     // load() leaves the current definitions untouched if it fails, so a bad
     // file after a migration/edit does not wipe the running configuration.
-    const bool definitionsOk = m_definitions->load(m_paths.definitionsFile());
+    const bool definitionsOk = m_definitions->load(
+        m_paths.definitionsFile(m_definitions->fmVersionId()), m_definitions->fmVersionId());
     reloadEngines();
     emit dataChanged();
     return definitionsOk;
