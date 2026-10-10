@@ -54,7 +54,8 @@ und Rolle** und baut alles Weitere darauf auf.
 | *„Wen melde ich?"* | Ein Meldelisten-Assistent für die Quoten der Premier League und der Champions / Europa / Conference League. |
 
 > 🧮 **Das Herzstück: eine beweisbar optimale Best XI.** Startelf und B-Team
-> werden gemeinsam als Zuordnungsproblem mit der Ungarischen Methode gelöst.
+> werden gemeinsam als Zuordnungsproblem mit der
+> [Ungarischen Methode](https://de.wikipedia.org/wiki/Ungarische_Methode) gelöst.
 > Keine andere Aufstellung deiner Spieler hat eine stärkere Startelf — und
 > unter allen gleich starken bekommst du das stärkste B-Team.
 > [So funktioniert's ↓](#-deine-beweisbar-optimale-best-xi--das-herzstück-der-app)
@@ -86,8 +87,18 @@ Das geht schief, sobald ein Spieler für zwei Positionen die beste Wahl ist: Die
 Position, die zuerst dran ist, bekommt ihn, die andere den Rest. Klügere
 Faustregeln helfen, aber sie raten trotzdem. Diese App rät nicht: Sie behandelt
 Startelf und B-Team als ein **Zuordnungsproblem** und löst es **exakt** mit der
-Ungarischen Methode (Kuhn–Munkres), der klassischen Mathematik für die
-Verteilung von Arbeitern auf Aufgaben.
+[Ungarischen Methode](https://de.wikipedia.org/wiki/Ungarische_Methode)
+(Kuhn–Munkres), der klassischen Mathematik für die Verteilung von Arbeitern
+auf Aufgaben.
+
+**Wie eine Aufstellung dazu passt.** Die Ungarische Methode ordnet zwei Gruppen
+einander eins zu eins zu, sodass der Gesamtgewinn so groß wie möglich wird.
+Hier sind die beiden Gruppen deine **Spieler** (die Quellen) und die
+**Positionen** von Startelf und B-Team (die Ziele), und der Gewinn, einen
+Spieler auf eine Position zu stellen, ist seine **Bewertung für die Rolle
+dieser Position** (DWRS, gewichtet wie von dir eingestellt). Jeder Spieler
+bekommt höchstens eine Position und jede Position höchstens einen Spieler —
+genau die eineindeutige Zuordnung, die das Verfahren löst.
 
 Was du bekommst, ist garantiert, in dieser Reihenfolge:
 
@@ -117,6 +128,11 @@ Spieler in einer Rolle ist, und keine Aufstellung aus diesen Bewertungen
 schlägt diese. Jugend-XI und Zweitteam-XI entstehen auf dieselbe exakte Weise,
 dazu die besten Tiefen-Optionen je Rolle. Wechsle oben den Wettbewerb, und
 alles wird aus den Spielern neu gebaut, die dafür wirklich gemeldet sind.
+
+<sub>Quellen: H. W. Kuhn, *The Hungarian method for the assignment problem*,
+Naval Research Logistics Quarterly 2 (1955), 83–97 · J. Munkres, *Algorithms
+for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
+32–38.</sub>
 
 ### Nach Rolle scouten, nicht nach Ruf
 

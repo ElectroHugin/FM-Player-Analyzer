@@ -53,7 +53,8 @@ and builds everything else on top of it.
 | *"Who do I register?"* | A squad-list assistant for the Premier League and the Champions / Europa / Conference League quotas. |
 
 > 🧮 **The heart of it: a provably optimal Best XI.** Starting XI and B-team
-> are solved together as an assignment problem with the Hungarian method. No
+> are solved together as an assignment problem with the
+> [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm). No
 > other line-up of your players has a stronger starting eleven — and of all
 > equally strong ones you get the strongest B-team.
 > [How it works ↓](#-your-provably-optimal-best-xi--the-heart-of-the-app)
@@ -84,8 +85,17 @@ formation slot by slot and hand each one its best player. That breaks as soon
 as a player is the best option for two positions: whichever slot comes first
 gets him, the other one is left with the scraps. Smarter heuristics help, but
 they still guess. This app doesn't: it treats starting XI and B-team as one
-**assignment problem** and solves it **exactly** with the Hungarian method
+**assignment problem** and solves it **exactly** with the
+[Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm)
 (Kuhn–Munkres), the classic mathematics for pairing workers with jobs.
+
+**How a line-up maps onto it.** The Hungarian algorithm pairs two groups one
+to one so that the total gain is as large as possible. Here the two groups are
+your **players** and the **positions** of starting XI and B-team, and the gain
+of putting a player in a position is his **rating for that position's role**
+(DWRS, weighted as you set it up). Every player gets at most one position and
+every position at most one player — exactly the one-to-one assignment the
+method solves.
 
 What you get is guaranteed, in this order:
 
@@ -112,6 +122,11 @@ role, and no line-up built from those ratings can beat this one. The youth XI
 and second-team XI are computed the same exact way, followed by the best depth
 options per role. Switch the competition at the top and everything is rebuilt
 from the players who are actually registered for it.
+
+<sub>Sources: H. W. Kuhn, *The Hungarian method for the assignment problem*,
+Naval Research Logistics Quarterly 2 (1955), 83–97 · J. Munkres, *Algorithms
+for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
+32–38.</sub>
 
 ### Scout by role, not by reputation
 
