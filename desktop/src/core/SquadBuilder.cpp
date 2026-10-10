@@ -1,12 +1,15 @@
 #include "SquadBuilder.h"
 
 #include "AppConfig.h"
+#include "Assignment.h"
 #include "Constants.h"
 #include "Definitions.h"
 #include "TalentEngine.h"
 #include "Utils.h"
 
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
 #include <limits>
 
 namespace fm {
@@ -19,6 +22,14 @@ struct Candidate {
     QString apt;
     double score = 0.0;
 };
+
+// A primary role pins the player to that role — but only while it is still
+// assigned; a stale one must not lock him out everywhere.
+bool pinnedToOtherRole(const Player &player, const QString &role)
+{
+    return !player.primaryRole.isEmpty() && player.primaryRole != role
+           && player.assignedRoles.contains(player.primaryRole);
+}
 
 // Legacy youth checks parse the TEXT age and fall back to 99 when it is not a
 // plain digit string; our migrator stores unparseable ages as 0.
@@ -105,10 +116,7 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
             const QSet<QString> &playerPositions = parsedPositions[player->uid];
             if (!playerPositions.intersects(allowed))
                 continue;
-            // A primary role pins the player to that role — but only while it
-            // is still assigned; a stale one must not lock him out everywhere.
-            if (!player->primaryRole.isEmpty() && player->primaryRole != role
-                && player->assignedRoles.contains(player->primaryRole))
+            if (pinnedToOtherRole(*player, role))
                 continue;
             const double rating = roleRatings.value(player->uid, 0.0);
             if (rating <= 0.0)
@@ -132,69 +140,101 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
         return candidates;
     };
 
-    // 'Weakest link first' team selection.
-    const auto selectTeam = [&](const std::vector<const Player *> &available) {
-        QHash<QString, XiCell> team;
-        QSet<QString> takenUids;
-        QHash<QString, std::vector<Candidate>> candidatesBySlot;
-        QHash<QString, size_t> heads; // index of first not-yet-discarded candidate
-        for (const QString &slot : slotOrder) {
-            candidatesBySlot.insert(slot, buildCandidates(slot, positions.value(slot), available));
-            heads.insert(slot, 0);
-        }
+    // --- Starting XI + B-team: one exact optimisation ---
+    // Both teams are filled together as an assignment problem (every player at
+    // most once, one player per slot) and solved exactly by the Hungarian
+    // method (Assignment::solveMinCost) — a proven optimum, not a heuristic.
+    // Priorities, strictly in this order:
+    //   1. as many starting-XI slots filled as possible,
+    //   2. the highest starting-XI total score,
+    //   3. as many B-team slots filled as possible,
+    //   4. the highest B-team total score.
+    // The XI is never weakened for the B-team; among equally strong XIs the one
+    // leaving the strongest B-team wins (a versatile player starts where his
+    // absence from the B-team costs least).
+    const int slotCount = static_cast<int>(slotOrder.size());
+    const int rowCount = 2 * slotCount; // XI rows, then B-team rows
 
-        while (team.size() < slotOrder.size()) {
-            QString bestSlot;
-            double bestDropOff = -1.0;
-            for (const QString &slot : slotOrder) { // legacy dict order
-                if (team.contains(slot))
-                    continue;
-                auto &cands = candidatesBySlot[slot];
-                size_t &head = heads[slot];
-                while (head < cands.size() && takenUids.contains(cands[head].player->uid))
-                    ++head;
-                if (head >= cands.size())
-                    continue;
-                // Next untaken candidate after the head.
-                double secondScore = std::numeric_limits<double>::quiet_NaN();
-                for (size_t j = head + 1; j < cands.size(); ++j) {
-                    if (!takenUids.contains(cands[j].player->uid)) {
-                        secondScore = cands[j].score;
-                        break;
-                    }
-                }
-                const double dropOff = std::isnan(secondScore)
-                                           ? std::numeric_limits<double>::infinity()
-                                           : cands[head].score - secondScore;
-                if (dropOff > bestDropOff) { // strict > keeps earlier slot on ties
-                    bestSlot = slot;
-                    bestDropOff = dropOff;
-                }
+    // Exact pruning: in an optimal solution every slot holds one of its best
+    // rowCount candidates — with only rowCount - 1 other slots competing, a
+    // better unassigned one would always be left over to swap in.
+    std::vector<std::vector<Candidate>> slotCandidates;
+    slotCandidates.reserve(static_cast<size_t>(slotCount));
+    std::vector<const Player *> columnPlayers;
+    QHash<const Player *, int> columnOf;
+    double maxScore = 0.0;
+    for (const QString &slot : slotOrder) {
+        std::vector<Candidate> cands = buildCandidates(slot, positions.value(slot), pool);
+        if (cands.size() > static_cast<size_t>(rowCount))
+            cands.resize(static_cast<size_t>(rowCount));
+        for (const Candidate &c : cands) {
+            if (!columnOf.contains(c.player)) {
+                columnOf.insert(c.player, static_cast<int>(columnPlayers.size()));
+                columnPlayers.push_back(c.player);
             }
+            maxScore = std::max(maxScore, c.score);
+        }
+        slotCandidates.push_back(std::move(cands));
+    }
 
-            if (bestSlot.isEmpty())
-                break; // no more valid players for any remaining slot
+    // Integer weights make the priorities exact: no amount of a lower level can
+    // outweigh one step of a higher one. Scores are kept to 1e-4 (coarser only
+    // if absurd weights would overflow 64 bits).
+    double scale = 1e4;
+    std::int64_t q = 0, bFill = 0, xiScore = 0, xiFill = 0;
+    for (;;) {
+        q = std::llround(maxScore * scale) + 1;    // > any single score
+        bFill = slotCount * q + 1;                 // > any B-team total
+        xiScore = slotCount * (bFill + q) + 1;     // > any B-team fill + total
+        if (static_cast<double>(slotCount) * q * xiScore * slotCount < 1e18 || scale <= 1.0)
+            break;
+        scale /= 10.0;
+    }
+    xiFill = slotCount * q * xiScore + xiScore; // > any XI total + B-team part
 
-            const Candidate &winner = candidatesBySlot[bestSlot][heads[bestSlot]];
+    // Minimisation: cost = -value. Unlisted pairs (ineligible player) and the
+    // spare columns cost 0, which is how a slot stays empty.
+    const int columnCount = static_cast<int>(columnPlayers.size()) + rowCount;
+    std::vector<std::vector<std::int64_t>> cost(
+        static_cast<size_t>(rowCount), std::vector<std::int64_t>(static_cast<size_t>(columnCount), 0));
+    for (int k = 0; k < slotCount; ++k) {
+        for (const Candidate &c : slotCandidates[static_cast<size_t>(k)]) {
+            const std::int64_t score = std::llround(c.score * scale);
+            const size_t column = static_cast<size_t>(columnOf.value(c.player));
+            cost[static_cast<size_t>(k)][column] = -(xiFill + score * xiScore);
+            cost[static_cast<size_t>(slotCount + k)][column] = -(bFill + score);
+        }
+    }
+    const std::vector<int> assignment = Assignment::solveMinCost(cost);
+
+    QHash<QString, XiCell> xi;
+    QHash<QString, XiCell> bTeam;
+    QSet<QString> takenUids;
+    for (int row = 0; row < rowCount; ++row) {
+        const int column = assignment[static_cast<size_t>(row)];
+        if (column < 0 || column >= static_cast<int>(columnPlayers.size())
+            || cost[static_cast<size_t>(row)][static_cast<size_t>(column)] == 0)
+            continue; // slot left empty
+        const int k = row % slotCount;
+        const Player *player = columnPlayers[static_cast<size_t>(column)];
+        for (const Candidate &c : slotCandidates[static_cast<size_t>(k)]) {
+            if (c.player != player)
+                continue;
             XiCell cell;
-            cell.playerUid = winner.player->uid;
-            cell.name = winner.player->name;
-            cell.rating = std::trunc(winner.rating); // legacy: f"{int(rating)}%"
-            cell.apt = winner.apt;
-            team.insert(bestSlot, cell);
-            takenUids.insert(winner.player->uid);
+            cell.playerUid = player->uid;
+            cell.name = player->name;
+            cell.rating = std::trunc(c.rating); // legacy: f"{int(rating)}%"
+            cell.apt = c.apt;
+            (row < slotCount ? xi : bTeam).insert(slotOrder[k], cell);
+            takenUids.insert(player->uid);
+            break;
         }
-
-        std::vector<const Player *> remaining;
-        for (const Player *p : available) {
-            if (!takenUids.contains(p->uid))
-                remaining.push_back(p);
-        }
-        return std::make_pair(team, remaining);
-    };
-
-    auto [xi, remainingForBTeam] = selectTeam(pool);
-    auto [bTeam, depthPool] = selectTeam(remainingForBTeam);
+    }
+    std::vector<const Player *> depthPool;
+    for (const Player *p : pool) {
+        if (!takenUids.contains(p->uid))
+            depthPool.push_back(p);
+    }
 
     // Footedness swaps on symmetrical same-role slot pairs; only EXPLICIT
     // preferred_side counts, swap only on strict improvement.
@@ -277,6 +317,9 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
         for (const QString &role : uniqueRoles) {
             const QHash<QString, double> roleRatings = ratings.value(role);
             std::vector<const Player *> sortedCandidates = availableDepth;
+            // Same pin as the team selection: no depth option for other roles.
+            std::erase_if(sortedCandidates,
+                          [&role](const Player *p) { return pinnedToOtherRole(*p, role); });
             std::stable_sort(sortedCandidates.begin(), sortedCandidates.end(),
                              [&](const Player *a, const Player *b) {
                                  return roleRatings.value(a->uid, -1.0)

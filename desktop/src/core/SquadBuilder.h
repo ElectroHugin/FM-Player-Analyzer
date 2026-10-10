@@ -53,10 +53,12 @@ struct DevelopmentSquads {
     std::vector<const Player *> sellCandidates; // sorted by last name
 };
 
-// Exact port of legacy squad_logic.py. Pools are ordered lists of players
-// (legacy list order = DB row order); all tie-breaking replicates Python's
-// stable sorts and dict-iteration order (tactic slot order from
-// Definitions::tacticSlotOrder).
+// Grew out of legacy squad_logic.py. The starting XI and B-team are no longer
+// picked greedily ("weakest link first") but jointly and provably optimally as
+// an assignment problem (see calculateSquadAndSurplus). Pools are ordered lists
+// of players (legacy list order = DB row order); the remaining tie-breaking
+// replicates Python's stable sorts and the tactic slot order from
+// Definitions::tacticSlotOrder.
 class SquadBuilder
 {
 public:
@@ -65,6 +67,11 @@ public:
     // Rebuild cached config values after settings change.
     void reloadConfig();
 
+    // Starting XI and B-team for a tactic, chosen together so that — strictly
+    // in this order — the most XI slots are filled, the XI total score is
+    // maximal, then the most B-team slots are filled and the B-team total is
+    // maximal (score = DWRS x playing-time weight x natural-position bonus).
+    // Exact, not heuristic. Plus depth options and the remaining pool.
     SquadResult calculateSquadAndSurplus(const std::vector<const Player *> &pool,
                                          const QHash<QString, QString> &positions,
                                          const QStringList &slotOrder,

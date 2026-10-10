@@ -5,7 +5,7 @@
 ### Stop guessing who should play. Know it.
 
 The free desktop companion for **Football Manager 2024** that turns your squad
-and scouting exports into clear answers: your real Best XI, the hidden weak
+and scouting exports into clear answers: your provably optimal Best XI, the hidden weak
 spot in your team, the wonderkid worth signing and the tactic your squad was
 built for.
 
@@ -44,13 +44,19 @@ and builds everything else on top of it.
 | You ask | The app answers |
 |---|---|
 | *"Who is my best player for this exact role?"* | A 0–100 role-fit score (**DWRS**) for every player in every role, colour-coded, sortable, comparable across positions. |
-| *"What is my strongest eleven?"* | A Best XI on a tactical pitch — plus B-team, youth and second team, per competition. |
+| *"What is my strongest eleven?"* | The mathematically optimal Best XI and B-team on a tactical pitch — plus youth and second team, per competition. |
 | *"Where is my team really weak?"* | Gap analysis that finds the obvious holes *and* the hidden ones, such as a star playing out of his best slot. |
 | *"Which tactic suits this squad?"* | Every bundled tactic ranked by how well your players fill it. Ideal when you take over a new club. |
 | *"Who should I sign?"* | Your whole scouting database ranked for the role you need, with filters for age, value, nationality and personality. |
 | *"Is this kid a future star?"* | A talent score that combines current ability, years left to develop, mentality and personality. |
 | *"What should he train?"* | The training methods that raise his rating for his role the most, in order. |
 | *"Who do I register?"* | A squad-list assistant for the Premier League and the Champions / Europa / Conference League quotas. |
+
+> 🧮 **The heart of it: a provably optimal Best XI.** Starting XI and B-team
+> are solved together as an assignment problem with the Hungarian method. No
+> other line-up of your players has a stronger starting eleven — and of all
+> equally strong ones you get the strongest B-team.
+> [How it works ↓](#-your-provably-optimal-best-xi--the-heart-of-the-app)
 
 **And it respects your time and your save:**
 
@@ -64,7 +70,7 @@ and builds everything else on top of it.
 
 ## 🎬 Feature tour
 
-### 🏆 Your real Best XI — the heart of the app
+### 🏆 Your provably optimal Best XI — the heart of the app
 
 Not the eleven highest numbers, but the eleven that make the strongest *team*.
 Starting XI and B-team stand side by side on the pitch in your formation, every
@@ -73,30 +79,39 @@ player for his profile, right-click for everything else.
 
 <img src="docs/screenshots/en/best-xi.png" alt="Best XI page: starting eleven and B-team on two tactical pitches, each player with rating, role and playing time" width="100%">
 
-**Why it picks better than "best player per position".** Most tools walk
-through the formation slot by slot and hand each one its best player. That
-breaks as soon as a player is the best option for two positions: whichever slot
-comes first gets him, the other one is left with the scraps. This app decides
-the hardest question first:
+**Provably optimal — not a rule of thumb.** Most tools walk through the
+formation slot by slot and hand each one its best player. That breaks as soon
+as a player is the best option for two positions: whichever slot comes first
+gets him, the other one is left with the scraps. Smarter heuristics help, but
+they still guess. This app doesn't: it treats starting XI and B-team as one
+**assignment problem** and solves it **exactly** with the Hungarian method
+(Kuhn–Munkres), the classic mathematics for pairing workers with jobs.
 
-1. **Rank the candidates for every slot.** Only players who can really play
-   there are considered, scored by their rating for that slot's role. You can
-   let agreed playing time and natural positions weigh in, and pin a player to
-   a primary role.
-2. **Find the slot with the biggest drop-off.** For every open slot the app
-   compares its best candidate with the next-best one. Where that gap is
-   largest, the best player is the hardest to replace — so that slot is filled
-   first.
-3. **Repeat.** The chosen player leaves every other slot's list, the gaps are
-   recalculated, and the next most critical slot is decided, until all eleven
-   are filled.
-4. **Finishing touches.** Two players sharing a role on mirrored slots — two
+What you get is guaranteed, in this order:
+
+1. **No stronger starting XI exists.** Of every possible line-up of your
+   players, none fills more slots or reaches a higher total rating.
+2. **The best B-team that XI allows.** Among all equally strong starting
+   elevens, the one that leaves the strongest B-team wins — a versatile
+   centre-back who can also play defensive midfield starts where his absence
+   from the B-team costs least.
+3. **Your rules always hold.** Only players who can really play a slot are
+   considered, rated by their DWRS for that slot's role, optionally weighted by
+   agreed playing time and natural positions. A player you pinned to a primary
+   role only ever plays there.
+4. **Finishing touch.** Two players sharing a role on mirrored slots — two
    centre-backs, say — are swapped if that puts them on their preferred side.
 
-The B-team is then built the same way from everyone who is left, followed by
-the best depth options per role, a youth XI and a second-team XI. Switch the
-competition at the top and the whole thing is rebuilt from the players who are
-actually registered for it.
+*A real case:* a step-by-step picker started a defender at centre-back,
+although he was the better defensive midfielder — so the B-team had to field a
+49% teenager in midfield. The exact method found the line-up in which **both**
+teams are stronger.
+
+"Optimal" means optimal for the ratings: DWRS decides how good a player is in a
+role, and no line-up built from those ratings can beat this one. The youth XI
+and second-team XI are computed the same exact way, followed by the best depth
+options per role. Switch the competition at the top and everything is rebuilt
+from the players who are actually registered for it.
 
 ### Scout by role, not by reputation
 

@@ -5,7 +5,7 @@
 ### Schluss mit Raten, wer spielen soll.
 
 Das kostenlose Desktop-Tool für den **Football Manager 2024**, das aus deinen
-Kader- und Scouting-Exporten klare Antworten macht: deine echte Best XI, die
+Kader- und Scouting-Exporten klare Antworten macht: deine beweisbar optimale Best XI, die
 versteckte Schwachstelle im Team, das Talent, das sich lohnt, und die Taktik,
 für die dein Kader gebaut ist.
 
@@ -45,13 +45,19 @@ und Rolle** und baut alles Weitere darauf auf.
 | Du fragst | Die App antwortet |
 |---|---|
 | *„Wer ist mein bester Spieler für genau diese Rolle?"* | Ein Rollen-Score von 0–100 (**DWRS**) für jeden Spieler in jeder Rolle: farbcodiert, sortierbar, über Positionen hinweg vergleichbar. |
-| *„Was ist meine stärkste Elf?"* | Eine Best XI auf dem Taktik-Spielfeld, dazu B-Team, Jugend und Zweitteam, je Wettbewerb. |
+| *„Was ist meine stärkste Elf?"* | Die mathematisch optimale Best XI samt B-Team auf dem Taktik-Spielfeld, dazu Jugend und Zweitteam, je Wettbewerb. |
 | *„Wo ist mein Team wirklich schwach?"* | Eine Gap-Analyse, die offensichtliche Lücken findet *und* versteckte, etwa einen Star, der nicht auf seiner besten Position spielt. |
 | *„Welche Taktik passt zu diesem Kader?"* | Jede mitgelieferte Taktik, sortiert danach, wie gut deine Spieler sie ausfüllen. Ideal, wenn du einen neuen Verein übernimmst. |
 | *„Wen soll ich holen?"* | Deine ganze Scouting-Datenbank, gerankt für die Rolle, die du brauchst, mit Filtern für Alter, Marktwert, Nationalität und Persönlichkeit. |
 | *„Wird aus dem Jungen ein Star?"* | Ein Talent-Score aus aktueller Stärke, verbleibenden Entwicklungsjahren, Mentalität und Persönlichkeit. |
 | *„Was soll er trainieren?"* | Die Trainingsmethoden, die seinen Rollen-Score am meisten heben, in der richtigen Reihenfolge. |
 | *„Wen melde ich?"* | Ein Meldelisten-Assistent für die Quoten der Premier League und der Champions / Europa / Conference League. |
+
+> 🧮 **Das Herzstück: eine beweisbar optimale Best XI.** Startelf und B-Team
+> werden gemeinsam als Zuordnungsproblem mit der Ungarischen Methode gelöst.
+> Keine andere Aufstellung deiner Spieler hat eine stärkere Startelf — und
+> unter allen gleich starken bekommst du das stärkste B-Team.
+> [So funktioniert's ↓](#-deine-beweisbar-optimale-best-xi--das-herzstück-der-app)
 
 **Und sie respektiert deine Zeit und deinen Spielstand:**
 
@@ -65,7 +71,7 @@ und Rolle** und baut alles Weitere darauf auf.
 
 ## 🎬 Die Funktionen
 
-### 🏆 Deine echte Best XI — das Herzstück der App
+### 🏆 Deine beweisbar optimale Best XI — das Herzstück der App
 
 Nicht die elf höchsten Zahlen, sondern die elf, die zusammen das stärkste *Team*
 ergeben. Startelf und B-Team stehen nebeneinander auf dem Spielfeld in deiner
@@ -74,31 +80,43 @@ Doppelklick auf einen Spieler öffnet sein Profil, Rechtsklick alles Weitere.
 
 <img src="docs/screenshots/de/best-xi.png" alt="Best-XI-Seite: Startelf und B-Team auf zwei Taktik-Spielfeldern, jeder Spieler mit Bewertung, Rolle und Spielzeit" width="100%">
 
-**Warum sie besser aufstellt als „bester Spieler pro Position".** Die meisten
-Tools gehen die Formation Position für Position durch und geben jeder ihren
-besten Spieler. Das geht schief, sobald ein Spieler für zwei Positionen die
-beste Wahl ist: Die Position, die zuerst dran ist, bekommt ihn, die andere den
-Rest. Diese App entscheidet die schwierigste Frage zuerst:
+**Beweisbar optimal — keine Faustregel.** Die meisten Tools gehen die
+Formation Position für Position durch und geben jeder ihren besten Spieler.
+Das geht schief, sobald ein Spieler für zwei Positionen die beste Wahl ist: Die
+Position, die zuerst dran ist, bekommt ihn, die andere den Rest. Klügere
+Faustregeln helfen, aber sie raten trotzdem. Diese App rät nicht: Sie behandelt
+Startelf und B-Team als ein **Zuordnungsproblem** und löst es **exakt** mit der
+Ungarischen Methode (Kuhn–Munkres), der klassischen Mathematik für die
+Verteilung von Arbeitern auf Aufgaben.
 
-1. **Kandidaten für jede Position reihen.** Berücksichtigt wird nur, wer dort
-   wirklich spielen kann, sortiert nach seiner Bewertung für die Rolle dieser
-   Position. Vereinbarte Spielzeit und natürliche Positionen kannst du
-   mitgewichten, und einen Spieler auf eine Hauptrolle festlegen.
-2. **Die Position mit dem größten Leistungsabfall finden.** Für jede offene
-   Position vergleicht die App ihren besten Kandidaten mit dem zweitbesten. Wo
-   dieser Abstand am größten ist, ist der Beste am schwersten zu ersetzen, also
-   wird diese Position zuerst besetzt.
-3. **Wiederholen.** Der gewählte Spieler verschwindet aus allen anderen
-   Kandidatenlisten, die Abstände werden neu berechnet, und die nächste
-   kritische Position wird entschieden, bis alle elf besetzt sind.
+Was du bekommst, ist garantiert, in dieser Reihenfolge:
+
+1. **Es gibt keine stärkere Startelf.** Von allen möglichen Aufstellungen
+   deiner Spieler besetzt keine mehr Positionen oder erreicht eine höhere
+   Gesamtbewertung.
+2. **Das beste B-Team, das diese Startelf zulässt.** Unter allen gleich starken
+   Startelfs gewinnt die, die das stärkste B-Team übrig lässt — ein
+   vielseitiger Innenverteidiger, der auch auf der Sechs spielen kann, beginnt
+   dort, wo sein Fehlen im B-Team am wenigsten kostet.
+3. **Deine Regeln gelten immer.** Berücksichtigt wird nur, wer auf einer
+   Position wirklich spielen kann, bewertet mit seinem DWRS für die Rolle
+   dieser Position, auf Wunsch gewichtet mit vereinbarter Spielzeit und
+   natürlichen Positionen. Wen du auf eine Hauptrolle festlegst, der spielt nur
+   dort.
 4. **Feinschliff.** Zwei Spieler mit derselben Rolle auf gespiegelten
    Positionen, etwa zwei Innenverteidiger, tauschen die Seite, wenn sie damit
    auf ihrer bevorzugten Seite stehen.
 
-Das B-Team entsteht danach auf dieselbe Weise aus allen übrigen Spielern, dann
-folgen die besten Tiefen-Optionen je Rolle, eine Jugend-XI und eine
-Zweitteam-XI. Wechsle oben den Wettbewerb, und alles wird aus den Spielern neu
-gebaut, die dafür wirklich gemeldet sind.
+*Ein echter Fall:* Eine schrittweise Auswahl stellte einen Verteidiger in die
+Innenverteidigung, obwohl er als Sechser stärker war — das B-Team musste
+dadurch einen 17-Jährigen mit 49 % im Mittelfeld aufbieten. Das exakte
+Verfahren fand die Aufstellung, in der **beide** Teams stärker sind.
+
+„Optimal" heißt optimal für die Bewertungen: Der DWRS entscheidet, wie gut ein
+Spieler in einer Rolle ist, und keine Aufstellung aus diesen Bewertungen
+schlägt diese. Jugend-XI und Zweitteam-XI entstehen auf dieselbe exakte Weise,
+dazu die besten Tiefen-Optionen je Rolle. Wechsle oben den Wettbewerb, und
+alles wird aus den Spielern neu gebaut, die dafür wirklich gemeldet sind.
 
 ### Nach Rolle scouten, nicht nach Ruf
 

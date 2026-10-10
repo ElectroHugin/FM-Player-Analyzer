@@ -1,6 +1,8 @@
 add_library(fmcore STATIC
     AppConfig.h
     AppConfig.cpp
+    Assignment.h
+    Assignment.cpp
     Attributes.h
     Constants.h
     Constants.cpp

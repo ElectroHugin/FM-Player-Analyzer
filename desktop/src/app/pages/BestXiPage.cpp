@@ -77,7 +77,6 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
     m_hint = new QLabel(algorithmHint(), content);
     m_hint->setWordWrap(true);
-    m_hint->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(m_hint);
 
     m_tabs = new QTabWidget(content);
@@ -218,11 +217,12 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
 QString BestXiPage::algorithmHint()
 {
-    return tr("Der Rechner nutzt einen 'Schwächstes-Glied-zuerst'-Algorithmus: Statt Position "
-              "für Position den besten Spieler zu wählen, wird immer zuerst die Position "
-              "besetzt, auf der der Abstand zwischen dem besten und dem zweitbesten "
-              "verfügbaren Spieler am größten ist — dort entstünde sonst die größte Lücke. "
-              "Das ergibt insgesamt ausgewogenere und stärkere Teams.");
+    return tr("🧮 <b>Beweisbar optimal.</b> Startelf und B-Team werden gemeinsam als "
+              "Zuordnungsproblem mit der Ungarischen Methode berechnet: Keine andere Aufstellung "
+              "hat eine stärkere Startelf, und unter allen gleich starken bekommst du das "
+              "stärkste B-Team — vielseitige Spieler stehen dort, wo ihr Fehlen am wenigsten "
+              "kostet. Grundlage ist der DWRS je Rolle, gewichtet mit Spielzeit und natürlicher "
+              "Position; Hauptrollen werden eingehalten.");
 }
 
 void BestXiPage::refresh()

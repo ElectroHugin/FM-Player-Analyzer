@@ -631,49 +631,49 @@
         <translation>Limits the first team to the players eligible for the competition: the saved squad list (&apos;Registration&apos; page) plus everyone who may play without a slot. In the cup everyone may play.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="91"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="90"/>
         <source>Startelf</source>
         <translation>Starting XI</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="98"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="97"/>
         <source>B-Team</source>
         <translation>B-Team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="108"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="107"/>
         <source>Weitere Kader-Tiefe</source>
         <translation>Additional squad depth</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="130"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="129"/>
         <source>Erste Mannschaft</source>
         <translation>First Team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="139"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="138"/>
         <source>Zweitteam-XI</source>
         <translation>Second Team XI</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="146"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="145"/>
         <source>Jugend-XI</source>
         <translation>Youth XI</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="157"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="156"/>
         <source>✔️ Zum Verwalten dieser Spieler dient die Seite &apos;Transfers&apos;.</source>
         <translation>✔️ Use the &apos;Transfers&apos; page to manage these players.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="172"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="171"/>
         <source>Vielversprechende Talente zum Verleihen (nach Talent-Score)</source>
         <translation>Promising talents to loan out (by talent score)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="117"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="176"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="184"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="116"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="175"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="183"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -683,88 +683,83 @@
         <translation>Competition:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="117"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="176"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="184"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="116"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="175"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="183"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="117"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="116"/>
         <source>Rolle</source>
         <translation>Role</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="117"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="116"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="117"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="116"/>
         <source>Eignung</source>
         <translation>Suitability</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="176"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="184"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="175"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="183"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="176"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="184"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="175"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="183"/>
         <source>Beste Rolle</source>
         <translation>Best Role</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="177"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="185"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="176"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="184"/>
         <source>Bester DWRS</source>
         <translation>Best DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="177"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="176"/>
         <source>Talent</source>
         <translation>Talent</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="177"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="185"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="176"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="184"/>
         <source>Ent</source>
         <translation>Det</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="177"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="185"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="176"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="184"/>
         <source>Arb</source>
         <translation>Wor</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="178"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="185"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="177"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="184"/>
         <source>Transfer</source>
         <translation>Transfer</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="178"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="186"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="177"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="185"/>
         <source>Leihe</source>
         <translation>Loan</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="182"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="181"/>
         <source>Überzählige Spieler für Verkauf / Freigabe</source>
         <translation>Surplus players for sale / release</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="191"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="190"/>
         <source>Jugend &amp;&amp; Zweitteam</source>
         <translation>Youth &amp;&amp; Second Team</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="221"/>
-        <source>Der Rechner nutzt einen &apos;Schwächstes-Glied-zuerst&apos;-Algorithmus: Statt Position für Position den besten Spieler zu wählen, wird immer zuerst die Position besetzt, auf der der Abstand zwischen dem besten und dem zweitbesten verfügbaren Spieler am größten ist — dort entstünde sonst die größte Lücke. Das ergibt insgesamt ausgewogenere und stärkere Teams.</source>
-        <translation>The calculator uses a &apos;weakest link first&apos; algorithm: instead of picking the best player position by position, it always fills the position where the gap between the best and the second-best available player is largest — that is where the biggest hole would otherwise open up. This produces more balanced and stronger teams overall.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="247"/>
@@ -791,6 +786,11 @@
         <location filename="../src/app/pages/BestXiPage.cpp" line="255"/>
         <source>%1 (alle Spieler)</source>
         <translation>%1 (all players)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="220"/>
+        <source>🧮 &lt;b&gt;Beweisbar optimal.&lt;/b&gt; Startelf und B-Team werden gemeinsam als Zuordnungsproblem mit der Ungarischen Methode berechnet: Keine andere Aufstellung hat eine stärkere Startelf, und unter allen gleich starken bekommst du das stärkste B-Team — vielseitige Spieler stehen dort, wo ihr Fehlen am wenigsten kostet. Grundlage ist der DWRS je Rolle, gewichtet mit Spielzeit und natürlicher Position; Hauptrollen werden eingehalten.</source>
+        <translation>🧮 &lt;b&gt;Provably optimal.&lt;/b&gt; Starting XI and B-team are computed together as an assignment problem with the Hungarian method: no other line-up has a stronger starting XI, and of all equally strong ones you get the strongest B-team — versatile players play where their absence costs least. Based on the DWRS per role, weighted by playing time and natural position; primary roles are respected.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="273"/>
