@@ -12,6 +12,7 @@ class QGroupBox;
 class QLabel;
 class QTableWidget;
 class QTabWidget;
+class QToolButton;
 
 namespace fm {
 
@@ -52,7 +53,9 @@ private:
     QLabel *m_competitionLabel = nullptr;
     QComboBox *m_competitionCombo = nullptr; // only with registration rules
     QLabel *m_registrationNote = nullptr;    // who is left out, or why nobody is
-    QLabel *m_hint = nullptr;
+    QLabel *m_hint = nullptr;         // algorithm explanation, shown on demand
+    QToolButton *m_hintToggle = nullptr;
+    QLabel *m_clubNotice = nullptr;   // "choose your club first"
     QTabWidget *m_tabs = nullptr;
 
     TacticPitchWidget *m_xiPitch = nullptr;

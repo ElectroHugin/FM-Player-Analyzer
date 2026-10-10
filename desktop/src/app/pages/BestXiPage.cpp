@@ -17,6 +17,7 @@
 #include <QScrollArea>
 #include <QTabWidget>
 #include <QTableWidget>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include <algorithm>
@@ -69,7 +70,21 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
            "Platz spielen dürfen. Im Pokal dürfen alle spielen."));
     tacticRow->addWidget(m_competitionCombo);
     tacticRow->addStretch(1);
+    // How the line-up is computed: one click away instead of always on screen.
+    m_hintToggle = new QToolButton(content);
+    m_hintToggle->setText(tr("Beweisbar optimal"));
+    m_hintToggle->setToolTip(tr("Erklärung des Rechenverfahrens ein- oder ausblenden"));
+    m_hintToggle->setCheckable(true);
+    m_hintToggle->setArrowType(Qt::RightArrow);
+    m_hintToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    tacticRow->addWidget(m_hintToggle);
     layout->addLayout(tacticRow);
+
+    m_clubNotice = new QLabel(tr("Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen)."),
+                              content);
+    m_clubNotice->setWordWrap(true);
+    m_clubNotice->setVisible(false);
+    layout->addWidget(m_clubNotice);
 
     m_registrationNote = new QLabel(content);
     m_registrationNote->setWordWrap(true);
@@ -77,7 +92,13 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
     m_hint = new QLabel(algorithmHint(), content);
     m_hint->setWordWrap(true);
+    m_hint->setObjectName(QStringLiteral("kpiCaption"));
+    m_hint->setVisible(false);
     layout->addWidget(m_hint);
+    connect(m_hintToggle, &QToolButton::toggled, this, [this](bool shown) {
+        m_hint->setVisible(shown);
+        m_hintToggle->setArrowType(shown ? Qt::DownArrow : Qt::RightArrow);
+    });
 
     m_tabs = new QTabWidget(content);
 
@@ -217,12 +238,13 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
 QString BestXiPage::algorithmHint()
 {
-    return tr("🧮 <b>Beweisbar optimal.</b> Startelf und B-Team werden gemeinsam als "
-              "Zuordnungsproblem mit der Ungarischen Methode berechnet: Keine andere Aufstellung "
-              "hat eine stärkere Startelf, und unter allen gleich starken bekommst du das "
-              "stärkste B-Team — vielseitige Spieler stehen dort, wo ihr Fehlen am wenigsten "
-              "kostet. Grundlage ist der DWRS je Rolle, gewichtet mit Spielzeit und natürlicher "
-              "Position; Hauptrollen werden eingehalten.");
+    return tr("Startelf und B-Team werden gemeinsam als Zuordnungsproblem berechnet, mit der "
+              "Ungarischen Methode (englisch: Hungarian algorithm, Kuhn–Munkres): Spieler werden "
+              "Positionen eins zu eins so zugeordnet, dass die Summe der Bewertungen maximal ist. "
+              "Keine andere Aufstellung hat eine stärkere Startelf, und unter allen gleich starken "
+              "bekommst du das stärkste B-Team — vielseitige Spieler stehen dort, wo ihr Fehlen "
+              "am wenigsten kostet. Grundlage ist der DWRS je Rolle, gewichtet mit Spielzeit und "
+              "natürlicher Position; Hauptrollen werden eingehalten.");
 }
 
 void BestXiPage::refresh()
@@ -270,7 +292,7 @@ void BestXiPage::rebuild()
     const QString tactic = m_tacticCombo->currentText();
 
     if (userClub.isEmpty() || tactic.isEmpty()) {
-        m_hint->setText(tr("Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen)."));
+        m_clubNotice->setVisible(true);
         m_registrationNote->setVisible(false);
         m_xiPitch->clearData();
         m_bTeamPitch->clearData();
@@ -278,7 +300,7 @@ void BestXiPage::rebuild()
         m_youthXiPitch->clearData();
         return;
     }
-    m_hint->setText(algorithmHint()); // back from the "choose your club" notice
+    m_clubNotice->setVisible(false);
 
     const auto positions = m_context.definitions().tacticRoles().value(tactic);
     const QStringList slotOrder = m_context.definitions().tacticSlotOrder(tactic);
