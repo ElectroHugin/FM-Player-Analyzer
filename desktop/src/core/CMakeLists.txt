@@ -10,6 +10,8 @@ add_library(fmcore STATIC
     Database.cpp
     Definitions.h
     Definitions.cpp
+    Development.h
+    Development.cpp
     DwrsEngine.h
     DwrsEngine.cpp
     Freshness.h

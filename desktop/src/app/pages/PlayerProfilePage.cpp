@@ -6,6 +6,7 @@
 #include "../widgets/PlayerSearchModel.h"
 #include "PageHelpers.h"
 #include "core/Constants.h"
+#include "core/Development.h"
 #include "core/DwrsEngine.h"
 #include "core/Freshness.h"
 #include "core/HtmlImporter.h"
@@ -18,7 +19,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCompleter>
-#include <QDateTime>
 #include <QFile>
 #include <QFileDialog>
 #include <QFrame>
@@ -26,6 +26,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QLocale>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
@@ -250,6 +251,8 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     chartTitle->setObjectName(QStringLiteral("sectionTitle"));
     detailLayout->addWidget(chartTitle);
     m_chart = new LineChartWidget(m_theme, m_detailWidget);
+    // One player's own history: each point is a stored change of his ratings.
+    m_chart->setAxisTitle(tr("Gespeicherte Veränderungen vor dem aktuellen Wert"));
     detailLayout->addWidget(m_chart);
 
     layout->addWidget(m_detailWidget);
@@ -581,29 +584,39 @@ void PlayerProfilePage::showPlayer()
     m_keyAttrsLabel->setText(chips.isEmpty() ? tr("Keine Attribut-Definitionen für diese Rolle.")
                                              : chips);
 
-    // --- Development chart for the top 3 roles ---
+    // --- Development chart for the top 3 roles (x = his upload snapshots) ---
+    QStringList chartRoles;
+    for (int i = 0; i < static_cast<int>(topRoles.size()) && i < 3; ++i)
+        chartRoles << topRoles[i].role;
+    std::vector<DwrsEntry> history = m_context.database().dwrsHistory({player->id});
+    std::erase_if(history,
+                  [&chartRoles](const DwrsEntry &entry) { return !chartRoles.contains(entry.role); });
+    const Development::Timeline timeline =
+        Development::buildTimeline(history, m_context.database().dwrsRecalcTimestamps());
     QList<LineChartWidget::Series> chartSeries;
-    QList<int> ids{player->id};
-    for (int i = 0; i < static_cast<int>(topRoles.size()) && i < 3; ++i) {
-        const auto history = m_context.database().dwrsHistory(ids, topRoles[i].role);
-        if (history.empty())
+    QList<const Development::Track *> chartTracks;
+    for (int i = 0; i < chartRoles.size(); ++i) {
+        const Development::Track *track = timeline.track(player->id, chartRoles.at(i));
+        if (!track)
             continue;
+        chartTracks << track;
         LineChartWidget::Series series;
         series.name = topRoles[i].roleName;
-        for (const DwrsEntry &entry : history) {
-            const QDateTime ts = parseDwrsTimestamp(entry.timestamp);
-            if (ts.isValid())
-                series.points.append(
-                    {static_cast<double>(ts.toMSecsSinceEpoch()), entry.normalized});
-        }
-        if (!series.points.isEmpty())
-            chartSeries.append(series);
+        series.emphasized = i == 0;
+        for (int s = track->firstSession; s < timeline.size(); ++s)
+            series.points.append({double(s), track->adjusted.at(s)});
+        chartSeries.append(series);
     }
+    QStringList snapshotLabels;
+    for (const Development::Session &session : timeline.sessions)
+        snapshotLabels << QLocale().toString(session.last, QLocale::ShortFormat);
+    const QList<int> markers = Development::recalcMarkers(chartTracks, 0);
     if (chartSeries.isEmpty())
         m_chart->clearChart(tr("Noch keine historischen DWRS-Daten. Importiere über die Zeit "
                                "weitere Snapshots, um die Entwicklung zu sehen."));
     else
-        m_chart->setSeries(std::move(chartSeries));
+        m_chart->setSeries(std::move(chartSeries), snapshotLabels,
+                           LineChartWidget::ValueMode::Percent, markers);
 }
 
 void PlayerProfilePage::runManualUpdate()
@@ -645,7 +658,7 @@ void PlayerProfilePage::runManualUpdate()
         if (!fileName.isEmpty() && fileName != playerName)
             message += tr(" (Name in der Datei: '%1'.)").arg(fileName);
         QMessageBox::information(this, tr("Spieler aktualisieren"), message);
-    });
+    }, RatingsOrigin::Import);
 }
 
 void PlayerProfilePage::showTrainingAdvice(const Player *player)

@@ -13,7 +13,7 @@ namespace RatingsUpdater {
 Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
                          const DwrsEngine &engine, const QStringList &validRoles,
                          const std::vector<int> &playersSubset,
-                         std::function<void(int, int)> progress)
+                         std::function<void(int, int)> progress, RatingsOrigin origin)
 {
     Result result;
 
@@ -82,7 +82,7 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
             progress(++done, total);
     }
 
-    if (!db.appendDwrsRatings(toInsert)) {
+    if (!db.appendDwrsRatings(toInsert, origin)) {
         result.error = db.errorString();
         return result;
     }

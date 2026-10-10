@@ -13,7 +13,7 @@
 namespace fm {
 
 void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affectedUids,
-                   std::function<void(QString)> onDone)
+                   std::function<void(QString)> onDone, RatingsOrigin origin)
 {
     auto *dialog = new BusyProgressDialog(QObject::tr("DWRS-Bewertungen werden berechnet…"),
                                           parent);
@@ -45,7 +45,7 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                      });
 
     const QFuture<RatingsUpdater::Result> future = QtConcurrent::run(
-        [dbFile, players = std::move(players), engine, validRoles,
+        [dbFile, players = std::move(players), engine, validRoles, origin,
          dialogGuard = QPointer<BusyProgressDialog>(dialog)] {
             Database db(Database::uniqueConnectionName(QStringLiteral("recalc_helper")));
             if (!db.open(dbFile)) {
@@ -68,7 +68,8 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                                 dialogGuard->setValue(percent);
                         },
                         Qt::QueuedConnection);
-                });
+                },
+                origin);
         });
     context.registerBackgroundTask(QFuture<void>(future));
     watcher->setFuture(future);

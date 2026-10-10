@@ -26,6 +26,10 @@ struct DwrsEntry {
     QString timestamp;       // "yyyy-MM-dd HH:mm:ss"
 };
 
+// Who wrote a batch of ratings: an import (real development) or a
+// recalculation of unchanged players (formula, weights or definitions changed).
+enum class RatingsOrigin { Import, Recalc };
+
 // Latest rating per (playerId, role).
 using LatestRatings = QHash<QPair<int, QString>, QPair<double, double>>; // -> (absolute, normalized)
 
@@ -98,7 +102,9 @@ public:
     bool mergePlayerInto(int badPlayerId, int goodPlayerId);
 
     // --- DWRS history ---
-    bool appendDwrsRatings(const std::vector<DwrsEntry> &entries);
+    // A Recalc batch also records its timestamps in dwrs_recalcs.
+    bool appendDwrsRatings(const std::vector<DwrsEntry> &entries,
+                           RatingsOrigin origin = RatingsOrigin::Import);
     LatestRatings latestDwrsRatings();
     // Latest ratings of just these players (queried in id chunks).
     LatestRatings latestDwrsRatings(const QList<int> &playerIds);
@@ -106,6 +112,8 @@ public:
     // player, role, timestamp.
     std::vector<DwrsEntry> dwrsHistory(const QList<int> &playerIds,
                                        const QString &role = QString());
+    // History timestamps written by recalculations (see RatingsOrigin).
+    QSet<QString> dwrsRecalcTimestamps();
 
     // --- Settings (key/value; same keys as legacy) ---
     QString setting(const QString &key, const QString &defaultValue = QString());
@@ -148,9 +156,11 @@ private:
     bool migrateV5ToV6();                 // re-base freshness stamps on full exports
     bool migrateV6ToV7();                 // expire stale manual U21 decisions
     bool migrateV7ToV8();                 // long-term injuries table
+    bool migrateV8ToV9();                 // dwrs_recalcs table
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     static QString createPlayerRegistrationSql(); // ditto
     static QString createLongTermInjuriesSql();   // ditto
+    static QString createDwrsRecalcsSql();        // ditto
     std::vector<Player> loadPlayersImpl(const QList<int> *ids); // nullptr = all
     bool exec(const QString &sql);
     // Runs `sqlTemplate` (with one "%1" for a "?,?,…" id placeholder list) for

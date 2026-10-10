@@ -195,10 +195,15 @@ dieser Liste.
 
 ### Sieh deinem Kader beim Wachsen zu
 
-Jeder Import ist eine Momentaufnahme. Exportiere während der Saison erneut und
-verfolge, wie sich dein Kader, eine einzelne Rolle oder ein Spieler entwickelt.
+Jeder Import ist eine Momentaufnahme. Die Entwicklungsseite sortiert deinen
+Kader danach, wie viel jeder Spieler in den letzten 5, 10 oder 20 Uploads
+zugelegt hat, mit einer Verlaufslinie pro Spieler. Gezählt wird in Uploads
+statt in Kalendertagen, denn der Export enthält kein Spieldatum. Klick auf
+einen Spieler zeigt seine Rollen, Strg-Klick vergleicht mehrere. Neuberechnungen
+nach geänderten Gewichten werden herausgerechnet, es zählt nur echter
+Fortschritt.
 
-<img src="docs/screenshots/de/development.png" alt="Liniendiagramm der durchschnittlichen Kaderbewertung je Rolle im Zeitverlauf" width="100%">
+<img src="docs/screenshots/de/development.png" alt="Entwicklungstabelle mit Bewertungsänderung und Verlaufslinie je Spieler neben dem Kader-Trend-Diagramm" width="100%">
 
 ### Mach es zu deinem
 

@@ -706,7 +706,8 @@ void MainWindow::startDwrsRecalc()
                                 dialogGuard->setValue(percent);
                         },
                         Qt::QueuedConnection);
-                });
+                },
+                RatingsOrigin::Recalc);
         });
     m_context.registerBackgroundTask(QFuture<void>(future));
     m_recalcWatcher.setFuture(future);

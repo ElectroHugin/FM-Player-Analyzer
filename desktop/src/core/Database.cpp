@@ -22,7 +22,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 8;
+constexpr int kSchemaVersion = 9;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -221,6 +221,8 @@ bool Database::initSchema()
             ok = migrateV6ToV7();
         if (ok && version < 8)
             ok = migrateV7ToV8();
+        if (ok && version < 9)
+            ok = migrateV8ToV9();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -297,6 +299,7 @@ bool Database::createInitialSchema()
                        " role TEXT NOT NULL)"),
         createPlayerRegistrationSql(),
         createLongTermInjuriesSql(),
+        createDwrsRecalcsSql(),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_dwrs_history_role_ts ON dwrs_history(role, ts)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_player_roles_role ON player_roles(role)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_players_club ON players(club)"),
@@ -478,6 +481,19 @@ QString Database::createLongTermInjuriesSql()
 bool Database::migrateV7ToV8()
 {
     return exec(createLongTermInjuriesSql());
+}
+
+QString Database::createDwrsRecalcsSql()
+{
+    // History timestamps written by a recalculation instead of an import: the
+    // development view re-bases ratings there instead of counting a change.
+    return QStringLiteral("CREATE TABLE IF NOT EXISTS dwrs_recalcs (ts TEXT PRIMARY KEY)");
+}
+
+bool Database::migrateV8ToV9()
+{
+    // Earlier recalculations left no trace; they cannot be told apart anymore.
+    return exec(createDwrsRecalcsSql());
 }
 
 std::vector<Player> Database::loadPlayers()
@@ -903,12 +919,28 @@ bool Database::replacePlayerRoles(const std::vector<std::pair<int, QStringList>>
     return commitTransaction();
 }
 
-bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries)
+bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsOrigin origin)
 {
     if (entries.empty())
         return true;
     if (!beginTransaction())
         return false;
+
+    if (origin == RatingsOrigin::Recalc) {
+        QSet<QString> stamps;
+        for (const DwrsEntry &entry : entries)
+            stamps.insert(entry.timestamp);
+        QSqlQuery mark(m_db);
+        mark.prepare(QStringLiteral("INSERT OR IGNORE INTO dwrs_recalcs (ts) VALUES (?)"));
+        for (const QString &stamp : stamps) {
+            mark.bindValue(0, stamp);
+            if (!mark.exec()) {
+                m_error = mark.lastError().text();
+                rollbackTransaction();
+                return false;
+            }
+        }
+    }
 
     // Multi-row statements: one exec per chunk instead of two per rating. The
     // per-exec overhead of QSqlQuery dominated a big recalc (~160k ratings took
@@ -1067,6 +1099,19 @@ std::vector<DwrsEntry> Database::dwrsHistory(const QList<int> &playerIds, const 
                        result.push_back(std::move(entry));
                    });
     return result;
+}
+
+QSet<QString> Database::dwrsRecalcTimestamps()
+{
+    QSet<QString> stamps;
+    QSqlQuery query(m_db);
+    if (!query.exec(QStringLiteral("SELECT ts FROM dwrs_recalcs"))) {
+        m_error = query.lastError().text();
+        return stamps;
+    }
+    while (query.next())
+        stamps.insert(query.value(0).toString());
+    return stamps;
 }
 
 QString Database::setting(const QString &key, const QString &defaultValue)

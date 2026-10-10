@@ -536,6 +536,39 @@ private slots:
         db.close();
     }
 
+    void recalcTimestampsAndV8Migration()
+    {
+        // A v8 database gains dwrs_recalcs; only Recalc batches leave a mark.
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v8.db"));
+        {
+            Database db(QStringLiteral("v8seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(1);
+            batch[0].uid = QStringLiteral("1");
+            batch[0].name = QStringLiteral("P");
+            QVERIFY(db.upsertPlayers(batch));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("DROP TABLE dwrs_recalcs")));
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 8")));
+            db.close();
+        }
+
+        Database db(QStringLiteral("v8migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        QVERIFY(db.dwrsRecalcTimestamps().isEmpty());
+        const int id = db.loadPlayers().front().id;
+        const QString imported = QStringLiteral("2026-10-01 20:00:00");
+        const QString recalculated = QStringLiteral("2026-10-02 09:00:00");
+        QVERIFY(db.appendDwrsRatings({{id, QStringLiteral("GK-D"), 1.0, 50.0, imported}}));
+        QVERIFY(db.appendDwrsRatings({{id, QStringLiteral("GK-D"), 1.0, 58.0, recalculated},
+                                      {id, QStringLiteral("SK-D"), 1.0, 55.0, recalculated}},
+                                     RatingsOrigin::Recalc));
+        QCOMPARE(db.dwrsRecalcTimestamps(), QSet<QString>{recalculated});
+        QCOMPARE(static_cast<int>(db.dwrsHistory({id}).size()), 3);
+        db.close();
+    }
+
     void migratesV6ToV7ExpiresStaleU21Overrides()
     {
         // Manual U21 decisions of players who are 22+ by now are reset; one at

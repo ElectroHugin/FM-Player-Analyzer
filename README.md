@@ -186,10 +186,14 @@ registered, save, and Best XI works with that list.
 
 ### Watch your squad grow
 
-Every import is a snapshot. Re-export during the season and follow how your
-squad, a single role or one player develops over time.
+Every import is a snapshot. The development page ranks your squad by what each
+player gained over the last 5, 10 or 20 uploads, with a trend line per player.
+It counts uploads, not calendar days, because the export carries no in-game
+date. Click a player to see his roles, Ctrl-click several to compare them.
+Recalculations after changed weights are factored out, so only real progress
+counts.
 
-<img src="docs/screenshots/en/development.png" alt="Line chart of the squad's average rating per role over time" width="100%">
+<img src="docs/screenshots/en/development.png" alt="Development table with the rating change and a trend line per player next to the squad trend chart" width="100%">
 
 ### Make it yours
 

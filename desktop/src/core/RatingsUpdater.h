@@ -24,11 +24,14 @@ struct Result {
 };
 
 // playersSubset: row indexes into players to restrict to (empty = all).
-// progress(current, total) is invoked per role batch.
+// progress(current, total) is invoked per role batch. origin: Recalc for every
+// run that is not part of an import (the rows then re-base the development
+// history instead of counting as change).
 Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
                          const DwrsEngine &engine, const QStringList &validRoles,
                          const std::vector<int> &playersSubset = {},
-                         std::function<void(int, int)> progress = {});
+                         std::function<void(int, int)> progress = {},
+                         RatingsOrigin origin = RatingsOrigin::Import);
 
 // Uid-keyed normalized ratings (the squad engines' input) built from the latest
 // DWRS rows, restricted to each player's CURRENTLY assigned roles. dwrs_latest
