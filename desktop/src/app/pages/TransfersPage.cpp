@@ -54,7 +54,7 @@ TransfersPage::TransfersPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading = new QLabel(
-        QStringLiteral("<h2>%1</h2>").arg(tr("Transfer- und Leih-Management")), content);
+        QStringLiteral("<h2>%1</h2>").arg(tr("Leihen & Verkäufe")), content);
     layout->addWidget(heading);
 
     m_hint = new QLabel(
@@ -147,7 +147,7 @@ void TransfersPage::rebuild()
     if (userClub.isEmpty() || tactic.isEmpty()) {
         m_loanSection.box->setVisible(false);
         m_sellSection.box->setVisible(false);
-        m_hint->setText(tr("Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen)."));
+        m_hint->setText(tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."));
         return;
     }
     m_loanSection.box->setVisible(true);

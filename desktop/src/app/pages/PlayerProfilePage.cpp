@@ -257,8 +257,8 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
 
     layout->addWidget(m_detailWidget);
     m_noRolesLabel = new QLabel(
-        tr("Dieser Spieler hat noch keine bewerteten Rollen. Weise ihm auf der Seite "
-           "'Rollen zuweisen' Rollen zu."),
+        tr("Dieser Spieler hat noch keine bewerteten Rollen. Weise ihm unter "
+           "Rollen & Taktiken → Rollen zuweisen Rollen zu."),
         content);
     m_noRolesLabel->hide();
     layout->addWidget(m_noRolesLabel);

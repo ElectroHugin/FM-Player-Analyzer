@@ -34,7 +34,8 @@ struct PlayerColumn;
 // with talent, personality, attribute-threshold and market filters, shortlist
 // toggle and a delta to the club's best player in the chosen role) and
 // "Mein Kader" (first team and/or second team, optionally youth only, never
-// touched by the scouting filters). CSV export on both.
+// touched by the scouting filters). CSV export on both. The tabs are two
+// navigation targets: "scouting_matrix" and "squad_matrix" (showSection).
 // Grew out of legacy player_role_matrix.py.
 class SquadMatrixPage : public PageBase
 {
@@ -44,6 +45,7 @@ public:
     explicit SquadMatrixPage(AppContext &context, QWidget *parent = nullptr);
 
     void refresh() override;
+    void showSection(const QString &pageId) override;
     void releaseStoreRows() override;
 
 private:
@@ -81,6 +83,7 @@ private:
     void loadAttributeThresholds();
 
     QTabWidget *m_tabs = nullptr;
+    QLabel *m_heading = nullptr;
 
     // Shared options
     QComboBox *m_tacticCombo = nullptr;

@@ -149,7 +149,7 @@ void NationalBestXiPage::rebuild()
     const QString tactic = m_tacticCombo->currentText();
     if (squadPlayers.empty() || tactic.isEmpty()) {
         m_hint->setText(tr("Noch keine Spieler im Nationalkader. Stelle ihn unter "
-                           "'Kader-Auswahl' zusammen."));
+                           "Kader → Auswahl zusammen."));
         m_hint->show();
         m_content->hide();
         return;

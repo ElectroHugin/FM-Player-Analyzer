@@ -299,6 +299,9 @@ QTabBar::tab {
     border: none; border-bottom: 3px solid transparent; }
 QTabBar::tab:hover { color: %FG%; }
 QTabBar::tab:selected { color: %INTERACTIVE%; border-bottom: 3px solid %INTERACTIVE%; font-weight: 600; }
+/* Page tabs of the active sidebar group, between header bar and page. */
+QFrame#pageTabStrip { background-color: %BG%; border-bottom: 1px solid %BORDER%; }
+QFrame#pageTabStrip QTabBar::tab { padding: 10px 20px; }
 
 /* ===== Group boxes as cards ===== */
 QGroupBox {

@@ -42,8 +42,8 @@ RoleAnalysisPage::RoleAnalysisPage(AppContext &context, QWidget *parent)
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Rollen-Analyse")), content);
-    layout->addWidget(heading);
+    m_heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Rollen-Abdeckung")), content);
+    layout->addWidget(m_heading);
 
     auto *controlRow = new QHBoxLayout;
     controlRow->addWidget(new QLabel(tr("Rolle:"), content));
@@ -151,6 +151,31 @@ QString RoleAnalysisPage::selectedRole() const
     return m_roleCombo->currentData().toString();
 }
 
+void RoleAnalysisPage::showSection(const QString &pageId)
+{
+    m_scoutedView = pageId == QLatin1String("scouting_roles");
+    m_heading->setText(QStringLiteral("<h2>%1</h2>").arg(
+        m_scoutedView ? tr("Scouting nach Rolle") : tr("Rollen-Abdeckung")));
+    applySectionVisibility();
+    m_tabs->setCurrentIndex(m_scoutedView ? m_scouted.tabIndex : m_myClub.tabIndex);
+    // Strengths & weaknesses look at the players of this section.
+    const int scope = m_scopeGroup->checkedId();
+    if (m_scoutedView != (scope == Scouted))
+        m_scopeGroup->button(m_scoutedView ? Scouted : MyClub)->setChecked(true);
+}
+
+void RoleAnalysisPage::applySectionVisibility()
+{
+    const bool second = !m_context.secondTeamClub().isEmpty();
+    m_tabs->setTabVisible(m_myClub.tabIndex, !m_scoutedView);
+    m_tabs->setTabVisible(m_secondTeam.tabIndex, !m_scoutedView && second);
+    m_tabs->setTabVisible(m_scouted.tabIndex, m_scoutedView);
+    // Scope buttons only where there is a choice (own club vs second team).
+    m_scopeGroup->button(MyClub)->setVisible(!m_scoutedView && second);
+    m_scopeGroup->button(SecondTeam)->setVisible(!m_scoutedView && second);
+    m_scopeGroup->button(Scouted)->setVisible(false);
+}
+
 void RoleAnalysisPage::releaseStoreRows()
 {
     for (Group *group : {&m_myClub, &m_secondTeam, &m_scouted}) {
@@ -183,7 +208,7 @@ void RoleAnalysisPage::refresh()
     std::sort(personalities.begin(), personalities.end());
     m_personalityFilter->setAvailablePersonalities(personalities);
 
-    m_tabs->setTabVisible(m_secondTeam.tabIndex, !m_context.secondTeamClub().isEmpty());
+    applySectionVisibility();
     m_updating = false;
 
     rebuildTables();

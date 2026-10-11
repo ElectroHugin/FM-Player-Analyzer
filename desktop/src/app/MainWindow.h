@@ -4,6 +4,7 @@
 #include <QHash>
 #include <QMainWindow>
 
+#include "Navigation.h"
 #include "core/RatingsUpdater.h"
 
 class QComboBox;
@@ -13,6 +14,7 @@ class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
+class QTabBar;
 class QToolButton;
 
 namespace fm {
@@ -52,8 +54,12 @@ private:
     void rebuildMenu(bool selectFirst = true);
     // Rebuilds the sidebar (e.g. a page appeared) and keeps the current page selected.
     void refreshMenuKeepingPage();
-    // Highlights the sidebar entry of pageId without triggering navigation.
+    // Highlights the sidebar group of pageId without triggering navigation.
     void selectMenuEntry(const QString &pageId);
+    // Tabs of pageId's sidebar group above the page; hidden for a single page.
+    void updateTabBar(const QString &pageId);
+    // A sidebar group: its last shown tab, else its first.
+    void navigateToGroup(const QString &groupId);
     void navigateTo(const QString &pageId);
     void goBack();
     void goForward();
@@ -83,7 +89,13 @@ private:
     QLabel *m_headerIdentity = nullptr; // club/national name + stadium
     QLabel *m_headerSave = nullptr;     // active save file
     QStackedWidget *m_stack = nullptr;
-    QHash<QString, PageBase *> m_pages; // lazily created
+    QHash<QString, PageBase *> m_pages; // by host page id (Navigation::hostPage), lazily created
+    QString m_currentPageId;            // page id shown (not its host)
+    QList<Navigation::Section> m_sidebar;
+    QWidget *m_tabStrip = nullptr;
+    QTabBar *m_tabBar = nullptr;
+    bool m_updatingTabs = false;
+    QHash<QString, QString> m_groupTabs; // group id -> last page id shown in it
 
     QFutureWatcher<RatingsUpdater::Result> m_recalcWatcher;
     BusyProgressDialog *m_recalcDialog = nullptr;

@@ -178,7 +178,7 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
     layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(12);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Dashboard")), content);
+    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Übersicht")), content);
     layout->addWidget(heading);
 
     layout->addWidget(buildImportSection(content));

@@ -339,7 +339,7 @@ void SigningAdvisorTab::recompute()
 
     if (m_tactic.isEmpty() || m_squad.empty()) {
         m_analysis = SigningAnalysis();
-        m_summary->setText(tr("Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen)."));
+        m_summary->setText(tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."));
         m_needsTable->setRowCount(0);
         m_optionsTable->setRowCount(0);
         m_optionsTitle->clear();

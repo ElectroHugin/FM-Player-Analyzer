@@ -10,6 +10,8 @@ add_executable(fmplayeranalyzer
     MainWindow.cpp
     MigrationWizard.h
     MigrationWizard.cpp
+    Navigation.h
+    Navigation.cpp
     ImportRunner.h
     ImportRunner.cpp
     PlayerActions.h

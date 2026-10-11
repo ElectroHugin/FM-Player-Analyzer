@@ -22,6 +22,11 @@ public:
 
     virtual void refresh() {}
 
+    // One page object can serve several navigation targets (tabs), e.g. Best
+    // XI's first-team and youth views share the tactic choice. Called with the
+    // target's page id each time the page is shown for it, before refresh().
+    virtual void showSection(const QString &pageId) { Q_UNUSED(pageId); }
+
     // Called on every non-visible page when the player store is replaced (a
     // reload), so no page keeps dangling Player* into the old store. Pages that
     // cache raw Player* (table models, filter pools) override this to drop them;

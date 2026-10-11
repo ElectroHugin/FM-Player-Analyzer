@@ -28,6 +28,7 @@
 #include <QScrollArea>
 #include <QSlider>
 #include <QSpinBox>
+#include <QTabBar>
 #include <QTabWidget>
 #include <QTableView>
 #include <QToolButton>
@@ -48,7 +49,6 @@ enum Tab { TabScouting = 0, TabSquad = 1 };
 const QString kAttrThresholdsKey = QStringLiteral("scouting_attr_thresholds"); // "Decisions:15,…"
 const QString kAttrEnabledKey = QStringLiteral("scouting_attr_enabled");
 const QString kAttrOnlyMatchesKey = QStringLiteral("scouting_attr_only_matches");
-const QString kTabKey = QStringLiteral("squad_matrix_tab");
 
 constexpr int kDefaultThreshold = 14;
 
@@ -106,8 +106,8 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Squad Matrix")), content);
-    layout->addWidget(heading);
+    m_heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Squad Matrix")), content);
+    layout->addWidget(m_heading);
 
     // --- Options shared by both tabs ---
     auto *optionsRow = new QHBoxLayout;
@@ -123,6 +123,7 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     m_tabs = new QTabWidget(content);
     m_tabs->addTab(buildScoutingTab(), tr("🔍 Scouting"));
     m_tabs->addTab(buildSquadTab(), tr("🏠 Mein Kader"));
+    m_tabs->tabBar()->hide(); // the main window's tabs choose (showSection)
     layout->addWidget(m_tabs, 1);
 
     // --- Signals ---
@@ -183,11 +184,14 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     });
     connect(m_attrOnlyMatchesCheck, &QCheckBox::toggled, this,
             [this] { attributeThresholdsChanged(); });
+}
 
-    connect(m_tabs, &QTabWidget::currentChanged, this, [this](int index) {
-        if (!m_updating)
-            m_context.database().setSetting(kTabKey, QString::number(index));
-    });
+void SquadMatrixPage::showSection(const QString &pageId)
+{
+    const bool scouting = pageId == QLatin1String("scouting_matrix");
+    m_tabs->setCurrentIndex(scouting ? TabScouting : TabSquad);
+    m_heading->setText(QStringLiteral("<h2>%1</h2>").arg(
+        scouting ? tr("Squad Matrix – Scouting") : tr("Squad Matrix – Mein Kader")));
 }
 
 QWidget *SquadMatrixPage::buildScoutingTab()
@@ -746,12 +750,10 @@ void SquadMatrixPage::refresh()
             .arg(m_context.config().ageThreshold(QStringLiteral("outfielder")))
             .arg(m_context.config().ageThreshold(QStringLiteral("goalkeeper"))));
 
-    // Per-database state: attribute thresholds and the last opened tab.
+    // Per-database state: the attribute thresholds.
     if (m_attrLoadedDb != m_context.currentDbName()) {
         m_attrLoadedDb = m_context.currentDbName();
         loadAttributeThresholds();
-        const int tab = m_context.database().setting(kTabKey, QString::number(TabScouting)).toInt();
-        m_tabs->setCurrentIndex(tab == TabSquad ? TabSquad : TabScouting);
     }
 
     m_updating = false;

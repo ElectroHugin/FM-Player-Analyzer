@@ -52,68 +52,12 @@
 #include <QShortcut>
 #include <QStackedWidget>
 #include <QStatusBar>
+#include <QTabBar>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QtConcurrentRun>
 
 namespace fm {
-
-namespace {
-
-struct MenuEntry {
-    QString label;
-    QString pageId;
-};
-
-// Club-mode menu (mirrors legacy sidebar order).
-const QList<MenuEntry> &clubMenu()
-{
-    static const QList<MenuEntry> entries = {
-        {QObject::tr("Dashboard"), QStringLiteral("dashboard")},
-        {QObject::tr("Rollen zuweisen"), QStringLiteral("assign_roles")},
-        {QObject::tr("Rollen-Analyse"), QStringLiteral("role_analysis")},
-        {QObject::tr("Spieler-Profil"), QStringLiteral("player_profile")},
-        {QObject::tr("Squad Matrix"), QStringLiteral("squad_matrix")},
-        {QObject::tr("Best XI"), QStringLiteral("best_xi")},
-        {QObject::tr("Registrierung"), QStringLiteral("registration")},
-        {QObject::tr("Taktik-Explorer"), QStringLiteral("tactic_explorer")},
-        {QObject::tr("Trainingsplan"), QStringLiteral("training_plan")},
-        {QObject::tr("Transfers"), QStringLiteral("transfers")},
-        {QObject::tr("Spieler-Vergleich"), QStringLiteral("player_comparison")},
-        {QObject::tr("Entwicklung"), QStringLiteral("dwrs_development")},
-        {QObject::tr("Spieler bearbeiten"), QStringLiteral("edit_player")},
-    };
-    return entries;
-}
-
-const QList<MenuEntry> &nationalMenu()
-{
-    static const QList<MenuEntry> entries = {
-        {QObject::tr("National-Dashboard"), QStringLiteral("national_dashboard")},
-        {QObject::tr("Rollen zuweisen"), QStringLiteral("assign_roles")},
-        {QObject::tr("Kader-Auswahl"), QStringLiteral("national_squad_selection")},
-        {QObject::tr("Nominierungs-Assistent"), QStringLiteral("national_callup")},
-        {QObject::tr("Squad Matrix"), QStringLiteral("national_squad_matrix")},
-        {QObject::tr("Best XI"), QStringLiteral("national_best_xi")},
-        {QObject::tr("Taktik-Explorer"), QStringLiteral("tactic_explorer")},
-        {QObject::tr("Spieler-Profil"), QStringLiteral("player_profile")},
-        {QObject::tr("Spieler-Vergleich"), QStringLiteral("player_comparison")},
-        {QObject::tr("Entwicklung"), QStringLiteral("dwrs_development")},
-    };
-    return entries;
-}
-
-const QList<MenuEntry> &globalMenu()
-{
-    static const QList<MenuEntry> entries = {
-        {QObject::tr("Neue Rolle"), QStringLiteral("new_role")},
-        {QObject::tr("Neue Taktik"), QStringLiteral("new_tactic")},
-        {QObject::tr("Einstellungen"), QStringLiteral("settings")},
-    };
-    return entries;
-}
-
-} // namespace
 
 MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent)
     : QMainWindow(parent)
@@ -183,6 +127,26 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     headerLayout->addWidget(m_headerIdentity, 1);
     headerLayout->addWidget(m_headerSave);
     contentColumn->addWidget(headerBar);
+
+    // Tabs of the active sidebar group (Navigation): one per page of the group.
+    m_tabStrip = new QFrame(central);
+    m_tabStrip->setObjectName(QStringLiteral("pageTabStrip"));
+    auto *tabLayout = new QHBoxLayout(m_tabStrip);
+    tabLayout->setContentsMargins(18, 6, 18, 0);
+    m_tabBar = new QTabBar(m_tabStrip);
+    m_tabBar->setExpanding(false);
+    m_tabBar->setDrawBase(false);
+    m_tabBar->setUsesScrollButtons(true);
+    m_tabBar->setCursor(Qt::PointingHandCursor);
+    m_tabBar->setFocusPolicy(Qt::NoFocus);
+    tabLayout->addWidget(m_tabBar);
+    tabLayout->addStretch(1);
+    m_tabStrip->setVisible(false);
+    contentColumn->addWidget(m_tabStrip);
+    connect(m_tabBar, &QTabBar::currentChanged, this, [this](int index) {
+        if (!m_updatingTabs && index >= 0)
+            navigateTo(m_tabBar->tabData(index).toString());
+    });
 
     m_stack = new QStackedWidget(central);
     contentColumn->addWidget(m_stack, 1);
@@ -348,9 +312,9 @@ void MainWindow::buildSidebar()
                 // sidebar (rebuildMenu selects the first row).
                 if (!current || !m_stack)
                     return;
-                const QString pageId = current->data(Qt::UserRole).toString();
-                if (!pageId.isEmpty())
-                    navigateTo(pageId);
+                const QString groupId = current->data(Qt::UserRole).toString();
+                if (!groupId.isEmpty())
+                    navigateToGroup(groupId);
             });
 
     auto *themeButton = new QPushButton(tr("🌓 Tag/Nacht wechseln"), sidebar);
@@ -378,19 +342,14 @@ void MainWindow::rebuildMenu(bool selectFirst)
     };
     // The registration page only exists while registration rules are active.
     m_registrationInMenu = m_context.registrationSettings().active();
-    const auto addEntries = [this](const QList<MenuEntry> &entries) {
-        for (const MenuEntry &entry : entries) {
-            if (entry.pageId == QLatin1String("registration") && !m_registrationInMenu)
-                continue;
-            auto *item = new QListWidgetItem(entry.label, m_menu);
-            item->setData(Qt::UserRole, entry.pageId);
+    m_sidebar = Navigation::sidebar(national, m_registrationInMenu);
+    for (const Navigation::Section &section : std::as_const(m_sidebar)) {
+        addSection(section.heading);
+        for (const Navigation::Group &group : section.groups) {
+            auto *item = new QListWidgetItem(group.label, m_menu);
+            item->setData(Qt::UserRole, group.id);
         }
-    };
-
-    addSection(national ? tr("NATIONALTEAM") : tr("VEREIN"));
-    addEntries(national ? nationalMenu() : clubMenu());
-    addSection(tr("ALLGEMEIN"));
-    addEntries(globalMenu());
+    }
 
     m_menu->blockSignals(false);
     if (selectFirst)
@@ -499,12 +458,8 @@ PageBase *MainWindow::createPage(const QString &pageId)
     // for an unknown/misspelled page id. Show a neutral placeholder instead of
     // returning nullptr (which navigateTo would dereference).
     QString label = pageId;
-    for (const auto &entry : clubMenu() + nationalMenu() + globalMenu()) {
-        if (entry.pageId == pageId) {
-            label = entry.label;
-            break;
-        }
-    }
+    if (const Navigation::Group *group = Navigation::findGroup(m_sidebar, pageId))
+        label = group->label;
     return new PlaceholderPage(m_context, label, this);
 }
 
@@ -515,16 +470,22 @@ void MainWindow::navigateTo(const QString &pageId)
     if (!m_restoringHistory)
         captureHistoryState();
 
-    PageBase *page = m_pages.value(pageId);
+    const QString hostId = Navigation::hostPage(pageId);
+    PageBase *page = m_pages.value(hostId);
     if (!page) {
-        page = createPage(pageId);
-        m_pages.insert(pageId, page);
+        page = createPage(hostId);
+        m_pages.insert(hostId, page);
         m_stack->addWidget(page);
     }
+    page->showSection(pageId);
     m_stack->setCurrentWidget(page);
+    m_currentPageId = pageId;
+    if (const Navigation::Group *group = Navigation::findGroup(m_sidebar, pageId))
+        m_groupTabs.insert(group->id, pageId);
 
-    // Keep the sidebar selection in sync (e.g. jump from the player search).
+    // Keep sidebar and tabs in sync (e.g. jump from the player search).
     selectMenuEntry(pageId);
+    updateTabBar(pageId);
 
     page->refresh();
 
@@ -535,14 +496,58 @@ void MainWindow::navigateTo(const QString &pageId)
 
 void MainWindow::selectMenuEntry(const QString &pageId)
 {
-    if (m_menu->currentItem() && m_menu->currentItem()->data(Qt::UserRole).toString() == pageId)
+    const Navigation::Group *group = Navigation::findGroup(m_sidebar, pageId);
+    const QString groupId = group ? group->id : QString();
+    if (m_menu->currentItem() && m_menu->currentItem()->data(Qt::UserRole).toString() == groupId)
         return;
-    for (int i = 0; i < m_menu->count(); ++i) {
-        if (m_menu->item(i)->data(Qt::UserRole).toString() == pageId) {
-            m_menu->blockSignals(true);
-            m_menu->setCurrentRow(i);
-            m_menu->blockSignals(false);
+    int row = -1; // a page outside this mode's sidebar highlights nothing
+    for (int i = 0; i < m_menu->count() && group; ++i) {
+        if (m_menu->item(i)->data(Qt::UserRole).toString() == groupId) {
+            row = i;
             break;
+        }
+    }
+    m_menu->blockSignals(true);
+    m_menu->setCurrentRow(row);
+    m_menu->blockSignals(false);
+}
+
+void MainWindow::updateTabBar(const QString &pageId)
+{
+    const Navigation::Group *group = Navigation::findGroup(m_sidebar, pageId);
+    const bool tabbed = group && group->tabs.size() > 1;
+    m_updatingTabs = true;
+    while (m_tabBar->count() > 0)
+        m_tabBar->removeTab(0);
+    if (tabbed) {
+        for (const Navigation::Tab &tab : group->tabs) {
+            // "&" would mark a shortcut letter ("Startelf & B-Team").
+            QString label = tab.label;
+            const int index = m_tabBar->addTab(label.replace(QLatin1Char('&'), QStringLiteral("&&")));
+            m_tabBar->setTabData(index, tab.pageId);
+            if (tab.pageId == pageId)
+                m_tabBar->setCurrentIndex(index);
+        }
+    }
+    m_updatingTabs = false;
+    m_tabStrip->setVisible(tabbed);
+}
+
+void MainWindow::navigateToGroup(const QString &groupId)
+{
+    for (const Navigation::Section &section : std::as_const(m_sidebar)) {
+        for (const Navigation::Group &group : section.groups) {
+            if (group.id != groupId || group.tabs.isEmpty())
+                continue;
+            const QString last = m_groupTabs.value(groupId);
+            for (const Navigation::Tab &tab : group.tabs) {
+                if (tab.pageId == last) {
+                    navigateTo(last);
+                    return;
+                }
+            }
+            navigateTo(group.tabs.first().pageId);
+            return;
         }
     }
 }
@@ -550,12 +555,8 @@ void MainWindow::selectMenuEntry(const QString &pageId)
 void MainWindow::refreshMenuKeepingPage()
 {
     rebuildMenu(/*selectFirst*/ false);
-    for (auto it = m_pages.constBegin(); it != m_pages.constEnd(); ++it) {
-        if (it.value() == m_stack->currentWidget()) {
-            selectMenuEntry(it.key());
-            break;
-        }
-    }
+    selectMenuEntry(m_currentPageId);
+    updateTabBar(m_currentPageId);
 }
 
 void MainWindow::captureHistoryState()
@@ -564,7 +565,7 @@ void MainWindow::captureHistoryState()
         return;
     HistoryEntry &entry = m_history[m_historyIndex];
     auto *current = qobject_cast<PageBase *>(m_stack->currentWidget());
-    if (current && m_pages.value(entry.pageId) == current)
+    if (current && entry.pageId == m_currentPageId)
         entry.state = current->historyState();
 }
 
@@ -593,7 +594,7 @@ void MainWindow::resetHistory()
     m_history.clear();
     m_historyIndex = -1;
     if (auto *current = qobject_cast<PageBase *>(m_stack->currentWidget()))
-        pushHistory(m_pages.key(current), current);
+        pushHistory(m_currentPageId, current);
     updateNavButtons();
 }
 
@@ -618,7 +619,7 @@ void MainWindow::goToHistory(int index)
         rebuildMenu(/*selectFirst*/ false);
         updateHeader();
     }
-    if (PageBase *page = m_pages.value(entry.pageId))
+    if (PageBase *page = m_pages.value(Navigation::hostPage(entry.pageId)))
         page->restoreHistoryState(entry.state);
     navigateTo(entry.pageId);
     m_restoringHistory = false;

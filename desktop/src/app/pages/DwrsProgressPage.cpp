@@ -518,7 +518,7 @@ void DwrsProgressPage::rebuildRows()
     if (noPool) {
         m_notice->setText(m_context.nationalUiMode()
                               ? tr("Noch kein Nationalkader gespeichert.")
-                              : tr("Bitte wähle zuerst deinen Verein (Dashboard oder "
+                              : tr("Bitte wähle zuerst deinen Verein (Übersicht oder "
                                    "Einstellungen)."));
     }
 

@@ -56,3 +56,13 @@ set_tests_properties(test_charts PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
     ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
 )
+
+# Sidebar structure (app/Navigation): plain Qt Core, compiled in directly.
+add_executable(test_navigation test_navigation.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/Navigation.cpp)
+target_include_directories(test_navigation PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_navigation PRIVATE Qt6::Core Qt6::Test)
+add_test(NAME test_navigation COMMAND test_navigation)
+set_tests_properties(test_navigation PROPERTIES
+    ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
+)

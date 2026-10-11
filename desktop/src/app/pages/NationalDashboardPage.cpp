@@ -49,7 +49,7 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("National-Dashboard")), content);
+        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Nationalteam-Übersicht")), content);
     layout->addWidget(heading);
 
     // --- Import section ---
@@ -250,7 +250,7 @@ void NationalDashboardPage::rebuildAnalysis()
     }
     if (squadPlayers.empty()) {
         m_hint->setText(tr("Noch keine Spieler im Nationalkader. Stelle ihn unter "
-                           "'Kader-Auswahl' zusammen."));
+                           "Kader → Auswahl zusammen."));
         m_hint->show();
         m_analysisWidget->hide();
         return;

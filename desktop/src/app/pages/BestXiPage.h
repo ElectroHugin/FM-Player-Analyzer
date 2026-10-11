@@ -36,7 +36,9 @@ struct DepthOption;
 // Players marked as long-term injured are left out of every squad unless the
 // user plans them in; a table shows how the optimal line-up closes the gap.
 //
-// The tab "Signing advisor" (SigningAdvisorTab) starts from the same squad.
+// The signing advisor (SigningAdvisorTab) starts from the same squad. The
+// page serves three navigation targets that share its controls: "best_xi"
+// (first team), "best_xi_youth" (youth & second team) and "signing_advisor".
 class BestXiPage : public PageBase
 {
     Q_OBJECT
@@ -46,6 +48,7 @@ public:
 
     void refresh() override;
     void releaseStoreRows() override;
+    void showSection(const QString &pageId) override;
 
 private:
     // How the team selection works, shown under the tactic choice.
@@ -61,6 +64,7 @@ private:
 
     ThemeManager &m_theme;
 
+    QLabel *m_heading = nullptr;
     QComboBox *m_tacticCombo = nullptr;
     QLabel *m_competitionLabel = nullptr;
     QComboBox *m_competitionCombo = nullptr; // only with registration rules

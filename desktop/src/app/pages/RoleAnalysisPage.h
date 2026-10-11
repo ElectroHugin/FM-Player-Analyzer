@@ -25,6 +25,8 @@ public:
 
     void refresh() override;
     void releaseStoreRows() override;
+    // "role_analysis": own club and second team; "scouting_roles": scouted players.
+    void showSection(const QString &pageId) override;
 
 private:
     struct Group {
@@ -40,6 +42,11 @@ private:
     void rebuildPlayerCombo();
     QString selectedRole() const;
 
+    // The tab and strengths/weaknesses scopes of the current section.
+    void applySectionVisibility();
+
+    QLabel *m_heading = nullptr;
+    bool m_scoutedView = false;
     QComboBox *m_roleCombo = nullptr;
     PersonalityFilterWidget *m_personalityFilter = nullptr;
     QTabWidget *m_tabs = nullptr;

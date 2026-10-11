@@ -92,7 +92,7 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     headLayout->setContentsMargins(18, 14, 18, 6);
     headLayout->setSpacing(8);
     headLayout->addWidget(
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Registrierung")), head));
+        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Meldeliste")), head));
     m_controls = new QWidget(head);
     auto *controlsLayout = new QVBoxLayout(m_controls);
     controlsLayout->setContentsMargins(0, 0, 0, 0);
@@ -296,7 +296,7 @@ void RegistrationPage::refresh()
         releaseStoreRows();
         m_hint->setText(
             settings.active()
-                ? tr("Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen).")
+                ? tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen).")
                 : tr("⚠️ Keine Registrierungsregeln aktiv. Wähle sie unter "
                      "Einstellungen → Verein → Registrierungsregeln."));
         return;

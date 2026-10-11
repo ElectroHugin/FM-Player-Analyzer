@@ -313,7 +313,7 @@ void NewRolePage::createRole()
     QMessageBox::information(
         this, tr("Neue Rolle"),
         tr("Rolle '%1' wurde erstellt und ist jetzt überall verfügbar. Weise sie unter "
-           "'Rollen zuweisen' Spielern zu.")
+           "Rollen & Taktiken → Rollen zuweisen Spielern zu.")
             .arg(displayName));
     resetForm();
 }

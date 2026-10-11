@@ -163,7 +163,7 @@ Klärt die Frage „Wer spielt am Samstag?" in Sekunden.
 
 ### Finde die Taktik, für die dein Kader gebaut ist
 
-Der Taktik-Explorer bewertet deinen Kader gegen alle Taktiken auf einmal: erst
+Der Taktik-Vergleich (Aufstellung → Taktik-Vergleich) bewertet deinen Kader gegen alle Taktiken auf einmal: erst
 die Abdeckung (kannst du alle elf Positionen besetzen?), dann die Stärke je
 Mannschaftsteil. Ein Klick auf eine Taktik zeigt, wie viele passende Spieler du
 für jeden Slot hast. Die mitgelieferten Taktiken sind aus der
@@ -215,7 +215,7 @@ Farben und das Logo deines Vereins in der Kopfzeile.
 ### Und es gibt noch mehr
 
 - **Nationalmannschafts-Modus** — eigenes Dashboard, Kader-Auswahl, Matrix und Best XI, dazu ein Nominierungs-Assistent, der sagt, wen du einladen und wen du streichen solltest.
-- **Squad Matrix** — jeder Spieler gegen jede Rolle einer Taktik in einer farbcodierten Tabelle. Der Tab *Scouting* bietet Talent-, Persönlichkeits- und Attribut-Schwellen-Filter (z. B. Decisions ≥ 15 für einen AM(C)), Free-Agent-Suche und ein Δ zu deinem besten Spieler auf der gewählten Rolle; *Mein Kader* zeigt erste Mannschaft, Zweitteam oder Jugend. CSV-Export in beiden.
+- **Squad Matrix** — jeder Spieler gegen jede Rolle einer Taktik in einer farbcodierten Tabelle. Unter *Scouting* bietet sie Talent-, Persönlichkeits- und Attribut-Schwellen-Filter (z. B. Decisions ≥ 15 für einen AM(C)), Free-Agent-Suche und ein Δ zu deinem besten Spieler auf der gewählten Rolle; unter *Kader* zeigt sie erste Mannschaft, Zweitteam oder Jugend. CSV-Export in beiden.
 - **Langzeitverletzte** — markiere einen Spieler, der monatelang ausfällt, und Best XI plant ohne ihn: Der Kader wird wieder optimal aufgestellt, und eine Tabelle zeigt Slot für Slot, wer übernimmt.
 - **Gap-Analyse** — eingeklappt im Tab Kaufberatung: markiert Positionen, die gegenüber dem Team abfallen, und Spieler, die von ihrer besten Position weggezogen sind oder auf der falschen Seite spielen.
 - **Transfers und Leihen** — schlägt vielversprechende Talente zum Verleihen und überzählige Spieler zum Verkauf vor.
@@ -263,9 +263,9 @@ Meldeliste verlangt, die Registrierungsregeln eintragen.
 
 **6 · Loslegen**
 
-Fang mit **Best XI** und dem Tab **Kaufberatung** an, schau dann in den
-**Taktik-Explorer**. Importiere einen großen Scouting-Export und öffne die
-**Rollen-Analyse**, um zu sehen, wen du wirklich kaufen solltest.
+Fang mit **Aufstellung** (Best XI) an, schau dann in **Transfers → Kaufberatung**
+und **Aufstellung → Taktik-Vergleich**. Importiere einen großen Scouting-Export und
+öffne **Scouting → Nach Rolle**, um zu sehen, wen du wirklich kaufen solltest.
 
 > **Tipps**
 > - Importiere neu, so oft du willst; einmal pro Spielmonat ist ein guter Rhythmus. Die App aktualisiert bekannte Spieler und baut ihren Bewertungsverlauf auf.

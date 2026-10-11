@@ -74,7 +74,7 @@ TacticExplorerPage::TacticExplorerPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Taktik-Explorer")), content);
+        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Taktik-Vergleich")), content);
     layout->addWidget(heading);
 
     auto *info = new QLabel(
@@ -188,7 +188,7 @@ void TacticExplorerPage::refresh()
         if (pool.empty()) {
             m_poolCaption->setText(
                 tr("Noch keine Spieler im Nationalkader. Stelle ihn unter "
-                   "'Kader-Auswahl' zusammen."));
+                   "Kader → Auswahl zusammen."));
             m_bestLabel->clear();
             m_rankTable->setRowCount(0);
             m_detailCombo->clear();
@@ -202,7 +202,7 @@ void TacticExplorerPage::refresh()
         const QString secondClub = m_context.secondTeamClub();
         if (userClub.isEmpty()) {
             m_poolCaption->setText(
-                tr("Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen)."));
+                tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."));
             m_bestLabel->clear();
             m_rankTable->setRowCount(0);
             m_detailCombo->clear();

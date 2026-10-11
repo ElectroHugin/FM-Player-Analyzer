@@ -292,10 +292,10 @@ QWidget *SettingsPage::buildClubTab()
 
     auto *hint = new QLabel(
         tr("Diese Einstellungen gelten pro Datenbank (Spielstand). Das Vereins-Land "
-           "steuert den Inland-Filter der Squad Matrix; die Lieblings-Taktiken werden "
-           "auf Dashboard, Squad Matrix und Transfers vorausgewählt. Die "
-           "Nationalteam-Angaben aktivieren die National-Seiten (Kader-Auswahl, "
-           "National-Dashboard, …)."),
+           "steuert den Inland-Filter beim Scouting; die Lieblings-Taktiken werden "
+           "auf Übersicht, Aufstellung, Kader und Transfers vorausgewählt, die erste "
+           "bestimmt die Rollen auf der Seite Entwicklung. Die Nationalteam-Angaben "
+           "aktivieren das National-Management."),
         content);
     hint->setWordWrap(true);
     layout->addWidget(hint);
