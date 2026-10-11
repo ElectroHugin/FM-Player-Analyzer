@@ -1140,274 +1140,344 @@ Possible causes: no &lt;table&gt; element, no &apos;UID&apos; column, or not a v
 <context>
     <name>fm::DwrsProgressPage</name>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="154"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="170"/>
         <source>DWRS-Entwicklung</source>
         <translation>DWRS Development</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="157"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="173"/>
         <source>So wird gerechnet</source>
         <translation>How it is calculated</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="158"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="174"/>
         <source>Erklärung ein- oder ausblenden</source>
         <translation>Show or hide the explanation</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="166"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="182"/>
         <source>Wer legt zu, wer stagniert? Gemessen wird in Uploads statt in Kalendertagen.</source>
         <translation>Who is improving, who stalls? Measured in uploads instead of calendar days.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="172"/>
-        <source>&lt;b&gt;Datenstände:&lt;/b&gt; Jeder Upload ist ein Datenstand. Uploads, die höchstens %1 Minuten auseinanderliegen (z. B. Kader-, Shortlist- und Gesamtexport derselben Spielwoche), zählen als einer. Die Achse zählt Datenstände statt Tage, denn der Export enthält kein Spieldatum.&lt;br&gt;&lt;b&gt;Δ:&lt;/b&gt; Veränderung des DWRS in Prozentpunkten über den gewählten Zeitraum, in der Rolle der Spalte „Rolle“ (Standard: die aktuell beste Rolle des Spielers). Ein neuer Wert wird nur gespeichert, wenn er sich um mindestens 1 Punkt ändert; dazwischen gilt der letzte Wert weiter.&lt;br&gt;&lt;b&gt;Neuberechnungen&lt;/b&gt; (geänderte Gewichte, Rollen oder Formel) verschieben Werte ohne echte Entwicklung. Sie erscheinen als gestrichelte Linie und werden herausgerechnet: frühere Werte sind auf die heutige Berechnung umgerechnet, Δ zählt nur echte Veränderung. Erfasst ab Version 1.4.14, ältere lassen sich nicht mehr erkennen. Auch neu sichtbare Attribute (gescoutete Spannen werden nach einer Verpflichtung zu exakten Werten) können einen Sprung erzeugen.</source>
-        <translation>&lt;b&gt;Snapshots:&lt;/b&gt; Every upload is a snapshot. Uploads at most %1 minutes apart (e.g. squad, shortlist and full export of the same game week) count as one. The axis counts snapshots instead of days, because the export carries no in-game date.&lt;br&gt;&lt;b&gt;Δ:&lt;/b&gt; Change of the DWRS in percentage points over the chosen period, in the role of the &quot;Role&quot; column (default: the player&apos;s current best role). A new value is only stored when it changes by at least 1 point; in between the last value stays valid.&lt;br&gt;&lt;b&gt;Recalculations&lt;/b&gt; (changed weights, roles or formula) shift values without any real development. They appear as a dashed line and are factored out: earlier values are converted to today&apos;s calculation, Δ counts real change only. Recorded from version 1.4.14 on; older ones can no longer be detected. Newly visible attributes (scouted ranges turn into exact values after a signing) can cause a jump as well.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="201"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="219"/>
         <source>Zeitraum:</source>
         <translation>Period:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="204"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="222"/>
         <source>Letzte %1</source>
         <translation>Last %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="205"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="223"/>
         <source>Veränderung über die letzten %1 Datenstände (Uploads)</source>
         <translation>Change over the last %1 snapshots (uploads)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="207"/>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="214"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="225"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="232"/>
         <source>Alle</source>
         <translation>All</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="208"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="226"/>
         <source>Veränderung seit dem ersten Datenstand</source>
         <translation>Change since the first snapshot</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="215"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="233"/>
         <source>Jugend</source>
         <translation>Youth</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="216"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="234"/>
         <source>Etablierte</source>
         <translation>Established</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="222"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="240"/>
         <source>Auf welche Rolle sich Werte und Δ beziehen</source>
         <translation>The role that values and Δ refer to</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="227"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="245"/>
         <source>Spieler suchen…</source>
         <translation>Search player…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="292"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="310"/>
+        <source>Weitere Rollen</source>
+        <translation>More roles</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="311"/>
+        <source>Zusätzlich die %1 besten Rollen des Spielers zeigen</source>
+        <translation>Also show the player&apos;s %1 best roles</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="317"/>
         <source>Zurück zum Kader-Trend</source>
         <translation>Back to the squad trend</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="301"/>
-        <source>Klick auf einen Spieler zeigt seine besten Rollen, Strg- oder Umschalt-Klick vergleicht mehrere. Doppelklick öffnet das Profil, Rechtsklick weitere Aktionen.</source>
-        <translation>Click a player to see his best roles, Ctrl- or Shift-click to compare several. Double-click opens the profile, right-click shows more actions.</translation>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="326"/>
+        <source>Klick auf einen Spieler zeigt seine Entwicklung in der Rolle der Tabelle, Strg- oder Umschalt-Klick vergleicht mehrere. Doppelklick öffnet das Profil, Rechtsklick weitere Aktionen.</source>
+        <translation>Click a player to see his development in the table&apos;s role, Ctrl- or Shift-click compares several. Double-click opens the profile, right-click shows more actions.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="391"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="458"/>
+        <source>Rolle in der Best XI</source>
+        <translation>Role in the Best XI</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="459"/>
+        <source>Rolle in der Best XI (%1)</source>
+        <translation>Role in the Best XI (%1)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="462"/>
+        <source>Die Rolle, die der Spieler in Startelf oder B-Team der Lieblingstaktik spielt (Einstellungen)</source>
+        <translation>The role the player plays in the starting XI or B-team of the favorite tactic (Settings)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="465"/>
         <source>Beste Rolle je Spieler</source>
         <translation>Best role per player</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="427"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="520"/>
         <source>Noch kein Nationalkader gespeichert.</source>
         <translation>No national squad saved yet.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="428"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="521"/>
         <source>Bitte wähle zuerst deinen Verein (Dashboard oder Einstellungen).</source>
         <translation>Please select your club first (Dashboard or Settings).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="438"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="531"/>
         <source>Bis %1 Jahre, Torhüter bis %2 (Einstellungen → Altersgrenzen)</source>
         <translation>Up to %1 years, goalkeepers up to %2 (Settings → age thresholds)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="483"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="579"/>
         <source>Spieler</source>
         <translation>Player</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="483"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="579"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="483"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="579"/>
         <source>Δ letzte %1</source>
         <translation>Δ last %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="483"/>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="484"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="579"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="580"/>
         <source>Δ gesamt</source>
         <translation>Δ total</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="484"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="580"/>
         <source>Verlauf</source>
         <translation>Trend</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="484"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="580"/>
         <source>Aktuell</source>
         <translation>Current</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="484"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="580"/>
         <source>Rolle</source>
         <translation>Role</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="497"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="580"/>
+        <source>Best XI</source>
+        <translation>Best XI</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="594"/>
         <source>Veränderung in Prozentpunkten über den gewählten Zeitraum</source>
         <translation>Change in percentage points over the chosen period</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="499"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="596"/>
         <source>Veränderung seit dem ersten Datenstand des Spielers</source>
         <translation>Change since the player&apos;s first snapshot</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="536"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="598"/>
+        <source>Platz in der Best XI der Lieblingstaktik (%1)</source>
+        <translation>Place in the Best XI of the favorite tactic (%1)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="615"/>
+        <source>Nicht in Startelf oder B-Team: beste Rolle der Taktik</source>
+        <translation>Not in starting XI or B-team: best role of the tactic</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="618"/>
+        <source>Startelf</source>
+        <translation>Starting XI</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="622"/>
+        <source>B-Team</source>
+        <translation>B-Team</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="626"/>
+        <source>verletzt</source>
+        <translation>injured</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="627"/>
+        <source>Langzeitverletzt, fehlt in der Best XI: beste Rolle der Taktik</source>
+        <translation>Long-term injured, missing from the Best XI: best role of the tactic</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="633"/>
+        <source>Noch kein Verlauf in seiner Best-XI-Rolle: Werte der besten Rolle</source>
+        <translation>No history in his Best XI role yet: values of his best role</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="659"/>
         <source>Verlauf über den gewählten Zeitraum</source>
         <translation>Trend over the chosen period</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="555"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="678"/>
         <source>Ø Veränderung in den letzten %1 Uploads</source>
         <translation>Ø change over the last %1 uploads</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="556"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="679"/>
         <source>Ø Veränderung seit dem ersten Datenstand</source>
         <translation>Ø change since the first snapshot</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="560"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="683"/>
         <source>Datenstände · zuletzt %1</source>
         <translation>Snapshots · latest %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="561"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="684"/>
         <source>Datenstände</source>
         <translation>Snapshots</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="565"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="688"/>
         <source>Größter Sprung</source>
         <translation>Biggest jump</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="567"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="690"/>
         <source>Größter Rückgang</source>
         <translation>Biggest drop</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="585"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="708"/>
         <source>Größter Sprung: %1</source>
         <translation>Biggest jump: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="589"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="712"/>
         <source>Größter Sprung: niemand hat zugelegt</source>
         <translation>Biggest jump: nobody improved</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="593"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="716"/>
         <source>Größter Rückgang: %1</source>
         <translation>Biggest drop: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="597"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="720"/>
         <source>Größter Rückgang: niemand hat abgebaut</source>
         <translation>Biggest drop: nobody declined</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="628"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="752"/>
         <source>Noch keine DWRS-Historie für diese Spieler.</source>
         <translation>No DWRS history for these players yet.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="629"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="753"/>
         <source>Keine Spieler für die aktuelle Auswahl.</source>
         <translation>No players for the current selection.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="634"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="758"/>
         <source>Erst ein Datenstand vorhanden – nach dem nächsten Upload siehst du hier die Entwicklung.</source>
         <translation>Only one snapshot so far – after the next upload you will see the development here.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="667"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="791"/>
         <source>Ø alle gezeigten (%1)</source>
         <translation>Ø all shown (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="669"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="793"/>
         <source>Ø Jugend (%1)</source>
         <translation>Ø youth (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="670"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="794"/>
         <source>Ø Etablierte (%1)</source>
         <translation>Ø established (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="672"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="796"/>
         <source>Kader-Trend: Ø Veränderung in Prozentpunkten</source>
         <translation>Squad trend: Ø change in percentage points</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="677"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="802"/>
         <source>Spieler nicht gefunden.</source>
         <translation>Player not found.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="710"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="839"/>
         <source>%1 · beste Rollen</source>
         <translation>%1 · best roles</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="730"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="861"/>
         <source>Vergleich als %1</source>
         <translation>Comparison as %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="731"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="863"/>
+        <source>Vergleich in der jeweiligen Best-XI-Rolle</source>
+        <translation>Comparison in each player&apos;s Best XI role</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="864"/>
         <source>Vergleich in der jeweils besten Rolle</source>
         <translation>Comparison, each in his best role</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="735"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="868"/>
         <source>Keine historischen Daten für die aktuelle Auswahl.</source>
         <translation>No historical data for the current selection.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="219"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="237"/>
         <source>Rolle:</source>
         <translation>Role:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="212"/>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="188"/>
+        <source>&lt;b&gt;Datenstände:&lt;/b&gt; Jeder Upload ist ein Datenstand. Uploads, die höchstens %1 Minuten auseinanderliegen (z. B. Kader-, Shortlist- und Gesamtexport derselben Spielwoche), zählen als einer. Die Achse zählt Datenstände statt Tage, denn der Export enthält kein Spieldatum.&lt;br&gt;&lt;b&gt;Δ:&lt;/b&gt; Veränderung des DWRS in Prozentpunkten über den gewählten Zeitraum, in der Rolle der Spalte „Rolle“. Standard ist die Rolle, die der Spieler in der Best XI deiner Lieblingstaktik (Einstellungen) spielt — in Startelf oder B-Team. Wer dort nicht steht, zählt in seiner besten Rolle dieser Taktik. Ein neuer Wert wird nur gespeichert, wenn er sich um mindestens 1 Punkt ändert; dazwischen gilt der letzte Wert weiter.&lt;br&gt;&lt;b&gt;Neuberechnungen&lt;/b&gt; (geänderte Gewichte, Rollen oder Formel) verschieben Werte ohne echte Entwicklung. Sie erscheinen als gestrichelte Linie und werden herausgerechnet: frühere Werte sind auf die heutige Berechnung umgerechnet, Δ zählt nur echte Veränderung. Erfasst ab Version 1.4.14, ältere lassen sich nicht mehr erkennen. Auch neu sichtbare Attribute (gescoutete Spannen werden nach einer Verpflichtung zu exakten Werten) können einen Sprung erzeugen.</source>
+        <translation>&lt;b&gt;Snapshots:&lt;/b&gt; Every upload is a snapshot. Uploads at most %1 minutes apart (e.g. squad, shortlist and full export of the same game week) count as one. The axis counts snapshots instead of days, because the export carries no in-game date.&lt;br&gt;&lt;b&gt;Δ:&lt;/b&gt; Change of the DWRS in percentage points over the chosen period, in the role of the &quot;Role&quot; column. The default is the role the player plays in the Best XI of your favorite tactic (Settings) — in the starting XI or the B-team. Anyone not there counts in his best role of that tactic. A new value is only stored when it changes by at least 1 point; in between the last value stays valid.&lt;br&gt;&lt;b&gt;Recalculations&lt;/b&gt; (changed weights, roles or formula) shift values without any real development. They appear as a dashed line and are factored out: earlier values are converted to today&apos;s calculation, Δ counts real change only. Recorded from version 1.4.14 on; older ones can no longer be detected. Newly visible attributes (scouted ranges turn into exact values after a signing) can cause a jump as well.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DwrsProgressPage.cpp" line="230"/>
         <source>Spieler:</source>
         <translation>Player:</translation>
     </message>

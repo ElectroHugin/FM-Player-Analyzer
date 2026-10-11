@@ -5,6 +5,8 @@
 #include "../widgets/CellStyleDelegate.h"
 #include "../widgets/Charts.h"
 #include "../widgets/NumericTableItem.h"
+#include "PageHelpers.h"
+#include "core/SquadBuilder.h"
 #include "core/TalentEngine.h"
 #include "core/Utils.h"
 
@@ -32,14 +34,28 @@ namespace fm {
 
 namespace {
 
-enum Column { ColName, ColAge, ColChange, ColTrend, ColCurrent, ColRole, ColTotal, ColCount };
+enum Column {
+    ColName,
+    ColAge,
+    ColChange,
+    ColTrend,
+    ColCurrent,
+    ColSpot,
+    ColRole,
+    ColTotal,
+    ColCount
+};
 enum Group { AllPlayers = 0, YouthOnly = 1, Established = 2 };
 
 // Sparkline values (QVariantList, invalid = no rating yet) of the trend column.
 constexpr int kSparkRole = Qt::UserRole + 1;
 
-// Most series a single player's chart shows (his best roles).
+// Most series a single player's chart shows on request (his best roles).
 constexpr int kMaxRoleLines = 5;
+
+// Role combo entries besides the concrete roles.
+const QString kLineupBasis = QStringLiteral("@lineup");
+const QString kBestBasis = QStringLiteral("@best");
 
 QString signedNumber(double value)
 {
@@ -174,7 +190,9 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
            "Spielwoche), zählen als einer. Die Achse zählt Datenstände statt Tage, denn der "
            "Export enthält kein Spieldatum.<br>"
            "<b>Δ:</b> Veränderung des DWRS in Prozentpunkten über den gewählten Zeitraum, in der "
-           "Rolle der Spalte „Rolle“ (Standard: die aktuell beste Rolle des Spielers). Ein neuer "
+           "Rolle der Spalte „Rolle“. Standard ist die Rolle, die der Spieler in der Best XI "
+           "deiner Lieblingstaktik (Einstellungen) spielt — in Startelf oder B-Team. Wer dort "
+           "nicht steht, zählt in seiner besten Rolle dieser Taktik. Ein neuer "
            "Wert wird nur gespeichert, wenn er sich um mindestens 1 Punkt ändert; dazwischen "
            "gilt der letzte Wert weiter.<br>"
            "<b>Neuberechnungen</b> (geänderte Gewichte, Rollen oder Formel) verschieben Werte "
@@ -289,6 +307,13 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
     m_chartTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_chartTitle->setWordWrap(true);
     chartHead->addWidget(m_chartTitle, 1);
+    m_moreRoles = new QPushButton(tr("Weitere Rollen"), chartPanel);
+    m_moreRoles->setToolTip(tr("Zusätzlich die %1 besten Rollen des Spielers zeigen")
+                                .arg(kMaxRoleLines));
+    m_moreRoles->setCheckable(true);
+    m_moreRoles->setAutoDefault(false);
+    m_moreRoles->setVisible(false);
+    chartHead->addWidget(m_moreRoles);
     m_clearSelection = new QPushButton(tr("Zurück zum Kader-Trend"), chartPanel);
     m_clearSelection->setAutoDefault(false);
     m_clearSelection->setVisible(false);
@@ -298,8 +323,9 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
     m_chart->setMinimumHeight(380);
     chartLayout->addWidget(m_chart, 1);
     auto *chartHint = new QLabel(
-        tr("Klick auf einen Spieler zeigt seine besten Rollen, Strg- oder Umschalt-Klick "
-           "vergleicht mehrere. Doppelklick öffnet das Profil, Rechtsklick weitere Aktionen."),
+        tr("Klick auf einen Spieler zeigt seine Entwicklung in der Rolle der Tabelle, Strg- "
+           "oder Umschalt-Klick vergleicht mehrere. Doppelklick öffnet das Profil, Rechtsklick "
+           "weitere Aktionen."),
         chartPanel);
     chartHint->setObjectName(QStringLiteral("kpiCaption"));
     chartHint->setWordWrap(true);
@@ -324,6 +350,7 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
             rebuildChart();
     });
     connect(m_clearSelection, &QPushButton::clicked, m_table, &QTableWidget::clearSelection);
+    connect(m_moreRoles, &QPushButton::toggled, this, [this] { rebuildChart(); });
 }
 
 std::vector<const Player *> DwrsProgressPage::poolPlayers() const
@@ -356,6 +383,7 @@ void DwrsProgressPage::refresh()
 {
     m_updating = true;
     reloadTimeline();
+    reloadLineup();
     fillRoleCombo();
     m_updating = false;
     rebuildRows();
@@ -373,6 +401,44 @@ void DwrsProgressPage::reloadTimeline()
         m_snapshotLabels << QLocale().toString(session.last, QLocale::ShortFormat);
 }
 
+void DwrsProgressPage::reloadLineup()
+{
+    // The same squad the Best XI page shows by default: the favorite tactic,
+    // long-term injured club players left out, national squads without the
+    // club playing-time weight.
+    m_lineup.clear();
+    const bool national = m_context.nationalUiMode();
+    m_lineupTactic = favoritesFirstTactics(m_context, national).value(0);
+    const std::vector<const Player *> players = poolPlayers();
+    if (m_lineupTactic.isEmpty() || players.empty())
+        return;
+    const auto positions = m_context.definitions().tacticRoles().value(m_lineupTactic);
+    const QStringList slotOrder = m_context.definitions().tacticSlotOrder(m_lineupTactic);
+    std::vector<const Player *> available;
+    for (const Player *player : players) {
+        if (national || !player->longTermInjured)
+            available.push_back(player);
+    }
+    const SquadResult squad = m_context.squadBuilder().calculateSquadAndSurplus(
+        available, positions, slotOrder, m_context.ratings(), !national);
+    for (const auto &[team, spot] : {std::pair{&squad.startingXi, Spot::StartingXi},
+                                     std::pair{&squad.bTeam, Spot::BTeam}}) {
+        for (auto it = team->constBegin(); it != team->constEnd(); ++it) {
+            if (it.value().isFilled())
+                m_lineup.insert(it.value().playerUid, {positions.value(it.key()), spot});
+        }
+    }
+    // Everyone else: his best role among the ones the tactic uses.
+    for (const Player *player : players) {
+        if (m_lineup.contains(player->uid))
+            continue;
+        const QStringList choices = trainingRoleChoices(m_context, *player, m_lineupTactic);
+        m_lineup.insert(player->uid,
+                        {bestTrainingRole(m_context, *player, choices),
+                         !national && player->longTermInjured ? Spot::Injured : Spot::Squad});
+    }
+}
+
 void DwrsProgressPage::fillRoleCombo()
 {
     const QString previous = m_roleCombo->currentData().toString();
@@ -388,7 +454,15 @@ void DwrsProgressPage::fillRoleCombo()
     });
     m_roleCombo->blockSignals(true);
     m_roleCombo->clear();
-    m_roleCombo->addItem(tr("Beste Rolle je Spieler"), QString());
+    m_roleCombo->addItem(m_lineupTactic.isEmpty()
+                             ? tr("Rolle in der Best XI")
+                             : tr("Rolle in der Best XI (%1)").arg(m_lineupTactic),
+                         kLineupBasis);
+    m_roleCombo->setItemData(0,
+                             tr("Die Rolle, die der Spieler in Startelf oder B-Team der "
+                                "Lieblingstaktik spielt (Einstellungen)"),
+                             Qt::ToolTipRole);
+    m_roleCombo->addItem(tr("Beste Rolle je Spieler"), kBestBasis);
     for (const QString &role : std::as_const(roles))
         m_roleCombo->addItem(roleNames.value(role, role), role);
     const int index = m_roleCombo->findData(previous);
@@ -396,13 +470,32 @@ void DwrsProgressPage::fillRoleCombo()
     m_roleCombo->blockSignals(false);
 }
 
-QString DwrsProgressPage::basisRole(const Player &player) const
+QString DwrsProgressPage::chosenRole() const
 {
-    const QString chosen = m_roleCombo->currentData().toString();
+    const QString data = m_roleCombo->currentData().toString();
+    return data == kLineupBasis || data == kBestBasis ? QString() : data;
+}
+
+QString DwrsProgressPage::basisRole(const Player &player, bool *fromLineup) const
+{
+    if (fromLineup)
+        *fromLineup = false;
+    const QString chosen = chosenRole();
     if (!chosen.isEmpty()) {
         return player.assignedRoles.contains(chosen) && m_timeline.track(player.id, chosen)
                    ? chosen
                    : QString();
+    }
+    if (m_roleCombo->currentData().toString() == kLineupBasis) {
+        const QString role = m_lineup.value(player.uid).role;
+        const Development::Track *track = role.isEmpty() ? nullptr
+                                                         : m_timeline.track(player.id, role);
+        if (track && track->isValid()) {
+            if (fromLineup)
+                *fromLineup = true;
+            return role;
+        }
+        // No history in that role yet: fall back to his best role.
     }
     QString best;
     double bestValue = -1.0;
@@ -447,7 +540,8 @@ void DwrsProgressPage::rebuildRows()
             continue;
         if (!search.isEmpty() && !foldForSearch(player->name).contains(search))
             continue;
-        const QString role = basisRole(*player);
+        bool fromLineup = false;
+        const QString role = basisRole(*player, &fromLineup);
         const Development::Track *track = role.isEmpty() ? nullptr
                                                          : m_timeline.track(player->id, role);
         if (!track || !track->isValid())
@@ -459,6 +553,8 @@ void DwrsProgressPage::rebuildRows()
         row.age = player->age;
         row.youth = youth;
         row.role = role;
+        row.inLineup = fromLineup;
+        row.spot = m_lineup.value(player->uid).spot;
         row.track = track;
         row.change = Development::change(*track, win);
         row.totalChange = Development::change(*track, 0);
@@ -481,8 +577,9 @@ void DwrsProgressPage::rebuildTable()
 
     m_table->setHorizontalHeaderLabels(
         {tr("Spieler"), tr("Alter"), win > 0 ? tr("Δ letzte %1").arg(win) : tr("Δ gesamt"),
-         tr("Verlauf"), tr("Aktuell"), tr("Rolle"), tr("Δ gesamt")});
+         tr("Verlauf"), tr("Aktuell"), tr("Best XI"), tr("Rolle"), tr("Δ gesamt")});
     m_table->setColumnHidden(ColTotal, win == 0);
+    m_table->setColumnHidden(ColSpot, m_roleCombo->currentData().toString() != kLineupBasis);
     // Room for the sort arrow: the styled header leaves it out of its size
     // hint and would clip the centered title instead.
     QFont headerFont = m_table->horizontalHeader()->font();
@@ -497,6 +594,8 @@ void DwrsProgressPage::rebuildTable()
         ->setToolTip(tr("Veränderung in Prozentpunkten über den gewählten Zeitraum"));
     m_table->horizontalHeaderItem(ColTotal)
         ->setToolTip(tr("Veränderung seit dem ersten Datenstand des Spielers"));
+    m_table->horizontalHeaderItem(ColSpot)
+        ->setToolTip(tr("Platz in der Best XI der Lieblingstaktik (%1)").arg(m_lineupTactic));
 
     double maxAbs = 0.0;
     for (const Row &row : m_rows)
@@ -512,6 +611,30 @@ void DwrsProgressPage::rebuildTable()
         m_table->setItem(r, ColName, name);
         m_table->setItem(r, ColAge, new NumericItem(QString::number(row.age), row.age));
         m_table->setItem(r, ColRole, new QTableWidgetItem(roleNames.value(row.role, row.role)));
+        QString spotText = QStringLiteral("–");
+        QString spotTip = tr("Nicht in Startelf oder B-Team: beste Rolle der Taktik");
+        switch (row.spot) {
+        case Spot::StartingXi:
+            spotText = tr("Startelf");
+            spotTip.clear();
+            break;
+        case Spot::BTeam:
+            spotText = tr("B-Team");
+            spotTip.clear();
+            break;
+        case Spot::Injured:
+            spotText = tr("verletzt");
+            spotTip = tr("Langzeitverletzt, fehlt in der Best XI: beste Rolle der Taktik");
+            break;
+        case Spot::Squad:
+            break;
+        }
+        if (!row.inLineup)
+            spotTip = tr("Noch kein Verlauf in seiner Best-XI-Rolle: Werte der besten Rolle");
+        auto *spot = new NumericItem(spotText, static_cast<double>(row.spot));
+        spot->setTextAlignment(Qt::AlignCenter);
+        spot->setToolTip(spotTip);
+        m_table->setItem(r, ColSpot, spot);
         const double current = row.track->current();
         m_table->setItem(r, ColCurrent, new NumericItem(percent(current), current));
 
@@ -621,6 +744,7 @@ void DwrsProgressPage::rebuildChart()
 {
     const QStringList uids = selectedUids();
     m_clearSelection->setVisible(!uids.isEmpty());
+    m_moreRoles->setVisible(uids.size() == 1);
 
     if (m_rows.empty()) {
         m_chartTitle->setText(QString());
@@ -671,7 +795,8 @@ void DwrsProgressPage::rebuildChart()
         }
         m_chartTitle->setText(tr("Kader-Trend: Ø Veränderung in Prozentpunkten"));
     } else if (uids.size() == 1) {
-        // One player: his best roles, the table's role emphasized.
+        // One player: the table's role; on request also his best roles, the
+        // table's role emphasized.
         const Player *player = m_context.store().findByUid(uids.first());
         if (!player) {
             m_chart->clearChart(tr("Spieler nicht gefunden."));
@@ -682,35 +807,41 @@ void DwrsProgressPage::rebuildChart()
             if (row.uid == player->uid)
                 tableRole = row.role;
         }
-        QList<std::pair<double, QString>> ranked;
-        for (const QString &role : player->assignedRoles) {
-            const Development::Track *track = m_timeline.track(player->id, role);
-            if (track && track->isValid())
-                ranked.append({track->current(), role});
-        }
-        std::sort(ranked.begin(), ranked.end(),
-                  [](const auto &a, const auto &b) { return a.first > b.first; });
+        const bool moreRoles = m_moreRoles->isChecked();
         QStringList roles;
-        for (const auto &[value, role] : std::as_const(ranked)) {
-            if (roles.size() < kMaxRoleLines)
-                roles << role;
+        if (!tableRole.isEmpty())
+            roles << tableRole;
+        if (moreRoles) {
+            QList<std::pair<double, QString>> ranked;
+            for (const QString &role : player->assignedRoles) {
+                const Development::Track *track = m_timeline.track(player->id, role);
+                if (track && track->isValid() && role != tableRole)
+                    ranked.append({track->current(), role});
+            }
+            std::sort(ranked.begin(), ranked.end(),
+                      [](const auto &a, const auto &b) { return a.first > b.first; });
+            for (const auto &[value, role] : std::as_const(ranked)) {
+                if (roles.size() < kMaxRoleLines)
+                    roles << role;
+            }
         }
-        if (!tableRole.isEmpty() && !roles.contains(tableRole))
-            roles.prepend(tableRole);
         for (const QString &role : std::as_const(roles)) {
             LineChartWidget::Series line;
             line.name = roleNames.value(role, role);
-            line.emphasized = role == tableRole;
+            line.emphasized = moreRoles && role == tableRole;
             const Development::Track *track = m_timeline.track(player->id, role);
             line.points = trackPoints(*track);
             shownTracks << track;
             if (!line.points.isEmpty())
                 series.append(line);
         }
-        m_chartTitle->setText(tr("%1 · beste Rollen").arg(player->name));
+        m_chartTitle->setText(moreRoles || tableRole.isEmpty()
+                                  ? tr("%1 · beste Rollen").arg(player->name)
+                                  : QStringLiteral("%1 · %2").arg(
+                                        player->name, roleNames.value(tableRole, tableRole)));
     } else {
         // Comparison: every selected player in the role of his table row.
-        const bool sameRole = !m_roleCombo->currentData().toString().isEmpty();
+        const bool sameRole = !chosenRole().isEmpty();
         for (const QString &uid : uids) {
             const auto it = std::find_if(m_rows.cbegin(), m_rows.cend(),
                                          [&uid](const Row &row) { return row.uid == uid; });
@@ -725,10 +856,12 @@ void DwrsProgressPage::rebuildChart()
             if (!line.points.isEmpty())
                 series.append(line);
         }
-        const QString role = m_roleCombo->currentData().toString();
-        m_chartTitle->setText(sameRole
-                                  ? tr("Vergleich als %1").arg(roleNames.value(role, role))
-                                  : tr("Vergleich in der jeweils besten Rolle"));
+        const QString role = chosenRole();
+        m_chartTitle->setText(
+            sameRole ? tr("Vergleich als %1").arg(roleNames.value(role, role))
+            : m_roleCombo->currentData().toString() == kLineupBasis
+                ? tr("Vergleich in der jeweiligen Best-XI-Rolle")
+                : tr("Vergleich in der jeweils besten Rolle"));
     }
 
     if (series.isEmpty())

@@ -23,9 +23,10 @@ class ThemeManager;
 // DWRS development of the own squad (national mode: the saved national squad),
 // measured in uploads instead of calendar days (core/Development). One table
 // answers "who is improving, who stalls" at a glance — sorted by the change
-// over the chosen window, with a sparkline per player. The chart beside it
-// follows the selection: nothing selected = squad trend, one player = his
-// roles, several players = comparison.
+// over the chosen window, with a sparkline per player. By default every
+// player's numbers refer to the role he plays in the Best XI of the favorite
+// tactic. The chart beside it follows the selection: nothing selected = squad
+// trend, one player = his role (more on request), several = comparison.
 class DwrsProgressPage : public PageBase
 {
     Q_OBJECT
@@ -36,6 +37,13 @@ public:
     void refresh() override;
 
 private:
+    // Where a player stands in the Best XI of the favorite tactic.
+    enum class Spot { StartingXi, BTeam, Squad, Injured };
+    struct LineupRole {
+        QString role; // empty: no role of the tactic
+        Spot spot = Spot::Squad;
+    };
+
     // One table row: a player in the role his numbers refer to.
     struct Row {
         QString uid;
@@ -44,6 +52,8 @@ private:
         int age = 0;
         bool youth = false;
         QString role;
+        bool inLineup = false; // role comes from the Best XI (m_lineup)
+        Spot spot = Spot::Squad;
         const Development::Track *track = nullptr; // points into m_timeline
         double change = 0.0;      // genuine change within the window
         double totalChange = 0.0; // genuine change over the whole history
@@ -51,6 +61,7 @@ private:
 
     std::vector<const Player *> poolPlayers() const;
     void reloadTimeline();      // DB read: history of the pool -> m_timeline
+    void reloadLineup();        // Best XI of the favorite tactic -> m_lineup
     void fillRoleCombo();
     void rebuildRows();         // filters -> m_rows, table, KPIs
     void rebuildTable();
@@ -58,8 +69,11 @@ private:
     void rebuildChart();
     int window() const;         // uploads in the window, 0 = whole history
     QStringList selectedUids() const;
-    // Role whose numbers a player shows: the chosen role, or his best one.
-    QString basisRole(const Player &player) const;
+    // The role picked in the combo; empty for "Best XI" and "best role".
+    QString chosenRole() const;
+    // Role whose numbers a player shows: his Best XI role, the chosen role or
+    // his best one. *fromLineup tells whether the Best XI decided it.
+    QString basisRole(const Player &player, bool *fromLineup = nullptr) const;
     QList<QPointF> trackPoints(const Development::Track &track) const;
 
     ThemeManager &m_theme;
@@ -85,8 +99,11 @@ private:
     QLabel *m_chartTitle = nullptr;
     LineChartWidget *m_chart = nullptr;
     QPushButton *m_clearSelection = nullptr;
+    QPushButton *m_moreRoles = nullptr;
 
     Development::Timeline m_timeline;
+    QHash<QString, LineupRole> m_lineup; // uid -> Best XI role
+    QString m_lineupTactic;
     QStringList m_snapshotLabels; // hover text per snapshot
     std::vector<Row> m_rows;
     bool m_updating = false;
