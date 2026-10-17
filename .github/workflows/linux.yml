@@ -1,0 +1,59 @@
+name: Linux
+
+# Reusable: build + tests on Linux, then package and smoke-test the AppImage.
+# Called by the CI workflow (branches, pull requests) and the Release workflow
+# (main). The AppImage is uploaded as a workflow artifact.
+on:
+  workflow_call:
+
+jobs:
+  build:
+    # Oldest supported Ubuntu: the AppImage needs at least the glibc it was
+    # built against, so an older build machine means more distributions.
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+
+      # Also installs the system libraries Qt needs (OpenGL, xkbcommon, xcb).
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtcharts
+          cache: true
+
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v5
+
+      - name: Configure
+        run: cmake --preset linux-release
+
+      # -k 0: keep going, so one run reports every compile error.
+      - name: Build
+        run: cmake --build --preset linux-release -- -k 0
+
+      - name: Test
+        run: ctest --preset linux-release
+
+      - name: Build AppImage
+        run: scripts/build-appimage.sh linux-release
+
+      - name: Smoke-test AppImage
+        run: |
+          sudo apt-get install -y --no-install-recommends xvfb
+          scripts/smoke-appimage.sh
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: FMPlayerAnalyzer-Linux-AppImage
+          path: desktop/build/appimage/*.AppImage
+          if-no-files-found: error

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=FM Player Analyzer
+Comment=Squad analysis for Football Manager
+Comment[de]=Kaderanalyse für Football Manager
+Exec=fmplayeranalyzer
+Icon=fmplayeranalyzer
+Terminal=false
+Categories=Game;SportsGame;
+StartupWMClass=fmplayeranalyzer
