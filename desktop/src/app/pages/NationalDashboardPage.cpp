@@ -54,7 +54,7 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
 
     // --- Import section ---
     auto *importBox =
-        new QGroupBox(tr("⬆️ Neue Spielerdaten importieren (FM-HTML-Export)"), content);
+        new QGroupBox(tr("⬆️ Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), content);
     auto *importLayout = new QVBoxLayout(importBox);
     auto *fileRow = new QHBoxLayout;
     m_filePathEdit = new QLineEdit(importBox);
@@ -72,7 +72,7 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
         new QCheckBox(tr("Nationalkader durch Spieler dieser Datei ersetzen"), importBox);
     m_replaceSquadCheck->setToolTip(
         tr("Wenn aktiviert, wird der aktuelle Nationalkader geleert und durch ALLE Spieler "
-           "aus dieser HTML-Datei ersetzt — praktisch für schnelle Kader-Updates."));
+           "aus dieser Exportdatei ersetzt — praktisch für schnelle Kader-Updates."));
     m_autoAssignCheck =
         new QCheckBox(tr("Neuen/unzugeordneten Spielern automatisch Rollen zuweisen"),
                       importBox);
@@ -84,8 +84,8 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     layout->addWidget(importBox);
     connect(browseButton, &QPushButton::clicked, this, [this] {
         const QString path = QFileDialog::getOpenFileName(
-            this, tr("FM-HTML-Export auswählen"), m_context.htmlExportDir(),
-            tr("HTML-Dateien (*.html *.htm);;Alle Dateien (*)"));
+            this, tr("FM-Export (HTML oder CSV) auswählen"), m_context.htmlExportDir(),
+            tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
         if (path.isEmpty())
             return;
         m_filePathEdit->setText(path);
@@ -474,7 +474,8 @@ void NationalDashboardPage::importFinished(const ImportPipelineResult &result)
     if (!result.import.success) {
         QMessageBox::critical(
             this, tr("Import fehlgeschlagen"),
-            tr("❌ Die Datei konnte nicht importiert werden.\n\n%1").arg(result.import.error));
+            tr("❌ Die Datei konnte nicht importiert werden.\n\n%1")
+                .arg(importErrorText(result.import)));
         return;
     }
 

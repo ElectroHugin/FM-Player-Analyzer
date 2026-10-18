@@ -204,7 +204,7 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
 
 QWidget *DashboardPage::buildImportSection(QWidget *parent)
 {
-    auto *box = new QGroupBox(tr("⬆️ Neue Spielerdaten importieren (FM-HTML-Export)"), parent);
+    auto *box = new QGroupBox(tr("⬆️ Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), parent);
     auto *layout = new QVBoxLayout(box);
 
     auto *fileRow = new QHBoxLayout;
@@ -276,6 +276,7 @@ QWidget *DashboardPage::buildAnalysisHeader(QWidget *parent)
         m_context.database().setSetting(QStringLiteral("user_club"),
                                         m_clubCombo->currentText());
         refreshAnalysis();
+        m_context.notifySettingsChanged(); // header and other pages follow the club
     });
     connect(m_tacticCombo, &QComboBox::activated, this, [this] {
         if (!m_updatingCombos)
@@ -759,8 +760,8 @@ void DashboardPage::rebuildSuggestions()
 void DashboardPage::chooseImportFile()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("FM-HTML-Export auswählen"), m_context.htmlExportDir(),
-        tr("HTML-Dateien (*.html *.htm);;Alle Dateien (*)"));
+        this, tr("FM-Export (HTML oder CSV) auswählen"), m_context.htmlExportDir(),
+        tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
     if (path.isEmpty())
         return;
     m_filePathEdit->setText(path);
@@ -791,9 +792,9 @@ void DashboardPage::importFinished(const ImportPipelineResult &result)
         QMessageBox::critical(
             this, tr("Import fehlgeschlagen"),
             tr("❌ Die Datei konnte nicht importiert werden.\n\n%1\n\n"
-               "Mögliche Ursachen: kein <table>-Element, keine 'UID'-Spalte oder "
-               "kein gültiger Football-Manager-HTML-Export.")
-                .arg(result.import.error));
+               "Mögliche Ursachen: keine 'UID'-Spalte oder kein gültiger "
+               "Football-Manager-Export (HTML oder CSV).")
+                .arg(importErrorText(result.import)));
         return;
     }
 

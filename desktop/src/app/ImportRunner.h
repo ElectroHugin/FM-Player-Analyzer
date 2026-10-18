@@ -27,4 +27,9 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
 QStringList importSummaryLines(const ImportPipelineResult &result);
 QStringList importWarningLines(const ImportPipelineResult &result);
 
+// Localized text for a failed read/import (ImportErrorCode::None/Other show
+// the core's message as is).
+QString importErrorText(const ImportError &error);
+QString importErrorText(const ImportResult &result);
+
 } // namespace fm

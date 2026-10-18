@@ -8,7 +8,6 @@
 #include "Registration.h"
 #include "Utils.h"
 
-#include <QFile>
 #include <QHash>
 #include <QSet>
 
@@ -35,6 +34,15 @@ bool storeExpiredU21(Database &db,
     pending.removeDuplicates();
     return db.setRegistrations(registrations)
            && db.setSetting(Registration::expiredU21SettingKey(), pending.join(QLatin1Char(',')));
+}
+
+ImportResult failedImport(const ImportError &error)
+{
+    ImportResult result;
+    result.error = error.message;
+    result.errorCode = error.code;
+    result.errorArg = error.arg;
+    return result;
 }
 
 // Decodes the handful of HTML entities FM exports actually contain.
@@ -201,12 +209,23 @@ bool isNewgenUid(const QString &uid)
 
 } // namespace
 
-bool HtmlImporter::extractTable(const QString &html, HtmlTable *out, QString *errorOut,
+bool HtmlImporter::extractTable(const QString &html, ImportTable *out, QString *errorOut,
                                 const std::function<void(int, int)> &progress)
 {
-    const auto fail = [&](const QString &message) {
+    ImportError error;
+    if (extractTable(html, out, &error, progress))
+        return true;
+    if (errorOut)
+        *errorOut = error.message;
+    return false;
+}
+
+bool HtmlImporter::extractTable(const QString &html, ImportTable *out, ImportError *errorOut,
+                                const std::function<void(int, int)> &progress)
+{
+    const auto fail = [&](ImportErrorCode code, const QString &message) {
         if (errorOut)
-            *errorOut = message;
+            *errorOut = {code, QString(), message};
         return false;
     };
 
@@ -214,7 +233,7 @@ bool HtmlImporter::extractTable(const QString &html, HtmlTable *out, QString *er
     const qsizetype htmlSize = view.size();
     const qsizetype tableStart = findTag(view, QLatin1StringView("table"), 0, htmlSize);
     if (tableStart < 0)
-        return fail(QStringLiteral("No <table> element found in file."));
+        return fail(ImportErrorCode::NoTable, QStringLiteral("No <table> element found in file."));
     qsizetype tableEnd = findMarkup(view, QLatin1StringView("/table"), tableStart, htmlSize,
                                     /*requireBoundary*/ false);
     if (tableEnd < 0)
@@ -274,7 +293,8 @@ bool HtmlImporter::extractTable(const QString &html, HtmlTable *out, QString *er
         if (!haveHeader) {
             // The first row must be the header row (legacy takes trs[0] <th>s).
             if (!headerRow || cells.isEmpty())
-                return fail(QStringLiteral("No <th> elements found in header row."));
+                return fail(ImportErrorCode::NoHeaderCells,
+                            QStringLiteral("No <th> elements found in header row."));
             out->headers = cells;
             haveHeader = true;
         } else if (!cells.isEmpty()) {
@@ -288,7 +308,7 @@ bool HtmlImporter::extractTable(const QString &html, HtmlTable *out, QString *er
     }
 
     if (!haveHeader)
-        return fail(QStringLiteral("No header row found in table."));
+        return fail(ImportErrorCode::NoHeaderRow, QStringLiteral("No header row found in table."));
     return true;
 }
 
@@ -349,17 +369,14 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
                                       const std::function<void(int, int)> &parseProgress,
                                       std::vector<Player> *updatedPlayers)
 {
-    HtmlTable table;
-    QString parseError;
-    if (!extractTable(html, &table, &parseError, parseProgress)) {
-        ImportResult result;
-        result.error = parseError;
-        return result;
-    }
+    ImportTable table;
+    ImportError parseError;
+    if (!extractTable(html, &table, &parseError, parseProgress))
+        return failedImport(parseError);
     return importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers);
 }
 
-ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
+ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
                                        const std::vector<Player> &existingPlayers,
                                        const std::function<void(int, int)> &progress,
                                        const QString &fmVersionId,
@@ -371,11 +388,10 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
     const QString &uidHeader = required.at(0);
     const QString &nameHeader = required.at(1);
 
-    if (table.headers.size() < 10) {
-        result.error = QStringLiteral("Too few columns (%1), expected at least 10.")
-                           .arg(table.headers.size());
-        return result;
-    }
+    if (table.headers.size() < 10)
+        return failedImport({ImportErrorCode::TooFewColumns, QString::number(table.headers.size()),
+                             QStringLiteral("Too few columns (%1), expected at least 10.")
+                                 .arg(table.headers.size())});
 
     // --- Deduplicate headers: only the FIRST occurrence of a name is used
     // (legacy renames later duplicates and drops them). ---
@@ -394,14 +410,12 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
         else if (header == nameHeader)
             nameCol = i;
     }
-    if (uidCol < 0) {
-        result.error = QStringLiteral("Required column '%1' not found.").arg(uidHeader);
-        return result;
-    }
-    if (nameCol < 0) {
-        result.error = QStringLiteral("Required column '%1' not found.").arg(nameHeader);
-        return result;
-    }
+    if (uidCol < 0)
+        return failedImport({ImportErrorCode::RequiredColumnMissing, uidHeader,
+                             QStringLiteral("Required column '%1' not found.").arg(uidHeader)});
+    if (nameCol < 0)
+        return failedImport({ImportErrorCode::RequiredColumnMissing, nameHeader,
+                             QStringLiteral("Required column '%1' not found.").arg(nameHeader)});
 
     // Unknown-column warning (legacy: not in attribute_mapping ∪ {UID} ∪ ignored).
     const QSet<QString> &ignored = ignoredExportColumns(fmVersionId);
@@ -412,6 +426,22 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
                 result.unknownColumns << header;
         }
     }
+
+    // Missing-column hint: schema columns no header of the file maps to.
+    QSet<QString> presentColumns;
+    for (const QString &header : table.headers) {
+        const auto it = mapping.constFind(header);
+        if (it != mapping.constEnd())
+            presentColumns.insert(it.value());
+    }
+    for (auto it = mapping.constBegin(); it != mapping.constEnd(); ++it) {
+        const QString &column = it.value();
+        if (column == QLatin1String("Registration") || column == QLatin1String("Information"))
+            continue;
+        if (!presentColumns.contains(column) && !result.missingColumns.contains(column))
+            result.missingColumns << column;
+    }
+    result.missingColumns.sort();
 
     result.malformedRows = table.malformedRows;
 
@@ -444,6 +474,7 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
 
     if (rowRefs.empty()) {
         result.error = QStringLiteral("No importable rows found (all rows were missing a UID).");
+        result.errorCode = ImportErrorCode::NoImportableRows;
         return result;
     }
     result.rowsParsed = static_cast<int>(rowRefs.size());
@@ -720,24 +751,10 @@ ImportResult HtmlImporter::importFile(const QString &filePath, Database &db,
                                       const std::function<void(int, int)> &parseProgress,
                                       std::vector<Player> *updatedPlayers)
 {
-    HtmlTable table;
-    {
-        QFile file(filePath);
-        if (!file.open(QIODevice::ReadOnly)) {
-            ImportResult result;
-            result.error = QStringLiteral("Could not open file: %1").arg(file.errorString());
-            return result;
-        }
-        // The decoded file (2 bytes per char) is only needed for parsing; it is
-        // released at the end of this scope, before the database work starts.
-        const QString html = QString::fromUtf8(file.readAll());
-        QString parseError;
-        if (!extractTable(html, &table, &parseError, parseProgress)) {
-            ImportResult result;
-            result.error = parseError;
-            return result;
-        }
-    }
+    ImportTable table;
+    ImportError readError;
+    if (!readImportTable(filePath, fmVersionId, &table, &readError, parseProgress))
+        return failedImport(readError);
     return importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers);
 }
 
@@ -746,19 +763,33 @@ QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,
                                               const QString &targetUid, QString *errorOut,
                                               const QString &fmVersionId)
 {
+    ImportTable table;
+    ImportError error;
+    QString name;
+    if (extractTable(html, &table, &error, {}))
+        name = forceUpdateSinglePlayer(table, db, existingPlayers, targetUid, &error, fmVersionId);
+    if (error.code != ImportErrorCode::None && errorOut)
+        *errorOut = error.message;
+    return name;
+}
+
+QString HtmlImporter::forceUpdateSinglePlayer(const ImportTable &table, Database &db,
+                                              const std::vector<Player> &existingPlayers,
+                                              const QString &targetUid, ImportError *errorOut,
+                                              const QString &fmVersionId)
+{
     const QHash<QString, QString> &mapping = attributeMapping(fmVersionId);
-    const auto fail = [&](const QString &message) {
+    if (errorOut)
+        *errorOut = {};
+    const auto fail = [&](ImportErrorCode code, const QString &arg, const QString &message) {
         if (errorOut)
-            *errorOut = message;
+            *errorOut = {code, arg, message};
         return QString();
     };
 
-    HtmlTable table;
-    QString parseError;
-    if (!extractTable(html, &table, &parseError))
-        return fail(parseError);
     if (table.rows.size() != 1)
-        return fail(QStringLiteral("The file must contain exactly ONE player, "
+        return fail(ImportErrorCode::NotSingleRow, QString::number(table.rows.size()),
+                    QStringLiteral("The file must contain exactly ONE player, "
                                    "but %1 rows were found.")
                         .arg(table.rows.size()));
 
@@ -770,7 +801,8 @@ QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,
         }
     }
     if (!existing)
-        return fail(QStringLiteral("Target player %1 not found.").arg(targetUid));
+        return fail(ImportErrorCode::TargetNotFound, targetUid,
+                    QStringLiteral("Target player %1 not found.").arg(targetUid));
 
     Player player = *existing; // app-managed fields preserved
     QSet<QString> seenHeaders;
@@ -800,7 +832,7 @@ QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,
 
     std::vector<Player> batch{std::move(player)};
     if (!db.upsertPlayers(batch) || !storeExpiredU21(db, expiredU21, {targetUid}))
-        return fail(db.errorString());
+        return fail(ImportErrorCode::Other, QString(), db.errorString());
     return fileName;
 }
 

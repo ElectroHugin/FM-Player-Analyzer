@@ -53,7 +53,7 @@ class TestHtmlImporter : public QObject
 private slots:
     void extractTableBasics()
     {
-        HtmlTable table;
+        ImportTable table;
         QString error;
         QVERIFY(HtmlImporter::extractTable(
             QStringLiteral("<table><tr><th>A</th><th>B</th></tr>"
@@ -76,7 +76,7 @@ private slots:
         // Backlog #38: the rewritten tag scanner must keep every quirk of the
         // old parser — mixed case, attributes, <thead> not mistaken for <th>,
         // unclosed cells, nested tags/entities, empty rows, no </table>.
-        HtmlTable table;
+        ImportTable table;
         QString error;
         QVERIFY2(HtmlImporter::extractTable(
                      QStringLiteral("<p>intro</p><TABLE border=1><THEAD>"
@@ -96,7 +96,7 @@ private slots:
 
     void extractTableEntitiesAndNesting()
     {
-        HtmlTable table;
+        ImportTable table;
         QVERIFY(HtmlImporter::extractTable(
             QStringLiteral("<TABLE><TR><TH>Name</TH></TR>"
                            "<TR><TD><b>K&#246;ln</b> &quot;X&quot;</TD></TR></TABLE>"),
@@ -132,7 +132,7 @@ private slots:
         }
         html += QStringLiteral("</table></body></html>");
 
-        HtmlTable table;
+        ImportTable table;
         QString error;
         QElapsedTimer timer;
         timer.start();

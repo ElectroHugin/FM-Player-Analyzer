@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ImportTable.h"
 #include "Player.h"
 
 #include <QList>
@@ -13,19 +14,14 @@ namespace fm {
 
 class Database;
 
-// Raw table extracted from an FM HTML export.
-struct HtmlTable {
-    QStringList headers;
-    QList<QStringList> rows;
-    int malformedRows = 0; // rows whose cell count did not match the header
-};
-
-// Outcome of an HTML import (port of legacy parse_and_update_data). The
-// message lists are structured facts; the UI turns them into localized
-// warnings.
+// Outcome of an import (port of legacy parse_and_update_data). The message
+// lists are structured facts; the UI turns them into localized warnings.
 struct ImportResult {
     bool success = false;
-    QString error;
+    QString error; // English, for logs and tests
+    // Translatable reason for a failure; None/Other = show `error` as is.
+    ImportErrorCode errorCode = ImportErrorCode::None;
+    QString errorArg;
 
     int rowsParsed = 0;
     int playersImported = 0;
@@ -35,6 +31,9 @@ struct ImportResult {
 
     QStringList duplicateUidNames; // duplicate UIDs inside the file (last row kept)
     QStringList unknownColumns;    // exported columns the app does not know
+    // Columns of the version's import schema (internal names) the file lacks;
+    // "Registration"/"Information" are not reported.
+    QStringList missingColumns;
     // "Name (UID 123) vs. Name2 (r-123)" — incoming numeric UID matches a
     // known newgen ID but the names differ; records left untouched.
     QStringList idNameConflicts;
@@ -67,8 +66,11 @@ public:
     // set if no usable table/header was found. progress(bytesDone, bytesTotal)
     // is called periodically while scanning so callers can show parse progress
     // on very large exports.
-    static bool extractTable(const QString &html, HtmlTable *out, QString *errorOut = nullptr,
+    static bool extractTable(const QString &html, ImportTable *out, QString *errorOut = nullptr,
                              const std::function<void(int, int)> &progress = {});
+    // Same, reporting a translatable error code.
+    static bool extractTable(const QString &html, ImportTable *out, ImportError *errorOut,
+                             const std::function<void(int, int)> &progress);
 
     // Full import into db, atomic (one transaction). existingPlayers must
     // reflect the current DB state (ids matching). progress(done, total) is
@@ -86,8 +88,9 @@ public:
                                    const std::function<void(int, int)> &parseProgress = {},
                                    std::vector<Player> *updatedPlayers = nullptr);
 
-    // Reads the file (UTF-8, lenient) and imports it like importHtml; the
-    // decoded file is released right after parsing, before the DB work.
+    // Reads the file (HTML or CSV by extension, see readImportTable) and
+    // imports it like importHtml; the decoded file is released right after
+    // parsing, before the DB work.
     static ImportResult importFile(const QString &filePath, Database &db,
                                    const std::vector<Player> &existingPlayers,
                                    std::function<void(int, int)> progress = {},
@@ -103,6 +106,12 @@ public:
                                            const std::vector<Player> &existingPlayers,
                                            const QString &targetUid, QString *errorOut,
                                            const QString &fmVersionId = QString());
+    // Same on an already read table (any export format); errorOut->code is
+    // None on success.
+    static QString forceUpdateSinglePlayer(const ImportTable &table, Database &db,
+                                           const std::vector<Player> &existingPlayers,
+                                           const QString &targetUid, ImportError *errorOut,
+                                           const QString &fmVersionId = QString());
 
     // Applies one HTML column value (full column name, e.g. "Acceleration",
     // "Transfer Value") to a player. Unknown columns are ignored.
@@ -110,7 +119,7 @@ public:
 
 private:
     // Shared import body once the table is extracted.
-    static ImportResult importTable(const HtmlTable &table, Database &db,
+    static ImportResult importTable(const ImportTable &table, Database &db,
                                     const std::vector<Player> &existingPlayers,
                                     const std::function<void(int, int)> &progress,
                                     const QString &fmVersionId,

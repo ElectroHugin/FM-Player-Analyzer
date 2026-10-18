@@ -26,7 +26,7 @@ struct FmDataVersion {
     bool supported;              // false = shown in the picker but not yet importable
     QString definitionsFileName; // roles/tactics in the data dir, e.g. "definitions.json"
     QString exportFolderName;    // game folder under "Documents/Sports Interactive"
-    QStringList importFormats;   // export formats the importer reads, e.g. {"html"}
+    QStringList importFormats;   // export formats the importer reads, e.g. {"html", "csv"}
     bool provisionalWeights = false; // true = attribute tiers/weights are assumed, not yet measured
     bool registrationRules = false;  // true = league/UEFA registration rules are modelled
 };

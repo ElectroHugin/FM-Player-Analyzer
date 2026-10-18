@@ -1,6 +1,7 @@
 #include "NationalCallupPage.h"
 
 #include "../AppContext.h"
+#include "../ImportRunner.h"
 #include "../PlayerActions.h"
 #include "PageHelpers.h"
 #include "core/HtmlImporter.h"
@@ -13,7 +14,6 @@
 #include <QButtonGroup>
 #include <QClipboard>
 #include <QComboBox>
-#include <QFile>
 #include <QFileDialog>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -70,7 +70,7 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
     auto *baselineBox = new QGroupBox(tr("1. Aktueller Kader"), content);
     auto *baselineLayout = new QVBoxLayout(baselineBox);
     m_savedRadio = new QRadioButton(tr("Gespeicherten Nationalkader verwenden"), baselineBox);
-    m_uploadRadio = new QRadioButton(tr("Kader aus FM-HTML-Export hochladen"), baselineBox);
+    m_uploadRadio = new QRadioButton(tr("Kader aus FM-Export (HTML oder CSV) hochladen"), baselineBox);
     m_savedRadio->setChecked(true);
     auto *group = new QButtonGroup(this);
     group->addButton(m_savedRadio);
@@ -326,31 +326,26 @@ void NationalCallupPage::uploadSquad()
 {
     const QString path = QFileDialog::getOpenFileName(
         this, tr("Nationalkader-Export wählen"), m_context.htmlExportDir(),
-        tr("HTML-Dateien (*.html *.htm);;Alle Dateien (*)"));
+        tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
     if (path.isEmpty())
         return;
 
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly)) {
+    ImportTable table;
+    ImportError error;
+    if (!readImportTable(path, m_context.fmVersionId(), &table, &error)) {
         QMessageBox::critical(this, tr("Nominierung"),
-                              tr("Datei konnte nicht geöffnet werden: %1").arg(file.errorString()));
-        return;
-    }
-    const QString html = QString::fromUtf8(file.readAll());
-
-    HtmlTable table;
-    QString error;
-    if (!HtmlImporter::extractTable(html, &table, &error)) {
-        QMessageBox::critical(this, tr("Nominierung"),
-                              tr("Kader-Datei konnte nicht gelesen werden: %1").arg(error));
+                              tr("Kader-Datei konnte nicht gelesen werden: %1")
+                                  .arg(importErrorText(error)));
         return;
     }
 
-    const int uidCol = table.headers.indexOf(QStringLiteral("UID"));
-    const int nameCol = table.headers.indexOf(QStringLiteral("Name"));
+    const QStringList &required = requiredImportColumns(m_context.fmVersionId());
+    const int uidCol = table.headers.indexOf(required.at(0));
+    const int nameCol = table.headers.indexOf(required.at(1));
     if (uidCol < 0 && nameCol < 0) {
         QMessageBox::critical(this, tr("Nominierung"),
-                              tr("Die Datei enthält weder eine 'UID'- noch eine 'Name'-Spalte."));
+                              tr("Die Datei enthält weder eine '%1'- noch eine '%2'-Spalte.")
+                                  .arg(required.at(0), required.at(1)));
         return;
     }
 

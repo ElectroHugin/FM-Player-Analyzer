@@ -167,7 +167,7 @@ int benchParse(const QString &htmlPath)
     const qint64 readMs = timer.restart();
     const QString html = QString::fromUtf8(bytes);
     const qint64 decodeMs = timer.restart();
-    fm::HtmlTable table;
+    fm::ImportTable table;
     QString error;
     if (!fm::HtmlImporter::extractTable(html, &table, &error)) {
         std::fprintf(stderr, "FEHLER: %s\n", qUtf8Printable(error));

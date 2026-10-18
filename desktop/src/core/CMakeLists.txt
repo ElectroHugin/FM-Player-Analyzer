@@ -8,6 +8,8 @@ add_library(fmcore STATIC
     Attributes.h
     Constants.h
     Constants.cpp
+    CsvReader.h
+    CsvReader.cpp
     Database.h
     Database.cpp
     Definitions.h
@@ -25,6 +27,8 @@ add_library(fmcore STATIC
     HtmlImporter.cpp
     ImportSchema.h
     ImportSchema.cpp
+    ImportTable.h
+    ImportTable.cpp
     ImportPipeline.h
     ImportPipeline.cpp
     LegacyMigrator.h

@@ -153,6 +153,10 @@ QStringList importWarningLines(const ImportPipelineResult &result)
     if (!result.import.unknownColumns.isEmpty())
         warnings << ImportText::tr("Unbekannte Spalten (werden ignoriert): %1")
                         .arg(result.import.unknownColumns.join(QStringLiteral(", ")));
+    if (!result.import.missingColumns.isEmpty())
+        warnings << ImportText::tr("Fehlende Spalten (diese Werte werden nicht aktualisiert): %1. "
+                                   "Nimm sie ggf. in die Exportansicht in FM auf.")
+                        .arg(result.import.missingColumns.join(QStringLiteral(", ")));
     if (!result.import.idNameConflicts.isEmpty())
         warnings << ImportText::tr("ID/Namens-Konflikt übersprungen: %1. Eine numerische UID "
                              "entspricht einer bekannten Newgen-ID, aber die Namen "
@@ -171,6 +175,45 @@ QStringList importWarningLines(const ImportPipelineResult &result)
     if (result.recalcRan && !result.recalc.success)
         warnings << ImportText::tr("DWRS-Berechnung fehlgeschlagen: %1").arg(result.recalc.error);
     return warnings;
+}
+
+QString importErrorText(const ImportError &error)
+{
+    switch (error.code) {
+    case ImportErrorCode::None:
+    case ImportErrorCode::Other:
+        break;
+    case ImportErrorCode::FileOpen:
+        return ImportText::tr("Datei konnte nicht geöffnet werden: %1").arg(error.arg);
+    case ImportErrorCode::UnsupportedFormat:
+        return ImportText::tr("Diese FM-Version kann keine %1-Dateien importieren.")
+            .arg(error.arg.toUpper());
+    case ImportErrorCode::NoTable:
+        return ImportText::tr("Kein <table>-Element in der Datei gefunden.");
+    case ImportErrorCode::NoHeaderCells:
+        return ImportText::tr("Die erste Tabellenzeile enthält keine Spaltenköpfe (<th>).");
+    case ImportErrorCode::NoHeaderRow:
+        return ImportText::tr("Keine Kopfzeile in der Datei gefunden.");
+    case ImportErrorCode::TooFewColumns:
+        return ImportText::tr("Zu wenige Spalten (%1), erwartet werden mindestens 10.")
+            .arg(error.arg);
+    case ImportErrorCode::RequiredColumnMissing:
+        return ImportText::tr("Pflichtspalte '%1' nicht gefunden.").arg(error.arg);
+    case ImportErrorCode::NoImportableRows:
+        return ImportText::tr("Keine importierbaren Zeilen gefunden (allen Zeilen fehlte die UID).");
+    case ImportErrorCode::NotSingleRow:
+        return ImportText::tr("Die Datei muss genau EINEN Spieler enthalten, gefunden wurden "
+                              "%1 Zeilen.")
+            .arg(error.arg);
+    case ImportErrorCode::TargetNotFound:
+        return ImportText::tr("Zielspieler %1 nicht gefunden.").arg(error.arg);
+    }
+    return error.message;
+}
+
+QString importErrorText(const ImportResult &result)
+{
+    return importErrorText(ImportError{result.errorCode, result.errorArg, result.error});
 }
 
 } // namespace fm

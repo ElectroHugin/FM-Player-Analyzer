@@ -1,6 +1,7 @@
 #include "PlayerProfilePage.h"
 
 #include "../AppContext.h"
+#include "../ImportRunner.h"
 #include "../RecalcHelper.h"
 #include "../widgets/Charts.h"
 #include "../widgets/PlayerSearchModel.h"
@@ -19,7 +20,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCompleter>
-#include <QFile>
 #include <QFileDialog>
 #include <QFrame>
 #include <QGroupBox>
@@ -130,7 +130,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     layout->addWidget(m_tagsLabel);
 
     // --- Manual single-player update ---
-    m_updateBox = new QGroupBox(tr("🔁 Diesen Spieler aus einer HTML-Datei aktualisieren"),
+    m_updateBox = new QGroupBox(tr("🔁 Diesen Spieler aus einer Exportdatei (HTML oder CSV) aktualisieren"),
                                 content);
     m_updateBox->setCheckable(true);
     m_updateBox->setChecked(false);
@@ -167,8 +167,8 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     layout->addWidget(m_updateBox);
     connect(browse, &QPushButton::clicked, this, [this] {
         const QString path = QFileDialog::getOpenFileName(
-            this, tr("FM-HTML-Export auswählen"), m_context.htmlExportDir(),
-            tr("HTML-Dateien (*.html *.htm);;Alle Dateien (*)"));
+            this, tr("FM-Export (HTML oder CSV) auswählen"), m_context.htmlExportDir(),
+            tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
         if (!path.isEmpty())
             m_updateFileEdit->setText(path);
         m_updateButton->setEnabled(!m_updateFileEdit->text().isEmpty()
@@ -627,19 +627,17 @@ void PlayerProfilePage::runManualUpdate()
     if (!player || filePath.isEmpty())
         return;
 
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::critical(this, tr("Spieler aktualisieren"), file.errorString());
+    ImportTable table;
+    ImportError error;
+    if (!readImportTable(filePath, m_context.fmVersionId(), &table, &error)) {
+        QMessageBox::critical(this, tr("Spieler aktualisieren"), importErrorText(error));
         return;
     }
-    const QString html = QString::fromUtf8(file.readAll());
-
-    QString error;
     const QString fileName = HtmlImporter::forceUpdateSinglePlayer(
-        html, m_context.database(), m_context.store().players(), uid, &error,
+        table, m_context.database(), m_context.store().players(), uid, &error,
         m_context.fmVersionId());
-    if (!error.isEmpty()) {
-        QMessageBox::critical(this, tr("Spieler aktualisieren"), error);
+    if (error.code != ImportErrorCode::None) {
+        QMessageBox::critical(this, tr("Spieler aktualisieren"), importErrorText(error));
         return;
     }
 
