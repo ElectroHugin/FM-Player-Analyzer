@@ -237,7 +237,8 @@ Informationen → Trotzdem ausführen*.
 
 **2 · Export-Ansicht in den FM holen**
 
-Die App liest den normalen HTML-Export des Football Manager. Am einfachsten
+Die App liest den normalen HTML-Export des Football Manager (CSV-Exporte
+gehen auch). Am einfachsten
 geht es mit den fertigen Ansichten von **PlayingSquirrel**
 ([@playingsquirrel](https://x.com/playingsquirrel)):
 [hier die FM24-Ansichtsdateien herunterladen](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file)
@@ -356,7 +357,7 @@ Football Manager 2024. Das Import-Format ist pro Spielversion definiert, weitere
 Versionen lassen sich also ergänzen.
 
 **Mac oder Linux?**
-Vorerst nur Windows 10 / 11 (64-bit).
+Windows 10 / 11 (64-bit), dazu ein Linux-AppImage auf der Release-Seite. Kein macOS.
 
 **Meine Liga steht nicht bei den Registrierungsregeln.**
 Wähle *Standard (keine Beschränkung)*. Hinterlegt sind bisher die Premier League

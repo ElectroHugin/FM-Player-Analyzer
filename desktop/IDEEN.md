@@ -57,15 +57,19 @@ FM27. Abgestimmt am 2026-10-10.
      markiert; wählbar beim Anlegen, sobald es mehrere gibt. Fest, sobald der
      Spielstand Spieler enthält. FM24 verhält sich unverändert. Neue Version
      einbauen: siehe Kommentar an `fmDataVersions()` in `core/Constants.h`.
-  2. **Flexibler Import:** CSV-Import, Spaltenzuordnung pro Version, klare
-     Meldung bei unbekannten oder fehlenden Spalten.
-  3. **Konzept zwei Rollen pro Slot** (siehe oben) ausarbeiten: Datenformat
-     von `definitions.json`, Datenbank (`player_roles`, `dwrs_history`,
-     `training_roles`), Oberfläche.
+  2. ✅ **Flexibler Import** (v1.6.0): CSV-Import mit Erkennung des
+     Trennzeichens, Spaltenschema pro Version (`core/ImportSchema`) und ein
+     Hinweis auf fehlende Spalten neben den unbekannten.
+  3. **Konzept zwei Rollen pro Slot:** Das Konzept steht in
+     [KONZEPT_ZWEI_ROLLEN.md](KONZEPT_ZWEI_ROLLEN.md) (Datenformat, Bewertung,
+     Auswirkungen, Reihenfolge). Gebaut wird, sobald die FM27-Rollenliste
+     feststeht.
   4. **Zum Release:** echten Export einlesen, Zuordnung anpassen, Rollen mit
-     Schlüsselattributen aus dem Spiel übernehmen, Positionen prüfen
-     (Slot-Geometrie und Slot → Spielposition liegen noch fest im Code,
-     `Constants.cpp`).
+     Schlüsselattributen aus dem Spiel übernehmen, Positionen prüfen. Die
+     Spielfeld-Geometrie (Slots, Slot → Spielposition, Rollen im
+     Taktik-Editor) liegt pro Version in `core/PitchGeometry` (eine Quelle);
+     für FM27 dort ergänzen. Seit v1.6.0 bietet der Taktik-Editor auf DML/DMR
+     nur noch Wingback-Rollen an, wie im Spiel.
   5. **Danach:** Gewichte nachziehen, sobald Engine-Tests vorliegen.
 
 ### 🟡 Statistik-Labor: Attributgewichte aus Spielstatistiken prüfen
@@ -190,8 +194,9 @@ passenden Rollen, ohne HTML-Export.
      `linux-release` (Qt-Pfad aus `QT_ROOT_DIR`), Linux-Job in `ci.yml` und als
      unabhängiger Job in `release.yml`. Baut mit GCC 13 ohne Code-Änderung,
      alle 16 Test-Suiten grün.
-  2. Offen: AppImage im Release-Workflow neben dem Windows-Installer (z. B.
-     `linuxdeploy` + Qt-Plugin); braucht ein PNG-Icon und eine `.desktop`-Datei.
+  2. ✅ 2026-10-17: AppImage im Release-Workflow neben dem Windows-Installer
+     (`linuxdeploy` + Qt-Plugin, PNG-Icon, `.desktop`-Datei, Starttest in CI);
+     auf Linux Mint getestet.
   3. Offen: Feinschliff nach dem ersten echten Test unter Linux — Schrift
      („Segoe UI" ist fest gesetzt), Standard-Importordner (FM24 läuft über
      Steam/Proton, der Dokumente-Ordner liegt im Proton-Präfix), Emojis in

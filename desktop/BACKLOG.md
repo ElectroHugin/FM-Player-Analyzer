@@ -92,7 +92,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~ → ~~#34~~ → ~~#35~~ → ~~#36~~. Offen: #29, #37.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~ → ~~#34~~ → ~~#35~~ → ~~#36~~. Offen: #37.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -230,7 +230,11 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
   `AppContext` registrieren; `closeEvent` wartet auf alle; eindeutige
   Worker-Verbindungsnamen.
 
-### #29 — Vereinswechsel im Dashboard-Combo ohne Benachrichtigung
+### ✅ #29 — Vereinswechsel im Dashboard-Combo ohne Benachrichtigung — erledigt in v1.6.0
+
+> **Umsetzung:** Nach dem Speichern von `user_club` ruft das Dashboard
+> `m_context.notifySettingsChanged()` auf; Kopfzeile und übrige Seiten ziehen
+> nach.
 
 - **Datei:** [src/app/pages/DashboardPage.cpp](src/app/pages/DashboardPage.cpp)
   `m_clubCombo` activated.

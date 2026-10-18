@@ -226,7 +226,8 @@ may show a SmartScreen notice — choose *More info → Run anyway*.
 
 **2 · Get the export view into FM**
 
-The app reads the standard HTML export of Football Manager. The easiest way is
+The app reads the standard HTML export of Football Manager (CSV exports work
+too). The easiest way is
 the ready-made custom views by **PlayingSquirrel**
 ([@playingsquirrel](https://x.com/playingsquirrel)) —
 [download the FM24 view files here](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file)
@@ -341,7 +342,7 @@ Football Manager 2024. The import layout is defined per game version, so other
 versions can be added.
 
 **Mac or Linux?**
-Windows 10 / 11 (64-bit) only for now.
+Windows 10 / 11 (64-bit), plus a Linux AppImage on the releases page. No macOS.
 
 **I play in a league that is not listed in the registration rules.**
 Choose *Default (no restriction)*. Premier League and the UEFA club competitions
