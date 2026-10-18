@@ -3,6 +3,8 @@ add_library(fmcore STATIC
     AppConfig.cpp
     Assignment.h
     Assignment.cpp
+    AttributeTiers.h
+    AttributeTiers.cpp
     Attributes.h
     Constants.h
     Constants.cpp
@@ -21,12 +23,16 @@ add_library(fmcore STATIC
     GistRainbowLut.h
     HtmlImporter.h
     HtmlImporter.cpp
+    ImportSchema.h
+    ImportSchema.cpp
     ImportPipeline.h
     ImportPipeline.cpp
     LegacyMigrator.h
     LegacyMigrator.cpp
     NationalCallup.h
     NationalCallup.cpp
+    PitchGeometry.h
+    PitchGeometry.cpp
     Player.h
     PlayerStatus.h
     PlayerStatus.cpp

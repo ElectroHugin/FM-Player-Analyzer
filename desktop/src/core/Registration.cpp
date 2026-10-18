@@ -1,5 +1,6 @@
 #include "Registration.h"
 
+#include "Constants.h"
 #include "Definitions.h"
 
 #include <QSet>
@@ -64,16 +65,24 @@ bool restrictsSquad(LeagueRules rules)
     return rules == LeagueRules::PremierLeague;
 }
 
+// Only versions whose registry entry models the rules. fmDataVersion() falls
+// back to the default version for unknown ids, so the id must match exactly.
+static bool modelsRegistrationRules(const QString &fmVersionId)
+{
+    const FmDataVersion &version = fmDataVersion(fmVersionId);
+    return version.id == fmVersionId && version.registrationRules;
+}
+
 QList<LeagueRules> leagueRulesFor(const QString &fmVersionId)
 {
-    if (fmVersionId == QLatin1String("fm24"))
+    if (modelsRegistrationRules(fmVersionId))
         return {LeagueRules::Bundesliga, LeagueRules::PremierLeague};
     return {};
 }
 
 bool uefaRulesFor(const QString &fmVersionId)
 {
-    return fmVersionId == QLatin1String("fm24");
+    return modelsRegistrationRules(fmVersionId);
 }
 
 U21Status u21StatusByAge(int age)

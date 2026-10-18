@@ -37,17 +37,6 @@ bool storeExpiredU21(Database &db,
            && db.setSetting(Registration::expiredU21SettingKey(), pending.join(QLatin1Char(',')));
 }
 
-// Columns FM routinely exports that the app intentionally ignores (legacy
-// IGNORED_EXPORT_COLUMNS) — listed so the unknown-column warning does not cry
-// wolf on every normal export.
-const QSet<QString> &ignoredExportColumns()
-{
-    static const QSet<QString> ignored = {
-        QStringLiteral("CON"), QStringLiteral("Ability"),
-        QStringLiteral("Position/Role/Duty"), QStringLiteral("Pun")};
-    return ignored;
-}
-
 // Decodes the handful of HTML entities FM exports actually contain.
 QString decodeEntities(const QString &text)
 {
@@ -378,6 +367,9 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
 {
     ImportResult result;
     const QHash<QString, QString> &mapping = attributeMapping(fmVersionId);
+    const QStringList &required = requiredImportColumns(fmVersionId);
+    const QString &uidHeader = required.at(0);
+    const QString &nameHeader = required.at(1);
 
     if (table.headers.size() < 10) {
         result.error = QStringLiteral("Too few columns (%1), expected at least 10.")
@@ -397,24 +389,25 @@ ImportResult HtmlImporter::importTable(const HtmlTable &table, Database &db,
             continue;
         }
         seenHeaders.insert(header);
-        if (header == QLatin1String("UID"))
+        if (header == uidHeader)
             uidCol = i;
-        else if (header == QLatin1String("Name"))
+        else if (header == nameHeader)
             nameCol = i;
     }
     if (uidCol < 0) {
-        result.error = QStringLiteral("Required column 'UID' not found.");
+        result.error = QStringLiteral("Required column '%1' not found.").arg(uidHeader);
         return result;
     }
     if (nameCol < 0) {
-        result.error = QStringLiteral("Required column 'Name' not found.");
+        result.error = QStringLiteral("Required column '%1' not found.").arg(nameHeader);
         return result;
     }
 
     // Unknown-column warning (legacy: not in attribute_mapping ∪ {UID} ∪ ignored).
+    const QSet<QString> &ignored = ignoredExportColumns(fmVersionId);
     for (const QString &header : table.headers) {
-        if (!mapping.contains(header) && header != QLatin1String("UID")
-            && !ignoredExportColumns().contains(header)) {
+        if (!mapping.contains(header) && !required.contains(header)
+            && !ignored.contains(header)) {
             if (!result.unknownColumns.contains(header))
                 result.unknownColumns << header;
         }
