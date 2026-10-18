@@ -69,7 +69,8 @@ FM27. Abgestimmt am 2026-10-10.
      Spielfeld-Geometrie (Slots, Slot → Spielposition, Rollen im
      Taktik-Editor) liegt pro Version in `core/PitchGeometry` (eine Quelle);
      für FM27 dort ergänzen. Seit v1.6.0 bietet der Taktik-Editor auf DML/DMR
-     nur noch Wingback-Rollen an, wie im Spiel.
+     nur noch Wingback-Rollen an, wie im Spiel. DL/DR verlangen jetzt die
+     Position D (L)/D (R); reine Wingbacks spielen nur auf WBL/WBR (DML/DMR).
   5. **Danach:** Gewichte nachziehen, sobald Engine-Tests vorliegen.
 
 ### 🟡 Statistik-Labor: Attributgewichte aus Spielstatistiken prüfen

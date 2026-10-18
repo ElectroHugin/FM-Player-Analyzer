@@ -58,7 +58,8 @@ const QHash<QString, int> &legacyStratumOrder()
 }
 
 // The natural role sorter as Definitions built it before (GK roles detected by
-// the "GK"/"SK" substring, legacy tables above).
+// the "GK"/"SK" substring, legacy tables above, including the old DL/DR
+// wing-back eligibility).
 QHash<QString, QPair<int, int>> legacyNaturalSorter(const Definitions &defs)
 {
     QHash<QString, QStringList> roleToPositions;
@@ -118,12 +119,17 @@ private slots:
             QCOMPARE(positions.value(it.key()).stratum, it.value().first);
             QCOMPARE(positions.value(it.key()).column, it.value().second);
         }
-        QCOMPARE(tacticalSlotToGamePositions(QStringLiteral("fm24")), legacySlotGamePositions());
+        // Deliberate change (Edmund, 2026-10-18): DL/DR need D (L)/D (R); a pure
+        // wing-back plays only on WBL/WBR (DML/DMR), as in the game.
+        QHash<QString, QStringList> expected = legacySlotGamePositions();
+        expected.insert(QStringLiteral("DL"), {QStringLiteral("D (L)")});
+        expected.insert(QStringLiteral("DR"), {QStringLiteral("D (R)")});
+        QCOMPARE(tacticalSlotToGamePositions(QStringLiteral("fm24")), expected);
         QCOMPARE(stratumOrder(QStringLiteral("fm24")), legacyStratumOrder());
 
         // Unknown ids and the wrappers fall back to FM24.
-        QCOMPARE(tacticalSlotToGamePositions(QStringLiteral("fm99")), legacySlotGamePositions());
-        QCOMPARE(tacticalSlotToGamePositions(), legacySlotGamePositions());
+        QCOMPARE(tacticalSlotToGamePositions(QStringLiteral("fm99")), expected);
+        QCOMPARE(tacticalSlotToGamePositions(), expected);
         QCOMPARE(stratumOrder(), legacyStratumOrder());
     }
 
@@ -169,11 +175,12 @@ private slots:
         // DML/DMR: only wing-backs (the editor used to offer DM roles too).
         QCOMPARE(g.slot(QStringLiteral("DML"))->rolePositions, QStringList{"WB (L)"});
         QCOMPARE(g.slot(QStringLiteral("DMR"))->rolePositions, QStringList{"WB (R)"});
-        // DL/DR: the editor keeps offering full-back roles only, while a
-        // wing-back may still fill the slot in the Best XI.
+        // DL/DR: the editor offers the roles of D (L)/D (R), and only players
+        // with that position may fill the slot.
         QCOMPARE(g.slot(QStringLiteral("DL"))->rolePositions, QStringList{"D (L)"});
         QCOMPARE(g.slot(QStringLiteral("DR"))->rolePositions, QStringList{"D (R)"});
-        QCOMPARE(g.slot(QStringLiteral("DL"))->gamePositions, (QStringList{"D (L)", "WB (L)"}));
+        QCOMPARE(g.slot(QStringLiteral("DL"))->gamePositions, QStringList{"D (L)"});
+        QCOMPARE(g.slot(QStringLiteral("DR"))->gamePositions, QStringList{"D (R)"});
         QCOMPARE(g.slot(QStringLiteral("DMC"))->rolePositions, QStringList{"DM"});
     }
 

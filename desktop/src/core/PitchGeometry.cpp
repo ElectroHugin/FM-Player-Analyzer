@@ -32,10 +32,11 @@ void buildLookups(PitchGeometry &geometry)
     }
 }
 
-// FM24 (legacy constants.py / new_tactic.py). Wing-back game positions: DL/DR
-// may be filled by a wing-back, DML/DMR ("WBL"/"WBR" in the game) only by one;
-// the tactic editor therefore offers just wing-back roles on DML/DMR and just
-// full-back roles on DL/DR.
+// FM24 (legacy constants.py / new_tactic.py). As in the game, who may fill a
+// slot depends on the slot's position, not on the role: DL/DR need D (L)/D (R)
+// (wing-back roles are fine there for such a player), DML/DMR ("WBL"/"WBR" in
+// the game) need WB (L)/WB (R) and take wing-back roles only. Decision
+// 2026-10-18: a pure wing-back no longer fills DL/DR (legacy allowed it).
 PitchGeometry buildFm24()
 {
     const QString dl = QStringLiteral("D (L)"), dr = QStringLiteral("D (R)");
@@ -53,12 +54,12 @@ PitchGeometry buildFm24()
 
     PitchRow defense{QStringLiteral("Defense"), QStringLiteral("DEF"), 1, {}};
     defense.pitchSlots = {
-        makeSlot(QStringLiteral("DL"), 0, {dl, wbl}, {dl}),
+        makeSlot(QStringLiteral("DL"), 0, {dl}),
         makeSlot(QStringLiteral("WBL"), 0, {wbl}, {}, {}, /*inEditor*/ false),
         makeSlot(QStringLiteral("DCL"), 1, {dc}),
         makeSlot(QStringLiteral("DC"), 2, {dc}),
         makeSlot(QStringLiteral("DCR"), 3, {dc}),
-        makeSlot(QStringLiteral("DR"), 4, {dr, wbr}, {dr}),
+        makeSlot(QStringLiteral("DR"), 4, {dr}),
         makeSlot(QStringLiteral("WBR"), 4, {wbr}, {}, {}, /*inEditor*/ false),
     };
     PitchRow defensiveMidfield{QStringLiteral("Defensive Midfield"), QStringLiteral("DM"), 2, {}};
