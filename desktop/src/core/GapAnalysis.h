@@ -41,7 +41,7 @@ std::vector<Gap> analyzeTeamGaps(const QHash<QString, XiCell> &team,
                                  const QHash<QString, const Player *> &playersByUid,
                                  const RoleRatings &ratings,
                                  double displacementThreshold, double dropoffThreshold,
-                                 double wrongSidePenalty);
+                                 double wrongSidePenalty, const QString &fmVersionId);
 
 } // namespace GapAnalysis
 

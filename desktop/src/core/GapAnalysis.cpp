@@ -22,9 +22,10 @@ double median(std::vector<double> values)
     return (values[n / 2 - 1] + values[n / 2]) / 2.0;
 }
 
-bool playerCanPlaySlot(const QSet<QString> &playerPositions, const QString &slot)
+bool playerCanPlaySlot(const QHash<QString, QStringList> &slotToGamePositions,
+                       const QSet<QString> &playerPositions, const QString &slot)
 {
-    const QStringList allowed = tacticalSlotToGamePositions().value(slot);
+    const QStringList allowed = slotToGamePositions.value(slot);
     for (const QString &pos : allowed) {
         if (playerPositions.contains(pos))
             return true;
@@ -43,19 +44,17 @@ QString effectiveSide(const Player &player)
 // Best slot among this tactic's slots the player is eligible for; on a DWRS
 // tie the CURRENT slot wins (mirror-slot protection). Iterates slots in the
 // given order (legacy dict order).
-std::pair<QString, double> bestTacticSlotForPlayer(const Player &player,
-                                                   const QSet<QString> &playerPositions,
-                                                   const QHash<QString, QString> &positions,
-                                                   const QStringList &slotOrder,
-                                                   const RoleRatings &ratings,
-                                                   const QString &currentSlot)
+std::pair<QString, double> bestTacticSlotForPlayer(
+    const Player &player, const QHash<QString, QStringList> &slotToGamePositions,
+    const QSet<QString> &playerPositions, const QHash<QString, QString> &positions,
+    const QStringList &slotOrder, const RoleRatings &ratings, const QString &currentSlot)
 {
     QString bestSlot;
     double bestDwrs = -1.0;
     bool haveBest = false;
 
     for (const QString &slot : slotOrder) {
-        if (!playerCanPlaySlot(playerPositions, slot))
+        if (!playerCanPlaySlot(slotToGamePositions, playerPositions, slot))
             continue;
         const QHash<QString, double> roleRatings = ratings.value(positions.value(slot));
         const auto it = roleRatings.constFind(player.uid);
@@ -90,8 +89,9 @@ std::vector<Gap> analyzeTeamGaps(const QHash<QString, XiCell> &team,
                                  const QHash<QString, const Player *> &playersByUid,
                                  const RoleRatings &ratings,
                                  double displacementThreshold, double dropoffThreshold,
-                                 double wrongSidePenalty)
+                                 double wrongSidePenalty, const QString &fmVersionId)
 {
+    const auto &slotToGamePositions = tacticalSlotToGamePositions(fmVersionId);
     struct Assigned {
         const Player *player;
         QString role;
@@ -131,7 +131,8 @@ std::vector<Gap> analyzeTeamGaps(const QHash<QString, XiCell> &team,
 
         // --- Displacement ---
         const auto [bestSlot, bestDwrs] =
-            bestTacticSlotForPlayer(player, playerPositions, positions, slotOrder, ratings, slot);
+            bestTacticSlotForPlayer(player, slotToGamePositions, playerPositions, positions,
+                                    slotOrder, ratings, slot);
         double dwrsGap = bestDwrs >= 0.0 ? bestDwrs - assignedDwrs : 0.0;
         if (dwrsGap < 0.0)
             dwrsGap = 0.0;
@@ -143,7 +144,7 @@ std::vector<Gap> analyzeTeamGaps(const QHash<QString, XiCell> &team,
         const QString thisSide = slotSide(slot);
         if (!side.isEmpty() && thisSide != QLatin1String("Center") && side != thisSide) {
             for (const QString &s : slotOrder) {
-                if (slotSide(s) == side && playerCanPlaySlot(playerPositions, s)) {
+                if (slotSide(s) == side && playerCanPlaySlot(slotToGamePositions, playerPositions, s)) {
                     wrongSide = true;
                     break;
                 }

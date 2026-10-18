@@ -508,6 +508,8 @@ void BestXiPage::rebuild()
     const DevelopmentSquads dev = m_context.squadBuilder().calculateDevelopmentSquads(
         secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);
 
+    for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_secondXiPitch, m_youthXiPitch})
+        pitch->setFmVersionId(m_context.fmVersionId());
     m_xiPitch->setTeam(first.startingXi, positions, layout, roleNames);
     m_bTeamPitch->setTeam(first.bTeam, positions, layout, roleNames);
     m_secondXiTitle->setText(secondClub.isEmpty()

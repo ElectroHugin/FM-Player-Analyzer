@@ -188,7 +188,8 @@ int main(int argc, char *argv[])
         const auto compareGaps = [&](const QString &key,
                                      const QHash<QString, XiCell> &team) {
             const std::vector<Gap> gaps = GapAnalysis::analyzeTeamGaps(
-                team, positions, slotOrder, playersByUid, ratings, dispThr, dropThr, sidePen);
+                team, positions, slotOrder, playersByUid, ratings, dispThr, dropThr, sidePen,
+                definitions.fmVersionId());
             const QJsonArray goldenGaps = g.value(key).toArray();
             if (static_cast<int>(gaps.size()) != goldenGaps.size()) {
                 diff(tactic + "/" + key + "/count", QString::number(goldenGaps.size()),

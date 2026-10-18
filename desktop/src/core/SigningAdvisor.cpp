@@ -1,6 +1,7 @@
 #include "SigningAdvisor.h"
 
 #include "Constants.h"
+#include "Definitions.h"
 #include "Utils.h"
 
 #include <algorithm>
@@ -65,7 +66,8 @@ SigningAnalysis analyze(const SquadBuilder &builder, const std::vector<const Pla
     for (const Player *player : market)
         marketPositions.push_back(parsePositionString(player->positionRaw));
 
-    const auto &slotToGamePositions = tacticalSlotToGamePositions();
+    const auto &slotToGamePositions =
+        tacticalSlotToGamePositions(builder.definitions().fmVersionId());
     std::vector<const Player *> candidates;
     QSet<const Player *> candidateSet;
     QHash<QString, size_t> slotIndex;

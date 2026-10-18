@@ -166,6 +166,8 @@ void NationalBestXiPage::rebuild()
     const SquadResult squad = m_context.squadBuilder().calculateSquadAndSurplus(
         squadPlayers, positions, slotOrder, m_context.ratings(), false);
 
+    m_xiPitch->setFmVersionId(m_context.fmVersionId());
+    m_bTeamPitch->setFmVersionId(m_context.fmVersionId());
     m_xiPitch->setTeam(squad.startingXi, positions, layout, roleNames, false);
     m_bTeamPitch->setTeam(squad.bTeam, positions, layout, roleNames, false);
 

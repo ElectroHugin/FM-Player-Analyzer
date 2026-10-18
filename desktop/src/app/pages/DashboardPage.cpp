@@ -551,6 +551,7 @@ void DashboardPage::refreshAnalysis()
         }
         strengths.insert(slot, strength);
     }
+    m_strengthGrid->setFmVersionId(m_context.fmVersionId());
     m_strengthGrid->setData(strengths, m_context.definitions().tacticLayouts().value(tactic));
 
     rebuildSuggestions();

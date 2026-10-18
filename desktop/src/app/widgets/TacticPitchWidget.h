@@ -35,6 +35,9 @@ public:
 
     void clearData();
 
+    // FM version whose pitch geometry places the slots (empty = default).
+    void setFmVersionId(const QString &versionId) { m_fmVersionId = versionId; }
+
 signals:
     // Player interactions (M13): boxes are clickable.
     void playerDoubleClicked(const QString &uid);
@@ -65,6 +68,7 @@ private:
     QHash<QString, XiCell> m_team;
     QHash<QString, QString> m_positions;
     QHash<QString, QStringList> m_layout;
+    QString m_fmVersionId;
     QHash<QString, QString> m_roleNames;
     QHash<QString, QColor> m_slotColors;
     QHash<QString, QString> m_slotSubtexts;

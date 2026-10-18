@@ -4,6 +4,7 @@
 #include "../widgets/CellStyleDelegate.h"
 #include "../widgets/NumericTableItem.h"
 #include "PageHelpers.h"
+#include "core/PitchGeometry.h"
 #include "core/Utils.h"
 
 #include <QComboBox>
@@ -21,25 +22,24 @@ namespace fm {
 
 namespace {
 
-const QStringList &stratumOrderList()
+// TacticExplorer reports the goalkeeper under this stratum name.
+const QString kGoalkeeperStratum = QStringLiteral("Goalkeeper");
+
+// Goalkeeper first, then the pitch rows from defense to attack.
+QStringList stratumOrderList(const PitchGeometry &geometry)
 {
-    static const QStringList order = {
-        QStringLiteral("Goalkeeper"),          QStringLiteral("Defense"),
-        QStringLiteral("Defensive Midfield"),  QStringLiteral("Midfield"),
-        QStringLiteral("Attacking Midfield"),  QStringLiteral("Strikers")};
+    QStringList order{kGoalkeeperStratum};
+    for (const PitchRow &row : geometry.rows)
+        order << row.stratum;
     return order;
 }
 
-QString stratumShort(const QString &stratum)
+QString stratumShort(const PitchGeometry &geometry, const QString &stratum)
 {
-    static const QHash<QString, QString> shorts = {
-        {QStringLiteral("Goalkeeper"), QStringLiteral("GK")},
-        {QStringLiteral("Defense"), QStringLiteral("DEF")},
-        {QStringLiteral("Defensive Midfield"), QStringLiteral("DM")},
-        {QStringLiteral("Midfield"), QStringLiteral("MID")},
-        {QStringLiteral("Attacking Midfield"), QStringLiteral("AM")},
-        {QStringLiteral("Strikers"), QStringLiteral("ST")}};
-    return shorts.value(stratum, stratum);
+    if (stratum == kGoalkeeperStratum)
+        return geometry.goalkeeper.key;
+    const PitchRow *row = geometry.row(stratum);
+    return row ? row->shortLabel : stratum;
 }
 
 // DWRS-colored cell for a 0-100 median/mean value; "–" for missing.
@@ -94,11 +94,10 @@ TacticExplorerPage::TacticExplorerPage(AppContext &context, QWidget *parent)
     layout->addWidget(m_bestLabel);
 
     m_rankTable = new QTableWidget(content);
-    const QStringList headers{tr("Taktik"), tr("XI"),     tr("Leer"), tr("Dünn"),
-                              tr("Median"), tr("Ø"),      QStringLiteral("GK"),
-                              QStringLiteral("DEF"),      QStringLiteral("DM"),
-                              QStringLiteral("MID"),      QStringLiteral("AM"),
-                              QStringLiteral("ST")};
+    QStringList headers{tr("Taktik"), tr("XI"), tr("Leer"), tr("Dünn"), tr("Median"), tr("Ø")};
+    const PitchGeometry &geometry = pitchGeometry(m_context.fmVersionId());
+    for (const QString &stratum : stratumOrderList(geometry))
+        headers << stratumShort(geometry, stratum);
     m_rankTable->setColumnCount(headers.size());
     m_rankTable->setHorizontalHeaderLabels(headers);
     m_rankTable->verticalHeader()->setVisible(false);
@@ -266,7 +265,7 @@ void TacticExplorerPage::refresh()
         m_rankTable->setItem(row, 4, dwrsItem(result.overallMedian));
         m_rankTable->setItem(row, 5, dwrsItem(result.overallMean));
         int column = 6;
-        for (const QString &stratum : stratumOrderList()) {
+        for (const QString &stratum : stratumOrderList(pitchGeometry(m_context.fmVersionId()))) {
             const auto it = result.perStratum.constFind(stratum);
             m_rankTable->setItem(row, column++,
                                  dwrsItem(it != result.perStratum.constEnd()

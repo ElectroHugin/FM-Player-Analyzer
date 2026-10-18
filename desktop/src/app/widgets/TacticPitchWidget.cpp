@@ -12,18 +12,6 @@ namespace fm {
 
 namespace {
 
-int rowForStratum(const QString &stratum)
-{
-    static const QHash<QString, int> rows = {
-        {QStringLiteral("Strikers"), 1},
-        {QStringLiteral("Attacking Midfield"), 2},
-        {QStringLiteral("Midfield"), 3},
-        {QStringLiteral("Defensive Midfield"), 4},
-        {QStringLiteral("Defense"), 5},
-    };
-    return rows.value(stratum, -1);
-}
-
 // "Kylian Mbappé Lottin" -> "K. Lottin" (football-style short form).
 QString initialAndLastName(const QString &fullName)
 {
@@ -205,18 +193,18 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         }
     };
 
+    const PitchGeometry &geometry = pitchGeometry(m_fmVersionId);
     for (auto it = m_layout.constBegin(); it != m_layout.constEnd(); ++it) {
-        const int row = rowForStratum(it.key());
+        const int row = geometry.drawingRow(it.key());
         if (row < 0)
             continue;
         for (const QString &slot : it.value()) {
-            if (slot == QLatin1String("GK"))
+            if (slot == geometry.goalkeeper.key)
                 continue;
-            const auto posIt = masterPositionMap().constFind(slot);
-            if (posIt == masterPositionMap().constEnd())
+            const PitchSlot *pitchSlot = geometry.slot(slot);
+            if (!pitchSlot)
                 continue;
-            const int col = posIt.value().column
-                            + (it.key() == QLatin1String("Strikers") ? 2 : 1);
+            const int col = pitchSlot->displayColumn + 1;
             if (col < 1 || col > 5)
                 continue;
             drawBox(cellRect(row, col), slot);

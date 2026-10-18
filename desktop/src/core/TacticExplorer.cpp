@@ -88,7 +88,7 @@ TacticMetrics TacticExplorer::analyzeTactic(const std::vector<const Player *> &p
 
     // Depth / coverage in isolation: players whose position fits the slot and
     // who have a positive rating for its role.
-    const auto &slotToGamePositions = tacticalSlotToGamePositions();
+    const auto &slotToGamePositions = tacticalSlotToGamePositions(m_definitions.fmVersionId());
     QHash<QString, QSet<QString>> parsed;
     for (const Player *p : pool)
         parsed.insert(p->uid, parsePositionString(p->positionRaw));

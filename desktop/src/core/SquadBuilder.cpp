@@ -100,7 +100,7 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
     for (const Player *p : pool)
         parsedPositions.insert(p->uid, parsePositionString(p->positionRaw));
 
-    const auto &slotToGamePositions = tacticalSlotToGamePositions();
+    const auto &slotToGamePositions = tacticalSlotToGamePositions(m_definitions.fmVersionId());
 
     // All eligible candidates for one tactical slot, best score first.
     // std::stable_sort + pool order replicates Python's stable sorted().

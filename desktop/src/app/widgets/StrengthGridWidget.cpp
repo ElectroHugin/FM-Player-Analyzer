@@ -10,23 +10,6 @@
 
 namespace fm {
 
-namespace {
-
-// Vertical pitch row (1 = top) per stratum; GK is drawn as a spanning row 6.
-int rowForStratum(const QString &stratum)
-{
-    static const QHash<QString, int> rows = {
-        {QStringLiteral("Strikers"), 1},
-        {QStringLiteral("Attacking Midfield"), 2},
-        {QStringLiteral("Midfield"), 3},
-        {QStringLiteral("Defensive Midfield"), 4},
-        {QStringLiteral("Defense"), 5},
-    };
-    return rows.value(stratum, -1);
-}
-
-} // namespace
-
 StrengthGridWidget::StrengthGridWidget(ThemeManager &theme, QWidget *parent)
     : QWidget(parent)
     , m_theme(theme)
@@ -171,17 +154,18 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
         }
     };
 
+    // Vertical pitch row (1 = top) per stratum; GK is drawn as a spanning row 6.
+    const PitchGeometry &geometry = pitchGeometry(m_fmVersionId);
     for (auto it = m_layout.constBegin(); it != m_layout.constEnd(); ++it) {
-        const int row = rowForStratum(it.key());
+        const int row = geometry.drawingRow(it.key());
         for (const QString &slot : it.value()) {
-            if (slot == QLatin1String("GK"))
+            if (slot == geometry.goalkeeper.key)
                 continue;
-            const auto posIt = masterPositionMap().constFind(slot);
-            if (posIt == masterPositionMap().constEnd() || row < 0)
+            const PitchSlot *pitchSlot = geometry.slot(slot);
+            if (!pitchSlot || row < 0)
                 continue;
-            // Strikers are shifted one column to the right (legacy grid).
-            const int col = posIt.value().column
-                            + (it.key() == QLatin1String("Strikers") ? 2 : 1);
+            // Strikers sit in the middle three grid columns (legacy grid).
+            const int col = pitchSlot->displayColumn + 1;
             if (col < 1 || col > 5)
                 continue;
             drawBox(cellRect(row, col), slot);

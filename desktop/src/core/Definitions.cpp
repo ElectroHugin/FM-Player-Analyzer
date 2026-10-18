@@ -292,12 +292,13 @@ QHash<QString, QPair<int, int>> Definitions::buildNaturalRoleSorter() const
     }
 
     QHash<QString, QPair<int, int>> sorter;
-    const auto &slotMap = masterPositionMap();
-    const auto &slotPositions = tacticalSlotToGamePositions();
-    const auto &strata = stratumOrder();
+    const auto &slotMap = masterPositionMap(m_fmVersionId);
+    const auto &slotPositions = tacticalSlotToGamePositions(m_fmVersionId);
+    const auto &strata = stratumOrder(m_fmVersionId);
+    const QSet<QString> gkRoles(m_gkRoles.cbegin(), m_gkRoles.cend());
 
     for (const QString &role : m_validRoles) {
-        if (role.contains(QLatin1String("GK")) || role.contains(QLatin1String("SK"))) {
+        if (gkRoles.contains(role)) {
             sorter.insert(role, {0, 0});
             continue;
         }

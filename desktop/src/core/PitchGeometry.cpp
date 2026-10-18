@@ -2,94 +2,176 @@
 
 namespace fm {
 
+namespace {
+
+PitchSlot makeSlot(const QString &key, int column, const QStringList &gamePositions,
+                   const QStringList &rolePositions = {}, const QString &label = {},
+                   bool inEditor = true)
+{
+    PitchSlot slot;
+    slot.key = key;
+    slot.label = label.isEmpty() ? key : label;
+    slot.column = column;
+    slot.displayColumn = column;
+    slot.gamePositions = gamePositions;
+    slot.rolePositions = rolePositions.isEmpty() ? gamePositions : rolePositions;
+    slot.inEditor = inEditor;
+    return slot;
+}
+
+void buildLookups(PitchGeometry &geometry)
+{
+    geometry.stratumOrders.insert(geometry.goalkeeperStratum, 0);
+    geometry.slotGamePositions.insert(geometry.goalkeeper.key, geometry.goalkeeper.gamePositions);
+    for (const PitchRow &row : std::as_const(geometry.rows)) {
+        geometry.stratumOrders.insert(row.stratum, row.order);
+        for (const PitchSlot &slot : row.pitchSlots) {
+            geometry.slotPositions.insert(slot.key, {row.stratum, slot.column});
+            geometry.slotGamePositions.insert(slot.key, slot.gamePositions);
+        }
+    }
+}
+
+// FM24 (legacy constants.py / new_tactic.py). Wing-back game positions: DL/DR
+// may be filled by a wing-back, DML/DMR ("WBL"/"WBR" in the game) only by one;
+// the tactic editor therefore offers just wing-back roles on DML/DMR and just
+// full-back roles on DL/DR.
+PitchGeometry buildFm24()
+{
+    const QString dl = QStringLiteral("D (L)"), dr = QStringLiteral("D (R)");
+    const QString dc = QStringLiteral("D (C)"), dm = QStringLiteral("DM");
+    const QString wbl = QStringLiteral("WB (L)"), wbr = QStringLiteral("WB (R)");
+    const QString ml = QStringLiteral("M (L)"), mc = QStringLiteral("M (C)"),
+                  mr = QStringLiteral("M (R)");
+    const QString aml = QStringLiteral("AM (L)"), amc = QStringLiteral("AM (C)"),
+                  amr = QStringLiteral("AM (R)");
+    const QString st = QStringLiteral("ST (C)");
+
+    PitchGeometry g;
+    g.goalkeeperStratum = QStringLiteral("GK");
+    g.goalkeeper = makeSlot(QStringLiteral("GK"), 0, {QStringLiteral("GK")});
+
+    PitchRow defense{QStringLiteral("Defense"), QStringLiteral("DEF"), 1, {}};
+    defense.pitchSlots = {
+        makeSlot(QStringLiteral("DL"), 0, {dl, wbl}, {dl}),
+        makeSlot(QStringLiteral("WBL"), 0, {wbl}, {}, {}, /*inEditor*/ false),
+        makeSlot(QStringLiteral("DCL"), 1, {dc}),
+        makeSlot(QStringLiteral("DC"), 2, {dc}),
+        makeSlot(QStringLiteral("DCR"), 3, {dc}),
+        makeSlot(QStringLiteral("DR"), 4, {dr, wbr}, {dr}),
+        makeSlot(QStringLiteral("WBR"), 4, {wbr}, {}, {}, /*inEditor*/ false),
+    };
+    PitchRow defensiveMidfield{QStringLiteral("Defensive Midfield"), QStringLiteral("DM"), 2, {}};
+    defensiveMidfield.pitchSlots = {
+        makeSlot(QStringLiteral("DML"), 0, {wbl}, {}, QStringLiteral("DML/WBL")),
+        makeSlot(QStringLiteral("DMCL"), 1, {dm}),
+        makeSlot(QStringLiteral("DMC"), 2, {dm}),
+        makeSlot(QStringLiteral("DMCR"), 3, {dm}),
+        makeSlot(QStringLiteral("DMR"), 4, {wbr}, {}, QStringLiteral("DMR/WBR")),
+    };
+    PitchRow midfield{QStringLiteral("Midfield"), QStringLiteral("MID"), 3, {}};
+    midfield.pitchSlots = {
+        makeSlot(QStringLiteral("ML"), 0, {ml}),
+        makeSlot(QStringLiteral("MCL"), 1, {mc}),
+        makeSlot(QStringLiteral("MC"), 2, {mc}),
+        makeSlot(QStringLiteral("MCR"), 3, {mc}),
+        makeSlot(QStringLiteral("MR"), 4, {mr}),
+    };
+    PitchRow attackingMidfield{QStringLiteral("Attacking Midfield"), QStringLiteral("AM"), 4, {}};
+    attackingMidfield.pitchSlots = {
+        makeSlot(QStringLiteral("AML"), 0, {aml}),
+        makeSlot(QStringLiteral("AMCL"), 1, {amc}),
+        makeSlot(QStringLiteral("AMC"), 2, {amc}),
+        makeSlot(QStringLiteral("AMCR"), 3, {amc}),
+        makeSlot(QStringLiteral("AMR"), 4, {amr}),
+    };
+    // Three striker slots (0-2), drawn in the middle three grid columns; ST and
+    // STC share the central slot.
+    PitchRow strikers{QStringLiteral("Strikers"), QStringLiteral("ST"), 5, {}};
+    strikers.pitchSlots = {
+        makeSlot(QStringLiteral("STL"), 0, {st}),
+        makeSlot(QStringLiteral("STC"), 1, {st}),
+        makeSlot(QStringLiteral("ST"), 1, {st}, {}, {}, /*inEditor*/ false),
+        makeSlot(QStringLiteral("STR"), 2, {st}),
+    };
+    for (PitchSlot &slot : strikers.pitchSlots)
+        slot.displayColumn = slot.column + 1;
+
+    g.rows = {defense, defensiveMidfield, midfield, attackingMidfield, strikers};
+    buildLookups(g);
+    return g;
+}
+
+} // namespace
+
+const PitchSlot *PitchGeometry::slot(const QString &key) const
+{
+    if (key == goalkeeper.key)
+        return &goalkeeper;
+    for (const PitchRow &r : rows) {
+        for (const PitchSlot &s : r.pitchSlots) {
+            if (s.key == key)
+                return &s;
+        }
+    }
+    return nullptr;
+}
+
+const PitchRow *PitchGeometry::row(const QString &stratum) const
+{
+    for (const PitchRow &r : rows) {
+        if (r.stratum == stratum)
+            return &r;
+    }
+    return nullptr;
+}
+
+int PitchGeometry::drawingRow(const QString &stratum) const
+{
+    for (qsizetype i = 0; i < rows.size(); ++i) {
+        if (rows.at(i).stratum == stratum)
+            return static_cast<int>(rows.size() - i);
+    }
+    return -1;
+}
+
+const PitchGeometry &pitchGeometry(const QString &versionId)
+{
+    // Dispatch on the FM version like attributeMapping(): new releases get
+    // another branch; unknown or empty ids fall back to the default version.
+    Q_UNUSED(versionId); // only FM24 exists today
+    static const PitchGeometry fm24 = buildFm24();
+    return fm24;
+}
+
+const QHash<QString, SlotPosition> &masterPositionMap(const QString &versionId)
+{
+    return pitchGeometry(versionId).slotPositions;
+}
+
+const QHash<QString, QStringList> &tacticalSlotToGamePositions(const QString &versionId)
+{
+    return pitchGeometry(versionId).slotGamePositions;
+}
+
+const QHash<QString, int> &stratumOrder(const QString &versionId)
+{
+    return pitchGeometry(versionId).stratumOrders;
+}
+
 const QHash<QString, SlotPosition> &masterPositionMap()
 {
-    static const QHash<QString, SlotPosition> map = {
-        // Defense (5 slots, indices 0-4)
-        {QStringLiteral("DL"), {QStringLiteral("Defense"), 0}},
-        {QStringLiteral("WBL"), {QStringLiteral("Defense"), 0}},
-        {QStringLiteral("DCL"), {QStringLiteral("Defense"), 1}},
-        {QStringLiteral("DC"), {QStringLiteral("Defense"), 2}},
-        {QStringLiteral("DCR"), {QStringLiteral("Defense"), 3}},
-        {QStringLiteral("DR"), {QStringLiteral("Defense"), 4}},
-        {QStringLiteral("WBR"), {QStringLiteral("Defense"), 4}},
-        // Defensive Midfield
-        {QStringLiteral("DML"), {QStringLiteral("Defensive Midfield"), 0}},
-        {QStringLiteral("DMCL"), {QStringLiteral("Defensive Midfield"), 1}},
-        {QStringLiteral("DMC"), {QStringLiteral("Defensive Midfield"), 2}},
-        {QStringLiteral("DMCR"), {QStringLiteral("Defensive Midfield"), 3}},
-        {QStringLiteral("DMR"), {QStringLiteral("Defensive Midfield"), 4}},
-        // Midfield
-        {QStringLiteral("ML"), {QStringLiteral("Midfield"), 0}},
-        {QStringLiteral("MCL"), {QStringLiteral("Midfield"), 1}},
-        {QStringLiteral("MC"), {QStringLiteral("Midfield"), 2}},
-        {QStringLiteral("MCR"), {QStringLiteral("Midfield"), 3}},
-        {QStringLiteral("MR"), {QStringLiteral("Midfield"), 4}},
-        // Attacking Midfield
-        {QStringLiteral("AML"), {QStringLiteral("Attacking Midfield"), 0}},
-        {QStringLiteral("AMCL"), {QStringLiteral("Attacking Midfield"), 1}},
-        {QStringLiteral("AMC"), {QStringLiteral("Attacking Midfield"), 2}},
-        {QStringLiteral("AMCR"), {QStringLiteral("Attacking Midfield"), 3}},
-        {QStringLiteral("AMR"), {QStringLiteral("Attacking Midfield"), 4}},
-        // Strikers (3 slots, indices 0-2); ST and STC share the central slot
-        {QStringLiteral("STL"), {QStringLiteral("Strikers"), 0}},
-        {QStringLiteral("STC"), {QStringLiteral("Strikers"), 1}},
-        {QStringLiteral("ST"), {QStringLiteral("Strikers"), 1}},
-        {QStringLiteral("STR"), {QStringLiteral("Strikers"), 2}},
-    };
-    return map;
+    return masterPositionMap(QString());
 }
 
 const QHash<QString, QStringList> &tacticalSlotToGamePositions()
 {
-    static const QHash<QString, QStringList> map = {
-        {QStringLiteral("GK"), {QStringLiteral("GK")}},
-        // Defense
-        {QStringLiteral("DL"), {QStringLiteral("D (L)"), QStringLiteral("WB (L)")}},
-        {QStringLiteral("WBL"), {QStringLiteral("WB (L)")}},
-        {QStringLiteral("DCL"), {QStringLiteral("D (C)")}},
-        {QStringLiteral("DC"), {QStringLiteral("D (C)")}},
-        {QStringLiteral("DCR"), {QStringLiteral("D (C)")}},
-        {QStringLiteral("DR"), {QStringLiteral("D (R)"), QStringLiteral("WB (R)")}},
-        {QStringLiteral("WBR"), {QStringLiteral("WB (R)")}},
-        // Defensive Midfield
-        {QStringLiteral("DML"), {QStringLiteral("WB (L)")}},
-        {QStringLiteral("DMCL"), {QStringLiteral("DM")}},
-        {QStringLiteral("DMC"), {QStringLiteral("DM")}},
-        {QStringLiteral("DMCR"), {QStringLiteral("DM")}},
-        {QStringLiteral("DMR"), {QStringLiteral("WB (R)")}},
-        // Midfield
-        {QStringLiteral("ML"), {QStringLiteral("M (L)")}},
-        {QStringLiteral("MCL"), {QStringLiteral("M (C)")}},
-        {QStringLiteral("MC"), {QStringLiteral("M (C)")}},
-        {QStringLiteral("MCR"), {QStringLiteral("M (C)")}},
-        {QStringLiteral("MR"), {QStringLiteral("M (R)")}},
-        // Attacking Midfield
-        {QStringLiteral("AML"), {QStringLiteral("AM (L)")}},
-        {QStringLiteral("AMCL"), {QStringLiteral("AM (C)")}},
-        {QStringLiteral("AMC"), {QStringLiteral("AM (C)")}},
-        {QStringLiteral("AMCR"), {QStringLiteral("AM (C)")}},
-        {QStringLiteral("AMR"), {QStringLiteral("AM (R)")}},
-        // Strikers: all striker slots map to the central striker game position
-        {QStringLiteral("STL"), {QStringLiteral("ST (C)")}},
-        {QStringLiteral("STC"), {QStringLiteral("ST (C)")}},
-        {QStringLiteral("ST"), {QStringLiteral("ST (C)")}},
-        {QStringLiteral("STR"), {QStringLiteral("ST (C)")}},
-    };
-    return map;
+    return tacticalSlotToGamePositions(QString());
 }
 
 const QHash<QString, int> &stratumOrder()
 {
-    static const QHash<QString, int> order = {
-        {QStringLiteral("GK"), 0},
-        {QStringLiteral("Defense"), 1},
-        {QStringLiteral("Defensive Midfield"), 2},
-        {QStringLiteral("Midfield"), 3},
-        {QStringLiteral("Attacking Midfield"), 4},
-        {QStringLiteral("Strikers"), 5},
-    };
-    return order;
+    return stratumOrder(QString());
 }
 
 } // namespace fm

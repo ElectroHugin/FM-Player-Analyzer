@@ -31,6 +31,9 @@ public:
                  const QHash<QString, QStringList> &layout);
     void clearData();
 
+    // FM version whose pitch geometry places the slots (empty = default).
+    void setFmVersionId(const QString &versionId) { m_fmVersionId = versionId; }
+
     bool hasData() const { return !m_layout.isEmpty(); }
 
 protected:
@@ -42,6 +45,7 @@ private:
     ThemeManager &m_theme;
     QHash<QString, SlotStrength> m_strengths;
     QHash<QString, QStringList> m_layout;
+    QString m_fmVersionId;
 };
 
 } // namespace fm

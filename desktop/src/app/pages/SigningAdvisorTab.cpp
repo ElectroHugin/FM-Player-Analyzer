@@ -558,7 +558,8 @@ void SigningAdvisorTab::fillGapTables(const SquadResult &squad)
           std::tuple{&squad.bTeam, m_bGapStatus, m_bGapTable}}) {
         const std::vector<Gap> gaps =
             GapAnalysis::analyzeTeamGaps(*team, positions, slotOrder, playersByUid,
-                                         m_context.ratings(), displacement, dropoff, wrongSide);
+                                         m_context.ratings(), displacement, dropoff, wrongSide,
+                                         m_context.fmVersionId());
         table->setSortingEnabled(false);
         table->clearContents();
         table->setRowCount(static_cast<int>(gaps.size()));

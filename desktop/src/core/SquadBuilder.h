@@ -64,6 +64,8 @@ class SquadBuilder
 public:
     SquadBuilder(const Definitions &definitions, const AppConfig &config);
 
+    const Definitions &definitions() const { return m_definitions; }
+
     // Rebuild cached config values after settings change.
     void reloadConfig();
 

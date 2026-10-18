@@ -325,6 +325,7 @@ void NationalDashboardPage::rebuildAnalysis()
             }
             strengths.insert(it.key(), strength);
         }
+        m_strengthGrid->setFmVersionId(m_context.fmVersionId());
         m_strengthGrid->setData(strengths,
                                 m_context.definitions().tacticLayouts().value(tactic));
     } else {

@@ -23,48 +23,35 @@ namespace fm {
 
 namespace {
 
-struct SlotSpec {
-    QString slot;             // tactic slot key ("AML", "DMC", …)
-    QString label;            // UI label ("DML/WBL")
-    QStringList gamePositions; // eligible-position keys for the role list
-    int column = 0;           // 0..4 on the 5-column pitch grid
-};
-
-// Pitch rows exactly as in legacy new_tactic.py (top = strikers).
-const QList<QPair<QString, QList<SlotSpec>>> &pitchRows()
+// Row caption of the editor (top = strikers, as in legacy new_tactic.py).
+QString stratumLabel(const QString &stratum)
 {
-    static const QList<QPair<QString, QList<SlotSpec>>> rows = {
-        {QObject::tr("Sturm"),
-         {{QStringLiteral("STL"), QStringLiteral("STL"), {QStringLiteral("ST (C)")}, 1},
-          {QStringLiteral("STC"), QStringLiteral("STC"), {QStringLiteral("ST (C)")}, 2},
-          {QStringLiteral("STR"), QStringLiteral("STR"), {QStringLiteral("ST (C)")}, 3}}},
-        {QObject::tr("Offensives Mittelfeld"),
-         {{QStringLiteral("AML"), QStringLiteral("AML"), {QStringLiteral("AM (L)")}, 0},
-          {QStringLiteral("AMCL"), QStringLiteral("AMCL"), {QStringLiteral("AM (C)")}, 1},
-          {QStringLiteral("AMC"), QStringLiteral("AMC"), {QStringLiteral("AM (C)")}, 2},
-          {QStringLiteral("AMCR"), QStringLiteral("AMCR"), {QStringLiteral("AM (C)")}, 3},
-          {QStringLiteral("AMR"), QStringLiteral("AMR"), {QStringLiteral("AM (R)")}, 4}}},
-        {QObject::tr("Mittelfeld"),
-         {{QStringLiteral("ML"), QStringLiteral("ML"), {QStringLiteral("M (L)")}, 0},
-          {QStringLiteral("MCL"), QStringLiteral("MCL"), {QStringLiteral("M (C)")}, 1},
-          {QStringLiteral("MC"), QStringLiteral("MC"), {QStringLiteral("M (C)")}, 2},
-          {QStringLiteral("MCR"), QStringLiteral("MCR"), {QStringLiteral("M (C)")}, 3},
-          {QStringLiteral("MR"), QStringLiteral("MR"), {QStringLiteral("M (R)")}, 4}}},
-        {QObject::tr("Defensives Mittelfeld"),
-         {{QStringLiteral("DML"), QStringLiteral("DML/WBL"),
-           {QStringLiteral("DM"), QStringLiteral("WB (L)")}, 0},
-          {QStringLiteral("DMCL"), QStringLiteral("DMCL"), {QStringLiteral("DM")}, 1},
-          {QStringLiteral("DMC"), QStringLiteral("DMC"), {QStringLiteral("DM")}, 2},
-          {QStringLiteral("DMCR"), QStringLiteral("DMCR"), {QStringLiteral("DM")}, 3},
-          {QStringLiteral("DMR"), QStringLiteral("DMR/WBR"),
-           {QStringLiteral("DM"), QStringLiteral("WB (R)")}, 4}}},
-        {QObject::tr("Abwehr"),
-         {{QStringLiteral("DL"), QStringLiteral("DL"), {QStringLiteral("D (L)")}, 0},
-          {QStringLiteral("DCL"), QStringLiteral("DCL"), {QStringLiteral("D (C)")}, 1},
-          {QStringLiteral("DC"), QStringLiteral("DC"), {QStringLiteral("D (C)")}, 2},
-          {QStringLiteral("DCR"), QStringLiteral("DCR"), {QStringLiteral("D (C)")}, 3},
-          {QStringLiteral("DR"), QStringLiteral("DR"), {QStringLiteral("D (R)")}, 4}}},
-    };
+    if (stratum == QLatin1String("Strikers"))
+        return QObject::tr("Sturm");
+    if (stratum == QLatin1String("Attacking Midfield"))
+        return QObject::tr("Offensives Mittelfeld");
+    if (stratum == QLatin1String("Midfield"))
+        return QObject::tr("Mittelfeld");
+    if (stratum == QLatin1String("Defensive Midfield"))
+        return QObject::tr("Defensives Mittelfeld");
+    if (stratum == QLatin1String("Defense"))
+        return QObject::tr("Abwehr");
+    return stratum;
+}
+
+// Editor rows from the pitch geometry, top (strikers) first, without alias
+// slots (WBL/WBR/ST).
+QList<QPair<QString, QList<PitchSlot>>> editorRows(const PitchGeometry &geometry)
+{
+    QList<QPair<QString, QList<PitchSlot>>> rows;
+    for (auto it = geometry.rows.crbegin(); it != geometry.rows.crend(); ++it) {
+        QList<PitchSlot> editorSlots;
+        for (const PitchSlot &slot : it->pitchSlots) {
+            if (slot.inEditor)
+                editorSlots << slot;
+        }
+        rows.append({it->stratum, editorSlots});
+    }
     return rows;
 }
 
@@ -125,23 +112,23 @@ NewTacticPage::NewTacticPage(AppContext &context, QWidget *parent)
     grid->setHorizontalSpacing(8);
     grid->setVerticalSpacing(4);
     int gridRow = 0;
-    for (const auto &[stratumLabel, specs] : pitchRows()) {
-        auto *stratumTitle = new QLabel(stratumLabel, pitchBox);
+    for (const auto &[stratum, specs] : editorRows(pitchGeometry(m_context.fmVersionId()))) {
+        auto *stratumTitle = new QLabel(stratumLabel(stratum), pitchBox);
         stratumTitle->setAlignment(Qt::AlignHCenter);
         stratumTitle->setObjectName(QStringLiteral("kpiCaption"));
         grid->addWidget(stratumTitle, gridRow++, 0, 1, 5);
-        for (const SlotSpec &spec : specs) {
+        for (const PitchSlot &spec : specs) {
             auto *cell = new QVBoxLayout;
             auto *slotLabel = new QLabel(spec.label, pitchBox);
             slotLabel->setAlignment(Qt::AlignHCenter);
             auto *combo = new QComboBox(pitchBox);
             combo->setMinimumWidth(150);
-            m_slotCombos.insert(spec.slot, combo);
+            m_slotCombos.insert(spec.key, combo);
             cell->addWidget(slotLabel);
             cell->addWidget(combo);
             auto *cellWidget = new QWidget(pitchBox);
             cellWidget->setLayout(cell);
-            grid->addWidget(cellWidget, gridRow, spec.column);
+            grid->addWidget(cellWidget, gridRow, spec.displayColumn);
             connect(combo, &QComboBox::currentIndexChanged, this,
                     &NewTacticPage::updateFullName);
         }
@@ -198,10 +185,12 @@ void NewTacticPage::fillSlotCombo(QComboBox *combo, const QStringList &gamePosit
 
 void NewTacticPage::refresh()
 {
-    for (const auto &[stratumLabel, specs] : pitchRows()) {
-        Q_UNUSED(stratumLabel);
-        for (const SlotSpec &spec : specs)
-            fillSlotCombo(m_slotCombos.value(spec.slot), spec.gamePositions);
+    for (const auto &[stratum, specs] : editorRows(pitchGeometry(m_context.fmVersionId()))) {
+        Q_UNUSED(stratum);
+        for (const PitchSlot &spec : specs) {
+            if (QComboBox *combo = m_slotCombos.value(spec.key))
+                fillSlotCombo(combo, spec.rolePositions);
+        }
     }
     // Goalkeeper: every GK/SK role (legacy).
     QComboBox *gkCombo = m_slotCombos.value(QStringLiteral("GK"));
@@ -296,8 +285,9 @@ void NewTacticPage::createTactic()
     // --- tactic_layouts: stratum -> [slots] from the master position map. ---
     QJsonObject tacticLayout;
     for (auto it = outfield.constBegin(); it != outfield.constEnd(); ++it) {
-        const auto posIt = masterPositionMap().constFind(it.key());
-        if (posIt == masterPositionMap().constEnd())
+        const auto &slotPositions = masterPositionMap(m_context.fmVersionId());
+        const auto posIt = slotPositions.constFind(it.key());
+        if (posIt == slotPositions.constEnd())
             continue;
         const QString stratum = posIt.value().stratum;
         QJsonArray stratumSlots = tacticLayout.value(stratum).toArray();
