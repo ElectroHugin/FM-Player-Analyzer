@@ -208,6 +208,9 @@ QFrame#sidebar QListWidget::item:selected {
     background-color: %PRIMARY%; color: %SIDEBARSELTEXT%; font-weight: 600; }
 QFrame#sidebar QListWidget::item:disabled {
     color: %MUTED%; padding: 12px 12px 4px 10px; background: transparent; }
+QFrame#sidebar QToolButton#creditButton {
+    background: transparent; border: none; color: %MUTED%; font-size: 8.5pt; padding: 2px 6px; }
+QFrame#sidebar QToolButton#creditButton:hover { color: %FG%; }
 
 /* ===== Header bar ===== */
 QFrame#headerBar { background-color: %HEADER%; border-bottom: 1px solid %BORDER%; }

@@ -14,7 +14,7 @@
 AppId={{8F2B6E7A-40A1-4C0D-9E3B-5D71C2A94F08}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-AppPublisher=Edmund Jochim
+AppPublisher=ElectroHugin
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
