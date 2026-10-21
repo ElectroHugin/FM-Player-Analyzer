@@ -867,7 +867,7 @@ void SquadMatrixPage::rebuildAll()
     m_clubSection.box->setTitle(clubTitle);
     m_clubSection.model->setColumns(buildColumns(true));
     m_clubSection.model->setRows(std::move(clubRows));
-    m_clubSection.table->resizeColumnsToContents();
+    fitColumnsCompact(m_clubSection.table);
 
     // --- Scouted filter combo (keep selection across rebuilds). ---
     m_updating = true;
@@ -989,7 +989,7 @@ void SquadMatrixPage::rebuildScoutedOnly()
         }
     }
     m_scoutedSection.table->sortByColumn(sortColumn, order);
-    m_scoutedSection.table->resizeColumnsToContents();
+    fitColumnsCompact(m_scoutedSection.table);
 }
 
 void SquadMatrixPage::addAttributeRow(int attrIndex, int minimum)
