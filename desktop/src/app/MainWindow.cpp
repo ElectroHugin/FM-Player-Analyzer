@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 
+#include "AboutDialog.h"
 #include "AppContext.h"
 #include "pages/AssignRolesPage.h"
 #include "pages/BestXiPage.h"
@@ -321,6 +322,25 @@ void MainWindow::buildSidebar()
     layout->addWidget(themeButton);
     connect(themeButton, &QPushButton::clicked, this, [this] { m_theme.toggle(); });
 
+    // Quiet author/version credit at the foot of the sidebar; opens Help → About.
+    auto *credit = new QToolButton(sidebar);
+    credit->setObjectName(QStringLiteral("creditButton"));
+    credit->setText(tr("v%1 · ElectroHugin").arg(appVersion()));
+    credit->setToolTip(tr("Über %1").arg(appName()));
+    credit->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    credit->setIconSize(QSize(16, 16));
+    credit->setCursor(Qt::PointingHandCursor);
+    credit->setFocusPolicy(Qt::NoFocus);
+    const auto tintCredit = [this, credit] {
+        QColor muted = m_theme.text();
+        muted.setAlphaF(0.60);
+        credit->setIcon(AboutDialog::brandMark(muted, 16, devicePixelRatioF()));
+    };
+    tintCredit();
+    connect(&m_theme, &ThemeManager::themeChanged, credit, tintCredit);
+    connect(credit, &QToolButton::clicked, this, &MainWindow::showAbout);
+    layout->addWidget(credit, 0, Qt::AlignHCenter);
+
     rebuildMenu();
 }
 
@@ -358,7 +378,7 @@ void MainWindow::rebuildMenu(bool selectFirst)
 
 void MainWindow::buildMenuBar()
 {
-    // The only menu today is language selection ("optional im Menü auf Deutsch").
+    // Language selection ("optional im Menü auf Deutsch") and Help → About.
     // Switching is restart-based: the whole UI (including statically initialized
     // navigation labels) is built once with the translator already installed.
     auto *languageMenu = menuBar()->addMenu(tr("&Sprache"));
@@ -381,6 +401,17 @@ void MainWindow::buildMenuBar()
         connect(action, &QAction::triggered, this,
                 [this, code = option.code] { changeLanguage(code); });
     }
+
+    auto *helpMenu = menuBar()->addMenu(tr("&Hilfe"));
+    auto *about = helpMenu->addAction(tr("Über %1 …").arg(appName()));
+    about->setMenuRole(QAction::AboutRole);
+    connect(about, &QAction::triggered, this, &MainWindow::showAbout);
+}
+
+void MainWindow::showAbout()
+{
+    AboutDialog dialog(m_theme, this);
+    dialog.exec();
 }
 
 void MainWindow::changeLanguage(const QString &language)

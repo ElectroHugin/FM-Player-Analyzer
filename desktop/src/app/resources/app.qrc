@@ -4,5 +4,6 @@
     </qresource>
     <qresource prefix="/app">
         <file>favicon.ico</file>
+        <file>electrohugin.png</file>
     </qresource>
 </RCC>

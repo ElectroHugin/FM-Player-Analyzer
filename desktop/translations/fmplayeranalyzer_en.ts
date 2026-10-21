@@ -526,29 +526,113 @@
         <translation>Calculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="14"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="27"/>
         <source>Frische</source>
         <translation>Freshness</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="18"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="31"/>
         <source>Retired (%1)</source>
         <translation>Retired (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="20"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="33"/>
         <source>veraltet (%1)</source>
         <translation>stale (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="22"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="35"/>
         <source>vor %1</source>
         <translation>%1 ago</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="23"/>
+        <location filename="../src/app/widgets/PlayerTableModel.cpp" line="36"/>
         <source>aktuell</source>
         <translation>current</translation>
+    </message>
+</context>
+<context>
+    <name>fm::AboutDialog</name>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="91"/>
+        <source>Über %1</source>
+        <translation>About %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="134"/>
+        <source>Version %1</source>
+        <translation>Version %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="142"/>
+        <source>Rollenbewertung, Best XI, Kaufberatung und Talentanalyse für die Football-Manager-Reihe.</source>
+        <translation>Role ratings, Best XI, signing advice and talent analysis for the Football Manager series.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="149"/>
+        <source>Entwickelt von &lt;b&gt;ElectroHugin&lt;/b&gt;</source>
+        <translation>Developed by &lt;b&gt;ElectroHugin&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="157"/>
+        <source>Support</source>
+        <translation>Support</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="162"/>
+        <source>Fehler gefunden oder eine Idee? Bitte öffne ein Issue auf GitHub. So bleibt alles an einem Ort, und andere finden die Antwort später auch.</source>
+        <translation>Found a bug or have an idea? Please open an issue on GitHub. That keeps everything in one place, and others can find the answer later too.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="178"/>
+        <source>Was gehört in ein Issue?</source>
+        <translation>What belongs in an issue?</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="186"/>
+        <source>• App-Version und Betriebssystem (Knopf „Systeminfo kopieren“ unten)&lt;br&gt;• Football-Manager-Version und welcher Export (Kader, Shortlist, Suche)&lt;br&gt;• Was du getan hast, was passiert ist und was du erwartet hättest&lt;br&gt;• Wenn möglich ein Screenshot oder die betroffene Exportdatei</source>
+        <translation>• App version and operating system (“Copy system info” button below)&lt;br&gt;• Football Manager version and which export (squad, shortlist, search)&lt;br&gt;• What you did, what happened and what you expected&lt;br&gt;• If possible, a screenshot or the affected export file</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="200"/>
+        <source>Für alles andere per E-Mail:</source>
+        <translation>For everything else, by e-mail:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="212"/>
+        <source>E-Mail-Adresse (als Bild)</source>
+        <translation>E-mail address (as an image)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="218"/>
+        <source>Die Adresse ist absichtlich ein Bild, damit Spam-Bots sie nicht auslesen können. Bitte von Hand abtippen.</source>
+        <translation>The address is an image on purpose so spam bots can’t read it. Please type it in by hand.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="230"/>
+        <source>© 2026 ElectroHugin · Freie Software unter der GNU GPL v3&lt;br&gt;Nicht offiziell mit Sports Interactive oder SEGA verbunden.</source>
+        <translation>© 2026 ElectroHugin · Free software under the GNU GPL v3&lt;br&gt;Not officially affiliated with Sports Interactive or SEGA.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="240"/>
+        <source>Schließen</source>
+        <translation>Close</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="243"/>
+        <location filename="../src/app/AboutDialog.cpp" line="250"/>
+        <source>Systeminfo kopieren</source>
+        <translation>Copy system info</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="244"/>
+        <source>Version, Qt und Betriebssystem für ein Issue in die Zwischenablage kopieren</source>
+        <translation>Copy version, Qt and operating system to the clipboard for an issue</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="248"/>
+        <source>Kopiert ✓</source>
+        <translation>Copied ✓</translation>
     </message>
 </context>
 <context>
@@ -1875,42 +1959,42 @@ You can change the folder later in the settings.</translation>
 <context>
     <name>fm::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="109"/>
+        <location filename="../src/app/MainWindow.cpp" line="110"/>
         <source>Zurück (Alt+←)</source>
         <translation>Back (Alt+←)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="111"/>
+        <location filename="../src/app/MainWindow.cpp" line="112"/>
         <source>Vorwärts (Alt+→)</source>
         <translation>Forward (Alt+→)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="113"/>
+        <location filename="../src/app/MainWindow.cpp" line="114"/>
         <source>Startseite (Alt+Pos1)</source>
         <translation>Home (Alt+Home)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="156"/>
+        <location filename="../src/app/MainWindow.cpp" line="157"/>
         <source>Bereit</source>
         <translation>Ready</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="195"/>
+        <location filename="../src/app/MainWindow.cpp" line="196"/>
         <source>Neuberechnung</source>
         <translation>Recalculation</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="198"/>
+        <location filename="../src/app/MainWindow.cpp" line="199"/>
         <source>DWRS neu berechnet: %1 Bewertungen, %2 geänderte Einträge gespeichert.</source>
         <translation>DWRS recalculated: %1 ratings, %2 changed entries saved.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="228"/>
+        <location filename="../src/app/MainWindow.cpp" line="229"/>
         <source>DWRS-Berechnung verbessert</source>
         <translation>DWRS calculation improved</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="229"/>
+        <location filename="../src/app/MainWindow.cpp" line="230"/>
         <source>Die DWRS-Berechnung wurde verbessert: Torhüter werden jetzt nach allen Torwart-Attributen bewertet, einschließlich der Schlüssel- und bevorzugten Attribute ihrer Rolle.
 
 Die gespeicherten Bewertungen dieses Spielstands stammen noch aus der alten Berechnung. Jetzt alle neu berechnen?
@@ -1923,62 +2007,82 @@ The ratings stored in this save still come from the old calculation. Recalculate
 (Possible at any time later under Settings → DWRS Weights.)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="262"/>
+        <location filename="../src/app/MainWindow.cpp" line="263"/>
         <source>🏟 Vereins-Management</source>
         <translation>🏟 Club Management</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="263"/>
+        <location filename="../src/app/MainWindow.cpp" line="264"/>
         <source>🌍 National-Management</source>
         <translation>🌍 National Management</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="275"/>
+        <location filename="../src/app/MainWindow.cpp" line="276"/>
         <source>🔎 Spieler suchen…</source>
         <translation>🔎 Search players…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="320"/>
+        <location filename="../src/app/MainWindow.cpp" line="321"/>
         <source>🌓 Tag/Nacht wechseln</source>
         <translation>🌓 Toggle Day/Night</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="364"/>
+        <location filename="../src/app/MainWindow.cpp" line="328"/>
+        <source>v%1 · ElectroHugin</source>
+        <translation>v%1 · ElectroHugin</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="329"/>
+        <source>Über %1</source>
+        <translation>About %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="384"/>
         <source>&amp;Sprache</source>
         <translation>&amp;Language</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="393"/>
+        <location filename="../src/app/MainWindow.cpp" line="405"/>
+        <source>&amp;Hilfe</source>
+        <translation>&amp;Help</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="406"/>
+        <source>Über %1 …</source>
+        <translation>About %1…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="424"/>
         <source>Sprache</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="394"/>
+        <location filename="../src/app/MainWindow.cpp" line="425"/>
         <source>Die Sprache wird nach einem Neustart geändert. Jetzt neu starten?</source>
         <translation>The language will change after a restart. Restart now?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="680"/>
+        <location filename="../src/app/MainWindow.cpp" line="711"/>
         <source>DWRS-Bewertungen werden neu berechnet…</source>
         <translation>Recalculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="739"/>
+        <location filename="../src/app/MainWindow.cpp" line="770"/>
         <source>Nationalteam</source>
         <translation>National Team</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="749"/>
+        <location filename="../src/app/MainWindow.cpp" line="780"/>
         <source>FM Dashboard</source>
         <translation>FM Dashboard</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="756"/>
+        <location filename="../src/app/MainWindow.cpp" line="787"/>
         <source>Aktiver Spielstand: &lt;b&gt;%1.db&lt;/b&gt; · %2 Spieler</source>
         <translation>Active save: &lt;b&gt;%1.db&lt;/b&gt; · %2 players</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="778"/>
+        <location filename="../src/app/MainWindow.cpp" line="809"/>
         <source>Datenbank: &lt;b&gt;%1&lt;/b&gt; · %2 Spieler</source>
         <translation>Database: &lt;b&gt;%1&lt;/b&gt; · %2 players</translation>
     </message>
