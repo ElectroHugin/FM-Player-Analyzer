@@ -287,7 +287,7 @@ void RoleAnalysisPage::rebuildTables()
         group.model->setColumns(columns);
         group.model->setRows(std::move(rows));
         group.table->sortByColumn(10, Qt::DescendingOrder);
-        group.table->resizeColumnsToContents();
+        fitColumnsCompact(group.table);
         m_tabs->setTabText(group.tabIndex, tr("%1 (%2)").arg(tabText).arg(count));
     };
     apply(m_myClub, std::move(mine),

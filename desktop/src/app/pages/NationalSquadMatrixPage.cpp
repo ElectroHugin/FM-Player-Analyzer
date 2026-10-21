@@ -242,13 +242,13 @@ void NationalSquadMatrixPage::rebuild()
     m_squadSection.box->setTitle(tr("Aktueller Kader (%1)").arg(squad.size()));
     m_squadSection.model->setColumns(buildColumns());
     m_squadSection.model->setRows(std::move(squad));
-    m_squadSection.table->resizeColumnsToContents();
+    fitColumnsCompact(m_squadSection.table);
 
     m_poolSection.box->setTitle(
         tr("Berechtigter Pool — nicht nominiert (%1)").arg(pool.size()));
     m_poolSection.model->setColumns(buildColumns());
     m_poolSection.model->setRows(std::move(pool));
-    m_poolSection.table->resizeColumnsToContents();
+    fitColumnsCompact(m_poolSection.table);
 }
 
 } // namespace fm

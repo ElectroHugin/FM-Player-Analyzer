@@ -9,6 +9,8 @@
 #include <functional>
 #include <vector>
 
+class QTableView;
+
 namespace fm {
 
 // One column of a PlayerTableModel, defined by lambdas so every page can
@@ -29,6 +31,11 @@ struct PlayerColumn {
 // labels. See core/Freshness. Shared by the pages that list scouted players.
 PlayerColumn makeFreshnessColumn(int currentCounter, int retirementAge,
                                  int staleAfterUploads, const QString &userClub);
+
+// Sizes the columns to their contents, but caps wide text columns (club,
+// position, personality, ...) at about 22 characters so the role columns
+// stay visible. Cut-off text is elided; the full text shows as tooltip.
+void fitColumnsCompact(QTableView *table);
 
 // Read-only table over a set of players (pointers into the PlayerStore; rows
 // must be reset whenever the store reloads).

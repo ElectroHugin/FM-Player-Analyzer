@@ -4,8 +4,21 @@
 #include "core/Utils.h"
 
 #include <QColor>
+#include <QHeaderView>
+#include <QTableView>
 
 namespace fm {
+
+void fitColumnsCompact(QTableView *table)
+{
+    table->resizeColumnsToContents();
+    const int maxWidth = table->fontMetrics().averageCharWidth() * 22;
+    QHeaderView *header = table->horizontalHeader();
+    for (int column = 0; column < header->count(); ++column) {
+        if (table->columnWidth(column) > maxWidth)
+            table->setColumnWidth(column, maxWidth);
+    }
+}
 
 PlayerColumn makeFreshnessColumn(int currentCounter, int retirementAge,
                                  int staleAfterUploads, const QString &userClub)
@@ -109,6 +122,13 @@ QVariant PlayerTableModel::data(const QModelIndex &index, int role) const
         return {};
     case Qt::TextAlignmentRole:
         return QVariant::fromValue(column.alignment);
+    case Qt::ToolTipRole: {
+        // Full text for cells cut off by fitColumnsCompact().
+        if (!column.value)
+            return {};
+        const QVariant value = column.value(player);
+        return value.typeId() == QMetaType::QString ? value : QVariant();
+    }
     default:
         return {};
     }
