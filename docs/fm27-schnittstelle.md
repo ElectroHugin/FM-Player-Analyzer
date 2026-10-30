@@ -87,6 +87,27 @@ Datei `squad_20261030_192739` (Kader FC Bayern, 24 Spieler, 375 Spalten), getest
 - Statistik-Spalten sind alle 0/`-` (Saisonbeginn). Format sonst: Punkt als Dezimaltrenner,
   `0%`, `0.0km`, Datum `30/6/2027`, große Beträge `"€65,000,000"`.
 
+### Zweiter Export: Spielersuche (30.10.2026)
+
+Datei `players_20261030_201715` (Spielersuche, eigene Attribut-Ansicht, 24 Spieler, 61 Spalten),
+getestet mit PR #4:
+
+- Import läuft durch, alle 40 Attribute gefüllt. CSV und HTML identisch.
+- **Spalte `Position` enthält in der Spielersuche zusätzlich die Rolle**, z. B.
+  `ST (C) Target Forward`, `DM, M (C) Deep-Lying Playmaker`, `GK Goalkeeper`. Der Analyzer
+  erkennt dann die letzte Position nicht mehr: 15 von 24 Spielern haben gar keine Position,
+  bei den übrigen fehlt die letzte (z. B. `ST (C)`). In der Kaderansicht stand nur die Position.
+  **Wunsch an den Exporter:** Position und Rolle trennen, also `Position` = nur Positionstext,
+  die Rolle in eine eigene Spalte (Vorschlag `Position Role`). Der Analyzer bekommt zusätzlich
+  eine Absicherung, die einen angehängten Rollennamen abschneidet.
+- **Keine Attribut-Spannen**, auch nicht bei `Knowledge` = `None`. Offen: Zeigt das Spiel für
+  diese Spieler wirklich alle Werte, oder liest der Exporter mehr als die Oberfläche anzeigt?
+- Neue Spalten `Recommendation` (`B- Very Good`) und `Knowledge` (`Extensive Knowledge`/`None`)
+  kennt der Analyzer noch nicht (als unbekannt gemeldet). `Effectiveness` ist leer.
+  `Wage` kommt hier als Spanne (`€190K - €215K p/w`).
+- Für Kaufberatung fehlen in dieser Ansicht `Height`, `Personality`, die Fuß-Spalten u. a.
+  → Preset „Analyzer“ auch für die Spielersuche verwenden.
+
 ## Offene Fragen
 
 - **Presets technisch:** Exportiert der Exporter nur die sichtbaren Spalten der
@@ -111,4 +132,5 @@ Datei `squad_20261030_192739` (Kader FC Bayern, 24 Spieler, 375 Spalten), getest
 ## Änderungen
 
 - 30.10.2026: erste Fassung (Analyzer-Projekt).
+- 30.10.2026: Befund Spielersuche (Position mit Rolle, keine Spannen).
 - 30.10.2026: Presets mit Spaltenlisten und Befund aus dem ersten echten Export ergänzt.
