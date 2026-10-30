@@ -113,11 +113,13 @@ Dateien:
 
 Für die Presets gilt: In der Anleitung stehen die Menüeinträge, die Edmund anklickt. Der
 Analyzer arbeitet mit den Spaltenköpfen.
-Stand des Menükatalogs: 258 Menüeinträge. Erfasst sind Attributes, Ability and Roles,
-Club, Contract (Bonuses, Clauses (Release), General), Dynamics and Happiness, Fitness and
-Injuries, Stats (General) und Stats mit allen acht Untergruppen.
-Es fehlen noch Contract > Clauses, General, International, Squad, Tactical Effectiveness,
-Training und Transfer.
+Stand des Menükatalogs: vollständig, 377 Menüeinträge in allen Gruppen. Bis auf `Player`
+und `Apps` hat jede Spalte des Voll-Exports einen Menüeintrag. Drei Einträge kamen im
+Voll-Export nicht vor: *Based Nation*, *Position Selected* und *Minimum Fee Release
+Clause (Domestic Club Release Fee Date Change)*.
+Im Spiel sind zwei Spaltenköpfe falsch beschriftet. Das Menü kennt *Attacking/Defending -
+Tactical* und *- Technical*, die Tabelle zeigt aber zweimal `Attacking - Tactical` und
+zweimal `Defending - Technical`.
 Wichtig: Das Menü blendet Spalten aus, die schon in der Ansicht stehen. Der Katalog
 entsteht deshalb am besten aus einer fast leeren Ansicht. Die Screenshots dazu liegen im Projektordner unter `fm27-spaltenmenue/`.
 
