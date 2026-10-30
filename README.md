@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚽ FM Player Analyzer
+<img src="docs/branding/banner.png" alt="FM Player Analyzer" width="100%">
 
 ### Stop guessing who should play. Know it.
 
