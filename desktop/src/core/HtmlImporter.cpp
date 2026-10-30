@@ -338,8 +338,11 @@ void HtmlImporter::applyColumn(Player &player, const QString &fullColumnName, co
         player.transferValueRaw = value;
         player.transferValue = valueToFloat(value);
     } else if (fullColumnName == QLatin1String("Average Rating")) {
+        // The FM View Exporter's German CSV style writes "7,05".
         bool ok = false;
-        const double v = value.toDouble(&ok);
+        double v = value.toDouble(&ok);
+        if (!ok)
+            v = QString(value).replace(QLatin1Char(','), QLatin1Char('.')).toDouble(&ok);
         player.averageRating = ok ? v : 0.0;
     } else if (fullColumnName == QLatin1String("Height")) {
         player.heightRaw = value;

@@ -286,6 +286,21 @@ private slots:
         QCOMPARE(young.attrLo[acc], uint8_t(12));
         QCOMPARE(young.attrHi[acc], uint8_t(15));
 
+        // The exporter's German CSV style: semicolon and decimal comma.
+        QByteArray german = csv;
+        german.replace(',', ';').replace("7.05", "7,05");
+        german.replace("\"D (C); DM\"", "\"D (C), DM\"");
+        Database germanDb(QStringLiteral("csv_test_fm27_german"));
+        QVERIFY(germanDb.open(dir.filePath(QStringLiteral("german.db"))));
+        const ImportResult fromGerman = HtmlImporter::importFile(
+            writeFile(dir, QStringLiteral("german.csv"), german), germanDb, {}, {}, fm27);
+        QVERIFY2(fromGerman.success, qPrintable(fromGerman.error));
+        QCOMPARE(fromGerman.malformedRows, 0);
+        for (const Player &p : germanDb.loadPlayers()) {
+            if (p.uid == QLatin1String("8718372"))
+                QCOMPARE(p.averageRating, 7.05);
+        }
+
         // FM27 files need the FM27 profile: the FM24 one misses "UID".
         Database fm24Db(QStringLiteral("csv_test_fm27_as_fm24"));
         QVERIFY(fm24Db.open(dir.filePath(QStringLiteral("fm24.db"))));

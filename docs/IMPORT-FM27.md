@@ -105,6 +105,10 @@ ist egal, der Analyzer sucht sie über den Namen. Quelle im Code:
 Gescoutete Attribute kommen als Spanne (`12-15`) und werden wie bei FM24 als
 Unter- und Obergrenze gespeichert.
 
+Beide CSV-Stile des Exporters gehen: *English* (Komma, `7.05`) und *German*
+(Semikolon, `7,05`). Der Analyzer erkennt das Trennzeichen selbst und liest die
+Note mit Punkt oder Komma.
+
 ### Nicht gelesen
 
 Alle anderen Spalten, die FM27 anbietet, kennt der Analyzer und überspringt sie
