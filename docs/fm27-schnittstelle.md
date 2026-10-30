@@ -33,18 +33,59 @@ hier unter „Änderungen“ vermerkt.
 
 ## Filter-Presets (Entwurf)
 
-Ziel: kleine, fokussierte Exporte statt immer aller 250+ Spalten.
+Ziel: kleine, fokussierte Exporte statt immer aller 375 Spalten. Abgeleitet aus Edmunds
+Voll-Export vom 30.10.2026. `Unique ID` und `Player` stehen immer vorn.
 
-| Preset | Inhalt | Zweck im Analyzer |
-| --- | --- | --- |
-| **Analyzer** | Unique ID, Player, Position, Age, Club, Nation, Height, Füße, alle 40 bewerteten Attribute | täglicher Import |
-| **Analyzer-Voll** | Analyzer + Wage, Transfer Value, Vertrag, Personality, Media Handling, Playing Time, Rating | Kaufberatung, Talente |
-| **Statistik** | Unique ID, Player, Position, `Minutes`, `Apps`, alle Statistik-Spalten je 90 min (xG/90, xA/90 …) | Statistik-Labor (Gewichte aus echten Daten) |
-| **Alles** | alle verfügbaren Spalten | Fehlersuche, neuer Patch |
+### Analyzer (täglicher Import)
 
-Die genaue Spaltenliste je Preset folgt, sobald der Spaltenkatalog aus einem
-echten Voll-Export steht. Das Preset **Analyzer** entspricht der Ansicht aus
-`docs/ANSICHT-ANALYZER-FM27.md` im Exporter.
+`Unique ID`, `Player`, `Position`, `Best Pos`, `Age`, `Club`, `Nation`, `2nd Nat`, `Height`,
+`Preferred Foot`, `Left Foot`, `Right Foot`, `Personality`, `Media Handling`, `Playing Time`,
+`Wage`, `Transfer Value`, `Rating`, `Inf`, `Best Role`, `Ability`, `Potential`, dazu alle 47 Attribute:
+
+- Torwart: `Aerial Reach`, `Command Of Area`, `Communication`, `Eccentricity`, `Handling`,
+  `Kicking`, `One On Ones`, `Punching`, `Reflexes`, `Rushing Out (Tendency)`, `Throwing`
+- Mental: `Aggression`, `Anticipation`, `Bravery`, `Composure`, `Concentration`, `Decisions`,
+  `Determination`, `Flair`, `Leadership`, `Off The Ball`, `Positioning`, `Team Work`, `Vision`, `Work Rate`
+- Physisch: `Acceleration`, `Agility`, `Balance`, `Jumping Reach`, `Natural Fitness`, `Pace`, `Stamina`, `Strength`
+- Technik: `Crossing`, `Dribbling`, `Finishing`, `First Touch`, `Heading`, `Long Shots`, `Marking`,
+  `Passing`, `Tackling`, `Technique`
+- Standards: `Corners`, `Free Kick Taking`, `Long Throws`, `Penalty Taking`
+
+(69 Spalten. Die Fuß-Spalten bitte weit vorn, siehe Befund unten.)
+
+### Analyzer-Voll (Kaufberatung, Talente)
+
+Analyzer + `Expires`, `Contract Start Date`, `Minimum Fee Release Clause`, `Asking Price`,
+`Transfer Status`, `Loan Status`, `Home-Grown Status`, `DoB`, `Pros`, `Cons`, `Style`,
+`Media Description`, `Int Apps`, `Int Gls`.
+
+### Statistik (Statistik-Labor)
+
+`Unique ID`, `Player`, `Position`, `Best Pos`, `Age`, `Minutes`, `Apps`, `Starts`,
+`Average Rating Club`, `Goals per 90 minutes`, `Asts/90`, `xG/90`, `NP-xG/90`, `xA/90`,
+`Shot/90`, `ShT/90`, `KP/90`, `OP-KP/90`, `Ch C/90`, `Pr passes/90`, `Ps A/90`, `Ps C/90`, `Pas %`,
+`Drb/90`, `Cr C/90`, `OP-Crs C/90`, `Aer A/90`, `Hdrs W/90`, `Hdr %`, `K Hdrs/90`, `Tck/90`,
+`K Tck/90`, `Tck R`, `Int/90`, `Clr/90`, `Blk/90`, `Shts Blckd/90`, `Poss Won/90`, `Poss Lost/90`,
+`Pres A/90`, `Pres C/90`, `Sprints/90`, `Dist/90`, `Fouls`, `Yel`, `Red`,
+Torwart zusätzlich: `Con/90`, `Cln/90`, `Saves/90`, `Sv %`, `xSv %`, `xGP/90`.
+
+### Alles
+
+Alle verfügbaren Spalten (Fehlersuche, neuer Patch).
+
+## Befund aus dem ersten echten Export (30.10.2026)
+
+Datei `squad_20261030_192739` (Kader FC Bayern, 24 Spieler, 375 Spalten), getestet mit PR #4:
+
+- CSV und HTML werden fehlerfrei eingelesen, keine unbekannten Spalten, alle 40 bewerteten
+  Attribute gefüllt. CSV und HTML haben identische Köpfe.
+- **Spalten 256–375 kommen leer an** (nur `World Reputation` hat „Unknown“). Letzte gefüllte
+  Spalte: Nr. 255 `Yearly Wage Rise`. Betroffen u. a. `Preferred Foot`, `Left Foot`,
+  `Right Foot`, `Inf`, `DoB`, `CON`, `SHP`, `Morale`, `Sec. Position`. Der Analyzer braucht die
+  Fuß-Spalten für Seitenpräferenz in Best XI und Kaderlücken. **Bitte im Exporter prüfen**
+  (Grenze bei 255 Spalten? Zellen außerhalb des sichtbaren Bereichs nicht gerendert?).
+- Statistik-Spalten sind alle 0/`-` (Saisonbeginn). Format sonst: Punkt als Dezimaltrenner,
+  `0%`, `0.0km`, Datum `30/6/2027`, große Beträge `"€65,000,000"`.
 
 ## Ansichten (.fmf) als Presets
 
@@ -93,9 +134,13 @@ Antworten vom Exporter (Stand 30.10.2026, getestet mit einem Kader-Export, 24 Sp
   Zusätzlich möglich und geplant: Presets im Exporter als Spaltenliste, die aus einer
   größeren Ansicht nur die genannten Spalten übernimmt (Reihenfolge, `Unique ID` und
   `Player` immer dabei). Das spart Ansichten, ersetzt sie aber nicht.
-  Grenze: FM27 befüllt nur etwa die ersten 255 Spalten einer Ansicht, auch im Spiel
-  selbst. Eine Ansicht „Alles“ mit allen 375 Spalten liefert deshalb rund 120 leere
-  Spalten. Presets müssen unter dieser Grenze bleiben.
+- **Leere Spalten ab Nr. 256:** Die Ursache liegt im Spiel, nicht im Exporter. FM27
+  befüllt nur die ersten 255 Spalten einer Ansicht. Edmund hat geprüft, dass die Spalten
+  auch im Spiel selbst leer sind. Der Exporter hat zudem testweise seitlich durch alle
+  Spalten gescrollt (`Export.ScanColumns = true`), das Ergebnis war byte-genau gleich.
+  Abhilfe: Presets mit höchstens etwa 250 Spalten, wichtige Spalten wie Füße, `Inf` und
+  `DoB` weit vorn. Das Preset „Analyzer“ mit 69 Spalten ist davon nicht betroffen. „Alles“
+  geht nur aufgeteilt auf zwei Ansichten.
 - **Statistik:** Rund 130 Statistik-Spalten, vollständig mit Bedeutung in
   `docs/columns/fm27.csv` im Exporter (Gruppen „Statistik …“). Formate wie im Spiel mit
   englischer Oberfläche:
@@ -141,5 +186,7 @@ Metadaten nur im Dateinamen, etwa `fm27_squad_analyzer_20261030_192739.csv`.
 ## Änderungen
 
 - 30.10.2026: erste Fassung (Analyzer-Projekt).
-- 30.10.2026: Antworten des Exporters zu den offenen Fragen, Metadaten-Vorschlag, Spaltennamen im Statistik-Preset (Exporter-Projekt).
+- 30.10.2026: Antworten des Exporters zu den offenen Fragen, Metadaten-Vorschlag (Exporter-Projekt).
 - 30.10.2026: Ansichten (.fmf) als Presets, Menükatalog `fm27-menu.csv` (Exporter-Projekt). Keine Spaltennamen geändert.
+- 30.10.2026: Presets mit Spaltenlisten und Befund aus dem ersten echten Export ergänzt.
+- 30.10.2026: Antwort zu den leeren Spalten ab Nr. 256: Grenze des Spiels (Exporter-Projekt).
