@@ -72,11 +72,13 @@ Dateien:
 
 Für die Presets gilt: In der Anleitung stehen die Menüeinträge, die Edmund anklickt. Der
 Analyzer arbeitet mit den Spaltenköpfen.
-Stand des Menükatalogs: Erfasst sind Attributes, Ability and Roles, Club, Contract
-(Bonuses, Clauses (Release), General), Dynamics and Happiness, Fitness and Injuries und
-Stats (General). Es fehlen noch Contract > Clauses, General, International, Squad,
-Tactical Effectiveness, Training, Transfer und Stats mit allen Untergruppen. Die
-Screenshots dazu liegen im Projektordner unter `fm27-spaltenmenue/`.
+Stand des Menükatalogs: 258 Menüeinträge. Erfasst sind Attributes, Ability and Roles,
+Club, Contract (Bonuses, Clauses (Release), General), Dynamics and Happiness, Fitness and
+Injuries, Stats (General) und Stats mit allen acht Untergruppen.
+Es fehlen noch Contract > Clauses, General, International, Squad, Tactical Effectiveness,
+Training und Transfer.
+Wichtig: Das Menü blendet Spalten aus, die schon in der Ansicht stehen. Der Katalog
+entsteht deshalb am besten aus einer fast leeren Ansicht. Die Screenshots dazu liegen im Projektordner unter `fm27-spaltenmenue/`.
 
 ## Offene Fragen
 
