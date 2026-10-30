@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/defaults">
         <file>definitions.json</file>
+        <!-- FM27 starts with the FM24 roles until its own role list exists. -->
+        <file alias="definitions_fm27.json">definitions.json</file>
     </qresource>
     <qresource prefix="/app">
         <file>favicon.ico</file>

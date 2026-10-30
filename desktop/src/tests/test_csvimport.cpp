@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QTemporaryDir>
 
+#include "core/Attributes.h"
+#include "core/Constants.h"
 #include "core/CsvReader.h"
 #include "core/Database.h"
 #include "core/HtmlImporter.h"
@@ -228,6 +230,89 @@ private slots:
         QVERIFY(!result.missingColumns.contains(QStringLiteral("Name")));
         QVERIFY(!result.missingColumns.contains(QStringLiteral("Unique ID")));
         QVERIFY(!result.missingColumns.contains(QStringLiteral("Acceleration")));
+    }
+
+    void fm27ExporterCsv()
+    {
+        // Shaped like the FM View Exporter's output for FM27: UTF-8 BOM,
+        // comma, the game's full column names, "Nation" twice (code, then full
+        // name) and columns the app does not read.
+        const QByteArray csv = QByteArray("\xEF\xBB\xBF")
+            + QStringLiteral(
+                  "Unique ID,Player,Position,Age,Nation,Club,Transfer Value,Wage,Rating,"
+                  "Playing Time,Height,Best Role,Nation,Acceleration,Off The Ball,Team Work,"
+                  "One On Ones,Command Of Area,Eccentricity\r\n"
+                  "8718372,Manuel Neuer,GK,40,GER,FC Bayern,\"€1.5M - €3.1M\",€300K p/w,7.05,"
+                  "First-Choice Goalkeeper,193 cm,BGK,Germany,9,5,14,18,17,15\r\n"
+                  "2002,Jung Talent,\"D (C), DM\",17,BRA,FC Bayern,€500K,€2K p/w,-,Youngster,"
+                  "181 cm,CD,Brazil,12-15,11,13,1,1,3\r\n")
+                  .toUtf8();
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = writeFile(dir, QStringLiteral("squad.csv"), csv);
+        Database db(QStringLiteral("csv_test_fm27"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+
+        const QString fm27 = QStringLiteral("fm27");
+        const ImportResult result = HtmlImporter::importFile(path, db, {}, {}, fm27);
+        QVERIFY2(result.success, qPrintable(result.error));
+        QCOMPARE(result.playersImported, 2);
+        QCOMPARE(result.malformedRows, 0);
+        QVERIFY2(result.unknownColumns.isEmpty(), qPrintable(result.unknownColumns.join(", ")));
+        QVERIFY(!result.missingColumns.contains(QStringLiteral("Acceleration")));
+        QVERIFY(result.missingColumns.contains(QStringLiteral("Vision")));
+
+        const std::vector<Player> players = db.loadPlayers();
+        QCOMPARE(static_cast<int>(players.size()), 2);
+        const Player &gk = players[0].uid == QLatin1String("8718372") ? players[0] : players[1];
+        const Player &young = &gk == &players[0] ? players[1] : players[0];
+        QCOMPARE(gk.name, QStringLiteral("Manuel Neuer"));
+        QCOMPARE(gk.age, 40);
+        QCOMPARE(gk.nationality, QStringLiteral("GER")); // first "Nation" column
+        QCOMPARE(gk.club, QStringLiteral("FC Bayern"));
+        QCOMPARE(gk.transferValue, 1'500'000.0);
+        QCOMPARE(gk.wageRaw, QStringLiteral("€300K p/w"));
+        QCOMPARE(gk.averageRating, 7.05);
+        QCOMPARE(gk.agreedPlayingTime, QStringLiteral("First-Choice Goalkeeper"));
+        QCOMPARE(gk.heightCm, 193);
+        QCOMPARE(gk.attrLo[attrIndexByName(QStringLiteral("Acceleration"))], uint8_t(9));
+        QCOMPARE(gk.attrLo[attrIndexByName(QStringLiteral("Off the Ball"))], uint8_t(5));
+        QCOMPARE(gk.attrLo[attrIndexByName(QStringLiteral("Teamwork"))], uint8_t(14));
+        QCOMPARE(gk.attrLo[attrIndexByName(QStringLiteral("One vs One"))], uint8_t(18));
+        QCOMPARE(gk.attrLo[attrIndexByName(QStringLiteral("Command of Area"))], uint8_t(17));
+        QCOMPARE(young.averageRating, 0.0); // "-" = no games
+        QCOMPARE(young.positionRaw, QStringLiteral("D (C), DM"));
+        const int acc = attrIndexByName(QStringLiteral("Acceleration"));
+        QCOMPARE(young.attrLo[acc], uint8_t(12));
+        QCOMPARE(young.attrHi[acc], uint8_t(15));
+
+        // FM27 files need the FM27 profile: the FM24 one misses "UID".
+        Database fm24Db(QStringLiteral("csv_test_fm27_as_fm24"));
+        QVERIFY(fm24Db.open(dir.filePath(QStringLiteral("fm24.db"))));
+        const ImportResult asFm24 = HtmlImporter::importFile(path, fm24Db, {});
+        QVERIFY(!asFm24.success);
+        QCOMPARE(asFm24.errorCode, ImportErrorCode::RequiredColumnMissing);
+        QCOMPARE(asFm24.errorArg, QStringLiteral("UID"));
+    }
+
+    void fm27MappingComplete()
+    {
+        // Every rated attribute is reachable from an FM27 header, and no
+        // header is both read and ignored.
+        const QString fm27 = QStringLiteral("fm27");
+        const auto &mapping = attributeMapping(fm27);
+        const auto &ignored = ignoredExportColumns(fm27);
+        int ratedCount = 0;
+        for (auto it = mapping.constBegin(); it != mapping.constEnd(); ++it) {
+            if (attrIndexByName(it.value()) >= 0)
+                ++ratedCount;
+            QVERIFY2(!ignored.contains(it.key()), qPrintable(it.key()));
+        }
+        QCOMPARE(ratedCount, kAttrCount);
+        QCOMPARE(requiredImportColumns(fm27),
+                 QStringList({QStringLiteral("Unique ID"), QStringLiteral("Player")}));
+        QCOMPARE(newestFmVersionId(), fm27);
+        QCOMPARE(fmDataVersion(fm27).exportFolderName, QStringLiteral("FM View Exporter"));
     }
 
     void errorCodes()
