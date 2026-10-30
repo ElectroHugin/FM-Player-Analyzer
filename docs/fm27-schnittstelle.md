@@ -46,6 +46,38 @@ Die genaue Spaltenliste je Preset folgt, sobald der Spaltenkatalog aus einem
 echten Voll-Export steht. Das Preset **Analyzer** entspricht der Ansicht aus
 `docs/ANSICHT-ANALYZER-FM27.md` im Exporter.
 
+## Ansichten (.fmf) als Presets
+
+Vorschlag Exporter, 30.10.2026, mit Edmund abgestimmt:
+
+1. **Der Analyzer bestimmt den Inhalt.** Er kennt alle Spalten, die FM27 anbietet, und
+   legt je Fokus fest, welche Spalten ein Preset braucht. Die Spaltenliste je Preset steht
+   in dieser Datei unter „Filter-Presets“.
+2. **Edmund baut die Ansicht im Spiel.** Dazu dient das Menü *Insert Column*,
+   *Replace this column* und *Remove this column* im Tabellenkopf. Anschließend speichert
+   er sie mit *Export Current View…* als `.fmf`-Datei. Die Datei ist verschlüsselt, das
+   spielt keine Rolle: Sie wird nur weitergereicht.
+3. **Der Exporter liefert die `.fmf`-Dateien mit**, im Repo unter `views/fm27/` und im
+   Release-Paket. Nutzer holen sie sich über *Import View…* in der Ansichtsauswahl.
+4. **Regeln für jedes Preset:**
+   - `Unique ID` und `Player` sind immer dabei.
+   - Höchstens etwa 250 Spalten, weil FM27 dahinter nichts mehr anzeigt.
+   - Der Dateiname der `.fmf` entspricht dem Preset-Namen.
+
+**Spaltenkatalog für die Auswahl:** Im Menü heißen viele Spalten anders als im
+Tabellenkopf, etwa *Player Of The Match* statt `PoM`. Der Exporter führt deshalb zwei
+Dateien:
+- `docs/columns/fm27.csv`: Spaltenköpfe, Bedeutung und Analyzer-Feld
+- `docs/columns/fm27-menu.csv`: Menüpfad, Menüeintrag und zugehöriger Spaltenkopf
+
+Für die Presets gilt: In der Anleitung stehen die Menüeinträge, die Edmund anklickt. Der
+Analyzer arbeitet mit den Spaltenköpfen.
+Stand des Menükatalogs: Erfasst sind Attributes, Ability and Roles, Club, Contract
+(Bonuses, Clauses (Release), General), Dynamics and Happiness, Fitness and Injuries und
+Stats (General). Es fehlen noch Contract > Clauses, General, International, Squad,
+Tactical Effectiveness, Training, Transfer und Stats mit allen Untergruppen. Die
+Screenshots dazu liegen im Projektordner unter `fm27-spaltenmenue/`.
+
 ## Offene Fragen
 
 Antworten vom Exporter (Stand 30.10.2026, getestet mit einem Kader-Export, 24 Spieler,
@@ -108,3 +140,4 @@ Metadaten nur im Dateinamen, etwa `fm27_squad_analyzer_20261030_192739.csv`.
 
 - 30.10.2026: erste Fassung (Analyzer-Projekt).
 - 30.10.2026: Antworten des Exporters zu den offenen Fragen, Metadaten-Vorschlag, Spaltennamen im Statistik-Preset (Exporter-Projekt).
+- 30.10.2026: Ansichten (.fmf) als Presets, Menükatalog `fm27-menu.csv` (Exporter-Projekt). Keine Spaltennamen geändert.
