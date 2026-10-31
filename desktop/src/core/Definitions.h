@@ -68,8 +68,32 @@ public:
     // Game position ("D (C)") -> eligible role abbreviations.
     const QHash<QString, QStringList> &positionToRoleMapping() const { return m_positionToRoles; }
 
-    // Tactic name -> {slot -> role abbr}.
+    // Tactic name -> {slot -> role abbr}. A slot with a role in possession and
+    // a different role out of possession (FM26+) holds the pair key
+    // "ipRole|oopRole" (see rolePair()); the slot key is the out-of-possession
+    // position, which decides eligibility. Ratings for pair keys are combined
+    // by RatingsUpdater::addRolePairRatings.
     const QHash<QString, QHash<QString, QString>> &tacticRoles() const { return m_tacticRoles; }
+
+    // Tactic name -> {slot -> slot in possession}, only where it differs from
+    // the slot key (display only).
+    const QHash<QString, QHash<QString, QString>> &tacticIpSlots() const { return m_tacticIpSlots; }
+
+    // Every pair key used by a tactic, sorted.
+    const QStringList &rolePairs() const { return m_rolePairs; }
+
+    // Phase of a role: "ip" (in possession), "oop" (out of possession) or
+    // "both" (FM24 roles, pair keys, unknown roles).
+    QString rolePhase(const QString &role) const;
+
+    // "ipRole|oopRole"; a single role when both are the same or one is empty.
+    static QString rolePair(const QString &ipRole, const QString &oopRole);
+    static bool isRolePair(const QString &role) { return role.contains(QLatin1Char('|')); }
+    // (ipRole, oopRole); a plain role returns (role, role).
+    static QPair<QString, QString> splitRolePair(const QString &role);
+    // The role that must be assigned to the player for him to be rated in this
+    // slot role: both halves of a pair, else the role itself.
+    static QStringList pairParts(const QString &role);
     const QStringList &tacticNames() const { return m_tacticNames; }
 
     // JSON-file insertion order (QJsonObject sorts keys alphabetically, but
@@ -132,6 +156,9 @@ private:
     QHash<QString, RoleWeights> m_roleWeights;
     QHash<QString, QStringList> m_positionToRoles;
     QHash<QString, QHash<QString, QString>> m_tacticRoles;
+    QHash<QString, QHash<QString, QString>> m_tacticIpSlots;
+    QStringList m_rolePairs;
+    QHash<QString, QString> m_rolePhases;
     QStringList m_tacticNames;
     QHash<QString, QHash<QString, QStringList>> m_tacticLayouts;
     QHash<QString, QString> m_personalities;

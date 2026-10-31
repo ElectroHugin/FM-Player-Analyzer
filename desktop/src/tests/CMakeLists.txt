@@ -39,6 +39,7 @@ fm_add_test(test_gapanalysis)
 fm_add_test(test_tacticexplorer)
 fm_add_test(test_talentengine)
 fm_add_test(test_ratingsupdater)
+fm_add_test(test_rolepairs)
 
 # Widget test for an app-side class: compiles the widget source directly (the
 # app is an executable, not a library) and runs headless on the offscreen QPA.

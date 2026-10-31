@@ -24,10 +24,12 @@ struct Candidate {
 };
 
 // A primary role pins the player to that role — but only while it is still
-// assigned; a stale one must not lock him out everywhere.
+// assigned; a stale one must not lock him out everywhere. In a two-role slot
+// ("ip|oop") either half counts as the pinned role.
 bool pinnedToOtherRole(const Player &player, const QString &role)
 {
-    return !player.primaryRole.isEmpty() && player.primaryRole != role
+    return !player.primaryRole.isEmpty()
+           && !Definitions::pairParts(role).contains(player.primaryRole)
            && player.assignedRoles.contains(player.primaryRole);
 }
 

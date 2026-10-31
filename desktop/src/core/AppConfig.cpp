@@ -7,6 +7,8 @@
 #include <QSet>
 #include <QStandardPaths>
 
+#include <algorithm>
+
 namespace fm {
 
 namespace {
@@ -176,6 +178,7 @@ void AppConfig::ensureDefaults()
     ensure(QStringLiteral("AgeThresholds/goalkeeper_youth_age"), QStringLiteral("25"));
 
     ensure(QStringLiteral("SelectionBonuses/natural_position_multiplier"), QStringLiteral("1.00"));
+    ensure(QStringLiteral("Phases/ip_share_percent"), QStringLiteral("50"));
 
     const auto &squad = squadManagementDefaults();
     for (auto it = squad.constBegin(); it != squad.constEnd(); ++it)
@@ -300,6 +303,18 @@ void AppConfig::setAgeThreshold(const QString &playerType, int value)
     m_settings->setValue(QStringLiteral("AgeThresholds/") + playerType
                              + QStringLiteral("_youth_age"),
                          QString::number(value));
+    m_settings->sync();
+}
+
+int AppConfig::ipSharePercent() const
+{
+    return std::clamp(m_settings->value(QStringLiteral("Phases/ip_share_percent"), 50).toInt(), 0, 100);
+}
+
+void AppConfig::setIpSharePercent(int percent)
+{
+    m_settings->setValue(QStringLiteral("Phases/ip_share_percent"),
+                         QString::number(std::clamp(percent, 0, 100)));
     m_settings->sync();
 }
 

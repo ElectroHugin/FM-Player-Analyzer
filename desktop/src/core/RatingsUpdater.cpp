@@ -1,6 +1,7 @@
 #include "RatingsUpdater.h"
 
 #include "Database.h"
+#include "Definitions.h"
 
 #include <QDateTime>
 #include <QSet>
@@ -118,6 +119,31 @@ RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings
         ratings[it.key().second].insert(player.uid, it.value().second);
     }
     return ratings;
+}
+
+void addRolePairRatings(RoleRatings &ratings, const QStringList &rolePairs, double ipShare,
+                        const QString &onlyUid)
+{
+    for (const QString &pair : rolePairs) {
+        const auto [ip, oop] = Definitions::splitRolePair(pair);
+        const QHash<QString, double> ipRatings = ratings.value(ip);
+        const QHash<QString, double> oopRatings = ratings.value(oop);
+        QHash<QString, double> &combined = ratings[pair];
+        if (onlyUid.isEmpty()) {
+            combined.clear();
+            for (auto it = oopRatings.constBegin(); it != oopRatings.constEnd(); ++it) {
+                const auto ipIt = ipRatings.constFind(it.key());
+                if (ipIt != ipRatings.constEnd())
+                    combined.insert(it.key(), ipShare * ipIt.value() + (1.0 - ipShare) * it.value());
+            }
+        } else {
+            combined.remove(onlyUid);
+            const auto ipIt = ipRatings.constFind(onlyUid);
+            const auto oopIt = oopRatings.constFind(onlyUid);
+            if (ipIt != ipRatings.constEnd() && oopIt != oopRatings.constEnd())
+                combined.insert(onlyUid, ipShare * ipIt.value() + (1.0 - ipShare) * oopIt.value());
+        }
+    }
 }
 
 } // namespace RatingsUpdater

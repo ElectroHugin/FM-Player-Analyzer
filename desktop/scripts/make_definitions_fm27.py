@@ -50,8 +50,9 @@ def category(position):
     return "Attack"
 
 
-# Default out-of-possession role per game position for the starter tactics.
-DEFAULT_OOP_ROLE = {
+# Default role per game position for the starter tactics (same names exist in
+# both phases).
+DEFAULT_ROLE = {
     "GK": "Goalkeeper", "D (C)": "Centre-Back", "D (L)": "Full-Back", "D (R)": "Full-Back",
     "WB (L)": "Wing-Back", "WB (R)": "Wing-Back", "DM": "Defensive Midfielder",
     "M (C)": "Central Midfielder", "M (L)": "Wide Midfielder", "M (R)": "Wide Midfielder",
@@ -134,7 +135,8 @@ def main():
             mapping[position].append(rid)
 
     # Formation templates per phase, and one starter tactic per out-of-possession
-    # formation (the base shape that decides eligibility) with default roles.
+    # formation (the base shape that decides eligibility) with a default role
+    # pair (in possession / out of possession) per slot.
     templates = {"ip": {}, "oop": {}}
     tactic_roles, tactic_layouts = {}, {}
     for row in read("formationen-fm27.csv"):
@@ -146,7 +148,10 @@ def main():
         if phase != "oop":
             continue
         name = row["Formation"]
-        tactic_roles[name] = {s: role_id("oop", DEFAULT_OOP_ROLE[slot_position(s)]) for s in slots}
+        tactic_roles[name] = {
+            s: {"ip": role_id("ip", DEFAULT_ROLE[slot_position(s)]),
+                "oop": role_id("oop", DEFAULT_ROLE[slot_position(s)])}
+            for s in slots}
         layout = {}
         for s in slots:
             if s != "GK":

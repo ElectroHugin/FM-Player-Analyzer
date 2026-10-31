@@ -53,6 +53,11 @@ public:
     double selectionBonus(const QString &key) const;
     void setSelectionBonus(const QString &key, double value);
 
+    // [Phases] — share of the in-possession role in a two-role slot (FM26+),
+    // percent 0..100, default 50.
+    int ipSharePercent() const;
+    void setIpSharePercent(int percent);
+
     // [SquadManagement]
     int squadManagementSetting(const QString &key) const;
     void setSquadManagementSetting(const QString &key, int value);

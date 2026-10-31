@@ -120,11 +120,18 @@ private slots:
                 const QStringList positions = s.key() == QLatin1String("GK")
                                                   ? QStringList{QStringLiteral("GK")}
                                                   : slotPositions.value(s.key());
-                bool eligible = false;
-                for (const QString &position : positions)
-                    eligible |= mapping.value(position).contains(s.value());
-                QVERIFY2(eligible, qPrintable(t.key() + QStringLiteral(" ") + s.key()
-                                              + QStringLiteral(": ") + s.value()));
+                // Starter tactics hold a role in possession and one out of it.
+                QVERIFY2(Definitions::isRolePair(s.value()), qPrintable(s.value()));
+                const auto [ip, oop] = Definitions::splitRolePair(s.value());
+                QCOMPARE(m_defs.rolePhase(ip), QStringLiteral("ip"));
+                QCOMPARE(m_defs.rolePhase(oop), QStringLiteral("oop"));
+                for (const QString &role : Definitions::pairParts(s.value())) {
+                    bool eligible = false;
+                    for (const QString &position : positions)
+                        eligible |= mapping.value(position).contains(role);
+                    QVERIFY2(eligible, qPrintable(t.key() + QStringLiteral(" ") + s.key()
+                                                  + QStringLiteral(": ") + role));
+                }
             }
         }
     }
