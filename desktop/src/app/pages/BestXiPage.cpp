@@ -158,22 +158,52 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         auto *tabLayout = new QVBoxLayout(tab);
         auto *pitchRow = new QHBoxLayout;
         auto *xiColumn = new QVBoxLayout;
-        auto *xiTitle = new QLabel(tr("Startelf"), tab);
-        xiTitle->setObjectName(QStringLiteral("sectionTitle"));
-        xiTitle->setAlignment(Qt::AlignHCenter);
+        m_xiTitle = new QLabel(tr("Startelf"), tab);
+        m_xiTitle->setObjectName(QStringLiteral("sectionTitle"));
+        m_xiTitle->setAlignment(Qt::AlignHCenter);
         m_xiPitch = new TacticPitchWidget(m_theme, tab);
-        xiColumn->addWidget(xiTitle);
+        xiColumn->addWidget(m_xiTitle);
         xiColumn->addWidget(m_xiPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
         auto *bColumn = new QVBoxLayout;
-        auto *bTitle = new QLabel(tr("B-Team"), tab);
-        bTitle->setObjectName(QStringLiteral("sectionTitle"));
-        bTitle->setAlignment(Qt::AlignHCenter);
+        m_bTitle = new QLabel(tr("B-Team"), tab);
+        m_bTitle->setObjectName(QStringLiteral("sectionTitle"));
+        m_bTitle->setAlignment(Qt::AlignHCenter);
         m_bTeamPitch = new TacticPitchWidget(m_theme, tab);
-        bColumn->addWidget(bTitle);
+        bColumn->addWidget(m_bTitle);
         bColumn->addWidget(m_bTeamPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
         pitchRow->addLayout(xiColumn, 1);
         pitchRow->addLayout(bColumn, 1);
+
+        // FM26+ tactics: the same players in the in-possession line-up. Under
+        // each name: the slot he takes in the other line-up.
+        m_phaseNote = new QLabel(tab);
+        m_phaseNote->setWordWrap(true);
+        m_phaseNote->setObjectName(QStringLiteral("kpiCaption"));
+        m_ipRow = new QWidget(tab);
+        auto *ipRow = new QHBoxLayout(m_ipRow);
+        ipRow->setContentsMargins(0, 0, 0, 0);
+        auto *xiIpColumn = new QVBoxLayout;
+        auto *xiIpTitle = new QLabel(tr("Startelf mit Ball"), m_ipRow);
+        xiIpTitle->setObjectName(QStringLiteral("sectionTitle"));
+        xiIpTitle->setAlignment(Qt::AlignHCenter);
+        m_xiIpPitch = new TacticPitchWidget(m_theme, m_ipRow);
+        xiIpColumn->addWidget(xiIpTitle);
+        xiIpColumn->addWidget(m_xiIpPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
+        auto *bIpColumn = new QVBoxLayout;
+        auto *bIpTitle = new QLabel(tr("B-Team mit Ball"), m_ipRow);
+        bIpTitle->setObjectName(QStringLiteral("sectionTitle"));
+        bIpTitle->setAlignment(Qt::AlignHCenter);
+        m_bTeamIpPitch = new TacticPitchWidget(m_theme, m_ipRow);
+        bIpColumn->addWidget(bIpTitle);
+        bIpColumn->addWidget(m_bTeamIpPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
+        ipRow->addLayout(xiIpColumn, 1);
+        ipRow->addLayout(bIpColumn, 1);
+
+        tabLayout->addWidget(m_phaseNote);
+        tabLayout->addWidget(m_ipRow);
         tabLayout->addLayout(pitchRow);
+        m_phaseNote->setVisible(false);
+        m_ipRow->setVisible(false);
 
         m_depthBox = new QGroupBox(tr("Weitere Kader-Tiefe"), tab);
         auto *depthLayout = new QVBoxLayout(m_depthBox);
@@ -277,8 +307,8 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     }
 
     // Player boxes on the pitches are interactive (M13).
-    for (TacticPitchWidget *pitch :
-         {m_xiPitch, m_bTeamPitch, m_secondXiPitch, m_youthXiPitch}) {
+    for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
+                                     m_secondXiPitch, m_youthXiPitch}) {
         connect(pitch, &TacticPitchWidget::playerDoubleClicked, this,
                 [this](const QString &uid) { PlayerActions::openProfile(m_context, uid); });
         connect(pitch, &TacticPitchWidget::playerContextMenuRequested, this,
@@ -365,6 +395,8 @@ void BestXiPage::rebuild()
         m_registrationNote->setVisible(false);
         m_xiPitch->clearData();
         m_bTeamPitch->clearData();
+        m_xiIpPitch->clearData();
+        m_bTeamIpPitch->clearData();
         m_secondXiPitch->clearData();
         m_youthXiPitch->clearData();
         m_injuryBox->setVisible(false);
@@ -508,10 +540,65 @@ void BestXiPage::rebuild()
     const DevelopmentSquads dev = m_context.squadBuilder().calculateDevelopmentSquads(
         secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);
 
-    for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_secondXiPitch, m_youthXiPitch})
+    for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
+                                     m_secondXiPitch, m_youthXiPitch})
         pitch->setFmVersionId(m_context.fmVersionId());
-    m_xiPitch->setTeam(first.startingXi, positions, layout, roleNames);
-    m_bTeamPitch->setTeam(first.bTeam, positions, layout, roleNames);
+    const bool twoPhase = m_context.definitions().isTwoPhaseTactic(tactic);
+    m_ipRow->setVisible(twoPhase);
+    m_phaseNote->setVisible(twoPhase);
+    m_xiTitle->setText(twoPhase ? tr("Startelf ohne Ball") : tr("Startelf"));
+    m_bTitle->setText(twoPhase ? tr("B-Team ohne Ball") : tr("B-Team"));
+    if (twoPhase) {
+        // Two free line-ups: who plays and where in each is one optimisation
+        // (SquadBuilder::calculateTwoPhaseSquad); depth, injuries and the
+        // development squads below still use the out-of-possession line-up.
+        const auto &lineUps = m_context.definitions().twoPhaseTactics().value(tactic);
+        const int share = m_context.config().ipSharePercent();
+        const TwoPhaseSquadResult squad = m_context.squadBuilder().calculateTwoPhaseSquad(
+            firstPool, tactic, ratings, share / 100.0);
+        const auto &slotMap = masterPositionMap(m_context.fmVersionId());
+        const auto layoutOf = [&](const QHash<QString, QString> &lineUp) {
+            QHash<QString, QStringList> strata;
+            for (auto it = lineUp.cbegin(); it != lineUp.cend(); ++it) {
+                if (it.key() != QLatin1String("GK"))
+                    strata[slotMap.value(it.key()).stratum].append(it.key());
+            }
+            return strata;
+        };
+        // Under each name: his slot in the other line-up.
+        const auto partnerTexts = [&](const QHash<QString, XiCell> &team, bool ipSide) {
+            QHash<QString, QString> texts;
+            for (auto it = team.cbegin(); it != team.cend(); ++it) {
+                if (!it->isFilled())
+                    continue;
+                const auto pair = squad.slotsOfUid.value(it->playerUid);
+                texts.insert(it.key(), ipSide ? tr("ohne Ball: %1").arg(pair.second)
+                                              : tr("mit Ball: %1").arg(pair.first));
+            }
+            return texts;
+        };
+        m_xiPitch->setTeam(squad.startingOop, lineUps.oop, layoutOf(lineUps.oop), roleNames);
+        m_xiPitch->setSlotSubtexts(partnerTexts(squad.startingOop, false));
+        m_bTeamPitch->setTeam(squad.bTeamOop, lineUps.oop, layoutOf(lineUps.oop), roleNames);
+        m_bTeamPitch->setSlotSubtexts(partnerTexts(squad.bTeamOop, false));
+        m_xiIpPitch->setTeam(squad.startingIp, lineUps.ip, layoutOf(lineUps.ip), roleNames);
+        m_xiIpPitch->setSlotSubtexts(partnerTexts(squad.startingIp, true));
+        m_bTeamIpPitch->setTeam(squad.bTeamIp, lineUps.ip, layoutOf(lineUps.ip), roleNames);
+        m_bTeamIpPitch->setSlotSubtexts(partnerTexts(squad.bTeamIp, true));
+        m_phaseNote->setText(
+            tr("Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer "
+               "wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle "
+               "ohne Ball am höchsten ist; jeder Spieler braucht die Position in beiden "
+               "Aufstellungen. Unter dem Namen steht sein Platz in der anderen Aufstellung. "
+               "Den Anteil stellst du in den Einstellungen ein.")
+                .arg(share)
+                .arg(100 - share));
+    } else {
+        m_xiPitch->setTeam(first.startingXi, positions, layout, roleNames);
+        m_bTeamPitch->setTeam(first.bTeam, positions, layout, roleNames);
+        m_xiPitch->setSlotSubtexts({});
+        m_bTeamPitch->setSlotSubtexts({});
+    }
     m_secondXiTitle->setText(secondClub.isEmpty()
                                  ? tr("Zweitteam-XI (aus Überschuss des Hauptvereins)")
                                  : tr("Zweitteam-XI (%1)").arg(secondClub));

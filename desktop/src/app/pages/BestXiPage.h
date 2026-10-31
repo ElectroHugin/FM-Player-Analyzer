@@ -78,8 +78,14 @@ private:
     QTableWidget *m_injuryTable = nullptr;
     QTabWidget *m_tabs = nullptr;
 
-    TacticPitchWidget *m_xiPitch = nullptr;
+    QLabel *m_xiTitle = nullptr;
+    QLabel *m_bTitle = nullptr;
+    TacticPitchWidget *m_xiPitch = nullptr;    // two-phase tactics: out of possession
     TacticPitchWidget *m_bTeamPitch = nullptr;
+    QWidget *m_ipRow = nullptr;                // two-phase tactics only
+    QLabel *m_phaseNote = nullptr;
+    TacticPitchWidget *m_xiIpPitch = nullptr;  // in possession
+    TacticPitchWidget *m_bTeamIpPitch = nullptr;
     QGroupBox *m_depthBox = nullptr;
     QTableWidget *m_depthTable = nullptr;
     QLabel *m_depthEmpty = nullptr;

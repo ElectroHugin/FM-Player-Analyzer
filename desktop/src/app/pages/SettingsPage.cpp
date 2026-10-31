@@ -526,7 +526,15 @@ QWidget *SettingsPage::buildThresholdsTab()
     m_minLoanAgeSpin->setRange(14, 25);
     m_youthLoanOverAgeSpin = new QSpinBox;
     m_youthLoanOverAgeSpin->setRange(14, 25);
+    m_ipShareSpin = new QSpinBox;
+    m_ipShareSpin->setRange(0, 100);
+    m_ipShareSpin->setSuffix(QStringLiteral(" %"));
+    m_ipShareSpin->setToolTip(
+        tr("Ab FM27 hat jede Taktik eine Aufstellung mit Ball und eine ohne Ball. Der Wert "
+           "eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner "
+           "Rolle ohne Ball. Standard 50 %."));
     squadForm->addRow(tr("Bonus natürliche Position:"), m_naturalPosSpin);
+    squadForm->addRow(tr("Anteil mit Ball (ab FM27):"), m_ipShareSpin);
     squadForm->addRow(tr("Max. Rollen pro Depth-Spieler:"), m_maxDepthRolesSpin);
     squadForm->addRow(tr("Min. Talent-Score für Leihe:"), m_minLoanTalentSpin);
     squadForm->addRow(tr("Mindestalter für Leihe:"), m_minLoanAgeSpin);
@@ -907,6 +915,7 @@ void SettingsPage::refresh()
     m_outfielderAgeSpin->setValue(config.ageThreshold(QStringLiteral("outfielder")));
     m_goalkeeperAgeSpin->setValue(config.ageThreshold(QStringLiteral("goalkeeper")));
     m_naturalPosSpin->setValue(config.selectionBonus(QStringLiteral("natural_position")));
+    m_ipShareSpin->setValue(config.ipSharePercent());
     m_maxDepthRolesSpin->setValue(
         config.squadManagementSetting(QStringLiteral("max_roles_per_depth_player")));
     m_minLoanTalentSpin->setValue(
@@ -1041,6 +1050,7 @@ void SettingsPage::saveAll()
     config.setAgeThreshold(QStringLiteral("outfielder"), m_outfielderAgeSpin->value());
     config.setAgeThreshold(QStringLiteral("goalkeeper"), m_goalkeeperAgeSpin->value());
     config.setSelectionBonus(QStringLiteral("natural_position"), m_naturalPosSpin->value());
+    config.setIpSharePercent(m_ipShareSpin->value());
     config.setSquadManagementSetting(QStringLiteral("max_roles_per_depth_player"),
                                      m_maxDepthRolesSpin->value());
     config.setSquadManagementSetting(QStringLiteral("min_loan_talent_score"),
