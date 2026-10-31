@@ -87,6 +87,27 @@ Datei `squad_20261030_192739` (Kader FC Bayern, 24 Spieler, 375 Spalten), getest
 - Statistik-Spalten sind alle 0/`-` (Saisonbeginn). Format sonst: Punkt als Dezimaltrenner,
   `0%`, `0.0km`, Datum `30/6/2027`, große Beträge `"€65,000,000"`.
 
+### Zweiter Export: Spielersuche (30.10.2026)
+
+Datei `players_20261030_201715` (Spielersuche, eigene Attribut-Ansicht, 24 Spieler, 61 Spalten),
+getestet mit PR #4:
+
+- Import läuft durch, alle 40 Attribute gefüllt. CSV und HTML identisch.
+- **Spalte `Position` enthält in der Spielersuche zusätzlich die Rolle**, z. B.
+  `ST (C) Target Forward`, `DM, M (C) Deep-Lying Playmaker`, `GK Goalkeeper`. Der Analyzer
+  erkennt dann die letzte Position nicht mehr: 15 von 24 Spielern haben gar keine Position,
+  bei den übrigen fehlt die letzte (z. B. `ST (C)`). In der Kaderansicht stand nur die Position.
+  **Wunsch an den Exporter:** Position und Rolle trennen, also `Position` = nur Positionstext,
+  die Rolle in eine eigene Spalte (Vorschlag `Position Role`). Der Analyzer bekommt zusätzlich
+  eine Absicherung, die einen angehängten Rollennamen abschneidet.
+- **Keine Attribut-Spannen**, auch nicht bei `Knowledge` = `None`. Offen: Zeigt das Spiel für
+  diese Spieler wirklich alle Werte, oder liest der Exporter mehr als die Oberfläche anzeigt?
+- Neue Spalten `Recommendation` (`B- Very Good`) und `Knowledge` (`Extensive Knowledge`/`None`)
+  kennt der Analyzer noch nicht (als unbekannt gemeldet). `Effectiveness` ist leer.
+  `Wage` kommt hier als Spanne (`€190K - €215K p/w`).
+- Für Kaufberatung fehlen in dieser Ansicht `Height`, `Personality`, die Fuß-Spalten u. a.
+  → Preset „Analyzer“ auch für die Spielersuche verwenden.
+
 ## Ansichten (.fmf) als Presets
 
 Vorschlag Exporter, 30.10.2026, mit Edmund abgestimmt:
@@ -122,6 +143,26 @@ Tactical* und *- Technical*, die Tabelle zeigt aber zweimal `Attacking - Tactica
 zweimal `Defending - Technical`.
 Wichtig: Das Menü blendet Spalten aus, die schon in der Ansicht stehen. Der Katalog
 entsteht deshalb am besten aus einer fast leeren Ansicht. Die Screenshots dazu liegen im Projektordner unter `fm27-spaltenmenue/`.
+
+### Fertige Ansichten je Bildschirm (31.10.2026)
+
+FM27 teilt Ansichten nicht zwischen Bildschirmen. Der Exporter liefert deshalb drei Dateien
+unter `views/fm27/` (Anleitung: `docs/VIEW-ANALYZER-FM27.md` im Exporter):
+
+| Bildschirm | Datei | Exportdatei |
+| --- | --- | --- |
+| Kader | `FM27-PlayerAnalyzer-Squad-Standard.fmf` | `squad_…` |
+| Recruitment > Player Database | `FM27-PlayerAnalyzer-PlayerDatabase-Standard.fmf` | `player-database_…` |
+| Recruitment > Shortlists | `FM27-PlayerAnalyzer-Shortlist-Standard.fmf` | `shortlist_…` |
+
+Inhalt jeweils Preset „Analyzer“. Unterschiede in Datenbank und Shortlist: kein `Personality`
+(bietet FM27 dort nicht an), zusätzlich `Rec.` (Scout-Note `A+` bis `F`), in der Shortlist
+zusätzlich *Player's Interest*. Die Spielerspalte heißt dort `Name` statt `Player`.
+`Nation` kommt im Kader als voller Name, in der Datenbank als Kürzel. In der Datenbank gibt es
+Attribut-Spannen (`8-13`) sowie `Unknown` bei Ability/Potential. Der Analyzer verarbeitet all
+das seit PR #4 (`Name` und `Rec.` als Alias, `nationCode()`).
+Dateinamen sind einstellbar: `Export.FilePrefix` (z. B. `fc-bayern-squad`), `Export.Timestamp`
+und `Export.Formats` (CSV, HTML oder beides).
 
 ## Offene Fragen
 
@@ -190,5 +231,7 @@ Metadaten nur im Dateinamen, etwa `fm27_squad_analyzer_20261030_192739.csv`.
 - 30.10.2026: erste Fassung (Analyzer-Projekt).
 - 30.10.2026: Antworten des Exporters zu den offenen Fragen, Metadaten-Vorschlag (Exporter-Projekt).
 - 30.10.2026: Ansichten (.fmf) als Presets, Menükatalog `fm27-menu.csv` (Exporter-Projekt). Keine Spaltennamen geändert.
+- 30.10.2026: Befund Spielersuche (Position mit Rolle, keine Spannen).
+- 31.10.2026: Fertige Ansichten je Bildschirm (Kader, Spieler-Datenbank, Shortlist), Befunde und Dateinamen (Exporter-Projekt). Keine Spaltennamen im Exporter geändert; `Name` und `Rec.` sind Spielköpfe.
 - 30.10.2026: Presets mit Spaltenlisten und Befund aus dem ersten echten Export ergänzt.
 - 30.10.2026: Antwort zu den leeren Spalten ab Nr. 256: Grenze des Spiels (Exporter-Projekt).
