@@ -496,27 +496,27 @@
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="30"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="31"/>
         <source>Sturm</source>
         <translation>Strikers</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="32"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="33"/>
         <source>Offensives Mittelfeld</source>
         <translation>Attacking Midfield</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="34"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="35"/>
         <source>Mittelfeld</source>
         <translation>Midfield</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="36"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="37"/>
         <source>Defensives Mittelfeld</source>
         <translation>Defensive Midfield</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="38"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="39"/>
         <source>Abwehr</source>
         <translation>Defence</translation>
     </message>
@@ -824,7 +824,7 @@
     <name>fm::BestXiPage</name>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="58"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="300"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="330"/>
         <source>Best XI</source>
         <translation>Best XI</translation>
     </message>
@@ -835,45 +835,47 @@
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="161"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="611"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="548"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="697"/>
         <source>Startelf</source>
         <translation>Starting XI</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="168"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="612"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="549"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="698"/>
         <source>B-Team</source>
         <translation>B-Team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="178"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="208"/>
         <source>Weitere Kader-Tiefe</source>
         <translation>Additional squad depth</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="200"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="230"/>
         <source>Erste Mannschaft</source>
         <translation>First Team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="209"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="239"/>
         <source>Zweitteam-XI</source>
         <translation>Second Team XI</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="216"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="246"/>
         <source>Jugend-XI</source>
         <translation>Youth XI</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="242"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="272"/>
         <source>Vielversprechende Talente zum Verleihen (nach Talent-Score)</source>
         <translation>Promising talents to loan out (by talent score)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="187"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="246"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="254"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="217"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="276"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="284"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -893,15 +895,15 @@
         <translation>Show or hide how the line-up is computed</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="187"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="246"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="254"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="217"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="276"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="284"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="128"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="187"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="217"/>
         <source>Rolle</source>
         <translation>Role</translation>
     </message>
@@ -943,7 +945,7 @@
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="129"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="130"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="187"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="217"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
@@ -963,175 +965,210 @@
         <translation>Δ</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="187"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="186"/>
+        <source>Startelf mit Ball</source>
+        <translation>Starting XI in possession</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="193"/>
+        <source>B-Team mit Ball</source>
+        <translation>B-team in possession</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="217"/>
         <source>Eignung</source>
         <translation>Suitability</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="227"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="257"/>
         <source>✔️ Zum Verwalten dieser Spieler dient Transfers → Leihen &amp; Verkäufe.</source>
         <translation>✔️ Manage these players under Transfers → Loans &amp; Sales.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="246"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="254"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="276"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="284"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="246"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="254"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="276"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="284"/>
         <source>Beste Rolle</source>
         <translation>Best Role</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="247"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="255"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="277"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="285"/>
         <source>Bester DWRS</source>
         <translation>Best DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="247"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="277"/>
         <source>Talent</source>
         <translation>Talent</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="247"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="255"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="277"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="285"/>
         <source>Ent</source>
         <translation>Det</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="247"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="255"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="277"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="285"/>
         <source>Arb</source>
         <translation>Wor</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="248"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="255"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="278"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="285"/>
         <source>Transfer</source>
         <translation>Transfer</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="248"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="256"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="278"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="286"/>
         <source>Leihe</source>
         <translation>Loan</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="252"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="282"/>
         <source>Überzählige Spieler für Verkauf / Freigabe</source>
         <translation>Surplus players for sale / release</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="261"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="291"/>
         <source>Jugend &amp;&amp; Zweitteam</source>
         <translation>Youth &amp;&amp; Second Team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="266"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="296"/>
         <source>🛒 Kaufberatung</source>
         <translation>🛒 Signing advisor</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="300"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="330"/>
         <source>Kaufberatung</source>
         <translation>Signing Advisor</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="310"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="340"/>
         <source>Startelf und B-Team werden gemeinsam als Zuordnungsproblem berechnet, mit der Ungarischen Methode (englisch: Hungarian algorithm, Kuhn–Munkres): Spieler werden Positionen eins zu eins so zugeordnet, dass die Summe der Bewertungen maximal ist. Keine andere Aufstellung hat eine stärkere Startelf, und unter allen gleich starken bekommst du das stärkste B-Team — vielseitige Spieler stehen dort, wo ihr Fehlen am wenigsten kostet. Grundlage ist der DWRS je Rolle, gewichtet mit Spielzeit und natürlicher Position; Hauptrollen werden eingehalten.</source>
         <translation>Starting XI and B-team are computed together as an assignment problem with the Hungarian algorithm (Kuhn–Munkres): players are assigned to positions one to one so that the sum of the ratings is maximal. No other line-up has a stronger starting XI, and of all equally strong ones you get the strongest B-team — versatile players play where their absence costs least. Based on the DWRS per role, weighted by playing time and natural position; primary roles are respected.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="338"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="368"/>
         <source>%1 (Meldeliste)</source>
         <translation>%1 (squad list)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="341"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="371"/>
         <source>Liga</source>
         <translation>League</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="344"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="374"/>
         <source>Champions / Europa / Conference League (Liste A + B)</source>
         <translation>Champions / Europa / Conference League (list A + B)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="346"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="376"/>
         <source>Pokal</source>
         <translation>Cup</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="341"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="346"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="371"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="376"/>
         <source>%1 (alle Spieler)</source>
         <translation>%1 (all players)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="462"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="493"/>
         <source>Alle Spieler der ersten Mannschaft sind spielberechtigt.</source>
         <translation>All first-team players are eligible.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="464"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="495"/>
         <source>%1 Spieler der ersten Mannschaft sind nicht gemeldet und bleiben außen vor.</source>
         <translation>%1 first-team players are not registered and are left out.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="469"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="500"/>
         <source>Ohne Meldeliste stünden davon in Startelf oder B-Team: %1</source>
         <translation>Without the squad list these would be in the starting XI or B-team: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="482"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="513"/>
         <source>⚠️ Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI rechnet mit allen Spielern. Speichere sie unter Transfers → Meldeliste.</source>
         <translation>⚠️ No squad list saved for this competition yet — Best XI uses all players. Save it under Transfers → Squad List.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="516"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="548"/>
+        <source>Startelf ohne Ball</source>
+        <translation>Starting XI out of possession</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="549"/>
+        <source>B-Team ohne Ball</source>
+        <translation>B-team out of possession</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="574"/>
+        <source>ohne Ball: %1</source>
+        <translation>out of possession: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="575"/>
+        <source>mit Ball: %1</source>
+        <translation>in possession: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="588"/>
+        <source>Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle ohne Ball am höchsten ist; jeder Spieler braucht die Position in beiden Aufstellungen. Unter dem Namen steht sein Platz in der anderen Aufstellung. Den Anteil stellst du in den Einstellungen ein.</source>
+        <translation>This tactic has one line-up in possession and one out of possession. The analyzer picks the players so that the sum of %1 % role in possession and %2 % role out of possession is highest; every player needs the position in both line-ups. Below each name is that player&apos;s place in the other line-up. You set the share in the settings.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="602"/>
         <source>Zweitteam-XI (aus Überschuss des Hauptvereins)</source>
         <translation>Second Team XI (from main club surplus)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="517"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="603"/>
         <source>Zweitteam-XI (%1)</source>
         <translation>Second Team XI (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="550"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="636"/>
         <source>Trotz Verletzung eingeplant: %1.</source>
         <translation>Planned in despite injury: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="551"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="637"/>
         <source>Nicht eingeplant: %1.</source>
         <translation>Not planned in: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="554"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="640"/>
         <source>Startelf und B-Team bleiben gleich stark.</source>
         <translation>Starting XI and B-team stay just as strong.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="557"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="643"/>
         <source>Der Kader gleicht das so aus — Startelf %1, B-Team %2 DWRS-Punkte (Summe über alle Positionen):</source>
         <translation>This is how the squad makes up for it — starting XI %1, B-team %2 DWRS points (sum over all positions):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="565"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="651"/>
         <source>🚑 Langzeitverletzt (%1)</source>
         <translation>🚑 Long-term injured (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="620"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="706"/>
         <source>— unbesetzt —</source>
         <translation>— unfilled —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="750"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="836"/>
         <source>Keine weiteren Spieler als Tiefen-Optionen für diese Taktik geeignet.</source>
         <translation>No further players suitable as depth options for this tactic.</translation>
     </message>
@@ -3020,104 +3057,154 @@ The original file is not modified.</translation>
 <context>
     <name>fm::NewTacticPage</name>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="76"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="151"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="77"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="114"/>
         <source>Neue Taktik erstellen</source>
         <translation>Create New Tactic</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="79"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="321"/>
         <source>Baue deine Formation auf dem Feld unten. Wähle für jede aktive Position eine Rolle — genau ein Torhüter und zehn Feldspieler.</source>
         <translation>Build your formation on the pitch below. Choose a role for each active position — exactly one goalkeeper and ten outfield players.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="87"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="86"/>
         <source>1. Taktik-Name</source>
         <translation>1. Tactic name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="89"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="88"/>
         <source>Formations-Name:</source>
         <translation>Formation name:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="91"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="90"/>
         <source>z. B. &apos;Mein Gegenpressing&apos;</source>
         <translation>e.g. &apos;My Gegenpress&apos;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="94"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="93"/>
         <source>Formation:</source>
         <translation>Formation:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="106"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="130"/>
+        <source>Vorlage aus dem Spiel:</source>
+        <translation>Template from the game:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="134"/>
+        <source>Setzt die Plätze dieser Formation mit der ersten passenden Rolle. Danach kannst du jede Rolle anpassen.</source>
+        <translation>Fills the slots of this formation with the first matching role. You can change every role afterwards.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="137"/>
+        <source>Übernehmen</source>
+        <translation>Apply</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="317"/>
+        <source>Eine Taktik hat zwei Aufstellungen: eine mit Ball und eine ohne Ball, jede mit einem Torhüter und zehn Feldspielern. Die Plätze müssen nicht zusammenpassen; der Analyzer verteilt die Spieler später selbst. Mit einer Vorlage aus dem Spiel bist du schneller.</source>
+        <translation>A tactic has two line-ups: one in possession and one out of possession, each with one goalkeeper and ten outfield players. The slots do not have to match; the analyzer distributes the players itself later. A template from the game gets you there faster.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="323"/>
+        <source>2b. Aufstellung ohne Ball</source>
+        <translation>2b. Line-up out of possession</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="324"/>
         <source>2. Formation gestalten</source>
         <translation>2. Design formation</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="138"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="173"/>
         <source>Torhüter</source>
         <translation>Goalkeeper</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="175"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="216"/>
         <source>— Unbesetzt —</source>
         <translation>— Unfilled —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="235"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="356"/>
         <source>&lt;b&gt;Vollständiger Taktik-Name:&lt;/b&gt; &lt;code&gt;%1&lt;/code&gt;</source>
         <translation>&lt;b&gt;Full tactic name:&lt;/b&gt; &lt;code&gt;%1&lt;/code&gt;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="238"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="351"/>
         <source>✅ 10 Feldspieler ausgewählt.</source>
         <translation>✅ 10 outfield players selected.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="239"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="325"/>
+        <source>2a. Aufstellung mit Ball</source>
+        <translation>2a. Line-up in possession</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="352"/>
         <source>Feldspieler ausgewählt: %1 / 10</source>
         <translation>Outfield players selected: %1 / 10</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="246"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="252"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="268"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="275"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="308"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="313"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="320"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="364"/>
+        <source>mit Ball</source>
+        <translation>in possession</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="364"/>
+        <source>ohne Ball</source>
+        <translation>out of possession</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="374"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="384"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="400"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="406"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="451"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="456"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="463"/>
         <source>Neue Taktik</source>
         <translation>New Tactic</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="247"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="375"/>
+        <source>Die Aufstellung %1 braucht genau 10 Feldspieler (aktuell: %2).</source>
+        <translation>The line-up %1 needs exactly 10 outfield players (currently: %2).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="385"/>
+        <source>Bitte wähle eine Torhüter-Rolle %1.</source>
+        <translation>Please choose a goalkeeper role %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="401"/>
         <source>Bitte gib sowohl einen Formations-Namen als auch eine Formation (z. B. 4-2-3-1) an.</source>
         <translation>Please provide both a formation name and a formation (e.g. 4-2-3-1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="253"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="407"/>
         <source>Eine Taktik namens &apos;%1&apos; existiert bereits. Bitte wähle einen anderen Namen.</source>
         <translation>A tactic named &apos;%1&apos; already exists. Please choose a different name.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="269"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="378"/>
         <source>Du musst genau 10 Feldspieler auswählen (aktuell: %1).</source>
         <translation>You must select exactly 10 outfield players (currently: %1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="275"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="386"/>
         <source>Bitte wähle eine Torhüter-Rolle.</source>
         <translation>Please select a goalkeeper role.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="314"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="457"/>
         <source>Die Taktik wurde gespeichert, aber die Definitionen konnten nicht neu geladen werden: %1</source>
         <translation>The tactic was saved, but the definitions could not be reloaded: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="321"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="464"/>
         <source>Taktik &apos;%1&apos; wurde erstellt und ist jetzt überall verfügbar.</source>
         <translation>Tactic &apos;%1&apos; has been created and is now available everywhere.</translation>
     </message>
@@ -4299,7 +4386,7 @@ The original file is not modified.</translation>
     <name>fm::SettingsPage</name>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="85"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1085"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1095"/>
         <source>Einstellungen</source>
         <translation>Settings</translation>
     </message>
@@ -4325,9 +4412,9 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="93"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="742"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="781"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="795"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="750"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="789"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="803"/>
         <source>Datenbank</source>
         <translation>Database</translation>
     </message>
@@ -4338,7 +4425,7 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="112"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="992"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1001"/>
         <source>Football-Manager-Version</source>
         <translation>Football Manager Version</translation>
     </message>
@@ -4663,280 +4750,290 @@ The original file is not modified.</translation>
         <translation>Squad Management</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="529"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="533"/>
+        <source>Ab FM27 hat jede Taktik eine Aufstellung mit Ball und eine ohne Ball. Der Wert eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner Rolle ohne Ball. Standard 50 %.</source>
+        <translation>From FM27 every tactic has one line-up in possession and one out of possession. A player&apos;s value is this share of the role in possession plus the rest of the role out of possession. Default 50 %.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="536"/>
         <source>Bonus natürliche Position:</source>
         <translation>Natural position bonus:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="530"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="537"/>
+        <source>Anteil mit Ball (ab FM27):</source>
+        <translation>Share in possession (FM27+):</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="538"/>
         <source>Max. Rollen pro Depth-Spieler:</source>
         <translation>Max. roles per depth player:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="531"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="539"/>
         <source>Min. Talent-Score für Leihe:</source>
         <translation>Min. talent score for loan:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="532"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="540"/>
         <source>Mindestalter für Leihe:</source>
         <translation>Minimum loan age:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="533"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="541"/>
         <source>Jugendelf-Leihe erst über Alter:</source>
         <translation>Loan youth-XI players only above age:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="536"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="544"/>
         <source>Gap-Analyse</source>
         <translation>Gap Analysis</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="547"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="555"/>
         <source>Displacement-Schwelle:</source>
         <translation>Displacement threshold:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="548"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="556"/>
         <source>Dropoff-Schwelle:</source>
         <translation>Dropoff threshold:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="549"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="557"/>
         <source>Falsche-Seite-Malus:</source>
         <translation>Wrong-side penalty:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="552"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="560"/>
         <source>Datenfrische / Retired</source>
         <translation>Data Freshness / Retired</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="558"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="566"/>
         <source>Retired ab Alter (X):</source>
         <translation>Retired from age (X):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="559"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="567"/>
         <source>Veraltet nach verpassten Komplett-Exporten (Y):</source>
         <translation>Stale after missed full exports (Y):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="562"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="570"/>
         <source>Ein Import mit mindestens einem Viertel so vielen Spielern wie der letzte Komplett-Export zählt selbst als Komplett-Export. Kleinere Exporte (Kader, Shortlist, Scouting) aktualisieren nur ihre Spieler. Wer in den letzten Y Komplett-Exporten fehlte, gilt als veraltet und wird in Matrizen, Vorschlägen und Pools ausgeblendet – außer Spielern deines Vereins und der Shortlist. Ist er zusätzlich mindestens X Jahre alt, heißt er Retired.</source>
         <translation>An import with at least a quarter as many players as the last full export counts as a full export itself. Smaller exports (squad, shortlist, scouting) only refresh their own players. Anyone missing from the last Y full exports counts as stale and is hidden from matrices, suggestions and pools, except players of your club and the shortlist. If they are also at least X years old, they are shown as Retired.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="574"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="582"/>
         <source>Trainings-Altersfenster</source>
         <translation>Training Age Windows</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="585"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="593"/>
         <source>stark bis</source>
         <translation>strong until</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="588"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="596"/>
         <source>gesperrt ab</source>
         <translation>locked from</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="595"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="603"/>
         <source>Explosiv (Tempo, Antritt, Beweglichkeit):</source>
         <translation>Explosive (Pace, Acceleration, Agility):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="597"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="605"/>
         <source>Kraft (Kraft, Ausdauer, Sprungkraft, Balance):</source>
         <translation>Strength (Strength, Stamina, Jumping Reach, Balance):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="599"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="607"/>
         <source>Technik:</source>
         <translation>Technical:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="602"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="610"/>
         <source>Steuert die Trainingsempfehlung: bis &apos;stark bis&apos; voll trainierbar, danach linear abnehmend bis &apos;gesperrt ab&apos;. Mentale Attribute gelten immer als trainierbar, Charakter-Attribute (Entschlossenheit, Arbeitsrate) nie (nur über Mentoring).</source>
         <translation>Drives the training recommendation: fully trainable up to &apos;strong until&apos;, then decreasing linearly to &apos;locked from&apos;. Mental attributes are always considered trainable, character attributes (Determination, Work Rate) never (mentoring only).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="622"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="630"/>
         <source>Farbschema</source>
         <translation>Colour Scheme</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="629"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="637"/>
         <source>Benutzerdefiniert</source>
         <translation>Custom</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="631"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="639"/>
         <source>Nacht (dunkel)</source>
         <translation>Night (dark)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="632"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="640"/>
         <source>Tag (hell)</source>
         <translation>Day (light)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="633"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="641"/>
         <source>Vereins-/Farbvorlage:</source>
         <translation>Club / colour preset:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="634"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="642"/>
         <source>Aktiver Modus:</source>
         <translation>Active mode:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="636"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="644"/>
         <source>Eine Vorlage setzt eine ruhige Anthrazit-Basis und nur die Vereinsfarben als Akzent (Kopfzeile, Buttons, Interaktion). Farben unten lassen sich danach frei anpassen — das schaltet auf &apos;Benutzerdefiniert&apos;.</source>
         <translation>A preset sets a calm anthracite base and uses only the club colours as accents (header, buttons, interaction). Colours below can then be freely adjusted — that switches to &apos;Custom&apos;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="654"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="662"/>
         <source>Hintergrund</source>
         <translation>Background</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="655"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="663"/>
         <source>Panel / Karten</source>
         <translation>Panel / Cards</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="656"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="664"/>
         <source>Sidebar</source>
         <translation>Sidebar</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="657"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="665"/>
         <source>Kopfzeile</source>
         <translation>Header</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="658"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="666"/>
         <source>Primär / Buttons</source>
         <translation>Primary / Buttons</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="659"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="667"/>
         <source>Interaktion (Tabs, Slider)</source>
         <translation>Interaction (tabs, sliders)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="660"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="668"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="664"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="672"/>
         <source>Nacht-Farben</source>
         <translation>Night Colours</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="665"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="673"/>
         <source>Tag-Farben</source>
         <translation>Day Colours</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="676"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="684"/>
         <source>Farbe wählen</source>
         <translation>Choose colour</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="728"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="736"/>
         <source>Aktive Datenbank</source>
         <translation>Active Database</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="731"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="739"/>
         <source>Wechseln</source>
         <translation>Switch</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="746"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="754"/>
         <source>Neue Datenbank anlegen…</source>
         <translation>Create new database…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="747"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="755"/>
         <source>Legacy-Datenbank importieren…</source>
         <translation>Import legacy database…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="754"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="771"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="762"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="779"/>
         <source>Neue Datenbank</source>
         <translation>New Database</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="755"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="763"/>
         <source>Name (ohne .db):</source>
         <translation>Name (without .db):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="771"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="779"/>
         <source>Football-Manager-Version:</source>
         <translation>Football Manager version:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="789"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="797"/>
         <source>Import</source>
         <translation>Import</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="790"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="798"/>
         <source>Importierte Datenbank &apos;%1&apos; jetzt aktivieren?</source>
         <translation>Activate imported database &apos;%1&apos; now?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="802"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="810"/>
         <source>Datenordner: %1
 (Änderbar über bootstrap.ini; Verschiebe-Assistent folgt in einem späteren Meilenstein.)</source>
         <translation>Data folder: %1
 (Changeable via bootstrap.ini; a move assistant will follow in a later milestone.)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="822"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="830"/>
         <source>Der Spielstand enthält Spieler. Für eine andere Version bitte einen neuen Spielstand anlegen.</source>
         <translation>The save contains players. Please create a new save for a different version.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="874"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="882"/>
         <source>Standard (keine Beschränkung)</source>
         <translation>Default (no restriction)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="896"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="904"/>
         <source>Gewichte für Spielstände von %1.</source>
         <translation>Weights for %1 saves.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="965"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="974"/>
         <source>⚠ %1: Kontrast Text/Hintergrund nur %2:1 (WCAG empfiehlt ≥ 4,5:1)</source>
         <translation>⚠ %1: text/background contrast only %2:1 (WCAG recommends ≥ 4.5:1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="966"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="975"/>
         <source>Nacht</source>
         <translation>Night</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="966"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="975"/>
         <source>Tag</source>
         <translation>Day</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="971"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="980"/>
         <source>✓ Kontrastwerte in Ordnung</source>
         <translation>✓ Contrast values OK</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1085"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1095"/>
         <source>Einstellungen gespeichert.</source>
         <translation>Settings saved.</translation>
     </message>
@@ -5138,7 +5235,7 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="465"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="464"/>
         <source>B-Team</source>
         <translation>B-Team</translation>
     </message>
@@ -5148,67 +5245,67 @@ The original file is not modified.</translation>
         <translation>Please choose your club first (Overview or Settings).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="367"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="366"/>
         <source>Gefilterter Markt: %1 Spieler, %2 davon als Neuzugang durchgerechnet.</source>
         <translation>Filtered market: %1 players, %2 of them simulated as a signing.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="372"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="371"/>
         <source>Mit diesen Filtern gibt der Markt niemanden her, der die Startelf verbessert.</source>
         <translation>With these filters the market offers nobody who improves the starting XI.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="378"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="377"/>
         <source>Größter Hebel: &lt;b&gt;%1 · %2&lt;/b&gt; — %3 (%4, %5) bringt der Startelf %6 DWRS.</source>
         <translation>Biggest lever: &lt;b&gt;%1 · %2&lt;/b&gt; — %3 (%4, %5) adds %6 DWRS to the starting XI.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="390"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="389"/>
         <source>Danach: %1.</source>
         <translation>Then: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="421"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="420"/>
         <source>— unbesetzt —</source>
         <translation>— unfilled —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="429"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="428"/>
         <source>niemand Besseres</source>
         <translation>nobody better</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="449"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="448"/>
         <source>%1 von %2</source>
         <translation>%1 of %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="464"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="463"/>
         <source>Kader</source>
         <translation>Squad</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="487"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="486"/>
         <source>Für %1 (%2) findet sich am gefilterten Markt niemand, der die Startelf verbessert.</source>
         <translation>For %1 (%2) the filtered market has nobody who improves the starting XI.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="490"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="489"/>
         <source>Kaufoptionen für %1 (%2)</source>
         <translation>Signing options for %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="543"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="542"/>
         <source>Schwellen — Versteckt: %1 · Offensichtlich: %2 · Falsche-Seite-Malus: %3 (anpassbar unter Einstellungen → Schwellenwerte)</source>
         <translation>Thresholds — Hidden: %1 · Obvious: %2 · Wrong-side penalty: %3 (adjustable under Settings → Thresholds)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="567"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="566"/>
         <source>✅ Keine nennenswerten Lücken mit den aktuellen Schwellenwerten gefunden.</source>
         <translation>✅ No significant gaps found with the current thresholds.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="569"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="568"/>
         <source>%1 auffällige Position(en) gefunden — schlechteste zuerst.</source>
         <translation>%1 notable position(s) found — worst first.</translation>
     </message>
