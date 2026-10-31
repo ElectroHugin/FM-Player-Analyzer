@@ -165,8 +165,8 @@ void TransfersPage::rebuild()
             secondPlayers.push_back(&player);
     }
 
-    const SquadResult first = m_context.squadBuilder().calculateSquadAndSurplus(
-        clubPlayers, positions, slotOrder, ratings);
+    const SquadResult first = m_context.squadBuilder().calculateSquadForTactic(
+        clubPlayers, tactic, ratings);
     const DevelopmentSquads dev = m_context.squadBuilder().calculateDevelopmentSquads(
         secondPlayers, first.depthPool, positions, slotOrder, ratings,
         first.depthPlayerUids);

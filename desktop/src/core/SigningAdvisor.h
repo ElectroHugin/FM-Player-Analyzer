@@ -65,11 +65,14 @@ namespace SigningAdvisor {
 // are simulated (an exact screen would need every player; the best few per
 // slot are the only realistic winners). optionsPerSlot caps each slot's list.
 // A signing's agreed playing time is unknown, so it is simulated without one.
+// With a tactic name, a two-phase tactic (FM27) is computed over both line-ups
+// (SquadBuilder::calculateSquadForTactic); positions/slotOrder must then be
+// that tactic's.
 SigningAnalysis analyze(const SquadBuilder &builder, const std::vector<const Player *> &squad,
                         const std::vector<const Player *> &market,
                         const QHash<QString, QString> &positions, const QStringList &slotOrder,
                         const RoleRatings &ratings, int candidatesPerSlot = 12,
-                        int optionsPerSlot = 15);
+                        int optionsPerSlot = 15, const QString &tactic = QString());
 
 } // namespace SigningAdvisor
 

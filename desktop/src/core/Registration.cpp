@@ -195,9 +195,7 @@ std::vector<RankedPlayer> rankPool(const SquadBuilder &builder, const Definition
             it.value() = tier;
     };
     for (const QString &tactic : tactics) {
-        const SquadResult squad = builder.calculateSquadAndSurplus(
-            pool, definitions.tacticRoles().value(tactic), definitions.tacticSlotOrder(tactic),
-            ratings);
+        const SquadResult squad = builder.calculateSquadForTactic(pool, tactic, ratings);
         for (const XiCell &cell : squad.startingXi)
             if (cell.isFilled())
                 promote(cell.playerUid, Tier::StartingXi);
@@ -358,9 +356,7 @@ std::vector<QuotaCost> quotaCosts(const SquadBuilder &builder, const Definitions
 {
     const auto xiAverage = [&](const std::vector<const Player *> &players,
                                const QString &tactic) {
-        const SquadResult squad = builder.calculateSquadAndSurplus(
-            players, definitions.tacticRoles().value(tactic),
-            definitions.tacticSlotOrder(tactic), ratings);
+        const SquadResult squad = builder.calculateSquadForTactic(players, tactic, ratings);
         double sum = 0.0;
         int filled = 0;
         for (const XiCell &cell : squad.startingXi) {

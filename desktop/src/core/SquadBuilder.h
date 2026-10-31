@@ -43,6 +43,11 @@ struct SquadResult {
     std::vector<const Player *> depthPool; // remaining after XI + B-team, in pool order
     QSet<QString> depthPlayerUids;
     QSet<QString> coreSquadUids; // XI + B-team + depth
+    // Two-phase tactic (calculateSquadForTactic): the slots are those of the
+    // line-up without ball and a cell's rating is the player's value over
+    // both line-ups (valueOfUid, untruncated).
+    bool twoPhase = false;
+    QHash<QString, double> valueOfUid;
 };
 
 // Best XI and B-team of a two-phase tactic (FM26+): every player of a team has
@@ -106,6 +111,13 @@ public:
                                                const QString &tactic, const RoleRatings &ratings,
                                                double ipShare, bool applyAptWeight = true) const;
 
+    // Best XI, B-team and depth for a tactic by name: calculateSquadAndSurplus
+    // for a one-line-up tactic, calculateTwoPhaseSquad (with the configured
+    // share "with ball") folded into a SquadResult for a two-phase tactic.
+    SquadResult calculateSquadForTactic(const std::vector<const Player *> &pool,
+                                        const QString &tactic, const RoleRatings &ratings,
+                                        bool applyAptWeight = true) const;
+
     DevelopmentSquads calculateDevelopmentSquads(
         const std::vector<const Player *> &secondTeamPlayers,
         const std::vector<const Player *> &firstTeamRemnants,
@@ -117,6 +129,11 @@ public:
     static double bestDwrsForPlayer(const Player &player, const RoleRatings &ratings);
 
 private:
+    // Best depth option per role among players outside XI and B-team.
+    void fillDepthOptions(const std::vector<const Player *> &pool,
+                          const QSet<QString> &xiOrBTeamUids, const QStringList &roles,
+                          const RoleRatings &ratings, SquadResult &result) const;
+
     const Definitions &m_definitions;
     const AppConfig &m_config;
 

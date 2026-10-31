@@ -460,8 +460,7 @@ void BestXiPage::rebuild()
     const auto firstTeamOf = [&](const std::vector<const Player *> &club,
                                  const std::vector<const Player *> &second, SquadResult *full,
                                  QString *note, std::vector<const Player *> *pool) {
-        *full = m_context.squadBuilder().calculateSquadAndSurplus(club, positions, slotOrder,
-                                                                  ratings);
+        *full = m_context.squadBuilder().calculateSquadForTactic(club, tactic, ratings);
         if (!restricted) {
             if (pool)
                 *pool = club;
@@ -502,8 +501,8 @@ void BestXiPage::rebuild()
                                    .arg(missed.join(QStringLiteral(", ")));
             }
         }
-        SquadResult first = m_context.squadBuilder().calculateSquadAndSurplus(
-            eligiblePlayers, positions, slotOrder, ratings);
+        SquadResult first = m_context.squadBuilder().calculateSquadForTactic(
+            eligiblePlayers, tactic, ratings);
         if (pool)
             *pool = std::move(eligiblePlayers);
         return first;

@@ -300,6 +300,25 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
             xiOrBTeamUids.insert(cell.playerUid);
     }
 
+    QStringList uniqueRoles;
+    for (const QString &slot : slotOrder) {
+        const QString role = positions.value(slot);
+        if (!uniqueRoles.contains(role))
+            uniqueRoles.append(role);
+    }
+    fillDepthOptions(pool, xiOrBTeamUids, uniqueRoles, ratings, result);
+
+    result.startingXi = std::move(xi);
+    result.bTeam = std::move(bTeam);
+    result.depthPool = std::move(depthPool);
+    result.coreSquadUids = xiOrBTeamUids + result.depthPlayerUids;
+    return result;
+}
+
+void SquadBuilder::fillDepthOptions(const std::vector<const Player *> &pool,
+                                    const QSet<QString> &xiOrBTeamUids, const QStringList &roles,
+                                    const RoleRatings &ratings, SquadResult &result) const
+{
     std::vector<const Player *> availableDepth;
     for (const Player *p : pool) {
         if (!xiOrBTeamUids.contains(p->uid))
@@ -308,12 +327,7 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
 
     QHash<QString, QSet<QString>> rolesCoveredByPlayer;
     if (!availableDepth.empty()) {
-        QStringList uniqueRoles;
-        for (const QString &slot : slotOrder) {
-            const QString role = positions.value(slot);
-            if (!uniqueRoles.contains(role))
-                uniqueRoles.append(role);
-        }
+        QStringList uniqueRoles = roles;
         std::sort(uniqueRoles.begin(), uniqueRoles.end());
 
         for (const QString &role : uniqueRoles) {
@@ -356,9 +370,51 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
         }
     }
 
-    result.startingXi = std::move(xi);
-    result.bTeam = std::move(bTeam);
-    result.depthPool = std::move(depthPool);
+}
+
+SquadResult SquadBuilder::calculateSquadForTactic(const std::vector<const Player *> &pool,
+                                                  const QString &tactic,
+                                                  const RoleRatings &ratings,
+                                                  bool applyAptWeight) const
+{
+    if (!m_definitions.isTwoPhaseTactic(tactic)) {
+        return calculateSquadAndSurplus(pool, m_definitions.tacticRoles().value(tactic),
+                                        m_definitions.tacticSlotOrder(tactic), ratings,
+                                        applyAptWeight);
+    }
+    const TwoPhaseSquadResult twoPhase = calculateTwoPhaseSquad(
+        pool, tactic, ratings, m_config.ipSharePercent() / 100.0, applyAptWeight);
+
+    SquadResult result;
+    result.twoPhase = true;
+    result.valueOfUid = twoPhase.valueOfUid;
+    // Slots of the line-up without ball (the base shape); the rating is the
+    // player's value over both line-ups, so totals and averages compare
+    // players and tactics fairly.
+    QSet<QString> xiOrBTeamUids;
+    const auto combine = [&](const QHash<QString, XiCell> &team, QHash<QString, XiCell> &out) {
+        for (auto it = team.constBegin(); it != team.constEnd(); ++it) {
+            XiCell cell = it.value();
+            if (cell.isFilled()) {
+                cell.rating = std::trunc(twoPhase.valueOfUid.value(cell.playerUid, cell.rating));
+                xiOrBTeamUids.insert(cell.playerUid);
+            }
+            out.insert(it.key(), cell);
+        }
+    };
+    combine(twoPhase.startingOop, result.startingXi);
+    combine(twoPhase.bTeamOop, result.bTeam);
+
+    const Definitions::TwoPhaseTactic &lineUps = m_definitions.twoPhaseTactics().value(tactic);
+    QStringList roles;
+    for (const QString &slot : lineUps.ipOrder)
+        roles.append(lineUps.ip.value(slot));
+    for (const QString &slot : lineUps.oopOrder)
+        roles.append(lineUps.oop.value(slot));
+    roles.removeDuplicates();
+    fillDepthOptions(pool, xiOrBTeamUids, roles, ratings, result);
+
+    result.depthPool = twoPhase.depthPool;
     result.coreSquadUids = xiOrBTeamUids + result.depthPlayerUids;
     return result;
 }

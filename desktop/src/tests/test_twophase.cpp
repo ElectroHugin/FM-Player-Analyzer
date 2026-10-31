@@ -260,6 +260,44 @@ private slots:
         const auto r = solve(defs, players, ratings, 0.5);
         QCOMPARE(r.startingIp.value(QStringLiteral("AMR")).playerUid, QStringLiteral("sane"));
     }
+
+    void squadForTacticFoldsBothLineUps()
+    {
+        // The pages and advisors see a two-phase tactic as one SquadResult:
+        // slots without ball, rating = value over both line-ups, depth over
+        // the roles of both line-ups.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AMR", "IF"}, {"DR", "FB"}}),
+                          slotMap({{"AMR", "TW"}, {"DR", "PFB"}})));
+        const std::vector<Player> players = {makePlayer(QStringLiteral("olise"), QStringLiteral("AM (R)")),
+                                             makePlayer(QStringLiteral("gnabry"), QStringLiteral("AM (R)")),
+                                             makePlayer(QStringLiteral("boey"), QStringLiteral("D (R)")),
+                                             makePlayer(QStringLiteral("musiala"), QStringLiteral("AM (C)"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("olise"), 90}, {QStringLiteral("gnabry"), 80},
+                                         {QStringLiteral("musiala"), 70}};
+        ratings[QStringLiteral("TW")] = {{QStringLiteral("olise"), 55}, {QStringLiteral("gnabry"), 75}};
+        ratings[QStringLiteral("FB")] = {{QStringLiteral("boey"), 70}};
+        ratings[QStringLiteral("PFB")] = {{QStringLiteral("boey"), 72}};
+
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+        QCOMPARE(m_config->ipSharePercent(), 50);
+        const SquadResult squad =
+            builder.calculateSquadForTactic(pool, QStringLiteral("T"), ratings, false);
+        QVERIFY(squad.twoPhase);
+        QCOMPARE(squad.startingXi.value(QStringLiteral("AMR")).playerUid, QStringLiteral("gnabry"));
+        QCOMPARE(squad.startingXi.value(QStringLiteral("AMR")).rating, 77.0);
+        QCOMPARE(squad.valueOfUid.value(QStringLiteral("gnabry")), 77.5);
+        QCOMPARE(squad.bTeam.value(QStringLiteral("AMR")).playerUid, QStringLiteral("olise"));
+        // Musiala fits no slot but is the depth option for the role with ball.
+        QCOMPARE(squad.bestDepthOptions.value(QStringLiteral("IF")).value(0).playerUid,
+                 QStringLiteral("musiala"));
+        QVERIFY(squad.coreSquadUids.contains(QStringLiteral("musiala")));
+        QCOMPARE(squad.depthPool.size(), size_t(1));
+    }
 };
 
 QTEST_GUILESS_MAIN(TestTwoPhase)

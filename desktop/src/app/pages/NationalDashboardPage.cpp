@@ -300,8 +300,8 @@ void NationalDashboardPage::rebuildAnalysis()
     const auto positions = m_context.definitions().tacticRoles().value(tactic);
     if (!positions.isEmpty()) {
         const QStringList slotOrder = m_context.definitions().tacticSlotOrder(tactic);
-        const SquadResult squad = m_context.squadBuilder().calculateSquadAndSurplus(
-            squadPlayers, positions, slotOrder, m_context.ratings(), false);
+        const SquadResult squad = m_context.squadBuilder().calculateSquadForTactic(
+            squadPlayers, tactic, m_context.ratings(), false);
 
         QHash<QString, StrengthGridWidget::SlotStrength> strengths;
         for (auto it = positions.constBegin(); it != positions.constEnd(); ++it) {

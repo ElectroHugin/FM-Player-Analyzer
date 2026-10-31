@@ -58,7 +58,8 @@ Recommendation recommend(const SquadBuilder &builder,
                          const QHash<QString, QString> &positions,
                          const QStringList &slotOrder, const RoleRatings &ratings,
                          int totalCount, int goalkeeperCount,
-                         const std::vector<const Player *> &currentSquad);
+                         const std::vector<const Player *> &currentSquad,
+                         const QString &tactic = QString());
 
 } // namespace NationalCallup
 

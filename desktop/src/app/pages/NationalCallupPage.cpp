@@ -451,7 +451,7 @@ void NationalCallupPage::compute()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     const NationalCallup::Recommendation rec = NationalCallup::recommend(
         m_context.squadBuilder(), pool, positions, slotOrder, m_context.ratings(), total, gks,
-        baseline);
+        baseline, tactic);
     QApplication::restoreOverrideCursor();
 
     // Remember the final squad for "apply".

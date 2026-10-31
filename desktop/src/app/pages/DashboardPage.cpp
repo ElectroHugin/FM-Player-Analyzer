@@ -504,8 +504,8 @@ void DashboardPage::refreshAnalysis()
     }
 
     const QStringList slotOrder = m_context.definitions().tacticSlotOrder(tactic);
-    const SquadResult squad = m_context.squadBuilder().calculateSquadAndSurplus(
-        clubPlayers, positions, slotOrder, m_context.ratings());
+    const SquadResult squad = m_context.squadBuilder().calculateSquadForTactic(
+        clubPlayers, tactic, m_context.ratings());
 
     // Core squad players (XI + B-team + depth).
     std::vector<const Player *> coreSquad;
