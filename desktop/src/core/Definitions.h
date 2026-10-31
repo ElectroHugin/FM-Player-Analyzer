@@ -88,6 +88,9 @@ public:
     // Phase of a role: "ip", "oop" ("role_phases" in the JSON) or "both"
     // (FM24 roles, unknown roles).
     QString rolePhase(const QString &role) const;
+    // True when the version splits roles into phases (FM27): tactics are
+    // then two line-ups, one with ball and one without.
+    bool hasRolePhases() const { return !m_rolePhases.isEmpty(); }
     const QStringList &tacticNames() const { return m_tacticNames; }
 
     // JSON-file insertion order (QJsonObject sorts keys alphabetically, but
