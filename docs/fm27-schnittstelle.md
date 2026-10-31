@@ -108,6 +108,25 @@ getestet mit PR #4:
 - Für Kaufberatung fehlen in dieser Ansicht `Height`, `Personality`, die Fuß-Spalten u. a.
   → Preset „Analyzer“ auch für die Spielersuche verwenden.
 
+### Exporter 1.0.0 (31.10.2026)
+
+Drei Testexporte (Kader 43 Spieler, Spielerdatenbank 235, Shortlist 6), je CSV und HTML,
+getestet mit PR #4 (Stand `b03dbb5`):
+
+- **Alle sechs Dateien werden fehlerfrei eingelesen**, keine unbekannten Spalten, keine
+  fehlerhaften Zeilen. CSV und HTML liefern identische Ergebnisse.
+- Die Befunde von oben sind behoben: Fuß-Spalten und `Inf` gefüllt, `Position` ohne Rollennamen
+  (alle Spieler haben erkannte Positionen), Attribut-Spannen kommen bei fremden Spielern an,
+  unbekannte Werte als `-` (19 kaum gescoutete Spieler in der Datenbank, wird korrekt als
+  „unbekannt“ gespeichert).
+- Spaltenköpfe weichen je Ansicht ab (`Player` / `Name`, `Recommendation` / `Rec.`), `Nation`
+  im Kader als Langname, sonst als Kürzel. PR #4 fängt beides ab.
+- **Spielerdatenbank und Shortlist haben keine Spalte `Personality`.** Bitte ergänzen, falls die
+  Ansicht sie anbietet (wird für Talent- und Kaufbewertung gebraucht).
+- `Ability` kann `Unknown` sein (Spielerdatenbank). Auffällig: Chris Afanou im Kader hat
+  `Ability` 3.5 bei `Potential` 1.0. Bitte im Spiel prüfen, ob die Sterne richtig gelesen werden.
+- `Player's Interest` ist in der Shortlist leer.
+
 ## Offene Fragen
 
 - **Presets technisch:** Exportiert der Exporter nur die sichtbaren Spalten der
@@ -132,5 +151,6 @@ getestet mit PR #4:
 ## Änderungen
 
 - 30.10.2026: erste Fassung (Analyzer-Projekt).
+- 31.10.2026: Test Exporter 1.0.0 (alle Dateien fehlerfrei, Personality fehlt in Datenbank/Shortlist).
 - 30.10.2026: Befund Spielersuche (Position mit Rolle, keine Spannen).
 - 30.10.2026: Presets mit Spaltenlisten und Befund aus dem ersten echten Export ergänzt.
