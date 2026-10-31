@@ -184,6 +184,9 @@ static const QSet<QString> &fm24IgnoredExportColumns()
 static const QSet<QString> &fm27IgnoredExportColumns()
 {
     static const QSet<QString> ignored = {
+        // Scout grade ("B- Very Good"), first column of the Player Database
+        // view; not in the squad's column menu.
+        QStringLiteral("Recommendation"),
         QStringLiteral("Best Pos"), QStringLiteral("Best Role"), QStringLiteral("Eccentricity"),
         QStringLiteral("Communication"), QStringLiteral("Punching"),
         QStringLiteral("Natural Fitness"), QStringLiteral("Free Kick Taking"),

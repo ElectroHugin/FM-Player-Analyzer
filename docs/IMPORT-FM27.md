@@ -114,7 +114,8 @@ Note mit Punkt oder Komma.
 Alle anderen Spalten, die FM27 anbietet, kennt der Analyzer und überspringt sie
 still, darunter `Communication`, `Eccentricity`, `Punching`, `Natural Fitness`,
 `Free Kick Taking`, `Long Throws` und `Penalty Taking` (wie bei FM24 nicht unter
-den bewerteten Attributen). Als *unbekannte Spalte* meldet der Import nur Köpfe, die
+den bewerteten Attributen) sowie `Recommendation` (Scout-Empfehlung von A+ bis F,
+erste Spalte der Ansicht für die Spielerdatenbank). Als *unbekannte Spalte* meldet der Import nur Köpfe, die
 in keiner der beiden Listen stehen, also z. B. Spalten, die ein Patch umbenannt hat.
 
 ## Was bei FM27 (noch) anders ist

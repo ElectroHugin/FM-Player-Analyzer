@@ -241,11 +241,11 @@ private slots:
             + QStringLiteral(
                   "Unique ID,Player,Position,Age,Nation,Club,Transfer Value,Wage,Rating,"
                   "Playing Time,Height,Best Role,Nation,Acceleration,Off The Ball,Team Work,"
-                  "One On Ones,Command Of Area,Eccentricity\r\n"
+                  "One On Ones,Command Of Area,Eccentricity,Recommendation\r\n"
                   "8718372,Manuel Neuer,GK,40,GER,FC Bayern,\"€1.5M - €3.1M\",€300K p/w,7.05,"
-                  "First-Choice Goalkeeper,193 cm,BGK,Germany,9,5,14,18,17,15\r\n"
+                  "First-Choice Goalkeeper,193 cm,BGK,Germany,9,5,14,18,17,15,B- Very Good\r\n"
                   "2002,Jung Talent,\"D (C), DM\",17,BRA,FC Bayern,€500K,€2K p/w,-,Youngster,"
-                  "181 cm,CD,Brazil,12-15,11,13,1,1,3\r\n")
+                  "181 cm,CD,Brazil,12-15,11,13,1,1,3,\r\n")
                   .toUtf8();
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
