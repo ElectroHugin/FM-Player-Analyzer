@@ -73,3 +73,8 @@ add_test(NAME test_navigation COMMAND test_navigation)
 set_tests_properties(test_navigation PROPERTIES
     ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
 )
+
+# FM27 role data (generated definitions_fm27.json).
+fm_add_test(test_definitions_fm27)
+target_compile_definitions(test_definitions_fm27 PRIVATE
+    DEFINITIONS_FM27="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json")

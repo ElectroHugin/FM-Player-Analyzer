@@ -128,9 +128,12 @@ in keiner der beiden Listen stehen, also z. B. Spalten, die ein Patch umbenannt 
 
 - **Keine Registrierung:** FM27 hat keine Spalte `Reg`. Der Registrierungs-Assistent
   ist für FM27-Spielstände deshalb aus.
-- **Rollen und Taktiken:** starten als Kopie der FM24-Rollen
-  (`definitions_fm27.json`), bis die FM27-Rollenliste mit zwei Rollen pro Slot
-  eingebaut ist ([KONZEPT_ZWEI_ROLLEN.md](../desktop/KONZEPT_ZWEI_ROLLEN.md)).
+- **Rollen und Taktiken:** die 79 FM27-Rollen (40 mit Ball, 39 ohne Ball) mit Key- und
+  Preferable-Attributen aus dem Spiel, erzeugt aus `desktop/data/fm27/` durch
+  `desktop/scripts/make_definitions_fm27.py` (`definitions_fm27.json`). Startaktiken sind
+  die Formationen ohne Ball mit Standardrollen. Zwei Rollen pro Slot folgen nach
+  [KONZEPT_ZWEI_ROLLEN.md](../desktop/KONZEPT_ZWEI_ROLLEN.md). Die Torwart-Attribute
+  `Communication` und `Eccentricity` liest der Analyzer noch nicht ein.
 - **Gewichte:** Attributkategorien und Gewichte sind vorläufig die von FM24
   (eigener Abschnitt `[Weights_fm27]` in `config.ini`).
 
