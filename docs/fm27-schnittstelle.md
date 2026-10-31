@@ -121,10 +121,14 @@ getestet mit PR #4 (Stand `b03dbb5`):
   „unbekannt“ gespeichert).
 - Spaltenköpfe weichen je Ansicht ab (`Player` / `Name`, `Recommendation` / `Rec.`), `Nation`
   im Kader als Langname, sonst als Kürzel. PR #4 fängt beides ab.
-- **Spielerdatenbank und Shortlist haben keine Spalte `Personality`.** Bitte ergänzen, falls die
-  Ansicht sie anbietet (wird für Talent- und Kaufbewertung gebraucht).
-- `Ability` kann `Unknown` sein (Spielerdatenbank). Auffällig: Chris Afanou im Kader hat
-  `Ability` 3.5 bei `Potential` 1.0. Bitte im Spiel prüfen, ob die Sterne richtig gelesen werden.
+- Spielerdatenbank und Shortlist haben keine Spalte `Personality`. Laut Edmund bietet FM27 sie
+  für gescoutete Spieler nicht an, also kein Exporter-Fehler. Der Analyzer muss ohne auskommen.
+- `Ability` kann `Unknown` sein (Spielerdatenbank).
+- **Sterne mit gemischter Farbe werden falsch gezählt.** Chris Afanou zeigt im Spiel bei
+  Potential Ability 1 gelben + 1 grauen Stern (= 2.0), exportiert wird `1.0`. Gelb = sichere
+  Einschätzung, grau = unsichere. Vermutlich zählt der Exporter bei gemischten Sternen nur die
+  gelben. Wunsch: Gesamtzahl exportieren (hier 2.0), optional eine eigene Spalte für den
+  sicheren Anteil.
 - `Player's Interest` ist in der Shortlist leer.
 
 ## Offene Fragen
@@ -151,6 +155,6 @@ getestet mit PR #4 (Stand `b03dbb5`):
 ## Änderungen
 
 - 30.10.2026: erste Fassung (Analyzer-Projekt).
-- 31.10.2026: Test Exporter 1.0.0 (alle Dateien fehlerfrei, Personality fehlt in Datenbank/Shortlist).
+- 31.10.2026: Test Exporter 1.0.0 (alle Dateien fehlerfrei; Sterne-Zählung bei gemischten Farben falsch).
 - 30.10.2026: Befund Spielersuche (Position mit Rolle, keine Spannen).
 - 30.10.2026: Presets mit Spaltenlisten und Befund aus dem ersten echten Export ergänzt.
