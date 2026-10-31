@@ -156,8 +156,9 @@ unter `views/fm27/` (Anleitung: `docs/VIEW-ANALYZER-FM27.md` im Exporter):
 | Recruitment > Shortlists | `FM27-PlayerAnalyzer-Shortlist-Standard.fmf` | `shortlist_…` |
 
 Inhalt jeweils Preset „Analyzer“. Unterschiede in Datenbank und Shortlist: kein `Personality`
-(bietet FM27 dort nicht an), zusätzlich `Rec.` (Scout-Note `A+` bis `F`), in der Shortlist
-zusätzlich *Player's Interest*. Die Spielerspalte heißt dort `Name` statt `Player`.
+(bietet FM27 dort nicht an). Die Datenbank hat zusätzlich `Rec.` (Scout-Note `A+` bis `F`),
+die Shortlist stattdessen `Recommendation` (dieselbe Note mit Wort, z. B. `B+ Superb`) und
+`Player's Interest` (oft leer); bestätigt mit dem ersten Shortlist-Export am 31.10.2026. Die Spielerspalte heißt dort `Name` statt `Player`.
 `Nation` kommt im Kader als voller Name, in der Datenbank als Kürzel. In der Datenbank gibt es
 Attribut-Spannen (`8-13`) sowie `Unknown` bei Ability/Potential. Der Analyzer verarbeitet all
 das seit PR #4 (`Name` und `Rec.` als Alias, `nationCode()`).
@@ -233,5 +234,6 @@ Metadaten nur im Dateinamen, etwa `fm27_squad_analyzer_20261030_192739.csv`.
 - 30.10.2026: Ansichten (.fmf) als Presets, Menükatalog `fm27-menu.csv` (Exporter-Projekt). Keine Spaltennamen geändert.
 - 30.10.2026: Befund Spielersuche (Position mit Rolle, keine Spannen).
 - 31.10.2026: Fertige Ansichten je Bildschirm (Kader, Spieler-Datenbank, Shortlist), Befunde und Dateinamen (Exporter-Projekt). Keine Spaltennamen im Exporter geändert; `Name` und `Rec.` sind Spielköpfe.
+- 31.10.2026: Shortlist-Spalten bestätigt: `Recommendation` (statt `Rec.`) und `Player's Interest`, beide neu in `docs/columns/fm27.csv` des Exporters (Exporter-Projekt). Der Analyzer ignoriert beide bisher; als Alias für `Rec.` wäre `Recommendation` später möglich.
 - 30.10.2026: Presets mit Spaltenlisten und Befund aus dem ersten echten Export ergänzt.
 - 30.10.2026: Antwort zu den leeren Spalten ab Nr. 256: Grenze des Spiels (Exporter-Projekt).
