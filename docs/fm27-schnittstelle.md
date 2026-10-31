@@ -1,6 +1,6 @@
 # Schnittstelle FM View Exporter ↔ FM Player Analyzer (FM27)
 
-Gemeinsame Absprache beider Projekte. Stand: 30.10.2026.
+Gemeinsame Absprache beider Projekte. Stand: 31.10.2026 (Exporter 1.0.0/1.0.1).
 Liegt im Analyzer-Repo auf dem Branch `claude/project-thread-1hrepb`, bis das
 FM27-Super-Update auf `main` kommt.
 
@@ -8,33 +8,52 @@ FM27-Super-Update auf `main` kommt.
 
 | Thema | Maßgebliche Quelle |
 | --- | --- |
-| Spaltennamen und welche Spalte welches Analyzer-Feld füllt | Exporter: `docs/columns/fm27.csv`, Spalte `analyzer_field` |
-| Wie der Analyzer die Spalten liest (Pflicht, Formate, ignoriert) | Analyzer: `docs/IMPORT-FM27.md` und `desktop/src/core/ImportSchema.cpp` (`fm27AttributeMapping()`) |
-| Filter-Presets, Wertformate, Metadaten, offene Fragen | **diese Datei** |
+| Spaltenköpfe, Bedeutung, Analyzer-Feld | Exporter: `docs/columns/fm27.csv` |
+| Menüeinträge zum Zusammenstellen von Ansichten | Exporter: `docs/columns/fm27-menu.csv` |
+| Fertige Ansichten (`.fmf`) und Anleitung | Exporter: `views/fm27/`, `docs/VIEW-ANALYZER-FM27.md` |
+| Wie der Analyzer die Spalten liest (Pflicht, Formate, Aliasse) | Analyzer: `docs/IMPORT-FM27.md`, `desktop/src/core/ImportSchema.cpp` |
+| Presets, Grundregeln, offene Fragen | **diese Datei** |
 
 Ändert sich etwas an einer Stelle, wird die andere im selben Zug angepasst und
 hier unter „Änderungen“ vermerkt.
 
 ## Grundregeln für den Export
 
-1. **Spaltenköpfe genau wie im Spiel** (englische Oberfläche, volle Namen wie
-   `Acceleration`, `Off The Ball`, `Unique ID`). Keine eigenen Kürzel.
-2. **`Unique ID` und `Player` in jedem Export**, auch in kleinen Presets.
-   `Unique ID` ist der Schlüssel, über den der Analyzer Dateien zusammenführt.
-3. **Werte wie angezeigt**, nicht umgerechnet: Spannen `12-15`, maskiert `-`,
-   Einheiten (`193 cm`, `€71M - €95M`) bleiben drin, der Analyzer liest sie.
-4. **CSV:** UTF-8 (BOM erlaubt), Trennzeichen fest pro Datei, Felder mit
-   Trennzeichen oder Zeilenumbruch in `"…"`. Der Analyzer erkennt `;`, `,` und Tab.
-5. **HTML:** eine `<table>` mit `<th>`-Kopfzeile.
-6. **Doppelte Spaltenköpfe** (z. B. `Nation`): erste Spalte zählt beim Analyzer.
-   Neue Doppelungen bitte hier melden.
-7. **Wünschenswert:** Metadaten im Dateinamen oder als Kommentarzeile, wenn ohne
-   Aufwand möglich: FM-Version, Ansicht (Kader/Suche/Scouting), Preset, Datum.
+1. **Spaltenköpfe genau wie im Spiel** (englische Oberfläche). Keine eigenen Kürzel.
+   Je Bildschirm können Köpfe abweichen (`Player`/`Name`, `Rec.`/`Recommendation`);
+   der Analyzer führt dafür Aliasse.
+2. **`Unique ID` und Spielername in jedem Export.** `Unique ID` ist der Schlüssel.
+3. **Werte wie angezeigt**, nicht umgerechnet: Spannen `12-15`, unbekannt `-`,
+   Einheiten (`193 cm`, `€71M - €95M`, `10.4km`, `81%`), Noten `7.12`.
+4. **CSV:** UTF-8 mit BOM, Stil `English` (Komma trennt, Punkt ist Dezimalzeichen).
+   `Export.CsvStyle = German` (Dezimalkomma) ist für den Analyzer nicht empfohlen.
+5. **HTML:** eine `<table>` mit `<th>`-Kopfzeile, Bildschirm im Titel.
+6. **Doppelte Spaltenköpfe** (`Nation`, `Expires`, `Attacking - Tactical`,
+   `Defending - Technical`): beim Analyzer zählt die erste Spalte.
+7. **Höchstens etwa 250 Spalten je Ansicht.** FM27 befüllt nur die ersten 255 Spalten,
+   auch im Spiel selbst. Wichtige Spalten nach vorn.
+8. **Sterne** (`Ability`, `Potential`, `Role Ability`): Anzahl so, wie sie im Spiel gefüllt
+   aussieht, gelb und grau zusammen (ab Exporter 1.0.1). `Unknown`, wenn das Spiel keine zeigt.
+9. **Dateinamen:** `squad_…`, `player-database_…`, `shortlist_…` plus Zeitstempel; Präfix,
+   Zeitstempel und Format (CSV/HTML/beides) sind einstellbar. Der Bildschirm steht immer im
+   Namen. Die FM-Version fehlt noch (Vorschlag: `fm27_` als Präfix).
 
-## Filter-Presets (Entwurf)
+## Presets
 
-Ziel: kleine, fokussierte Exporte statt immer aller 375 Spalten. Abgeleitet aus Edmunds
-Voll-Export vom 30.10.2026. `Unique ID` und `Player` stehen immer vorn.
+Ein Preset ist eine **gespeicherte Ansicht im Spiel**: Der Exporter liest nur die Spalten,
+die die aktuelle Ansicht zeigt. Der Analyzer legt fest, welche Spalten ein Preset braucht,
+Edmund baut daraus die Ansicht, der Exporter liefert sie als `.fmf` mit. FM27 teilt
+Ansichten nicht zwischen Bildschirmen, deshalb gibt es je Bildschirm eine Datei.
+
+### Fertig (31.10.2026)
+
+| Bildschirm | Ansicht | Exportdatei |
+| --- | --- | --- |
+| Kader | `FM27-PlayerAnalyzer-Squad-Standard.fmf` | `squad_…` |
+| Recruitment > Player Database | `FM27-PlayerAnalyzer-PlayerDatabase-Standard.fmf` | `player-database_…` |
+| Recruitment > Shortlists | `FM27-PlayerAnalyzer-Shortlist-Standard.fmf` | `shortlist_…` |
+
+Alle drei enthalten das Preset „Analyzer“.
 
 ### Analyzer (täglicher Import)
 
@@ -51,7 +70,8 @@ Voll-Export vom 30.10.2026. `Unique ID` und `Player` stehen immer vorn.
   `Passing`, `Tackling`, `Technique`
 - Standards: `Corners`, `Free Kick Taking`, `Long Throws`, `Penalty Taking`
 
-(69 Spalten. Die Fuß-Spalten bitte weit vorn, siehe Befund unten.)
+(69 Spalten. In Player Database und Shortlist ohne `Personality`, dafür `Rec.` bzw.
+`Recommendation` und `Player's Interest`; die Spielerspalte heißt dort `Name`.)
 
 ### Analyzer-Voll (Kaufberatung, Talente)
 
@@ -71,90 +91,43 @@ Torwart zusätzlich: `Con/90`, `Cln/90`, `Saves/90`, `Sv %`, `xSv %`, `xGP/90`.
 
 ### Alles
 
-Alle verfügbaren Spalten (Fehlersuche, neuer Patch).
+Alle verfügbaren Spalten, wegen der Grenze von 255 Spalten aufgeteilt auf zwei Ansichten
+(Fehlersuche, neuer Patch).
 
-## Befund aus dem ersten echten Export (30.10.2026)
+## Testergebnisse
 
-Datei `squad_20261030_192739` (Kader FC Bayern, 24 Spieler, 375 Spalten), getestet mit PR #4:
+| Datum | Exporte | Ergebnis mit PR #4 |
+| --- | --- | --- |
+| 30.10. | Kader, Voll-Export (375 Spalten) | fehlerfrei; Spalten ab Nr. 256 leer (Grenze des Spiels) |
+| 30.10. | alte Spielersuche-Ansicht | Position mit angehängter Rolle → behoben in 1.0.0 |
+| 31.10. | 1.0.0: Kader (43), Player Database (235), Shortlist (6), je CSV + HTML | alle fehlerfrei, keine unbekannten Spalten, Spannen und `-` korrekt |
+| 31.10. | Chris Afanou: Potential 1 gelber + 1 grauer Stern | als `1.0` exportiert → behoben in 1.0.1 (`2.0`) |
 
-- CSV und HTML werden fehlerfrei eingelesen, keine unbekannten Spalten, alle 40 bewerteten
-  Attribute gefüllt. CSV und HTML haben identische Köpfe.
-- **Spalten 256–375 kommen leer an** (nur `World Reputation` hat „Unknown“). Letzte gefüllte
-  Spalte: Nr. 255 `Yearly Wage Rise`. Betroffen u. a. `Preferred Foot`, `Left Foot`,
-  `Right Foot`, `Inf`, `DoB`, `CON`, `SHP`, `Morale`, `Sec. Position`. Der Analyzer braucht die
-  Fuß-Spalten für Seitenpräferenz in Best XI und Kaderlücken. **Bitte im Exporter prüfen**
-  (Grenze bei 255 Spalten? Zellen außerhalb des sichtbaren Bereichs nicht gerendert?).
-- Statistik-Spalten sind alle 0/`-` (Saisonbeginn). Format sonst: Punkt als Dezimaltrenner,
-  `0%`, `0.0km`, Datum `30/6/2027`, große Beträge `"€65,000,000"`.
-
-### Zweiter Export: Spielersuche (30.10.2026)
-
-Datei `players_20261030_201715` (Spielersuche, eigene Attribut-Ansicht, 24 Spieler, 61 Spalten),
-getestet mit PR #4:
-
-- Import läuft durch, alle 40 Attribute gefüllt. CSV und HTML identisch.
-- **Spalte `Position` enthält in der Spielersuche zusätzlich die Rolle**, z. B.
-  `ST (C) Target Forward`, `DM, M (C) Deep-Lying Playmaker`, `GK Goalkeeper`. Der Analyzer
-  erkennt dann die letzte Position nicht mehr: 15 von 24 Spielern haben gar keine Position,
-  bei den übrigen fehlt die letzte (z. B. `ST (C)`). In der Kaderansicht stand nur die Position.
-  **Wunsch an den Exporter:** Position und Rolle trennen, also `Position` = nur Positionstext,
-  die Rolle in eine eigene Spalte (Vorschlag `Position Role`). Der Analyzer bekommt zusätzlich
-  eine Absicherung, die einen angehängten Rollennamen abschneidet.
-- **Keine Attribut-Spannen**, auch nicht bei `Knowledge` = `None`. Offen: Zeigt das Spiel für
-  diese Spieler wirklich alle Werte, oder liest der Exporter mehr als die Oberfläche anzeigt?
-- Neue Spalten `Recommendation` (`B- Very Good`) und `Knowledge` (`Extensive Knowledge`/`None`)
-  kennt der Analyzer noch nicht (als unbekannt gemeldet). `Effectiveness` ist leer.
-  `Wage` kommt hier als Spanne (`€190K - €215K p/w`).
-- Für Kaufberatung fehlen in dieser Ansicht `Height`, `Personality`, die Fuß-Spalten u. a.
-  → Preset „Analyzer“ auch für die Spielersuche verwenden.
-
-### Exporter 1.0.0 (31.10.2026)
-
-Drei Testexporte (Kader 43 Spieler, Spielerdatenbank 235, Shortlist 6), je CSV und HTML,
-getestet mit PR #4 (Stand `b03dbb5`):
-
-- **Alle sechs Dateien werden fehlerfrei eingelesen**, keine unbekannten Spalten, keine
-  fehlerhaften Zeilen. CSV und HTML liefern identische Ergebnisse.
-- Die Befunde von oben sind behoben: Fuß-Spalten und `Inf` gefüllt, `Position` ohne Rollennamen
-  (alle Spieler haben erkannte Positionen), Attribut-Spannen kommen bei fremden Spielern an,
-  unbekannte Werte als `-` (19 kaum gescoutete Spieler in der Datenbank, wird korrekt als
-  „unbekannt“ gespeichert).
-- Spaltenköpfe weichen je Ansicht ab (`Player` / `Name`, `Recommendation` / `Rec.`), `Nation`
-  im Kader als Langname, sonst als Kürzel. PR #4 fängt beides ab.
-- Spielerdatenbank und Shortlist haben keine Spalte `Personality`. Laut Edmund bietet FM27 sie
-  für gescoutete Spieler nicht an, also kein Exporter-Fehler. Der Analyzer muss ohne auskommen.
-- `Ability` kann `Unknown` sein (Spielerdatenbank).
-- **Sterne mit gemischter Farbe werden falsch gezählt.** Chris Afanou zeigt im Spiel bei
-  Potential Ability 1 gelben + 1 grauen Stern (= 2.0), exportiert wird `1.0`. Gelb = sichere
-  Einschätzung, grau = unsichere. Vermutlich zählt der Exporter bei gemischten Sternen nur die
-  gelben. Wunsch: Gesamtzahl exportieren (hier 2.0), optional eine eigene Spalte für den
-  sicheren Anteil.
-- `Player's Interest` ist in der Shortlist leer.
+Statistik-Spalten sind bisher nur zu Saisonbeginn (alle 0) gesehen. Ein Export nach einigen
+Spieltagen folgt.
 
 ## Offene Fragen
 
-- **Presets technisch:** Exportiert der Exporter nur die sichtbaren Spalten der
-  aktuellen Ansicht, oder kann er Spalten selbst wählen? Im ersten Fall sind
-  Presets = gespeicherte Ansichten im Spiel (mit Anleitung je Preset).
-- **Leere Spalten ab Nr. 256:** Ursache und Abhilfe (siehe Befund).
-- **Rollen-Eignung:** Kommen „Role“ / „Role Ability“ aus dem Taktik-Bildschirm
-  oder Key/Preferable-Markierungen an die Liste heran?
-- **Mit/ohne Ball:** Wie wird der Umschalter „In Possession / Out of Possession“
-  in der Kaderliste exportiert?
+- **Sterne, sicherer Anteil:** Der Analyzer braucht ihn vorerst nicht; die Bewertung macht
+  DWRS. Falls später doch, wäre eine Spanne `2.0-3.0` wie bei Attributen denkbar.
+- **Rollen-Eignung:** `Role Ability` und `Role Ability Out Of Possession` waren leer
+  (vermutlich keine Rolle gewählt), `Player Role Suitability` und `Position/Role` lagen hinter
+  Spalte 255. Nächster Schritt: schlanke Ansicht mit diesen Spalten und gewählter Rolle.
+- **Mit/ohne Ball:** Der Export zeigt den Zustand des Umschalters beim Druck auf F9. Ob sich
+  Köpfe oder nur Werte ändern, ist offen. Nächster Schritt: je ein Export in beiden Stellungen.
+- **Statistik-Export** mit echten Werten (siehe oben).
 
 ## Wie Änderungen laufen
 
 - Änderungen an dieser Datei: Pull Request **gegen den Branch
-  `claude/project-thread-1hrepb`**, nicht gegen `main`. Edmund entscheidet über
-  den Merge.
+  `claude/project-thread-1hrepb`**, nicht gegen `main`. Edmund entscheidet über den Merge.
 - Änderungen an Spaltennamen: zuerst `docs/columns/fm27.csv` im Exporter, dann
   `ImportSchema.cpp` und `docs/IMPORT-FM27.md` hier, Eintrag unter „Änderungen“.
-- Große Beispiel-Exporte und Screenshots gehören nicht ins Repo, sondern in
-  Edmunds Google Drive bzw. den Projektordner.
+- Große Beispiel-Exporte und Screenshots gehören nicht ins Repo, sondern in den Projektordner.
 
 ## Änderungen
 
-- 30.10.2026: erste Fassung (Analyzer-Projekt).
-- 31.10.2026: Test Exporter 1.0.0 (alle Dateien fehlerfrei; Sterne-Zählung bei gemischten Farben falsch).
-- 30.10.2026: Befund Spielersuche (Position mit Rolle, keine Spannen).
-- 30.10.2026: Presets mit Spaltenlisten und Befund aus dem ersten echten Export ergänzt.
+- 30.10.2026: erste Fassung, Presets mit Spaltenlisten, Befunde Voll-Export und Spielersuche (Analyzer-Projekt).
+- 30.10.2026: Antworten zu den offenen Fragen, Grenze 255 Spalten, Ansichten (.fmf) als Presets, Menükatalog (Exporter-Projekt, PR #5).
+- 31.10.2026: Fertige Ansichten je Bildschirm, Shortlist-Spalten, Dateinamen (Exporter-Projekt, PR #5).
+- 31.10.2026: Test mit Exporter 1.0.0, Sterne-Zählung (1.0.1), Notiz aufgeräumt und auf Stand gebracht (Analyzer-Projekt).
