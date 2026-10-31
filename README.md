@@ -224,6 +224,13 @@ Download the latest `FMPlayerAnalyzer-…-Windows-x64-Setup.exe` from the
 and run it. Nothing else is needed. The installer is not code-signed, so Windows
 may show a SmartScreen notice — choose *More info → Run anyway*.
 
+> **Football Manager 2027:** FM27 has no export of its own. Install the free
+> [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin,
+> add its *Analyzer* view in the game and press **F9** on any player list; then
+> import the CSV into a save created for *Football Manager 2027* (the default
+> for new saves). Column mapping and details: [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
+> Steps 2 and 3 below are for FM24.
+
 **2 · Get the export view into FM**
 
 The app reads the standard HTML export of Football Manager (CSV exports work

@@ -321,9 +321,9 @@ void HtmlImporter::applyColumn(Player &player, const QString &fullColumnName, co
     } else if (fullColumnName == QLatin1String("Club")) {
         player.club = value;
     } else if (fullColumnName == QLatin1String("Nationality")) {
-        player.nationality = value;
+        player.nationality = nationCode(value);
     } else if (fullColumnName == QLatin1String("Second Nationality")) {
-        player.secondNationality = value;
+        player.secondNationality = nationCode(value);
     } else if (fullColumnName == QLatin1String("Position")) {
         player.positionRaw = value;
     } else if (fullColumnName == QLatin1String("Personality")) {
@@ -338,8 +338,11 @@ void HtmlImporter::applyColumn(Player &player, const QString &fullColumnName, co
         player.transferValueRaw = value;
         player.transferValue = valueToFloat(value);
     } else if (fullColumnName == QLatin1String("Average Rating")) {
+        // The FM View Exporter's German CSV style writes "7,05".
         bool ok = false;
-        const double v = value.toDouble(&ok);
+        double v = value.toDouble(&ok);
+        if (!ok)
+            v = QString(value).replace(QLatin1Char(','), QLatin1Char('.')).toDouble(&ok);
         player.averageRating = ok ? v : 0.0;
     } else if (fullColumnName == QLatin1String("Height")) {
         player.heightRaw = value;
@@ -373,6 +376,7 @@ ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
     ImportError parseError;
     if (!extractTable(html, &table, &parseError, parseProgress))
         return failedImport(parseError);
+    applyHeaderAliases(&table.headers, fmVersionId);
     return importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers);
 }
 
@@ -766,8 +770,10 @@ QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,
     ImportTable table;
     ImportError error;
     QString name;
-    if (extractTable(html, &table, &error, {}))
+    if (extractTable(html, &table, &error, {})) {
+        applyHeaderAliases(&table.headers, fmVersionId);
         name = forceUpdateSinglePlayer(table, db, existingPlayers, targetUid, &error, fmVersionId);
+    }
     if (error.code != ImportErrorCode::None && errorOut)
         *errorOut = error.message;
     return name;

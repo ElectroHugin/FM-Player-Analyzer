@@ -235,6 +235,13 @@ und führe sie aus. Mehr brauchst du nicht. Der Installer ist nicht signiert,
 deshalb zeigt Windows eventuell einen SmartScreen-Hinweis: *Weitere
 Informationen → Trotzdem ausführen*.
 
+> **Football Manager 2027:** FM27 hat keinen eigenen Export mehr. Installiere das
+> kostenlose Plugin [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter),
+> lege im Spiel dessen Ansicht *Analyzer* an und drücke in einer Spielerliste **F9**.
+> Die CSV-Datei importierst du in einen Spielstand mit der Version *Football
+> Manager 2027* (Standard für neue Spielstände). Spaltenzuordnung und Details:
+> [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md). Schritt 2 und 3 unten gelten für FM24.
+
 **2 · Export-Ansicht in den FM holen**
 
 Die App liest den normalen HTML-Export des Football Manager (CSV-Exporte

@@ -68,7 +68,15 @@ const QList<FmDataVersion> &fmDataVersions()
     // Registry of Football Manager releases, newest first. FM24 keeps the
     // unsuffixed "definitions.json" its users already have; later releases get
     // "definitions_<id>.json". See Constants.h for what a new release needs.
+    // FM27 has no export of its own: its files come from the FM View Exporter
+    // plugin, which writes to "Sports Interactive/FM View Exporter". Its roles
+    // start as a copy of FM24's (app.qrc) and its attribute tiers/weights fall
+    // back to FM24's until FM27 data exist; no "Reg" column, so no
+    // registration rules.
     static const QList<FmDataVersion> versions = {
+        {QStringLiteral("fm27"), QStringLiteral("Football Manager 2027"), true,
+         QStringLiteral("definitions_fm27.json"), QStringLiteral("FM View Exporter"),
+         {QStringLiteral("csv"), QStringLiteral("html")}, /*provisionalWeights*/ true, /*registrationRules*/ false},
         {QStringLiteral("fm24"), QStringLiteral("Football Manager 2024"), true,
          QStringLiteral("definitions.json"), QStringLiteral("Football Manager 2024"),
          {QStringLiteral("html"), QStringLiteral("csv")}, /*provisionalWeights*/ false, /*registrationRules*/ true},
