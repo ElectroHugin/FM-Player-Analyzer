@@ -120,6 +120,12 @@ in keiner der beiden Listen stehen, also z. B. Spalten, die ein Patch umbenannt 
 
 ## Was bei FM27 (noch) anders ist
 
+- **Fehlende Spalten überschreiben nichts:** Fehlt einer Datei eine Spalte, behält
+  der Analyzer den bisher gespeicherten Wert. Beispiel: Die Ansicht für
+  *Recruitment > Player Database* bietet keine `Personality`; die Persönlichkeit
+  aus einem Kader-Import bleibt erhalten, neue Spieler aus der Datenbank haben
+  zunächst keine.
+
 - **Keine Registrierung:** FM27 hat keine Spalte `Reg`. Der Registrierungs-Assistent
   ist für FM27-Spielstände deshalb aus.
 - **Rollen und Taktiken:** starten als Kopie der FM24-Rollen
