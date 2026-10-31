@@ -1,7 +1,10 @@
 #include "SettingsPage.h"
 
+#include "../NewSaveWizard.h"
+
 #include "../AppContext.h"
 #include "../MigrationWizard.h"
+#include "../NewSaveWizard.h"
 #include "../theming/ThemeManager.h"
 #include "../theming/ThemePresets.h"
 #include "core/Constants.h"
@@ -751,7 +754,7 @@ QWidget *SettingsPage::buildDatabaseTab()
     });
 
     auto *actionsRow = new QHBoxLayout;
-    auto *createButton = new QPushButton(tr("Neue Datenbank anlegen…"), content);
+    auto *createButton = new QPushButton(tr("Neuer Spielstand …"), content);
     auto *migrateButton = new QPushButton(tr("Legacy-Datenbank importieren…"), content);
     actionsRow->addWidget(createButton);
     actionsRow->addWidget(migrateButton);
@@ -759,34 +762,8 @@ QWidget *SettingsPage::buildDatabaseTab()
     layout->addLayout(actionsRow);
 
     connect(createButton, &QPushButton::clicked, this, [this] {
-        const QString name = QInputDialog::getText(this, tr("Neue Datenbank"),
-                                                   tr("Name (ohne .db):"));
-        if (name.trimmed().isEmpty())
-            return;
-        // The FM version is fixed with the save; ask only when there is a choice.
-        QString versionId = newestFmVersionId();
-        QStringList versionNames;
-        QStringList versionIds;
-        for (const FmDataVersion &version : fmDataVersions()) {
-            if (version.supported) {
-                versionNames << version.displayName;
-                versionIds << version.id;
-            }
-        }
-        if (versionIds.size() > 1) {
-            bool ok = false;
-            const QString chosen = QInputDialog::getItem(
-                this, tr("Neue Datenbank"), tr("Football-Manager-Version:"), versionNames,
-                versionIds.indexOf(versionId), false, &ok);
-            if (!ok)
-                return;
-            versionId = versionIds.at(versionNames.indexOf(chosen));
-        }
-        const bool existed = m_context.availableDatabases().contains(name.trimmed());
-        QString error;
-        if (!m_context.openDatabase(name.trimmed(), &error)
-            || (!existed && !m_context.setFmVersion(versionId, &error)))
-            QMessageBox::critical(this, tr("Datenbank"), error);
+        NewSaveWizard wizard(m_context, this);
+        wizard.exec();
         refresh();
     });
     connect(migrateButton, &QPushButton::clicked, this, [this] {
@@ -804,6 +781,25 @@ QWidget *SettingsPage::buildDatabaseTab()
             refresh();
         }
     });
+
+    auto *startGroup = new QGroupBox(tr("Programmstart"), content);
+    auto *startLayout = new QVBoxLayout(startGroup);
+    auto *autoOpen =
+        new QCheckBox(tr("Beim Start immer den zuletzt verwendeten Spielstand öffnen"), startGroup);
+    autoOpen->setChecked(m_context.config().autoOpenLastDatabase());
+    connect(autoOpen, &QCheckBox::toggled, this,
+            [this](bool on) { m_context.config().setAutoOpenLastDatabase(on); });
+    startLayout->addWidget(autoOpen);
+    auto *autoOpenHint = new QLabel(
+        tr("Ohne Haken erscheint beim Start der Startbildschirm mit deinen Spielständen. "
+           "Mit Haken lässt er sich durch Gedrückthalten der Umschalttaste beim Start "
+           "trotzdem aufrufen."),
+        startGroup);
+    autoOpenHint->setObjectName(QStringLiteral("kpiCaption"));
+    autoOpenHint->setWordWrap(true);
+    startLayout->addWidget(autoOpenHint);
+    layout->addWidget(startGroup);
+    m_autoOpenCheck = autoOpen;
 
     auto *pathInfo = new QLabel(content);
     pathInfo->setWordWrap(true);
@@ -957,6 +953,10 @@ void SettingsPage::refresh()
     }
     updateContrastWarning();
 
+    {
+        QSignalBlocker blocker(m_autoOpenCheck);
+        m_autoOpenCheck->setChecked(m_context.config().autoOpenLastDatabase());
+    }
     m_dbCombo->clear();
     m_dbCombo->addItems(m_context.availableDatabases());
     m_dbCombo->setCurrentText(m_context.currentDbName());

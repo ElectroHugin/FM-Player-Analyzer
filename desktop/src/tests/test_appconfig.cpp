@@ -40,6 +40,31 @@ private slots:
         QVERIFY(QFile::exists(config.filePath()));
     }
 
+    void startupAndRecentSaves()
+    {
+        QTemporaryDir dir;
+        const QString path = dir.filePath(QStringLiteral("config.ini"));
+        {
+            AppConfig config(path);
+            QVERIFY(!config.autoOpenLastDatabase()); // start screen by default
+            QVERIFY(!config.databaseLastOpened(QStringLiteral("Bayern 2026")).isValid());
+            config.setAutoOpenLastDatabase(true);
+            config.setDbName(QStringLiteral("Bayern 2026"));
+            config.touchDatabaseLastOpened(QStringLiteral("Bayern 2026"));
+            config.touchDatabaseLastOpened(QStringLiteral("brighton"));
+        }
+        AppConfig config(path);
+        QVERIFY(config.autoOpenLastDatabase());
+        // Names with spaces/umlauts survive as INI keys.
+        QVERIFY(config.databaseLastOpened(QStringLiteral("Bayern 2026")).isValid());
+        config.renameDatabaseEntry(QStringLiteral("Bayern 2026"), QStringLiteral("München ä/1"));
+        QVERIFY(!config.databaseLastOpened(QStringLiteral("Bayern 2026")).isValid());
+        QVERIFY(config.databaseLastOpened(QStringLiteral("München ä/1")).isValid());
+        QCOMPARE(config.dbName(), QStringLiteral("München ä/1")); // the active save follows
+        config.removeDatabaseEntry(QStringLiteral("brighton"));
+        QVERIFY(!config.databaseLastOpened(QStringLiteral("brighton")).isValid());
+    }
+
     void aptWeightNoneReturnsDefault()
     {
         QTemporaryDir dir;

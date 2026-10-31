@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QFont>
+#include <QGuiApplication>
 #include <QIcon>
 #include <QMessageBox>
 #include <QTimer>
@@ -8,6 +9,7 @@
 #include "AppContext.h"
 #include "FirstRunDialog.h"
 #include "MainWindow.h"
+#include "StartScreen.h"
 #include "theming/ThemeManager.h"
 #include "core/Version.h"
 
@@ -44,8 +46,12 @@ int main(int argc, char *argv[])
         context.paths().setDataDir(dialog.chosenDataDir());
     }
 
+    // --smoke (build verification) must never block on a dialog: it opens
+    // the last save directly, as the app did before the start screen.
+    const bool smoke = app.arguments().contains(QStringLiteral("--smoke"));
+
     QString error;
-    if (!context.initialize(&error)) {
+    if (!context.initialize(&error, /*openActiveDatabase*/ smoke)) {
         QMessageBox::critical(nullptr, fm::appName(),
                               QObject::tr("Start fehlgeschlagen:\n%1").arg(error));
         return 1;
@@ -54,11 +60,36 @@ int main(int argc, char *argv[])
     fm::ThemeManager theme(context.config());
     theme.apply();
 
+    if (!smoke) {
+        // "Always open the last save" skips the start screen; holding Shift
+        // at launch shows it anyway (e.g. when that save no longer opens).
+        const bool forceStartScreen =
+            QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier);
+        const QString last = context.currentDbName();
+        bool opened = false;
+        if (context.config().autoOpenLastDatabase() && !forceStartScreen
+            && context.availableDatabases().contains(last)) {
+            opened = context.openDatabase(last, &error);
+            if (!opened) {
+                QMessageBox::warning(
+                    nullptr, fm::appName(),
+                    QObject::tr("Der zuletzt verwendete Spielstand „%1“ konnte nicht geöffnet "
+                                "werden:\n%2")
+                        .arg(last, error));
+            }
+        }
+        if (!opened) {
+            fm::StartScreen start(context, theme, fm::StartScreen::Mode::Startup);
+            if (start.exec() != QDialog::Accepted || !context.hasDatabase())
+                return 0;
+        }
+    }
+
     fm::MainWindow window(context, theme);
     window.show();
 
     // --smoke: exit immediately after the event loop starts (build verification)
-    if (app.arguments().contains(QStringLiteral("--smoke"))) {
+    if (smoke) {
         QTimer::singleShot(0, &app, &QCoreApplication::quit);
     }
 

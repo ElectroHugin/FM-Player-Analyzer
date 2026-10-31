@@ -2,6 +2,10 @@
 
 #include "AboutDialog.h"
 #include "AppContext.h"
+#include "NewSaveWizard.h"
+#include "SaveLibrary.h"
+#include "StartScreen.h"
+#include "widgets/DropZone.h"
 #include "pages/AssignRolesPage.h"
 #include "pages/BestXiPage.h"
 #include "pages/DashboardPage.h"
@@ -37,6 +41,12 @@
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QCompleter>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QFileDialog>
+#include <QIcon>
+#include <QLocale>
+#include <QMimeData>
 #include <QMenu>
 #include <QMenuBar>
 #include <QPixmap>
@@ -68,6 +78,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     setWindowTitle(appName());
     resize(1600, 950);
     setMinimumSize(1100, 700);
+    setAcceptDrops(true); // drop an FM export anywhere to import it
     if (!m_context.paths().windowGeometry().isEmpty())
         restoreGeometry(m_context.paths().windowGeometry());
 
@@ -246,18 +257,20 @@ void MainWindow::buildSidebar()
     layout->setContentsMargins(10, 14, 10, 12);
     layout->setSpacing(8);
 
-    auto *title = new QLabel(
-        QStringLiteral("<span style='font-size:12pt; font-weight:600;'>⚽ %1</span>")
-            .arg(appName()),
-        sidebar);
-    title->setAlignment(Qt::AlignCenter);
-    layout->addWidget(title);
-
-    m_dbLabel = new QLabel(sidebar);
-    m_dbLabel->setAlignment(Qt::AlignCenter);
-    m_dbLabel->setObjectName(QStringLiteral("kpiCaption"));
-    layout->addWidget(m_dbLabel);
-    layout->addSpacing(4);
+    // The open save, click for recent saves / all saves / a new one.
+    m_saveSwitcher = new QToolButton(sidebar);
+    m_saveSwitcher->setObjectName(QStringLiteral("saveSwitcher"));
+    m_saveSwitcher->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    m_saveSwitcher->setIconSize(QSize(32, 32));
+    m_saveSwitcher->setPopupMode(QToolButton::InstantPopup);
+    m_saveSwitcher->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_saveSwitcher->setCursor(Qt::PointingHandCursor);
+    m_saveSwitcher->setToolTip(tr("Spielstand wechseln (Strg+O)"));
+    auto *saveMenu = new QMenu(m_saveSwitcher);
+    connect(saveMenu, &QMenu::aboutToShow, this, [this, saveMenu] { fillSaveMenu(saveMenu); });
+    m_saveSwitcher->setMenu(saveMenu);
+    layout->addWidget(m_saveSwitcher);
+    layout->addSpacing(2);
 
     m_modeCombo = new QComboBox(sidebar);
     m_modeCombo->addItem(tr("🏟 Vereins-Management"), QStringLiteral("club"));
@@ -381,6 +394,21 @@ void MainWindow::buildMenuBar()
     // Language selection ("optional im Menü auf Deutsch") and Help → About.
     // Switching is restart-based: the whole UI (including statically initialized
     // navigation labels) is built once with the translator already installed.
+    auto *fileMenu = menuBar()->addMenu(tr("&Datei"));
+    auto *newSaveAction = fileMenu->addAction(tr("Neuer Spielstand …"), this, &MainWindow::newSave);
+    newSaveAction->setShortcut(QKeySequence::New);
+    auto *switchAction =
+        fileMenu->addAction(tr("Spielstand wechseln …"), this, &MainWindow::switchSave);
+    switchAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
+    fileMenu->addSeparator();
+    auto *importAction =
+        fileMenu->addAction(tr("Export importieren …"), this, [this] { importExport({}); });
+    importAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
+    fileMenu->addSeparator();
+    auto *quitAction = fileMenu->addAction(tr("Beenden"), this, &QWidget::close);
+    quitAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
+    quitAction->setMenuRole(QAction::QuitRole);
+
     auto *languageMenu = menuBar()->addMenu(tr("&Sprache"));
     auto *group = new QActionGroup(this);
     group->setExclusive(true);
@@ -427,14 +455,8 @@ void MainWindow::changeLanguage(const QString &language)
     if (answer != QMessageBox::Yes)
         return;
 
-    // Relaunch this executable, then quit the current instance. The window
-    // geometry is persisted in closeEvent so the new instance restores it.
-    QStringList args = QApplication::arguments();
-    if (!args.isEmpty())
-        args.removeFirst(); // drop the program path itself
-    args.removeAll(QStringLiteral("--smoke"));
-    QProcess::startDetached(QApplication::applicationFilePath(), args);
-    QApplication::quit();
+    // The window geometry is persisted in closeEvent so the new instance restores it.
+    StartScreen::relaunchApplication();
 }
 
 PageBase *MainWindow::createPage(const QString &pageId)
@@ -806,9 +828,87 @@ void MainWindow::rebuildSearchModel()
 
 void MainWindow::updateDbLabel()
 {
-    m_dbLabel->setText(tr("Datenbank: <b>%1</b> · %2 Spieler")
-                           .arg(m_context.currentDbName())
-                           .arg(m_context.store().size()));
+    const SaveInfo save = SaveLibrary::current(m_context);
+    m_saveSwitcher->setIcon(QIcon(SaveLibrary::crest(save, 32, devicePixelRatioF())));
+    m_saveSwitcher->setText(QStringLiteral("%1\n%2 · %3")
+                                .arg(save.name, SaveLibrary::shortVersionLabel(save.fmVersionId),
+                                     tr("%1 Spieler").arg(QLocale().toString(save.playerCount))));
+}
+
+void MainWindow::fillSaveMenu(QMenu *menu)
+{
+    menu->clear();
+    const QList<SaveInfo> saves = SaveLibrary::scan(m_context);
+    int shown = 0;
+    for (const SaveInfo &save : saves) {
+        if (save.name == m_context.currentDbName())
+            continue;
+        if (shown == 0)
+            menu->addSection(tr("Zuletzt verwendet"));
+        QAction *action = menu->addAction(
+            QIcon(SaveLibrary::crest(save, 20, devicePixelRatioF())),
+            QStringLiteral("%1  ·  %2").arg(save.name,
+                                            SaveLibrary::shortVersionLabel(save.fmVersionId)));
+        connect(action, &QAction::triggered, this, [this, name = save.name] {
+            QString error;
+            if (!m_context.openDatabase(name, &error))
+                QMessageBox::critical(this, tr("Spielstand öffnen"), error);
+        });
+        if (++shown == 5)
+            break;
+    }
+    if (shown > 0)
+        menu->addSeparator();
+    menu->addAction(tr("Alle Spielstände …"), this, &MainWindow::switchSave);
+    menu->addAction(tr("Neuer Spielstand …"), this, &MainWindow::newSave);
+}
+
+void MainWindow::newSave()
+{
+    NewSaveWizard wizard(m_context, this);
+    wizard.exec();
+}
+
+void MainWindow::switchSave()
+{
+    StartScreen screen(m_context, m_theme, StartScreen::Mode::Switch, this);
+    screen.exec();
+}
+
+void MainWindow::importExport(QString filePath)
+{
+    if (filePath.isEmpty()) {
+        filePath = QFileDialog::getOpenFileName(
+            this, tr("FM-Export (HTML oder CSV) auswählen"), m_context.htmlExportDir(),
+            tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
+        if (filePath.isEmpty())
+            return;
+    }
+    // The import (with its options) lives on the mode's overview page.
+    const bool national = m_context.nationalUiMode();
+    navigateTo(national ? QStringLiteral("national_dashboard") : QStringLiteral("dashboard"));
+    if (national) {
+        if (auto *page = qobject_cast<NationalDashboardPage *>(m_pages.value(
+                QStringLiteral("national_dashboard"))))
+            page->prepareImport(filePath);
+    } else if (auto *page = qobject_cast<DashboardPage *>(m_pages.value(QStringLiteral("dashboard")))) {
+        page->prepareImport(filePath);
+    }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (!DropZone::importableFileFrom(event->mimeData()).isEmpty())
+        event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    const QString path = DropZone::importableFileFrom(event->mimeData());
+    if (path.isEmpty())
+        return;
+    event->acceptProposedAction();
+    importExport(path);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

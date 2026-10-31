@@ -6,6 +6,7 @@
 #include <QFileInfo>
 #include <QSet>
 #include <QStandardPaths>
+#include <QUrl>
 
 #include <algorithm>
 
@@ -218,6 +219,56 @@ QString AppConfig::dbName() const
 void AppConfig::setDbName(const QString &name)
 {
     m_settings->setValue(QStringLiteral("Database/db_name"), name);
+    m_settings->sync();
+}
+
+bool AppConfig::autoOpenLastDatabase() const
+{
+    return m_settings->value(QStringLiteral("Startup/auto_open_last"), false).toBool();
+}
+
+void AppConfig::setAutoOpenLastDatabase(bool enabled)
+{
+    m_settings->setValue(QStringLiteral("Startup/auto_open_last"), enabled);
+    m_settings->sync();
+}
+
+namespace {
+// Save names may contain spaces and umlauts; percent-encoding keeps them valid
+// and unambiguous as INI keys on every platform.
+QString recentKey(const QString &name)
+{
+    return QStringLiteral("RecentDatabases/")
+        + QString::fromLatin1(QUrl::toPercentEncoding(name));
+}
+} // namespace
+
+QDateTime AppConfig::databaseLastOpened(const QString &name) const
+{
+    return QDateTime::fromString(m_settings->value(recentKey(name)).toString(), Qt::ISODate);
+}
+
+void AppConfig::touchDatabaseLastOpened(const QString &name)
+{
+    m_settings->setValue(recentKey(name),
+                         QDateTime::currentDateTime().toString(Qt::ISODate));
+    m_settings->sync();
+}
+
+void AppConfig::renameDatabaseEntry(const QString &oldName, const QString &newName)
+{
+    const QVariant value = m_settings->value(recentKey(oldName));
+    m_settings->remove(recentKey(oldName));
+    if (value.isValid())
+        m_settings->setValue(recentKey(newName), value);
+    if (dbName() == oldName)
+        m_settings->setValue(QStringLiteral("Database/db_name"), newName);
+    m_settings->sync();
+}
+
+void AppConfig::removeDatabaseEntry(const QString &name)
+{
+    m_settings->remove(recentKey(name));
     m_settings->sync();
 }
 

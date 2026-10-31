@@ -9,7 +9,10 @@
 
 class QComboBox;
 class QCompleter;
+class QDragEnterEvent;
+class QDropEvent;
 class QLabel;
+class QMenu;
 class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
@@ -36,6 +39,9 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     // Mouse back/forward side buttons anywhere in this window drive the history.
     bool eventFilter(QObject *watched, QEvent *event) override;
+    // An FM export dropped anywhere on the window opens the import with it.
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
     // One Back/Forward history step: the page, the management mode it was
@@ -76,6 +82,12 @@ private:
     // computed with an older DWRS formula (kDwrsSchemeVersion).
     void offerRecalcIfOutdated();
     void updateDbLabel();
+    void fillSaveMenu(QMenu *menu);
+    void newSave();
+    void switchSave();
+    // Opens the import of the current mode's overview with filePath (asks
+    // for a file when empty).
+    void importExport(QString filePath);
     void updateHeader();
     void rebuildSearchModel();
 
@@ -85,7 +97,7 @@ private:
     QListWidget *m_menu = nullptr;
     QComboBox *m_modeCombo = nullptr; // Club / National
     QLineEdit *m_searchEdit = nullptr;
-    QLabel *m_dbLabel = nullptr;
+    QToolButton *m_saveSwitcher = nullptr;
     QLabel *m_headerLogo = nullptr;     // optional club logo (user PNG)
     QLabel *m_headerIdentity = nullptr; // club/national name + stadium
     QLabel *m_headerSave = nullptr;     // active save file

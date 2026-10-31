@@ -208,6 +208,9 @@ QFrame#sidebar QListWidget::item:selected {
     background-color: %PRIMARY%; color: %SIDEBARSELTEXT%; font-weight: 600; }
 QFrame#sidebar QListWidget::item:disabled {
     color: %MUTED%; padding: 12px 12px 4px 10px; background: transparent; }
+QFrame#sidebar QToolButton#saveSwitcher {
+    text-align: left; padding: 7px 26px 7px 8px; border-radius: 10px; font-weight: 600; }
+QFrame#sidebar QToolButton#saveSwitcher::menu-indicator { right: 10px; }
 QFrame#sidebar QToolButton#creditButton {
     background: transparent; border: none; color: %MUTED%; font-size: 8.5pt; padding: 2px 6px; }
 QFrame#sidebar QToolButton#creditButton:hover { color: %FG%; }
@@ -336,6 +339,56 @@ QScrollBar::handle:horizontal { background: %BORDER%; border-radius: 4px; min-wi
 QScrollBar::handle:horizontal:hover { background: %MUTED%; }
 QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; }
 QScrollBar::add-page, QScrollBar::sub-page { background: transparent; }
+
+/* ===== Start screen / new save wizard ===== */
+QFrame#startHero { background-color: %SIDEBAR%; border-right: 1px solid %BORDER%; }
+QLabel#startTitle { font-size: 17pt; font-weight: 600; }
+QPushButton#heroPrimary, QPushButton#heroAction {
+    text-align: left; padding: 11px 16px; font-size: 10.5pt; }
+QPushButton#heroPrimary {
+    background-color: %PRIMARY%; color: %PRIMARYTEXT%; border-color: %PRIMARY%; font-weight: 600; }
+QPushButton#heroPrimary:hover { background-color: %PRIMARYHOVER%; border-color: %PRIMARYHOVER%; }
+QPushButton:default:disabled { background: transparent; color: %MUTED%; border-color: %BORDER%; }
+QToolButton#flatButton {
+    background: transparent; border: 1px solid transparent; color: %MUTED%; padding: 5px 8px; }
+QToolButton#flatButton:hover { color: %FG%; border-color: %BORDER%; }
+QToolButton#flatButton::menu-indicator { image: none; width: 0; }
+QListWidget#saveList { background: transparent; border: none; }
+QListWidget#saveList::item {
+    border: 1px solid %BORDER%; border-radius: 10px; background-color: %SURFACE%;
+    padding: 0; margin: 0; }
+QListWidget#saveList::item:hover:!selected { border-color: %INTERACTIVE%; }
+QListWidget#saveList::item:selected {
+    background-color: %INTERACTIVESUBTLE%; border: 1px solid %INTERACTIVE%; }
+QFrame#saveCard { background: transparent; }
+QLabel#saveName { font-size: 11pt; font-weight: 600; }
+QLabel#chip, QLabel#chipAccent {
+    border-radius: 8px; padding: 1px 7px; font-size: 8.5pt; font-weight: 600; }
+QLabel#chip { background-color: %HOVER%; color: %MUTED%; }
+QLabel#chipAccent { background-color: %INTERACTIVESUBTLE%; color: %FG%; }
+QToolButton#cardMenuButton {
+    background: transparent; border: none; font-size: 14pt; color: %MUTED%; padding: 0 8px; }
+QToolButton#cardMenuButton:hover { color: %FG%; background-color: %HOVER%; }
+QLabel#emptyState { color: %MUTED%; font-size: 11pt; }
+QFrame#startFooter { border-top: 1px solid %BORDER%; }
+QLabel#stepLabel { color: %MUTED%; font-weight: 600; }
+QLabel#stepLabel[state="current"] { color: %INTERACTIVE%; }
+QLabel#stepLabel[state="done"] { color: %FG%; }
+QFrame#stepLine { background-color: %BORDER%; border: none; }
+QLabel#fieldLabel { font-weight: 600; }
+QLabel#errorText { color: #e5484d; }
+QLabel#successNote {
+    background-color: %INTERACTIVESUBTLE%; border-radius: 8px; padding: 10px 12px; }
+QPushButton#choiceCard {
+    text-align: left; padding: 14px 16px; border-radius: 10px; min-height: 44px; }
+QPushButton#choiceCard:checked {
+    border: 2px solid %INTERACTIVE%; background-color: %INTERACTIVESUBTLE%; font-weight: 600; }
+QToolButton#foldButton { background: transparent; border: none; color: %MUTED%; padding: 2px 0; }
+QToolButton#foldButton:hover { color: %FG%; }
+QFrame#dropZone { border: 2px dashed %INTERACTIVE%; border-radius: 12px; background-color: %HOVER%; }
+QFrame#dropZone[hovered="true"] { background-color: %INTERACTIVESUBTLE%; }
+QLabel#dropZoneIcon { font-size: 22pt; color: %INTERACTIVE%; }
+QLabel#dropZoneTitle { font-size: 11pt; font-weight: 600; }
 
 /* ===== Menus / tooltips / statusbar / progress ===== */
 QMenu { background-color: %SURFACE%; color: %FG%; border: 1px solid %BORDER%;

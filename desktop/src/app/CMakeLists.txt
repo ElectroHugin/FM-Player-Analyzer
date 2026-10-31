@@ -10,6 +10,12 @@ add_executable(fmplayeranalyzer
     FirstRunDialog.cpp
     MainWindow.h
     MainWindow.cpp
+    NewSaveWizard.h
+    NewSaveWizard.cpp
+    SaveLibrary.h
+    SaveLibrary.cpp
+    StartScreen.h
+    StartScreen.cpp
     MigrationWizard.h
     MigrationWizard.cpp
     Navigation.h
@@ -71,6 +77,8 @@ add_executable(fmplayeranalyzer
     theming/ThemeManager.cpp
     theming/ThemePresets.h
     theming/ThemePresets.cpp
+    widgets/DropZone.h
+    widgets/DropZone.cpp
     widgets/BusyProgressDialog.h
     widgets/BusyProgressDialog.cpp
     widgets/CellStyleDelegate.h
