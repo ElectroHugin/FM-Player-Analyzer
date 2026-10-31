@@ -57,6 +57,21 @@ private slots:
         }
     }
 
+    // FM24 never imported Communication/Eccentricity: although its sweeper
+    // keeper lists them, they must not move the rating.
+    void fm24IgnoresFm27GoalkeeperAttributes()
+    {
+        Player low = playerWithAllAttrs(12);
+        Player high = low;
+        low.attrLo[idx(Attr::Communication)] = low.attrHi[idx(Attr::Communication)] = 1;
+        high.attrLo[idx(Attr::Communication)] = high.attrHi[idx(Attr::Communication)] = 20;
+        high.attrLo[idx(Attr::Eccentricity)] = high.attrHi[idx(Attr::Eccentricity)] = 20;
+        const QString role = QStringLiteral("SK-A");
+        QVERIFY(defs.roleWeights(role).key.contains(QStringLiteral("Communication"))
+                || defs.roleWeights(role).preferable.contains(QStringLiteral("Communication")));
+        QCOMPARE(engine->calculate(low, role).second, engine->calculate(high, role).second);
+    }
+
     void ratingIsMonotonicInAttributes()
     {
         const QString role = QStringLiteral("CD-D");

@@ -2,6 +2,7 @@
 
 #include <QDir>
 #include <QSqlDatabase>
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QTemporaryDir>
 
@@ -326,6 +327,56 @@ private slots:
         QVERIFY(!cols.contains(QStringLiteral("information")));
         // The v2 -> v3 step also ran as part of the chain.
         QVERIFY(cols.contains(QStringLiteral("last_seen_update")));
+        db.close();
+    }
+
+    // v9 -> v10 adds the FM27 goalkeeper attributes; existing players keep
+    // their data and the new values round-trip.
+    void migratesV9ToV10()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v9.db"));
+        {
+            Database db(QStringLiteral("test_v9_create"));
+            QVERIFY(db.open(dbFile));
+            std::vector<Player> players(1);
+            players[0].uid = QStringLiteral("p1");
+            players[0].name = QStringLiteral("Keeper");
+            QVERIFY(db.upsertPlayers(players));
+            db.close();
+        }
+        {
+            QSqlDatabase raw = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"),
+                                                         QStringLiteral("v9setup"));
+            raw.setDatabaseName(dbFile);
+            QVERIFY(raw.open());
+            QSqlQuery q(raw);
+            for (const char *col : {"communication_lo", "communication_hi", "eccentricity_lo",
+                                    "eccentricity_hi"}) {
+                QVERIFY2(q.exec(QStringLiteral("ALTER TABLE players DROP COLUMN %1")
+                                    .arg(QLatin1String(col))),
+                         qPrintable(q.lastError().text()));
+            }
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 9")));
+            raw.close();
+        }
+        QSqlDatabase::removeDatabase(QStringLiteral("v9setup"));
+
+        Database db(QStringLiteral("test_v9_migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        std::vector<Player> players = db.loadPlayers();
+        QCOMPARE(static_cast<int>(players.size()), 1);
+        QCOMPARE(players[0].name, QStringLiteral("Keeper"));
+        QCOMPARE(players[0].attrLo[idx(Attr::Communication)], uint8_t(0));
+
+        players[0].attrLo[idx(Attr::Communication)] = 14;
+        players[0].attrHi[idx(Attr::Communication)] = 16;
+        players[0].attrLo[idx(Attr::Eccentricity)] = 7;
+        players[0].attrHi[idx(Attr::Eccentricity)] = 7;
+        QVERIFY(db.upsertPlayers(players));
+        const auto reloaded = db.loadPlayers();
+        QCOMPARE(reloaded[0].attrHi[idx(Attr::Communication)], uint8_t(16));
+        QCOMPARE(reloaded[0].attrLo[idx(Attr::Eccentricity)], uint8_t(7));
         db.close();
     }
 

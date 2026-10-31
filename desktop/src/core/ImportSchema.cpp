@@ -105,6 +105,8 @@ static const QHash<QString, QString> &fm27AttributeMapping()
         // Goalkeeping
         {QStringLiteral("Aerial Reach"), QStringLiteral("Aerial Reach")},
         {QStringLiteral("Command Of Area"), QStringLiteral("Command of Area")},
+        {QStringLiteral("Communication"), QStringLiteral("Communication")},
+        {QStringLiteral("Eccentricity"), QStringLiteral("Eccentricity")},
         {QStringLiteral("Handling"), QStringLiteral("Handling")},
         {QStringLiteral("Kicking"), QStringLiteral("Kicking")},
         {QStringLiteral("One On Ones"), QStringLiteral("One vs One")},
@@ -187,8 +189,8 @@ static const QSet<QString> &fm27IgnoredExportColumns()
         // Scout grade ("B- Very Good"), first column of the Player Database
         // view; not in the squad's column menu.
         QStringLiteral("Recommendation"),
-        QStringLiteral("Best Pos"), QStringLiteral("Best Role"), QStringLiteral("Eccentricity"),
-        QStringLiteral("Communication"), QStringLiteral("Punching"),
+        QStringLiteral("Best Pos"), QStringLiteral("Best Role"),
+        QStringLiteral("Punching"),
         QStringLiteral("Natural Fitness"), QStringLiteral("Free Kick Taking"),
         QStringLiteral("Long Throws"), QStringLiteral("Penalty Taking"),
         QStringLiteral("Home-Grown Status"), QStringLiteral("Media Description"),

@@ -273,6 +273,9 @@ private slots:
         QCOMPARE(gk.transferValue, 1'500'000.0);
         QCOMPARE(gk.wageRaw, QStringLiteral("€300K p/w"));
         QCOMPARE(gk.averageRating, 7.05);
+        // FM27 goalkeeper attribute (schema v10); "Communication" is absent here.
+        QCOMPARE(gk.attrLo[idx(Attr::Eccentricity)], uint8_t(15));
+        QCOMPARE(gk.attrLo[idx(Attr::Communication)], uint8_t(0));
         QCOMPARE(gk.agreedPlayingTime, QStringLiteral("First-Choice Goalkeeper"));
         QCOMPARE(gk.heightCm, 193);
         QCOMPARE(gk.attrLo[attrIndexByName(QStringLiteral("Acceleration"))], uint8_t(9));

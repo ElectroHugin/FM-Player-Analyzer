@@ -112,7 +112,7 @@ Note mit Punkt oder Komma.
 ### Nicht gelesen
 
 Alle anderen Spalten, die FM27 anbietet, kennt der Analyzer und überspringt sie
-still, darunter `Communication`, `Eccentricity`, `Punching`, `Natural Fitness`,
+still, darunter `Punching`, `Natural Fitness`,
 `Free Kick Taking`, `Long Throws` und `Penalty Taking` (wie bei FM24 nicht unter
 den bewerteten Attributen) sowie `Rec.` / `Recommendation` (Scout-Empfehlung von A+ bis F,
 erste Spalte der Ansicht für die Spielerdatenbank). Als *unbekannte Spalte* meldet der Import nur Köpfe, die
@@ -132,8 +132,9 @@ in keiner der beiden Listen stehen, also z. B. Spalten, die ein Patch umbenannt 
   Preferable-Attributen aus dem Spiel, erzeugt aus `desktop/data/fm27/` durch
   `desktop/scripts/make_definitions_fm27.py` (`definitions_fm27.json`). Startaktiken sind
   die Formationen ohne Ball mit Standardrollen. Zwei Rollen pro Slot folgen nach
-  [KONZEPT_ZWEI_ROLLEN.md](../desktop/KONZEPT_ZWEI_ROLLEN.md). Die Torwart-Attribute
-  `Communication` und `Eccentricity` liest der Analyzer noch nicht ein.
+  [KONZEPT_ZWEI_ROLLEN.md](../desktop/KONZEPT_ZWEI_ROLLEN.md). Zusätzlich zu FM24 liest
+  der Analyzer die Torwart-Attribute `Communication` und `Eccentricity` (Key bzw. Preferable
+  der FM27-Torwartrollen); FM24-Spielstände bewerten sie weiterhin nicht.
 - **Gewichte:** Attributkategorien und Gewichte sind vorläufig die von FM24
   (eigener Abschnitt `[Weights_fm27]` in `config.ini`).
 

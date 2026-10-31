@@ -18,10 +18,6 @@ namespace {
 
 const QString kVersion = QStringLiteral("fm27");
 
-// FM27 goalkeeper attributes the analyzer does not store yet (FM27 update, step C2).
-const QSet<QString> kPendingAttributes = {QStringLiteral("Communication"),
-                                          QStringLiteral("Eccentricity")};
-
 const QStringList kPositions = {
     QStringLiteral("GK"),     QStringLiteral("D (C)"),  QStringLiteral("D (L)"),
     QStringLiteral("D (R)"),  QStringLiteral("WB (L)"), QStringLiteral("WB (R)"),
@@ -66,7 +62,7 @@ private slots:
             const RoleWeights w = m_defs.roleWeights(role);
             QVERIFY2(!w.key.isEmpty(), qPrintable(role));
             for (const QString &attr : w.key + w.preferable) {
-                QVERIFY2(attrIndexByName(attr) >= 0 || kPendingAttributes.contains(attr),
+                QVERIFY2(attributeRated(kVersion, attrIndexByName(attr)),
                          qPrintable(role + QStringLiteral(": ") + attr));
             }
         }

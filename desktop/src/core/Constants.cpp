@@ -47,6 +47,8 @@ const std::array<QString, kAttrCount> &attrNames()
         QStringLiteral("Throwing"),
         QStringLiteral("Vision"),
         QStringLiteral("Work Rate"),
+        QStringLiteral("Communication"),
+        QStringLiteral("Eccentricity"),
     };
     return names;
 }
@@ -79,7 +81,10 @@ const QList<FmDataVersion> &fmDataVersions()
          {QStringLiteral("csv"), QStringLiteral("html")}, /*provisionalWeights*/ true, /*registrationRules*/ false},
         {QStringLiteral("fm24"), QStringLiteral("Football Manager 2024"), true,
          QStringLiteral("definitions.json"), QStringLiteral("Football Manager 2024"),
-         {QStringLiteral("html"), QStringLiteral("csv")}, /*provisionalWeights*/ false, /*registrationRules*/ true},
+         {QStringLiteral("html"), QStringLiteral("csv")}, /*provisionalWeights*/ false, /*registrationRules*/ true,
+         // The legacy app never read these; rating them would shift every FM24
+         // goalkeeper's DWRS.
+         /*unratedAttributes*/ {QStringLiteral("Communication"), QStringLiteral("Eccentricity")}},
     };
     return versions;
 }
@@ -110,6 +115,13 @@ const FmDataVersion &fmDataVersion(const QString &versionId)
             return version;
     }
     return versions.first();
+}
+
+bool attributeRated(const QString &versionId, int attrIndex)
+{
+    if (attrIndex < 0 || attrIndex >= kAttrCount)
+        return false;
+    return !fmDataVersion(versionId).unratedAttributes.contains(attrNames()[attrIndex]);
 }
 
 const QHash<QString, QString> &personalityDefaults()

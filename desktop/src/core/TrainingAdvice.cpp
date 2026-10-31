@@ -181,7 +181,7 @@ Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine
 const std::vector<TrainingFocus> &trainingFocuses()
 {
     // Attribute names normalized to the app's attribute set; names that do not
-    // exist here (e.g. "Free Kick Taking", "Communication") simply never match
+    // exist here (e.g. "Free Kick Taking") simply never match
     // and contribute nothing — which is fine, they barely feed the DWRS anyway.
     static const std::vector<TrainingFocus> focuses = {
         // --- Injury Rehab (never recommended) ---
