@@ -130,11 +130,11 @@ in keiner der beiden Listen stehen, also z. B. Spalten, die ein Patch umbenannt 
   ist für FM27-Spielstände deshalb aus.
 - **Rollen und Taktiken:** die 79 FM27-Rollen (40 mit Ball, 39 ohne Ball) mit Key- und
   Preferable-Attributen aus dem Spiel, erzeugt aus `desktop/data/fm27/` durch
-  `desktop/scripts/make_definitions_fm27.py` (`definitions_fm27.json`). Startaktiken sind
-  die Formationen ohne Ball mit Standardrollen. Zwei Rollen pro Slot folgen nach
-  [KONZEPT_ZWEI_ROLLEN.md](../desktop/KONZEPT_ZWEI_ROLLEN.md). Zusätzlich zu FM24 liest
-  der Analyzer die Torwart-Attribute `Communication` und `Eccentricity` (Key bzw. Preferable
-  der FM27-Torwartrollen); FM24-Spielstände bewerten sie weiterhin nicht.
+  `desktop/scripts/make_definitions_fm27.py` (`definitions_fm27.json`). Eine FM27-Taktik hat zwei
+  unabhängige Aufstellungen (mit Ball, ohne Ball) ohne feste Paare; die Best XI wählt die Spieler
+  und für jeden einen Platz in beiden Aufstellungen per Min-Cost-Flow
+  (`SquadBuilder::calculateTwoPhaseSquad`). Zusätzlich zu FM24 liest der Analyzer die
+  Torwart-Attribute `Communication` und `Eccentricity`; FM24-Spielstände bewerten sie nicht.
 - **Gewichte:** Attributkategorien und Gewichte sind vorläufig die von FM24
   (eigener Abschnitt `[Weights_fm27]` in `config.ini`).
 

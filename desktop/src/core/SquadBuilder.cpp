@@ -2,6 +2,7 @@
 
 #include "AppConfig.h"
 #include "Assignment.h"
+#include "MinCostFlow.h"
 #include "Constants.h"
 #include "Definitions.h"
 #include "TalentEngine.h"
@@ -11,6 +12,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <optional>
 
 namespace fm {
 
@@ -24,12 +26,10 @@ struct Candidate {
 };
 
 // A primary role pins the player to that role — but only while it is still
-// assigned; a stale one must not lock him out everywhere. In a two-role slot
-// ("ip|oop") either half counts as the pinned role.
+// assigned; a stale one must not lock him out everywhere.
 bool pinnedToOtherRole(const Player &player, const QString &role)
 {
-    return !player.primaryRole.isEmpty()
-           && !Definitions::pairParts(role).contains(player.primaryRole)
+    return !player.primaryRole.isEmpty() && player.primaryRole != role
            && player.assignedRoles.contains(player.primaryRole);
 }
 
@@ -465,6 +465,201 @@ DevelopmentSquads SquadBuilder::calculateDevelopmentSquads(
                          return getLastName(a->name) < getLastName(b->name);
                      });
 
+    return result;
+}
+
+TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const Player *> &pool,
+                                                         const QString &tactic,
+                                                         const RoleRatings &ratings,
+                                                         double ipShare,
+                                                         bool applyAptWeight) const
+{
+    TwoPhaseSquadResult result;
+    const auto tacticIt = m_definitions.twoPhaseTactics().constFind(tactic);
+    if (tacticIt == m_definitions.twoPhaseTactics().constEnd()) {
+        result.depthPool = pool;
+        return result;
+    }
+    const Definitions::TwoPhaseTactic &lineUps = tacticIt.value();
+    ipShare = std::clamp(ipShare, 0.0, 1.0);
+
+    QHash<QString, QSet<QString>> parsedPositions;
+    for (const Player *p : pool)
+        parsedPositions.insert(p->uid, parsePositionString(p->positionRaw));
+    const auto &slotToGamePositions = tacticalSlotToGamePositions(m_definitions.fmVersionId());
+
+    // Pinned to his primary role: in that role's phase the player may only
+    // take slots of exactly that role.
+    const auto pinnedOut = [&](const Player &player, const QString &role, const QString &phase) {
+        if (player.primaryRole.isEmpty() || player.primaryRole == role
+            || !player.assignedRoles.contains(player.primaryRole))
+            return false;
+        const QString pinnedPhase = m_definitions.rolePhase(player.primaryRole);
+        return pinnedPhase == phase || pinnedPhase == QLatin1String("both");
+    };
+
+    struct Option {
+        double rating = 0.0; // DWRS of the slot's role
+        double score = 0.0;  // rating x playing-time weight x natural bonus
+        QString apt;
+    };
+    // Score of `player` in `slot` (role from `lineUp`), or nothing if ineligible.
+    const auto option = [&](const Player &player, const QString &slot,
+                            const QHash<QString, QString> &lineUp,
+                            const QString &phase) -> std::optional<Option> {
+        const QStringList allowedList = slot == QLatin1String("GK")
+                                            ? QStringList{QStringLiteral("GK")}
+                                            : slotToGamePositions.value(slot);
+        const QSet<QString> allowed(allowedList.begin(), allowedList.end());
+        if (!parsedPositions[player.uid].intersects(allowed))
+            return std::nullopt;
+        const QString role = lineUp.value(slot);
+        if (pinnedOut(player, role, phase))
+            return std::nullopt;
+        const double rating = ratings.value(role).value(player.uid, 0.0);
+        if (rating <= 0.0)
+            return std::nullopt;
+        Option o;
+        o.rating = rating;
+        o.apt = player.agreedPlayingTime.isEmpty() ? QStringLiteral("None")
+                                                   : player.agreedPlayingTime;
+        const double aptWeight = applyAptWeight ? m_aptWeights.value(o.apt, 1.0) : 1.0;
+        double naturalBonus = 1.0;
+        const QStringList naturalGamePositions = m_roleToGamePositions.value(role);
+        for (const QString &np : player.naturalPositions) {
+            if (naturalGamePositions.contains(np)) {
+                naturalBonus = m_naturalPosMultiplier;
+                break;
+            }
+        }
+        o.score = rating * aptWeight * naturalBonus;
+        return o;
+    };
+
+    // One team: min-cost flow source -> ip slot -> player -> oop slot -> sink.
+    // Each unit of flow places one player in both line-ups. A fixed reward per
+    // placed player (split over his two edges) outweighs any score, so the
+    // most players are placed first, then the value is maximal.
+    const auto pickTeam = [&](const std::vector<const Player *> &available,
+                              QHash<QString, XiCell> &ipTeam, QHash<QString, XiCell> &oopTeam) {
+        const QStringList &ipSlots = lineUps.ipOrder;
+        const QStringList &oopSlots = lineUps.oopOrder;
+        const int nIp = static_cast<int>(ipSlots.size());
+        const int nOop = static_cast<int>(oopSlots.size());
+        const int nPlayers = static_cast<int>(available.size());
+        // Nodes: 0 source, 1 sink, ip slots, player in, player out, oop slots.
+        const int ipBase = 2;
+        const int inBase = ipBase + nIp;
+        const int outBase = inBase + nPlayers;
+        const int oopBase = outBase + nPlayers;
+        MinCostFlow flow(oopBase + nOop);
+
+        constexpr double kScale = 1e4;
+        // > the largest possible total of scaled scores (11 x 2 x 100 x weights).
+        double maxScore = 0.0;
+        std::vector<std::vector<std::optional<Option>>> ipOpt(static_cast<size_t>(nPlayers)),
+            oopOpt(static_cast<size_t>(nPlayers));
+        for (int p = 0; p < nPlayers; ++p) {
+            const Player &player = *available[static_cast<size_t>(p)];
+            for (const QString &slot : ipSlots) {
+                ipOpt[static_cast<size_t>(p)].push_back(option(player, slot, lineUps.ip, QStringLiteral("ip")));
+                if (ipOpt[static_cast<size_t>(p)].back())
+                    maxScore = std::max(maxScore, ipOpt[static_cast<size_t>(p)].back()->score);
+            }
+            for (const QString &slot : oopSlots) {
+                oopOpt[static_cast<size_t>(p)].push_back(option(player, slot, lineUps.oop, QStringLiteral("oop")));
+                if (oopOpt[static_cast<size_t>(p)].back())
+                    maxScore = std::max(maxScore, oopOpt[static_cast<size_t>(p)].back()->score);
+            }
+        }
+        const std::int64_t halfReward =
+            std::llround(maxScore * kScale) * std::max(nIp, nOop) + 1;
+
+        for (int k = 0; k < nIp; ++k)
+            flow.addEdge(0, ipBase + k, 1, 0);
+        for (int j = 0; j < nOop; ++j)
+            flow.addEdge(oopBase + j, 1, 1, 0);
+        std::vector<std::vector<int>> ipEdge(static_cast<size_t>(nPlayers), std::vector<int>(static_cast<size_t>(nIp), -1));
+        std::vector<std::vector<int>> oopEdge(static_cast<size_t>(nPlayers), std::vector<int>(static_cast<size_t>(nOop), -1));
+        for (int p = 0; p < nPlayers; ++p) {
+            bool anyIp = false;
+            bool anyOop = false;
+            for (int k = 0; k < nIp; ++k)
+                anyIp |= ipOpt[static_cast<size_t>(p)][static_cast<size_t>(k)].has_value();
+            for (int j = 0; j < nOop; ++j)
+                anyOop |= oopOpt[static_cast<size_t>(p)][static_cast<size_t>(j)].has_value();
+            if (!anyIp || !anyOop)
+                continue; // must fit both line-ups
+            flow.addEdge(inBase + p, outBase + p, 1, 0);
+            for (int k = 0; k < nIp; ++k) {
+                if (const auto &o = ipOpt[static_cast<size_t>(p)][static_cast<size_t>(k)]) {
+                    ipEdge[static_cast<size_t>(p)][static_cast<size_t>(k)] = flow.addEdge(
+                        ipBase + k, inBase + p, 1,
+                        -(halfReward + std::llround(ipShare * o->score * kScale)));
+                }
+            }
+            for (int j = 0; j < nOop; ++j) {
+                if (const auto &o = oopOpt[static_cast<size_t>(p)][static_cast<size_t>(j)]) {
+                    oopEdge[static_cast<size_t>(p)][static_cast<size_t>(j)] = flow.addEdge(
+                        outBase + p, oopBase + j, 1,
+                        -(halfReward + std::llround((1.0 - ipShare) * o->score * kScale)));
+                }
+            }
+        }
+        flow.solve(0, 1, std::min(nIp, nOop));
+
+        QSet<QString> taken;
+        for (int p = 0; p < nPlayers; ++p) {
+            const Player &player = *available[static_cast<size_t>(p)];
+            int ipK = -1;
+            int oopJ = -1;
+            for (int k = 0; k < nIp; ++k) {
+                const int e = ipEdge[static_cast<size_t>(p)][static_cast<size_t>(k)];
+                if (e >= 0 && flow.flowOn(e) > 0)
+                    ipK = k;
+            }
+            for (int j = 0; j < nOop; ++j) {
+                const int e = oopEdge[static_cast<size_t>(p)][static_cast<size_t>(j)];
+                if (e >= 0 && flow.flowOn(e) > 0)
+                    oopJ = j;
+            }
+            if (ipK < 0 || oopJ < 0)
+                continue;
+            const Option &ipO = *ipOpt[static_cast<size_t>(p)][static_cast<size_t>(ipK)];
+            const Option &oopO = *oopOpt[static_cast<size_t>(p)][static_cast<size_t>(oopJ)];
+            const auto cell = [&](const Option &o) {
+                XiCell c;
+                c.playerUid = player.uid;
+                c.name = player.name;
+                c.rating = std::trunc(o.rating);
+                c.apt = o.apt;
+                return c;
+            };
+            ipTeam.insert(ipSlots[ipK], cell(ipO));
+            oopTeam.insert(oopSlots[oopJ], cell(oopO));
+            result.slotsOfUid.insert(player.uid, {ipSlots[ipK], oopSlots[oopJ]});
+            result.valueOfUid.insert(player.uid,
+                                     ipShare * ipO.rating + (1.0 - ipShare) * oopO.rating);
+            taken.insert(player.uid);
+        }
+        for (const QString &slot : ipSlots) {
+            if (!ipTeam.contains(slot))
+                ipTeam.insert(slot, XiCell());
+        }
+        for (const QString &slot : oopSlots) {
+            if (!oopTeam.contains(slot))
+                oopTeam.insert(slot, XiCell());
+        }
+        std::vector<const Player *> rest;
+        for (const Player *p : available) {
+            if (!taken.contains(p->uid))
+                rest.push_back(p);
+        }
+        return rest;
+    };
+
+    const std::vector<const Player *> afterXi = pickTeam(pool, result.startingIp, result.startingOop);
+    result.depthPool = pickTeam(afterXi, result.bTeamIp, result.bTeamOop);
     return result;
 }
 

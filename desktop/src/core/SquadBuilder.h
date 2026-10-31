@@ -45,6 +45,20 @@ struct SquadResult {
     QSet<QString> coreSquadUids; // XI + B-team + depth
 };
 
+// Best XI and B-team of a two-phase tactic (FM26+): every player of a team has
+// one slot in the in-possession line-up and one in the out-of-possession
+// line-up; which slot goes with which is the result of the optimisation, not
+// part of the tactic.
+struct TwoPhaseSquadResult {
+    QHash<QString, XiCell> startingIp;  // ip slot -> cell (rating = ip role DWRS)
+    QHash<QString, XiCell> startingOop; // oop slot -> cell (rating = oop role DWRS)
+    QHash<QString, XiCell> bTeamIp;
+    QHash<QString, XiCell> bTeamOop;
+    QHash<QString, QPair<QString, QString>> slotsOfUid; // uid -> (ip slot, oop slot)
+    QHash<QString, double> valueOfUid;                  // uid -> a*ip + (1-a)*oop DWRS
+    std::vector<const Player *> depthPool; // not in XI or B-team, pool order
+};
+
 // Result of calculate_development_squads.
 struct DevelopmentSquads {
     QHash<QString, XiCell> youthXi;
@@ -79,6 +93,18 @@ public:
                                          const QStringList &slotOrder,
                                          const RoleRatings &ratings,
                                          bool applyAptWeight = true) const;
+
+    // Two-phase tactic (FM26+, see algorithmus-zwei-aufstellungen.md): picks
+    // the 11 players and, for each, one in-possession and one out-of-possession
+    // slot so that — strictly in this order — the most players are placed and
+    // the summed value is maximal; value = ipShare * score(ip role) +
+    // (1 - ipShare) * score(oop role), score = DWRS x playing-time weight x
+    // natural-position bonus. A player needs the position for both slots.
+    // Exact (minimum-cost flow). The B-team is then chosen the same way from
+    // the remaining players.
+    TwoPhaseSquadResult calculateTwoPhaseSquad(const std::vector<const Player *> &pool,
+                                               const QString &tactic, const RoleRatings &ratings,
+                                               double ipShare, bool applyAptWeight = true) const;
 
     DevelopmentSquads calculateDevelopmentSquads(
         const std::vector<const Player *> &secondTeamPlayers,

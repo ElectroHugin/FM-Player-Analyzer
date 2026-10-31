@@ -47,15 +47,6 @@ RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings
 void patchRoleRatings(RoleRatings &ratings, const Player &player, const QString &previousUid,
                       const LatestRatings &latest);
 
-// Adds the combined rating of every role pair ("ipRole|oopRole", see
-// Definitions::rolePair) to `ratings`:
-//   pair = ipShare * rating(ipRole) + (1 - ipShare) * rating(oopRole)
-// A player is rated for a pair only when he has a rating in both roles. With
-// `onlyUid` set, only that player's pair entries are rebuilt (after
-// patchRoleRatings); otherwise every pair entry is rebuilt.
-void addRolePairRatings(RoleRatings &ratings, const QStringList &rolePairs, double ipShare,
-                        const QString &onlyUid = QString());
-
 } // namespace RatingsUpdater
 
 } // namespace fm

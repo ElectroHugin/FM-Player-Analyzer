@@ -6,7 +6,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonParseError>
-#include <QSet>
 
 #include <algorithm>
 
@@ -113,8 +112,33 @@ QStringList Definitions::tacticNamesOrdered() const
     return m_tacticOrder.isEmpty() ? tacticNames() : m_tacticOrder;
 }
 
+QStringList Definitions::pitchOrder(QStringList slotKeys) const
+{
+    // GK first, then own goal -> attack, left -> right within a line.
+    const auto &map = masterPositionMap(m_fmVersionId);
+    const auto &strata = stratumOrder(m_fmVersionId);
+    const auto key = [&](const QString &slot) {
+        if (slot == QLatin1String("GK"))
+            return std::make_pair(-1, 0);
+        const SlotPosition pos = map.value(slot);
+        return std::make_pair(strata.value(pos.stratum, 99), pos.column);
+    };
+    std::stable_sort(slotKeys.begin(), slotKeys.end(),
+                     [&](const QString &a, const QString &b) { return key(a) < key(b); });
+    return slotKeys;
+}
+
+QString Definitions::rolePhase(const QString &role) const
+{
+    const QString phase = m_rolePhases.value(role);
+    return phase.isEmpty() ? QStringLiteral("both") : phase;
+}
+
 QStringList Definitions::tacticSlotOrder(const QString &tactic) const
 {
+    const auto twoPhase = m_twoPhaseTactics.constFind(tactic);
+    if (twoPhase != m_twoPhaseTactics.constEnd())
+        return twoPhase->oopOrder; // file order holds "ip"/"oop", not slots
     const QStringList order = m_slotOrder.value(tactic);
     if (!order.isEmpty())
         return order;
@@ -226,42 +250,29 @@ void Definitions::rebuildCache()
     for (auto it = phases.begin(); it != phases.end(); ++it)
         m_rolePhases.insert(it.key(), it.value().toString());
 
-    // A slot is either "role" (same role in both phases, FM24) or
-    // {"ip": role, "oop": role, "ipSlot": slot} (FM26+).
     m_tacticRoles.clear();
-    m_tacticIpSlots.clear();
-    QSet<QString> pairs;
+    m_twoPhaseTactics.clear();
+    const auto readSlots = [](const QJsonObject &obj) {
+        QHash<QString, QString> slotMap;
+        for (auto slotIt = obj.begin(); slotIt != obj.end(); ++slotIt)
+            slotMap.insert(slotIt.key(), slotIt.value().toString());
+        return slotMap;
+    };
     const QJsonObject tactics = m_root.value(QLatin1String("tactic_roles")).toObject();
     for (auto tacticIt = tactics.begin(); tacticIt != tactics.end(); ++tacticIt) {
-        QHash<QString, QString> slotMap;
-        QHash<QString, QString> ipSlots;
         const QJsonObject slotObj = tacticIt.value().toObject();
-        for (auto slotIt = slotObj.begin(); slotIt != slotObj.end(); ++slotIt) {
-            if (!slotIt.value().isObject()) {
-                slotMap.insert(slotIt.key(), slotIt.value().toString());
-                continue;
-            }
-            const QJsonObject pair = slotIt.value().toObject();
-            const QString role = rolePair(pair.value(QLatin1String("ip")).toString(),
-                                          pair.value(QLatin1String("oop")).toString());
-            slotMap.insert(slotIt.key(), role);
-            if (isRolePair(role))
-                pairs.insert(role);
-            const QString ipSlot = pair.value(QLatin1String("ipSlot")).toString();
-            if (!ipSlot.isEmpty() && ipSlot != slotIt.key())
-                ipSlots.insert(slotIt.key(), ipSlot);
+        if (slotObj.value(QLatin1String("ip")).isObject()
+            && slotObj.value(QLatin1String("oop")).isObject()) {
+            TwoPhaseTactic tactic;
+            tactic.ip = readSlots(slotObj.value(QLatin1String("ip")).toObject());
+            tactic.oop = readSlots(slotObj.value(QLatin1String("oop")).toObject());
+            tactic.ipOrder = pitchOrder(tactic.ip.keys());
+            tactic.oopOrder = pitchOrder(tactic.oop.keys());
+            m_tacticRoles.insert(tacticIt.key(), tactic.oop);
+            m_twoPhaseTactics.insert(tacticIt.key(), tactic);
+            continue;
         }
-        m_tacticRoles.insert(tacticIt.key(), slotMap);
-        if (!ipSlots.isEmpty())
-            m_tacticIpSlots.insert(tacticIt.key(), ipSlots);
-    }
-    m_rolePairs = QStringList(pairs.cbegin(), pairs.cend());
-    std::sort(m_rolePairs.begin(), m_rolePairs.end());
-    // Pair keys display as "In possession / Out of possession".
-    for (const QString &pair : std::as_const(m_rolePairs)) {
-        const auto [ip, oop] = splitRolePair(pair);
-        m_roleDisplayMap.insert(pair, m_roleDisplayMap.value(ip, ip) + QStringLiteral(" / ")
-                                          + m_roleDisplayMap.value(oop, oop));
+        m_tacticRoles.insert(tacticIt.key(), readSlots(slotObj));
     }
     m_tacticNames = tactics.keys();
 
@@ -299,37 +310,6 @@ void Definitions::rebuildCache()
 
     // Last: depends on the position mapping and the valid roles above.
     m_naturalSorter = buildNaturalRoleSorter();
-}
-
-QString Definitions::rolePhase(const QString &role) const
-{
-    const QString phase = m_rolePhases.value(role);
-    return phase.isEmpty() ? QStringLiteral("both") : phase;
-}
-
-QString Definitions::rolePair(const QString &ipRole, const QString &oopRole)
-{
-    if (ipRole.isEmpty() || ipRole == oopRole)
-        return oopRole;
-    if (oopRole.isEmpty())
-        return ipRole;
-    return ipRole + QLatin1Char('|') + oopRole;
-}
-
-QPair<QString, QString> Definitions::splitRolePair(const QString &role)
-{
-    const int bar = role.indexOf(QLatin1Char('|'));
-    if (bar < 0)
-        return {role, role};
-    return {role.left(bar), role.mid(bar + 1)};
-}
-
-QStringList Definitions::pairParts(const QString &role)
-{
-    if (!isRolePair(role))
-        return {role};
-    const auto [ip, oop] = splitRolePair(role);
-    return {ip, oop};
 }
 
 QStringList Definitions::rolesWithWeights() const

@@ -87,10 +87,6 @@ public:
     // Re-reads config-dependent engine state (after settings changes).
     void reloadEngines();
 
-    // Rebuilds the combined ratings of the two-role slots (FM26+) in the
-    // ratings cache; with onlyUid only that player's entries.
-    void refreshRolePairs(const QString &onlyUid = QString());
-
     // Lets the settings page announce changed DB settings (club identity,
     // favorites, …) so header and pages refresh without a full reload.
     void notifySettingsChanged() { emit dataChanged(); }

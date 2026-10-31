@@ -50,7 +50,10 @@ def category(position):
     return "Attack"
 
 
-# Default role per game position for the starter tactics (same names exist in
+# Starter tactics whose two line-ups differ (in possession, out of possession).
+STARTER_PAIRS = [("4-2-3-1 DM Wide", "4-3-3 DM Wide"), ("4-2-3-1 DM Wide", "4-4-1-1 2 DM")]
+
+# Default role per game position for the starter tactics (these names exist in
 # both phases).
 DEFAULT_ROLE = {
     "GK": "Goalkeeper", "D (C)": "Centre-Back", "D (L)": "Full-Back", "D (R)": "Full-Back",
@@ -134,26 +137,28 @@ def main():
         for position in entry["positions"]:
             mapping[position].append(rid)
 
-    # Formation templates per phase, and one starter tactic per out-of-possession
-    # formation (the base shape that decides eligibility) with a default role
-    # pair (in possession / out of possession) per slot.
+    # Formation templates per phase. Starter tactics: two independent line-ups
+    # (in / out of possession) with default roles; which slot goes with which
+    # is decided by the best-XI optimisation, not by the tactic.
     templates = {"ip": {}, "oop": {}}
-    tactic_roles, tactic_layouts = {}, {}
     for row in read("formationen-fm27.csv"):
-        phase = PHASES[row["Phase"]]
         slots = row["Slots"].split("|")
         if len(slots) != 11 or len(set(slots)) != 11:
             sys.exit("Formation %s hat keine 11 Slots" % row["Formation"])
-        templates[phase][row["Formation"]] = slots
-        if phase != "oop":
-            continue
-        name = row["Formation"]
-        tactic_roles[name] = {
-            s: {"ip": role_id("ip", DEFAULT_ROLE[slot_position(s)]),
-                "oop": role_id("oop", DEFAULT_ROLE[slot_position(s)])}
-            for s in slots}
+        templates[PHASES[row["Phase"]]][row["Formation"]] = slots
+
+    def line_up(phase, slots):
+        return {s: role_id(phase, DEFAULT_ROLE[slot_position(s)]) for s in slots}
+
+    starters = [(name, name) for name in templates["oop"] if name in templates["ip"]]
+    starters += [(ip, oop) for ip, oop in STARTER_PAIRS]
+    tactic_roles, tactic_layouts = {}, {}
+    for ip, oop in starters:
+        name = ip if ip == oop else "%s / %s" % (ip, oop)
+        tactic_roles[name] = {"ip": line_up("ip", templates["ip"][ip]),
+                              "oop": line_up("oop", templates["oop"][oop])}
         layout = {}
-        for s in slots:
+        for s in templates["oop"][oop]:
             if s != "GK":
                 layout.setdefault(slot_stratum(s), []).append(s)
         tactic_layouts[name] = layout

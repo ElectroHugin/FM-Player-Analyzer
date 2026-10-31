@@ -105,31 +105,39 @@ private slots:
         QCOMPARE(count, 22);
     }
 
-    void starterTacticsUseEligibleRoles()
+    void starterTacticsAreTwoPhase()
     {
         const auto &slotPositions = tacticalSlotToGamePositions(kVersion);
         const auto &mapping = m_defs.positionToRoleMapping();
-        QVERIFY(!m_defs.tacticRoles().isEmpty());
-        for (auto t = m_defs.tacticRoles().cbegin(); t != m_defs.tacticRoles().cend(); ++t) {
-            QCOMPARE(t.value().size(), 11);
-            for (auto s = t.value().cbegin(); s != t.value().cend(); ++s) {
+        QVERIFY(!m_defs.twoPhaseTactics().isEmpty());
+        QCOMPARE(m_defs.twoPhaseTactics().size(), m_defs.tacticRoles().size());
+        const auto check = [&](const QString &tactic, const QHash<QString, QString> &lineUp,
+                               const QStringList &order, const QString &phase) {
+            QCOMPARE(lineUp.size(), 11);
+            QCOMPARE(order.size(), 11);
+            QCOMPARE(order.first(), QStringLiteral("GK"));
+            for (auto s = lineUp.cbegin(); s != lineUp.cend(); ++s) {
+                QCOMPARE(m_defs.rolePhase(s.value()), phase);
                 const QStringList positions = s.key() == QLatin1String("GK")
                                                   ? QStringList{QStringLiteral("GK")}
                                                   : slotPositions.value(s.key());
-                // Starter tactics hold a role in possession and one out of it.
-                QVERIFY2(Definitions::isRolePair(s.value()), qPrintable(s.value()));
-                const auto [ip, oop] = Definitions::splitRolePair(s.value());
-                QCOMPARE(m_defs.rolePhase(ip), QStringLiteral("ip"));
-                QCOMPARE(m_defs.rolePhase(oop), QStringLiteral("oop"));
-                for (const QString &role : Definitions::pairParts(s.value())) {
-                    bool eligible = false;
-                    for (const QString &position : positions)
-                        eligible |= mapping.value(position).contains(role);
-                    QVERIFY2(eligible, qPrintable(t.key() + QStringLiteral(" ") + s.key()
-                                                  + QStringLiteral(": ") + role));
-                }
+                bool eligible = false;
+                for (const QString &position : positions)
+                    eligible |= mapping.value(position).contains(s.value());
+                QVERIFY2(eligible, qPrintable(tactic + QStringLiteral(" ") + s.key()
+                                              + QStringLiteral(": ") + s.value()));
             }
+        };
+        for (auto t = m_defs.twoPhaseTactics().cbegin(); t != m_defs.twoPhaseTactics().cend(); ++t) {
+            check(t.key(), t->ip, t->ipOrder, QStringLiteral("ip"));
+            check(t.key(), t->oop, t->oopOrder, QStringLiteral("oop"));
+            // The single-line-up view of a two-phase tactic is its base shape.
+            QCOMPARE(m_defs.tacticRoles().value(t.key()), t->oop);
+            QCOMPARE(m_defs.tacticSlotOrder(t.key()), t->oopOrder);
         }
+        const auto edmund = m_defs.twoPhaseTactics().value(QStringLiteral("4-2-3-1 DM Wide / 4-3-3 DM Wide"));
+        QVERIFY(edmund.ip.contains(QStringLiteral("AMC")));
+        QVERIFY(!edmund.oop.contains(QStringLiteral("AMC")));
     }
 };
 

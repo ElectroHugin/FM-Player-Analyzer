@@ -190,7 +190,6 @@ void AppContext::refreshPlayers(const QList<int> &playerIds)
         m_store.replace(row, std::move(player));
         RatingsUpdater::patchRoleRatings(m_ratings, m_store.at(row), previousUid,
                                          m_latestRatings);
-        refreshRolePairs(m_store.at(row).uid);
     }
     emit dataChanged();
 }
@@ -209,7 +208,6 @@ void AppContext::refreshRatings(const QList<int> &playerIds)
         if (row >= 0) {
             const Player &player = m_store.at(row);
             RatingsUpdater::patchRoleRatings(m_ratings, player, player.uid, m_latestRatings);
-            refreshRolePairs(player.uid);
         }
     }
     emit dataChanged();
@@ -233,7 +231,6 @@ void AppContext::adoptState(PlayerStore store, LatestRatings latestRatings, Role
     m_store = std::move(store);
     m_latestRatings = std::move(latestRatings);
     m_ratings = std::move(ratings);
-    refreshRolePairs();
     emit dataChanged();
 }
 
@@ -249,13 +246,6 @@ void AppContext::rebuildRatingsCache()
 {
     m_latestRatings = m_database->latestDwrsRatings();
     m_ratings = RatingsUpdater::roleRatingsForAssigned(m_store, m_latestRatings);
-    refreshRolePairs();
-}
-
-void AppContext::refreshRolePairs(const QString &onlyUid)
-{
-    RatingsUpdater::addRolePairRatings(m_ratings, m_definitions->rolePairs(),
-                                       m_config->ipSharePercent() / 100.0, onlyUid);
 }
 
 PlayerStatus::FreshnessContext AppContext::freshnessContext()
@@ -327,8 +317,6 @@ void AppContext::reloadEngines()
     waitForBackgroundTasks();
     m_dwrsEngine->reloadConfig();
     m_squadBuilder->reloadConfig();
-    // Tactics (role pairs) or the in-possession share may have changed.
-    refreshRolePairs();
 }
 
 bool AppContext::reloadConfigAndDefinitions()

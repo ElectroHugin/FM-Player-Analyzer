@@ -2183,463 +2183,283 @@
   },
   "tactic_roles": {
     "3-4-3 DM Narrow": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
+      "ip": {
+        "GK": "GK-IP",
+        "DCL": "CB-IP",
+        "DC": "CB-IP",
+        "DCR": "CB-IP",
+        "DML": "WB-IP",
+        "DMCL": "DM-IP",
+        "DMCR": "DM-IP",
+        "DMR": "WB-IP",
+        "AMCL": "AM-IP",
+        "AMCR": "AM-IP",
+        "STC": "CF-IP"
       },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DC": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DML": {
-        "ip": "WB-IP",
-        "oop": "WB-OOP"
-      },
-      "DMCL": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMCR": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMR": {
-        "ip": "WB-IP",
-        "oop": "WB-OOP"
-      },
-      "AMCL": {
-        "ip": "AM-IP",
-        "oop": "AM-OOP"
-      },
-      "AMCR": {
-        "ip": "AM-IP",
-        "oop": "AM-OOP"
-      },
-      "STC": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DCL": "CB-OOP",
+        "DC": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DML": "WB-OOP",
+        "DMCL": "DM-OOP",
+        "DMCR": "DM-OOP",
+        "DMR": "WB-OOP",
+        "AMCL": "AM-OOP",
+        "AMCR": "AM-OOP",
+        "STC": "CF-OOP"
       }
     },
     "3-4-3 DM Wide": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
+      "ip": {
+        "GK": "GK-IP",
+        "DCL": "CB-IP",
+        "DC": "CB-IP",
+        "DCR": "CB-IP",
+        "DML": "WB-IP",
+        "DMCL": "DM-IP",
+        "DMCR": "DM-IP",
+        "DMR": "WB-IP",
+        "AML": "W-IP",
+        "AMR": "W-IP",
+        "STC": "CF-IP"
       },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DC": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DML": {
-        "ip": "WB-IP",
-        "oop": "WB-OOP"
-      },
-      "DMCL": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMCR": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMR": {
-        "ip": "WB-IP",
-        "oop": "WB-OOP"
-      },
-      "AML": {
-        "ip": "W-IP",
-        "oop": "W-OOP"
-      },
-      "AMR": {
-        "ip": "W-IP",
-        "oop": "W-OOP"
-      },
-      "STC": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
-      }
-    },
-    "4-1-4-1 DM": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
-      },
-      "DL": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DR": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DMC": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "ML": {
-        "ip": "WM-IP",
-        "oop": "WM-OOP"
-      },
-      "MCL": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "MCR": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "MR": {
-        "ip": "WM-IP",
-        "oop": "WM-OOP"
-      },
-      "STC": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DCL": "CB-OOP",
+        "DC": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DML": "WB-OOP",
+        "DMCL": "DM-OOP",
+        "DMCR": "DM-OOP",
+        "DMR": "WB-OOP",
+        "AML": "W-OOP",
+        "AMR": "W-OOP",
+        "STC": "CF-OOP"
       }
     },
     "4-2-2-2 DM Wide": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
+      "ip": {
+        "GK": "GK-IP",
+        "DL": "FB-IP",
+        "DCL": "CB-IP",
+        "DCR": "CB-IP",
+        "DR": "FB-IP",
+        "DMCL": "DM-IP",
+        "DMCR": "DM-IP",
+        "ML": "WM-IP",
+        "MR": "WM-IP",
+        "STL": "CF-IP",
+        "STR": "CF-IP"
       },
-      "DL": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DR": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DMCL": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMCR": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "ML": {
-        "ip": "WM-IP",
-        "oop": "WM-OOP"
-      },
-      "MR": {
-        "ip": "WM-IP",
-        "oop": "WM-OOP"
-      },
-      "STL": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
-      },
-      "STR": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DL": "FB-OOP",
+        "DCL": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DR": "FB-OOP",
+        "DMCL": "DM-OOP",
+        "DMCR": "DM-OOP",
+        "ML": "WM-OOP",
+        "MR": "WM-OOP",
+        "STL": "CF-OOP",
+        "STR": "CF-OOP"
       }
     },
     "4-3-2-1 DM Narrow": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
+      "ip": {
+        "GK": "GK-IP",
+        "DL": "FB-IP",
+        "DCL": "CB-IP",
+        "DCR": "CB-IP",
+        "DR": "FB-IP",
+        "DMC": "DM-IP",
+        "MCL": "CM-IP",
+        "MCR": "CM-IP",
+        "AMCL": "AM-IP",
+        "AMCR": "AM-IP",
+        "STC": "CF-IP"
       },
-      "DL": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DR": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DMC": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "MCL": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "MCR": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "AMCL": {
-        "ip": "AM-IP",
-        "oop": "AM-OOP"
-      },
-      "AMCR": {
-        "ip": "AM-IP",
-        "oop": "AM-OOP"
-      },
-      "STC": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DL": "FB-OOP",
+        "DCL": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DR": "FB-OOP",
+        "DMC": "DM-OOP",
+        "MCL": "CM-OOP",
+        "MCR": "CM-OOP",
+        "AMCL": "AM-OOP",
+        "AMCR": "AM-OOP",
+        "STC": "CF-OOP"
       }
     },
     "4-3-3 DM Wide": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
+      "ip": {
+        "GK": "GK-IP",
+        "DL": "FB-IP",
+        "DCL": "CB-IP",
+        "DCR": "CB-IP",
+        "DR": "FB-IP",
+        "DMC": "DM-IP",
+        "MCL": "CM-IP",
+        "MCR": "CM-IP",
+        "AML": "W-IP",
+        "AMR": "W-IP",
+        "STC": "CF-IP"
       },
-      "DL": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DR": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DMC": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "MCL": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "MCR": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "AML": {
-        "ip": "W-IP",
-        "oop": "W-OOP"
-      },
-      "AMR": {
-        "ip": "W-IP",
-        "oop": "W-OOP"
-      },
-      "STC": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
-      }
-    },
-    "4-4-1-1 2 DM": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
-      },
-      "DL": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DR": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DMCL": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMCR": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "ML": {
-        "ip": "WM-IP",
-        "oop": "WM-OOP"
-      },
-      "MR": {
-        "ip": "WM-IP",
-        "oop": "WM-OOP"
-      },
-      "AMC": {
-        "ip": "AM-IP",
-        "oop": "AM-OOP"
-      },
-      "STC": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DL": "FB-OOP",
+        "DCL": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DR": "FB-OOP",
+        "DMC": "DM-OOP",
+        "MCL": "CM-OOP",
+        "MCR": "CM-OOP",
+        "AML": "W-OOP",
+        "AMR": "W-OOP",
+        "STC": "CF-OOP"
       }
     },
     "4-4-2 Diamond Narrow": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
+      "ip": {
+        "GK": "GK-IP",
+        "DL": "FB-IP",
+        "DCL": "CB-IP",
+        "DCR": "CB-IP",
+        "DR": "FB-IP",
+        "DMC": "DM-IP",
+        "MCL": "CM-IP",
+        "MCR": "CM-IP",
+        "AMC": "AM-IP",
+        "STL": "CF-IP",
+        "STR": "CF-IP"
       },
-      "DL": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DR": {
-        "ip": "FB-IP",
-        "oop": "FB-OOP"
-      },
-      "DMC": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "MCL": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "MCR": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "AMC": {
-        "ip": "AM-IP",
-        "oop": "AM-OOP"
-      },
-      "STL": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
-      },
-      "STR": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DL": "FB-OOP",
+        "DCL": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DR": "FB-OOP",
+        "DMC": "DM-OOP",
+        "MCL": "CM-OOP",
+        "MCR": "CM-OOP",
+        "AMC": "AM-OOP",
+        "STL": "CF-OOP",
+        "STR": "CF-OOP"
       }
     },
     "5-1-2-2 DM WB": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
+      "ip": {
+        "GK": "GK-IP",
+        "DCL": "CB-IP",
+        "DC": "CB-IP",
+        "DCR": "CB-IP",
+        "DML": "WB-IP",
+        "DMC": "DM-IP",
+        "DMR": "WB-IP",
+        "MCL": "CM-IP",
+        "MCR": "CM-IP",
+        "STL": "CF-IP",
+        "STR": "CF-IP"
       },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DC": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DML": {
-        "ip": "WB-IP",
-        "oop": "WB-OOP"
-      },
-      "DMC": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMR": {
-        "ip": "WB-IP",
-        "oop": "WB-OOP"
-      },
-      "MCL": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "MCR": {
-        "ip": "CM-IP",
-        "oop": "CM-OOP"
-      },
-      "STL": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
-      },
-      "STR": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DCL": "CB-OOP",
+        "DC": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DML": "WB-OOP",
+        "DMC": "DM-OOP",
+        "DMR": "WB-OOP",
+        "MCL": "CM-OOP",
+        "MCR": "CM-OOP",
+        "STL": "CF-OOP",
+        "STR": "CF-OOP"
       }
     },
     "5-2-1-2 DM WB": {
-      "GK": {
-        "ip": "GK-IP",
-        "oop": "GK-OOP"
+      "ip": {
+        "GK": "GK-IP",
+        "DCL": "CB-IP",
+        "DC": "CB-IP",
+        "DCR": "CB-IP",
+        "DML": "WB-IP",
+        "DMCL": "DM-IP",
+        "DMCR": "DM-IP",
+        "DMR": "WB-IP",
+        "AMC": "AM-IP",
+        "STL": "CF-IP",
+        "STR": "CF-IP"
       },
-      "DCL": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DCL": "CB-OOP",
+        "DC": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DML": "WB-OOP",
+        "DMCL": "DM-OOP",
+        "DMCR": "DM-OOP",
+        "DMR": "WB-OOP",
+        "AMC": "AM-OOP",
+        "STL": "CF-OOP",
+        "STR": "CF-OOP"
+      }
+    },
+    "4-2-3-1 DM Wide / 4-3-3 DM Wide": {
+      "ip": {
+        "GK": "GK-IP",
+        "DL": "FB-IP",
+        "DCL": "CB-IP",
+        "DCR": "CB-IP",
+        "DR": "FB-IP",
+        "DMCL": "DM-IP",
+        "DMCR": "DM-IP",
+        "AML": "W-IP",
+        "AMC": "AM-IP",
+        "AMR": "W-IP",
+        "STC": "CF-IP"
       },
-      "DC": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DL": "FB-OOP",
+        "DCL": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DR": "FB-OOP",
+        "DMC": "DM-OOP",
+        "MCL": "CM-OOP",
+        "MCR": "CM-OOP",
+        "AML": "W-OOP",
+        "AMR": "W-OOP",
+        "STC": "CF-OOP"
+      }
+    },
+    "4-2-3-1 DM Wide / 4-4-1-1 2 DM": {
+      "ip": {
+        "GK": "GK-IP",
+        "DL": "FB-IP",
+        "DCL": "CB-IP",
+        "DCR": "CB-IP",
+        "DR": "FB-IP",
+        "DMCL": "DM-IP",
+        "DMCR": "DM-IP",
+        "AML": "W-IP",
+        "AMC": "AM-IP",
+        "AMR": "W-IP",
+        "STC": "CF-IP"
       },
-      "DCR": {
-        "ip": "CB-IP",
-        "oop": "CB-OOP"
-      },
-      "DML": {
-        "ip": "WB-IP",
-        "oop": "WB-OOP"
-      },
-      "DMCL": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMCR": {
-        "ip": "DM-IP",
-        "oop": "DM-OOP"
-      },
-      "DMR": {
-        "ip": "WB-IP",
-        "oop": "WB-OOP"
-      },
-      "AMC": {
-        "ip": "AM-IP",
-        "oop": "AM-OOP"
-      },
-      "STL": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
-      },
-      "STR": {
-        "ip": "CF-IP",
-        "oop": "CF-OOP"
+      "oop": {
+        "GK": "GK-OOP",
+        "DL": "FB-OOP",
+        "DCL": "CB-OOP",
+        "DCR": "CB-OOP",
+        "DR": "FB-OOP",
+        "DMCL": "DM-OOP",
+        "DMCR": "DM-OOP",
+        "ML": "WM-OOP",
+        "MR": "WM-OOP",
+        "AMC": "AM-OOP",
+        "STC": "CF-OOP"
       }
     }
   },
@@ -2679,26 +2499,6 @@
       "Attacking Midfield": [
         "AML",
         "AMR"
-      ],
-      "Strikers": [
-        "STC"
-      ]
-    },
-    "4-1-4-1 DM": {
-      "Defense": [
-        "DL",
-        "DCL",
-        "DCR",
-        "DR"
-      ],
-      "Defensive Midfield": [
-        "DMC"
-      ],
-      "Midfield": [
-        "ML",
-        "MCL",
-        "MCR",
-        "MR"
       ],
       "Strikers": [
         "STC"
@@ -2763,28 +2563,6 @@
       "Attacking Midfield": [
         "AML",
         "AMR"
-      ],
-      "Strikers": [
-        "STC"
-      ]
-    },
-    "4-4-1-1 2 DM": {
-      "Defense": [
-        "DL",
-        "DCL",
-        "DCR",
-        "DR"
-      ],
-      "Defensive Midfield": [
-        "DMCL",
-        "DMCR"
-      ],
-      "Midfield": [
-        "ML",
-        "MR"
-      ],
-      "Attacking Midfield": [
-        "AMC"
       ],
       "Strikers": [
         "STC"
@@ -2850,6 +2628,50 @@
       "Strikers": [
         "STL",
         "STR"
+      ]
+    },
+    "4-2-3-1 DM Wide / 4-3-3 DM Wide": {
+      "Defense": [
+        "DL",
+        "DCL",
+        "DCR",
+        "DR"
+      ],
+      "Defensive Midfield": [
+        "DMC"
+      ],
+      "Midfield": [
+        "MCL",
+        "MCR"
+      ],
+      "Attacking Midfield": [
+        "AML",
+        "AMR"
+      ],
+      "Strikers": [
+        "STC"
+      ]
+    },
+    "4-2-3-1 DM Wide / 4-4-1-1 2 DM": {
+      "Defense": [
+        "DL",
+        "DCL",
+        "DCR",
+        "DR"
+      ],
+      "Defensive Midfield": [
+        "DMCL",
+        "DMCR"
+      ],
+      "Midfield": [
+        "ML",
+        "MR"
+      ],
+      "Attacking Midfield": [
+        "AMC"
+      ],
+      "Strikers": [
+        "STC"
       ]
     }
   },
