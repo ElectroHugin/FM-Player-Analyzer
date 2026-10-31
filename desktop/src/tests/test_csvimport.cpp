@@ -310,6 +310,54 @@ private slots:
         QCOMPARE(asFm24.errorArg, QStringLiteral("UID"));
     }
 
+    void fm27PlayerDatabaseCsv()
+    {
+        // The Player Database view calls the player column "Name", shows the
+        // scout grade as "Rec." and full names in "2nd Nat"; the squad view
+        // shows full names in "Nation".
+        const QByteArray csv = QByteArray("\xEF\xBB\xBF")
+            + QStringLiteral(
+                  "Rec.,Unique ID,Name,Position,Age,Club,Nation,2nd Nat,Height,Acceleration,"
+                  "Pace,Finishing,Passing,Vision,Ability\r\n"
+                  "E,2000478054,Brian Adoga,D/WB (L),17,1. FC Köln,GER,Nigeria,178 cm,11-16,"
+                  "13-16,2-7,9,6-10,Unknown\r\n")
+                  .toUtf8();
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        Database db(QStringLiteral("csv_test_fm27_database"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+        const ImportResult result = HtmlImporter::importFile(
+            writeFile(dir, QStringLiteral("playerdatabase.csv"), csv), db, {}, {},
+            QStringLiteral("fm27"));
+        QVERIFY2(result.success, qPrintable(result.error));
+        QVERIFY2(result.unknownColumns.isEmpty(), qPrintable(result.unknownColumns.join(", ")));
+        const std::vector<Player> players = db.loadPlayers();
+        QCOMPARE(static_cast<int>(players.size()), 1);
+        QCOMPARE(players[0].name, QStringLiteral("Brian Adoga"));
+        QCOMPARE(players[0].nationality, QStringLiteral("GER"));
+        QCOMPARE(players[0].secondNationality, QStringLiteral("NGA"));
+
+        QStringList headers = {QStringLiteral("Unique ID"), QStringLiteral("Player"),
+                               QStringLiteral("Name")};
+        applyHeaderAliases(&headers, QStringLiteral("fm27"));
+        QCOMPARE(headers.at(2), QStringLiteral("Name")); // "Player" already there
+        QStringList fm24 = {QStringLiteral("UID"), QStringLiteral("Name")};
+        applyHeaderAliases(&fm24, QStringLiteral("fm24"));
+        QCOMPARE(fm24.at(1), QStringLiteral("Name"));
+    }
+
+    void nationCodes()
+    {
+        QCOMPARE(nationCode(QStringLiteral("Germany")), QStringLiteral("GER"));
+        QCOMPARE(nationCode(QStringLiteral(" Ivory Coast ")), QStringLiteral("CIV"));
+        QCOMPARE(nationCode(QStringLiteral("Türkiye")), QStringLiteral("TUR"));
+        QCOMPARE(nationCode(QStringLiteral("U.S.A.")), QStringLiteral("USA"));
+        QCOMPARE(nationCode(QStringLiteral("South Korea")), QStringLiteral("KOR"));
+        QCOMPARE(nationCode(QStringLiteral("GER")), QStringLiteral("GER"));
+        QCOMPARE(nationCode(QStringLiteral("Pays Basque")), QStringLiteral("Pays Basque"));
+        QCOMPARE(nationCode(QString()), QString());
+    }
+
     void fm27MappingComplete()
     {
         // Every rated attribute is reachable from an FM27 header, and no

@@ -35,13 +35,18 @@ bool readImportTable(const QString &filePath, const QString &fmVersionId, Import
         return fail(ImportErrorCode::FileOpen, file.errorString(),
                     QStringLiteral("Could not open file: %1").arg(file.errorString()));
 
-    if (format == QLatin1String("csv"))
-        return CsvReader::read(file.readAll(), out, error);
-
-    // The decoded file (2 bytes per char) is only needed for parsing; it is
-    // released when this function returns, before the database work starts.
-    const QString html = QString::fromUtf8(file.readAll());
-    return HtmlImporter::extractTable(html, out, error, progress);
+    bool ok = false;
+    if (format == QLatin1String("csv")) {
+        ok = CsvReader::read(file.readAll(), out, error);
+    } else {
+        // The decoded file (2 bytes per char) is only needed for parsing; it
+        // is released when this block ends, before the database work starts.
+        const QString html = QString::fromUtf8(file.readAll());
+        ok = HtmlImporter::extractTable(html, out, error, progress);
+    }
+    if (ok)
+        applyHeaderAliases(&out->headers, fmVersionId);
+    return ok;
 }
 
 } // namespace fm

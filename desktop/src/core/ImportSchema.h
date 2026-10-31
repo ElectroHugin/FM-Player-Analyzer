@@ -28,4 +28,16 @@ const QSet<QString> &ignoredExportColumns(const QString &versionId);
 // version.
 const QStringList &requiredImportColumns(const QString &versionId);
 
+// Other spellings of export headers, alias -> header used by the schema (FM27:
+// the Player Database calls the player column "Name", the squad "Player").
+// Unknown/empty ids fall back to the default version.
+const QHash<QString, QString> &exportHeaderAliases(const QString &versionId);
+// Renames alias headers in place, unless the file also has the header itself.
+void applyHeaderAliases(QStringList *headers, const QString &versionId);
+
+// Nationality as the app stores it: the game's three-letter code ("GER").
+// FM27 shows full names in some views ("Germany", "Ivory Coast"); known names
+// become their code, anything else is returned trimmed and unchanged.
+QString nationCode(const QString &value);
+
 } // namespace fm

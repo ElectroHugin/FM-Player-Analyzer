@@ -34,7 +34,7 @@ ist egal, der Analyzer sucht sie über den Namen. Quelle im Code:
 | Spalte in FM27 | Feld im Analyzer | FM24-Kopf |
 | --- | --- | --- |
 | `Unique ID` | Unique ID | `UID` |
-| `Player` | Name | `Name` |
+| `Player` (Spielerdatenbank: `Name`) | Name | `Name` |
 
 ### Stammdaten
 
@@ -43,8 +43,8 @@ ist egal, der Analyzer sucht sie über den Namen. Quelle im Code:
 | `Position` | Position | `Position` | |
 | `Age` | Age | `Age` | |
 | `Club` | Club | `Club` | |
-| `Nation` | Nationality | `Nat` | kommt zweimal vor; die erste Spalte (Kürzel, `GER`) zählt |
-| `2nd Nat` | Second Nationality | `2nd Nat` | |
+| `Nation` | Nationality | `Nat` | Kürzel (`GER`) oder voller Name (`Germany`), gespeichert wird das Kürzel; bei zwei `Nation`-Spalten zählt die erste |
+| `2nd Nat` | Second Nationality | `2nd Nat` | voller Name, gespeichert wird das Kürzel |
 | `Height` | Height | `Height` | `193 cm` |
 | `Preferred Foot` | Preferred Foot | `Preferred Foot` | |
 | `Left Foot` | Left Foot | `Left Foot` | |
@@ -114,7 +114,7 @@ Note mit Punkt oder Komma.
 Alle anderen Spalten, die FM27 anbietet, kennt der Analyzer und überspringt sie
 still, darunter `Communication`, `Eccentricity`, `Punching`, `Natural Fitness`,
 `Free Kick Taking`, `Long Throws` und `Penalty Taking` (wie bei FM24 nicht unter
-den bewerteten Attributen) sowie `Recommendation` (Scout-Empfehlung von A+ bis F,
+den bewerteten Attributen) sowie `Rec.` / `Recommendation` (Scout-Empfehlung von A+ bis F,
 erste Spalte der Ansicht für die Spielerdatenbank). Als *unbekannte Spalte* meldet der Import nur Köpfe, die
 in keiner der beiden Listen stehen, also z. B. Spalten, die ein Patch umbenannt hat.
 
