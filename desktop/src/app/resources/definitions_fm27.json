@@ -1,5 +1,18 @@
 {
   "fm_version": "fm27",
+  "data_revision": 2,
+  "retired_tactics": [
+    "3-4-3 DM Narrow",
+    "3-4-3 DM Wide",
+    "4-2-2-2 DM Wide",
+    "4-2-3-1 DM Wide / 4-3-3 DM Wide",
+    "4-2-3-1 DM Wide / 4-4-1-1 2 DM",
+    "4-3-2-1 DM Narrow",
+    "4-3-3 DM Wide",
+    "4-4-2 Diamond Narrow",
+    "5-1-2-2 DM WB",
+    "5-2-1-2 DM WB"
+  ],
   "player_roles": {
     "Goalkeepers": {
       "BPGK": "Ball-Playing Goalkeeper",
@@ -2182,477 +2195,37 @@
     }
   },
   "tactic_roles": {
-    "3-4-3 DM Narrow": {
+    "4-2-3-1 - Bavarian Blitz": {
       "ip": {
-        "GK": "GK-IP",
-        "DCL": "CB-IP",
-        "DC": "CB-IP",
-        "DCR": "CB-IP",
-        "DML": "WB-IP",
-        "DMCL": "DM-IP",
+        "GK": "BPGK",
+        "DL": "WB-IP",
+        "DCL": "BPCB",
+        "DCR": "BPCB",
+        "DR": "WB-IP",
+        "DMCL": "DLP",
         "DMCR": "DM-IP",
-        "DMR": "WB-IP",
-        "AMCL": "AM-IP",
-        "AMCR": "AM-IP",
-        "STC": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DCL": "CB-OOP",
-        "DC": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DML": "WB-OOP",
-        "DMCL": "DM-OOP",
-        "DMCR": "DM-OOP",
-        "DMR": "WB-OOP",
-        "AMCL": "AM-OOP",
-        "AMCR": "AM-OOP",
-        "STC": "CF-OOP"
-      }
-    },
-    "3-4-3 DM Wide": {
-      "ip": {
-        "GK": "GK-IP",
-        "DCL": "CB-IP",
-        "DC": "CB-IP",
-        "DCR": "CB-IP",
-        "DML": "WB-IP",
-        "DMCL": "DM-IP",
-        "DMCR": "DM-IP",
-        "DMR": "WB-IP",
-        "AML": "W-IP",
-        "AMR": "W-IP",
-        "STC": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DCL": "CB-OOP",
-        "DC": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DML": "WB-OOP",
-        "DMCL": "DM-OOP",
-        "DMCR": "DM-OOP",
-        "DMR": "WB-OOP",
-        "AML": "W-OOP",
-        "AMR": "W-OOP",
-        "STC": "CF-OOP"
-      }
-    },
-    "4-2-2-2 DM Wide": {
-      "ip": {
-        "GK": "GK-IP",
-        "DL": "FB-IP",
-        "DCL": "CB-IP",
-        "DCR": "CB-IP",
-        "DR": "FB-IP",
-        "DMCL": "DM-IP",
-        "DMCR": "DM-IP",
-        "ML": "WM-IP",
-        "MR": "WM-IP",
-        "STL": "CF-IP",
-        "STR": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DL": "FB-OOP",
-        "DCL": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DR": "FB-OOP",
-        "DMCL": "DM-OOP",
-        "DMCR": "DM-OOP",
-        "ML": "WM-OOP",
-        "MR": "WM-OOP",
-        "STL": "CF-OOP",
-        "STR": "CF-OOP"
-      }
-    },
-    "4-3-2-1 DM Narrow": {
-      "ip": {
-        "GK": "GK-IP",
-        "DL": "FB-IP",
-        "DCL": "CB-IP",
-        "DCR": "CB-IP",
-        "DR": "FB-IP",
-        "DMC": "DM-IP",
-        "MCL": "CM-IP",
-        "MCR": "CM-IP",
-        "AMCL": "AM-IP",
-        "AMCR": "AM-IP",
-        "STC": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DL": "FB-OOP",
-        "DCL": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DR": "FB-OOP",
-        "DMC": "DM-OOP",
-        "MCL": "CM-OOP",
-        "MCR": "CM-OOP",
-        "AMCL": "AM-OOP",
-        "AMCR": "AM-OOP",
-        "STC": "CF-OOP"
-      }
-    },
-    "4-3-3 DM Wide": {
-      "ip": {
-        "GK": "GK-IP",
-        "DL": "FB-IP",
-        "DCL": "CB-IP",
-        "DCR": "CB-IP",
-        "DR": "FB-IP",
-        "DMC": "DM-IP",
-        "MCL": "CM-IP",
-        "MCR": "CM-IP",
-        "AML": "W-IP",
-        "AMR": "W-IP",
-        "STC": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DL": "FB-OOP",
-        "DCL": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DR": "FB-OOP",
-        "DMC": "DM-OOP",
-        "MCL": "CM-OOP",
-        "MCR": "CM-OOP",
-        "AML": "W-OOP",
-        "AMR": "W-OOP",
-        "STC": "CF-OOP"
-      }
-    },
-    "4-4-2 Diamond Narrow": {
-      "ip": {
-        "GK": "GK-IP",
-        "DL": "FB-IP",
-        "DCL": "CB-IP",
-        "DCR": "CB-IP",
-        "DR": "FB-IP",
-        "DMC": "DM-IP",
-        "MCL": "CM-IP",
-        "MCR": "CM-IP",
+        "AML": "IF",
         "AMC": "AM-IP",
-        "STL": "CF-IP",
-        "STR": "CF-IP"
+        "AMR": "IW",
+        "STC": "DLF"
       },
       "oop": {
-        "GK": "GK-OOP",
+        "GK": "SK",
         "DL": "FB-OOP",
         "DCL": "CB-OOP",
         "DCR": "CB-OOP",
         "DR": "FB-OOP",
-        "DMC": "DM-OOP",
-        "MCL": "CM-OOP",
-        "MCR": "CM-OOP",
+        "DMCL": "DM-OOP",
+        "DMCR": "SDM",
+        "ML": "TWM",
         "AMC": "AM-OOP",
-        "STL": "CF-OOP",
-        "STR": "CF-OOP"
-      }
-    },
-    "5-1-2-2 DM WB": {
-      "ip": {
-        "GK": "GK-IP",
-        "DCL": "CB-IP",
-        "DC": "CB-IP",
-        "DCR": "CB-IP",
-        "DML": "WB-IP",
-        "DMC": "DM-IP",
-        "DMR": "WB-IP",
-        "MCL": "CM-IP",
-        "MCR": "CM-IP",
-        "STL": "CF-IP",
-        "STR": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DCL": "CB-OOP",
-        "DC": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DML": "WB-OOP",
-        "DMC": "DM-OOP",
-        "DMR": "WB-OOP",
-        "MCL": "CM-OOP",
-        "MCR": "CM-OOP",
-        "STL": "CF-OOP",
-        "STR": "CF-OOP"
-      }
-    },
-    "5-2-1-2 DM WB": {
-      "ip": {
-        "GK": "GK-IP",
-        "DCL": "CB-IP",
-        "DC": "CB-IP",
-        "DCR": "CB-IP",
-        "DML": "WB-IP",
-        "DMCL": "DM-IP",
-        "DMCR": "DM-IP",
-        "DMR": "WB-IP",
-        "AMC": "AM-IP",
-        "STL": "CF-IP",
-        "STR": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DCL": "CB-OOP",
-        "DC": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DML": "WB-OOP",
-        "DMCL": "DM-OOP",
-        "DMCR": "DM-OOP",
-        "DMR": "WB-OOP",
-        "AMC": "AM-OOP",
-        "STL": "CF-OOP",
-        "STR": "CF-OOP"
-      }
-    },
-    "4-2-3-1 DM Wide / 4-3-3 DM Wide": {
-      "ip": {
-        "GK": "GK-IP",
-        "DL": "FB-IP",
-        "DCL": "CB-IP",
-        "DCR": "CB-IP",
-        "DR": "FB-IP",
-        "DMCL": "DM-IP",
-        "DMCR": "DM-IP",
-        "AML": "W-IP",
-        "AMC": "AM-IP",
-        "AMR": "W-IP",
-        "STC": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DL": "FB-OOP",
-        "DCL": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DR": "FB-OOP",
-        "DMC": "DM-OOP",
-        "MCL": "CM-OOP",
-        "MCR": "CM-OOP",
-        "AML": "W-OOP",
-        "AMR": "W-OOP",
-        "STC": "CF-OOP"
-      }
-    },
-    "4-2-3-1 DM Wide / 4-4-1-1 2 DM": {
-      "ip": {
-        "GK": "GK-IP",
-        "DL": "FB-IP",
-        "DCL": "CB-IP",
-        "DCR": "CB-IP",
-        "DR": "FB-IP",
-        "DMCL": "DM-IP",
-        "DMCR": "DM-IP",
-        "AML": "W-IP",
-        "AMC": "AM-IP",
-        "AMR": "W-IP",
-        "STC": "CF-IP"
-      },
-      "oop": {
-        "GK": "GK-OOP",
-        "DL": "FB-OOP",
-        "DCL": "CB-OOP",
-        "DCR": "CB-OOP",
-        "DR": "FB-OOP",
-        "DMCL": "DM-OOP",
-        "DMCR": "DM-OOP",
-        "ML": "WM-OOP",
-        "MR": "WM-OOP",
-        "AMC": "AM-OOP",
+        "MR": "TWM",
         "STC": "CF-OOP"
       }
     }
   },
   "tactic_layouts": {
-    "3-4-3 DM Narrow": {
-      "Defense": [
-        "DCL",
-        "DC",
-        "DCR"
-      ],
-      "Defensive Midfield": [
-        "DML",
-        "DMCL",
-        "DMCR",
-        "DMR"
-      ],
-      "Attacking Midfield": [
-        "AMCL",
-        "AMCR"
-      ],
-      "Strikers": [
-        "STC"
-      ]
-    },
-    "3-4-3 DM Wide": {
-      "Defense": [
-        "DCL",
-        "DC",
-        "DCR"
-      ],
-      "Defensive Midfield": [
-        "DML",
-        "DMCL",
-        "DMCR",
-        "DMR"
-      ],
-      "Attacking Midfield": [
-        "AML",
-        "AMR"
-      ],
-      "Strikers": [
-        "STC"
-      ]
-    },
-    "4-2-2-2 DM Wide": {
-      "Defense": [
-        "DL",
-        "DCL",
-        "DCR",
-        "DR"
-      ],
-      "Defensive Midfield": [
-        "DMCL",
-        "DMCR"
-      ],
-      "Midfield": [
-        "ML",
-        "MR"
-      ],
-      "Strikers": [
-        "STL",
-        "STR"
-      ]
-    },
-    "4-3-2-1 DM Narrow": {
-      "Defense": [
-        "DL",
-        "DCL",
-        "DCR",
-        "DR"
-      ],
-      "Defensive Midfield": [
-        "DMC"
-      ],
-      "Midfield": [
-        "MCL",
-        "MCR"
-      ],
-      "Attacking Midfield": [
-        "AMCL",
-        "AMCR"
-      ],
-      "Strikers": [
-        "STC"
-      ]
-    },
-    "4-3-3 DM Wide": {
-      "Defense": [
-        "DL",
-        "DCL",
-        "DCR",
-        "DR"
-      ],
-      "Defensive Midfield": [
-        "DMC"
-      ],
-      "Midfield": [
-        "MCL",
-        "MCR"
-      ],
-      "Attacking Midfield": [
-        "AML",
-        "AMR"
-      ],
-      "Strikers": [
-        "STC"
-      ]
-    },
-    "4-4-2 Diamond Narrow": {
-      "Defense": [
-        "DL",
-        "DCL",
-        "DCR",
-        "DR"
-      ],
-      "Defensive Midfield": [
-        "DMC"
-      ],
-      "Midfield": [
-        "MCL",
-        "MCR"
-      ],
-      "Attacking Midfield": [
-        "AMC"
-      ],
-      "Strikers": [
-        "STL",
-        "STR"
-      ]
-    },
-    "5-1-2-2 DM WB": {
-      "Defense": [
-        "DCL",
-        "DC",
-        "DCR"
-      ],
-      "Defensive Midfield": [
-        "DML",
-        "DMC",
-        "DMR"
-      ],
-      "Midfield": [
-        "MCL",
-        "MCR"
-      ],
-      "Strikers": [
-        "STL",
-        "STR"
-      ]
-    },
-    "5-2-1-2 DM WB": {
-      "Defense": [
-        "DCL",
-        "DC",
-        "DCR"
-      ],
-      "Defensive Midfield": [
-        "DML",
-        "DMCL",
-        "DMCR",
-        "DMR"
-      ],
-      "Attacking Midfield": [
-        "AMC"
-      ],
-      "Strikers": [
-        "STL",
-        "STR"
-      ]
-    },
-    "4-2-3-1 DM Wide / 4-3-3 DM Wide": {
-      "Defense": [
-        "DL",
-        "DCL",
-        "DCR",
-        "DR"
-      ],
-      "Defensive Midfield": [
-        "DMC"
-      ],
-      "Midfield": [
-        "MCL",
-        "MCR"
-      ],
-      "Attacking Midfield": [
-        "AML",
-        "AMR"
-      ],
-      "Strikers": [
-        "STC"
-      ]
-    },
-    "4-2-3-1 DM Wide / 4-4-1-1 2 DM": {
+    "4-2-3-1 - Bavarian Blitz": {
       "Defense": [
         "DL",
         "DCL",

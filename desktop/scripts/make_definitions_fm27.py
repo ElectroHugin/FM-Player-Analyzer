@@ -51,18 +51,25 @@ def category(position):
 
 
 # Starter tactics whose two line-ups differ (in possession, out of possession).
-STARTER_PAIRS = [("4-2-3-1 DM Wide", "4-3-3 DM Wide"), ("4-2-3-1 DM Wide", "4-4-1-1 2 DM")]
-
-# Default role per game position for the starter tactics (these names exist in
-# both phases).
-DEFAULT_ROLE = {
-    "GK": "Goalkeeper", "D (C)": "Centre-Back", "D (L)": "Full-Back", "D (R)": "Full-Back",
-    "WB (L)": "Wing-Back", "WB (R)": "Wing-Back", "DM": "Defensive Midfielder",
-    "M (C)": "Central Midfielder", "M (L)": "Wide Midfielder", "M (R)": "Wide Midfielder",
-    "AM (C)": "Attacking Midfielder", "AM (L)": "Winger", "AM (R)": "Winger",
-    "ST (C)": "Centre Forward",
+# Real tactics only (Edmund 31.10.2026: formations are no tactics, they stay
+# templates for the tactic editor). Role ids as in role_id(); game
+# abbreviations in the comments (BGK = BPGK, BCB = BPCB, CFD = CF-OOP).
+DATA_REVISION = 2
+# Formerly shipped (generated from formations); dropped from users' copies.
+RETIRED_TACTICS = ["3-4-3 DM Narrow", "3-4-3 DM Wide", "4-2-2-2 DM Wide",
+                   "4-2-3-1 DM Wide / 4-3-3 DM Wide", "4-2-3-1 DM Wide / 4-4-1-1 2 DM",
+                   "4-3-2-1 DM Narrow", "4-3-3 DM Wide", "4-4-2 Diamond Narrow", "5-1-2-2 DM WB",
+                   "5-2-1-2 DM WB"]
+TACTICS = {
+    "4-2-3-1 - Bavarian Blitz": {
+        "ip": {"GK": "BPGK", "DL": "WB-IP", "DCL": "BPCB", "DCR": "BPCB", "DR": "WB-IP",
+               "DMCL": "DLP", "DMCR": "DM-IP", "AML": "IF", "AMC": "AM-IP", "AMR": "IW",
+               "STC": "DLF"},
+        "oop": {"GK": "SK", "DL": "FB-OOP", "DCL": "CB-OOP", "DCR": "CB-OOP", "DR": "FB-OOP",
+                "DMCL": "DM-OOP", "DMCR": "SDM", "ML": "TWM", "AMC": "AM-OOP", "MR": "TWM",
+                "STC": "CF-OOP"},
+    },
 }
-
 
 def slot_position(slot):
     """Tactic slot -> game position (FM24 rules: DML/DMR = WB, DL/DR = D)."""
@@ -147,18 +154,18 @@ def main():
             sys.exit("Formation %s hat keine 11 Slots" % row["Formation"])
         templates[PHASES[row["Phase"]]][row["Formation"]] = slots
 
-    def line_up(phase, slots):
-        return {s: role_id(phase, DEFAULT_ROLE[slot_position(s)]) for s in slots}
-
-    starters = [(name, name) for name in templates["oop"] if name in templates["ip"]]
-    starters += [(ip, oop) for ip, oop in STARTER_PAIRS]
     tactic_roles, tactic_layouts = {}, {}
-    for ip, oop in starters:
-        name = ip if ip == oop else "%s / %s" % (ip, oop)
-        tactic_roles[name] = {"ip": line_up("ip", templates["ip"][ip]),
-                              "oop": line_up("oop", templates["oop"][oop])}
+    known_roles = set(phases)
+    for name, tactic in TACTICS.items():
+        for phase in ("ip", "oop"):
+            if len(tactic[phase]) != 11:
+                sys.exit("Taktik %s (%s) hat keine 11 Plätze" % (name, phase))
+            for slot, role in tactic[phase].items():
+                if role not in known_roles or phases[role] != phase:
+                    sys.exit("Taktik %s: Rolle %s passt nicht zu %s" % (name, role, phase))
+        tactic_roles[name] = tactic
         layout = {}
-        for s in templates["oop"][oop]:
+        for s in tactic["oop"]:
             if s != "GK":
                 layout.setdefault(slot_stratum(s), []).append(s)
         tactic_layouts[name] = layout
@@ -168,6 +175,10 @@ def main():
 
     out = {
         "fm_version": "fm27",
+        # Raise on every data change that existing users must receive (the app
+        # replaces their copy, keeping their own tactics).
+        "data_revision": DATA_REVISION,
+        "retired_tactics": RETIRED_TACTICS,
         "player_roles": player_roles,
         "role_phases": phases,
         "role_specific_weights": weights,

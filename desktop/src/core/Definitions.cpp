@@ -1,5 +1,7 @@
 #include "Definitions.h"
 
+#include <QSet>
+
 #include "Constants.h"
 
 #include <QFile>
@@ -126,6 +128,60 @@ QStringList Definitions::pitchOrder(QStringList slotKeys) const
     std::stable_sort(slotKeys.begin(), slotKeys.end(),
                      [&](const QString &a, const QString &b) { return key(a) < key(b); });
     return slotKeys;
+}
+
+bool Definitions::applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user)
+{
+    const int shippedRevision = shipped.value(QLatin1String("data_revision")).toInt(0);
+    if (shippedRevision <= user.value(QLatin1String("data_revision")).toInt(0))
+        return false;
+
+    QSet<QString> knownRoles;
+    const QJsonObject categories = shipped.value(QLatin1String("player_roles")).toObject();
+    for (auto cat = categories.begin(); cat != categories.end(); ++cat) {
+        const QJsonObject roles = cat.value().toObject();
+        for (auto role = roles.begin(); role != roles.end(); ++role)
+            knownRoles.insert(role.key());
+    }
+    const auto rolesKnown = [&knownRoles](const QJsonValue &tactic) {
+        // One line-up {slot: role} or two {"ip": {...}, "oop": {...}}.
+        const QJsonObject obj = tactic.toObject();
+        QList<QJsonObject> lineUps;
+        if (obj.contains(QLatin1String("ip")) || obj.contains(QLatin1String("oop")))
+            lineUps = {obj.value(QLatin1String("ip")).toObject(),
+                       obj.value(QLatin1String("oop")).toObject()};
+        else
+            lineUps = {obj};
+        for (const QJsonObject &lineUp : std::as_const(lineUps)) {
+            if (lineUp.isEmpty())
+                return false;
+            for (auto it = lineUp.begin(); it != lineUp.end(); ++it) {
+                if (!knownRoles.contains(it.value().toString()))
+                    return false;
+            }
+        }
+        return true;
+    };
+
+    QSet<QString> retired;
+    for (const QJsonValue &name : shipped.value(QLatin1String("retired_tactics")).toArray())
+        retired.insert(name.toString());
+
+    QJsonObject merged = shipped;
+    QJsonObject tactics = merged.value(QLatin1String("tactic_roles")).toObject();
+    QJsonObject layouts = merged.value(QLatin1String("tactic_layouts")).toObject();
+    const QJsonObject userTactics = user.value(QLatin1String("tactic_roles")).toObject();
+    const QJsonObject userLayouts = user.value(QLatin1String("tactic_layouts")).toObject();
+    for (auto it = userTactics.begin(); it != userTactics.end(); ++it) {
+        if (tactics.contains(it.key()) || retired.contains(it.key()) || !rolesKnown(it.value()))
+            continue;
+        tactics.insert(it.key(), it.value());
+        layouts.insert(it.key(), userLayouts.value(it.key()));
+    }
+    merged.insert(QStringLiteral("tactic_roles"), tactics);
+    merged.insert(QStringLiteral("tactic_layouts"), layouts);
+    user = merged;
+    return true;
 }
 
 QString Definitions::rolePhase(const QString &role) const

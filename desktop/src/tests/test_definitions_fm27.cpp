@@ -105,7 +105,7 @@ private slots:
         QCOMPARE(count, 22);
     }
 
-    void starterTacticsAreTwoPhase()
+    void shippedTacticsAreTwoPhase()
     {
         const auto &slotPositions = tacticalSlotToGamePositions(kVersion);
         const auto &mapping = m_defs.positionToRoleMapping();
@@ -135,9 +135,45 @@ private slots:
             QCOMPARE(m_defs.tacticRoles().value(t.key()), t->oop);
             QCOMPARE(m_defs.tacticSlotOrder(t.key()), t->oopOrder);
         }
-        const auto edmund = m_defs.twoPhaseTactics().value(QStringLiteral("4-2-3-1 DM Wide / 4-3-3 DM Wide"));
-        QVERIFY(edmund.ip.contains(QStringLiteral("AMC")));
-        QVERIFY(!edmund.oop.contains(QStringLiteral("AMC")));
+        // Only real tactics ship (formations are editor templates):
+        // Edmund's own, with wingers that drop into midfield without ball.
+        QCOMPARE(m_defs.tacticNames(), QStringList{QStringLiteral("4-2-3-1 - Bavarian Blitz")});
+        const auto blitz = m_defs.twoPhaseTactics().value(QStringLiteral("4-2-3-1 - Bavarian Blitz"));
+        QCOMPARE(blitz.ip.value(QStringLiteral("AMR")), QStringLiteral("IW"));
+        QCOMPARE(blitz.oop.value(QStringLiteral("MR")), QStringLiteral("TWM"));
+        QVERIFY(!blitz.oop.contains(QStringLiteral("AMR")));
+    }
+
+    void shippedUpdateKeepsOwnTactics()
+    {
+        const QJsonObject shipped = m_defs.root();
+        QVERIFY(shipped.value(QLatin1String("data_revision")).toInt() >= 2);
+        const QJsonObject blitz = shipped.value(QLatin1String("tactic_roles"))
+                                      .toObject()
+                                      .value(QLatin1String("4-2-3-1 - Bavarian Blitz"))
+                                      .toObject();
+        // An older copy: a retired generated tactic, an own tactic, an own
+        // tactic with a role that no longer exists.
+        QJsonObject brokenOop = blitz.value(QLatin1String("oop")).toObject();
+        brokenOop.insert(QStringLiteral("STC"), QStringLiteral("GONE"));
+        QJsonObject broken = blitz;
+        broken.insert(QStringLiteral("oop"), brokenOop);
+        QJsonObject user{
+            {QStringLiteral("tactic_roles"),
+             QJsonObject{{QStringLiteral("4-3-3 DM Wide"), blitz},
+                         {QStringLiteral("Meine Taktik"), blitz},
+                         {QStringLiteral("Kaputt"), broken}}},
+            {QStringLiteral("tactic_layouts"),
+             QJsonObject{{QStringLiteral("Meine Taktik"), QJsonObject{}}}},
+        };
+        QVERIFY(Definitions::applyShippedUpdate(shipped, user));
+        const QJsonObject tactics = user.value(QLatin1String("tactic_roles")).toObject();
+        QCOMPARE(tactics.keys(), (QStringList{QStringLiteral("4-2-3-1 - Bavarian Blitz"),
+                                              QStringLiteral("Meine Taktik")}));
+        QVERIFY(user.value(QLatin1String("tactic_layouts")).toObject().contains(
+            QStringLiteral("Meine Taktik")));
+        // Same revision again: nothing to do.
+        QVERIFY(!Definitions::applyShippedUpdate(shipped, user));
     }
 };
 

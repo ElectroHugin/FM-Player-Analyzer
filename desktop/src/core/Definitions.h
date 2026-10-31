@@ -54,6 +54,14 @@ public:
     // Fixed display order of role categories.
     static QStringList roleCategoryOrder();
 
+    // Shipped-data update of a user's definitions file. A shipped file with a
+    // higher "data_revision" than the user's replaces it (provisional FM27
+    // roles/abbreviations/weights must reach existing users), keeping the
+    // user's own tactics: every tactic the shipped file does not have and
+    // does not list under "retired_tactics", if all its roles still exist.
+    // Returns false (user untouched) when no update is due.
+    static bool applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user);
+
     // All role abbreviations, sorted (get_valid_roles).
     const QStringList &validRoles() const { return m_validRoles; }
 

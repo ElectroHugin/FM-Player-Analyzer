@@ -1,6 +1,12 @@
 #include "AppPaths.h"
 
 #include "core/Constants.h"
+#include "core/Definitions.h"
+
+#include <QDateTime>
+#include <QFileInfo>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <QDir>
 #include <QFile>
@@ -91,9 +97,29 @@ bool AppPaths::ensureDefinitionsFile(const QString &fmVersionId)
 {
     // Seed the shipped role/tactic definitions on first use of a version.
     const QString target = definitionsFile(fmVersionId);
-    if (QFile::exists(target))
-        return true;
     QFile bundled(QStringLiteral(":/defaults/") + fmDataVersion(fmVersionId).definitionsFileName);
+    if (QFile::exists(target)) {
+        // Newer shipped data (see Definitions::applyShippedUpdate): back up
+        // the user's file, then write the merged one.
+        QFile userFile(target);
+        if (!bundled.open(QIODevice::ReadOnly) || !userFile.open(QIODevice::ReadOnly))
+            return true;
+        const QJsonObject shipped = QJsonDocument::fromJson(bundled.readAll()).object();
+        QJsonObject user = QJsonDocument::fromJson(userFile.readAll()).object();
+        userFile.close();
+        bundled.close();
+        if (user.isEmpty() || !Definitions::applyShippedUpdate(shipped, user))
+            return true;
+        QDir().mkpath(backupsDir());
+        const QString backup = QDir(backupsDir()).filePath(
+            QFileInfo(target).completeBaseName() + QStringLiteral("_vor_update_")
+            + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_HHmmss"))
+            + QStringLiteral(".json"));
+        QFile::copy(target, backup);
+        if (userFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            userFile.write(QJsonDocument(user).toJson(QJsonDocument::Indented));
+        return true;
+    }
     if (!bundled.copy(target))
         return false;
     // Resource copies are read-only; the user edits this file via the app.
