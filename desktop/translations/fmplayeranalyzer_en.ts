@@ -400,26 +400,6 @@
 %2</translation>
     </message>
     <message>
-        <source>Sturm</source>
-        <translation type="vanished">Strikers</translation>
-    </message>
-    <message>
-        <source>Offensives Mittelfeld</source>
-        <translation type="vanished">Attacking Midfield</translation>
-    </message>
-    <message>
-        <source>Mittelfeld</source>
-        <translation type="vanished">Midfield</translation>
-    </message>
-    <message>
-        <source>Defensives Mittelfeld</source>
-        <translation type="vanished">Defensive Midfield</translation>
-    </message>
-    <message>
-        <source>Abwehr</source>
-        <translation type="vanished">Defence</translation>
-    </message>
-    <message>
         <source>DWRS-Bewertungen werden berechnet…</source>
         <translation>Calculating DWRS ratings…</translation>
     </message>
@@ -815,14 +795,6 @@
         <translation>Δ</translation>
     </message>
     <message>
-        <source>Startelf mit Ball</source>
-        <translation type="vanished">Starting XI in possession</translation>
-    </message>
-    <message>
-        <source>B-Team mit Ball</source>
-        <translation type="vanished">B-team in possession</translation>
-    </message>
-    <message>
         <source>Eignung</source>
         <translation>Suitability</translation>
     </message>
@@ -919,24 +891,12 @@
         <translation>⚠️ No squad list saved for this competition yet — Best XI uses all players. Save it under Transfers → Squad List.</translation>
     </message>
     <message>
-        <source>Startelf ohne Ball</source>
-        <translation type="vanished">Starting XI out of possession</translation>
-    </message>
-    <message>
-        <source>B-Team ohne Ball</source>
-        <translation type="vanished">B-team out of possession</translation>
-    </message>
-    <message>
         <source>ohne: %1</source>
         <translation>OOP: %1</translation>
     </message>
     <message>
         <source>mit: %1</source>
         <translation>IP: %1</translation>
-    </message>
-    <message>
-        <source>Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle ohne Ball am höchsten ist; jeder Spieler braucht die Position in beiden Aufstellungen. Unter dem Namen steht sein Platz in der anderen Aufstellung. Den Anteil stellst du in den Einstellungen ein.</source>
-        <translation type="vanished">This tactic has one line-up in possession and one out of possession. The analyzer picks the players so that the sum of %1 % role in possession and %2 % role out of possession is highest; every player needs the position in both line-ups. Below each name is that player&apos;s place in the other line-up. You set the share in the settings.</translation>
     </message>
     <message>
         <source>Zweitteam-XI (aus Überschuss des Hauptvereins)</source>
@@ -2672,10 +2632,6 @@ The original file is not modified.</translation>
         <translation>Name</translation>
     </message>
     <message>
-        <source>z. B. Bayern 2027</source>
-        <translation type="vanished">e.g. Bayern 2027</translation>
-    </message>
-    <message>
         <source>Nur für dich zum Wiedererkennen, z. B. Verein und Startjahr.</source>
         <translation>Just for you to recognise it, e.g. club and starting year.</translation>
     </message>
@@ -2739,10 +2695,6 @@ The original file is not modified.</translation>
         <translation>Create New Tactic</translation>
     </message>
     <message>
-        <source>Baue deine Formation auf dem Feld unten. Wähle für jede aktive Position eine Rolle — genau ein Torhüter und zehn Feldspieler.</source>
-        <translation type="vanished">Build your formation on the pitch below. Choose a role for each active position — exactly one goalkeeper and ten outfield players.</translation>
-    </message>
-    <message>
         <source>1. Taktik-Name</source>
         <translation>1. Tactic name</translation>
     </message>
@@ -2771,20 +2723,12 @@ The original file is not modified.</translation>
         <translation>Apply</translation>
     </message>
     <message>
-        <source>Eine Taktik hat zwei Aufstellungen: eine mit Ball und eine ohne Ball, jede mit einem Torhüter und zehn Feldspielern. Die Plätze müssen nicht zusammenpassen; der Analyzer verteilt die Spieler später selbst. Mit einer Vorlage aus dem Spiel bist du schneller.</source>
-        <translation type="vanished">A tactic has two line-ups: one in possession and one out of possession, each with one goalkeeper and ten outfield players. The slots do not have to match; the analyzer distributes the players itself later. A template from the game gets you there faster.</translation>
-    </message>
-    <message>
         <source>2b. Aufstellung ohne Ball</source>
         <translation>2b. Line-up out of possession</translation>
     </message>
     <message>
         <source>2. Formation gestalten</source>
         <translation>2. Design formation</translation>
-    </message>
-    <message>
-        <source>Torhüter</source>
-        <translation type="vanished">Goalkeeper</translation>
     </message>
     <message>
         <source>— Unbesetzt —</source>
@@ -3847,10 +3791,6 @@ The original file is not modified.</translation>
         <translation>Version of this save:</translation>
     </message>
     <message>
-        <source>Bestimmt, wie die Spielerattribute aus dem Export gelesen werden, welche Rollen und Taktiken gelten und wie die Attribute gewichtet werden. Die Version wird beim Anlegen eines Spielstands gewählt und steht fest, sobald er Spieler enthält. Aktuell wird Football Manager 2024 unterstützt.</source>
-        <translation type="vanished">Determines how player attributes are read from the export, which roles and tactics apply and how attributes are weighted. The version is chosen when a save is created and is fixed once it contains players. Football Manager 2024 is currently supported.</translation>
-    </message>
-    <message>
         <source>Startordner der Dateiauswahl beim Hochladen von HTML-Exporten. Leer = automatisch: der Spielordner der Football-Manager-Version unter &apos;Sports Interactive&apos; im Dokumentenordner des aktuellen Nutzers (falls vorhanden).</source>
         <translation>Start folder of the file dialog when uploading HTML exports. Empty = automatic: the game folder of the Football Manager version under &apos;Sports Interactive&apos; in the current user&apos;s Documents folder (if it exists).</translation>
     </message>
@@ -3861,14 +3801,6 @@ The original file is not modified.</translation>
     <message>
         <source>Vereins-Zuordnung</source>
         <translation>Club Assignment</translation>
-    </message>
-    <message>
-        <source>z. B. &apos;FC Bayern München&apos; (für den Header)</source>
-        <translation type="vanished">e.g. &apos;FC Bayern München&apos; (for the header)</translation>
-    </message>
-    <message>
-        <source>z. B. &apos;Allianz Arena&apos;</source>
-        <translation type="vanished">e.g. &apos;Allianz Arena&apos;</translation>
     </message>
     <message>
         <source>Mein Verein:</source>
@@ -4333,22 +4265,42 @@ The original file is not modified.</translation>
         <translation>The folder %1 could not be created.</translation>
     </message>
     <message>
-        <source>Es konnte keine Ansicht nach %1 kopiert werden.</source>
-        <translation>No view could be copied to %1.</translation>
-    </message>
-    <message>
-        <source>%1 Ansichten nach %2 kopiert:
-%3</source>
-        <translation>%1 views copied to %2:
-%3</translation>
-    </message>
-    <message>
         <source>voller Vereinsname (für den Header)</source>
         <translation>full club name (for the header)</translation>
     </message>
     <message>
         <source>Name des Stadions</source>
         <translation>stadium name</translation>
+    </message>
+    <message>
+        <source>Es konnte keine Datei nach %1 kopiert werden.</source>
+        <translation>No file could be copied to %1.</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n Datei(en) nach %1 kopiert:
+%2</source>
+        <translation>
+            <numerusform>%n file copied to %1:
+%2</numerusform>
+            <numerusform>%n files copied to %1:
+%2</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Standardtaktik für FM27 installieren</source>
+        <translation>Install standard tactic for FM27</translation>
+    </message>
+    <message>
+        <source>Kopiert die mitgelieferte Standardtaktik (4-2-3-1 - Bavarian Blitz) als Spieldatei in den Ordner &apos;tactics&apos; von Football Manager 27. Im Spiel lädst du sie dann in der Taktik-Ansicht über das Laden einer Taktik. Im Analyzer ist sie schon eingebaut; eigene Taktiken legst du im Taktik-Editor an.</source>
+        <translation>Copies the bundled standard tactic (4-2-3-1 - Bavarian Blitz) as a game file into the &apos;tactics&apos; folder of Football Manager 27. In the game, load it from the tactics screen. The analyzer already includes it; create your own tactics in the tactic editor.</translation>
+    </message>
+    <message>
+        <source>FM27-Taktik:</source>
+        <translation>FM27 tactic:</translation>
+    </message>
+    <message>
+        <source>FM27-Taktik</source>
+        <translation>FM27 tactic</translation>
     </message>
 </context>
 <context>

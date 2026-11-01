@@ -172,9 +172,9 @@ die Abdeckung (kannst du alle elf Positionen besetzen?), dann die Stärke je
 Mannschaftsteil. Ein Klick auf eine Taktik zeigt, wie viele passende Spieler du
 für jeden Slot hast. Die mitgelieferten Taktiken sind aus der
 [FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/)
-nachgebaut, eigene kannst du ergänzen. Für FM27 liegt nur eine Beispieltaktik bei
-(„4-2-3-1 - Bavarian Blitz“); deine eigenen Taktiken legst du im Taktik-Editor
-an, Updates lassen sie unberührt.
+nachgebaut, eigene kannst du ergänzen. Für FM27 liegt meine Standardtaktik bei
+(„4-2-3-1 - Bavarian Blitz“), auch als Spieldatei zum Import in FM27; deine
+eigenen Taktiken legst du im Taktik-Editor an, Updates lassen sie unberührt.
 
 <img src="docs/screenshots/de/tactic-explorer.png" alt="Taktik-Explorer mit Taktiken, sortiert nach Abdeckung und Median-Bewertung je Mannschaftsteil" width="100%">
 
@@ -241,30 +241,33 @@ und führe sie aus. Mehr brauchst du nicht. Der Installer ist nicht signiert,
 deshalb zeigt Windows eventuell einen SmartScreen-Hinweis: *Weitere
 Informationen → Trotzdem ausführen*.
 
-> **Football Manager 2027:** FM27 hat keinen eigenen Export mehr. Installiere das
-> kostenlose Plugin [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter),
-> lege im Spiel dessen Ansicht *Analyzer* an und drücke in einer Spielerliste **F9**.
-> Die CSV-Datei importierst du in einen Spielstand mit der Version *Football
-> Manager 2027* (Standard für neue Spielstände). Spaltenzuordnung und Details:
-> [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md). Der Installer kann fertige FM27-Ansichten
-> (Kader, Spielerdatenbank, Shortlist) gleich in deinen FM27-Ordner `views` legen;
-> später geht das über *Einstellungen → Verein → Ansichten für FM27 installieren*.
-> Schritt 2 und 3 unten gelten für FM24.
+**2 · Export-Ansichten in den FM27 holen**
 
-**2 · Export-Ansicht in den FM holen**
-
-Die App liest den normalen HTML-Export des Football Manager (CSV-Exporte
-gehen auch). Am einfachsten
-geht es mit den fertigen Ansichten von **PlayingSquirrel**
-([@playingsquirrel](https://x.com/playingsquirrel)):
-[hier die FM24-Ansichtsdateien herunterladen](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file)
-und im FM importieren. Achte darauf, dass die Ansicht die Spalte **UID**
-enthält.
+FM27 hat keinen eigenen Export mehr. Installiere das kostenlose Plugin
+[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter). Der
+Installer des Analyzers kann meine fertigen FM27-Ansichten (Kader,
+Spielerdatenbank, Shortlist) gleich in deinen FM27-Ordner `views` legen; später
+geht das über *Einstellungen → Verein → Ansichten für FM27 installieren*. Im
+Spiel lädst du die Ansicht in der Spielerliste.
 
 **3 · Spieler exportieren**
 
-Öffne im FM deinen Kader (und später jede Scouting- oder Spielersuch-Liste) mit
-dieser Ansicht, dann *Rechtsklick → Drucken/Exportieren → Webseite (.html)*.
+Öffne in FM27 deinen Kader (und später die Spielerdatenbank oder deine
+Shortlist) mit dieser Ansicht und drücke **F9**. Das Plugin schreibt eine
+CSV-Datei. Den Spielstand legst du im Analyzer mit der Version *Football
+Manager 2027* an (Standard für neue Spielstände). Spaltenzuordnung und Details:
+[docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
+
+> **Standardtaktik im Spiel ausprobieren:** Der Analyzer enthält meine
+> FM27-Standardtaktik „4-2-3-1 - Bavarian Blitz“ schon. Dieselbe Taktik liegt
+> als Spieldatei (`.fmf`) bei: Der Installer kann sie in deinen FM27-Ordner
+> `tactics` kopieren, später geht das über *Einstellungen → Verein →
+> Standardtaktik für FM27 installieren*.
+>
+> **Noch mit FM24 unterwegs?** Exportiere den Kader als HTML (*Rechtsklick →
+> Drucken/Exportieren → Webseite (.html)*) mit einer Ansicht, die die Spalte
+> **UID** enthält, zum Beispiel die
+> [FM24-Ansichten von PlayingSquirrel](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file).
 
 **4 · Importieren**
 
@@ -455,7 +458,7 @@ Backlog stehen in [`desktop/IDEEN.md`](desktop/IDEEN.md) und
 - Die Meta-Attribut-Gewichtung wurde von der Recherche von
   **[u/florin133](https://www.reddit.com/r/footballmanagergames/comments/16fuksi/a_not_so_short_guide_to_meta_player_attributes/)**
   inspiriert.
-- Die Export-Ansichten stammen von
+- Die FM24-Export-Ansichten stammen von
   **[PlayingSquirrel](https://x.com/playingsquirrel)**.
 - Die mitgelieferten Taktiken sind aus der
   **[FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/)**
@@ -467,6 +470,15 @@ Fehler gefunden oder eine Idee?
 [Öffne ein Issue](https://github.com/ElectroHugin/FM-Player-Analyzer/issues).
 Und wenn die App deinem Spielstand hilft: Ein ⭐ auf GitHub hilft anderen, sie
 zu finden.
+
+## Code-Signierung
+
+Die Signierung der Windows-Downloads ist bei der SignPath Foundation beantragt
+(free code signing provided by [SignPath.io](https://about.signpath.io/),
+certificate by [SignPath Foundation](https://signpath.org/)). Bis zur Zusage
+sind die Downloads noch unsigniert. Wer jede Version baut und
+freigibt und wie deine Privatsphäre geschützt bleibt, steht in der
+[Code signing policy](CODE_SIGNING.md).
 
 ## Lizenz & Haftungsausschluss
 

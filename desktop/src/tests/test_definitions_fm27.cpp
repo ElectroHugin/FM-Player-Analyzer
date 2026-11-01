@@ -141,12 +141,16 @@ private slots:
             QCOMPARE(m_defs.tacticSlotOrder(t.key()), t->oopOrder);
         }
         // Only real tactics ship (formations are editor templates):
-        // Edmund's own, with wingers that drop into midfield without ball.
+        // Edmund's own: 4-2-3-1 with ball, three in midfield and tracking
+        // wingers without ball (updated for 2.0.1).
         QCOMPARE(m_defs.tacticNames(), QStringList{QStringLiteral("4-2-3-1 - Bavarian Blitz")});
         const auto blitz = m_defs.twoPhaseTactics().value(QStringLiteral("4-2-3-1 - Bavarian Blitz"));
         QCOMPARE(blitz.ip.value(QStringLiteral("AMR")), QStringLiteral("IW"));
-        QCOMPARE(blitz.oop.value(QStringLiteral("MR")), QStringLiteral("TWM"));
-        QVERIFY(!blitz.oop.contains(QStringLiteral("AMR")));
+        QCOMPARE(blitz.ip.value(QStringLiteral("DMCL")), QStringLiteral("BBP"));
+        QCOMPARE(blitz.oop.value(QStringLiteral("AMR")), QStringLiteral("TW"));
+        QCOMPARE(blitz.oop.value(QStringLiteral("DMC")), QStringLiteral("SDM"));
+        QCOMPARE(blitz.oop.value(QStringLiteral("MCL")), QStringLiteral("PCM"));
+        QVERIFY(!blitz.oop.contains(QStringLiteral("MR")));
     }
 
     void shippedUpdateKeepsOwnTactics()
@@ -196,7 +200,7 @@ private slots:
             {QStringLiteral("Kimmich"), QStringLiteral("D (R), DM, M (C)")},
             {QStringLiteral("Pavlovic"), QStringLiteral("DM, M (C)")},
             {QStringLiteral("Diaz"), QStringLiteral("M (L), AM (L), ST (C)")},
-            {QStringLiteral("Musiala"), QStringLiteral("AM (C)")},
+            {QStringLiteral("Musiala"), QStringLiteral("M (C), AM (C)")},
             {QStringLiteral("Olise"), QStringLiteral("M (R), AM (R)")},
             {QStringLiteral("Kane"), QStringLiteral("ST (C)")},
         };

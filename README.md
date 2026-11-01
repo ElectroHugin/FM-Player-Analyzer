@@ -165,9 +165,9 @@ first (can you fill all eleven positions?), then strength per line. Click a
 tactic to see how many suitable players you have for each slot. The bundled
 tactics are rebuilt from the
 [FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/), and
-you can add your own. FM27 ships with a single example tactic
-("4-2-3-1 - Bavarian Blitz"); create your own tactics in the tactic editor,
-updates leave them untouched.
+you can add your own. FM27 ships with my standard tactic
+("4-2-3-1 - Bavarian Blitz"), also as a game file to import into FM27; create
+your own tactics in the tactic editor, updates leave them untouched.
 
 <img src="docs/screenshots/en/tactic-explorer.png" alt="Tactic Explorer ranking tactics by coverage and median rating per team part" width="100%">
 
@@ -230,29 +230,30 @@ Download the latest `FMPlayerAnalyzer-…-Windows-x64-Setup.exe` from the
 and run it. Nothing else is needed. The installer is not code-signed, so Windows
 may show a SmartScreen notice — choose *More info → Run anyway*.
 
-> **Football Manager 2027:** FM27 has no export of its own. Install the free
-> [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin,
-> add its *Analyzer* view in the game and press **F9** on any player list; then
-> import the CSV into a save created for *Football Manager 2027* (the default
-> for new saves). The installer can also put ready-made FM27 views (squad,
-> player database, shortlist) into your FM27 `views` folder; later via
-> *Settings → Club → Install views for FM27*. Column mapping and details:
-> [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
-> Steps 2 and 3 below are for FM24.
+**2 · Get the export views into FM27**
 
-**2 · Get the export view into FM**
-
-The app reads the standard HTML export of Football Manager (CSV exports work
-too). The easiest way is
-the ready-made custom views by **PlayingSquirrel**
-([@playingsquirrel](https://x.com/playingsquirrel)) —
-[download the FM24 view files here](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file)
-and import them in FM. Make sure the view contains the **UID** column.
+FM27 has no export of its own. Install the free
+[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin. The
+installer of the analyzer can put my ready-made FM27 views (squad, player
+database, shortlist) straight into your FM27 `views` folder; later via
+*Settings → Club → Install views for FM27*. In the game, load the view on the
+player list.
 
 **3 · Export your players**
 
-In FM, open your squad (and later any scouting or player-search list) with that
-view, then *right-click → Print/Export → Web page (.html)*.
+In FM27, open your squad (and later the player database or your shortlist) with
+that view and press **F9**. The plugin writes a CSV file. Create the save in the
+analyzer for *Football Manager 2027* (the default for new saves). Column mapping
+and details: [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
+
+> **Try the standard tactic in the game:** the analyzer already includes my
+> FM27 standard tactic "4-2-3-1 - Bavarian Blitz". The same tactic ships as a
+> game file (`.fmf`): the installer can copy it into your FM27 `tactics` folder,
+> later via *Settings → Club → Install standard tactic for FM27*.
+>
+> **Still on FM24?** Export the squad as HTML (*right-click → Print/Export → Web
+> page (.html)*) with a view that contains the **UID** column, for example the
+> [FM24 views by PlayingSquirrel](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file).
 
 **4 · Import**
 
@@ -437,7 +438,7 @@ technical backlog live in [`desktop/IDEEN.md`](desktop/IDEEN.md) and
 
 - The meta-attribute weighting was inspired by the research of
   **[u/florin133](https://www.reddit.com/r/footballmanagergames/comments/16fuksi/a_not_so_short_guide_to_meta_player_attributes/)**.
-- The custom export views are the work of
+- The FM24 export views are the work of
   **[PlayingSquirrel](https://x.com/playingsquirrel)**.
 - The bundled tactics are replicated from the
   **[FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/)** —
@@ -448,6 +449,15 @@ technical backlog live in [`desktop/IDEEN.md`](desktop/IDEEN.md) and
 Found a bug or have an idea?
 [Open an issue](https://github.com/ElectroHugin/FM-Player-Analyzer/issues) — and
 if the app helps your save, a ⭐ on GitHub helps others find it.
+
+## Code signing
+
+Signing of the Windows downloads has been applied for with SignPath
+Foundation (free code signing provided by [SignPath.io](https://about.signpath.io/),
+certificate by [SignPath Foundation](https://signpath.org/)). Until it is
+approved the downloads are unsigned. Read the
+[Code signing policy](CODE_SIGNING.md) for who builds and approves each
+release and how your privacy is protected.
 
 ## License & disclaimer
 

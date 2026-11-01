@@ -3,7 +3,9 @@ name: Release
 # On every push to main: build + test. If the version in Version.cpp is new
 # (no release/tag for it yet), build the installer and publish a GitHub release
 # automatically. Bump the number in desktop/src/core/Version.cpp and push —
-# that's it. Independent Linux jobs build, test and package the AppImage and
+# that's it. Code signing (SignPath, see CODE_SIGNING.md) switches on once the
+# repository variable SIGNPATH_ORGANIZATION_ID is set; without it the release
+# is built unsigned exactly as before. Independent Linux jobs build, test and package the AppImage and
 # attach it to a new release.
 on:
   push:
@@ -11,6 +13,8 @@ on:
 
 permissions:
   contents: write
+  # Lets SignPath fetch the unsigned files uploaded below (code signing).
+  actions: read
 
 jobs:
   release:
@@ -91,6 +95,44 @@ jobs:
           & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations `
             --no-system-d3d-compiler --no-opengl-sw "$staging/fmplayeranalyzer.exe"
 
+      # --- Code signing, part 1: the program file -----------------------------
+      # Only when SignPath is set up (repository variable
+      # SIGNPATH_ORGANIZATION_ID + secret SIGNPATH_API_TOKEN). The request waits
+      # for the manual approval in SignPath before the job continues.
+      - name: Upload unsigned program file
+        id: upload-unsigned-exe
+        if: steps.version.outputs.is_new == 'true' && vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-exe
+          path: desktop/installer/staging/fmplayeranalyzer.exe
+          if-no-files-found: error
+
+      - name: Sign program file (SignPath)
+        if: steps.version.outputs.is_new == 'true' && vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
+          project-slug: 'FM-Player-Analyzer'
+          signing-policy-slug: 'release-signing'
+          artifact-configuration-slug: 'program'
+          github-artifact-id: '${{ steps.upload-unsigned-exe.outputs.artifact-id }}'
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 21600
+          output-artifact-directory: 'signed-exe'
+          parameters: |
+            version: "${{ steps.version.outputs.version }}"
+
+      - name: Use signed program file
+        if: steps.version.outputs.is_new == 'true' && vars.SIGNPATH_ORGANIZATION_ID != ''
+        shell: pwsh
+        run: |
+          Copy-Item signed-exe/fmplayeranalyzer.exe desktop/installer/staging/fmplayeranalyzer.exe -Force
+          $sig = Get-AuthenticodeSignature desktop/installer/staging/fmplayeranalyzer.exe
+          if ($sig.Status -ne 'Valid') { throw "Programmdatei nicht gültig signiert: $($sig.Status)" }
+          Write-Host "Signiert von: $($sig.SignerCertificate.Subject)"
+
       - name: Build installer (Inno Setup)
         if: steps.version.outputs.is_new == 'true'
         shell: pwsh
@@ -100,6 +142,42 @@ jobs:
           & $iscc "/DMyAppVersion=${{ steps.version.outputs.version }}" "desktop\installer\setup.iss"
           if ($LASTEXITCODE -ne 0) { throw "ISCC fehlgeschlagen." }
 
+      # --- Code signing, part 2: the installer ---------------------------------
+      - name: Upload unsigned installer
+        id: upload-unsigned-setup
+        if: steps.version.outputs.is_new == 'true' && vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-setup
+          path: desktop/installer/output/FMPlayerAnalyzer-${{ steps.version.outputs.version }}-Windows-x64-Setup.exe
+          if-no-files-found: error
+
+      - name: Sign installer (SignPath)
+        if: steps.version.outputs.is_new == 'true' && vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
+          project-slug: 'FM-Player-Analyzer'
+          signing-policy-slug: 'release-signing'
+          artifact-configuration-slug: 'installer'
+          github-artifact-id: '${{ steps.upload-unsigned-setup.outputs.artifact-id }}'
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 21600
+          output-artifact-directory: 'signed-setup'
+          parameters: |
+            version: "${{ steps.version.outputs.version }}"
+
+      - name: Use signed installer
+        if: steps.version.outputs.is_new == 'true' && vars.SIGNPATH_ORGANIZATION_ID != ''
+        shell: pwsh
+        run: |
+          $name = "FMPlayerAnalyzer-${{ steps.version.outputs.version }}-Windows-x64-Setup.exe"
+          Copy-Item "signed-setup/$name" "desktop/installer/output/$name" -Force
+          $sig = Get-AuthenticodeSignature "desktop/installer/output/$name"
+          if ($sig.Status -ne 'Valid') { throw "Installer nicht gültig signiert: $($sig.Status)" }
+          Write-Host "Signiert von: $($sig.SignerCertificate.Subject)"
+
       - name: Publish release
         if: steps.version.outputs.is_new == 'true'
         shell: pwsh
@@ -108,11 +186,16 @@ jobs:
         run: |
           $version = "${{ steps.version.outputs.version }}"
           $asset = "desktop/installer/output/FMPlayerAnalyzer-$version-Windows-x64-Setup.exe"
+          $notes = @()
+          if ("${{ vars.SIGNPATH_ORGANIZATION_ID }}" -ne "") {
+            # SignPath Foundation terms: name the policy on the download page.
+            $notes = @("--notes", "Signed Windows installer. Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/). [Code signing policy](https://github.com/$env:GITHUB_REPOSITORY/blob/main/CODE_SIGNING.md)")
+          }
           gh release create "v$version" $asset `
             --repo $env:GITHUB_REPOSITORY `
             --target $env:GITHUB_SHA `
             --title "FM Player Analyzer $version (Windows 64-bit)" `
-            --generate-notes
+            --generate-notes @notes
 
   # Build + tests on Linux and the AppImage (same job as in ci.yml).
   # Deliberately independent of the release job: a Linux failure must not hold
