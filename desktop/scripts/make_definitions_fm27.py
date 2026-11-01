@@ -3,7 +3,7 @@
 
 Sources (desktop/data/fm27/, transcribed from in-game screenshots):
     rollen-fm27.csv              Phase;Position;Rolle;Kuerzel;Key;Preferable;Merkmale;Notiz
-    rollen-kuerzel-vorschlag.csv Phase;Rolle;Kuerzel-Vorschlag;Kuerzel-im-Spiel;Positionen
+    rollen-kuerzel-fm27.csv Phase;Rolle;Kuerzel-Vorschlag;Kuerzel-im-Spiel;Positionen
     formationen-fm27.csv         Phase;Formation;Slots;Anzahl;Notiz
 
 Usage (from desktop/):  python3 scripts/make_definitions_fm27.py
@@ -53,8 +53,8 @@ def category(position):
 # Starter tactics whose two line-ups differ (in possession, out of possession).
 # Real tactics only (Edmund 31.10.2026: formations are no tactics, they stay
 # templates for the tactic editor). Role ids as in role_id(); game
-# abbreviations in the comments (BGK = BPGK, BCB = BPCB, CFD = CF-OOP).
-DATA_REVISION = 2
+# abbreviations from data/fm27/rollen-kuerzel-fm27.csv (checked in the game).
+DATA_REVISION = 3
 # Formerly shipped (generated from formations); dropped from users' copies.
 RETIRED_TACTICS = ["3-4-3 DM Narrow", "3-4-3 DM Wide", "4-2-2-2 DM Wide",
                    "4-2-3-1 DM Wide / 4-3-3 DM Wide", "4-2-3-1 DM Wide / 4-4-1-1 2 DM",
@@ -62,12 +62,12 @@ RETIRED_TACTICS = ["3-4-3 DM Narrow", "3-4-3 DM Wide", "4-2-2-2 DM Wide",
                    "5-2-1-2 DM WB"]
 TACTICS = {
     "4-2-3-1 - Bavarian Blitz": {
-        "ip": {"GK": "BPGK", "DL": "WB-IP", "DCL": "BPCB", "DCR": "BPCB", "DR": "WB-IP",
+        "ip": {"GK": "BGK", "DL": "WB-IP", "DCL": "BCB", "DCR": "BCB", "DR": "WB-IP",
                "DMCL": "DLP", "DMCR": "DM-IP", "AML": "IF", "AMC": "AM-IP", "AMR": "IW",
                "STC": "DLF"},
         "oop": {"GK": "SK", "DL": "FB-OOP", "DCL": "CB-OOP", "DCR": "CB-OOP", "DR": "FB-OOP",
                 "DMCL": "DM-OOP", "DMCR": "SDM", "ML": "TWM", "AMC": "AM-OOP", "MR": "TWM",
-                "STC": "CF-OOP"},
+                "STC": "CFD-OOP"},
     },
 }
 
@@ -111,7 +111,7 @@ def attr_list(text):
 
 def main():
     abbreviations = {}
-    for row in read("rollen-kuerzel-vorschlag.csv"):
+    for row in read("rollen-kuerzel-fm27.csv"):
         abbr = row["Kuerzel-im-Spiel"].strip() or row["Kuerzel-Vorschlag"].strip()
         abbreviations[(PHASES[row["Phase"]], row["Rolle"])] = abbr
 

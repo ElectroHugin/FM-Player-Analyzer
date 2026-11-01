@@ -1,6 +1,6 @@
 {
   "fm_version": "fm27",
-  "data_revision": 2,
+  "data_revision": 3,
   "retired_tactics": [
     "3-4-3 DM Narrow",
     "3-4-3 DM Wide",
@@ -15,18 +15,18 @@
   ],
   "player_roles": {
     "Goalkeepers": {
-      "BPGK": "Ball-Playing Goalkeeper",
+      "BGK": "Ball-Playing Goalkeeper",
       "GK-IP": "Goalkeeper",
-      "NNGK": "No-Nonsense Goalkeeper",
+      "NGK": "No-Nonsense Goalkeeper",
       "GK-OOP": "Goalkeeper",
-      "LHGK": "Line-Holding Goalkeeper",
+      "LHK": "Line-Holding Goalkeeper",
       "SK": "Sweeper Keeper"
     },
     "Defense": {
       "ACB": "Advanced Centre-Back",
-      "BPCB": "Ball-Playing Centre-Back",
+      "BCB": "Ball-Playing Centre-Back",
       "CB-IP": "Centre-Back",
-      "NNCB": "No-Nonsense Centre-Back",
+      "NCB": "No-Nonsense Centre-Back",
       "OCB": "Overlapping Centre-Back",
       "WCB-IP": "Wide Centre-Back",
       "FB-IP": "Full-Back",
@@ -37,9 +37,9 @@
       "AWB": "Advanced Wing-Back",
       "CB-OOP": "Centre-Back",
       "CCB": "Covering Centre-Back",
-      "CWCB": "Covering Wide Centre-Back",
+      "CWD": "Covering Wide Centre-Back",
       "SCB": "Stopping Centre-Back",
-      "SWCB": "Stopping Wide Centre-Back",
+      "SWD": "Stopping Wide Centre-Back",
       "WCB-OOP": "Wide Centre-Back",
       "FB-OOP": "Full-Back",
       "HFB": "Holding Full-Back",
@@ -58,58 +58,58 @@
       "AM-IP": "Attacking Midfielder",
       "CM-IP": "Central Midfielder",
       "CHM": "Channel Midfielder",
-      "MP": "Midfield Playmaker",
-      "WCM": "Wide Central Midfielder",
+      "MPM": "Midfield Playmaker",
+      "WCM-IP": "Wide Central Midfielder",
       "IW": "Inside Winger",
       "PW": "Playmaking Winger",
-      "WM-IP": "Wide Midfielder",
+      "WM": "Wide Midfielder",
       "W-IP": "Winger",
       "DM-OOP": "Defensive Midfielder",
       "DDM": "Dropping Defensive Midfielder",
       "PDM": "Pressing Defensive Midfielder",
       "SDM": "Screening Defensive Midfielder",
-      "WCDM": "Wide Covering Defensive Midfielder",
+      "WDM": "Wide Covering Defensive Midfielder",
       "CM-OOP": "Central Midfielder",
       "PCM": "Pressing Central Midfielder",
       "SCM": "Screening Central Midfielder",
-      "WCCM": "Wide Covering Central Midfielder",
+      "WCM-OOP": "Wide Covering Central Midfielder",
       "TWM": "Tracking Wide Midfielder",
-      "WM-OOP": "Wide Midfielder",
-      "WOWM": "Wide Outlet Wide Midfielder"
+      "WMF": "Wide Midfielder",
+      "OWM": "Wide Outlet Wide Midfielder"
     },
     "Attack": {
       "FR": "Free Role",
       "SS": "Second Striker",
       "IF": "Inside Forward",
-      "WF": "Wide Forward",
-      "CF-IP": "Centre Forward",
+      "WFD": "Wide Forward",
+      "CFD-IP": "Centre Forward",
       "CHF": "Channel Forward",
       "DLF": "Deep-Lying Forward",
       "F9": "False Nine",
       "P": "Poacher",
       "TF": "Target Forward",
       "AM-OOP": "Attacking Midfielder",
-      "COAM": "Central Outlet Attacking Midfielder",
-      "SOAM": "Splitting Outlet Attacking Midfielder",
+      "OAM": "Central Outlet Attacking Midfielder",
+      "SAM": "Splitting Outlet Attacking Midfielder",
       "TAM": "Tracking Attacking Midfielder",
       "IOW": "Inside Outlet Winger",
       "TW": "Tracking Winger",
       "WOW": "Wide Outlet Winger",
       "W-OOP": "Winger",
-      "COCF": "Central Outlet Centre Forward",
-      "CF-OOP": "Centre Forward",
-      "SOCF": "Splitting Outlet Centre Forward",
+      "OCF": "Central Outlet Centre Forward",
+      "CFD-OOP": "Centre Forward",
+      "SCF": "Splitting Outlet Centre Forward",
       "TCF": "Tracking Centre Forward"
     }
   },
   "role_phases": {
-    "BPGK": "ip",
+    "BGK": "ip",
     "GK-IP": "ip",
-    "NNGK": "ip",
+    "NGK": "ip",
     "ACB": "ip",
-    "BPCB": "ip",
+    "BCB": "ip",
     "CB-IP": "ip",
-    "NNCB": "ip",
+    "NCB": "ip",
     "OCB": "ip",
     "WCB-IP": "ip",
     "FB-IP": "ip",
@@ -127,30 +127,30 @@
     "AM-IP": "ip",
     "CM-IP": "ip",
     "CHM": "ip",
-    "MP": "ip",
-    "WCM": "ip",
+    "MPM": "ip",
+    "WCM-IP": "ip",
     "IW": "ip",
     "PW": "ip",
-    "WM-IP": "ip",
+    "WM": "ip",
     "W-IP": "ip",
     "FR": "ip",
     "SS": "ip",
     "IF": "ip",
-    "WF": "ip",
-    "CF-IP": "ip",
+    "WFD": "ip",
+    "CFD-IP": "ip",
     "CHF": "ip",
     "DLF": "ip",
     "F9": "ip",
     "P": "ip",
     "TF": "ip",
     "GK-OOP": "oop",
-    "LHGK": "oop",
+    "LHK": "oop",
     "SK": "oop",
     "CB-OOP": "oop",
     "CCB": "oop",
-    "CWCB": "oop",
+    "CWD": "oop",
     "SCB": "oop",
-    "SWCB": "oop",
+    "SWD": "oop",
     "WCB-OOP": "oop",
     "FB-OOP": "oop",
     "HFB": "oop",
@@ -162,29 +162,29 @@
     "DDM": "oop",
     "PDM": "oop",
     "SDM": "oop",
-    "WCDM": "oop",
+    "WDM": "oop",
     "CM-OOP": "oop",
     "PCM": "oop",
     "SCM": "oop",
-    "WCCM": "oop",
+    "WCM-OOP": "oop",
     "TWM": "oop",
-    "WM-OOP": "oop",
-    "WOWM": "oop",
+    "WMF": "oop",
+    "OWM": "oop",
     "AM-OOP": "oop",
-    "COAM": "oop",
-    "SOAM": "oop",
+    "OAM": "oop",
+    "SAM": "oop",
     "TAM": "oop",
     "IOW": "oop",
     "TW": "oop",
     "WOW": "oop",
     "W-OOP": "oop",
-    "COCF": "oop",
-    "CF-OOP": "oop",
-    "SOCF": "oop",
+    "OCF": "oop",
+    "CFD-OOP": "oop",
+    "SCF": "oop",
     "TCF": "oop"
   },
   "role_specific_weights": {
-    "BPGK": {
+    "BGK": {
       "key": [
         "Aerial Reach",
         "Command of Area",
@@ -225,7 +225,7 @@
         "Decisions"
       ]
     },
-    "NNGK": {
+    "NGK": {
       "key": [
         "Aerial Reach",
         "Command of Area",
@@ -268,7 +268,7 @@
         "Stamina"
       ]
     },
-    "BPCB": {
+    "BCB": {
       "key": [
         "Heading",
         "Marking",
@@ -310,7 +310,7 @@
         "Pace"
       ]
     },
-    "NNCB": {
+    "NCB": {
       "key": [
         "Heading",
         "Marking",
@@ -724,7 +724,7 @@
         "Stamina"
       ]
     },
-    "MP": {
+    "MPM": {
       "key": [
         "First Touch",
         "Passing",
@@ -746,7 +746,7 @@
         "Stamina"
       ]
     },
-    "WCM": {
+    "WCM-IP": {
       "key": [
         "First Touch",
         "Passing",
@@ -816,7 +816,7 @@
         "Stamina"
       ]
     },
-    "WM-IP": {
+    "WM": {
       "key": [
         "Crossing",
         "Passing",
@@ -926,7 +926,7 @@
         "Stamina"
       ]
     },
-    "WF": {
+    "WFD": {
       "key": [
         "Dribbling",
         "First Touch",
@@ -948,7 +948,7 @@
         "Stamina"
       ]
     },
-    "CF-IP": {
+    "CFD-IP": {
       "key": [
         "Finishing",
         "First Touch",
@@ -1087,7 +1087,7 @@
         "Decisions"
       ]
     },
-    "LHGK": {
+    "LHK": {
       "key": [
         "Aerial Reach",
         "Command of Area",
@@ -1161,7 +1161,7 @@
         "Acceleration"
       ]
     },
-    "CWCB": {
+    "CWD": {
       "key": [
         "Heading",
         "Marking",
@@ -1198,7 +1198,7 @@
         "Pace"
       ]
     },
-    "SWCB": {
+    "SWD": {
       "key": [
         "Heading",
         "Marking",
@@ -1418,7 +1418,7 @@
         "Strength"
       ]
     },
-    "WCDM": {
+    "WDM": {
       "key": [
         "Marking",
         "Tackling",
@@ -1486,7 +1486,7 @@
         "Stamina"
       ]
     },
-    "WCCM": {
+    "WCM-OOP": {
       "key": [
         "Marking",
         "Tackling",
@@ -1523,7 +1523,7 @@
         "Pace"
       ]
     },
-    "WM-OOP": {
+    "WMF": {
       "key": [
         "Decisions",
         "Teamwork",
@@ -1540,7 +1540,7 @@
         "Stamina"
       ]
     },
-    "WOWM": {
+    "OWM": {
       "key": [
         "Anticipation",
         "Concentration",
@@ -1572,7 +1572,7 @@
         "Stamina"
       ]
     },
-    "COAM": {
+    "OAM": {
       "key": [
         "Anticipation",
         "Concentration",
@@ -1588,7 +1588,7 @@
         "Strength"
       ]
     },
-    "SOAM": {
+    "SAM": {
       "key": [
         "Anticipation",
         "Concentration",
@@ -1691,7 +1691,7 @@
         "Stamina"
       ]
     },
-    "COCF": {
+    "OCF": {
       "key": [
         "Anticipation",
         "Concentration",
@@ -1707,7 +1707,7 @@
         "Strength"
       ]
     },
-    "CF-OOP": {
+    "CFD-OOP": {
       "key": [
         "Anticipation",
         "Decisions",
@@ -1721,7 +1721,7 @@
         "Stamina"
       ]
     },
-    "SOCF": {
+    "SCF": {
       "key": [
         "Anticipation",
         "Concentration",
@@ -1755,25 +1755,25 @@
   },
   "position_to_role_mapping": {
     "GK": [
-      "BPGK",
+      "BGK",
       "GK-IP",
-      "NNGK",
+      "NGK",
       "GK-OOP",
-      "LHGK",
+      "LHK",
       "SK"
     ],
     "D (C)": [
       "ACB",
-      "BPCB",
+      "BCB",
       "CB-IP",
-      "NNCB",
+      "NCB",
       "OCB",
       "WCB-IP",
       "CB-OOP",
       "CCB",
-      "CWCB",
+      "CWD",
       "SCB",
-      "SWCB",
+      "SWD",
       "WCB-OOP"
     ],
     "D (L)": [
@@ -1824,37 +1824,37 @@
       "DDM",
       "PDM",
       "SDM",
-      "WCDM"
+      "WDM"
     ],
     "M (C)": [
       "AP",
       "AM-IP",
       "CM-IP",
       "CHM",
-      "MP",
-      "WCM",
+      "MPM",
+      "WCM-IP",
       "CM-OOP",
       "PCM",
       "SCM",
-      "WCCM"
+      "WCM-OOP"
     ],
     "M (L)": [
       "IW",
       "PW",
-      "WM-IP",
+      "WM",
       "W-IP",
       "TWM",
-      "WM-OOP",
-      "WOWM"
+      "WMF",
+      "OWM"
     ],
     "M (R)": [
       "IW",
       "PW",
-      "WM-IP",
+      "WM",
       "W-IP",
       "TWM",
-      "WM-OOP",
-      "WOWM"
+      "WMF",
+      "OWM"
     ],
     "AM (C)": [
       "AP",
@@ -1863,8 +1863,8 @@
       "FR",
       "SS",
       "AM-OOP",
-      "COAM",
-      "SOAM",
+      "OAM",
+      "SAM",
       "TAM"
     ],
     "AM (L)": [
@@ -1872,7 +1872,7 @@
       "PW",
       "W-IP",
       "IF",
-      "WF",
+      "WFD",
       "IOW",
       "TW",
       "WOW",
@@ -1883,22 +1883,22 @@
       "PW",
       "W-IP",
       "IF",
-      "WF",
+      "WFD",
       "IOW",
       "TW",
       "WOW",
       "W-OOP"
     ],
     "ST (C)": [
-      "CF-IP",
+      "CFD-IP",
       "CHF",
       "DLF",
       "F9",
       "P",
       "TF",
-      "COCF",
-      "CF-OOP",
-      "SOCF",
+      "OCF",
+      "CFD-OOP",
+      "SCF",
       "TCF"
     ]
   },
@@ -2197,10 +2197,10 @@
   "tactic_roles": {
     "4-2-3-1 - Bavarian Blitz": {
       "ip": {
-        "GK": "BPGK",
+        "GK": "BGK",
         "DL": "WB-IP",
-        "DCL": "BPCB",
-        "DCR": "BPCB",
+        "DCL": "BCB",
+        "DCR": "BCB",
         "DR": "WB-IP",
         "DMCL": "DLP",
         "DMCR": "DM-IP",
@@ -2220,7 +2220,7 @@
         "ML": "TWM",
         "AMC": "AM-OOP",
         "MR": "TWM",
-        "STC": "CF-OOP"
+        "STC": "CFD-OOP"
       }
     }
   },

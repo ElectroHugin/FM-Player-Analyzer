@@ -1,0 +1,80 @@
+Phase;Rolle;Kuerzel-Vorschlag;Kuerzel-im-Spiel;Positionen
+mit Ball;Ball-Playing Goalkeeper;BPGK;BGK;GK
+mit Ball;Goalkeeper;GK;GK;GK
+mit Ball;No-Nonsense Goalkeeper;NNGK;NGK;GK
+mit Ball;Advanced Centre-Back;ACB;ACB;D (C)
+mit Ball;Ball-Playing Centre-Back;BPCB;BCB;D (C)
+mit Ball;Centre-Back;CB;CB;D (C)
+mit Ball;No-Nonsense Centre-Back;NNCB;NCB;D (C)
+mit Ball;Overlapping Centre-Back;OCB;OCB;D (C)
+mit Ball;Wide Centre-Back;WCB;WCB;D (C)
+mit Ball;Full-Back;FB;FB;D (L)|D (R)
+mit Ball;Inside Full-Back;IFB;IFB;D (L)|D (R)
+mit Ball;Inside Wing-Back;IWB;IWB;D (L)|D (R)|WB (L)|WB (R)
+mit Ball;Playmaking Wing-Back;PWB;PWB;D (L)|D (R)|WB (L)|WB (R)
+mit Ball;Wing-Back;WB;WB;D (L)|D (R)|WB (L)|WB (R)
+mit Ball;Advanced Wing-Back;AWB;AWB;WB (L)|WB (R)
+mit Ball;Box-To-Box Midfielder;BBM;BBM;DM
+mit Ball;Box-To-Box Playmaker;BBP;BBP;DM
+mit Ball;Deep-Lying Playmaker;DLP;DLP;DM
+mit Ball;Defensive Midfielder;DM;DM;DM
+mit Ball;Half Back;HB;HB;DM
+mit Ball;Advanced Playmaker;AP;AP;M (C)|AM (C)
+mit Ball;Attacking Midfielder;AM;AM;M (C)|AM (C)
+mit Ball;Central Midfielder;CM;CM;M (C)
+mit Ball;Channel Midfielder;CHM;CHM;M (C)|AM (C)
+mit Ball;Midfield Playmaker;MP;MPM;M (C)
+mit Ball;Wide Central Midfielder;WCM;WCM;M (C)
+mit Ball;Inside Winger;IW;IW;M (L)|M (R)|AM (L)|AM (R)
+mit Ball;Playmaking Winger;PW;PW;M (L)|M (R)|AM (L)|AM (R)
+mit Ball;Wide Midfielder;WM;WM;M (L)|M (R)
+mit Ball;Winger;W;W;M (L)|M (R)|AM (L)|AM (R)
+mit Ball;Free Role;FR;FR;AM (C)
+mit Ball;Second Striker;SS;SS;AM (C)
+mit Ball;Inside Forward;IF;IF;AM (L)|AM (R)
+mit Ball;Wide Forward;WF;WFD;AM (L)|AM (R)
+mit Ball;Centre Forward;CF;CFD;ST (C)
+mit Ball;Channel Forward;CHF;CHF;ST (C)
+mit Ball;Deep-Lying Forward;DLF;DLF;ST (C)
+mit Ball;False Nine;F9;F9;ST (C)
+mit Ball;Poacher;P;P;ST (C)
+mit Ball;Target Forward;TF;TF;ST (C)
+ohne Ball;Goalkeeper;GK;GK;GK
+ohne Ball;Line-Holding Goalkeeper;LHGK;LHK;GK
+ohne Ball;Sweeper Keeper;SK;SK;GK
+ohne Ball;Centre-Back;CB;CB;D (C)
+ohne Ball;Covering Centre-Back;CCB;CCB;D (C)
+ohne Ball;Covering Wide Centre-Back;CWCB;CWD;D (C)
+ohne Ball;Stopping Centre-Back;SCB;SCB;D (C)
+ohne Ball;Stopping Wide Centre-Back;SWCB;SWD;D (C)
+ohne Ball;Wide Centre-Back;WCB;WCB;D (C)
+ohne Ball;Full-Back;FB;FB;D (L)|D (R)
+ohne Ball;Holding Full-Back;HFB;HFB;D (L)|D (R)
+ohne Ball;Pressing Full-Back;PFB;PFB;D (L)|D (R)
+ohne Ball;Holding Wing-Back;HWB;HWB;WB (L)|WB (R)
+ohne Ball;Pressing Wing-Back;PWB;PWB;WB (L)|WB (R)
+ohne Ball;Wing-Back;WB;WB;WB (L)|WB (R)
+ohne Ball;Defensive Midfielder;DM;DM;DM
+ohne Ball;Dropping Defensive Midfielder;DDM;DDM;DM
+ohne Ball;Pressing Defensive Midfielder;PDM;PDM;DM
+ohne Ball;Screening Defensive Midfielder;SDM;SDM;DM
+ohne Ball;Wide Covering Defensive Midfielder;WCDM;WDM;DM
+ohne Ball;Central Midfielder;CM;CM;M (C)
+ohne Ball;Pressing Central Midfielder;PCM;PCM;M (C)
+ohne Ball;Screening Central Midfielder;SCM;SCM;M (C)
+ohne Ball;Wide Covering Central Midfielder;WCCM;WCM;M (C)
+ohne Ball;Tracking Wide Midfielder;TWM;TWM;M (L)|M (R)
+ohne Ball;Wide Midfielder;WM;WMF;M (L)|M (R)
+ohne Ball;Wide Outlet Wide Midfielder;WOWM;OWM;M (L)|M (R)
+ohne Ball;Attacking Midfielder;AM;AM;AM (C)
+ohne Ball;Central Outlet Attacking Midfielder;COAM;OAM;AM (C)
+ohne Ball;Splitting Outlet Attacking Midfielder;SOAM;SAM;AM (C)
+ohne Ball;Tracking Attacking Midfielder;TAM;TAM;AM (C)
+ohne Ball;Inside Outlet Winger;IOW;IOW;AM (L)|AM (R)
+ohne Ball;Tracking Winger;TW;TW;AM (L)|AM (R)
+ohne Ball;Wide Outlet Winger;WOW;WOW;AM (L)|AM (R)
+ohne Ball;Winger;W;W;AM (L)|AM (R)
+ohne Ball;Central Outlet Centre Forward;COCF;OCF;ST (C)
+ohne Ball;Centre Forward;CF;CFD;ST (C)
+ohne Ball;Splitting Outlet Centre Forward;SOCF;SCF;ST (C)
+ohne Ball;Tracking Centre Forward;TCF;TCF;ST (C)

@@ -162,7 +162,14 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.setPen(QPen(boxBorder, 1));
         painter.drawPath(path);
 
-        const QString roleAbbr = m_positions.value(slot);
+        // FM27 ids carry the phase when an abbreviation exists in both
+        // ("CFD-OOP"); the pitch belongs to one phase, so show the game's
+        // abbreviation.
+        QString roleAbbr = m_positions.value(slot);
+        if (roleAbbr.endsWith(QLatin1String("-IP")))
+            roleAbbr.chop(3);
+        else if (roleAbbr.endsWith(QLatin1String("-OOP")))
+            roleAbbr.chop(4);
         const QString apt = aptAbbreviations().value(cell.apt, cell.apt);
         const QString subtext = m_slotSubtexts.value(slot);
 
