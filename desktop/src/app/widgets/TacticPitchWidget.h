@@ -35,6 +35,13 @@ public:
 
     void clearData();
 
+    // Tactic editor mode: roles: slot -> role id of the slots in use;
+    // roleNames: role id -> display name. Free slots are drawn as "+" boxes
+    // while showFreeSlots is true (e.g. until ten outfield players stand).
+    // Every box is clickable (slotClicked).
+    void setEditorSlots(const QHash<QString, QString> &roles,
+                        const QHash<QString, QString> &roleNames, bool showFreeSlots);
+
     // FM version whose pitch geometry places the slots (empty = default).
     void setFmVersionId(const QString &versionId) { m_fmVersionId = versionId; }
 
@@ -42,10 +49,13 @@ signals:
     // Player interactions (M13): boxes are clickable.
     void playerDoubleClicked(const QString &uid);
     void playerContextMenuRequested(const QString &uid, const QPoint &globalPos);
+    // Editor mode: a slot (in use or free) was clicked.
+    void slotClicked(const QString &slot, const QPoint &globalPos);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
     bool hasHeightForWidth() const override { return true; }
@@ -62,6 +72,7 @@ private:
     static constexpr int kHintWidth = 480;
 
     QString uidAt(const QPoint &pos) const;
+    QString slotAt(const QPoint &pos) const;
 
     ThemeManager &m_theme;
     QHash<QString, QRectF> m_boxRects; // slot -> painted rect (for hit tests)
@@ -73,6 +84,9 @@ private:
     QHash<QString, QColor> m_slotColors;
     QHash<QString, QString> m_slotSubtexts;
     bool m_showApt = true;
+    bool m_editor = false;
+    bool m_showFreeSlots = true;
+    QHash<QString, QString> m_editorRoles; // slot -> role id
 };
 
 } // namespace fm

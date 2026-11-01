@@ -52,7 +52,7 @@ private slots:
     void everyTabHasAPage()
     {
         QFETCH(bool, national);
-        const auto sidebar = Navigation::sidebar(national, true);
+        const auto sidebar = Navigation::sidebar(national);
         const QStringList ids = pageIds(sidebar);
         QSet<QString> seen;
         for (const QString &id : ids) {
@@ -77,7 +77,7 @@ private slots:
 
     void clubSidebarCoversEveryClubPage()
     {
-        const QStringList ids = pageIds(Navigation::sidebar(false, true));
+        const QStringList ids = pageIds(Navigation::sidebar(false));
         for (const char *id : {"dashboard", "best_xi", "best_xi_youth", "tactic_explorer",
                                "squad_matrix", "role_analysis", "dwrs_development",
                                "training_plan", "signing_advisor", "transfers", "registration",
@@ -85,14 +85,15 @@ private slots:
             QVERIFY2(ids.contains(QLatin1String(id)), id);
     }
 
-    void registrationTabOnlyWhenActive()
+    void registrationTabAlwaysUnderSquad()
     {
-        QVERIFY(!pageIds(Navigation::sidebar(false, false)).contains(QStringLiteral("registration")));
-        const auto sidebar = Navigation::sidebar(false, true);
+        // Listed even without active rules, so it can always be found.
+        const auto sidebar = Navigation::sidebar(false);
         const Navigation::Group *group =
             Navigation::findGroup(sidebar, QStringLiteral("registration"));
         QVERIFY(group);
-        QCOMPARE(group->id, QStringLiteral("transfers"));
+        QCOMPARE(group->id, QStringLiteral("squad"));
+        QVERIFY(!pageIds(Navigation::sidebar(true)).contains(QStringLiteral("registration")));
     }
 
     void sharedPagesHaveOneHost()
@@ -108,13 +109,13 @@ private slots:
 
     void findGroupLocatesTabs()
     {
-        const auto club = Navigation::sidebar(false, false);
+        const auto club = Navigation::sidebar(false);
         QCOMPARE(Navigation::findGroup(club, QStringLiteral("best_xi_youth"))->id,
                  QStringLiteral("lineup"));
         QCOMPARE(Navigation::findGroup(club, QStringLiteral("scouting_roles"))->id,
                  QStringLiteral("scouting"));
         QVERIFY(!Navigation::findGroup(club, QStringLiteral("national_callup")));
-        const auto national = Navigation::sidebar(true, false);
+        const auto national = Navigation::sidebar(true);
         QCOMPARE(Navigation::findGroup(national, QStringLiteral("tactic_explorer"))->id,
                  QStringLiteral("national_lineup"));
         QVERIFY(!Navigation::findGroup(national, QStringLiteral("training_plan")));

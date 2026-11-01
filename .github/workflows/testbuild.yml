@@ -1,0 +1,94 @@
+name: Testbuild
+
+# Release candidate of a branch that is not on main yet, built exactly like the
+# Release workflow (same windeployqt + Inno Setup installer, version from
+# Version.cpp) but uploaded as a run artifact instead of a GitHub release.
+# Also a portable zip that leaves the installed version alone. Both use the
+# data folder %LOCALAPPDATA%\FM24PlayerAnalyzer — back that up first.
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/project-thread-2i3rhj]
+
+permissions:
+  contents: read
+
+jobs:
+  windows-portable:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          modules: qtcharts
+          cache: true
+
+      - name: Setup MSVC (x64)
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v5
+
+      - name: Configure
+        run: cmake -S desktop -B build -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$env:QT_ROOT_DIR"
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Stage app with windeployqt
+        shell: pwsh
+        run: |
+          $staging = "portable/FMPlayerAnalyzer-Testbuild"
+          New-Item -ItemType Directory -Force $staging | Out-Null
+          Copy-Item build/src/app/fmplayeranalyzer.exe $staging
+          & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations `
+            --no-system-d3d-compiler --no-opengl-sw "$staging/fmplayeranalyzer.exe"
+          $sha = "${{ github.sha }}".Substring(0, 7)
+          Set-Content "$staging/TESTBUILD.txt" "Testbuild $env:GITHUB_REF_NAME @ $sha - kein offizielles Release."
+
+      - name: Determine version
+        id: version
+        shell: pwsh
+        run: |
+          $src = Get-Content desktop/src/core/Version.cpp -Raw
+          if ($src -notmatch 'appVersion[\s\S]*?QStringLiteral\("(\d+\.\d+\.\d+)"\)') {
+            throw "Version aus Version.cpp konnte nicht gelesen werden."
+          }
+          "version=$($matches[1])" >> $env:GITHUB_OUTPUT
+
+      - name: Build installer (Inno Setup, as in the release)
+        shell: pwsh
+        run: |
+          $staging = "desktop/installer/staging"
+          if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }
+          Copy-Item -Recurse "portable/FMPlayerAnalyzer-Testbuild" $staging
+          Remove-Item "$staging/TESTBUILD.txt"
+          choco install innosetup -y --no-progress
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          & $iscc "/DMyAppVersion=${{ steps.version.outputs.version }}" "desktop\installer\setup.iss"
+          if ($LASTEXITCODE -ne 0) { throw "ISCC fehlgeschlagen." }
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: FMPlayerAnalyzer-${{ steps.version.outputs.version }}-Windows-x64-Setup
+          path: desktop/installer/output/*.exe
+          retention-days: 30
+
+      - name: Upload portable zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: FMPlayerAnalyzer-Testbuild-Windows-portable
+          path: portable/
+          retention-days: 30

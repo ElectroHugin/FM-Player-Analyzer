@@ -15,6 +15,7 @@ namespace Navigation {
 struct Tab {
     QString label;
     QString pageId;
+    QString keywords; // extra search words for the command palette
 };
 
 struct Group {
@@ -28,9 +29,8 @@ struct Section {
     QList<Group> groups;
 };
 
-// The sidebar of a management mode. registrationActive: the squad-list tab
-// (registration assistant) exists only while registration rules are active.
-QList<Section> sidebar(bool national, bool registrationActive);
+// The sidebar of a management mode.
+QList<Section> sidebar(bool national);
 
 // The group that holds pageId in the given sidebar, or nullptr.
 const Group *findGroup(const QList<Section> &sections, const QString &pageId);

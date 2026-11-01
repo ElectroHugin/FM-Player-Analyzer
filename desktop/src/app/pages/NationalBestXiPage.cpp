@@ -163,8 +163,8 @@ void NationalBestXiPage::rebuild()
     const auto roleNames = m_context.definitions().roleDisplayMap();
 
     // apply_apt_weight=false — national selection ignores club playing time.
-    const SquadResult squad = m_context.squadBuilder().calculateSquadAndSurplus(
-        squadPlayers, positions, slotOrder, m_context.ratings(), false);
+    const SquadResult squad = m_context.squadBuilder().calculateSquadForTactic(
+        squadPlayers, tactic, m_context.ratings(), false);
 
     m_xiPitch->setFmVersionId(m_context.fmVersionId());
     m_bTeamPitch->setFmVersionId(m_context.fmVersionId());

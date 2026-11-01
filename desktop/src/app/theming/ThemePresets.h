@@ -17,9 +17,11 @@ struct ClubTheme {
     QString interactive;  // accent for tabs/sliders/checkboxes/selection
     QString headerNight;  // optional header override (dark mode)
     QString headerDay;    // optional header override (light mode)
+    QString league;       // e.g. "Bundesliga"; empty for the neutral preset
 };
 
-// All presets, "neutral" first, then Bundesliga, then international clubs.
+// All presets: "neutral" first, then the clubs by league (leagues and clubs
+// alphabetically), so no club comes first.
 const QList<ClubTheme> &clubThemes();
 
 // Full theme settings (every role, both modes, plus theme_preset) for a

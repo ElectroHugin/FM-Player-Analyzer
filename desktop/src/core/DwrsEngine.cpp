@@ -100,7 +100,7 @@ DwrsEngine::RolePlan DwrsEngine::buildPlan(const QString &role) const
             continue; // category not in the weight table -> attribute ignored
 
         const int attrIdx = attrIndexByName(attr);
-        if (attrIdx < 0)
+        if (attrIdx < 0 || !attributeRated(m_definitions.fmVersionId(), attrIdx))
             continue;
 
         int catIdx = categoryIndex.value(category, -1);

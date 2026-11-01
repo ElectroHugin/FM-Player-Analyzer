@@ -2,6 +2,7 @@
 
 #include "AppConfig.h"
 #include "Assignment.h"
+#include "MinCostFlow.h"
 #include "Constants.h"
 #include "Definitions.h"
 #include "TalentEngine.h"
@@ -11,6 +12,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <optional>
 
 namespace fm {
 
@@ -298,6 +300,25 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
             xiOrBTeamUids.insert(cell.playerUid);
     }
 
+    QStringList uniqueRoles;
+    for (const QString &slot : slotOrder) {
+        const QString role = positions.value(slot);
+        if (!uniqueRoles.contains(role))
+            uniqueRoles.append(role);
+    }
+    fillDepthOptions(pool, xiOrBTeamUids, uniqueRoles, ratings, result);
+
+    result.startingXi = std::move(xi);
+    result.bTeam = std::move(bTeam);
+    result.depthPool = std::move(depthPool);
+    result.coreSquadUids = xiOrBTeamUids + result.depthPlayerUids;
+    return result;
+}
+
+void SquadBuilder::fillDepthOptions(const std::vector<const Player *> &pool,
+                                    const QSet<QString> &xiOrBTeamUids, const QStringList &roles,
+                                    const RoleRatings &ratings, SquadResult &result) const
+{
     std::vector<const Player *> availableDepth;
     for (const Player *p : pool) {
         if (!xiOrBTeamUids.contains(p->uid))
@@ -306,12 +327,7 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
 
     QHash<QString, QSet<QString>> rolesCoveredByPlayer;
     if (!availableDepth.empty()) {
-        QStringList uniqueRoles;
-        for (const QString &slot : slotOrder) {
-            const QString role = positions.value(slot);
-            if (!uniqueRoles.contains(role))
-                uniqueRoles.append(role);
-        }
+        QStringList uniqueRoles = roles;
         std::sort(uniqueRoles.begin(), uniqueRoles.end());
 
         for (const QString &role : uniqueRoles) {
@@ -354,9 +370,51 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
         }
     }
 
-    result.startingXi = std::move(xi);
-    result.bTeam = std::move(bTeam);
-    result.depthPool = std::move(depthPool);
+}
+
+SquadResult SquadBuilder::calculateSquadForTactic(const std::vector<const Player *> &pool,
+                                                  const QString &tactic,
+                                                  const RoleRatings &ratings,
+                                                  bool applyAptWeight) const
+{
+    if (!m_definitions.isTwoPhaseTactic(tactic)) {
+        return calculateSquadAndSurplus(pool, m_definitions.tacticRoles().value(tactic),
+                                        m_definitions.tacticSlotOrder(tactic), ratings,
+                                        applyAptWeight);
+    }
+    const TwoPhaseSquadResult twoPhase = calculateTwoPhaseSquad(
+        pool, tactic, ratings, m_config.ipSharePercent() / 100.0, applyAptWeight);
+
+    SquadResult result;
+    result.twoPhase = true;
+    result.valueOfUid = twoPhase.valueOfUid;
+    // Slots of the line-up without ball (the base shape); the rating is the
+    // player's value over both line-ups, so totals and averages compare
+    // players and tactics fairly.
+    QSet<QString> xiOrBTeamUids;
+    const auto combine = [&](const QHash<QString, XiCell> &team, QHash<QString, XiCell> &out) {
+        for (auto it = team.constBegin(); it != team.constEnd(); ++it) {
+            XiCell cell = it.value();
+            if (cell.isFilled()) {
+                cell.rating = std::trunc(twoPhase.valueOfUid.value(cell.playerUid, cell.rating));
+                xiOrBTeamUids.insert(cell.playerUid);
+            }
+            out.insert(it.key(), cell);
+        }
+    };
+    combine(twoPhase.startingOop, result.startingXi);
+    combine(twoPhase.bTeamOop, result.bTeam);
+
+    const Definitions::TwoPhaseTactic &lineUps = m_definitions.twoPhaseTactics().value(tactic);
+    QStringList roles;
+    for (const QString &slot : lineUps.ipOrder)
+        roles.append(lineUps.ip.value(slot));
+    for (const QString &slot : lineUps.oopOrder)
+        roles.append(lineUps.oop.value(slot));
+    roles.removeDuplicates();
+    fillDepthOptions(pool, xiOrBTeamUids, roles, ratings, result);
+
+    result.depthPool = twoPhase.depthPool;
     result.coreSquadUids = xiOrBTeamUids + result.depthPlayerUids;
     return result;
 }
@@ -464,6 +522,286 @@ DevelopmentSquads SquadBuilder::calculateDevelopmentSquads(
                      });
 
     return result;
+}
+
+TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const Player *> &pool,
+                                                         const QString &tactic,
+                                                         const RoleRatings &ratings,
+                                                         double ipShare,
+                                                         bool applyAptWeight,
+                                                         const QHash<QString, QPair<QString, QString>> &fixedBridges) const
+{
+    TwoPhaseSquadResult result;
+    const auto tacticIt = m_definitions.twoPhaseTactics().constFind(tactic);
+    if (tacticIt == m_definitions.twoPhaseTactics().constEnd()) {
+        result.depthPool = pool;
+        return result;
+    }
+    const Definitions::TwoPhaseTactic &lineUps = tacticIt.value();
+    ipShare = std::clamp(ipShare, 0.0, 1.0);
+
+    QHash<QString, QSet<QString>> parsedPositions;
+    for (const Player *p : pool)
+        parsedPositions.insert(p->uid, parsePositionString(p->positionRaw));
+    const auto &slotToGamePositions = tacticalSlotToGamePositions(m_definitions.fmVersionId());
+
+    // Pinned to his primary role: in that role's phase the player may only
+    // take slots of exactly that role.
+    const auto pinnedOut = [&](const Player &player, const QString &role, const QString &phase) {
+        if (player.primaryRole.isEmpty() || player.primaryRole == role
+            || !player.assignedRoles.contains(player.primaryRole))
+            return false;
+        const QString pinnedPhase = m_definitions.rolePhase(player.primaryRole);
+        return pinnedPhase == phase || pinnedPhase == QLatin1String("both");
+    };
+
+    struct Option {
+        double rating = 0.0; // DWRS of the slot's role
+        double score = 0.0;  // rating x playing-time weight x natural bonus
+        QString apt;
+    };
+    // Score of `player` in `slot` (role from `lineUp`), or nothing if ineligible.
+    const auto option = [&](const Player &player, const QString &slot,
+                            const QHash<QString, QString> &lineUp,
+                            const QString &phase) -> std::optional<Option> {
+        const QStringList allowedList = slot == QLatin1String("GK")
+                                            ? QStringList{QStringLiteral("GK")}
+                                            : slotToGamePositions.value(slot);
+        const QSet<QString> allowed(allowedList.begin(), allowedList.end());
+        if (!parsedPositions[player.uid].intersects(allowed))
+            return std::nullopt;
+        const QString role = lineUp.value(slot);
+        if (pinnedOut(player, role, phase))
+            return std::nullopt;
+        const double rating = ratings.value(role).value(player.uid, 0.0);
+        if (rating <= 0.0)
+            return std::nullopt;
+        Option o;
+        o.rating = rating;
+        o.apt = player.agreedPlayingTime.isEmpty() ? QStringLiteral("None")
+                                                   : player.agreedPlayingTime;
+        const double aptWeight = applyAptWeight ? m_aptWeights.value(o.apt, 1.0) : 1.0;
+        double naturalBonus = 1.0;
+        const QStringList naturalGamePositions = m_roleToGamePositions.value(role);
+        for (const QString &np : player.naturalPositions) {
+            if (naturalGamePositions.contains(np)) {
+                naturalBonus = m_naturalPosMultiplier;
+                break;
+            }
+        }
+        o.score = rating * aptWeight * naturalBonus;
+        return o;
+    };
+
+    // One team: min-cost flow source -> ip slot -> player -> oop slot -> sink.
+    // Each unit of flow places one player in both line-ups. A fixed reward per
+    // placed player (split over his two edges) outweighs any score, so the
+    // most players are placed first, then the value is maximal.
+    // Manual bridges (starting XI only): a fixed player may take only his
+    // fixed slot in that phase, nobody else may take it.
+    using Bridges = QHash<QString, QPair<QString, QString>>;
+    const auto pickTeam = [&](const std::vector<const Player *> &available,
+                              QHash<QString, XiCell> &ipTeam, QHash<QString, XiCell> &oopTeam,
+                              const Bridges &fixed) {
+        QSet<QString> fixedIp, fixedOop;
+        for (auto it = fixed.cbegin(); it != fixed.cend(); ++it) {
+            if (!it->first.isEmpty())
+                fixedIp.insert(it->first);
+            if (!it->second.isEmpty())
+                fixedOop.insert(it->second);
+        }
+        const auto allowed = [&](const Player &player, const QString &slot, bool ipPhase) {
+            const auto own = fixed.constFind(player.uid);
+            const QString mine = own == fixed.cend() ? QString()
+                                                     : (ipPhase ? own->first : own->second);
+            if (!mine.isEmpty())
+                return slot == mine;
+            return !(ipPhase ? fixedIp : fixedOop).contains(slot);
+        };
+        const QStringList &ipSlots = lineUps.ipOrder;
+        const QStringList &oopSlots = lineUps.oopOrder;
+        const int nIp = static_cast<int>(ipSlots.size());
+        const int nOop = static_cast<int>(oopSlots.size());
+        const int nPlayers = static_cast<int>(available.size());
+        // Nodes: 0 source, 1 sink, ip slots, player in, player out, oop slots.
+        const int ipBase = 2;
+        const int inBase = ipBase + nIp;
+        const int outBase = inBase + nPlayers;
+        const int oopBase = outBase + nPlayers;
+        MinCostFlow flow(oopBase + nOop);
+
+        constexpr double kScale = 1e4;
+        // > the largest possible total of scaled scores (11 x 2 x 100 x weights).
+        double maxScore = 0.0;
+        std::vector<std::vector<std::optional<Option>>> ipOpt(static_cast<size_t>(nPlayers)),
+            oopOpt(static_cast<size_t>(nPlayers));
+        for (int p = 0; p < nPlayers; ++p) {
+            const Player &player = *available[static_cast<size_t>(p)];
+            for (const QString &slot : ipSlots) {
+                ipOpt[static_cast<size_t>(p)].push_back(
+                    allowed(player, slot, true)
+                        ? option(player, slot, lineUps.ip, QStringLiteral("ip"))
+                        : std::nullopt);
+                if (ipOpt[static_cast<size_t>(p)].back())
+                    maxScore = std::max(maxScore, ipOpt[static_cast<size_t>(p)].back()->score);
+            }
+            for (const QString &slot : oopSlots) {
+                oopOpt[static_cast<size_t>(p)].push_back(
+                    allowed(player, slot, false)
+                        ? option(player, slot, lineUps.oop, QStringLiteral("oop"))
+                        : std::nullopt);
+                if (oopOpt[static_cast<size_t>(p)].back())
+                    maxScore = std::max(maxScore, oopOpt[static_cast<size_t>(p)].back()->score);
+            }
+        }
+        const std::int64_t halfReward =
+            std::llround(maxScore * kScale) * std::max(nIp, nOop) + 1;
+
+        for (int k = 0; k < nIp; ++k)
+            flow.addEdge(0, ipBase + k, 1, 0);
+        for (int j = 0; j < nOop; ++j)
+            flow.addEdge(oopBase + j, 1, 1, 0);
+        std::vector<std::vector<int>> ipEdge(static_cast<size_t>(nPlayers), std::vector<int>(static_cast<size_t>(nIp), -1));
+        std::vector<std::vector<int>> oopEdge(static_cast<size_t>(nPlayers), std::vector<int>(static_cast<size_t>(nOop), -1));
+        for (int p = 0; p < nPlayers; ++p) {
+            bool anyIp = false;
+            bool anyOop = false;
+            for (int k = 0; k < nIp; ++k)
+                anyIp |= ipOpt[static_cast<size_t>(p)][static_cast<size_t>(k)].has_value();
+            for (int j = 0; j < nOop; ++j)
+                anyOop |= oopOpt[static_cast<size_t>(p)][static_cast<size_t>(j)].has_value();
+            if (!anyIp || !anyOop)
+                continue; // must fit both line-ups
+            flow.addEdge(inBase + p, outBase + p, 1, 0);
+            for (int k = 0; k < nIp; ++k) {
+                if (const auto &o = ipOpt[static_cast<size_t>(p)][static_cast<size_t>(k)]) {
+                    ipEdge[static_cast<size_t>(p)][static_cast<size_t>(k)] = flow.addEdge(
+                        ipBase + k, inBase + p, 1,
+                        -(halfReward + std::llround(ipShare * o->score * kScale)));
+                }
+            }
+            for (int j = 0; j < nOop; ++j) {
+                if (const auto &o = oopOpt[static_cast<size_t>(p)][static_cast<size_t>(j)]) {
+                    oopEdge[static_cast<size_t>(p)][static_cast<size_t>(j)] = flow.addEdge(
+                        outBase + p, oopBase + j, 1,
+                        -(halfReward + std::llround((1.0 - ipShare) * o->score * kScale)));
+                }
+            }
+        }
+        flow.solve(0, 1, std::min(nIp, nOop));
+
+        QSet<QString> taken;
+        for (int p = 0; p < nPlayers; ++p) {
+            const Player &player = *available[static_cast<size_t>(p)];
+            int ipK = -1;
+            int oopJ = -1;
+            for (int k = 0; k < nIp; ++k) {
+                const int e = ipEdge[static_cast<size_t>(p)][static_cast<size_t>(k)];
+                if (e >= 0 && flow.flowOn(e) > 0)
+                    ipK = k;
+            }
+            for (int j = 0; j < nOop; ++j) {
+                const int e = oopEdge[static_cast<size_t>(p)][static_cast<size_t>(j)];
+                if (e >= 0 && flow.flowOn(e) > 0)
+                    oopJ = j;
+            }
+            if (ipK < 0 || oopJ < 0)
+                continue;
+            const Option &ipO = *ipOpt[static_cast<size_t>(p)][static_cast<size_t>(ipK)];
+            const Option &oopO = *oopOpt[static_cast<size_t>(p)][static_cast<size_t>(oopJ)];
+            const auto cell = [&](const Option &o) {
+                XiCell c;
+                c.playerUid = player.uid;
+                c.name = player.name;
+                c.rating = std::trunc(o.rating);
+                c.apt = o.apt;
+                return c;
+            };
+            ipTeam.insert(ipSlots[ipK], cell(ipO));
+            oopTeam.insert(oopSlots[oopJ], cell(oopO));
+            result.slotsOfUid.insert(player.uid, {ipSlots[ipK], oopSlots[oopJ]});
+            result.valueOfUid.insert(player.uid,
+                                     ipShare * ipO.rating + (1.0 - ipShare) * oopO.rating);
+            taken.insert(player.uid);
+        }
+        for (const QString &slot : ipSlots) {
+            if (!ipTeam.contains(slot))
+                ipTeam.insert(slot, XiCell());
+        }
+        for (const QString &slot : oopSlots) {
+            if (!oopTeam.contains(slot))
+                oopTeam.insert(slot, XiCell());
+        }
+        std::vector<const Player *> rest;
+        for (const Player *p : available) {
+            if (!taken.contains(p->uid))
+                rest.push_back(p);
+        }
+        return rest;
+    };
+
+    const std::vector<const Player *> afterXi =
+        pickTeam(pool, result.startingIp, result.startingOop, fixedBridges);
+    result.depthPool = pickTeam(afterXi, result.bTeamIp, result.bTeamOop, {});
+    return result;
+}
+
+double SquadBuilder::startingValue(const TwoPhaseSquadResult &squad)
+{
+    double total = 0.0;
+    for (const XiCell &cell : squad.startingIp) {
+        if (cell.isFilled())
+            total += squad.valueOfUid.value(cell.playerUid);
+    }
+    return total;
+}
+
+QList<BridgeOption> SquadBuilder::bridgeOptions(const std::vector<const Player *> &pool,
+                                                const QString &tactic, const RoleRatings &ratings,
+                                                double ipShare, const Bridges &fixed,
+                                                const QString &uid, bool ipPhase,
+                                                bool applyAptWeight) const
+{
+    QList<BridgeOption> options;
+    const auto tacticIt = m_definitions.twoPhaseTactics().constFind(tactic);
+    if (tacticIt == m_definitions.twoPhaseTactics().constEnd())
+        return options;
+    const TwoPhaseSquadResult current =
+        calculateTwoPhaseSquad(pool, tactic, ratings, ipShare, applyAptWeight, fixed);
+    const auto mine = current.slotsOfUid.constFind(uid);
+    if (mine == current.slotsOfUid.cend())
+        return options; // not in the starting XI
+    const QString oldSlot = ipPhase ? mine->first : mine->second;
+    const QHash<QString, XiCell> &team = ipPhase ? current.startingIp : current.startingOop;
+    const QStringList &order = ipPhase ? tacticIt->ipOrder : tacticIt->oopOrder;
+    for (const QString &slot : order) {
+        if (slot == oldSlot)
+            continue;
+        Bridges trial = fixed;
+        auto own = trial.value(uid, {mine->first, mine->second});
+        (ipPhase ? own.first : own.second) = slot;
+        trial.insert(uid, own);
+        // Whoever holds the slot moves to the player's old one (a swap).
+        const QString other = team.value(slot).playerUid;
+        if (!other.isEmpty()) {
+            auto theirs = current.slotsOfUid.value(other);
+            (ipPhase ? theirs.first : theirs.second) = oldSlot;
+            trial.insert(other, theirs);
+        }
+        const TwoPhaseSquadResult result =
+            calculateTwoPhaseSquad(pool, tactic, ratings, ipShare, applyAptWeight, trial);
+        const auto placed = result.slotsOfUid.constFind(uid);
+        if (placed == result.slotsOfUid.cend()
+            || (ipPhase ? placed->first : placed->second) != slot)
+            continue; // not possible (position missing)
+        BridgeOption option;
+        option.slot = slot;
+        option.swapUid = other;
+        option.bridges = trial;
+        option.total = startingValue(result);
+        options.append(option);
+    }
+    return options;
 }
 
 } // namespace fm

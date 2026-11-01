@@ -351,10 +351,9 @@ void SigningAdvisorTab::recompute()
     const QStringList slotOrder = m_context.definitions().tacticSlotOrder(m_tactic);
     const RoleRatings &ratings = m_context.ratings();
     m_analysis = SigningAdvisor::analyze(m_context.squadBuilder(), m_squad, marketPool(),
-                                         positions, slotOrder, ratings);
+                                         positions, slotOrder, ratings, 12, 15, m_tactic);
     fillNeeds();
-    fillGapTables(m_context.squadBuilder().calculateSquadAndSurplus(m_squad, positions,
-                                                                    slotOrder, ratings));
+    fillGapTables(m_context.squadBuilder().calculateSquadForTactic(m_squad, m_tactic, ratings));
     QApplication::restoreOverrideCursor();
 }
 

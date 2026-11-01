@@ -32,8 +32,13 @@ public:
     ~AppContext() override;
 
     // Call after the data dir is settled (first-run dialog done). Loads
-    // config/definitions and opens the active database.
-    bool initialize(QString *errorOut = nullptr);
+    // config/definitions and, unless openActiveDatabase is false, opens the
+    // active database. Without it, nothing database-backed may be used until
+    // openDatabase() succeeded (the start screen picks the save first).
+    bool initialize(QString *errorOut = nullptr, bool openActiveDatabase = true);
+
+    // True once a database is open.
+    bool hasDatabase() const { return m_database != nullptr; }
 
     AppPaths &paths() { return m_paths; }
     AppConfig &config() { return *m_config; }
@@ -56,6 +61,11 @@ public:
 
     // Switches/creates the active database and reloads everything.
     bool openDatabase(const QString &dbName, QString *errorOut = nullptr);
+
+    // Creates a new, empty save for the given FM version and opens it. Fails
+    // if a save with that name already exists.
+    bool createDatabase(const QString &dbName, const QString &fmVersionId,
+                        QString *errorOut = nullptr);
 
     // Re-reads players + ratings from the database into memory.
     void reloadFromDatabase();

@@ -504,8 +504,8 @@ void DashboardPage::refreshAnalysis()
     }
 
     const QStringList slotOrder = m_context.definitions().tacticSlotOrder(tactic);
-    const SquadResult squad = m_context.squadBuilder().calculateSquadAndSurplus(
-        clubPlayers, positions, slotOrder, m_context.ratings());
+    const SquadResult squad = m_context.squadBuilder().calculateSquadForTactic(
+        clubPlayers, tactic, m_context.ratings());
 
     // Core squad players (XI + B-team + depth).
     std::vector<const Player *> coreSquad;
@@ -767,6 +767,15 @@ void DashboardPage::chooseImportFile()
         return;
     m_filePathEdit->setText(path);
     m_importButton->setEnabled(true);
+}
+
+void DashboardPage::prepareImport(const QString &filePath)
+{
+    if (m_importRunning)
+        return;
+    m_filePathEdit->setText(filePath);
+    m_importButton->setEnabled(true);
+    m_importButton->setFocus();
 }
 
 void DashboardPage::startImport()

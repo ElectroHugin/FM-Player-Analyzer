@@ -6,6 +6,9 @@
 #include <QFileInfo>
 #include <QSet>
 #include <QStandardPaths>
+#include <QUrl>
+
+#include <algorithm>
 
 namespace fm {
 
@@ -82,16 +85,16 @@ const QHash<QString, QString> &themeDefaults()
         {QStringLiteral("night_surface_color"), QStringLiteral("#343434")},
         {QStringLiteral("night_sidebar_color"), QStringLiteral("#1f1f1f")},
         {QStringLiteral("night_header_color"), QStringLiteral("#2d2d2d")},
-        {QStringLiteral("night_primary_color"), QStringLiteral("#3d7dff")},
-        {QStringLiteral("night_interactive_color"), QStringLiteral("#3d7dff")},
+        {QStringLiteral("night_primary_color"), QStringLiteral("#6a1bf5")},
+        {QStringLiteral("night_interactive_color"), QStringLiteral("#9d6bff")},
         {QStringLiteral("night_text_color"), QStringLiteral("#F5F5F5")},
         // --- Day ---
         {QStringLiteral("day_background_color"), QStringLiteral("#F0F2F6")},
         {QStringLiteral("day_surface_color"), QStringLiteral("#FFFFFF")},
         {QStringLiteral("day_sidebar_color"), QStringLiteral("#E7E9ED")},
         {QStringLiteral("day_header_color"), QStringLiteral("#FFFFFF")},
-        {QStringLiteral("day_primary_color"), QStringLiteral("#0069b3")},
-        {QStringLiteral("day_interactive_color"), QStringLiteral("#0069b3")},
+        {QStringLiteral("day_primary_color"), QStringLiteral("#6a1bf5")},
+        {QStringLiteral("day_interactive_color"), QStringLiteral("#9d6bff")},
         {QStringLiteral("day_text_color"), QStringLiteral("#31333F")},
     };
     return defaults;
@@ -176,6 +179,7 @@ void AppConfig::ensureDefaults()
     ensure(QStringLiteral("AgeThresholds/goalkeeper_youth_age"), QStringLiteral("25"));
 
     ensure(QStringLiteral("SelectionBonuses/natural_position_multiplier"), QStringLiteral("1.00"));
+    ensure(QStringLiteral("Phases/ip_share_percent"), QStringLiteral("50"));
 
     const auto &squad = squadManagementDefaults();
     for (auto it = squad.constBegin(); it != squad.constEnd(); ++it)
@@ -201,6 +205,19 @@ void AppConfig::ensureDefaults()
     const auto &theme = themeDefaults();
     for (auto it = theme.constBegin(); it != theme.constEnd(); ++it)
         ensure(QStringLiteral("ThemeSettings/") + it.key(), it.value());
+    // v1.7: the neutral (club-free) look moved from blue to the logo purple.
+    // Only untouched blue defaults follow; club themes and custom colors stay.
+    if (s.value(QStringLiteral("ThemeSettings/theme_preset")).toString()
+            == QLatin1String("neutral")
+        && s.value(QStringLiteral("ThemeSettings/night_primary_color")).toString().toLower()
+               == QLatin1String("#3d7dff")) {
+        for (const QString &key :
+             {QStringLiteral("night_primary_color"), QStringLiteral("night_interactive_color"),
+              QStringLiteral("day_primary_color"), QStringLiteral("day_interactive_color")}) {
+            s.setValue(QStringLiteral("ThemeSettings/") + key, theme.value(key));
+        }
+        modified = true;
+    }
 
     if (modified)
         s.sync();
@@ -215,6 +232,56 @@ QString AppConfig::dbName() const
 void AppConfig::setDbName(const QString &name)
 {
     m_settings->setValue(QStringLiteral("Database/db_name"), name);
+    m_settings->sync();
+}
+
+bool AppConfig::autoOpenLastDatabase() const
+{
+    return m_settings->value(QStringLiteral("Startup/auto_open_last"), false).toBool();
+}
+
+void AppConfig::setAutoOpenLastDatabase(bool enabled)
+{
+    m_settings->setValue(QStringLiteral("Startup/auto_open_last"), enabled);
+    m_settings->sync();
+}
+
+namespace {
+// Save names may contain spaces and umlauts; percent-encoding keeps them valid
+// and unambiguous as INI keys on every platform.
+QString recentKey(const QString &name)
+{
+    return QStringLiteral("RecentDatabases/")
+        + QString::fromLatin1(QUrl::toPercentEncoding(name));
+}
+} // namespace
+
+QDateTime AppConfig::databaseLastOpened(const QString &name) const
+{
+    return QDateTime::fromString(m_settings->value(recentKey(name)).toString(), Qt::ISODate);
+}
+
+void AppConfig::touchDatabaseLastOpened(const QString &name)
+{
+    m_settings->setValue(recentKey(name),
+                         QDateTime::currentDateTime().toString(Qt::ISODate));
+    m_settings->sync();
+}
+
+void AppConfig::renameDatabaseEntry(const QString &oldName, const QString &newName)
+{
+    const QVariant value = m_settings->value(recentKey(oldName));
+    m_settings->remove(recentKey(oldName));
+    if (value.isValid())
+        m_settings->setValue(recentKey(newName), value);
+    if (dbName() == oldName)
+        m_settings->setValue(QStringLiteral("Database/db_name"), newName);
+    m_settings->sync();
+}
+
+void AppConfig::removeDatabaseEntry(const QString &name)
+{
+    m_settings->remove(recentKey(name));
     m_settings->sync();
 }
 
@@ -300,6 +367,18 @@ void AppConfig::setAgeThreshold(const QString &playerType, int value)
     m_settings->setValue(QStringLiteral("AgeThresholds/") + playerType
                              + QStringLiteral("_youth_age"),
                          QString::number(value));
+    m_settings->sync();
+}
+
+int AppConfig::ipSharePercent() const
+{
+    return std::clamp(m_settings->value(QStringLiteral("Phases/ip_share_percent"), 50).toInt(), 0, 100);
+}
+
+void AppConfig::setIpSharePercent(int percent)
+{
+    m_settings->setValue(QStringLiteral("Phases/ip_share_percent"),
+                         QString::number(std::clamp(percent, 0, 100)));
     m_settings->sync();
 }
 

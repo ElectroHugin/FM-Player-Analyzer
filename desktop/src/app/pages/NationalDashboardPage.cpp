@@ -300,8 +300,8 @@ void NationalDashboardPage::rebuildAnalysis()
     const auto positions = m_context.definitions().tacticRoles().value(tactic);
     if (!positions.isEmpty()) {
         const QStringList slotOrder = m_context.definitions().tacticSlotOrder(tactic);
-        const SquadResult squad = m_context.squadBuilder().calculateSquadAndSurplus(
-            squadPlayers, positions, slotOrder, m_context.ratings(), false);
+        const SquadResult squad = m_context.squadBuilder().calculateSquadForTactic(
+            squadPlayers, tactic, m_context.ratings(), false);
 
         QHash<QString, StrengthGridWidget::SlotStrength> strengths;
         for (auto it = positions.constBegin(); it != positions.constEnd(); ++it) {
@@ -453,6 +453,15 @@ void NationalDashboardPage::rebuildCallUps()
     }
     for (int c = 0; c < columns; ++c)
         m_cardsLayout->setColumnStretch(c, 1);
+}
+
+void NationalDashboardPage::prepareImport(const QString &filePath)
+{
+    if (m_importRunning)
+        return;
+    m_filePathEdit->setText(filePath);
+    m_importButton->setEnabled(true);
+    m_importButton->setFocus();
 }
 
 void NationalDashboardPage::startImport()

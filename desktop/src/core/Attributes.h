@@ -52,7 +52,11 @@ enum class Attr : uint8_t {
     Throwing,
     Vision,
     WorkRate,
-    Count // = 40
+    // Added for FM27 goalkeeper roles (schema v10); FM24 never imports or rates
+    // them (FmDataVersion::unratedAttributes).
+    Communication,
+    Eccentricity,
+    Count // = 42
 };
 
 inline constexpr int kAttrCount = static_cast<int>(Attr::Count);

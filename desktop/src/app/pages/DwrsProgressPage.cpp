@@ -419,8 +419,8 @@ void DwrsProgressPage::reloadLineup()
         if (national || !player->longTermInjured)
             available.push_back(player);
     }
-    const SquadResult squad = m_context.squadBuilder().calculateSquadAndSurplus(
-        available, positions, slotOrder, m_context.ratings(), !national);
+    const SquadResult squad = m_context.squadBuilder().calculateSquadForTactic(
+        available, m_lineupTactic, m_context.ratings(), !national);
     for (const auto &[team, spot] : {std::pair{&squad.startingXi, Spot::StartingXi},
                                      std::pair{&squad.bTeam, Spot::BTeam}}) {
         for (auto it = team->constBegin(); it != team->constEnd(); ++it) {

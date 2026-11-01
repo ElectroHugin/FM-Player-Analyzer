@@ -14,13 +14,18 @@ namespace {
 // Gains below this are rounding noise, not an improvement.
 constexpr double kMinGain = 0.01;
 
+// Sum of the team's ratings; for a two-phase squad the players' values over
+// both line-ups (SquadResult::valueOfUid).
 double teamTotal(const QHash<QString, XiCell> &team, const QHash<QString, QString> &positions,
-                 const RoleRatings &ratings)
+                 const RoleRatings &ratings, const SquadResult &squad)
 {
     double total = 0.0;
     for (auto it = team.constBegin(); it != team.constEnd(); ++it) {
-        if (it->isFilled())
-            total += ratings.value(positions.value(it.key())).value(it->playerUid, 0.0);
+        if (!it->isFilled())
+            continue;
+        total += squad.twoPhase
+                     ? squad.valueOfUid.value(it->playerUid, 0.0)
+                     : ratings.value(positions.value(it.key())).value(it->playerUid, 0.0);
     }
     return total;
 }
@@ -50,14 +55,17 @@ QHash<QString, Place> placesOf(const SquadResult &squad)
 SigningAnalysis analyze(const SquadBuilder &builder, const std::vector<const Player *> &squad,
                         const std::vector<const Player *> &market,
                         const QHash<QString, QString> &positions, const QStringList &slotOrder,
-                        const RoleRatings &ratings, int candidatesPerSlot, int optionsPerSlot)
+                        const RoleRatings &ratings, int candidatesPerSlot, int optionsPerSlot,
+                        const QString &tactic)
 {
     SigningAnalysis result;
     result.marketSize = static_cast<int>(market.size());
 
-    const SquadResult base = builder.calculateSquadAndSurplus(squad, positions, slotOrder, ratings);
-    result.xiTotal = teamTotal(base.startingXi, positions, ratings);
-    result.bTeamTotal = teamTotal(base.bTeam, positions, ratings);
+    const SquadResult base = tactic.isEmpty()
+        ? builder.calculateSquadAndSurplus(squad, positions, slotOrder, ratings)
+        : builder.calculateSquadForTactic(squad, tactic, ratings);
+    result.xiTotal = teamTotal(base.startingXi, positions, ratings, base);
+    result.bTeamTotal = teamTotal(base.bTeam, positions, ratings, base);
     const QHash<QString, Place> basePlaces = placesOf(base);
 
     // --- Market per slot: comparison figures + the players worth simulating ---
@@ -118,7 +126,9 @@ SigningAnalysis analyze(const SquadBuilder &builder, const std::vector<const Pla
         signing.agreedPlayingTime.clear(); // his new role in the squad is not agreed yet
         pool.back() = &signing;
         const SquadResult after =
-            builder.calculateSquadAndSurplus(pool, positions, slotOrder, ratings);
+            tactic.isEmpty()
+                ? builder.calculateSquadAndSurplus(pool, positions, slotOrder, ratings)
+                : builder.calculateSquadForTactic(pool, tactic, ratings);
         ++result.simulated;
 
         QString slot;
@@ -133,9 +143,11 @@ SigningAnalysis analyze(const SquadBuilder &builder, const std::vector<const Pla
         SigningOption option;
         option.player = candidate;
         option.slot = slot;
-        option.rating = ratings.value(positions.value(slot)).value(signing.uid, 0.0);
-        option.xiGain = teamTotal(after.startingXi, positions, ratings) - result.xiTotal;
-        option.bTeamGain = teamTotal(after.bTeam, positions, ratings) - result.bTeamTotal;
+        option.rating = after.twoPhase
+                            ? after.valueOfUid.value(signing.uid, 0.0)
+                            : ratings.value(positions.value(slot)).value(signing.uid, 0.0);
+        option.xiGain = teamTotal(after.startingXi, positions, ratings, after) - result.xiTotal;
+        option.bTeamGain = teamTotal(after.bTeam, positions, ratings, after) - result.bTeamTotal;
         if (option.xiGain < kMinGain)
             continue;
 

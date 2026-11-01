@@ -157,6 +157,7 @@ private:
     bool migrateV6ToV7();                 // expire stale manual U21 decisions
     bool migrateV7ToV8();                 // long-term injuries table
     bool migrateV8ToV9();                 // dwrs_recalcs table
+    bool migrateV9ToV10();                // communication/eccentricity columns
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     static QString createPlayerRegistrationSql(); // ditto
     static QString createLongTermInjuriesSql();   // ditto

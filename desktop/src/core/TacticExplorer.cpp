@@ -63,7 +63,7 @@ TacticMetrics TacticExplorer::analyzeTactic(const std::vector<const Player *> &p
     const QHash<QString, QStringList> layout = m_definitions.tacticLayouts().value(tactic);
 
     const SquadResult squad =
-        m_builder.calculateSquadAndSurplus(pool, positions, slotOrder, ratings, applyAptWeight);
+        m_builder.calculateSquadForTactic(pool, tactic, ratings, applyAptWeight);
 
     TacticMetrics metrics;
     metrics.tactic = tactic;

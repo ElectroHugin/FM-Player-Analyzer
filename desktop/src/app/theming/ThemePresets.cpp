@@ -1,5 +1,7 @@
 #include "ThemePresets.h"
 
+#include <algorithm>
+
 namespace fm {
 
 const QList<ClubTheme> &clubThemes()
@@ -7,9 +9,11 @@ const QList<ClubTheme> &clubThemes()
     // header override only where the club's identity is a dark second color
     // (e.g. black/yellow), so the header isn't a glaring full-brand bar.
     static const QString blk = QStringLiteral("#161616"); // near-black header
-    static const QList<ClubTheme> themes = {
+    static const QList<ClubTheme> raw = {
+        // Analyzer purple of the app logo; the lighter accent stays readable as
+        // text and outline on the dark base.
         {QStringLiteral("neutral"), QStringLiteral("Vereinsneutral (Standard)"),
-         QStringLiteral("#3d7dff"), QStringLiteral("#3d7dff"), QStringLiteral("#2d2d2d"),
+         QStringLiteral("#6a1bf5"), QStringLiteral("#9d6bff"), QStringLiteral("#2d2d2d"),
          QStringLiteral("#ffffff")},
 
         // --- Bundesliga ---
@@ -90,6 +94,42 @@ const QList<ClubTheme> &clubThemes()
         {QStringLiteral("celtic"), QStringLiteral("Celtic FC"),
          QStringLiteral("#018749"), QStringLiteral("#018749"), {}, {}},
     };
+    static const QList<ClubTheme> themes = [] {
+        static const QHash<QString, QString> leagueOf = {
+            {QStringLiteral("realmadrid"), QStringLiteral("LaLiga")},
+            {QStringLiteral("barcelona"), QStringLiteral("LaLiga")},
+            {QStringLiteral("atletico"), QStringLiteral("LaLiga")},
+            {QStringLiteral("mancity"), QStringLiteral("Premier League")},
+            {QStringLiteral("manutd"), QStringLiteral("Premier League")},
+            {QStringLiteral("liverpool"), QStringLiteral("Premier League")},
+            {QStringLiteral("arsenal"), QStringLiteral("Premier League")},
+            {QStringLiteral("chelsea"), QStringLiteral("Premier League")},
+            {QStringLiteral("tottenham"), QStringLiteral("Premier League")},
+            {QStringLiteral("juventus"), QStringLiteral("Serie A")},
+            {QStringLiteral("acmilan"), QStringLiteral("Serie A")},
+            {QStringLiteral("intermilan"), QStringLiteral("Serie A")},
+            {QStringLiteral("napoli"), QStringLiteral("Serie A")},
+            {QStringLiteral("roma"), QStringLiteral("Serie A")},
+            {QStringLiteral("psg"), QStringLiteral("Ligue 1")},
+            {QStringLiteral("ajax"), QStringLiteral("Eredivisie")},
+            {QStringLiteral("benfica"), QStringLiteral("Liga Portugal")},
+            {QStringLiteral("porto"), QStringLiteral("Liga Portugal")},
+            {QStringLiteral("celtic"), QStringLiteral("Scottish Premiership")},
+        };
+        QList<ClubTheme> list = raw;
+        for (ClubTheme &theme : list) {
+            if (theme.id != QLatin1String("neutral"))
+                theme.league = leagueOf.value(theme.id, QStringLiteral("Bundesliga"));
+        }
+        // Neutral first (empty league), then league, then club name.
+        std::stable_sort(list.begin(), list.end(), [](const ClubTheme &a, const ClubTheme &b) {
+            const int league = QString::localeAwareCompare(a.league, b.league);
+            if (league != 0)
+                return league < 0;
+            return QString::localeAwareCompare(a.displayName, b.displayName) < 0;
+        });
+        return list;
+    }();
     return themes;
 }
 

@@ -1,3 +1,4 @@
+#include <QSet>
 #include <QtTest>
 
 #include "core/Constants.h"
@@ -80,14 +81,18 @@ private slots:
 
     void attributeMappingComplete()
     {
-        // Every rated attribute must be reachable from an FM export header.
-        const auto &mapping = attributeMapping();
-        int ratedCount = 0;
-        for (auto it = mapping.constBegin(); it != mapping.constEnd(); ++it) {
-            if (attrIndexByName(it.value()) >= 0)
-                ++ratedCount;
+        // Every attribute a version rates must be reachable from its export
+        // headers (FM24 leaves out the FM27 goalkeeper attributes).
+        for (const QString &version : {QStringLiteral("fm24"), QStringLiteral("fm27")}) {
+            const auto &mapping = attributeMapping(version);
+            QSet<int> reached;
+            for (auto it = mapping.constBegin(); it != mapping.constEnd(); ++it) {
+                if (attrIndexByName(it.value()) >= 0)
+                    reached.insert(attrIndexByName(it.value()));
+            }
+            for (int a = 0; a < kAttrCount; ++a)
+                QCOMPARE(reached.contains(a), attributeRated(version, a));
         }
-        QCOMPARE(ratedCount, kAttrCount);
     }
 };
 

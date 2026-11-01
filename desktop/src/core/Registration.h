@@ -20,11 +20,27 @@ class Definitions;
 namespace Registration {
 
 // League rule set. None is the default for every league whose rules are not
-// modelled (yet): no restriction. Bundesliga is selectable by name but has no
-// effective restriction either (99 places, no quota), so it behaves like None.
-enum class LeagueRules { None, Bundesliga, PremierLeague };
+// modelled (yet): no restriction. Leagues with 99 places and no quota the
+// analyzer can check (Bundesliga, Ligue 1, Austrian Bundesliga) are selectable
+// by name but behave like None. FM27 rules come from the game's "Squad
+// Selection Rules" screens (docs/REGISTRIERUNG-FM27.md); nationality and
+// non-EU limits are not modelled (no reliable data in the export).
+enum class LeagueRules {
+    None,
+    Bundesliga,
+    PremierLeague,
+    LaLiga,
+    SerieA,
+    Ligue1,
+    LigaPortugal,
+    SwissSuperLeague,
+    AustrianBundesliga,
+    RussianPremierLiga,
+    UkrainianPremierLeague,
+    SuperLig,
+};
 
-// Stable settings keys ("none", "bundesliga", "premier_league").
+// Stable settings keys ("none", "bundesliga", "premier_league", "laliga", ...).
 QString leagueRulesKey(LeagueRules rules);
 LeagueRules leagueRulesFromKey(const QString &key); // unknown -> None
 
@@ -101,11 +117,17 @@ struct Quota {
     // Exempt keepers (U21) count towards the minimum: true for the league
     // (they may play), false for UEFA (the minimum applies to list A itself).
     bool exemptKeepersCount = true;
+    // League: U21 players need no slot (Premier League, Ukraine). Leagues
+    // whose youth exemption depends on nationality or is not documented
+    // register everyone.
+    bool u21Exempt = true;
 };
 Quota quotaFor(Competition competition, const Settings &settings);
 
-// Eligible without a slot: U21 (league) or list B (UEFA).
+// Eligible without a slot: U21 where the league exempts them, or list B
+// (UEFA). Without a quota the Premier League rule (U21 exempt) applies.
 bool isExempt(const Player &player, Competition competition);
+bool isExempt(const Player &player, Competition competition, const Quota &quota);
 
 enum class Category { NonHomeGrown, HomeGrown, ClubTrained };
 Category category(const Player &player);
@@ -159,6 +181,7 @@ bool isListed(const Player &player, Competition competition);
 
 // May play in the competition: on its saved list, or eligible without a slot.
 bool isEligible(const Player &player, Competition competition);
+bool isEligible(const Player &player, Competition competition, const Quota &quota);
 
 // Whether a list has been saved for the competition at all (someone is listed).
 bool hasSavedList(const std::vector<const Player *> &players, Competition competition);

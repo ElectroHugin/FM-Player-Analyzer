@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDateTime>
 #include <QHash>
 #include <QSettings>
 #include <QString>
@@ -27,6 +28,18 @@ public:
     QString dbName() const;
     void setDbName(const QString &name);
 
+    // [Startup] — open the last used save directly instead of showing the
+    // start screen (default: off).
+    bool autoOpenLastDatabase() const;
+    void setAutoOpenLastDatabase(bool enabled);
+
+    // [RecentDatabases] — when each save was last opened (for the start
+    // screen). Unknown saves return an invalid QDateTime.
+    QDateTime databaseLastOpened(const QString &name) const;
+    void touchDatabaseLastOpened(const QString &name);
+    void renameDatabaseEntry(const QString &oldName, const QString &newName);
+    void removeDatabaseEntry(const QString &name);
+
     // [Weights] / [GKWeights] — category weights per FM version, category name
     // as in constants ("Extremely Important", "Top Importance", ...). FM24 uses
     // the legacy section names, later versions "Weights_<id>"/"GKWeights_<id>",
@@ -52,6 +65,11 @@ public:
     // [SelectionBonuses] — key without "_multiplier" suffix, e.g. "natural_position".
     double selectionBonus(const QString &key) const;
     void setSelectionBonus(const QString &key, double value);
+
+    // [Phases] — share of the in-possession role in a two-role slot (FM26+),
+    // percent 0..100, default 50.
+    int ipSharePercent() const;
+    void setIpSharePercent(int percent);
 
     // [SquadManagement]
     int squadManagementSetting(const QString &key) const;

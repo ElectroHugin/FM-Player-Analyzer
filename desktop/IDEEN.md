@@ -64,7 +64,9 @@ FM27. Abgestimmt am 2026-10-10.
      [KONZEPT_ZWEI_ROLLEN.md](KONZEPT_ZWEI_ROLLEN.md) (Datenformat, Bewertung,
      Auswirkungen, Reihenfolge). Gebaut wird, sobald die FM27-Rollenliste
      feststeht.
-  4. **Zum Release:** echten Export einlesen, Zuordnung anpassen, Rollen mit
+  4. **Zum Release:** ✅ Import (Profil `fm27`, Spaltenschema für die Dateien
+     des FM View Exporters, siehe [docs/IMPORT-FM27.md](../docs/IMPORT-FM27.md));
+     offen: echten Export einlesen und Zuordnung prüfen, Rollen mit
      Schlüsselattributen aus dem Spiel übernehmen, Positionen prüfen. Die
      Spielfeld-Geometrie (Slots, Slot → Spielposition, Rollen im
      Taktik-Editor) liegt pro Version in `core/PitchGeometry` (eine Quelle);

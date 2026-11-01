@@ -47,6 +47,8 @@ const std::array<QString, kAttrCount> &attrNames()
         QStringLiteral("Throwing"),
         QStringLiteral("Vision"),
         QStringLiteral("Work Rate"),
+        QStringLiteral("Communication"),
+        QStringLiteral("Eccentricity"),
     };
     return names;
 }
@@ -68,10 +70,21 @@ const QList<FmDataVersion> &fmDataVersions()
     // Registry of Football Manager releases, newest first. FM24 keeps the
     // unsuffixed "definitions.json" its users already have; later releases get
     // "definitions_<id>.json". See Constants.h for what a new release needs.
+    // FM27 has no export of its own: its files come from the FM View Exporter
+    // plugin, which writes to "Sports Interactive/FM View Exporter". Its roles
+    // (one per phase, see definitions_fm27.json) come from the game; attribute
+    // tiers/weights fall back to FM24's until FM27 data exist; registration
+    // rules of 11 leagues from the game's screens (Registration.cpp).
     static const QList<FmDataVersion> versions = {
+        {QStringLiteral("fm27"), QStringLiteral("Football Manager 2027"), true,
+         QStringLiteral("definitions_fm27.json"), QStringLiteral("FM View Exporter"),
+         {QStringLiteral("csv"), QStringLiteral("html")}, /*provisionalWeights*/ true, /*registrationRules*/ true},
         {QStringLiteral("fm24"), QStringLiteral("Football Manager 2024"), true,
          QStringLiteral("definitions.json"), QStringLiteral("Football Manager 2024"),
-         {QStringLiteral("html"), QStringLiteral("csv")}, /*provisionalWeights*/ false, /*registrationRules*/ true},
+         {QStringLiteral("html"), QStringLiteral("csv")}, /*provisionalWeights*/ false, /*registrationRules*/ true,
+         // The legacy app never read these; rating them would shift every FM24
+         // goalkeeper's DWRS.
+         /*unratedAttributes*/ {QStringLiteral("Communication"), QStringLiteral("Eccentricity")}},
     };
     return versions;
 }
@@ -102,6 +115,13 @@ const FmDataVersion &fmDataVersion(const QString &versionId)
             return version;
     }
     return versions.first();
+}
+
+bool attributeRated(const QString &versionId, int attrIndex)
+{
+    if (attrIndex < 0 || attrIndex >= kAttrCount)
+        return false;
+    return !fmDataVersion(versionId).unratedAttributes.contains(attrNames()[attrIndex]);
 }
 
 const QHash<QString, QString> &personalityDefaults()

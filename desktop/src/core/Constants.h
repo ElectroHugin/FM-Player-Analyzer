@@ -29,6 +29,7 @@ struct FmDataVersion {
     QStringList importFormats;   // export formats the importer reads, e.g. {"html", "csv"}
     bool provisionalWeights = false; // true = attribute tiers/weights are assumed, not yet measured
     bool registrationRules = false;  // true = league/UEFA registration rules are modelled
+    QStringList unratedAttributes;   // attributes this release neither imports nor rates
 };
 
 // All FM releases the app knows (newest first). To add a release: an entry
@@ -44,6 +45,9 @@ QString defaultFmVersionId();
 QString newestFmVersionId();
 // Registry entry for an id; unknown/empty ids fall back to the default version.
 const FmDataVersion &fmDataVersion(const QString &versionId);
+// False if the attribute (Attr index) is not part of that release's data
+// (e.g. Communication/Eccentricity in FM24): DWRS and attribute lists skip it.
+bool attributeRated(const QString &versionId, int attrIndex);
 
 // Version of the DWRS formula. Bump it whenever a change makes the ratings
 // stored in a database outdated; each database records the version its

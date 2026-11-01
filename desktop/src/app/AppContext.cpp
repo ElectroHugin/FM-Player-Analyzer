@@ -44,7 +44,7 @@ void AppContext::waitForBackgroundTasks()
     m_backgroundTasks.clear();
 }
 
-bool AppContext::initialize(QString *errorOut)
+bool AppContext::initialize(QString *errorOut, bool openActiveDatabase)
 {
     if (!m_paths.ensureDataDirInitialized()) {
         if (errorOut)
@@ -62,6 +62,8 @@ bool AppContext::initialize(QString *errorOut)
     m_squadBuilder = std::make_unique<SquadBuilder>(*m_definitions, *m_config);
     m_tacticExplorer = std::make_unique<TacticExplorer>(*m_definitions, *m_squadBuilder);
 
+    if (!openActiveDatabase)
+        return true;
     return openDatabase(m_config->dbName(), errorOut);
 }
 
@@ -105,8 +107,12 @@ bool AppContext::openDatabase(const QString &dbName, QString *errorOut)
     }
     // New saves are marked explicitly; unmarked ones predate the setting and
     // are FM24 (defaultFmVersionId).
-    if (isNew)
+    if (isNew) {
         database->setSetting(QStringLiteral("fm_version"), newestFmVersionId());
+        // Every rating this save will ever hold uses the current formula (the
+        // new-save wizard may import before the main window first checks).
+        database->setSetting(QStringLiteral("dwrs_scheme"), QString::number(kDwrsSchemeVersion));
+    }
 
     // Load the database's version profile before switching: if it fails, the
     // previous database stays active with its own definitions.
@@ -115,10 +121,22 @@ bool AppContext::openDatabase(const QString &dbName, QString *errorOut)
         return false;
     m_database = std::move(database);
     m_config->setDbName(dbName);
+    m_config->touchDatabaseLastOpened(dbName);
 
     reloadFromDatabase();
     emit databaseChanged(dbName);
     return true;
+}
+
+bool AppContext::createDatabase(const QString &dbName, const QString &fmVersionId,
+                                QString *errorOut)
+{
+    if (QFile::exists(m_paths.databaseFile(dbName))) {
+        if (errorOut)
+            *errorOut = tr("Ein Spielstand mit dem Namen „%1“ existiert bereits.").arg(dbName);
+        return false;
+    }
+    return openDatabase(dbName, errorOut) && setFmVersion(fmVersionId, errorOut);
 }
 
 bool AppContext::activateFmVersion(const QString &versionId, QString *errorOut)

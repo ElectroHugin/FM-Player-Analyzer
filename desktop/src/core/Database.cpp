@@ -22,7 +22,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 9;
+constexpr int kSchemaVersion = 10;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -223,6 +223,8 @@ bool Database::initSchema()
             ok = migrateV7ToV8();
         if (ok && version < 9)
             ok = migrateV8ToV9();
+        if (ok && version < 10)
+            ok = migrateV9ToV10();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -494,6 +496,29 @@ bool Database::migrateV8ToV9()
 {
     // Earlier recalculations left no trace; they cannot be told apart anymore.
     return exec(createDwrsRecalcsSql());
+}
+
+bool Database::migrateV9ToV10()
+{
+    // FM27 goalkeeper attributes; existing rows stay NULL (= not scouted).
+    // Skips columns that already exist (a database rewound to v9 by hand).
+    QSet<QString> existing;
+    QSqlQuery info(m_db);
+    if (!info.exec(QStringLiteral("PRAGMA table_info(players)"))) {
+        m_error = info.lastError().text();
+        return false;
+    }
+    while (info.next())
+        existing.insert(info.value(1).toString());
+    for (const QString &name : {QStringLiteral("Communication"), QStringLiteral("Eccentricity")}) {
+        for (const QString &suffix : {QStringLiteral("_lo"), QStringLiteral("_hi")}) {
+            const QString column = attrColumnName(name) + suffix;
+            if (!existing.contains(column)
+                && !exec(QStringLiteral("ALTER TABLE players ADD COLUMN %1 INTEGER").arg(column)))
+                return false;
+        }
+    }
+    return true;
 }
 
 std::vector<Player> Database::loadPlayers()

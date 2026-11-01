@@ -1,21 +1,25 @@
 <div align="center">
 
-# ⚽ FM Player Analyzer
+<img src="docs/branding/banner.png" alt="FM Player Analyzer" width="100%">
 
 ### Stop guessing who should play. Know it.
 
-The free desktop companion for **Football Manager 2024** that turns your squad
+The free desktop companion for **Football Manager 2024 and 2027** that turns your squad
 and scouting exports into clear answers: your provably optimal Best XI, the hidden weak
 spot in your team, the wonderkid worth signing and the tactic your squad was
 built for.
 
-[![Download for Windows](https://img.shields.io/badge/%E2%AC%87%20Download%20for%20Windows-free-dc052d?style=for-the-badge)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
+[![Download for Windows](https://img.shields.io/badge/%E2%AC%87%20Download%20for%20Windows-free-6a1bf5?style=for-the-badge)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
 
 [![Latest release](https://img.shields.io/github/v/release/ElectroHugin/FM-Player-Analyzer?label=latest%20version)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/ElectroHugin/FM-Player-Analyzer/total?label=downloads)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases)
 [![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078d4)
-![Football Manager 2024](https://img.shields.io/badge/Football%20Manager-2024-6f42c1)
+![Football Manager 2024 | 2027](https://img.shields.io/badge/Football%20Manager-2024%20%7C%202027-6f42c1)
+
+**Playing FM27?** The game has no export of its own any more. Use my free
+companion plugin **[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)**
+to turn any player list into a CSV the analyzer reads.
 
 **🇬🇧 English** · [🇩🇪 Deutsch](README.de.md)
 
@@ -50,7 +54,7 @@ and builds everything else on top of it.
 | *"Who should I sign?"* | Your whole scouting database ranked for the role you need, with filters for age, value, nationality and personality. |
 | *"Is this kid a future star?"* | A talent score that combines current ability, years left to develop, mentality and personality. |
 | *"What should he train?"* | The training methods that raise his rating for his role the most, in order. |
-| *"Who do I register?"* | A squad-list assistant for the Premier League and the Champions / Europa / Conference League quotas. |
+| *"Who do I register?"* | A squad-list assistant for league quotas (FM27: eleven leagues) and the Champions / Europa / Conference League. |
 
 > 🧮 **The heart of it: a provably optimal Best XI.** Starting XI and B-team
 > are solved together as an assignment problem with the
@@ -78,7 +82,7 @@ Starting XI and B-team stand side by side on the pitch in your formation, every
 player with his rating, his role and his agreed playing time. Double-click a
 player for his profile, right-click for everything else.
 
-<img src="docs/screenshots/en/best-xi.png" alt="Best XI page: starting eleven and B-team on two tactical pitches, each player with rating, role and playing time" width="100%">
+<img src="docs/screenshots/en/best-xi.png" alt="Best XI page: the starting eleven in possession and out of possession side by side, each player with rating, role and his place in the other line-up" width="100%">
 
 **Provably optimal — not a rule of thumb.** Most tools walk through the
 formation slot by slot and hand each one its best player. That breaks as soon
@@ -161,7 +165,9 @@ first (can you fill all eleven positions?), then strength per line. Click a
 tactic to see how many suitable players you have for each slot. The bundled
 tactics are rebuilt from the
 [FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/), and
-you can add your own.
+you can add your own. FM27 ships with a single example tactic
+("4-2-3-1 - Bavarian Blitz"); create your own tactics in the tactic editor,
+updates leave them untouched.
 
 <img src="docs/screenshots/en/tactic-explorer.png" alt="Tactic Explorer ranking tactics by coverage and median rating per team part" width="100%">
 
@@ -197,7 +203,7 @@ counts.
 
 ### Make it yours
 
-Dark and light mode, 37 club colour presets from Bayern to Celtic, your own
+Dark and light mode, 37 club colour presets grouped by league, your own
 colours and your club's logo in the header.
 
 <img src="docs/screenshots/en/dashboard-light.png" alt="The dashboard in light mode" width="100%">
@@ -223,6 +229,16 @@ Download the latest `FMPlayerAnalyzer-…-Windows-x64-Setup.exe` from the
 [Releases page](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
 and run it. Nothing else is needed. The installer is not code-signed, so Windows
 may show a SmartScreen notice — choose *More info → Run anyway*.
+
+> **Football Manager 2027:** FM27 has no export of its own. Install the free
+> [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin,
+> add its *Analyzer* view in the game and press **F9** on any player list; then
+> import the CSV into a save created for *Football Manager 2027* (the default
+> for new saves). The installer can also put ready-made FM27 views (squad,
+> player database, shortlist) into your FM27 `views` folder; later via
+> *Settings → Club → Install views for FM27*. Column mapping and details:
+> [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
+> Steps 2 and 3 below are for FM24.
 
 **2 · Get the export view into FM**
 
@@ -338,15 +354,26 @@ It uses only what the game shows you. Attributes of players you have not fully
 scouted stay masked ranges, exactly as exported.
 
 **Which Football Manager versions are supported?**
-Football Manager 2024. The import layout is defined per game version, so other
-versions can be added.
+Football Manager 2024 and Football Manager 2027 (since version 2.0.0; import via
+the [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)). The
+import layout is defined per game version, so other versions can be added.
 
 **Mac or Linux?**
 Windows 10 / 11 (64-bit), plus a Linux AppImage on the releases page. No macOS.
 
 **I play in a league that is not listed in the registration rules.**
-Choose *Default (no restriction)*. Premier League and the UEFA club competitions
-are modelled today; the UEFA list works with any league.
+Choose *Default (no restriction)*. For FM24 the Premier League is modelled; for
+FM27 eleven leagues are (Bundesliga, Premier League, LaLiga, Serie A, Ligue 1,
+Liga Portugal, Swiss Super League, Austrian Bundesliga, Russian Premier Liga,
+Ukrainian Premier League, Süper Lig, details in
+[docs/REGISTRIERUNG-FM27.md](docs/REGISTRIERUNG-FM27.md)). The UEFA list works
+with any league. Checked are squad size and players trained in the country and
+at the club; limits for foreign or non-EU players are not.
+
+**Want another league?** I cannot collect every league's rules myself. Please
+[open an issue](https://github.com/ElectroHugin/FM-Player-Analyzer/issues/new)
+with the league's name and country and a screenshot of its *Squad Selection
+Rules* screen in FM.
 
 **I used the older Streamlit version.**
 A one-time migration wizard (Settings → Database → *Import legacy database*)

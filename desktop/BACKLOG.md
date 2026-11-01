@@ -92,7 +92,7 @@ Kurzfassung der Umsetzung:
 
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
-Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~ → ~~#34~~ → ~~#35~~ → ~~#36~~. Offen: #37.
+Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~ → ~~#34~~ → ~~#35~~ → ~~#36~~ → ~~#37~~.
 Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## 🔴 Funktionale Bugs
@@ -352,7 +352,7 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
 
 ## ⚪ Testlücken
 
-- **#37** Keine Unit-Tests für `SquadBuilder`, `RoleAssignment`,
+- ✅ **#37** (P7, 31.10.2026: Tests für RoleAssignment, RatingsUpdater, GapAnalysis, TacticExplorer, TalentEngine; Golden-Anleitung in TESTS.md) Keine Unit-Tests für `SquadBuilder`, `RoleAssignment`,
   `RatingsUpdater`, `GapAnalysis`, `TacticExplorer`, `TalentEngine`; der
   Squad-Golden-Vergleich (`fmsquad`) läuft nicht in CI. Mindestens #23 und #25
   mit Regressionstests absichern.

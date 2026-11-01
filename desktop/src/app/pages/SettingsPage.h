@@ -54,6 +54,7 @@ private:
     QSpinBox *m_outfielderAgeSpin = nullptr;
     QSpinBox *m_goalkeeperAgeSpin = nullptr;
     QDoubleSpinBox *m_naturalPosSpin = nullptr;
+    QSpinBox *m_ipShareSpin = nullptr; // FM26+: share of the in-possession role
     QSpinBox *m_maxDepthRolesSpin = nullptr;
     QSpinBox *m_minLoanTalentSpin = nullptr;
     QSpinBox *m_minLoanAgeSpin = nullptr;
@@ -83,6 +84,7 @@ private:
     void markCustomPreset();
 
     // Database tab.
+    QCheckBox *m_autoOpenCheck = nullptr;
     QComboBox *m_dbCombo = nullptr;
 
     // Club tab (settings table keys, same as legacy).

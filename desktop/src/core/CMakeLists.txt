@@ -33,6 +33,8 @@ add_library(fmcore STATIC
     ImportPipeline.cpp
     LegacyMigrator.h
     LegacyMigrator.cpp
+    MinCostFlow.h
+    MinCostFlow.cpp
     NationalCallup.h
     NationalCallup.cpp
     PitchGeometry.h

@@ -1,7 +1,10 @@
 #include "SettingsPage.h"
 
+#include "../NewSaveWizard.h"
+
 #include "../AppContext.h"
 #include "../MigrationWizard.h"
+#include "../NewSaveWizard.h"
 #include "../theming/ThemeManager.h"
 #include "../theming/ThemePresets.h"
 #include "core/Constants.h"
@@ -10,11 +13,13 @@
 #include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
+#include <QStandardItemModel>
 #include <QDesktopServices>
 #include <QDir>
 #include <QDoubleSpinBox>
 #include <QFile>
 #include <QFileDialog>
+#include <QStandardPaths>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -128,7 +133,7 @@ QWidget *SettingsPage::buildClubTab()
         tr("Bestimmt, wie die Spielerattribute aus dem Export gelesen werden, welche "
            "Rollen und Taktiken gelten und wie die Attribute gewichtet werden. Die "
            "Version wird beim Anlegen eines Spielstands gewählt und steht fest, sobald "
-           "er Spieler enthält. Aktuell wird Football Manager 2024 unterstützt."),
+           "er Spieler enthält. Unterstützt werden Football Manager 2024 und 2027."),
         versionGroup);
     versionHint->setWordWrap(true);
     versionHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -172,6 +177,52 @@ QWidget *SettingsPage::buildClubTab()
     connect(importDirOpen, &QPushButton::clicked, this, [currentImportDir] {
         QDesktopServices::openUrl(QUrl::fromLocalFile(currentImportDir()));
     });
+    // FM27 has no export of its own: the shipped view filters (.fmf) give the
+    // game's list screens the columns the analyzer reads.
+    auto *viewsButton = new QPushButton(tr("Ansichten für FM27 installieren"));
+    auto *viewsHint = new QLabel(
+        tr("Kopiert die mitgelieferten Ansichten (Kader, Spielerdatenbank, Shortlist) in "
+           "den Ordner 'views' von Football Manager 27. Im Spiel lädst du sie dann über "
+           "das Ansichten-Menü der Liste. Vorhandene Dateien mit demselben Namen werden "
+           "ersetzt, andere Ansichten bleiben unberührt."),
+        versionGroup);
+    viewsHint->setWordWrap(true);
+    viewsHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(tr("FM27-Ansichten:"), viewsButton);
+    versionForm->addRow(viewsHint);
+    connect(viewsButton, &QPushButton::clicked, this, [this] {
+        const QString target =
+            QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
+                .filePath(QStringLiteral("Sports Interactive/Football Manager 27/views"));
+        if (!QDir().mkpath(target)) {
+            QMessageBox::warning(this, tr("FM27-Ansichten"),
+                                 tr("Der Ordner %1 konnte nicht angelegt werden.")
+                                     .arg(QDir::toNativeSeparators(target)));
+            return;
+        }
+        QStringList copied;
+        const QDir source(QStringLiteral(":/views"));
+        for (const QString &name : source.entryList({QStringLiteral("*.fmf")}, QDir::Files)) {
+            const QString dest = QDir(target).filePath(name);
+            QFile::remove(dest);
+            if (QFile::copy(source.filePath(name), dest)) {
+                QFile::setPermissions(dest, QFile::ReadOwner | QFile::WriteOwner
+                                                | QFile::ReadUser | QFile::WriteUser);
+                copied << name;
+            }
+        }
+        if (copied.isEmpty()) {
+            QMessageBox::warning(this, tr("FM27-Ansichten"),
+                                 tr("Es konnte keine Ansicht nach %1 kopiert werden.")
+                                     .arg(QDir::toNativeSeparators(target)));
+            return;
+        }
+        QMessageBox::information(this, tr("FM27-Ansichten"),
+                                 tr("%1 Ansichten nach %2 kopiert:\n%3")
+                                     .arg(copied.size())
+                                     .arg(QDir::toNativeSeparators(target),
+                                          copied.join(QLatin1Char('\n'))));
+    });
     layout->addWidget(versionGroup);
 
     auto *clubGroup = new QGroupBox(tr("Vereins-Zuordnung"), content);
@@ -186,10 +237,10 @@ QWidget *SettingsPage::buildClubTab()
     m_clubCountryEdit->setPlaceholderText(QStringLiteral("GER"));
     m_fullClubNameEdit = new QLineEdit;
     m_fullClubNameEdit->setMinimumWidth(260);
-    m_fullClubNameEdit->setPlaceholderText(tr("z. B. 'FC Bayern München' (für den Header)"));
+    m_fullClubNameEdit->setPlaceholderText(tr("voller Vereinsname (für den Header)"));
     m_stadiumEdit = new QLineEdit;
     m_stadiumEdit->setMinimumWidth(260);
-    m_stadiumEdit->setPlaceholderText(tr("z. B. 'Allianz Arena'"));
+    m_stadiumEdit->setPlaceholderText(tr("Name des Stadions"));
     clubForm->addRow(tr("Mein Verein:"), m_userClubCombo);
     clubForm->addRow(tr("Zweitteam:"), m_secondClubCombo);
     clubForm->addRow(tr("Voller Vereinsname (Anzeige):"), m_fullClubNameEdit);
@@ -240,9 +291,12 @@ QWidget *SettingsPage::buildClubTab()
     auto *registrationHint = new QLabel(
         tr("Aktiviert die Home-Grown-/Club-Grown-/U21-Markierungen (Spieler bearbeiten, "
            "Rechtsklick → Registrierung) und den Registrierungs-Assistenten, sobald ein "
-           "Wettbewerb eine Meldeliste verlangt. 'Standard' und Bundesliga kennen keine "
-           "Beschränkung: dort sind alle Spieler spielberechtigt. 'Standard' gilt auch "
-           "für alle Ligen, deren Regeln noch nicht hinterlegt sind."),
+           "Wettbewerb eine Meldeliste verlangt. 'Standard' und Ligen mit 99 Plätzen "
+           "(Bundesliga, Ligue 1, Österreich) kennen keine Beschränkung: dort sind alle "
+           "Spieler spielberechtigt. Geprüft werden Kadergröße sowie im Land und im Verein "
+           "ausgebildete Spieler; Grenzen für Ausländer oder Nicht-EU-Spieler prüft der "
+           "Analyzer nicht. 'Standard' gilt für alle Ligen, deren Regeln noch nicht "
+           "hinterlegt sind. Wie du weitere Ligen anfragst, steht in der README."),
         m_registrationGroup);
     registrationHint->setWordWrap(true);
     registrationHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -526,7 +580,15 @@ QWidget *SettingsPage::buildThresholdsTab()
     m_minLoanAgeSpin->setRange(14, 25);
     m_youthLoanOverAgeSpin = new QSpinBox;
     m_youthLoanOverAgeSpin->setRange(14, 25);
+    m_ipShareSpin = new QSpinBox;
+    m_ipShareSpin->setRange(0, 100);
+    m_ipShareSpin->setSuffix(QStringLiteral(" %"));
+    m_ipShareSpin->setToolTip(
+        tr("Ab FM27 hat jede Taktik eine Aufstellung mit Ball und eine ohne Ball. Der Wert "
+           "eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner "
+           "Rolle ohne Ball. Standard 50 %."));
     squadForm->addRow(tr("Bonus natürliche Position:"), m_naturalPosSpin);
+    squadForm->addRow(tr("Anteil mit Ball (ab FM27):"), m_ipShareSpin);
     squadForm->addRow(tr("Max. Rollen pro Depth-Spieler:"), m_maxDepthRolesSpin);
     squadForm->addRow(tr("Min. Talent-Score für Leihe:"), m_minLoanTalentSpin);
     squadForm->addRow(tr("Mindestalter für Leihe:"), m_minLoanAgeSpin);
@@ -624,8 +686,19 @@ QWidget *SettingsPage::buildThemeTab()
     m_presetCombo = new QComboBox;
     m_presetCombo->setMinimumWidth(280);
     m_presetCombo->setMaxVisibleItems(20);
-    for (const ClubTheme &preset : clubThemes())
+    // Grouped by league: a disabled league caption above its clubs.
+    QString league;
+    for (const ClubTheme &preset : clubThemes()) {
+        if (preset.league != league) {
+            league = preset.league;
+            m_presetCombo->insertSeparator(m_presetCombo->count());
+            m_presetCombo->addItem(QStringLiteral("— %1 —").arg(league));
+            if (auto *model = qobject_cast<QStandardItemModel *>(m_presetCombo->model()))
+                model->item(m_presetCombo->count() - 1)->setEnabled(false);
+        }
         m_presetCombo->addItem(preset.displayName, preset.id);
+    }
+    m_presetCombo->insertSeparator(m_presetCombo->count());
     m_presetCombo->addItem(tr("Benutzerdefiniert"), QStringLiteral("custom"));
     m_modeCombo = new QComboBox;
     m_modeCombo->addItem(tr("Nacht (dunkel)"), QStringLiteral("night"));
@@ -743,7 +816,7 @@ QWidget *SettingsPage::buildDatabaseTab()
     });
 
     auto *actionsRow = new QHBoxLayout;
-    auto *createButton = new QPushButton(tr("Neue Datenbank anlegen…"), content);
+    auto *createButton = new QPushButton(tr("Neuer Spielstand …"), content);
     auto *migrateButton = new QPushButton(tr("Legacy-Datenbank importieren…"), content);
     actionsRow->addWidget(createButton);
     actionsRow->addWidget(migrateButton);
@@ -751,34 +824,8 @@ QWidget *SettingsPage::buildDatabaseTab()
     layout->addLayout(actionsRow);
 
     connect(createButton, &QPushButton::clicked, this, [this] {
-        const QString name = QInputDialog::getText(this, tr("Neue Datenbank"),
-                                                   tr("Name (ohne .db):"));
-        if (name.trimmed().isEmpty())
-            return;
-        // The FM version is fixed with the save; ask only when there is a choice.
-        QString versionId = newestFmVersionId();
-        QStringList versionNames;
-        QStringList versionIds;
-        for (const FmDataVersion &version : fmDataVersions()) {
-            if (version.supported) {
-                versionNames << version.displayName;
-                versionIds << version.id;
-            }
-        }
-        if (versionIds.size() > 1) {
-            bool ok = false;
-            const QString chosen = QInputDialog::getItem(
-                this, tr("Neue Datenbank"), tr("Football-Manager-Version:"), versionNames,
-                versionIds.indexOf(versionId), false, &ok);
-            if (!ok)
-                return;
-            versionId = versionIds.at(versionNames.indexOf(chosen));
-        }
-        const bool existed = m_context.availableDatabases().contains(name.trimmed());
-        QString error;
-        if (!m_context.openDatabase(name.trimmed(), &error)
-            || (!existed && !m_context.setFmVersion(versionId, &error)))
-            QMessageBox::critical(this, tr("Datenbank"), error);
+        NewSaveWizard wizard(m_context, this);
+        wizard.exec();
         refresh();
     });
     connect(migrateButton, &QPushButton::clicked, this, [this] {
@@ -796,6 +843,25 @@ QWidget *SettingsPage::buildDatabaseTab()
             refresh();
         }
     });
+
+    auto *startGroup = new QGroupBox(tr("Programmstart"), content);
+    auto *startLayout = new QVBoxLayout(startGroup);
+    auto *autoOpen =
+        new QCheckBox(tr("Beim Start immer den zuletzt verwendeten Spielstand öffnen"), startGroup);
+    autoOpen->setChecked(m_context.config().autoOpenLastDatabase());
+    connect(autoOpen, &QCheckBox::toggled, this,
+            [this](bool on) { m_context.config().setAutoOpenLastDatabase(on); });
+    startLayout->addWidget(autoOpen);
+    auto *autoOpenHint = new QLabel(
+        tr("Ohne Haken erscheint beim Start der Startbildschirm mit deinen Spielständen. "
+           "Mit Haken lässt er sich durch Gedrückthalten der Umschalttaste beim Start "
+           "trotzdem aufrufen."),
+        startGroup);
+    autoOpenHint->setObjectName(QStringLiteral("kpiCaption"));
+    autoOpenHint->setWordWrap(true);
+    startLayout->addWidget(autoOpenHint);
+    layout->addWidget(startGroup);
+    m_autoOpenCheck = autoOpen;
 
     auto *pathInfo = new QLabel(content);
     pathInfo->setWordWrap(true);
@@ -907,6 +973,7 @@ void SettingsPage::refresh()
     m_outfielderAgeSpin->setValue(config.ageThreshold(QStringLiteral("outfielder")));
     m_goalkeeperAgeSpin->setValue(config.ageThreshold(QStringLiteral("goalkeeper")));
     m_naturalPosSpin->setValue(config.selectionBonus(QStringLiteral("natural_position")));
+    m_ipShareSpin->setValue(config.ipSharePercent());
     m_maxDepthRolesSpin->setValue(
         config.squadManagementSetting(QStringLiteral("max_roles_per_depth_player")));
     m_minLoanTalentSpin->setValue(
@@ -948,6 +1015,10 @@ void SettingsPage::refresh()
     }
     updateContrastWarning();
 
+    {
+        QSignalBlocker blocker(m_autoOpenCheck);
+        m_autoOpenCheck->setChecked(m_context.config().autoOpenLastDatabase());
+    }
     m_dbCombo->clear();
     m_dbCombo->addItems(m_context.availableDatabases());
     m_dbCombo->setCurrentText(m_context.currentDbName());
@@ -1041,6 +1112,7 @@ void SettingsPage::saveAll()
     config.setAgeThreshold(QStringLiteral("outfielder"), m_outfielderAgeSpin->value());
     config.setAgeThreshold(QStringLiteral("goalkeeper"), m_goalkeeperAgeSpin->value());
     config.setSelectionBonus(QStringLiteral("natural_position"), m_naturalPosSpin->value());
+    config.setIpSharePercent(m_ipShareSpin->value());
     config.setSquadManagementSetting(QStringLiteral("max_roles_per_depth_player"),
                                      m_maxDepthRolesSpin->value());
     config.setSquadManagementSetting(QStringLiteral("min_loan_talent_score"),

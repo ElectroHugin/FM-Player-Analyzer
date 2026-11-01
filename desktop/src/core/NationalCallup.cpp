@@ -32,7 +32,7 @@ Recommendation recommend(const SquadBuilder &builder,
                          const QHash<QString, QString> &positions,
                          const QStringList &slotOrder, const RoleRatings &ratings,
                          int totalCount, int goalkeeperCount,
-                         const std::vector<const Player *> &currentSquad)
+                         const std::vector<const Player *> &currentSquad, const QString &tactic)
 {
     Recommendation result;
     if (totalCount < 1)
@@ -43,7 +43,9 @@ Recommendation recommend(const SquadBuilder &builder,
     // (team A), the B-team and the remaining depth — the strength backbone the
     // recommendation is drawn from. National selection ignores club playing
     // time (apply_apt_weight = false), matching the national Best XI page.
-    result.squad = builder.calculateSquadAndSurplus(pool, positions, slotOrder, ratings, false);
+    result.squad = tactic.isEmpty()
+        ? builder.calculateSquadAndSurplus(pool, positions, slotOrder, ratings, false)
+        : builder.calculateSquadForTactic(pool, tactic, ratings, false);
 
     QSet<QString> xiUids, bUids;
     for (const XiCell &cell : result.squad.startingXi)

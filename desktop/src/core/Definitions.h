@@ -54,6 +54,14 @@ public:
     // Fixed display order of role categories.
     static QStringList roleCategoryOrder();
 
+    // Shipped-data update of a user's definitions file. A shipped file with a
+    // higher "data_revision" than the user's replaces it (provisional FM27
+    // roles/abbreviations/weights must reach existing users), keeping the
+    // user's own tactics: every tactic the shipped file does not have and
+    // does not list under "retired_tactics", if all its roles still exist.
+    // Returns false (user untouched) when no update is due.
+    static bool applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user);
+
     // All role abbreviations, sorted (get_valid_roles).
     const QStringList &validRoles() const { return m_validRoles; }
 
@@ -68,8 +76,29 @@ public:
     // Game position ("D (C)") -> eligible role abbreviations.
     const QHash<QString, QStringList> &positionToRoleMapping() const { return m_positionToRoles; }
 
-    // Tactic name -> {slot -> role abbr}.
+    // Tactic name -> {slot -> role abbr}. For a two-phase tactic (FM26+, see
+    // twoPhaseTactics()) this is its out-of-possession line-up, the base shape.
     const QHash<QString, QHash<QString, QString>> &tacticRoles() const { return m_tacticRoles; }
+
+    // FM26+ tactics: two independent line-ups of slot -> role, one in
+    // possession ("ip") and one out of possession ("oop"), with no fixed link
+    // between their slots; SquadBuilder::calculateTwoPhaseSquad pairs them.
+    // JSON: "tactic_roles": {name: {"ip": {slot: role}, "oop": {slot: role}}}.
+    struct TwoPhaseTactic {
+        QHash<QString, QString> ip;
+        QHash<QString, QString> oop;
+        QStringList ipOrder;  // slots in pitch order (GK first, then L -> R per line)
+        QStringList oopOrder;
+    };
+    const QHash<QString, TwoPhaseTactic> &twoPhaseTactics() const { return m_twoPhaseTactics; }
+    bool isTwoPhaseTactic(const QString &tactic) const { return m_twoPhaseTactics.contains(tactic); }
+
+    // Phase of a role: "ip", "oop" ("role_phases" in the JSON) or "both"
+    // (FM24 roles, unknown roles).
+    QString rolePhase(const QString &role) const;
+    // True when the version splits roles into phases (FM27): tactics are
+    // then two line-ups, one with ball and one without.
+    bool hasRolePhases() const { return !m_rolePhases.isEmpty(); }
     const QStringList &tacticNames() const { return m_tacticNames; }
 
     // JSON-file insertion order (QJsonObject sorts keys alphabetically, but
@@ -114,6 +143,7 @@ public:
 
 private:
     void indexTacticOrder(const QByteArray &json);
+    QStringList pitchOrder(QStringList slotKeys) const;
     // Re-derives every cached table below from m_root.
     void rebuildCache();
     QHash<QString, QPair<int, int>> buildNaturalRoleSorter() const;
@@ -132,6 +162,8 @@ private:
     QHash<QString, RoleWeights> m_roleWeights;
     QHash<QString, QStringList> m_positionToRoles;
     QHash<QString, QHash<QString, QString>> m_tacticRoles;
+    QHash<QString, TwoPhaseTactic> m_twoPhaseTactics;
+    QHash<QString, QString> m_rolePhases;
     QStringList m_tacticNames;
     QHash<QString, QHash<QString, QStringList>> m_tacticLayouts;
     QHash<QString, QString> m_personalities;
