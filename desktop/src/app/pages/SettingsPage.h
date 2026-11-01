@@ -84,6 +84,7 @@ private:
     void markCustomPreset();
 
     // Database tab.
+    QCheckBox *m_autoOpenCheck = nullptr;
     QComboBox *m_dbCombo = nullptr;
 
     // Club tab (settings table keys, same as legacy).

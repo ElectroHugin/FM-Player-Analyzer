@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDateTime>
 #include <QHash>
 #include <QSettings>
 #include <QString>
@@ -26,6 +27,18 @@ public:
     // [Database]
     QString dbName() const;
     void setDbName(const QString &name);
+
+    // [Startup] — open the last used save directly instead of showing the
+    // start screen (default: off).
+    bool autoOpenLastDatabase() const;
+    void setAutoOpenLastDatabase(bool enabled);
+
+    // [RecentDatabases] — when each save was last opened (for the start
+    // screen). Unknown saves return an invalid QDateTime.
+    QDateTime databaseLastOpened(const QString &name) const;
+    void touchDatabaseLastOpened(const QString &name);
+    void renameDatabaseEntry(const QString &oldName, const QString &newName);
+    void removeDatabaseEntry(const QString &name);
 
     // [Weights] / [GKWeights] — category weights per FM version, category name
     // as in constants ("Extremely Important", "Top Importance", ...). FM24 uses

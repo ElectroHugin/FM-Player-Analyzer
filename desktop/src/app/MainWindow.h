@@ -3,13 +3,20 @@
 #include <QFutureWatcher>
 #include <QHash>
 #include <QMainWindow>
+#include <QTimer>
+
+#include <functional>
 
 #include "Navigation.h"
 #include "core/RatingsUpdater.h"
 
-class QComboBox;
-class QCompleter;
+class QButtonGroup;
+class QFrame;
+class QPushButton;
+class QDragEnterEvent;
+class QDropEvent;
 class QLabel;
+class QMenu;
 class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
@@ -22,7 +29,7 @@ namespace fm {
 class AppContext;
 class BusyProgressDialog;
 class PageBase;
-class PlayerSearchModel;
+class CommandPalette;
 class ThemeManager;
 
 class MainWindow : public QMainWindow
@@ -36,6 +43,9 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     // Mouse back/forward side buttons anywhere in this window drive the history.
     bool eventFilter(QObject *watched, QEvent *event) override;
+    // An FM export dropped anywhere on the window opens the import with it.
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
     // One Back/Forward history step: the page, the management mode it was
@@ -54,7 +64,6 @@ private:
     // false when the history restores a page itself.
     void rebuildMenu(bool selectFirst = true);
     // Rebuilds the sidebar (e.g. a page appeared) and keeps the current page selected.
-    void refreshMenuKeepingPage();
     // Highlights the sidebar group of pageId without triggering navigation.
     void selectMenuEntry(const QString &pageId);
     // Tabs of pageId's sidebar group above the page; hidden for a single page.
@@ -76,19 +85,42 @@ private:
     // computed with an older DWRS formula (kDwrsSchemeVersion).
     void offerRecalcIfOutdated();
     void updateDbLabel();
+    void fillSaveMenu(QMenu *menu);
+    void newSave();
+    void switchSave();
+    // Opens the import of the current mode's overview with filePath (asks
+    // for a file when empty).
+    void importExport(QString filePath);
     void updateHeader();
     void rebuildSearchModel();
+    void openPalette();
+    void updateMenuIcons();
+    void updateBreadcrumb(const QString &pageId);
+    // Hint bar above the page (instead of a blocking pop-up).
+    void showNotice(const QString &text, const QString &actionLabel,
+                    std::function<void()> action);
+    // Short confirmation at the bottom right that fades out by itself.
+    void showToast(const QString &text);
 
     AppContext &m_context;
     ThemeManager &m_theme;
 
     QListWidget *m_menu = nullptr;
-    QComboBox *m_modeCombo = nullptr; // Club / National
-    QLineEdit *m_searchEdit = nullptr;
-    QLabel *m_dbLabel = nullptr;
+    QButtonGroup *m_modeGroup = nullptr; // 0 = club, 1 = national
+    QLabel *m_breadcrumb = nullptr;
+    QPushButton *m_paletteButton = nullptr;
+    QPushButton *m_importButton = nullptr;
+    CommandPalette *m_palette = nullptr;
+    QFrame *m_noticeBar = nullptr;
+    QLabel *m_noticeText = nullptr;
+    QPushButton *m_noticeLater = nullptr;
+    QPushButton *m_noticeAction = nullptr;
+    std::function<void()> m_noticeCallback;
+    QLabel *m_toast = nullptr;
+    QTimer m_toastTimer;
+    QToolButton *m_saveSwitcher = nullptr;
     QLabel *m_headerLogo = nullptr;     // optional club logo (user PNG)
     QLabel *m_headerIdentity = nullptr; // club/national name + stadium
-    QLabel *m_headerSave = nullptr;     // active save file
     QStackedWidget *m_stack = nullptr;
     QHash<QString, PageBase *> m_pages; // by host page id (Navigation::hostPage), lazily created
     QString m_currentPageId;            // page id shown (not its host)
@@ -108,10 +140,8 @@ private:
     int m_historyIndex = -1;
     bool m_restoringHistory = false; // navigateTo() must not record a new step
 
-    QCompleter *m_searchCompleter = nullptr;
-    PlayerSearchModel *m_searchModel = nullptr;
+    QStringList m_searchKeys; // folded "name club" per store row, for the palette
     bool m_searchModelDirty = true;
-    bool m_registrationInMenu = false; // sidebar shows the registration page
 };
 
 } // namespace fm

@@ -4,6 +4,7 @@
 #include "../PlayerActions.h"
 #include "../widgets/NumericTableItem.h"
 #include "PageHelpers.h"
+#include "core/Constants.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
 
@@ -294,11 +295,21 @@ void RegistrationPage::refresh()
         w->setVisible(ready);
     if (!ready) {
         releaseStoreRows();
-        m_hint->setText(
-            settings.active()
-                ? tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen).")
-                : tr("⚠️ Keine Registrierungsregeln aktiv. Wähle sie unter "
-                     "Einstellungen → Verein → Registrierungsregeln."));
+        const QString versionId = m_context.fmVersionId();
+        if (settings.active()) {
+            m_hint->setText(tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."));
+        } else if (Registration::leagueRulesFor(versionId).isEmpty()
+                   && !Registration::uefaRulesFor(versionId)) {
+            m_hint->setText(
+                tr("Für %1 sind noch keine Registrierungsregeln hinterlegt. Die Meldeliste "
+                   "steht bisher nur für FM24-Spielstände zur Verfügung.")
+                    .arg(fmDataVersion(versionId).displayName));
+        } else {
+            m_hint->setText(
+                tr("Hier stellst du die Meldeliste für Liga und Europapokal zusammen. "
+                   "Schalte dazu zuerst die Registrierungsregeln ein: Einstellungen → "
+                   "Verein → Registrierungsregeln."));
+        }
         return;
     }
 

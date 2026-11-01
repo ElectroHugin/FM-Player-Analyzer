@@ -8,6 +8,7 @@
 #include "Registration.h"
 #include "Utils.h"
 
+#include <QDateTime>
 #include <QHash>
 #include <QSet>
 
@@ -710,6 +711,8 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
     // The bumped counter is part of the same transaction, so a failed import
     // never advances the freshness clock.
     if (!db.setSetting(QStringLiteral("update_counter"), QString::number(newCounter))
+        || !db.setSetting(QStringLiteral("last_import_at"),
+                          QDateTime::currentDateTime().toString(Qt::ISODate))
         || !transaction.commit()) {
         result.error = db.errorString();
         return result;

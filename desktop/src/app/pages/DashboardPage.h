@@ -35,6 +35,10 @@ public:
 
     void refresh() override;
 
+    // Puts filePath into the import field so the user only confirms the
+    // options and clicks "Importieren" (drag & drop, Datei → Import).
+    void prepareImport(const QString &filePath);
+
 private:
     QWidget *buildImportSection(QWidget *parent);
     QWidget *buildAnalysisHeader(QWidget *parent);

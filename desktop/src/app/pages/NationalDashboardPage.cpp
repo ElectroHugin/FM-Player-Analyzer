@@ -455,6 +455,15 @@ void NationalDashboardPage::rebuildCallUps()
         m_cardsLayout->setColumnStretch(c, 1);
 }
 
+void NationalDashboardPage::prepareImport(const QString &filePath)
+{
+    if (m_importRunning)
+        return;
+    m_filePathEdit->setText(filePath);
+    m_importButton->setEnabled(true);
+    m_importButton->setFocus();
+}
+
 void NationalDashboardPage::startImport()
 {
     if (m_importRunning)

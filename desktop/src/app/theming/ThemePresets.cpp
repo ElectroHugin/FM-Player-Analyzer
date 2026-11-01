@@ -8,8 +8,10 @@ const QList<ClubTheme> &clubThemes()
     // (e.g. black/yellow), so the header isn't a glaring full-brand bar.
     static const QString blk = QStringLiteral("#161616"); // near-black header
     static const QList<ClubTheme> themes = {
+        // Analyzer purple of the app logo; the lighter accent stays readable as
+        // text and outline on the dark base.
         {QStringLiteral("neutral"), QStringLiteral("Vereinsneutral (Standard)"),
-         QStringLiteral("#3d7dff"), QStringLiteral("#3d7dff"), QStringLiteral("#2d2d2d"),
+         QStringLiteral("#6a1bf5"), QStringLiteral("#9d6bff"), QStringLiteral("#2d2d2d"),
          QStringLiteral("#ffffff")},
 
         // --- Bundesliga ---

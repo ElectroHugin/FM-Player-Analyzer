@@ -769,6 +769,15 @@ void DashboardPage::chooseImportFile()
     m_importButton->setEnabled(true);
 }
 
+void DashboardPage::prepareImport(const QString &filePath)
+{
+    if (m_importRunning)
+        return;
+    m_filePathEdit->setText(filePath);
+    m_importButton->setEnabled(true);
+    m_importButton->setFocus();
+}
+
 void DashboardPage::startImport()
 {
     if (m_importRunning)

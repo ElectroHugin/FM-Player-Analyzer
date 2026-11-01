@@ -1,4 +1,5 @@
 #include <QtTest>
+#include <QSettings>
 
 #include "core/AppConfig.h"
 #include "core/Constants.h"
@@ -38,6 +39,65 @@ private slots:
 
         // The file must exist on disk after seeding.
         QVERIFY(QFile::exists(config.filePath()));
+    }
+
+    void startupAndRecentSaves()
+    {
+        QTemporaryDir dir;
+        const QString path = dir.filePath(QStringLiteral("config.ini"));
+        {
+            AppConfig config(path);
+            QVERIFY(!config.autoOpenLastDatabase()); // start screen by default
+            QVERIFY(!config.databaseLastOpened(QStringLiteral("Bayern 2026")).isValid());
+            config.setAutoOpenLastDatabase(true);
+            config.setDbName(QStringLiteral("Bayern 2026"));
+            config.touchDatabaseLastOpened(QStringLiteral("Bayern 2026"));
+            config.touchDatabaseLastOpened(QStringLiteral("brighton"));
+        }
+        AppConfig config(path);
+        QVERIFY(config.autoOpenLastDatabase());
+        // Names with spaces/umlauts survive as INI keys.
+        QVERIFY(config.databaseLastOpened(QStringLiteral("Bayern 2026")).isValid());
+        config.renameDatabaseEntry(QStringLiteral("Bayern 2026"), QStringLiteral("München ä/1"));
+        QVERIFY(!config.databaseLastOpened(QStringLiteral("Bayern 2026")).isValid());
+        QVERIFY(config.databaseLastOpened(QStringLiteral("München ä/1")).isValid());
+        QCOMPARE(config.dbName(), QStringLiteral("München ä/1")); // the active save follows
+        config.removeDatabaseEntry(QStringLiteral("brighton"));
+        QVERIFY(!config.databaseLastOpened(QStringLiteral("brighton")).isValid());
+    }
+
+    void neutralBlueMigratesToLogoPurple()
+    {
+        QTemporaryDir dir;
+        const QString path = dir.filePath(QStringLiteral("config.ini"));
+        {
+            QSettings old(path, QSettings::IniFormat);
+            old.setValue(QStringLiteral("ThemeSettings/theme_preset"), QStringLiteral("neutral"));
+            old.setValue(QStringLiteral("ThemeSettings/night_primary_color"),
+                         QStringLiteral("#3D7DFF"));
+            old.setValue(QStringLiteral("ThemeSettings/day_interactive_color"),
+                         QStringLiteral("#3d7dff"));
+        }
+        {
+            AppConfig config(path);
+            const auto theme = config.themeSettings();
+            QCOMPARE(theme.value(QStringLiteral("night_primary_color")), QStringLiteral("#6a1bf5"));
+            QCOMPARE(theme.value(QStringLiteral("day_primary_color")), QStringLiteral("#6a1bf5"));
+            QCOMPARE(theme.value(QStringLiteral("day_interactive_color")),
+                     QStringLiteral("#9d6bff"));
+        }
+
+        // A club preset or a custom color is the user's choice and stays.
+        const QString clubPath = dir.filePath(QStringLiteral("club.ini"));
+        {
+            QSettings old(clubPath, QSettings::IniFormat);
+            old.setValue(QStringLiteral("ThemeSettings/theme_preset"), QStringLiteral("bayern"));
+            old.setValue(QStringLiteral("ThemeSettings/night_primary_color"),
+                         QStringLiteral("#3d7dff"));
+        }
+        AppConfig club(clubPath);
+        QCOMPARE(club.themeSettings().value(QStringLiteral("night_primary_color")),
+                 QStringLiteral("#3d7dff"));
     }
 
     void aptWeightNoneReturnsDefault()
