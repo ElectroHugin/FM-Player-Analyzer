@@ -54,7 +54,7 @@ def category(position):
 # Real tactics only (Edmund 31.10.2026: formations are no tactics, they stay
 # templates for the tactic editor). Role ids as in role_id(); game
 # abbreviations from data/fm27/rollen-kuerzel-fm27.csv (checked in the game).
-DATA_REVISION = 5
+DATA_REVISION = 6
 # Formerly shipped (generated from formations); dropped from users' copies.
 RETIRED_TACTICS = ["3-4-3 DM Narrow", "3-4-3 DM Wide", "4-2-2-2 DM Wide",
                    "4-2-3-1 DM Wide / 4-3-3 DM Wide", "4-2-3-1 DM Wide / 4-4-1-1 2 DM",
@@ -66,7 +66,7 @@ TACTICS = {
     "4-2-3-1 - Bavarian Blitz": {
         "ip": {"GK": "BGK", "DL": "WB-IP", "DCL": "BCB", "DCR": "BCB", "DR": "WB-IP",
                "DMCL": "DLP", "DMCR": "DM-IP", "AML": "IF", "AMC": "AM-IP", "AMR": "IW",
-               "STC": "CFD-IP"},
+               "STC": "DLF"},
         "oop": {"GK": "SK", "DL": "FB-OOP", "DCL": "CB-OOP", "DCR": "CB-OOP", "DR": "FB-OOP",
                 "DMC": "SDM", "MCL": "PCM", "MCR": "CM-OOP", "AML": "TW", "AMR": "TW",
                 "STC": "CFD-OOP"},

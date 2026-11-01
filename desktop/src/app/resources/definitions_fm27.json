@@ -1,6 +1,6 @@
 {
   "fm_version": "fm27",
-  "data_revision": 5,
+  "data_revision": 6,
   "retired_tactics": [
     "3-4-3 DM Narrow",
     "3-4-3 DM Wide",
@@ -2207,7 +2207,7 @@
         "AML": "IF",
         "AMC": "AM-IP",
         "AMR": "IW",
-        "STC": "CFD-IP"
+        "STC": "DLF"
       },
       "oop": {
         "GK": "SK",
