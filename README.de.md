@@ -470,9 +470,10 @@ zu finden.
 
 ## Code-Signierung
 
-Die Windows-Downloads sind signiert. Free code signing provided by
-[SignPath.io](https://about.signpath.io/), certificate by
-[SignPath Foundation](https://signpath.org/). Wer jede Version baut und
+Die Signierung der Windows-Downloads ist bei der SignPath Foundation beantragt
+(free code signing provided by [SignPath.io](https://about.signpath.io/),
+certificate by [SignPath Foundation](https://signpath.org/)). Bis zur Zusage
+sind die Downloads noch unsigniert. Wer jede Version baut und
 freigibt und wie deine Privatsphäre geschützt bleibt, steht in der
 [Code signing policy](CODE_SIGNING.md).
 

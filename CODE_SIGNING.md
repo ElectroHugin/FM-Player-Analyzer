@@ -1,5 +1,8 @@
 # Code signing policy
 
+> **Status:** code signing via SignPath Foundation has been applied for. Until
+> it is approved, the Windows releases are not signed yet.
+
 Free code signing provided by [SignPath.io](https://about.signpath.io/),
 certificate by [SignPath Foundation](https://signpath.org/).
 

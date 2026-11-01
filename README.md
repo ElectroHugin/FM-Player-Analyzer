@@ -451,9 +451,10 @@ if the app helps your save, a ⭐ on GitHub helps others find it.
 
 ## Code signing
 
-The Windows downloads are signed. Free code signing provided by
-[SignPath.io](https://about.signpath.io/), certificate by
-[SignPath Foundation](https://signpath.org/). Read the
+Signing of the Windows downloads has been applied for with SignPath
+Foundation (free code signing provided by [SignPath.io](https://about.signpath.io/),
+certificate by [SignPath Foundation](https://signpath.org/)). Until it is
+approved the downloads are unsigned. Read the
 [Code signing policy](CODE_SIGNING.md) for who builds and approves each
 release and how your privacy is protected.
 
