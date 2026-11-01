@@ -298,6 +298,50 @@ private slots:
         QVERIFY(squad.coreSquadUids.contains(QStringLiteral("musiala")));
         QCOMPARE(squad.depthPool.size(), size_t(1));
     }
+    void manualBridgeCostsValue()
+    {
+        // Olise is the better inside forward, Musiala the better winger in the
+        // centre. Swapping them by hand is possible, but costs value; the
+        // options list it with the resulting total.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AMR", "IF"}, {"AMC", "W"}}),
+                          slotMap({{"MR", "WM"}, {"ML", "WM"}})));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("olise"), QStringLiteral("AM (RC), M (RL)")),
+            makePlayer(QStringLiteral("musiala"), QStringLiteral("AM (RC), M (RL)"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("olise"), 90}, {QStringLiteral("musiala"), 70}};
+        ratings[QStringLiteral("W")] = {{QStringLiteral("olise"), 60}, {QStringLiteral("musiala"), 85}};
+        ratings[QStringLiteral("WM")] = {{QStringLiteral("olise"), 60}, {QStringLiteral("musiala"), 60}};
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+
+        const auto best = builder.calculateTwoPhaseSquad(pool, QStringLiteral("T"), ratings, 0.5, false);
+        QCOMPARE(best.startingIp.value(QStringLiteral("AMR")).playerUid, QStringLiteral("olise"));
+        QCOMPARE(SquadBuilder::startingValue(best), 147.5);
+
+        SquadBuilder::Bridges fixed;
+        fixed.insert(QStringLiteral("olise"), qMakePair(QStringLiteral("AMC"), QString()));
+        const auto manual =
+            builder.calculateTwoPhaseSquad(pool, QStringLiteral("T"), ratings, 0.5, false, fixed);
+        QCOMPARE(manual.startingIp.value(QStringLiteral("AMC")).playerUid, QStringLiteral("olise"));
+        QCOMPARE(manual.startingIp.value(QStringLiteral("AMR")).playerUid, QStringLiteral("musiala"));
+        QCOMPARE(SquadBuilder::startingValue(manual), 125.0);
+
+        const auto options = builder.bridgeOptions(pool, QStringLiteral("T"), ratings, 0.5, {},
+                                                   QStringLiteral("olise"), true, false);
+        QCOMPARE(options.size(), 1);
+        QCOMPARE(options[0].slot, QStringLiteral("AMC"));
+        QCOMPARE(options[0].swapUid, QStringLiteral("musiala"));
+        QCOMPARE(options[0].total, 125.0);
+        // Out of possession both slots are worth the same: a free swap.
+        const auto oopOptions = builder.bridgeOptions(pool, QStringLiteral("T"), ratings, 0.5, {},
+                                                      QStringLiteral("olise"), false, false);
+        QCOMPARE(oopOptions.size(), 1);
+        QCOMPARE(oopOptions[0].total, 147.5);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestTwoPhase)

@@ -4,6 +4,7 @@
 
 #include <QHash>
 #include <QList>
+#include <QPair>
 
 #include <vector>
 
@@ -56,6 +57,14 @@ private:
     // How the team selection works, shown under the tactic choice.
     static QString algorithmHint();
     void rebuild();
+    // Manual bridges (two-phase tactics): uid -> (slot with ball, slot
+    // without ball), stored per tactic in the database settings.
+    using Bridges = QHash<QString, QPair<QString, QString>>;
+    Bridges loadBridges(const QString &tactic) const;
+    void saveBridges(const QString &tactic, const Bridges &bridges);
+    // Right-click on a starting-XI card: the usual menu plus "move to slot"
+    // entries with the value each move costs.
+    void showBridgeMenu(const QString &uid, const QPoint &globalPos, bool ipPhase);
     // Who replaces the long-term injured: slot by slot, all fit vs without them.
     void fillInjuryBox(const std::vector<const Player *> &injured,
                        const SquadResult &allFit, const SquadResult &withoutInjured,
@@ -90,6 +99,18 @@ private:
     QLabel *m_xiIpTitle = nullptr;
     QLabel *m_bIpTitle = nullptr;
     QLabel *m_phaseNote = nullptr;
+    QWidget *m_bridgeBar = nullptr;            // "manually adjusted: -x" + reset
+    QLabel *m_bridgeNote = nullptr;
+    // State of the last two-phase calculation, for the bridge menu.
+    struct BridgeState {
+        QString tactic;
+        std::vector<const Player *> pool;
+        double share = 0.5;
+        Bridges bridges;          // applied (only players still in the pool)
+        Bridges slotsOfUid;       // current starting XI
+        double current = 0.0;     // value of the starting XI shown
+        double optimum = 0.0;     // value without manual bridges
+    } m_bridge;
     TacticPitchWidget *m_xiIpPitch = nullptr;  // in possession
     TacticPitchWidget *m_bTeamIpPitch = nullptr;
     QGroupBox *m_depthBox = nullptr;

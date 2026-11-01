@@ -528,7 +528,8 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
                                                          const QString &tactic,
                                                          const RoleRatings &ratings,
                                                          double ipShare,
-                                                         bool applyAptWeight) const
+                                                         bool applyAptWeight,
+                                                         const QHash<QString, QPair<QString, QString>> &fixedBridges) const
 {
     TwoPhaseSquadResult result;
     const auto tacticIt = m_definitions.twoPhaseTactics().constFind(tactic);
@@ -596,8 +597,27 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
     // Each unit of flow places one player in both line-ups. A fixed reward per
     // placed player (split over his two edges) outweighs any score, so the
     // most players are placed first, then the value is maximal.
+    // Manual bridges (starting XI only): a fixed player may take only his
+    // fixed slot in that phase, nobody else may take it.
+    using Bridges = QHash<QString, QPair<QString, QString>>;
     const auto pickTeam = [&](const std::vector<const Player *> &available,
-                              QHash<QString, XiCell> &ipTeam, QHash<QString, XiCell> &oopTeam) {
+                              QHash<QString, XiCell> &ipTeam, QHash<QString, XiCell> &oopTeam,
+                              const Bridges &fixed) {
+        QSet<QString> fixedIp, fixedOop;
+        for (auto it = fixed.cbegin(); it != fixed.cend(); ++it) {
+            if (!it->first.isEmpty())
+                fixedIp.insert(it->first);
+            if (!it->second.isEmpty())
+                fixedOop.insert(it->second);
+        }
+        const auto allowed = [&](const Player &player, const QString &slot, bool ipPhase) {
+            const auto own = fixed.constFind(player.uid);
+            const QString mine = own == fixed.cend() ? QString()
+                                                     : (ipPhase ? own->first : own->second);
+            if (!mine.isEmpty())
+                return slot == mine;
+            return !(ipPhase ? fixedIp : fixedOop).contains(slot);
+        };
         const QStringList &ipSlots = lineUps.ipOrder;
         const QStringList &oopSlots = lineUps.oopOrder;
         const int nIp = static_cast<int>(ipSlots.size());
@@ -618,12 +638,18 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
         for (int p = 0; p < nPlayers; ++p) {
             const Player &player = *available[static_cast<size_t>(p)];
             for (const QString &slot : ipSlots) {
-                ipOpt[static_cast<size_t>(p)].push_back(option(player, slot, lineUps.ip, QStringLiteral("ip")));
+                ipOpt[static_cast<size_t>(p)].push_back(
+                    allowed(player, slot, true)
+                        ? option(player, slot, lineUps.ip, QStringLiteral("ip"))
+                        : std::nullopt);
                 if (ipOpt[static_cast<size_t>(p)].back())
                     maxScore = std::max(maxScore, ipOpt[static_cast<size_t>(p)].back()->score);
             }
             for (const QString &slot : oopSlots) {
-                oopOpt[static_cast<size_t>(p)].push_back(option(player, slot, lineUps.oop, QStringLiteral("oop")));
+                oopOpt[static_cast<size_t>(p)].push_back(
+                    allowed(player, slot, false)
+                        ? option(player, slot, lineUps.oop, QStringLiteral("oop"))
+                        : std::nullopt);
                 if (oopOpt[static_cast<size_t>(p)].back())
                     maxScore = std::max(maxScore, oopOpt[static_cast<size_t>(p)].back()->score);
             }
@@ -714,9 +740,68 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
         return rest;
     };
 
-    const std::vector<const Player *> afterXi = pickTeam(pool, result.startingIp, result.startingOop);
-    result.depthPool = pickTeam(afterXi, result.bTeamIp, result.bTeamOop);
+    const std::vector<const Player *> afterXi =
+        pickTeam(pool, result.startingIp, result.startingOop, fixedBridges);
+    result.depthPool = pickTeam(afterXi, result.bTeamIp, result.bTeamOop, {});
     return result;
+}
+
+double SquadBuilder::startingValue(const TwoPhaseSquadResult &squad)
+{
+    double total = 0.0;
+    for (const XiCell &cell : squad.startingIp) {
+        if (cell.isFilled())
+            total += squad.valueOfUid.value(cell.playerUid);
+    }
+    return total;
+}
+
+QList<BridgeOption> SquadBuilder::bridgeOptions(const std::vector<const Player *> &pool,
+                                                const QString &tactic, const RoleRatings &ratings,
+                                                double ipShare, const Bridges &fixed,
+                                                const QString &uid, bool ipPhase,
+                                                bool applyAptWeight) const
+{
+    QList<BridgeOption> options;
+    const auto tacticIt = m_definitions.twoPhaseTactics().constFind(tactic);
+    if (tacticIt == m_definitions.twoPhaseTactics().constEnd())
+        return options;
+    const TwoPhaseSquadResult current =
+        calculateTwoPhaseSquad(pool, tactic, ratings, ipShare, applyAptWeight, fixed);
+    const auto mine = current.slotsOfUid.constFind(uid);
+    if (mine == current.slotsOfUid.cend())
+        return options; // not in the starting XI
+    const QString oldSlot = ipPhase ? mine->first : mine->second;
+    const QHash<QString, XiCell> &team = ipPhase ? current.startingIp : current.startingOop;
+    const QStringList &order = ipPhase ? tacticIt->ipOrder : tacticIt->oopOrder;
+    for (const QString &slot : order) {
+        if (slot == oldSlot)
+            continue;
+        Bridges trial = fixed;
+        auto own = trial.value(uid, {mine->first, mine->second});
+        (ipPhase ? own.first : own.second) = slot;
+        trial.insert(uid, own);
+        // Whoever holds the slot moves to the player's old one (a swap).
+        const QString other = team.value(slot).playerUid;
+        if (!other.isEmpty()) {
+            auto theirs = current.slotsOfUid.value(other);
+            (ipPhase ? theirs.first : theirs.second) = oldSlot;
+            trial.insert(other, theirs);
+        }
+        const TwoPhaseSquadResult result =
+            calculateTwoPhaseSquad(pool, tactic, ratings, ipShare, applyAptWeight, trial);
+        const auto placed = result.slotsOfUid.constFind(uid);
+        if (placed == result.slotsOfUid.cend()
+            || (ipPhase ? placed->first : placed->second) != slot)
+            continue; // not possible (position missing)
+        BridgeOption option;
+        option.slot = slot;
+        option.swapUid = other;
+        option.bridges = trial;
+        option.total = startingValue(result);
+        options.append(option);
+    }
+    return options;
 }
 
 } // namespace fm

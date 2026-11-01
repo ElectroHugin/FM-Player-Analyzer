@@ -8,6 +8,7 @@
 #include "PageHelpers.h"
 #include "SigningAdvisorTab.h"
 #include "core/Registration.h"
+#include "core/SquadBuilder.h"
 #include "core/TalentEngine.h"
 #include "core/Utils.h"
 
@@ -21,6 +22,11 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QLocale>
+#include <QMenu>
 #include <QLabel>
 #include <QScrollArea>
 #include <QTabBar>
@@ -191,6 +197,23 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_phaseNote->setVisible(false);
         tabLayout->addWidget(m_phaseNote);
 
+        m_bridgeBar = new QFrame(tab);
+        m_bridgeBar->setObjectName(QStringLiteral("bridgeBar"));
+        auto *bridgeLayout = new QHBoxLayout(m_bridgeBar);
+        bridgeLayout->setContentsMargins(0, 0, 0, 0);
+        m_bridgeNote = new QLabel(m_bridgeBar);
+        m_bridgeNote->setWordWrap(true);
+        auto *bridgeReset = new QPushButton(tr("Vorschlag wiederherstellen"), m_bridgeBar);
+        bridgeReset->setCursor(Qt::PointingHandCursor);
+        connect(bridgeReset, &QPushButton::clicked, this, [this] {
+            saveBridges(m_bridge.tactic, {});
+            rebuild();
+        });
+        bridgeLayout->addWidget(m_bridgeNote, 1);
+        bridgeLayout->addWidget(bridgeReset);
+        m_bridgeBar->setVisible(false);
+        tabLayout->addWidget(m_bridgeBar);
+
         m_teamStack = new QStackedWidget(tab);
         const auto makePage = [this](TacticPitchWidget *&ipPitch, TacticPitchWidget *&oopPitch,
                                      QLabel *&ipTitle, QLabel *&oopTitle) {
@@ -329,8 +352,14 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         connect(pitch, &TacticPitchWidget::playerDoubleClicked, this,
                 [this](const QString &uid) { PlayerActions::openProfile(m_context, uid); });
         connect(pitch, &TacticPitchWidget::playerContextMenuRequested, this,
-                [this](const QString &uid, const QPoint &globalPos) {
-                    PlayerActions::showContextMenu(m_context, this, uid, globalPos);
+                [this, pitch](const QString &uid, const QPoint &globalPos) {
+                    // Starting XI of a two-phase tactic: bridges can be moved.
+                    const bool startingXi = pitch == m_xiPitch || pitch == m_xiIpPitch;
+                    if (startingXi && !m_bridge.tactic.isEmpty()
+                        && m_bridge.slotsOfUid.contains(uid))
+                        showBridgeMenu(uid, globalPos, pitch == m_xiIpPitch);
+                    else
+                        PlayerActions::showContextMenu(m_context, this, uid, globalPos);
                 });
     }
     PlayerActions::attachToTableWidget(m_context, m_loanTable);
@@ -350,6 +379,7 @@ void BestXiPage::showSection(const QString &pageId)
 void BestXiPage::releaseStoreRows()
 {
     m_signingTab->clear();
+    m_bridge = BridgeState(); // its pool points into the store
 }
 
 QString BestXiPage::algorithmHint()
@@ -567,14 +597,46 @@ void BestXiPage::rebuild()
                                                        m_bIpTitle, m_xiTitle, m_bTitle})
         w->setVisible(twoPhase);
     m_phaseNote->setVisible(twoPhase);
+    m_bridge = BridgeState();
+    m_bridgeBar->setVisible(false);
     if (twoPhase) {
         // Two free line-ups: who plays and where in each is one optimisation
         // (SquadBuilder::calculateTwoPhaseSquad); depth, injuries and the
         // development squads below still use the out-of-possession line-up.
         const auto &lineUps = m_context.definitions().twoPhaseTactics().value(tactic);
         const int share = m_context.config().ipSharePercent();
+        // Manual bridges of players no longer in the pool (sold, injured,
+        // not registered) are left out.
+        Bridges bridges;
+        {
+            const Bridges stored = loadBridges(tactic);
+            for (const Player *player : firstPool) {
+                const auto it = stored.constFind(player->uid);
+                if (it != stored.cend())
+                    bridges.insert(player->uid, *it);
+            }
+        }
         const TwoPhaseSquadResult squad = m_context.squadBuilder().calculateTwoPhaseSquad(
-            firstPool, tactic, ratings, share / 100.0);
+            firstPool, tactic, ratings, share / 100.0, true, bridges);
+        m_bridge.tactic = tactic;
+        m_bridge.pool = firstPool;
+        m_bridge.share = share / 100.0;
+        m_bridge.bridges = bridges;
+        m_bridge.slotsOfUid = squad.slotsOfUid;
+        m_bridge.current = SquadBuilder::startingValue(squad);
+        m_bridge.optimum = bridges.isEmpty()
+            ? m_bridge.current
+            : SquadBuilder::startingValue(m_context.squadBuilder().calculateTwoPhaseSquad(
+                  firstPool, tactic, ratings, share / 100.0));
+        if (!bridges.isEmpty()) {
+            const double loss = m_bridge.optimum - m_bridge.current;
+            m_bridgeNote->setText(
+                tr("✋ Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer "
+                   "als der Vorschlag des Analyzers.",
+                   nullptr, static_cast<int>(bridges.size()))
+                    .arg(QLocale().toString(std::max(0.0, loss), 'f', 1)));
+            m_bridgeBar->setVisible(true);
+        }
         const auto &slotMap = masterPositionMap(m_context.fmVersionId());
         const auto layoutOf = [&](const QHash<QString, QString> &lineUp) {
             QHash<QString, QStringList> strata;
@@ -609,7 +671,9 @@ void BestXiPage::rebuild()
                "wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle "
                "ohne Ball am höchsten ist; jeder Spieler braucht die Position in beiden "
                "Aufstellungen. Unter dem Namen steht sein Platz in der anderen Aufstellung. "
-               "Den Anteil stellst du in den Einstellungen ein.")
+               "Den Anteil stellst du in den Einstellungen ein. Per Rechtsklick auf einen "
+               "Spieler der Startelf verschiebst du ihn selbst; der Analyzer zeigt, was "
+               "jeder Platz kostet.")
                 .arg(share)
                 .arg(100 - share));
     } else {
@@ -631,6 +695,95 @@ void BestXiPage::rebuild()
     fillSurplusTable(m_sellTable, dev.sellCandidates, false);
     m_loanBox->setVisible(!dev.loanCandidates.empty());
     m_sellBox->setVisible(!dev.sellCandidates.empty());
+}
+
+BestXiPage::Bridges BestXiPage::loadBridges(const QString &tactic) const
+{
+    Bridges bridges;
+    const QJsonObject obj =
+        QJsonDocument::fromJson(
+            m_context.database().setting(QStringLiteral("bridges/") + tactic).toUtf8())
+            .object();
+    for (auto it = obj.begin(); it != obj.end(); ++it) {
+        const QJsonArray pair = it.value().toArray();
+        if (pair.size() == 2)
+            bridges.insert(it.key(), {pair.at(0).toString(), pair.at(1).toString()});
+    }
+    return bridges;
+}
+
+void BestXiPage::saveBridges(const QString &tactic, const Bridges &bridges)
+{
+    const QString key = QStringLiteral("bridges/") + tactic;
+    if (bridges.isEmpty()) {
+        m_context.database().removeSetting(key);
+        return;
+    }
+    QJsonObject obj;
+    for (auto it = bridges.cbegin(); it != bridges.cend(); ++it)
+        obj.insert(it.key(), QJsonArray{it->first, it->second});
+    m_context.database().setSetting(key,
+                                    QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact)));
+}
+
+void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, bool ipPhase)
+{
+    const BridgeState state = m_bridge; // a rebuild may run while the menu is open
+    const auto nameOf = [this](const QString &playerUid) {
+        const Player *p = m_context.store().findByUid(playerUid);
+        return p ? p->name : playerUid;
+    };
+    const auto delta = [](double value) {
+        const QString text = QLocale().toString(value, 'f', 1);
+        return value >= 0.05 ? QStringLiteral("+") + text : value <= -0.05 ? text : QStringLiteral("±0");
+    };
+    PlayerActions::showContextMenu(m_context, this, uid, globalPos, [&](QMenu &menu) {
+        const QPair<QString, QString> mine = state.slotsOfUid.value(uid);
+        const QString current = ipPhase ? mine.first : mine.second;
+        QMenu *sub = menu.addMenu(ipPhase ? tr("↔ Platz mit Ball ändern (jetzt %1)").arg(current)
+                                          : tr("↔ Platz ohne Ball ändern (jetzt %1)").arg(current));
+        const QList<BridgeOption> options = m_context.squadBuilder().bridgeOptions(
+            state.pool, state.tactic, m_context.ratings(), state.share, state.bridges, uid,
+            ipPhase);
+        if (options.isEmpty()) {
+            sub->addAction(tr("Kein anderer Platz möglich (Position fehlt)"))->setEnabled(false);
+        } else {
+            auto *caption = sub->addAction(tr("Platz · Tausch mit · DWRS-Punkte der Elf"));
+            caption->setEnabled(false);
+            sub->addSeparator();
+        }
+        for (const BridgeOption &option : options) {
+            const QString text =
+                option.swapUid.isEmpty()
+                    ? tr("%1 (frei) · %2").arg(option.slot, delta(option.total - state.current))
+                    : tr("%1 · %2 · %3")
+                          .arg(option.slot, nameOf(option.swapUid),
+                               delta(option.total - state.current));
+            const Bridges bridges = option.bridges;
+            const QString tactic = state.tactic;
+            sub->addAction(text, this, [this, tactic, bridges] {
+                saveBridges(tactic, bridges);
+                rebuild();
+            });
+        }
+        if (state.bridges.contains(uid)) {
+            menu.addAction(tr("↺ %1 wieder dem Analyzer überlassen").arg(nameOf(uid)), this,
+                           [this, uid, tactic = state.tactic] {
+                               Bridges bridges = loadBridges(tactic);
+                               bridges.remove(uid);
+                               saveBridges(tactic, bridges);
+                               rebuild();
+                           });
+        }
+        if (!state.bridges.isEmpty()) {
+            menu.addAction(tr("↺ Vorschlag des Analyzers wiederherstellen (%1)")
+                               .arg(delta(state.optimum - state.current)),
+                           this, [this, tactic = state.tactic] {
+                               saveBridges(tactic, {});
+                               rebuild();
+                           });
+        }
+    });
 }
 
 void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,

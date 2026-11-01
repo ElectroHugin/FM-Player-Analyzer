@@ -135,7 +135,7 @@ void openProfile(AppContext &context, const QString &uid)
 }
 
 void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
-                     const QPoint &globalPos)
+                     const QPoint &globalPos, const std::function<void(QMenu &)> &extra)
 {
     const Player *player = context.store().findByUid(uid);
     if (!player)
@@ -145,6 +145,10 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
     auto *title = menu.addAction(QStringLiteral("%1 · %2").arg(player->name, player->club));
     title->setEnabled(false);
     menu.addSeparator();
+    if (extra) {
+        extra(menu);
+        menu.addSeparator();
+    }
 
     menu.addAction(ActionText::tr("👤 Profil öffnen"), [&context, uid] {
         openProfile(context, uid);

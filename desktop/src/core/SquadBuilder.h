@@ -64,6 +64,15 @@ struct TwoPhaseSquadResult {
     std::vector<const Player *> depthPool; // not in XI or B-team, pool order
 };
 
+// One way to move a starting-XI player to another slot of one line-up
+// (SquadBuilder::bridgeOptions).
+struct BridgeOption {
+    QString slot;    // the new slot
+    QString swapUid; // who held it and takes the player's old slot ("" = empty)
+    QHash<QString, QPair<QString, QString>> bridges; // fixed bridges to apply
+    double total = 0.0; // starting-XI value with it (SquadBuilder::startingValue)
+};
+
 // Result of calculate_development_squads.
 struct DevelopmentSquads {
     QHash<QString, XiCell> youthXi;
@@ -107,9 +116,25 @@ public:
     // natural-position bonus. A player needs the position for both slots.
     // Exact (minimum-cost flow). The B-team is then chosen the same way from
     // the remaining players.
+    // fixedBridges: manual bridges uid -> (ip slot, oop slot) for the
+    // starting XI; an empty slot leaves that phase free. A fixed player may
+    // only take his slot, nobody else may take it; the rest is optimised.
+    using Bridges = QHash<QString, QPair<QString, QString>>;
     TwoPhaseSquadResult calculateTwoPhaseSquad(const std::vector<const Player *> &pool,
                                                const QString &tactic, const RoleRatings &ratings,
-                                               double ipShare, bool applyAptWeight = true) const;
+                                               double ipShare, bool applyAptWeight = true,
+                                               const Bridges &fixedBridges = {}) const;
+
+    // Sum of the starting XI's values over both line-ups.
+    static double startingValue(const TwoPhaseSquadResult &squad);
+
+    // The other slots `uid` could take in one line-up (ipPhase) on top of the
+    // fixed bridges: the holder of a slot swaps to his old one. Each option
+    // carries the bridges to store and the resulting starting-XI value.
+    QList<BridgeOption> bridgeOptions(const std::vector<const Player *> &pool,
+                                      const QString &tactic, const RoleRatings &ratings,
+                                      double ipShare, const Bridges &fixed, const QString &uid,
+                                      bool ipPhase, bool applyAptWeight = true) const;
 
     // Best XI, B-team and depth for a tactic by name: calculateSquadAndSurplus
     // for a one-line-up tactic, calculateTwoPhaseSquad (with the configured

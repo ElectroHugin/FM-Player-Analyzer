@@ -3,6 +3,10 @@
 #include <QPoint>
 #include <QString>
 
+#include <functional>
+
+class QMenu;
+
 class QTableView;
 class QTableWidget;
 class QWidget;
@@ -20,9 +24,11 @@ namespace PlayerActions {
 void openProfile(AppContext &context, const QString &uid);
 
 // Shows the full context menu (profile / comparison / edit / transfer / loan /
-// shortlist toggles) at the given global position.
+// shortlist toggles) at the given global position. extra: page-specific
+// entries, added right after the title.
 void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
-                     const QPoint &globalPos);
+                     const QPoint &globalPos,
+                     const std::function<void(QMenu &)> &extra = {});
 
 // Wires a PlayerTableModel-backed view: right-click menu + double-click
 // profile. ignoreDoubleClickColumn: column whose double-click is left alone
