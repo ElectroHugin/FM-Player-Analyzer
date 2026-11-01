@@ -1,8 +1,7 @@
 # Schnittstelle FM View Exporter ↔ FM Player Analyzer (FM27)
 
 Gemeinsame Absprache beider Projekte. Stand: 31.10.2026 (Exporter 1.0.0/1.0.1).
-Liegt im Analyzer-Repo auf dem Branch `claude/project-thread-1hrepb`, bis das
-FM27-Super-Update auf `main` kommt.
+Liegt seit Version 2.0.0 des Analyzers auf `main`.
 
 ## Wer ist wofür maßgeblich
 

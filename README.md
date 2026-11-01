@@ -4,18 +4,22 @@
 
 ### Stop guessing who should play. Know it.
 
-The free desktop companion for **Football Manager 2024** that turns your squad
+The free desktop companion for **Football Manager 2024 and 2027** that turns your squad
 and scouting exports into clear answers: your provably optimal Best XI, the hidden weak
 spot in your team, the wonderkid worth signing and the tactic your squad was
 built for.
 
-[![Download for Windows](https://img.shields.io/badge/%E2%AC%87%20Download%20for%20Windows-free-dc052d?style=for-the-badge)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
+[![Download for Windows](https://img.shields.io/badge/%E2%AC%87%20Download%20for%20Windows-free-6a1bf5?style=for-the-badge)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
 
 [![Latest release](https://img.shields.io/github/v/release/ElectroHugin/FM-Player-Analyzer?label=latest%20version)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/ElectroHugin/FM-Player-Analyzer/total?label=downloads)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases)
 [![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078d4)
-![Football Manager 2024](https://img.shields.io/badge/Football%20Manager-2024-6f42c1)
+![Football Manager 2024 | 2027](https://img.shields.io/badge/Football%20Manager-2024%20%7C%202027-6f42c1)
+
+**Playing FM27?** The game has no export of its own any more. Use my free
+companion plugin **[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)**
+to turn any player list into a CSV the analyzer reads.
 
 **🇬🇧 English** · [🇩🇪 Deutsch](README.de.md)
 
@@ -230,7 +234,10 @@ may show a SmartScreen notice — choose *More info → Run anyway*.
 > [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin,
 > add its *Analyzer* view in the game and press **F9** on any player list; then
 > import the CSV into a save created for *Football Manager 2027* (the default
-> for new saves). Column mapping and details: [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
+> for new saves). The installer can also put ready-made FM27 views (squad,
+> player database, shortlist) into your FM27 `views` folder; later via
+> *Settings → Club → Install views for FM27*. Column mapping and details:
+> [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
 > Steps 2 and 3 below are for FM24.
 
 **2 · Get the export view into FM**
@@ -347,8 +354,9 @@ It uses only what the game shows you. Attributes of players you have not fully
 scouted stay masked ranges, exactly as exported.
 
 **Which Football Manager versions are supported?**
-Football Manager 2024. The import layout is defined per game version, so other
-versions can be added.
+Football Manager 2024 and Football Manager 2027 (since version 2.0.0; import via
+the [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)). The
+import layout is defined per game version, so other versions can be added.
 
 **Mac or Linux?**
 Windows 10 / 11 (64-bit), plus a Linux AppImage on the releases page. No macOS.

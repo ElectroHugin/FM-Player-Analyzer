@@ -5,6 +5,7 @@
 
 #include <QPainter>
 #include <QPainterPath>
+#include <QSet>
 
 #include <algorithm>
 
@@ -62,45 +63,59 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    // Same pitch as the Best XI (TacticPitchWidget): dark green with mown
+    // stripes, compact cards at their place, lines close up without holes.
     const bool night = m_theme.mode() != QLatin1String("day");
-    const QColor pitchBg = night ? QColor(0x2a, 0x5d, 0x34) : QColor(0xD3, 0xEE, 0xD8);
-    const QColor markings = night ? QColor(255, 255, 255, 76) : QColor(0, 0, 0, 51);
-    const QColor textColor = night ? QColor(Qt::white) : QColor(0x31, 0x33, 0x3F);
+    const QColor pitchBg = night ? QColor(0x0f, 0x4a, 0x3c) : QColor(0x2e, 0x7d, 0x5b);
+    const QColor stripe = night ? QColor(255, 255, 255, 10) : QColor(255, 255, 255, 18);
+    const QColor markings = QColor(255, 255, 255, night ? 90 : 120);
+    const QColor emptyCard = night ? QColor(0x12, 0x16, 0x1c) : QColor(0xfb, 0xfb, 0xfd);
+    const QColor cardText = QColor(0x1e, 0x22, 0x2b);
 
     const QRectF pitch = rect().adjusted(1, 1, -1, -1);
-
-    // --- Pitch background + markings ---
     QPainterPath pitchPath;
-    pitchPath.addRoundedRect(pitch, 8, 8);
+    pitchPath.addRoundedRect(pitch, 10, 10);
     painter.fillPath(pitchPath, pitchBg);
-    painter.setPen(QPen(markings, 1));
-    painter.drawPath(pitchPath);
-
     painter.setClipPath(pitchPath);
-    const double cx = pitch.center().x();
-    painter.drawLine(QPointF(pitch.left(), pitch.center().y()),
-                     QPointF(pitch.right(), pitch.center().y()));
-    painter.drawEllipse(pitch.center(), 30.0, 30.0);
-    const double penW = pitch.width() * 0.40, penH = pitch.height() * 0.16;
-    painter.drawRect(QRectF(cx - penW / 2, pitch.top(), penW, penH));
-    painter.drawRect(QRectF(cx - penW / 2, pitch.bottom() - penH, penW, penH));
-    const double goalW = pitch.width() * 0.20, goalH = pitch.height() * 0.07;
-    painter.drawRect(QRectF(cx - goalW / 2, pitch.top(), goalW, goalH));
-    painter.drawRect(QRectF(cx - goalW / 2, pitch.bottom() - goalH, goalW, goalH));
+    const int stripes = 10;
+    for (int i = 0; i < stripes; i += 2)
+        painter.fillRect(QRectF(pitch.left(), pitch.top() + i * pitch.height() / stripes,
+                                pitch.width(), pitch.height() / stripes),
+                         stripe);
+    const QRectF field = pitch.adjusted(6, 6, -6, -6);
+    painter.setPen(QPen(markings, 1.2));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(field);
+    const double cx = field.center().x();
+    painter.drawLine(QPointF(field.left(), field.center().y()),
+                     QPointF(field.right(), field.center().y()));
+    painter.drawEllipse(field.center(), field.width() * 0.14, field.width() * 0.14);
+    const double penW = field.width() * 0.44, penH = field.height() * 0.16;
+    painter.drawRect(QRectF(cx - penW / 2, field.top(), penW, penH));
+    painter.drawRect(QRectF(cx - penW / 2, field.bottom() - penH, penW, penH));
+    const double goalW = field.width() * 0.20, goalH = field.height() * 0.06;
+    painter.drawRect(QRectF(cx - goalW / 2, field.top(), goalW, goalH));
+    painter.drawRect(QRectF(cx - goalW / 2, field.bottom() - goalH, goalW, goalH));
 
     if (m_layout.isEmpty()) {
-        painter.setPen(textColor);
+        painter.setPen(Qt::white);
         painter.drawText(pitch, Qt::AlignCenter, tr("Keine Daten"));
         return;
     }
 
-    // --- 5x6 cell grid (row 6 = GK, spanning) ---
-    const double padding = 8.0, gap = 4.0;
-    const double cellW = (pitch.width() - 2 * padding - 4 * gap) / 5.0;
-    const double cellH = (pitch.height() - 2 * padding - 5 * gap) / 6.0;
-    const auto cellRect = [&](int row, int col) {
-        return QRectF(pitch.left() + padding + (col - 1) * (cellW + gap),
-                      pitch.top() + padding + (row - 1) * (cellH + gap), cellW, cellH);
+    const double cardW = field.width() * 0.188;
+    const double cardH = field.height() * 0.115;
+    static const double kRowY[] = {0.0, 0.085, 0.255, 0.42, 0.585, 0.75, 0.915};
+    const auto xFraction = [](int displayColumn, const QSet<int> &occupied) {
+        const bool closeUp = occupied.contains(1) && occupied.contains(3) && !occupied.contains(2);
+        if (closeUp && (displayColumn == 1 || displayColumn == 3))
+            return displayColumn == 1 ? 0.37 : 0.63;
+        return 0.1 + 0.2 * displayColumn;
+    };
+    const auto cardRectAt = [&](int row, double xf) {
+        const double x = field.left() + field.width() * xf;
+        const double y = field.top() + field.height() * kRowY[qBound(1, row, 6)];
+        return QRectF(x - cardW / 2, y - cardH / 2, cardW, cardH);
     };
 
     // Relative color range over the occupied positions.
@@ -120,62 +135,54 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
 
     QFont avgFont = font();
     avgFont.setBold(true);
-    avgFont.setPointSizeF(font().pointSizeF() * 1.15);
+    avgFont.setPointSizeF(font().pointSizeF() * 1.0);
     QFont rangeFont = font();
-    rangeFont.setPointSizeF(font().pointSizeF() * 0.8);
+    rangeFont.setPointSizeF(font().pointSizeF() * 0.72);
 
     const auto drawBox = [&](const QRectF &box, const QString &slot) {
         const SlotStrength stats = m_strengths.value(slot);
         QPainterPath path;
-        path.addRoundedRect(box, 4, 4);
+        path.addRoundedRect(box, 5, 5);
         if (stats.avg > 0.0) {
-            QColor fill = relativeColor(stats.avg, minAvg, maxAvg);
-            fill.setAlphaF(0.85f);
-            painter.fillPath(path, fill);
-            painter.setPen(QPen(QColor(0, 0, 0, 50), 1));
+            painter.fillPath(path, relativeColor(stats.avg, minAvg, maxAvg));
+            painter.setPen(QPen(QColor(0, 0, 0, 60), 1));
+            painter.setBrush(Qt::NoBrush);
             painter.drawPath(path);
-            painter.setPen(textColor);
+            painter.setPen(cardText);
             painter.setFont(avgFont);
-            QRectF top = box.adjusted(0, box.height() * 0.12, 0, -box.height() * 0.42);
-            painter.drawText(top, Qt::AlignHCenter | Qt::AlignVCenter,
+            painter.drawText(box.adjusted(0, 1, 0, -box.height() * 0.42), Qt::AlignCenter,
                              QStringLiteral("%1%").arg(qRound(stats.avg)));
             painter.setFont(rangeFont);
-            QRectF bottom = box.adjusted(0, box.height() * 0.52, 0, -box.height() * 0.08);
-            painter.drawText(bottom, Qt::AlignHCenter | Qt::AlignVCenter,
-                             QStringLiteral("(%1–%2)")
-                                 .arg(qRound(stats.min))
-                                 .arg(qRound(stats.max)));
+            painter.drawText(box.adjusted(0, box.height() * 0.55, 0, -1), Qt::AlignCenter,
+                             QStringLiteral("%1–%2").arg(qRound(stats.min)).arg(qRound(stats.max)));
         } else {
-            painter.setPen(QPen(markings, 1));
-            painter.drawPath(path);
-            painter.setPen(textColor);
+            painter.fillPath(path, emptyCard);
+            painter.setPen(night ? QColor(Qt::white) : cardText);
             painter.setFont(rangeFont);
             painter.drawText(box, Qt::AlignCenter, QStringLiteral("–"));
         }
     };
 
-    // Vertical pitch row (1 = top) per stratum; GK is drawn as a spanning row 6.
     const PitchGeometry &geometry = pitchGeometry(m_fmVersionId);
     for (auto it = m_layout.constBegin(); it != m_layout.constEnd(); ++it) {
         const int row = geometry.drawingRow(it.key());
+        if (row < 0)
+            continue;
+        QSet<int> occupied;
+        for (const QString &slot : it.value()) {
+            if (const PitchSlot *pitchSlot = geometry.slot(slot))
+                occupied.insert(pitchSlot->displayColumn);
+        }
         for (const QString &slot : it.value()) {
             if (slot == geometry.goalkeeper.key)
                 continue;
             const PitchSlot *pitchSlot = geometry.slot(slot);
-            if (!pitchSlot || row < 0)
+            if (!pitchSlot || pitchSlot->displayColumn < 0 || pitchSlot->displayColumn > 4)
                 continue;
-            // Strikers sit in the middle three grid columns (legacy grid).
-            const int col = pitchSlot->displayColumn + 1;
-            if (col < 1 || col > 5)
-                continue;
-            drawBox(cellRect(row, col), slot);
+            drawBox(cardRectAt(row, xFraction(pitchSlot->displayColumn, occupied)), slot);
         }
     }
-
-    // GK spans the full bottom row.
-    const QRectF gkRect(pitch.left() + padding, pitch.top() + padding + 5 * (cellH + gap),
-                        pitch.width() - 2 * padding, cellH);
-    drawBox(gkRect, QStringLiteral("GK"));
+    drawBox(cardRectAt(6, 0.5), QStringLiteral("GK"));
 }
 
 } // namespace fm

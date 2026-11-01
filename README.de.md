@@ -4,18 +4,22 @@
 
 ### Schluss mit Raten, wer spielen soll.
 
-Das kostenlose Desktop-Tool für den **Football Manager 2024**, das aus deinen
+Das kostenlose Desktop-Tool für den **Football Manager 2024 und 2027**, das aus deinen
 Kader- und Scouting-Exporten klare Antworten macht: deine beweisbar optimale Best XI, die
 versteckte Schwachstelle im Team, das Talent, das sich lohnt, und die Taktik,
 für die dein Kader gebaut ist.
 
-[![Download für Windows](https://img.shields.io/badge/%E2%AC%87%20Download%20f%C3%BCr%20Windows-kostenlos-dc052d?style=for-the-badge)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
+[![Download für Windows](https://img.shields.io/badge/%E2%AC%87%20Download%20f%C3%BCr%20Windows-kostenlos-6a1bf5?style=for-the-badge)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
 
 [![Neueste Version](https://img.shields.io/github/v/release/ElectroHugin/FM-Player-Analyzer?label=neueste%20Version)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/ElectroHugin/FM-Player-Analyzer/total?label=Downloads)](https://github.com/ElectroHugin/FM-Player-Analyzer/releases)
 [![Lizenz: GPL v3](https://img.shields.io/badge/Lizenz-GPLv3-blue)](LICENSE)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows%2010%20%2F%2011-0078d4)
-![Football Manager 2024](https://img.shields.io/badge/Football%20Manager-2024-6f42c1)
+![Football Manager 2024 | 2027](https://img.shields.io/badge/Football%20Manager-2024%20%7C%202027-6f42c1)
+
+**Du spielst FM27?** Das Spiel hat keinen eigenen Export mehr. Mit meinem
+kostenlosen Begleit-Plugin **[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)**
+wird jede Spielerliste zu einer CSV-Datei, die der Analyzer liest.
 
 [🇬🇧 English](README.md) · **🇩🇪 Deutsch**
 
@@ -242,7 +246,10 @@ Informationen → Trotzdem ausführen*.
 > lege im Spiel dessen Ansicht *Analyzer* an und drücke in einer Spielerliste **F9**.
 > Die CSV-Datei importierst du in einen Spielstand mit der Version *Football
 > Manager 2027* (Standard für neue Spielstände). Spaltenzuordnung und Details:
-> [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md). Schritt 2 und 3 unten gelten für FM24.
+> [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md). Der Installer kann fertige FM27-Ansichten
+> (Kader, Spielerdatenbank, Shortlist) gleich in deinen FM27-Ordner `views` legen;
+> später geht das über *Einstellungen → Verein → Ansichten für FM27 installieren*.
+> Schritt 2 und 3 unten gelten für FM24.
 
 **2 · Export-Ansicht in den FM holen**
 
@@ -362,8 +369,9 @@ Die App nutzt nur, was dir das Spiel zeigt. Attribute von nicht vollständig
 gescouteten Spielern bleiben verdeckte Bereiche, genau wie exportiert.
 
 **Welche Football-Manager-Versionen werden unterstützt?**
-Football Manager 2024. Das Import-Format ist pro Spielversion definiert, weitere
-Versionen lassen sich also ergänzen.
+Football Manager 2024 und Football Manager 2027 (seit Version 2.0.0; Import über
+den [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)). Das
+Import-Format ist pro Spielversion definiert, weitere Versionen lassen sich also ergänzen.
 
 **Mac oder Linux?**
 Windows 10 / 11 (64-bit), dazu ein Linux-AppImage auf der Release-Seite. Kein macOS.
