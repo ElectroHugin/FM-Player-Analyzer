@@ -168,7 +168,9 @@ die Abdeckung (kannst du alle elf Positionen besetzen?), dann die Stärke je
 Mannschaftsteil. Ein Klick auf eine Taktik zeigt, wie viele passende Spieler du
 für jeden Slot hast. Die mitgelieferten Taktiken sind aus der
 [FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/)
-nachgebaut, eigene kannst du ergänzen.
+nachgebaut, eigene kannst du ergänzen. Für FM27 liegt nur eine Beispieltaktik bei
+(„4-2-3-1 - Bavarian Blitz“); deine eigenen Taktiken legst du im Taktik-Editor
+an, Updates lassen sie unberührt.
 
 <img src="docs/screenshots/de/tactic-explorer.png" alt="Taktik-Explorer mit Taktiken, sortiert nach Abdeckung und Median-Bewertung je Mannschaftsteil" width="100%">
 
@@ -207,7 +209,7 @@ Fortschritt.
 
 ### Mach es zu deinem
 
-Dunkel- und Hellmodus, 37 Vereins-Farbschemata von Bayern bis Celtic, eigene
+Dunkel- und Hellmodus, 37 Vereins-Farbschemata nach Liga sortiert, eigene
 Farben und das Logo deines Vereins in der Kopfzeile.
 
 <img src="docs/screenshots/de/dashboard-light.png" alt="Das Dashboard im Hellmodus" width="100%">

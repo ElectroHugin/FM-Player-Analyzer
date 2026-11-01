@@ -161,7 +161,9 @@ first (can you fill all eleven positions?), then strength per line. Click a
 tactic to see how many suitable players you have for each slot. The bundled
 tactics are rebuilt from the
 [FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/), and
-you can add your own.
+you can add your own. FM27 ships with a single example tactic
+("4-2-3-1 - Bavarian Blitz"); create your own tactics in the tactic editor,
+updates leave them untouched.
 
 <img src="docs/screenshots/en/tactic-explorer.png" alt="Tactic Explorer ranking tactics by coverage and median rating per team part" width="100%">
 
@@ -197,7 +199,7 @@ counts.
 
 ### Make it yours
 
-Dark and light mode, 37 club colour presets from Bayern to Celtic, your own
+Dark and light mode, 37 club colour presets grouped by league, your own
 colours and your club's logo in the header.
 
 <img src="docs/screenshots/en/dashboard-light.png" alt="The dashboard in light mode" width="100%">

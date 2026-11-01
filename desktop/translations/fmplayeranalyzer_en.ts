@@ -1029,6 +1029,14 @@
         <source>↺ Vorschlag des Analyzers wiederherstellen (%1)</source>
         <translation>↺ Restore the analyzer&apos;s suggestion (%1)</translation>
     </message>
+    <message>
+        <source>＋ Eigene Taktik</source>
+        <translation>＋ Own tactic</translation>
+    </message>
+    <message>
+        <source>Die mitgelieferten Taktiken sind nur Beispiele. Im Taktik-Editor legst du deine eigenen an; Updates lassen sie unberührt.</source>
+        <translation>The bundled tactics are only examples. Create your own in the tactic editor; updates leave them untouched.</translation>
+    </message>
 </context>
 <context>
     <name>fm::CommandPalette</name>
@@ -2665,7 +2673,7 @@ The original file is not modified.</translation>
     </message>
     <message>
         <source>z. B. Bayern 2027</source>
-        <translation>e.g. Bayern 2027</translation>
+        <translation type="vanished">e.g. Bayern 2027</translation>
     </message>
     <message>
         <source>Nur für dich zum Wiedererkennen, z. B. Verein und Startjahr.</source>
@@ -2718,6 +2726,10 @@ The original file is not modified.</translation>
     <message>
         <source>Die Datei konnte nicht importiert werden: %1</source>
         <translation>The file could not be imported: %1</translation>
+    </message>
+    <message>
+        <source>z. B. Mein Verein 2027</source>
+        <translation>e.g. My club 2027</translation>
     </message>
 </context>
 <context>
@@ -3852,11 +3864,11 @@ The original file is not modified.</translation>
     </message>
     <message>
         <source>z. B. &apos;FC Bayern München&apos; (für den Header)</source>
-        <translation>e.g. &apos;FC Bayern München&apos; (for the header)</translation>
+        <translation type="vanished">e.g. &apos;FC Bayern München&apos; (for the header)</translation>
     </message>
     <message>
         <source>z. B. &apos;Allianz Arena&apos;</source>
-        <translation>e.g. &apos;Allianz Arena&apos;</translation>
+        <translation type="vanished">e.g. &apos;Allianz Arena&apos;</translation>
     </message>
     <message>
         <source>Mein Verein:</source>
@@ -4329,6 +4341,14 @@ The original file is not modified.</translation>
 %3</source>
         <translation>%1 views copied to %2:
 %3</translation>
+    </message>
+    <message>
+        <source>voller Vereinsname (für den Header)</source>
+        <translation>full club name (for the header)</translation>
+    </message>
+    <message>
+        <source>Name des Stadions</source>
+        <translation>stadium name</translation>
     </message>
 </context>
 <context>

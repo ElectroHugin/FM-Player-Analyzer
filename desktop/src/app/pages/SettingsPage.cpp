@@ -13,6 +13,7 @@
 #include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
+#include <QStandardItemModel>
 #include <QDesktopServices>
 #include <QDir>
 #include <QDoubleSpinBox>
@@ -236,10 +237,10 @@ QWidget *SettingsPage::buildClubTab()
     m_clubCountryEdit->setPlaceholderText(QStringLiteral("GER"));
     m_fullClubNameEdit = new QLineEdit;
     m_fullClubNameEdit->setMinimumWidth(260);
-    m_fullClubNameEdit->setPlaceholderText(tr("z. B. 'FC Bayern München' (für den Header)"));
+    m_fullClubNameEdit->setPlaceholderText(tr("voller Vereinsname (für den Header)"));
     m_stadiumEdit = new QLineEdit;
     m_stadiumEdit->setMinimumWidth(260);
-    m_stadiumEdit->setPlaceholderText(tr("z. B. 'Allianz Arena'"));
+    m_stadiumEdit->setPlaceholderText(tr("Name des Stadions"));
     clubForm->addRow(tr("Mein Verein:"), m_userClubCombo);
     clubForm->addRow(tr("Zweitteam:"), m_secondClubCombo);
     clubForm->addRow(tr("Voller Vereinsname (Anzeige):"), m_fullClubNameEdit);
@@ -685,8 +686,19 @@ QWidget *SettingsPage::buildThemeTab()
     m_presetCombo = new QComboBox;
     m_presetCombo->setMinimumWidth(280);
     m_presetCombo->setMaxVisibleItems(20);
-    for (const ClubTheme &preset : clubThemes())
+    // Grouped by league: a disabled league caption above its clubs.
+    QString league;
+    for (const ClubTheme &preset : clubThemes()) {
+        if (preset.league != league) {
+            league = preset.league;
+            m_presetCombo->insertSeparator(m_presetCombo->count());
+            m_presetCombo->addItem(QStringLiteral("— %1 —").arg(league));
+            if (auto *model = qobject_cast<QStandardItemModel *>(m_presetCombo->model()))
+                model->item(m_presetCombo->count() - 1)->setEnabled(false);
+        }
         m_presetCombo->addItem(preset.displayName, preset.id);
+    }
+    m_presetCombo->insertSeparator(m_presetCombo->count());
     m_presetCombo->addItem(tr("Benutzerdefiniert"), QStringLiteral("custom"));
     m_modeCombo = new QComboBox;
     m_modeCombo->addItem(tr("Nacht (dunkel)"), QStringLiteral("night"));

@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QSet>
 
 namespace fm {
 
@@ -156,11 +157,21 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     const double cardW = field.width() * 0.188;
     const double cardH = field.height() * 0.125;
     static const double kRowY[] = {0.0, 0.085, 0.255, 0.42, 0.585, 0.75, 0.915};
-    const auto cardRect = [&](int row, int col) {
-        const double x = field.left() + field.width() * (0.1 + 0.2 * (col - 1));
+    // Dynamic line: two inside players without one in the middle (DCL+DCR,
+    // DMCL+DMCR, STL+STR) close up towards the centre instead of leaving a
+    // hole; wide players stay on the touchline.
+    const auto xFraction = [](int displayColumn, const QSet<int> &occupied) {
+        const bool closeUp = occupied.contains(1) && occupied.contains(3) && !occupied.contains(2);
+        if (closeUp && (displayColumn == 1 || displayColumn == 3))
+            return displayColumn == 1 ? 0.37 : 0.63;
+        return 0.1 + 0.2 * displayColumn;
+    };
+    const auto cardRectAt = [&](int row, double xf) {
+        const double x = field.left() + field.width() * xf;
         const double y = field.top() + field.height() * kRowY[qBound(1, row, 6)];
         return QRectF(x - cardW / 2, y - cardH / 2, cardW, cardH);
     };
+    const auto cardRect = [&](int row, int col) { return cardRectAt(row, 0.1 + 0.2 * (col - 1)); };
     // Header colour per line, like the role colours in FM's tactics screen.
     static const QColor kLineColors[] = {
         QColor(0x4a, 0x4f, 0x63), QColor(0x9b, 0x23, 0x6f), QColor(0x5e, 0x2e, 0x8f),
@@ -192,8 +203,9 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
                 role.chop(4);
             return role;
         };
+        // squeezed: free middle place between two cards that closed up.
         const auto drawSlot = [&](const QRectF &box, const QString &slot, const QString &label,
-                                  int row) {
+                                  int row, bool squeezed = false) {
             const QString role = m_editorRoles.value(slot);
             if (role.isEmpty() && !m_showFreeSlots)
                 return;
@@ -201,20 +213,26 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             QPainterPath path;
             path.addRoundedRect(box, 6, 6);
             if (role.isEmpty()) {
-                painter.fillPath(path, QColor(255, 255, 255, night ? 10 : 20));
-                QPen dashed(QColor(255, 255, 255, 110), 1.2, Qt::DashLine);
-                painter.setPen(dashed);
-                painter.setBrush(Qt::NoBrush);
-                painter.drawPath(path);
+                // Free place: a small "+" marker, so it fits between the
+                // cards of a line that closed up.
+                const double d = box.height() * (squeezed ? 0.3 : 0.42);
+                const double cy = squeezed ? box.bottom() - d * 0.2 : box.center().y() - d * 0.25;
+                const QRectF circle(box.center().x() - d / 2, cy - d / 2, d, d);
+                m_boxRects.insert(slot, circle.adjusted(-4, -4, 4, d * 0.6));
+                painter.setBrush(QColor(255, 255, 255, night ? 22 : 36));
+                painter.setPen(QPen(QColor(255, 255, 255, 150), 1.2, Qt::DashLine));
+                painter.drawEllipse(circle);
                 QFont plus = font();
-                plus.setPointSizeF(font().pointSizeF() * 1.6);
+                plus.setBold(true);
+                plus.setPointSizeF(font().pointSizeF() * 1.25);
                 painter.setFont(plus);
-                painter.setPen(QColor(255, 255, 255, 190));
-                painter.drawText(box.adjusted(0, 0, 0, -box.height() * 0.3), Qt::AlignCenter,
-                                 QStringLiteral("+"));
+                painter.setPen(QColor(255, 255, 255, 220));
+                painter.drawText(circle, Qt::AlignCenter, QStringLiteral("+"));
                 painter.setFont(smallFont);
-                painter.drawText(box.adjusted(2, box.height() * 0.55, -2, -2), Qt::AlignCenter,
-                                 label);
+                painter.setPen(QColor(255, 255, 255, 170));
+                painter.drawText(QRectF(box.left() - 10, circle.bottom() + 1, box.width() + 20,
+                                        d * 0.55),
+                                 Qt::AlignHCenter | Qt::AlignTop, label);
                 return;
             }
             painter.fillPath(path, cardBody);
@@ -260,11 +278,18 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             const int row = geometry.drawingRow(pitchRow.stratum);
             if (row < 0)
                 continue;
+            QSet<int> occupied;
             for (const PitchSlot &slot : pitchRow.pitchSlots) {
-                const int col = slot.displayColumn + 1;
-                if (!slot.inEditor || col < 1 || col > 5)
+                if (slot.inEditor && !m_editorRoles.value(slot.key).isEmpty())
+                    occupied.insert(slot.displayColumn);
+            }
+            for (const PitchSlot &slot : pitchRow.pitchSlots) {
+                if (!slot.inEditor || slot.displayColumn < 0 || slot.displayColumn > 4)
                     continue;
-                drawSlot(cardRect(row, col), slot.key, slot.key, row);
+                const bool squeezed = slot.displayColumn == 2 && occupied.contains(1)
+                                      && occupied.contains(3) && !occupied.contains(2);
+                drawSlot(cardRectAt(row, xFraction(slot.displayColumn, occupied)), slot.key,
+                         slot.key, row, squeezed);
             }
         }
         drawSlot(cardRect(6, 3), QStringLiteral("GK"), QStringLiteral("GK"), 6);
@@ -343,16 +368,20 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         const int row = geometry.drawingRow(it.key());
         if (row < 0)
             continue;
+        QSet<int> occupied;
+        for (const QString &slot : it.value()) {
+            if (const PitchSlot *pitchSlot = geometry.slot(slot))
+                occupied.insert(pitchSlot->displayColumn);
+        }
         for (const QString &slot : it.value()) {
             if (slot == geometry.goalkeeper.key)
                 continue;
             const PitchSlot *pitchSlot = geometry.slot(slot);
             if (!pitchSlot)
                 continue;
-            const int col = pitchSlot->displayColumn + 1;
-            if (col < 1 || col > 5)
+            if (pitchSlot->displayColumn < 0 || pitchSlot->displayColumn > 4)
                 continue;
-            drawCard(cardRect(row, col), slot, row);
+            drawCard(cardRectAt(row, xFraction(pitchSlot->displayColumn, occupied)), slot, row);
         }
     }
 

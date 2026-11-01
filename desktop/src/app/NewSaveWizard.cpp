@@ -136,7 +136,7 @@ QWidget *NewSaveWizard::buildNamePage()
     nameLabel->setObjectName(QStringLiteral("fieldLabel"));
     layout->addWidget(nameLabel);
     m_nameEdit = new QLineEdit(page);
-    m_nameEdit->setPlaceholderText(tr("z. B. Bayern 2027"));
+    m_nameEdit->setPlaceholderText(tr("z. B. Mein Verein 2027"));
     m_nameEdit->setMaxLength(80);
     layout->addWidget(m_nameEdit);
     m_nameError = new QLabel(page);

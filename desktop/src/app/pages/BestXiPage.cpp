@@ -73,6 +73,14 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     m_tacticCombo = new QComboBox(content);
     m_tacticCombo->setMinimumWidth(260);
     tacticRow->addWidget(m_tacticCombo);
+    // The bundled tactics are examples; your own go into the tactic editor.
+    auto *ownTactic = new QPushButton(tr("＋ Eigene Taktik"), content);
+    ownTactic->setCursor(Qt::PointingHandCursor);
+    ownTactic->setToolTip(tr("Die mitgelieferten Taktiken sind nur Beispiele. Im Taktik-Editor "
+                             "legst du deine eigenen an; Updates lassen sie unberührt."));
+    connect(ownTactic, &QPushButton::clicked, this,
+            [this] { m_context.requestNavigation(QStringLiteral("new_tactic")); });
+    tacticRow->addWidget(ownTactic);
     m_competitionLabel = new QLabel(tr("Wettbewerb:"), content);
     tacticRow->addSpacing(16);
     tacticRow->addWidget(m_competitionLabel);
