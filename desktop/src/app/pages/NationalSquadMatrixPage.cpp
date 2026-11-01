@@ -106,17 +106,10 @@ void NationalSquadMatrixPage::buildSection(Section *section, const QString &titl
 QStringList NationalSquadMatrixPage::selectedRoles() const
 {
     const QString tactic = m_tacticCombo->currentData().toString();
-    QStringList roles;
-    if (tactic.isEmpty()) {
-        roles = m_context.definitions().validRoles();
-    } else {
-        const auto positions = m_context.definitions().tacticRoles().value(tactic);
-        QSet<QString> roleSet;
-        for (auto it = positions.constBegin(); it != positions.constEnd(); ++it)
-            roleSet.insert(it.value());
-        roles = QStringList(roleSet.cbegin(), roleSet.cend());
-    }
-    return m_context.definitions().sortRolesNaturally(roles);
+    // All roles of the tactic, for FM27 both line-ups (with ball first).
+    if (tactic.isEmpty())
+        return m_context.definitions().sortRolesByPhase(m_context.definitions().validRoles());
+    return m_context.definitions().tacticRoleList(tactic);
 }
 
 QList<PlayerColumn> NationalSquadMatrixPage::buildColumns() const
@@ -153,7 +146,7 @@ QList<PlayerColumn> NationalSquadMatrixPage::buildColumns() const
     }
     for (const QString &role : roles) {
         const QHash<QString, double> roleRatings = ratings.value(role);
-        columns.append({role,
+        columns.append({definitions->roleLabel(role),
                         [roleRatings](const Player &p) -> QVariant {
                             const auto it = roleRatings.constFind(p.uid);
                             if (it == roleRatings.constEnd())
@@ -169,7 +162,7 @@ QList<PlayerColumn> NationalSquadMatrixPage::buildColumns() const
                                 return {};
                             return dwrsCellStyle(it.value());
                         },
-                        Qt::AlignRight | Qt::AlignVCenter});
+                        Qt::AlignRight | Qt::AlignVCenter, roleHeaderToolTip(*definitions, role)});
     }
     return columns;
 }

@@ -163,7 +163,13 @@ void AssignRolesPage::setupColumns()
             m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads")),
             m_context.userClub()),
         {tr("Zugewiesene Rollen"),
-         [](const Player &p) { return p.assignedRoles.join(QStringLiteral(", ")); }, nullptr,
+         [definitions = &m_context.definitions()](const Player &p) {
+             QStringList labels;
+             for (const QString &role : p.assignedRoles)
+                 labels << definitions->roleLabel(role);
+             return labels.join(QStringLiteral(", "));
+         },
+         nullptr,
          nullptr, {}},
     });
 }

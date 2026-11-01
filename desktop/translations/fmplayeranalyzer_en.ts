@@ -2812,6 +2812,17 @@ The original file is not modified.</translation>
     </message>
 </context>
 <context>
+    <name>fm::PageHelpers</name>
+    <message>
+        <source>Rolle mit Ball</source>
+        <translation>Role in possession</translation>
+    </message>
+    <message>
+        <source>Rolle ohne Ball</source>
+        <translation>Role out of possession</translation>
+    </message>
+</context>
+<context>
     <name>fm::PersonalityFilterWidget</name>
     <message>
         <source>Persönlichkeit:</source>
@@ -3024,8 +3035,16 @@ The original file is not modified.</translation>
         <translation>Playing Time</translation>
     </message>
     <message>
-        <source>Zugewiesene Rollen</source>
-        <translation>Assigned Roles</translation>
+        <source>Beste Rollen (DWRS)</source>
+        <translation>Best roles (DWRS)</translation>
+    </message>
+    <message>
+        <source>+%1 weitere</source>
+        <translation>+%1 more</translation>
+    </message>
+    <message>
+        <source>Alle zugewiesenen Rollen:</source>
+        <translation>All assigned roles:</translation>
     </message>
 </context>
 <context>
@@ -3073,10 +3092,6 @@ The original file is not modified.</translation>
     <message>
         <source>Spieler aktualisieren</source>
         <translation>Update Player</translation>
-    </message>
-    <message>
-        <source>Top-Rollen</source>
-        <translation>Top Roles</translation>
     </message>
     <message>
         <source>🌱 Talent-Projektion</source>
@@ -3253,6 +3268,26 @@ The original file is not modified.</translation>
     <message>
         <source>⚠ Ø-Note unter 7.0 — entwickelt sich aktuell nur langsam.</source>
         <translation>⚠ Average rating below 7.0 — currently develops only slowly.</translation>
+    </message>
+    <message>
+        <source>Rollen (beste zuerst)</source>
+        <translation>Roles (best first)</translation>
+    </message>
+    <message>
+        <source>Alle Rollen</source>
+        <translation>All Roles</translation>
+    </message>
+    <message>
+        <source>Nur mit Ball (IP)</source>
+        <translation>In possession only (IP)</translation>
+    </message>
+    <message>
+        <source>Nur ohne Ball (OOP)</source>
+        <translation>Out of possession only (OOP)</translation>
+    </message>
+    <message>
+        <source>Welche Rollen als Kacheln gezeigt werden. Seitlich scrollen für alle Rollen.</source>
+        <translation>Which roles are shown as tiles. Scroll sideways for all roles.</translation>
     </message>
 </context>
 <context>
