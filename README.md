@@ -449,6 +449,14 @@ Found a bug or have an idea?
 [Open an issue](https://github.com/ElectroHugin/FM-Player-Analyzer/issues) — and
 if the app helps your save, a ⭐ on GitHub helps others find it.
 
+## Code signing
+
+The Windows downloads are signed. Free code signing provided by
+[SignPath.io](https://about.signpath.io/), certificate by
+[SignPath Foundation](https://signpath.org/). Read the
+[Code signing policy](CODE_SIGNING.md) for who builds and approves each
+release and how your privacy is protected.
+
 ## License & disclaimer
 
 Licensed under **GPLv3** — see [LICENSE](LICENSE).

@@ -468,6 +468,14 @@ Fehler gefunden oder eine Idee?
 Und wenn die App deinem Spielstand hilft: Ein ⭐ auf GitHub hilft anderen, sie
 zu finden.
 
+## Code-Signierung
+
+Die Windows-Downloads sind signiert. Free code signing provided by
+[SignPath.io](https://about.signpath.io/), certificate by
+[SignPath Foundation](https://signpath.org/). Wer jede Version baut und
+freigibt und wie deine Privatsphäre geschützt bleibt, steht in der
+[Code signing policy](CODE_SIGNING.md).
+
 ## Lizenz & Haftungsausschluss
 
 Lizenziert unter **GPLv3**, siehe [LICENSE](LICENSE).
