@@ -138,6 +138,11 @@ private slots:
         QVERIFY(Registration::leagueRulesFor(QStringLiteral("fm24"))
                 == (QList<L>{L::Bundesliga, L::PremierLeague}));
         QVERIFY(Registration::uefaRulesFor(QStringLiteral("fm24")));
+        // FM27: the 11 leagues from the game's squad-selection screens.
+        const auto fm27 = Registration::leagueRulesFor(QStringLiteral("fm27"));
+        QCOMPARE(fm27.size(), 11);
+        QVERIFY(fm27.contains(L::SerieA) && fm27.contains(L::SuperLig));
+        QVERIFY(Registration::uefaRulesFor(QStringLiteral("fm27")));
         QVERIFY(Registration::leagueRulesFor(QStringLiteral("fm99")).isEmpty());
         QVERIFY(!Registration::uefaRulesFor(QStringLiteral("fm99")));
     }
@@ -399,9 +404,48 @@ private slots:
         QCOMPARE(plain[2].player->uid, QStringLiteral("gk2"));
     }
 
+    void fm27LeagueQuotas()
+    {
+        using L = Registration::LeagueRules;
+        using C = Registration::Competition;
+        const auto quota = [](L league) {
+            Registration::Settings settings;
+            settings.league = league;
+            return Registration::quotaFor(C::League, settings);
+        };
+        // Serie A: 25 places, at least 8 trained in Italy, 4 of them at the club.
+        auto q = quota(L::SerieA);
+        QCOMPARE(q.maxSize, 25);
+        QCOMPARE(q.maxNonHomeGrown, 17);
+        QCOMPARE(q.maxNonClubTrained, 21);
+        QVERIFY(!q.u21Exempt);
+        // Portugal (club with B team): 68 places, 10 trained in Portugal.
+        q = quota(L::LigaPortugal);
+        QCOMPARE(q.maxSize, 68);
+        QCOMPARE(q.maxNonHomeGrown, 58);
+        // Ukraine: U21 free, 8 trained incl. 4 at the club.
+        q = quota(L::UkrainianPremierLeague);
+        QVERIFY(q.u21Exempt);
+        QCOMPARE(q.maxNonClubTrained, 21);
+        // Süper Lig: only the size (foreigner limits are not modelled).
+        q = quota(L::SuperLig);
+        QCOMPARE(q.maxSize, 28);
+        QCOMPARE(q.maxNonHomeGrown, 28);
+        QVERIFY(!Registration::restrictsSquad(L::Ligue1));
+        QVERIFY(!Registration::restrictsSquad(L::AustrianBundesliga));
+        QVERIFY(Registration::restrictsSquad(L::LaLiga));
+
+        // Where U21 need a slot, a youngster is not eligible without the list.
+        Player youngster = playerAged(19);
+        QVERIFY(Registration::isEligible(youngster, C::League, quota(L::PremierLeague)));
+        QVERIFY(!Registration::isEligible(youngster, C::League, quota(L::SerieA)));
+    }
+
     void keysRoundTrip()
     {
         using L = Registration::LeagueRules;
+        for (const L rules : Registration::leagueRulesFor(QStringLiteral("fm27")))
+            QCOMPARE(Registration::leagueRulesFromKey(Registration::leagueRulesKey(rules)), rules);
         for (const L rules : {L::None, L::Bundesliga, L::PremierLeague})
             QCOMPARE(Registration::leagueRulesFromKey(Registration::leagueRulesKey(rules)), rules);
         QCOMPARE(Registration::leagueRulesFromKey(QStringLiteral("bogus")), L::None);

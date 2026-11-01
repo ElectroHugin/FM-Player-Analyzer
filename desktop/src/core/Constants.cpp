@@ -73,12 +73,12 @@ const QList<FmDataVersion> &fmDataVersions()
     // FM27 has no export of its own: its files come from the FM View Exporter
     // plugin, which writes to "Sports Interactive/FM View Exporter". Its roles
     // (one per phase, see definitions_fm27.json) come from the game; attribute
-    // tiers/weights fall back to FM24's until FM27 data exist; no "Reg" column,
-    // so no registration rules.
+    // tiers/weights fall back to FM24's until FM27 data exist; registration
+    // rules of 11 leagues from the game's screens (Registration.cpp).
     static const QList<FmDataVersion> versions = {
         {QStringLiteral("fm27"), QStringLiteral("Football Manager 2027"), true,
          QStringLiteral("definitions_fm27.json"), QStringLiteral("FM View Exporter"),
-         {QStringLiteral("csv"), QStringLiteral("html")}, /*provisionalWeights*/ true, /*registrationRules*/ false},
+         {QStringLiteral("csv"), QStringLiteral("html")}, /*provisionalWeights*/ true, /*registrationRules*/ true},
         {QStringLiteral("fm24"), QStringLiteral("Football Manager 2024"), true,
          QStringLiteral("definitions.json"), QStringLiteral("Football Manager 2024"),
          {QStringLiteral("html"), QStringLiteral("csv")}, /*provisionalWeights*/ false, /*registrationRules*/ true,

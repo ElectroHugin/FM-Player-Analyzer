@@ -302,7 +302,7 @@ void RegistrationPage::refresh()
                    && !Registration::uefaRulesFor(versionId)) {
             m_hint->setText(
                 tr("Für %1 sind noch keine Registrierungsregeln hinterlegt. Die Meldeliste "
-                   "steht bisher nur für FM24-Spielstände zur Verfügung.")
+                   "steht für diese Version noch nicht zur Verfügung.")
                     .arg(fmDataVersion(versionId).displayName));
         } else {
             m_hint->setText(
@@ -827,7 +827,9 @@ void RegistrationPage::seedExemptSnapshots()
         QSet<QString> exempt;
         for (const Player *p : m_pool) {
             const bool wasU21 = expired.contains(p->uid);
-            if (Registration::isExempt(*p, comp)
+            if (Registration::isExempt(*p, comp,
+                                       Registration::quotaFor(comp,
+                                                              m_context.registrationSettings()))
                 || (wasU21
                     && (comp == Registration::Competition::League
                         || Registration::isClubTrained(*p))))

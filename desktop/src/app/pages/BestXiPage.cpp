@@ -449,6 +449,8 @@ void BestXiPage::rebuild()
     const Registration::Competition competition = competitionMode == kUefa
                                                       ? Registration::Competition::Uefa
                                                       : Registration::Competition::League;
+    const Registration::Quota competitionQuota =
+        Registration::quotaFor(competition, m_context.registrationSettings());
     std::vector<const Player *> registrationPool = clubAll;
     registrationPool.insert(registrationPool.end(), secondAll.begin(), secondAll.end());
     const bool restricted =
@@ -478,7 +480,7 @@ void BestXiPage::rebuild()
         for (const auto *pool : {&club, &second}) {
             for (const Player *player : *pool) {
                 const bool firstTeam = pool == &club;
-                if (firstTeam ? Registration::isEligible(*player, competition)
+                if (firstTeam ? Registration::isEligible(*player, competition, competitionQuota)
                               : Registration::isListed(*player, competition)) {
                     eligiblePlayers.push_back(player);
                 } else if (firstTeam) {

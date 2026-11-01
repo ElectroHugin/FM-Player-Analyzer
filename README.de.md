@@ -51,7 +51,7 @@ und Rolle** und baut alles Weitere darauf auf.
 | *„Wen soll ich holen?"* | Deine ganze Scouting-Datenbank, gerankt für die Rolle, die du brauchst, mit Filtern für Alter, Marktwert, Nationalität und Persönlichkeit. |
 | *„Wird aus dem Jungen ein Star?"* | Ein Talent-Score aus aktueller Stärke, verbleibenden Entwicklungsjahren, Mentalität und Persönlichkeit. |
 | *„Was soll er trainieren?"* | Die Trainingsmethoden, die seinen Rollen-Score am meisten heben, in der richtigen Reihenfolge. |
-| *„Wen melde ich?"* | Ein Meldelisten-Assistent für die Quoten der Premier League und der Champions / Europa / Conference League. |
+| *„Wen melde ich?"* | Ein Meldelisten-Assistent für Liga-Quoten (FM27: elf Ligen) und die Champions / Europa / Conference League. |
 
 > 🧮 **Das Herzstück: eine beweisbar optimale Best XI.** Startelf und B-Team
 > werden gemeinsam als Zuordnungsproblem mit der
@@ -367,8 +367,19 @@ Versionen lassen sich also ergänzen.
 Windows 10 / 11 (64-bit), dazu ein Linux-AppImage auf der Release-Seite. Kein macOS.
 
 **Meine Liga steht nicht bei den Registrierungsregeln.**
-Wähle *Standard (keine Beschränkung)*. Hinterlegt sind bisher die Premier League
-und die UEFA-Vereinswettbewerbe; die UEFA-Liste funktioniert mit jeder Liga.
+Wähle *Standard (keine Beschränkung)*. Für FM24 ist die Premier League
+hinterlegt, für FM27 elf Ligen (Bundesliga, Premier League, LaLiga, Serie A,
+Ligue 1, Liga Portugal, Super League Schweiz, Bundesliga Österreich, Russian
+Premier Liga, Ukrainian Premier League, Süper Lig, Details in
+[docs/REGISTRIERUNG-FM27.md](docs/REGISTRIERUNG-FM27.md)). Die UEFA-Liste
+funktioniert mit jeder Liga. Geprüft werden Kadergröße sowie im Land und im
+Verein ausgebildete Spieler, nicht aber Grenzen für Ausländer oder
+Nicht-EU-Spieler.
+
+**Du möchtest eine weitere Liga?** Alle Ligen kann ich nicht selbst erfassen.
+Bitte [öffne ein Issue](https://github.com/ElectroHugin/FM-Player-Analyzer/issues/new)
+mit dem Namen und dem Land der Liga und einem Screenshot ihrer *Squad Selection
+Rules* aus dem FM.
 
 **Ich habe die ältere Streamlit-Version benutzt.**
 Ein einmaliger Migrations-Assistent (Einstellungen → Datenbank →

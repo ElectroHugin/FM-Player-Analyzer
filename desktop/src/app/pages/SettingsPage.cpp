@@ -243,9 +243,12 @@ QWidget *SettingsPage::buildClubTab()
     auto *registrationHint = new QLabel(
         tr("Aktiviert die Home-Grown-/Club-Grown-/U21-Markierungen (Spieler bearbeiten, "
            "Rechtsklick → Registrierung) und den Registrierungs-Assistenten, sobald ein "
-           "Wettbewerb eine Meldeliste verlangt. 'Standard' und Bundesliga kennen keine "
-           "Beschränkung: dort sind alle Spieler spielberechtigt. 'Standard' gilt auch "
-           "für alle Ligen, deren Regeln noch nicht hinterlegt sind."),
+           "Wettbewerb eine Meldeliste verlangt. 'Standard' und Ligen mit 99 Plätzen "
+           "(Bundesliga, Ligue 1, Österreich) kennen keine Beschränkung: dort sind alle "
+           "Spieler spielberechtigt. Geprüft werden Kadergröße sowie im Land und im Verein "
+           "ausgebildete Spieler; Grenzen für Ausländer oder Nicht-EU-Spieler prüft der "
+           "Analyzer nicht. 'Standard' gilt für alle Ligen, deren Regeln noch nicht "
+           "hinterlegt sind. Wie du weitere Ligen anfragst, steht in der README."),
         m_registrationGroup);
     registrationHint->setWordWrap(true);
     registrationHint->setObjectName(QStringLiteral("kpiCaption"));

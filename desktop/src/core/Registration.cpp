@@ -12,57 +12,82 @@ namespace fm {
 
 namespace Registration {
 
+namespace {
+
+struct LeagueInfo {
+    LeagueRules rules;
+    const char *key;
+    const char *name; // proper noun, not translated
+    const char *cup;
+};
+
+const LeagueInfo kLeagues[] = {
+    {LeagueRules::Bundesliga, "bundesliga", "Bundesliga", "DFB-Pokal"},
+    {LeagueRules::PremierLeague, "premier_league", "Premier League", "FA Cup / League Cup"},
+    {LeagueRules::LaLiga, "laliga", "LaLiga", "Copa del Rey"},
+    {LeagueRules::SerieA, "serie_a", "Serie A", "Coppa Italia"},
+    {LeagueRules::Ligue1, "ligue_1", "Ligue 1", "Coupe de France"},
+    {LeagueRules::LigaPortugal, "liga_portugal", "Liga Portugal", "Taça de Portugal"},
+    {LeagueRules::SwissSuperLeague, "swiss_super_league", "Super League (Schweiz)",
+     "Schweizer Cup"},
+    {LeagueRules::AustrianBundesliga, "austrian_bundesliga", "Bundesliga (Österreich)",
+     "ÖFB-Cup"},
+    {LeagueRules::RussianPremierLiga, "russian_premier_liga", "Russian Premier Liga",
+     "Russian Cup"},
+    {LeagueRules::UkrainianPremierLeague, "ukrainian_premier_league",
+     "Ukrainian Premier League", "Ukrainian Cup"},
+    {LeagueRules::SuperLig, "super_lig", "Süper Lig", "Türkiye Kupası"},
+};
+
+const LeagueInfo *infoOf(LeagueRules rules)
+{
+    for (const LeagueInfo &info : kLeagues) {
+        if (info.rules == rules)
+            return &info;
+    }
+    return nullptr;
+}
+
+} // namespace
+
 QString leagueRulesKey(LeagueRules rules)
 {
-    switch (rules) {
-    case LeagueRules::Bundesliga:
-        return QStringLiteral("bundesliga");
-    case LeagueRules::PremierLeague:
-        return QStringLiteral("premier_league");
-    case LeagueRules::None:
-        break;
-    }
-    return QStringLiteral("none");
+    const LeagueInfo *info = infoOf(rules);
+    return info ? QString::fromLatin1(info->key) : QStringLiteral("none");
 }
 
 LeagueRules leagueRulesFromKey(const QString &key)
 {
-    if (key == QLatin1String("bundesliga"))
-        return LeagueRules::Bundesliga;
-    if (key == QLatin1String("premier_league"))
-        return LeagueRules::PremierLeague;
+    for (const LeagueInfo &info : kLeagues) {
+        if (key == QLatin1String(info.key))
+            return info.rules;
+    }
     return LeagueRules::None;
 }
 
 QString leagueDisplayName(LeagueRules rules)
 {
-    switch (rules) {
-    case LeagueRules::Bundesliga:
-        return QStringLiteral("Bundesliga");
-    case LeagueRules::PremierLeague:
-        return QStringLiteral("Premier League");
-    case LeagueRules::None:
-        break;
-    }
-    return {};
+    const LeagueInfo *info = infoOf(rules);
+    return info ? QString::fromUtf8(info->name) : QString();
 }
 
 QString cupDisplayName(LeagueRules rules)
 {
-    switch (rules) {
-    case LeagueRules::Bundesliga:
-        return QStringLiteral("DFB-Pokal");
-    case LeagueRules::PremierLeague:
-        return QStringLiteral("FA Cup / League Cup");
-    case LeagueRules::None:
-        break;
-    }
-    return {};
+    const LeagueInfo *info = infoOf(rules);
+    return info ? QString::fromUtf8(info->cup) : QString();
 }
 
 bool restrictsSquad(LeagueRules rules)
 {
-    return rules == LeagueRules::PremierLeague;
+    switch (rules) {
+    case LeagueRules::None:
+    case LeagueRules::Bundesliga:
+    case LeagueRules::Ligue1:
+    case LeagueRules::AustrianBundesliga:
+        return false; // 99 places, no quota the analyzer can check
+    default:
+        return true;
+    }
 }
 
 // Only versions whose registry entry models the rules. fmDataVersion() falls
@@ -75,9 +100,14 @@ static bool modelsRegistrationRules(const QString &fmVersionId)
 
 QList<LeagueRules> leagueRulesFor(const QString &fmVersionId)
 {
-    if (modelsRegistrationRules(fmVersionId))
+    if (!modelsRegistrationRules(fmVersionId))
+        return {};
+    if (fmVersionId == QLatin1String("fm24"))
         return {LeagueRules::Bundesliga, LeagueRules::PremierLeague};
-    return {};
+    QList<LeagueRules> all;
+    for (const LeagueInfo &info : kLeagues)
+        all.append(info.rules);
+    return all;
 }
 
 bool uefaRulesFor(const QString &fmVersionId)
@@ -156,11 +186,43 @@ Quota quotaFor(Competition competition, const Settings &settings)
         quota.exemptKeepersCount = false;
         return quota;
     }
+    // Size and the trained-in-country (home-grown) / club-trained minimums
+    // become nested maximums: e.g. 25 places with at least 8 home-grown, 4 of
+    // them club-trained = at most 17 non-home-grown and 21 non-club-trained.
+    const auto set = [&quota](int size, int minHomeGrown, int minClubTrained, bool u21Exempt) {
+        quota.maxSize = size;
+        quota.maxNonHomeGrown = size - minHomeGrown;
+        quota.maxNonClubTrained = size - minClubTrained;
+        quota.u21Exempt = u21Exempt;
+    };
     switch (settings.league) {
     case LeagueRules::PremierLeague:
-        // 25-man list, at most 17 non-home-grown; no club-trained quota.
+        set(25, 8, 0, true); // U21 need no slot
+        break;
+    case LeagueRules::LaLiga:
+        set(25, 0, 0, false); // non-EU limit and U19-EU exemption not modelled
+        break;
+    case LeagueRules::SerieA:
+        set(25, 8, 4, false);
+        break;
+    case LeagueRules::LigaPortugal:
+        set(68, 10, 0, false); // clubs with a B team; without one not documented
+        break;
+    case LeagueRules::SwissSuperLeague:
+        set(25, 8, 0, false); // non-EU limit not modelled
+        break;
+    case LeagueRules::RussianPremierLiga:
+        set(55, 8, 4, false); // foreigner limit and domestic U18 exemption not modelled
+        break;
+    case LeagueRules::UkrainianPremierLeague:
+        set(25, 8, 4, true); // U21 need no slot
+        break;
+    case LeagueRules::SuperLig:
+        set(28, 0, 0, false); // foreigner limits and domestic U21 exemption not modelled
         break;
     case LeagueRules::Bundesliga:
+    case LeagueRules::Ligue1:
+    case LeagueRules::AustrianBundesliga:
     case LeagueRules::None:
         // No list is built for these (see restrictsSquad); no quota applies.
         quota.maxNonHomeGrown = quota.maxSize;
@@ -173,6 +235,13 @@ Quota quotaFor(Competition competition, const Settings &settings)
 bool isExempt(const Player &player, Competition competition)
 {
     return competition == Competition::Uefa ? isListBEligible(player) : isU21(player);
+}
+
+bool isExempt(const Player &player, Competition competition, const Quota &quota)
+{
+    if (competition == Competition::Uefa)
+        return isListBEligible(player);
+    return quota.u21Exempt && isU21(player);
 }
 
 Category category(const Player &player)
@@ -228,7 +297,7 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
 
     std::vector<const RankedPlayer *> candidates;
     for (const RankedPlayer &entry : ranked) {
-        if (isExempt(*entry.player, competition)) {
+        if (isExempt(*entry.player, competition, quota)) {
             result.exempt.push_back(entry);
             if (quota.exemptKeepersCount && entry.player->isGoalkeeper())
                 ++result.goalkeepers;
@@ -307,6 +376,11 @@ bool isListed(const Player &player, Competition competition)
 bool isEligible(const Player &player, Competition competition)
 {
     return isListed(player, competition) || isExempt(player, competition);
+}
+
+bool isEligible(const Player &player, Competition competition, const Quota &quota)
+{
+    return isListed(player, competition) || isExempt(player, competition, quota);
 }
 
 bool hasSavedList(const std::vector<const Player *> &players, Competition competition)

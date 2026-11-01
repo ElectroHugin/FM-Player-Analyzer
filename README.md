@@ -50,7 +50,7 @@ and builds everything else on top of it.
 | *"Who should I sign?"* | Your whole scouting database ranked for the role you need, with filters for age, value, nationality and personality. |
 | *"Is this kid a future star?"* | A talent score that combines current ability, years left to develop, mentality and personality. |
 | *"What should he train?"* | The training methods that raise his rating for his role the most, in order. |
-| *"Who do I register?"* | A squad-list assistant for the Premier League and the Champions / Europa / Conference League quotas. |
+| *"Who do I register?"* | A squad-list assistant for league quotas (FM27: eleven leagues) and the Champions / Europa / Conference League. |
 
 > 🧮 **The heart of it: a provably optimal Best XI.** Starting XI and B-team
 > are solved together as an assignment problem with the
@@ -352,8 +352,18 @@ versions can be added.
 Windows 10 / 11 (64-bit), plus a Linux AppImage on the releases page. No macOS.
 
 **I play in a league that is not listed in the registration rules.**
-Choose *Default (no restriction)*. Premier League and the UEFA club competitions
-are modelled today; the UEFA list works with any league.
+Choose *Default (no restriction)*. For FM24 the Premier League is modelled; for
+FM27 eleven leagues are (Bundesliga, Premier League, LaLiga, Serie A, Ligue 1,
+Liga Portugal, Swiss Super League, Austrian Bundesliga, Russian Premier Liga,
+Ukrainian Premier League, Süper Lig, details in
+[docs/REGISTRIERUNG-FM27.md](docs/REGISTRIERUNG-FM27.md)). The UEFA list works
+with any league. Checked are squad size and players trained in the country and
+at the club; limits for foreign or non-EU players are not.
+
+**Want another league?** I cannot collect every league's rules myself. Please
+[open an issue](https://github.com/ElectroHugin/FM-Player-Analyzer/issues/new)
+with the league's name and country and a screenshot of its *Squad Selection
+Rules* screen in FM.
 
 **I used the older Streamlit version.**
 A one-time migration wizard (Settings → Database → *Import legacy database*)
