@@ -30,13 +30,17 @@
 #include "pages/TransfersPage.h"
 #include "theming/ThemeManager.h"
 #include "widgets/BusyProgressDialog.h"
-#include "widgets/PlayerSearchModel.h"
+#include "widgets/CommandPalette.h"
+#include "widgets/LineIcons.h"
+#include "core/Utils.h"
 #include "core/Database.h"
 #include "core/Version.h"
 
 #include <QAction>
 #include <QTimer>
 #include <QActionGroup>
+#include <QButtonGroup>
+#include <QSet>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QComboBox>
@@ -133,11 +137,33 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     m_headerLogo->setFixedHeight(34);
     m_headerLogo->hide();
     m_headerIdentity = new QLabel(headerBar);
-    m_headerSave = new QLabel(headerBar);
-    m_headerSave->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    m_breadcrumb = new QLabel(headerBar);
+    m_breadcrumb->setObjectName(QStringLiteral("breadcrumb"));
     headerLayout->addWidget(m_headerLogo);
-    headerLayout->addWidget(m_headerIdentity, 1);
-    headerLayout->addWidget(m_headerSave);
+    headerLayout->addWidget(m_headerIdentity);
+    headerLayout->addWidget(m_breadcrumb, 1);
+
+    // Ctrl+K: search players, pages and actions in one field.
+    m_paletteButton = new QPushButton(headerBar);
+    m_paletteButton->setObjectName(QStringLiteral("paletteButton"));
+    m_paletteButton->setText(tr("Spieler, Seiten, Aktionen …    Strg+K"));
+    m_paletteButton->setCursor(Qt::PointingHandCursor);
+    m_paletteButton->setFocusPolicy(Qt::NoFocus);
+    connect(m_paletteButton, &QPushButton::clicked, this, &MainWindow::openPalette);
+    headerLayout->addWidget(m_paletteButton);
+    auto *paletteShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_K), this);
+    connect(paletteShortcut, &QShortcut::activated, this, &MainWindow::openPalette);
+    auto *findShortcut = new QShortcut(QKeySequence::Find, this);
+    connect(findShortcut, &QShortcut::activated, this, &MainWindow::openPalette);
+
+    m_importButton = new QPushButton(tr("Importieren"), headerBar);
+    m_importButton->setObjectName(QStringLiteral("headerPrimary"));
+    m_importButton->setToolTip(tr("FM-Export importieren (Strg+I). Du kannst eine Datei auch "
+                                  "einfach ins Fenster ziehen."));
+    m_importButton->setCursor(Qt::PointingHandCursor);
+    m_importButton->setFocusPolicy(Qt::NoFocus);
+    connect(m_importButton, &QPushButton::clicked, this, [this] { importExport({}); });
+    headerLayout->addWidget(m_importButton);
     contentColumn->addWidget(headerBar);
 
     // Tabs of the active sidebar group (Navigation): one per page of the group.
@@ -160,12 +186,47 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
             navigateTo(m_tabBar->tabData(index).toString());
     });
 
+    // Non-blocking hints (e.g. outdated ratings) instead of pop-ups.
+    m_noticeBar = new QFrame(central);
+    m_noticeBar->setObjectName(QStringLiteral("noticeBar"));
+    auto *noticeLayout = new QHBoxLayout(m_noticeBar);
+    noticeLayout->setContentsMargins(14, 8, 10, 8);
+    noticeLayout->setSpacing(10);
+    m_noticeText = new QLabel(m_noticeBar);
+    m_noticeText->setWordWrap(true);
+    noticeLayout->addWidget(m_noticeText, 1);
+    m_noticeLater = new QPushButton(tr("Später"), m_noticeBar);
+    m_noticeAction = new QPushButton(m_noticeBar);
+    m_noticeAction->setObjectName(QStringLiteral("headerPrimary"));
+    noticeLayout->addWidget(m_noticeLater);
+    noticeLayout->addWidget(m_noticeAction);
+    connect(m_noticeLater, &QPushButton::clicked, m_noticeBar, &QWidget::hide);
+    connect(m_noticeAction, &QPushButton::clicked, this, [this] {
+        m_noticeBar->hide();
+        if (m_noticeCallback)
+            m_noticeCallback();
+    });
+    m_noticeBar->hide();
+    auto *noticeWrap = new QHBoxLayout;
+    noticeWrap->setContentsMargins(18, 10, 18, 0);
+    noticeWrap->addWidget(m_noticeBar);
+    contentColumn->addLayout(noticeWrap);
+
     m_stack = new QStackedWidget(central);
     contentColumn->addWidget(m_stack, 1);
+
+    m_toast = new QLabel(central);
+    m_toast->setObjectName(QStringLiteral("toast"));
+    m_toast->setWordWrap(true);
+    m_toast->setMaximumWidth(460);
+    m_toast->hide();
+    m_toastTimer.setSingleShot(true);
+    connect(&m_toastTimer, &QTimer::timeout, m_toast, &QWidget::hide);
+
+    m_palette = new CommandPalette(this);
     rootLayout->addLayout(contentColumn, 1);
     setCentralWidget(central);
 
-    statusBar()->showMessage(tr("Bereit"));
     updateDbLabel();
     updateHeader();
 
@@ -174,6 +235,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         updateDbLabel();
         updateHeader();
         m_searchModelDirty = true;
+        m_noticeBar->hide(); // hints belong to the previous save
         for (PageBase *page : std::as_const(m_pages))
             page->refresh();
         // Another database: earlier steps (e.g. a player's profile) may not
@@ -207,11 +269,9 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
             QMessageBox::critical(this, tr("Neuberechnung"), result.error);
             return;
         }
-        statusBar()->showMessage(tr("DWRS neu berechnet: %1 Bewertungen, %2 geänderte "
-                                    "Einträge gespeichert.")
-                                     .arg(result.computed)
-                                     .arg(result.inserted),
-                                 10000);
+        showToast(tr("DWRS neu berechnet: %1 Bewertungen, %2 geänderte Einträge gespeichert.")
+                      .arg(result.computed)
+                      .arg(result.inserted));
         // Every stored rating now follows the current formula.
         m_context.database().setSetting(QStringLiteral("dwrs_scheme"),
                                         QString::number(kDwrsSchemeVersion));
@@ -236,15 +296,10 @@ void MainWindow::offerRecalcIfOutdated()
         db.setSetting(QStringLiteral("dwrs_scheme"), QString::number(kDwrsSchemeVersion));
         return;
     }
-    const auto answer = QMessageBox::question(
-        this, tr("DWRS-Berechnung verbessert"),
-        tr("Die DWRS-Berechnung wurde verbessert: Torhüter werden jetzt nach allen "
-           "Torwart-Attributen bewertet, einschließlich der Schlüssel- und bevorzugten "
-           "Attribute ihrer Rolle.\n\nDie gespeicherten Bewertungen dieses Spielstands "
-           "stammen noch aus der alten Berechnung. Jetzt alle neu berechnen?\n\n"
-           "(Später jederzeit unter Einstellungen → DWRS-Gewichte möglich.)"));
-    if (answer == QMessageBox::Yes)
-        startDwrsRecalc();
+    showNotice(tr("Die DWRS-Berechnung wurde verbessert (Torhüter werden nach allen "
+                  "Torwart-Attributen bewertet). Die Bewertungen dieses Spielstands stammen "
+                  "noch aus der alten Berechnung."),
+               tr("Jetzt neu berechnen"), [this] { startDwrsRecalc(); });
 }
 
 void MainWindow::buildSidebar()
@@ -272,53 +327,40 @@ void MainWindow::buildSidebar()
     layout->addWidget(m_saveSwitcher);
     layout->addSpacing(2);
 
-    m_modeCombo = new QComboBox(sidebar);
-    m_modeCombo->addItem(tr("🏟 Vereins-Management"), QStringLiteral("club"));
-    m_modeCombo->addItem(tr("🌍 National-Management"), QStringLiteral("national"));
-    layout->addWidget(m_modeCombo);
-    connect(m_modeCombo, &QComboBox::currentIndexChanged, this, [this] {
+    // Club / national management as a two-way switch.
+    auto *segmented = new QFrame(sidebar);
+    segmented->setObjectName(QStringLiteral("segmented"));
+    auto *segLayout = new QHBoxLayout(segmented);
+    segLayout->setContentsMargins(3, 3, 3, 3);
+    segLayout->setSpacing(3);
+    m_modeGroup = new QButtonGroup(this);
+    m_modeGroup->setExclusive(true);
+    for (const auto &[id, label] : {std::pair{0, tr("Verein")}, std::pair{1, tr("Nationalteam")}}) {
+        auto *button = new QPushButton(label, segmented);
+        button->setObjectName(QStringLiteral("segmentButton"));
+        button->setCheckable(true);
+        button->setChecked(id == 0);
+        button->setCursor(Qt::PointingHandCursor);
+        button->setFocusPolicy(Qt::NoFocus);
+        m_modeGroup->addButton(button, id);
+        segLayout->addWidget(button, 1);
+    }
+    layout->addWidget(segmented);
+    connect(m_modeGroup, &QButtonGroup::idClicked, this, [this](int id) {
+        if ((id == 1) == m_context.nationalUiMode())
+            return;
         // Pages shared between both modes (Taktik-Explorer, Profil, …) scope
         // their pools by this flag; the menu decides which pages are shown.
-        m_context.setNationalUiMode(m_modeCombo->currentData().toString()
-                                    == QLatin1String("national"));
+        m_context.setNationalUiMode(id == 1);
         rebuildMenu(); // navigates to the mode's first page (a history step)
         updateHeader();
     });
-
-    m_searchEdit = new QLineEdit(sidebar);
-    m_searchEdit->setPlaceholderText(tr("🔎 Spieler suchen…"));
-    m_searchEdit->setClearButtonEnabled(true);
-    layout->addWidget(m_searchEdit);
-
-    m_searchModel = new PlayerSearchModel(this);
-    m_searchCompleter = new FoldingCompleter(m_searchModel, this);
-    m_searchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-    m_searchCompleter->setFilterMode(Qt::MatchContains);
-    m_searchCompleter->setCompletionMode(QCompleter::PopupCompletion);
-    m_searchCompleter->setCompletionRole(PlayerSearchKeyRole); // fold umlauts/accents
-    m_searchCompleter->setMaxVisibleItems(12);
-    m_searchEdit->setCompleter(m_searchCompleter);
-
-    // The model over 80k players is built lazily on first keystroke and
-    // invalidated whenever the store reloads.
-    connect(m_searchEdit, &QLineEdit::textEdited, this, [this] {
-        if (m_searchModelDirty)
-            rebuildSearchModel();
-    });
-    connect(m_searchCompleter, QOverload<const QModelIndex &>::of(&QCompleter::activated),
-            this, [this](const QModelIndex &index) {
-                const QString uid = index.data(Qt::UserRole).toString();
-                if (uid.isEmpty())
-                    return;
-                m_context.setPendingProfileUid(uid);
-                m_searchEdit->clear();
-                navigateTo(QStringLiteral("player_profile"));
-            });
 
     m_menu = new QListWidget(sidebar);
     m_menu->setCursor(Qt::PointingHandCursor);
     m_menu->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     m_menu->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_menu->setIconSize(QSize(18, 18));
     layout->addWidget(m_menu, 1);
     connect(m_menu, &QListWidget::currentItemChanged, this,
             [this](QListWidgetItem *current, QListWidgetItem *) {
@@ -331,9 +373,16 @@ void MainWindow::buildSidebar()
                     navigateToGroup(groupId);
             });
 
-    auto *themeButton = new QPushButton(tr("🌓 Tag/Nacht wechseln"), sidebar);
-    layout->addWidget(themeButton);
-    connect(themeButton, &QPushButton::clicked, this, [this] { m_theme.toggle(); });
+    auto *foot = new QHBoxLayout;
+    foot->setSpacing(4);
+    auto *themeButton = new QToolButton(sidebar);
+    themeButton->setObjectName(QStringLiteral("sidebarIconButton"));
+    themeButton->setToolTip(tr("Tag/Nacht wechseln"));
+    themeButton->setCursor(Qt::PointingHandCursor);
+    themeButton->setFocusPolicy(Qt::NoFocus);
+    themeButton->setIconSize(QSize(18, 18));
+    connect(themeButton, &QToolButton::clicked, this, [this] { m_theme.toggle(); });
+    foot->addWidget(themeButton);
 
     // Quiet author/version credit at the foot of the sidebar; opens Help → About.
     auto *credit = new QToolButton(sidebar);
@@ -349,17 +398,27 @@ void MainWindow::buildSidebar()
         muted.setAlphaF(0.60);
         credit->setIcon(AboutDialog::brandMark(muted, 16, devicePixelRatioF()));
     };
-    tintCredit();
-    connect(&m_theme, &ThemeManager::themeChanged, credit, tintCredit);
+    const auto tintIcons = [this, themeButton, tintCredit] {
+        tintCredit();
+        QColor muted = m_theme.text();
+        muted.setAlphaF(0.70);
+        themeButton->setIcon(LineIcons::icon(QStringLiteral("moon"), muted, 18,
+                                             devicePixelRatioF()));
+        updateMenuIcons();
+    };
+    tintIcons();
+    connect(&m_theme, &ThemeManager::themeChanged, this, tintIcons);
     connect(credit, &QToolButton::clicked, this, &MainWindow::showAbout);
-    layout->addWidget(credit, 0, Qt::AlignHCenter);
+    foot->addStretch(1);
+    foot->addWidget(credit);
+    layout->addLayout(foot);
 
     rebuildMenu();
 }
 
 void MainWindow::rebuildMenu(bool selectFirst)
 {
-    const bool national = m_modeCombo->currentData().toString() == QLatin1String("national");
+    const bool national = m_context.nationalUiMode();
 
     m_menu->blockSignals(true);
     m_menu->clear();
@@ -381,9 +440,11 @@ void MainWindow::rebuildMenu(bool selectFirst)
         for (const Navigation::Group &group : section.groups) {
             auto *item = new QListWidgetItem(group.label, m_menu);
             item->setData(Qt::UserRole, group.id);
+            item->setData(Qt::UserRole + 1, LineIcons::forGroup(group.id));
         }
     }
 
+    updateMenuIcons();
     m_menu->blockSignals(false);
     if (selectFirst)
         m_menu->setCurrentRow(1); // first real entry below the section header
@@ -539,6 +600,7 @@ void MainWindow::navigateTo(const QString &pageId)
     // Keep sidebar and tabs in sync (e.g. jump from the player search).
     selectMenuEntry(pageId);
     updateTabBar(pageId);
+    updateBreadcrumb(pageId);
 
     page->refresh();
 
@@ -663,11 +725,7 @@ void MainWindow::goToHistory(int index)
     // The step may belong to the other management mode: switch the sidebar
     // without letting the mode switch navigate on its own.
     if (entry.national != m_context.nationalUiMode()) {
-        const int modeIndex = m_modeCombo->findData(entry.national ? QStringLiteral("national")
-                                                                   : QStringLiteral("club"));
-        m_modeCombo->blockSignals(true);
-        m_modeCombo->setCurrentIndex(modeIndex);
-        m_modeCombo->blockSignals(false);
+        m_modeGroup->button(entry.national ? 1 : 0)->setChecked(true);
         m_context.setNationalUiMode(entry.national);
         rebuildMenu(/*selectFirst*/ false);
         updateHeader();
@@ -803,27 +861,150 @@ void MainWindow::updateHeader()
         identity = QStringLiteral("<b style='font-size:13pt;'>%1</b>")
                        .arg(display.toHtmlEscaped());
         if (!stadium.isEmpty())
-            identity += QStringLiteral(" &nbsp;<span>🏟️ %1</span>").arg(stadium.toHtmlEscaped());
+            m_headerIdentity->setToolTip(stadium);
     }
     m_headerIdentity->setText(identity);
-    m_headerSave->setText(tr("Aktiver Spielstand: <b>%1.db</b> · %2 Spieler")
-                              .arg(m_context.currentDbName())
-                              .arg(m_context.store().size()));
+}
+
+void MainWindow::updateMenuIcons()
+{
+    if (!m_menu)
+        return;
+    QColor color = m_theme.text();
+    color.setAlphaF(0.80);
+    for (int i = 0; i < m_menu->count(); ++i) {
+        QListWidgetItem *item = m_menu->item(i);
+        const QString name = item->data(Qt::UserRole + 1).toString();
+        if (!name.isEmpty())
+            item->setIcon(LineIcons::icon(name, color, 18, devicePixelRatioF()));
+    }
+}
+
+void MainWindow::updateBreadcrumb(const QString &pageId)
+{
+    QString text;
+    if (const Navigation::Group *group = Navigation::findGroup(m_sidebar, pageId)) {
+        text = group->label;
+        if (group->tabs.size() > 1) {
+            for (const Navigation::Tab &tab : group->tabs) {
+                if (tab.pageId == pageId)
+                    text += QStringLiteral("  ›  ") + tab.label;
+            }
+        }
+    }
+    m_breadcrumb->setText(text.isEmpty() ? QString() : QStringLiteral("›  ") + text);
+}
+
+void MainWindow::showNotice(const QString &text, const QString &actionLabel,
+                            std::function<void()> action)
+{
+    m_noticeText->setText(text);
+    m_noticeAction->setText(actionLabel);
+    m_noticeAction->setVisible(!actionLabel.isEmpty());
+    m_noticeCallback = std::move(action);
+    m_noticeBar->show();
+}
+
+void MainWindow::showToast(const QString &text)
+{
+    m_toast->setText(text);
+    m_toast->adjustSize();
+    const QWidget *area = centralWidget();
+    m_toast->move(area->width() - m_toast->width() - 24, area->height() - m_toast->height() - 24);
+    m_toast->raise();
+    m_toast->show();
+    m_toastTimer.start(5000);
 }
 
 void MainWindow::rebuildSearchModel()
 {
     const auto &players = m_context.store().players();
-    std::vector<PlayerSearchModel::Entry> entries;
-    entries.reserve(players.size());
-    for (const Player &player : players) {
-        entries.push_back(
-            {QStringLiteral("%1 — %2 · %3").arg(player.name, player.club, player.positionRaw),
-             player.uid,
-             foldForSearch(player.name + QLatin1Char(' ') + player.club)});
-    }
-    m_searchModel->setEntries(std::move(entries));
+    m_searchKeys.clear();
+    m_searchKeys.reserve(players.size());
+    for (const Player &player : players)
+        m_searchKeys.append(foldForSearch(player.name + QLatin1Char(' ') + player.club));
     m_searchModelDirty = false;
+}
+
+void MainWindow::openPalette()
+{
+    if (QApplication::activeModalWidget())
+        return;
+    QList<CommandPalette::Entry> entries;
+    QColor color = m_theme.text();
+    color.setAlphaF(0.75);
+    const qreal dpr = devicePixelRatioF();
+
+    // Pages of both modes; switching mode where needed.
+    const bool registration = m_context.registrationSettings().active();
+    QSet<QString> seen;
+    for (const bool national : {m_context.nationalUiMode(), !m_context.nationalUiMode()}) {
+        for (const Navigation::Section &section : Navigation::sidebar(national, registration)) {
+            for (const Navigation::Group &group : section.groups) {
+                for (const Navigation::Tab &tab : group.tabs) {
+                    if (seen.contains(tab.pageId))
+                        continue;
+                    seen.insert(tab.pageId);
+                    const QString title =
+                        group.tabs.size() > 1 ? tab.label : group.label;
+                    QString detail = group.tabs.size() > 1 ? group.label : QString();
+                    if (national != m_context.nationalUiMode())
+                        detail = national ? tr("Nationalteam") : tr("Verein");
+                    entries.append({tr("Seiten"),
+                                    LineIcons::icon(LineIcons::forGroup(group.id), color, 18, dpr),
+                                    title, detail,
+                                    foldForSearch(title + QLatin1Char(' ') + group.label),
+                                    [this, national, pageId = tab.pageId] {
+                                        if (national != m_context.nationalUiMode()) {
+                                            m_modeGroup->button(national ? 1 : 0)->setChecked(true);
+                                            m_context.setNationalUiMode(national);
+                                            rebuildMenu(/*selectFirst*/ false);
+                                            updateHeader();
+                                        }
+                                        navigateTo(pageId);
+                                    }});
+                }
+            }
+        }
+    }
+    const auto action = [&](const QString &icon, const QString &title, const QString &shortcut,
+                            std::function<void()> run) {
+        entries.append({tr("Aktionen"), LineIcons::icon(icon, color, 18, dpr), title, shortcut,
+                        foldForSearch(title), std::move(run)});
+    };
+    action(QStringLiteral("upload"), tr("Export importieren …"), tr("Strg+I"),
+           [this] { importExport({}); });
+    action(QStringLiteral("folder"), tr("Spielstand wechseln …"), tr("Strg+O"),
+           [this] { switchSave(); });
+    action(QStringLiteral("plus"), tr("Neuer Spielstand …"), tr("Strg+N"), [this] { newSave(); });
+    action(QStringLiteral("trend"), tr("DWRS neu berechnen"), {}, [this] { startDwrsRecalc(); });
+    action(QStringLiteral("moon"), tr("Tag/Nacht wechseln"), {}, [this] { m_theme.toggle(); });
+    m_palette->setEntries(std::move(entries));
+
+    m_palette->setPlayerSearch([this, color, dpr](const QString &query) {
+        if (m_searchModelDirty)
+            rebuildSearchModel();
+        QList<CommandPalette::Entry> found;
+        const auto &players = m_context.store().players();
+        const QIcon icon = LineIcons::icon(QStringLiteral("person"), color, 18, dpr);
+        // Name starts with the query first, then anywhere.
+        for (const bool prefixPass : {true, false}) {
+            for (qsizetype i = 0; i < m_searchKeys.size() && found.size() < 8; ++i) {
+                const bool prefix = m_searchKeys.at(i).startsWith(query);
+                if (prefix != prefixPass || (!prefix && !m_searchKeys.at(i).contains(query)))
+                    continue;
+                const Player &player = players.at(static_cast<size_t>(i));
+                found.append({tr("Spieler"), icon, player.name,
+                              QStringLiteral("%1 · %2").arg(player.club, player.positionRaw), {},
+                              [this, uid = player.uid] {
+                                  m_context.setPendingProfileUid(uid);
+                                  navigateTo(QStringLiteral("player_profile"));
+                              }});
+            }
+        }
+        return found;
+    });
+    m_palette->popup();
 }
 
 void MainWindow::updateDbLabel()

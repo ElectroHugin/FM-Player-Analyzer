@@ -202,7 +202,7 @@ QSplitter::handle { background: transparent; }
 QFrame#sidebar { background-color: %SIDEBAR%; border-right: 1px solid %BORDER%; }
 QFrame#sidebar QListWidget { background: transparent; border: none; outline: none; }
 QFrame#sidebar QListWidget::item {
-    padding: 9px 12px; margin: 1px 6px; border-radius: 8px; color: %FG%; }
+    padding: 8px 10px; margin: 1px 6px; border-radius: 8px; color: %FG%; }
 QFrame#sidebar QListWidget::item:hover:!selected { background-color: %SIDEBARHOVER%; }
 QFrame#sidebar QListWidget::item:selected {
     background-color: %PRIMARY%; color: %SIDEBARSELTEXT%; font-weight: 600; }
@@ -339,6 +339,36 @@ QScrollBar::handle:horizontal { background: %BORDER%; border-radius: 4px; min-wi
 QScrollBar::handle:horizontal:hover { background: %MUTED%; }
 QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; }
 QScrollBar::add-page, QScrollBar::sub-page { background: transparent; }
+
+/* ===== Main window frame ===== */
+QFrame#headerBar QLabel#breadcrumb { color: %MUTED%; font-weight: 600; padding-left: 4px; }
+QFrame#headerBar QPushButton#paletteButton {
+    text-align: left; color: %MUTED%; min-width: 240px; padding: 6px 12px; font-weight: 400; }
+QFrame#headerBar QPushButton#paletteButton:hover { color: %FG%; }
+QPushButton#headerPrimary {
+    background-color: %PRIMARY%; color: %PRIMARYTEXT%; border-color: %PRIMARY%; font-weight: 600; }
+QPushButton#headerPrimary:hover { background-color: %PRIMARYHOVER%; border-color: %PRIMARYHOVER%; }
+QFrame#noticeBar {
+    background-color: rgba(240, 176, 74, 0.14); border: 1px solid rgba(240, 176, 74, 0.45);
+    border-radius: 10px; }
+QLabel#toast {
+    background-color: %SURFACE%; color: %FG%; border: 1px solid %INTERACTIVE%;
+    border-radius: 10px; padding: 10px 14px; }
+QFrame#segmented { background-color: %HOVER%; border-radius: 9px; }
+QFrame#segmented QPushButton#segmentButton {
+    background: transparent; border: none; border-radius: 7px; padding: 5px 6px;
+    color: %MUTED%; font-weight: 600; min-height: 18px; }
+QFrame#segmented QPushButton#segmentButton:hover { color: %FG%; }
+QFrame#segmented QPushButton#segmentButton:checked {
+    background-color: %SURFACE%; color: %FG%; border: 1px solid %BORDER%; }
+QFrame#sidebar QToolButton#sidebarIconButton {
+    background: transparent; border: 1px solid transparent; border-radius: 7px; padding: 5px; }
+QFrame#sidebar QToolButton#sidebarIconButton:hover { background-color: %HOVER%; border-color: %BORDER%; }
+QDialog#commandPalette {
+    background-color: %SURFACE%; border: 1px solid %INTERACTIVE%; border-radius: 12px; }
+QListWidget#paletteList { background: transparent; border: none; }
+QListWidget#paletteList::item { padding: 7px 10px; border-radius: 7px; }
+QListWidget#paletteList::item:disabled { color: %MUTED%; padding: 10px 10px 2px 10px; }
 
 /* ===== Start screen / new save wizard ===== */
 QFrame#startHero { background-color: %SIDEBAR%; border-right: 1px solid %BORDER%; }

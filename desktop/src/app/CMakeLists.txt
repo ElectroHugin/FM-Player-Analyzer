@@ -77,7 +77,11 @@ add_executable(fmplayeranalyzer
     theming/ThemeManager.cpp
     theming/ThemePresets.h
     theming/ThemePresets.cpp
+    widgets/CommandPalette.h
+    widgets/CommandPalette.cpp
     widgets/DropZone.h
+    widgets/LineIcons.h
+    widgets/LineIcons.cpp
     widgets/DropZone.cpp
     widgets/BusyProgressDialog.h
     widgets/BusyProgressDialog.cpp
