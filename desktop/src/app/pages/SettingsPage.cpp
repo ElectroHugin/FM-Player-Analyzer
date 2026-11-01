@@ -178,7 +178,41 @@ QWidget *SettingsPage::buildClubTab()
         QDesktopServices::openUrl(QUrl::fromLocalFile(currentImportDir()));
     });
     // FM27 has no export of its own: the shipped view filters (.fmf) give the
-    // game's list screens the columns the analyzer reads.
+    // game's list screens the columns the analyzer reads. The standard tactic
+    // ships as a game file too, so it can be tried in FM27 itself.
+    const auto installIntoFm27 = [this](const QString &resourceDir, const QString &gameFolder,
+                                        const QString &title) {
+        const QString target =
+            QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
+                .filePath(QStringLiteral("Sports Interactive/Football Manager 27/") + gameFolder);
+        if (!QDir().mkpath(target)) {
+            QMessageBox::warning(this, title,
+                                 tr("Der Ordner %1 konnte nicht angelegt werden.")
+                                     .arg(QDir::toNativeSeparators(target)));
+            return;
+        }
+        QStringList copied;
+        const QDir source(resourceDir);
+        for (const QString &name : source.entryList({QStringLiteral("*.fmf")}, QDir::Files)) {
+            const QString dest = QDir(target).filePath(name);
+            QFile::remove(dest);
+            if (QFile::copy(source.filePath(name), dest)) {
+                QFile::setPermissions(dest, QFile::ReadOwner | QFile::WriteOwner
+                                                | QFile::ReadUser | QFile::WriteUser);
+                copied << name;
+            }
+        }
+        if (copied.isEmpty()) {
+            QMessageBox::warning(this, title,
+                                 tr("Es konnte keine Datei nach %1 kopiert werden.")
+                                     .arg(QDir::toNativeSeparators(target)));
+            return;
+        }
+        QMessageBox::information(this, title,
+                                 tr("%n Datei(en) nach %1 kopiert:\n%2", nullptr, copied.size())
+                                     .arg(QDir::toNativeSeparators(target),
+                                          copied.join(QLatin1Char('\n'))));
+    };
     auto *viewsButton = new QPushButton(tr("Ansichten für FM27 installieren"));
     auto *viewsHint = new QLabel(
         tr("Kopiert die mitgelieferten Ansichten (Kader, Spielerdatenbank, Shortlist) in "
@@ -190,38 +224,24 @@ QWidget *SettingsPage::buildClubTab()
     viewsHint->setObjectName(QStringLiteral("kpiCaption"));
     versionForm->addRow(tr("FM27-Ansichten:"), viewsButton);
     versionForm->addRow(viewsHint);
-    connect(viewsButton, &QPushButton::clicked, this, [this] {
-        const QString target =
-            QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
-                .filePath(QStringLiteral("Sports Interactive/Football Manager 27/views"));
-        if (!QDir().mkpath(target)) {
-            QMessageBox::warning(this, tr("FM27-Ansichten"),
-                                 tr("Der Ordner %1 konnte nicht angelegt werden.")
-                                     .arg(QDir::toNativeSeparators(target)));
-            return;
-        }
-        QStringList copied;
-        const QDir source(QStringLiteral(":/views"));
-        for (const QString &name : source.entryList({QStringLiteral("*.fmf")}, QDir::Files)) {
-            const QString dest = QDir(target).filePath(name);
-            QFile::remove(dest);
-            if (QFile::copy(source.filePath(name), dest)) {
-                QFile::setPermissions(dest, QFile::ReadOwner | QFile::WriteOwner
-                                                | QFile::ReadUser | QFile::WriteUser);
-                copied << name;
-            }
-        }
-        if (copied.isEmpty()) {
-            QMessageBox::warning(this, tr("FM27-Ansichten"),
-                                 tr("Es konnte keine Ansicht nach %1 kopiert werden.")
-                                     .arg(QDir::toNativeSeparators(target)));
-            return;
-        }
-        QMessageBox::information(this, tr("FM27-Ansichten"),
-                                 tr("%1 Ansichten nach %2 kopiert:\n%3")
-                                     .arg(copied.size())
-                                     .arg(QDir::toNativeSeparators(target),
-                                          copied.join(QLatin1Char('\n'))));
+    connect(viewsButton, &QPushButton::clicked, this, [this, installIntoFm27] {
+        installIntoFm27(QStringLiteral(":/views"), QStringLiteral("views"),
+                        tr("FM27-Ansichten"));
+    });
+    auto *tacticButton = new QPushButton(tr("Standardtaktik für FM27 installieren"));
+    auto *tacticHint = new QLabel(
+        tr("Kopiert die mitgelieferte Standardtaktik (4-2-3-1 - Bavarian Blitz) als "
+           "Spieldatei in den Ordner 'tactics' von Football Manager 27. Im Spiel lädst du "
+           "sie dann in der Taktik-Ansicht über das Laden einer Taktik. Im Analyzer ist sie "
+           "schon eingebaut; eigene Taktiken legst du im Taktik-Editor an."),
+        versionGroup);
+    tacticHint->setWordWrap(true);
+    tacticHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(tr("FM27-Taktik:"), tacticButton);
+    versionForm->addRow(tacticHint);
+    connect(tacticButton, &QPushButton::clicked, this, [this, installIntoFm27] {
+        installIntoFm27(QStringLiteral(":/tactics"), QStringLiteral("tactics"),
+                        tr("FM27-Taktik"));
     });
     layout->addWidget(versionGroup);
 

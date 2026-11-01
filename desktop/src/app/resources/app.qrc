@@ -11,6 +11,12 @@
         <file alias="FM27-PlayerAnalyzer-Shortlist-Standard.fmf">views/FM27-PlayerAnalyzer-Shortlist-Standard.fmf</file>
         <file alias="FM27-PlayerAnalyzer-Squad-Standard.fmf">views/FM27-PlayerAnalyzer-Squad-Standard.fmf</file>
     </qresource>
+    <!-- Edmund's standard tactic as a game file (.fmf) for import into FM27
+         (Settings -> Club, installer task). The analyzer's own copy of it is
+         "4-2-3-1 - Bavarian Blitz" in definitions_fm27.json. -->
+    <qresource prefix="/tactics">
+        <file alias="FM27-PlayerAnalyzer-Tactic-4-2-3-1-Bavarian-Blitz.fmf">tactics/FM27-PlayerAnalyzer-Tactic-4-2-3-1-Bavarian-Blitz.fmf</file>
+    </qresource>
     <qresource prefix="/app">
         <file>favicon.ico</file>
         <file>electrohugin.png</file>
