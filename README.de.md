@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚽ FM Player Analyzer
+<img src="docs/branding/banner.png" alt="FM Player Analyzer" width="100%">
 
 ### Schluss mit Raten, wer spielen soll.
 
