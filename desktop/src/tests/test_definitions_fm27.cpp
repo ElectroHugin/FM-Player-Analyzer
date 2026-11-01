@@ -1,6 +1,11 @@
 #include "core/Attributes.h"
 #include "core/Definitions.h"
 #include "core/PitchGeometry.h"
+#include "core/AppConfig.h"
+#include "core/RoleAssignment.h"
+#include "core/SquadBuilder.h"
+
+#include <QTemporaryDir>
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -174,6 +179,61 @@ private slots:
             QStringLiteral("Meine Taktik")));
         // Same revision again: nothing to do.
         QVERIFY(!Definitions::applyShippedUpdate(shipped, user));
+    }
+
+    void blitzPicksTheBayernSquad()
+    {
+        // Edmund's squad as FM27 lists it, roles auto-assigned on import
+        // (every role of every position, both phases), every role rated.
+        const QList<QPair<QString, QString>> squad = {
+            {QStringLiteral("Urbig"), QStringLiteral("GK")},
+            {QStringLiteral("Neuer"), QStringLiteral("GK")},
+            {QStringLiteral("Tah"), QStringLiteral("D (C)")},
+            {QStringLiteral("Kim"), QStringLiteral("D (C)")},
+            {QStringLiteral("Upamecano"), QStringLiteral("D (C)")},
+            {QStringLiteral("Brown"), QStringLiteral("D (L), WB (L)")},
+            {QStringLiteral("Boey"), QStringLiteral("D (R), WB (R)")},
+            {QStringLiteral("Kimmich"), QStringLiteral("D (R), DM, M (C)")},
+            {QStringLiteral("Pavlovic"), QStringLiteral("DM, M (C)")},
+            {QStringLiteral("Diaz"), QStringLiteral("M (L), AM (L), ST (C)")},
+            {QStringLiteral("Musiala"), QStringLiteral("AM (C)")},
+            {QStringLiteral("Olise"), QStringLiteral("M (R), AM (R)")},
+            {QStringLiteral("Kane"), QStringLiteral("ST (C)")},
+        };
+        std::vector<Player> players;
+        RoleAssignment::DefaultRoles defaults(m_defs);
+        RoleRatings ratings;
+        int n = 0;
+        for (const auto &[name, positions] : squad) {
+            Player p;
+            p.uid = name;
+            p.name = name;
+            p.age = 25;
+            p.positionRaw = positions;
+            p.assignedRoles = defaults.forPosition(positions);
+            QVERIFY2(!p.assignedRoles.isEmpty(), qPrintable(name));
+            for (const QString &role : p.assignedRoles)
+                ratings[role][name] = 50 + (++n % 30);
+            players.push_back(p);
+        }
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+        QTemporaryDir dir;
+        AppConfig config(dir.filePath(QStringLiteral("config.ini")));
+        SquadBuilder builder(m_defs, config);
+        const QString tactic = QStringLiteral("4-2-3-1 - Bavarian Blitz");
+        const TwoPhaseSquadResult r =
+            builder.calculateTwoPhaseSquad(pool, tactic, ratings, 0.5);
+        int filled = 0;
+        for (const XiCell &cell : r.startingIp)
+            filled += cell.isFilled();
+        QCOMPARE(filled, 11);
+        const SquadResult folded = builder.calculateSquadForTactic(pool, tactic, ratings);
+        filled = 0;
+        for (const XiCell &cell : folded.startingXi)
+            filled += cell.isFilled();
+        QCOMPARE(filled, 11);
     }
 };
 
