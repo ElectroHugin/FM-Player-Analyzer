@@ -20,6 +20,8 @@ struct SaveInfo {
     int playerCount = -1; // -1 = could not be read
     QDateTime lastOpened; // invalid = never opened by this version
     QDateTime modified;   // file modification time
+    QDateTime lastImport; // last successful import (invalid = unknown / none)
+    QString tactic;       // favorite tactic of the save, may be empty
 };
 
 namespace SaveLibrary {
@@ -30,8 +32,12 @@ SaveInfo current(AppContext &context);
 // All saves in the data directory, most recently used first.
 QList<SaveInfo> scan(AppContext &context);
 
-// Club logo of the save, or a colored disc with the club's initials.
+// Club logo of the save, or a disc in the club's colors (known club themes,
+// else a stable muted hue) with the club's initials ("FCB", "BHA").
 QPixmap crest(const SaveInfo &save, int size, qreal dpr);
+
+// "FCB" for "FC Bayern München", "BHA" for "Brighton & Hove Albion".
+QString clubInitials(const QString &name);
 
 // Short label of an FM version for chips ("FM27").
 QString shortVersionLabel(const QString &fmVersionId);

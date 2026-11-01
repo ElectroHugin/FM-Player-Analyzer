@@ -39,7 +39,7 @@ Section adminSection()
 
 } // namespace
 
-QList<Section> sidebar(bool national, bool registrationActive)
+QList<Section> sidebar(bool national)
 {
     if (national) {
         return {
@@ -71,17 +71,6 @@ QList<Section> sidebar(bool national, bool registrationActive)
         };
     }
 
-    QList<Tab> transferTabs = {
-        {QCoreApplication::translate("Navigation", "Kaufberatung"),
-         QStringLiteral("signing_advisor")},
-        {QCoreApplication::translate("Navigation", "Leihen & Verkäufe"),
-         QStringLiteral("transfers")},
-    };
-    if (registrationActive) {
-        transferTabs.append(
-            {QCoreApplication::translate("Navigation", "Meldeliste"), QStringLiteral("registration")});
-    }
-
     return {
         {QCoreApplication::translate("Navigation", "VEREIN"),
          {{QStringLiteral("overview"),
@@ -101,7 +90,12 @@ QList<Section> sidebar(bool national, bool registrationActive)
            {{QCoreApplication::translate("Navigation", "Matrix"),
              QStringLiteral("squad_matrix")},
             {QCoreApplication::translate("Navigation", "Rollen-Abdeckung"),
-             QStringLiteral("role_analysis")}}},
+             QStringLiteral("role_analysis")},
+            // Always listed: hiding it while no rules are active made it
+            // impossible to find; the page itself explains how to enable it.
+            {QCoreApplication::translate("Navigation", "Meldeliste"),
+             QStringLiteral("registration"),
+             QCoreApplication::translate("Navigation", "Registrierung Kaderliste Kadermeldung")}}},
           {QStringLiteral("development"),
            QCoreApplication::translate("Navigation", "Training & Entwicklung"),
            {{QCoreApplication::translate("Navigation", "Entwicklung"),
@@ -110,7 +104,10 @@ QList<Section> sidebar(bool national, bool registrationActive)
              QStringLiteral("training_plan")}}},
           {QStringLiteral("transfers"),
            QCoreApplication::translate("Navigation", "Transfers"),
-           transferTabs}}},
+           {{QCoreApplication::translate("Navigation", "Kaufberatung"),
+             QStringLiteral("signing_advisor")},
+            {QCoreApplication::translate("Navigation", "Leihen & Verkäufe"),
+             QStringLiteral("transfers")}}}}},
         {QCoreApplication::translate("Navigation", "SCOUTING"),
          {{QStringLiteral("scouting"),
            QCoreApplication::translate("Navigation", "Scouting"),

@@ -78,6 +78,28 @@ QPainterPath pathFor(const QString &name)
         p.moveTo(5, 21); p.lineTo(5, 4);
         p.moveTo(5, 4.5); p.cubicTo(9, 2.5, 12, 6.5, 19, 4.5);
         p.lineTo(19, 13); p.cubicTo(12, 15, 9, 11, 5, 13);
+    } else if (name == QLatin1String("globe")) {
+        p.addEllipse(QPointF(12, 12), 8.5, 8.5);
+        p.addEllipse(QPointF(12, 12), 3.8, 8.5);
+        p.moveTo(3.5, 12); p.lineTo(20.5, 12);
+    } else if (name == QLatin1String("help")) {
+        p.addEllipse(QPointF(12, 12), 8.5, 8.5);
+        p.moveTo(9.5, 9.5); p.cubicTo(9.5, 6.5, 14.5, 6.5, 14.5, 9.5);
+        p.cubicTo(14.5, 11.5, 12, 11.5, 12, 14);
+        p.addEllipse(QPointF(12, 17), 0.4, 0.4);
+    } else if (name == QLatin1String("sun")) {
+        p.addEllipse(QPointF(12, 12), 4, 4);
+        for (int i = 0; i < 8; ++i) {
+            QTransform t;
+            t.translate(12, 12);
+            t.rotate(i * 45);
+            p.moveTo(t.map(QPointF(0, -6.5)));
+            p.lineTo(t.map(QPointF(0, -8.5)));
+        }
+    } else if (name == QLatin1String("migrate")) {
+        p.addRoundedRect(3.5, 4, 17, 6, 1.5, 1.5);
+        p.addRoundedRect(3.5, 14, 17, 6, 1.5, 1.5);
+        p.moveTo(12, 10); p.lineTo(12, 14);
     } else if (name == QLatin1String("plus")) {
         p.moveTo(12, 5); p.lineTo(12, 19); p.moveTo(5, 12); p.lineTo(19, 12);
     } else if (name == QLatin1String("folder")) {

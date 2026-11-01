@@ -82,9 +82,14 @@ NewSaveWizard::NewSaveWizard(AppContext &context, QWidget *parent)
             line->setMinimumWidth(30);
             steps->addWidget(line, 1);
         }
-        auto *label = new QLabel(QStringLiteral("%1  %2").arg(i + 1).arg(stepNames.at(i)), this);
+        auto *number = new QLabel(QString::number(i + 1), this);
+        number->setObjectName(QStringLiteral("stepNumber"));
+        number->setAlignment(Qt::AlignCenter);
+        auto *label = new QLabel(stepNames.at(i), this);
         label->setObjectName(QStringLiteral("stepLabel"));
+        m_stepLabels.append(number);
         m_stepLabels.append(label);
+        steps->addWidget(number);
         steps->addWidget(label);
     }
     layout->addLayout(steps);
@@ -161,11 +166,22 @@ QWidget *NewSaveWizard::buildNamePage()
         QStringList formats;
         for (const QString &format : version.importFormats)
             formats << format.toUpper();
-        auto *card = new QPushButton(
-            QStringLiteral("%1\n%2")
-                .arg(version.displayName,
-                     tr("Import: %1").arg(formats.join(QStringLiteral(", ")))),
-            page);
+        auto *card = new QPushButton(page);
+        auto *cardLayout = new QVBoxLayout(card);
+        cardLayout->setContentsMargins(16, 12, 16, 12);
+        cardLayout->setSpacing(2);
+        auto *cardTitle = new QLabel(SaveLibrary::shortVersionLabel(version.id), card);
+        cardTitle->setObjectName(QStringLiteral("choiceTitle"));
+        auto *cardText = new QLabel(
+            QStringLiteral("%1\n%2").arg(version.displayName,
+                                          tr("Import: %1").arg(formats.join(QStringLiteral(", ")))),
+            card);
+        cardText->setObjectName(QStringLiteral("kpiCaption"));
+        cardLayout->addWidget(cardTitle);
+        cardLayout->addWidget(cardText);
+        for (QLabel *label : {cardTitle, cardText})
+            label->setAttribute(Qt::WA_TransparentForMouseEvents);
+        card->setMinimumHeight(cardLayout->sizeHint().height());
         card->setObjectName(QStringLiteral("choiceCard"));
         card->setCheckable(true);
         card->setProperty("versionId", version.id);
@@ -261,9 +277,10 @@ void NewSaveWizard::goTo(int step)
     m_pages->setCurrentIndex(step);
     for (int i = 0; i < m_stepLabels.size(); ++i) {
         QLabel *label = m_stepLabels.at(i);
-        label->setProperty("state", i < step    ? QStringLiteral("done")
-                                    : i == step ? QStringLiteral("current")
-                                                : QStringLiteral("todo"));
+        const int labelStep = i / 2; // number + name per step
+        label->setProperty("state", labelStep < step    ? QStringLiteral("done")
+                                    : labelStep == step ? QStringLiteral("current")
+                                                        : QStringLiteral("todo"));
         label->style()->unpolish(label);
         label->style()->polish(label);
     }

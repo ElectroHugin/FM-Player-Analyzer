@@ -3,6 +3,8 @@
 #include "AppContext.h"
 #include "core/Constants.h"
 #include "core/Database.h"
+#include "core/Utils.h"
+#include "theming/ThemePresets.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -46,7 +48,8 @@ void readInfo(SaveInfo &info)
             QSqlQuery settings(db);
             if (settings.exec(QStringLiteral("SELECT key, value FROM settings WHERE key IN "
                                              "('fm_version','user_club','full_club_name',"
-                                             "'club_logo_path')"))) {
+                                             "'club_logo_path','last_import_at',"
+                                             "'favorite_tactic_1')"))) {
                 QString userClub;
                 QString fullName;
                 while (settings.next()) {
@@ -60,6 +63,10 @@ void readInfo(SaveInfo &info)
                         fullName = value;
                     else if (key == QLatin1String("club_logo_path"))
                         info.logoPath = value;
+                    else if (key == QLatin1String("last_import_at"))
+                        info.lastImport = QDateTime::fromString(value, Qt::ISODate);
+                    else if (key == QLatin1String("favorite_tactic_1"))
+                        info.tactic = value;
                 }
                 info.clubName = fullName.isEmpty() ? userClub : fullName;
             }
@@ -91,6 +98,9 @@ SaveInfo current(AppContext &context)
     info.clubName = fullName.isEmpty() ? context.userClub() : fullName;
     info.logoPath = context.database().setting(QStringLiteral("club_logo_path"));
     info.playerCount = static_cast<int>(context.store().size());
+    info.tactic = context.database().setting(QStringLiteral("favorite_tactic_1"));
+    info.lastImport = QDateTime::fromString(
+        context.database().setting(QStringLiteral("last_import_at")), Qt::ISODate);
     return info;
 }
 
@@ -140,30 +150,62 @@ QPixmap crest(const SaveInfo &save, int size, qreal dpr)
     }
 
     const QString source = save.clubName.isEmpty() ? save.name : save.clubName;
-    QString initials;
-    for (const QString &word : source.split(QLatin1Char(' '), Qt::SkipEmptyParts)) {
-        if (word.at(0).isLetterOrNumber())
-            initials += word.at(0).toUpper();
-        if (initials.size() == 3)
-            break;
+    const QString initials = save.clubName.isEmpty() ? QStringLiteral("?") : clubInitials(source);
+    // Club colors where a club theme matches ("FC Bayern" ~ "FC Bayern München"),
+    // else a stable muted hue per name so saves are told apart at a glance.
+    static const QList<QColor> palette = {
+        QColor(0x25, 0x63, 0xeb), QColor(0x0d, 0x94, 0x88), QColor(0x16, 0xa3, 0x4a),
+        QColor(0xea, 0x58, 0x0c), QColor(0xdc, 0x26, 0x26), QColor(0xdb, 0x27, 0x77),
+        QColor(0x4f, 0x46, 0xe5), QColor(0x47, 0x55, 0x69)};
+    QColor fill = save.clubName.isEmpty()
+                      ? QColor(0x55, 0x50, 0x63)
+                      : palette.at(int(qHash(source.toLower()) % palette.size()));
+    if (!save.clubName.isEmpty()) {
+        const QString club = save.clubName.toLower();
+        for (const ClubTheme &theme : clubThemes()) {
+            const QString themeName = theme.displayName.toLower();
+            if (theme.id != QLatin1String("neutral")
+                && (themeName.startsWith(club) || club.startsWith(themeName))) {
+                fill = QColor(theme.primary);
+                break;
+            }
+        }
     }
-    if (initials.isEmpty())
-        initials = QStringLiteral("?");
-    // Stable, muted hue per name so saves are told apart at a glance.
-    const int hue = int(qHash(source) % 360);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(save.clubName.isEmpty() ? QColor(0x55, 0x50, 0x63)
-                                             : QColor::fromHsl(hue, 120, 92));
+    painter.setBrush(fill);
     painter.drawEllipse(QRectF(0, 0, size, size));
     QFont font = painter.font();
     font.setBold(true);
-    font.setPointSizeF(initials.size() > 2 ? 8.0 : 9.5);
+    font.setPixelSize(qMax(7, qRound(size * (initials.size() > 2 ? 0.30 : 0.36))));
     painter.setFont(font);
-    painter.setPen(Qt::white);
+    painter.setPen(contrastRatio(fill, QColorConstants::White) >= 3.0 ? QColorConstants::White
+                                                                      : QColorConstants::Black);
     painter.drawText(QRectF(0, 0, size, size), Qt::AlignCenter, initials);
     return pixmap;
 }
 
+
+QString clubInitials(const QString &name)
+{
+    // Letter-only words; a short leading abbreviation ("FC", "SC", "VfB")
+    // is kept whole, then the first letter of each following word.
+    QStringList words;
+    for (const QString &word : name.split(QLatin1Char(' '), Qt::SkipEmptyParts)) {
+        if (word.at(0).isLetter())
+            words << word;
+    }
+    if (words.isEmpty())
+        return QStringLiteral("?");
+    QString initials;
+    int start = 0;
+    if (words.size() > 1 && words.first().size() <= 3) {
+        initials = words.first().toUpper();
+        start = 1;
+    }
+    for (int i = start; i < words.size() && initials.size() < 3; ++i)
+        initials += words.at(i).at(0).toUpper();
+    return initials.left(3);
+}
 
 QString shortVersionLabel(const QString &fmVersionId)
 {

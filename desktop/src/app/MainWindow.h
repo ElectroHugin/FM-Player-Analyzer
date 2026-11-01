@@ -64,7 +64,6 @@ private:
     // false when the history restores a page itself.
     void rebuildMenu(bool selectFirst = true);
     // Rebuilds the sidebar (e.g. a page appeared) and keeps the current page selected.
-    void refreshMenuKeepingPage();
     // Highlights the sidebar group of pageId without triggering navigation.
     void selectMenuEntry(const QString &pageId);
     // Tabs of pageId's sidebar group above the page; hidden for a single page.
@@ -143,7 +142,6 @@ private:
 
     QStringList m_searchKeys; // folded "name club" per store row, for the palette
     bool m_searchModelDirty = true;
-    bool m_registrationInMenu = false; // sidebar shows the registration page
 };
 
 } // namespace fm

@@ -8,7 +8,8 @@ namespace fm {
 
 // Small built-in line icons (drawn with QPainter, so they work offline and
 // follow the theme color). Names: home, pitch, list, trend, transfer, search,
-// person, grid, gear, moon, upload, flag, people, plus, folder.
+// person, grid, gear, moon, sun, upload, flag, people, plus, folder, globe,
+// help, migrate.
 namespace LineIcons {
 
 QIcon icon(const QString &name, const QColor &color, int size = 18, qreal dpr = 1.0);

@@ -85,16 +85,16 @@ const QHash<QString, QString> &themeDefaults()
         {QStringLiteral("night_surface_color"), QStringLiteral("#343434")},
         {QStringLiteral("night_sidebar_color"), QStringLiteral("#1f1f1f")},
         {QStringLiteral("night_header_color"), QStringLiteral("#2d2d2d")},
-        {QStringLiteral("night_primary_color"), QStringLiteral("#3d7dff")},
-        {QStringLiteral("night_interactive_color"), QStringLiteral("#3d7dff")},
+        {QStringLiteral("night_primary_color"), QStringLiteral("#6a1bf5")},
+        {QStringLiteral("night_interactive_color"), QStringLiteral("#9d6bff")},
         {QStringLiteral("night_text_color"), QStringLiteral("#F5F5F5")},
         // --- Day ---
         {QStringLiteral("day_background_color"), QStringLiteral("#F0F2F6")},
         {QStringLiteral("day_surface_color"), QStringLiteral("#FFFFFF")},
         {QStringLiteral("day_sidebar_color"), QStringLiteral("#E7E9ED")},
         {QStringLiteral("day_header_color"), QStringLiteral("#FFFFFF")},
-        {QStringLiteral("day_primary_color"), QStringLiteral("#0069b3")},
-        {QStringLiteral("day_interactive_color"), QStringLiteral("#0069b3")},
+        {QStringLiteral("day_primary_color"), QStringLiteral("#6a1bf5")},
+        {QStringLiteral("day_interactive_color"), QStringLiteral("#9d6bff")},
         {QStringLiteral("day_text_color"), QStringLiteral("#31333F")},
     };
     return defaults;
@@ -205,6 +205,19 @@ void AppConfig::ensureDefaults()
     const auto &theme = themeDefaults();
     for (auto it = theme.constBegin(); it != theme.constEnd(); ++it)
         ensure(QStringLiteral("ThemeSettings/") + it.key(), it.value());
+    // v1.7: the neutral (club-free) look moved from blue to the logo purple.
+    // Only untouched blue defaults follow; club themes and custom colors stay.
+    if (s.value(QStringLiteral("ThemeSettings/theme_preset")).toString()
+            == QLatin1String("neutral")
+        && s.value(QStringLiteral("ThemeSettings/night_primary_color")).toString().toLower()
+               == QLatin1String("#3d7dff")) {
+        for (const QString &key :
+             {QStringLiteral("night_primary_color"), QStringLiteral("night_interactive_color"),
+              QStringLiteral("day_primary_color"), QStringLiteral("day_interactive_color")}) {
+            s.setValue(QStringLiteral("ThemeSettings/") + key, theme.value(key));
+        }
+        modified = true;
+    }
 
     if (modified)
         s.sync();

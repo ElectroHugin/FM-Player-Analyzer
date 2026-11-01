@@ -273,14 +273,14 @@
     <message>
         <location filename="../src/app/Navigation.cpp" line="48"/>
         <location filename="../src/app/Navigation.cpp" line="49"/>
-        <location filename="../src/app/Navigation.cpp" line="88"/>
-        <location filename="../src/app/Navigation.cpp" line="89"/>
+        <location filename="../src/app/Navigation.cpp" line="77"/>
+        <location filename="../src/app/Navigation.cpp" line="78"/>
         <source>Übersicht</source>
         <translation>Overview</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="52"/>
-        <location filename="../src/app/Navigation.cpp" line="100"/>
+        <location filename="../src/app/Navigation.cpp" line="89"/>
         <source>Kader</source>
         <translation>Squad</translation>
     </message>
@@ -296,14 +296,14 @@
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="57"/>
-        <location filename="../src/app/Navigation.cpp" line="101"/>
-        <location filename="../src/app/Navigation.cpp" line="117"/>
+        <location filename="../src/app/Navigation.cpp" line="90"/>
+        <location filename="../src/app/Navigation.cpp" line="114"/>
         <source>Matrix</source>
         <translation>Matrix</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="60"/>
-        <location filename="../src/app/Navigation.cpp" line="92"/>
+        <location filename="../src/app/Navigation.cpp" line="81"/>
         <source>Aufstellung</source>
         <translation>Line-up</translation>
     </message>
@@ -314,81 +314,86 @@
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="63"/>
-        <location filename="../src/app/Navigation.cpp" line="97"/>
+        <location filename="../src/app/Navigation.cpp" line="86"/>
         <source>Taktik-Vergleich</source>
         <translation>Tactic Comparison</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="66"/>
         <location filename="../src/app/Navigation.cpp" line="67"/>
-        <location filename="../src/app/Navigation.cpp" line="107"/>
+        <location filename="../src/app/Navigation.cpp" line="101"/>
         <source>Entwicklung</source>
         <translation>Development</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="75"/>
+        <location filename="../src/app/Navigation.cpp" line="107"/>
         <source>Kaufberatung</source>
         <translation>Signing Advisor</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="77"/>
+        <location filename="../src/app/Navigation.cpp" line="109"/>
         <source>Leihen &amp; Verkäufe</source>
         <translation>Loans &amp; Sales</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="82"/>
+        <location filename="../src/app/Navigation.cpp" line="96"/>
         <source>Meldeliste</source>
         <translation>Squad List</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="86"/>
+        <location filename="../src/app/Navigation.cpp" line="75"/>
         <source>VEREIN</source>
         <translation>CLUB</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="93"/>
+        <location filename="../src/app/Navigation.cpp" line="82"/>
         <source>Startelf &amp; B-Team</source>
         <translation>Starting XI &amp; B-Team</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="95"/>
+        <location filename="../src/app/Navigation.cpp" line="84"/>
         <source>Jugend &amp; Zweitteam</source>
         <translation>Youth &amp; Second Team</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="103"/>
+        <location filename="../src/app/Navigation.cpp" line="92"/>
         <source>Rollen-Abdeckung</source>
         <translation>Role Coverage</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="106"/>
+        <location filename="../src/app/Navigation.cpp" line="100"/>
         <source>Training &amp; Entwicklung</source>
         <translation>Training &amp; Development</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="109"/>
+        <location filename="../src/app/Navigation.cpp" line="103"/>
         <source>Trainingsplan</source>
         <translation>Training Plan</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="112"/>
+        <location filename="../src/app/Navigation.cpp" line="106"/>
         <source>Transfers</source>
         <translation>Transfers</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="114"/>
+        <location filename="../src/app/Navigation.cpp" line="111"/>
         <source>SCOUTING</source>
         <translation>SCOUTING</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="116"/>
+        <location filename="../src/app/Navigation.cpp" line="113"/>
         <source>Scouting</source>
         <translation>Scouting</translation>
     </message>
     <message>
-        <location filename="../src/app/Navigation.cpp" line="119"/>
+        <location filename="../src/app/Navigation.cpp" line="116"/>
         <source>Nach Rolle</source>
         <translation>By Role</translation>
+    </message>
+    <message>
+        <location filename="../src/app/Navigation.cpp" line="98"/>
+        <source>Registrierung Kaderliste Kadermeldung</source>
+        <translation>registration squad list squad registration</translation>
     </message>
 </context>
 <context>
@@ -561,52 +566,52 @@
 <context>
     <name>SaveLibrary</name>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="177"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="219"/>
         <source>Bitte einen Namen eingeben.</source>
         <translation>Please enter a name.</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="181"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="223"/>
         <source>Der Name darf diese Zeichen nicht enthalten: \ / : * ? &quot; &lt; &gt; |</source>
         <translation>The name must not contain these characters: \ / : * ? &quot; &lt; &gt; |</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="184"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="226"/>
         <source>Der Name darf nicht mit einem Punkt beginnen oder enden.</source>
         <translation>The name must not start or end with a dot.</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="186"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="228"/>
         <source>Der Name ist zu lang (höchstens 80 Zeichen).</source>
         <translation>The name is too long (80 characters at most).</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="189"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="231"/>
         <source>Ein Spielstand mit diesem Namen existiert bereits.</source>
         <translation>A save with this name already exists.</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="199"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="241"/>
         <source>Der geöffnete Spielstand kann nicht umbenannt werden. Öffne vorher einen anderen.</source>
         <translation>The open save cannot be renamed. Open another one first.</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="214"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="256"/>
         <source>Die Datei %1 konnte nicht umbenannt werden.</source>
         <translation>The file %1 could not be renamed.</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="255"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="297"/>
         <source>Der Spielstand konnte nicht kopiert werden: %1</source>
         <translation>The save could not be copied: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="263"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="305"/>
         <source>Der geöffnete Spielstand kann nicht gelöscht werden. Öffne vorher einen anderen.</source>
         <translation>The open save cannot be deleted. Open another one first.</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="271"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="313"/>
         <source>Vor dem Löschen konnte kein Backup angelegt werden, deshalb wurde nichts gelöscht.
 
 %1</source>
@@ -615,12 +620,12 @@
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="279"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="321"/>
         <source>Die Datei %1 konnte nicht gelöscht werden.</source>
         <translation>The file %1 could not be deleted.</translation>
     </message>
     <message>
-        <location filename="../src/app/SaveLibrary.cpp" line="300"/>
+        <location filename="../src/app/SaveLibrary.cpp" line="342"/>
         <source>Die Datei konnte nicht in den Datenordner kopiert werden.</source>
         <translation>The file could not be copied into the data folder.</translation>
     </message>
@@ -2136,59 +2141,59 @@ You can change the folder later in the settings.</translation>
         <translation>Home (Alt+Home)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="269"/>
+        <location filename="../src/app/MainWindow.cpp" line="267"/>
         <source>Neuberechnung</source>
         <translation>Recalculation</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="272"/>
+        <location filename="../src/app/MainWindow.cpp" line="270"/>
         <source>DWRS neu berechnet: %1 Bewertungen, %2 geänderte Einträge gespeichert.</source>
         <translation>DWRS recalculated: %1 ratings, %2 changed entries saved.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="390"/>
+        <location filename="../src/app/MainWindow.cpp" line="388"/>
         <source>v%1 · ElectroHugin</source>
         <translation>v%1 · ElectroHugin</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="391"/>
+        <location filename="../src/app/MainWindow.cpp" line="389"/>
         <source>Über %1</source>
         <translation>About %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="473"/>
+        <location filename="../src/app/MainWindow.cpp" line="469"/>
         <source>&amp;Sprache</source>
         <translation>&amp;Language</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="494"/>
+        <location filename="../src/app/MainWindow.cpp" line="490"/>
         <source>&amp;Hilfe</source>
         <translation>&amp;Help</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="495"/>
+        <location filename="../src/app/MainWindow.cpp" line="491"/>
         <source>Über %1 …</source>
         <translation>About %1…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="513"/>
+        <location filename="../src/app/MainWindow.cpp" line="509"/>
         <source>Sprache</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="514"/>
+        <location filename="../src/app/MainWindow.cpp" line="510"/>
         <source>Die Sprache wird nach einem Neustart geändert. Jetzt neu starten?</source>
         <translation>The language will change after a restart. Restart now?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="791"/>
+        <location filename="../src/app/MainWindow.cpp" line="780"/>
         <source>DWRS-Bewertungen werden neu berechnet…</source>
         <translation>Recalculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="338"/>
-        <location filename="../src/app/MainWindow.cpp" line="850"/>
-        <location filename="../src/app/MainWindow.cpp" line="952"/>
+        <location filename="../src/app/MainWindow.cpp" line="336"/>
+        <location filename="../src/app/MainWindow.cpp" line="839"/>
+        <location filename="../src/app/MainWindow.cpp" line="940"/>
         <source>Nationalteam</source>
         <translation>National Team</translation>
     </message>
@@ -2213,128 +2218,128 @@ You can change the folder later in the settings.</translation>
         <translation>Later</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="299"/>
+        <location filename="../src/app/MainWindow.cpp" line="297"/>
         <source>Die DWRS-Berechnung wurde verbessert (Torhüter werden nach allen Torwart-Attributen bewertet). Die Bewertungen dieses Spielstands stammen noch aus der alten Berechnung.</source>
         <translation>The DWRS calculation has been improved (goalkeepers are rated on all goalkeeping attributes). The ratings in this save still come from the old calculation.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="302"/>
+        <location filename="../src/app/MainWindow.cpp" line="300"/>
         <source>Jetzt neu berechnen</source>
         <translation>Recalculate now</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="323"/>
+        <location filename="../src/app/MainWindow.cpp" line="321"/>
         <source>Spielstand wechseln (Strg+O)</source>
         <translation>Switch save (Ctrl+O)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="338"/>
-        <location filename="../src/app/MainWindow.cpp" line="952"/>
+        <location filename="../src/app/MainWindow.cpp" line="336"/>
+        <location filename="../src/app/MainWindow.cpp" line="940"/>
         <source>Verein</source>
         <translation>Club</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="380"/>
-        <location filename="../src/app/MainWindow.cpp" line="981"/>
+        <location filename="../src/app/MainWindow.cpp" line="378"/>
+        <location filename="../src/app/MainWindow.cpp" line="970"/>
         <source>Tag/Nacht wechseln</source>
         <translation>Toggle day/night</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="458"/>
+        <location filename="../src/app/MainWindow.cpp" line="454"/>
         <source>&amp;Datei</source>
         <translation>&amp;File</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="459"/>
-        <location filename="../src/app/MainWindow.cpp" line="979"/>
-        <location filename="../src/app/MainWindow.cpp" line="1044"/>
+        <location filename="../src/app/MainWindow.cpp" line="455"/>
+        <location filename="../src/app/MainWindow.cpp" line="968"/>
+        <location filename="../src/app/MainWindow.cpp" line="1033"/>
         <source>Neuer Spielstand …</source>
         <translation>New save …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="462"/>
-        <location filename="../src/app/MainWindow.cpp" line="977"/>
+        <location filename="../src/app/MainWindow.cpp" line="458"/>
+        <location filename="../src/app/MainWindow.cpp" line="966"/>
         <source>Spielstand wechseln …</source>
         <translation>Switch save …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="466"/>
-        <location filename="../src/app/MainWindow.cpp" line="975"/>
+        <location filename="../src/app/MainWindow.cpp" line="462"/>
+        <location filename="../src/app/MainWindow.cpp" line="964"/>
         <source>Export importieren …</source>
         <translation>Import export …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="469"/>
+        <location filename="../src/app/MainWindow.cpp" line="465"/>
         <source>Beenden</source>
         <translation>Quit</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="860"/>
+        <location filename="../src/app/MainWindow.cpp" line="849"/>
         <source>FM Dashboard</source>
         <translation>FM Dashboard</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="953"/>
+        <location filename="../src/app/MainWindow.cpp" line="941"/>
         <source>Seiten</source>
         <translation>Pages</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="972"/>
+        <location filename="../src/app/MainWindow.cpp" line="961"/>
         <source>Aktionen</source>
         <translation>Actions</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="975"/>
+        <location filename="../src/app/MainWindow.cpp" line="964"/>
         <source>Strg+I</source>
         <translation>Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="977"/>
+        <location filename="../src/app/MainWindow.cpp" line="966"/>
         <source>Strg+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="979"/>
+        <location filename="../src/app/MainWindow.cpp" line="968"/>
         <source>Strg+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="980"/>
+        <location filename="../src/app/MainWindow.cpp" line="969"/>
         <source>DWRS neu berechnen</source>
         <translation>Recalculate DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="997"/>
+        <location filename="../src/app/MainWindow.cpp" line="986"/>
         <source>Spieler</source>
         <translation>Players</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1016"/>
+        <location filename="../src/app/MainWindow.cpp" line="1005"/>
         <source>%1 Spieler</source>
         <translation>%1 players</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1028"/>
+        <location filename="../src/app/MainWindow.cpp" line="1017"/>
         <source>Zuletzt verwendet</source>
         <translation>Recently used</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1036"/>
+        <location filename="../src/app/MainWindow.cpp" line="1025"/>
         <source>Spielstand öffnen</source>
         <translation>Open save</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1043"/>
+        <location filename="../src/app/MainWindow.cpp" line="1032"/>
         <source>Alle Spielstände …</source>
         <translation>All saves …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1063"/>
+        <location filename="../src/app/MainWindow.cpp" line="1052"/>
         <source>FM-Export (HTML oder CSV) auswählen</source>
         <translation>Select FM export (HTML or CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1064"/>
+        <location filename="../src/app/MainWindow.cpp" line="1053"/>
         <source>FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)</source>
         <translation>FM exports (*.html *.htm *.csv);;All files (*)</translation>
     </message>
@@ -3292,95 +3297,95 @@ The original file is not modified.</translation>
         <translation>Club</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="99"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="104"/>
         <source>Abbrechen</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="100"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="105"/>
         <source>Überspringen</source>
         <translation>Skip</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="101"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="273"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="278"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="106"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="290"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="295"/>
         <source>Weiter</source>
         <translation>Next</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="130"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="135"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="134"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="139"/>
         <source>z. B. Bayern 2027</source>
         <translation>e.g. Bayern 2027</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="143"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="148"/>
         <source>Nur für dich zum Wiedererkennen, z. B. Verein und Startjahr.</source>
         <translation>Just for you to recognise it, e.g. club and starting year.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="149"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="154"/>
         <source>Football-Manager-Version</source>
         <translation>Football Manager Version</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="167"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="177"/>
         <source>Import: %1</source>
         <translation>Import: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="181"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="197"/>
         <source>Warum lässt sich die Version später nicht ändern?</source>
         <translation>Why can’t the version be changed later?</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="182"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="198"/>
         <source>Rollen, Bewertungen und Verlauf eines Spielstands beziehen sich auf die Rollen seiner FM-Version. Für einen anderen Football Manager legst du deshalb einen eigenen Spielstand an. Deine bisherigen Spielstände bleiben unverändert.</source>
         <translation>A save’s roles, ratings and history refer to the roles of its FM version. For another Football Manager you therefore create a separate save. Your existing saves stay unchanged.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="198"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="214"/>
         <source>Ziehe einen Spieler-Export aus dem Football Manager hierher, zum Beispiel deinen Kader oder eine Scouting-Liste. Weitere Exporte kannst du jederzeit später importieren.</source>
         <translation>Drop a player export from Football Manager here, for example your squad or a scouting list. You can import more exports at any time later.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="210"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="278"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="226"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="295"/>
         <source>Importieren</source>
         <translation>Import</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="214"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="230"/>
         <source>Neuen Spielern automatisch passende Rollen zuweisen</source>
         <translation>Automatically assign suitable roles to new players</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="232"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="248"/>
         <source>Welchen Verein managst du?</source>
         <translation>Which club do you manage?</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="242"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="258"/>
         <source>Damit kennt der Analyzer deinen Kader: Übersicht, Best XI, Kaufberatung und Trainingsplan rechnen mit diesem Verein. Logo, Zweitteam und Nationalteam stellst du später in den Einstellungen ein.</source>
         <translation>This tells the Analyzer which squad is yours: overview, Best XI, signing advice and training plan work with this club. Set the logo, second team and national team later in the settings.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="276"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="293"/>
         <source>Später einrichten</source>
         <translation>Set up later</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="283"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="300"/>
         <source>Fertig</source>
         <translation>Done</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="355"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="372"/>
         <source>Die Datei konnte nicht importiert werden: %1</source>
         <translation>The file could not be imported: %1</translation>
     </message>
@@ -4117,446 +4122,451 @@ The original file is not modified.</translation>
 <context>
     <name>fm::RegistrationPage</name>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="750"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="768"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="773"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="781"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="761"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="779"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="784"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="792"/>
         <source>Registrierung</source>
         <translation>Registration</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="101"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="102"/>
         <source>Wettbewerb:</source>
         <translation>Competition:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="177"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="178"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="178"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="179"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="178"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="179"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="178"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="179"/>
         <source>Ausbildung</source>
         <translation>Training status</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="179"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="180"/>
         <source>Bedarf</source>
         <translation>Need</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="179"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="180"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="179"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="180"/>
         <source>Hinweis</source>
         <translation>Note</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="283"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
         <source>Champions / Europa / Conference League (Liste A)</source>
         <translation>Champions / Europa / Conference League (List A)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="300"/>
-        <source>⚠️ Keine Registrierungsregeln aktiv. Wähle sie unter Einstellungen → Verein → Registrierungsregeln.</source>
-        <translation>⚠️ No registration rules active. Choose them under Settings → Club → Registration rules.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="177"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="178"/>
         <source>Gemeldet</source>
         <translation>Registered</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="177"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="178"/>
         <source>Empfehlung</source>
         <translation>Recommendation</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="106"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="107"/>
         <source>Empfehlung übernehmen</source>
         <translation>Apply recommendation</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="95"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="96"/>
         <source>Meldeliste</source>
         <translation>Squad List</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="107"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="108"/>
         <source>Setzt die Häkchen auf den Vorschlag des Assistenten.</source>
         <translation>Sets the ticks to the assistant&apos;s proposal.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="109"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="110"/>
         <source>Meldeliste speichern</source>
         <translation>Save squad list</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="111"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="112"/>
         <source>Speichert die angehakten Spieler als gemeldete Liste dieses Wettbewerbs. Best XI nutzt sie, und spätere Änderungen (Transfers, neue Markierungen) werden sichtbar.</source>
         <translation>Saves the ticked players as this competition&apos;s registered list. Best XI uses it, and later changes (transfers, new markers) become visible.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="144"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="145"/>
         <source>Gesehen</source>
         <translation>Got it</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="146"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="147"/>
         <source>Nimmt den aktuellen Stand als neuen Vergleichspunkt, ohne die Liste zu speichern.</source>
         <translation>Takes the current state as the new reference without saving the list.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="164"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="165"/>
         <source>Setze das Häkchen bei jedem Spieler, den du im Spiel wirklich gemeldet hast, und speichere die Liste — Best XI rechnet dann mit ihr. Vorbelegt ist die Empfehlung, nach dem Speichern deine Liste. Orange markiert: Häkchen und Empfehlung weichen ab. Sortieren: Klick auf einen Spaltenkopf (Standard: Position, vom Tor zum Sturm, rechts vor links).</source>
         <translation>Tick every player you have actually registered in the game and save the list — Best XI then works with it. The ticks start as the recommendation, after saving they show your list. Orange: tick and recommendation differ. Sort: click a column header (default: position, goalkeeper to striker, right before left).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="299"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="300"/>
         <source>Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen).</source>
         <translation>Please choose your club first (Overview or Settings).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="317"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="328"/>
         <source>Pool: Erste Mannschaft + Zweitteam (%1 Spieler, ohne Retired). Rangfolge aus Startelf, B-Team und Kadertiefe von: %2. Markierungen änderst du per Rechtsklick → Registrierung — der Vorschlag rechnet sofort neu.</source>
         <translation>Pool: first team + second team (%1 players, retired excluded). Ranking from starting XI, B-team and squad depth of: %2. Change markers via right-click → Registration — the proposal recalculates immediately.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="321"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="332"/>
         <source>keine Taktik vorhanden</source>
         <translation>no tactic available</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="414"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="474"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="842"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="425"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="485"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="853"/>
         <source>Liste B</source>
         <translation>List B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="414"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="474"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="842"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="425"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="485"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="853"/>
         <source>U21</source>
         <translation>U21</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="417"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="428"/>
         <source>Im Spiel gemeldet. &apos;%1&apos; ist ohne Platz spielberechtigt.</source>
         <translation>Registered in the game. &apos;%1&apos; is eligible without a slot.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="419"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="430"/>
         <source>Torhüter (%1)</source>
         <translation>Goalkeepers (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="420"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="431"/>
         <source>Feldspieler (%1)</source>
         <translation>Outfield players (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="476"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="487"/>
         <source>Ohne Platz auf der Meldeliste spielberechtigt.</source>
         <translation>Eligible without a slot on the squad list.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="507"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="518"/>
         <source>⚠️ nicht mehr Liste B – braucht einen Platz</source>
         <translation>⚠️ no longer list B – needs a slot</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="508"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="519"/>
         <source>⚠️ kein U21 mehr – braucht einen Platz</source>
         <translation>⚠️ no longer U21 – needs a slot</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="510"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="521"/>
         <source>jetzt Liste B</source>
         <translation>now list B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="510"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="521"/>
         <source>jetzt U21</source>
         <translation>now U21</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="613"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="624"/>
         <source>&lt;b&gt;Meldeliste:&lt;/b&gt; %1 / %2</source>
         <translation>&lt;b&gt;Squad list:&lt;/b&gt; %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="615"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="626"/>
         <source>Nicht-HG %1 / %2</source>
         <translation>Non-HG %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="617"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="628"/>
         <source>Home-Grown %1</source>
         <translation>Home-grown %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="618"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="629"/>
         <source>Club-Grown %1</source>
         <translation>Club-grown %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="620"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="631"/>
         <source>Torhüter %1 (min. %2)</source>
         <translation>Goalkeepers %1 (min. %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="622"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="633"/>
         <source>&lt;b&gt;Liste B&lt;/b&gt; (ohne Platz): %1 Spieler</source>
         <translation>&lt;b&gt;List B&lt;/b&gt; (no place needed): %1 players</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="623"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="634"/>
         <source>&lt;b&gt;U21&lt;/b&gt; (ohne Platz): %1 Spieler</source>
         <translation>&lt;b&gt;U21&lt;/b&gt; (no place needed): %1 players</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="630"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="641"/>
         <source>Noch keine Meldeliste gespeichert — die Häkchen entsprechen der Empfehlung.</source>
         <translation>No squad list saved yet — the ticks match the recommendation.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="632"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="643"/>
         <source>Noch keine Meldeliste gespeichert.</source>
         <translation>No squad list saved yet.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="634"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="645"/>
         <source>Entspricht der gespeicherten Meldeliste.</source>
         <translation>Matches the saved squad list.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="660"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="671"/>
         <source>%1: Ø Startelf-DWRS %2 → %3 (%4)</source>
         <translation>%1: avg. starting XI DWRS %2 → %3 (%4)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="664"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="675"/>
         <source>keine Einbuße</source>
         <translation>no loss</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="667"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="678"/>
         <source>Kosten der Registrierung (ohne Regeln → mit Meldeliste):</source>
         <translation>Cost of registration (without rules → with squad list):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="673"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="684"/>
         <source>Keine Lieblingstaktik gesetzt — Rangfolge aus &apos;%1&apos;. Lege sie unter Einstellungen → Verein fest.</source>
         <translation>No favorite tactic set — ranking from &apos;%1&apos;. Set them under Settings → Club.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="693"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="704"/>
         <source>nur Club-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.</source>
         <translation>only club-grown players may take them, and there are no more.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="695"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="706"/>
         <source>nur Home-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.</source>
         <translation>only home-grown players may take them, and there are no more.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="697"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="708"/>
         <source>es gibt keine weiteren Spieler im Pool.</source>
         <translation>there are no more players in the pool.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="698"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="709"/>
         <source>%1 Plätze bleiben frei: %2</source>
         <translation>%1 places stay empty: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="711"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="722"/>
         <source>U21 unklar (Alter 21 oder unbekannt), zählt vorsichtshalber als nicht U21: %1. Per Rechtsklick → Registrierung festlegen.</source>
         <translation>U21 unclear (age 21 or unknown), counted as not U21 to be safe: %1. Set it via right-click → Registration.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="858"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="869"/>
         <source>&lt;b&gt;Braucht jetzt einen Platz&lt;/b&gt; (kein %1 mehr): %2</source>
         <translation>&lt;b&gt;Needs a slot now&lt;/b&gt; (no longer %1): %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="861"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="872"/>
         <source>Ohne Häkchen nicht spielberechtigt: anmelden und dafür jemand anderen streichen, oder bewusst draußen lassen.</source>
         <translation>Not eligible without a tick: register and drop someone else instead, or leave out on purpose.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="865"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="876"/>
         <source>&lt;b&gt;Jetzt ohne Platz spielberechtigt&lt;/b&gt; (%1): %2 — dadurch werden Plätze frei.</source>
         <translation>&lt;b&gt;Now eligible without a slot&lt;/b&gt; (%1): %2 — this frees up slots.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="871"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="882"/>
         <source>Die Empfehlung rechnet das schon ein. Wo Häkchen und Empfehlung auseinanderliegen, ist die Empfehlung in der Tabelle orange markiert.</source>
         <translation>The recommendation already accounts for this. Where tick and recommendation differ, the recommendation is marked orange in the table.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="873"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="884"/>
         <source>🔔 &lt;b&gt;Seit dem letzten Speichern geändert&lt;/b&gt;</source>
         <translation>🔔 &lt;b&gt;Changed since the last save&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="896"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="907"/>
         <source>Gemeldet, aber nicht empfohlen</source>
         <translation>Registered, but not recommended</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="897"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="908"/>
         <source>Empfohlen, aber nicht gemeldet</source>
         <translation>Recommended, but not registered</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="431"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="442"/>
         <source>Club-Grown</source>
         <translation>Club-grown</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="433"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="444"/>
         <source>Home-Grown</source>
         <translation>Home-grown</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="437"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="448"/>
         <source>Nicht-HG</source>
         <translation>Non-HG</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="442"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="453"/>
         <source>Startelf</source>
         <translation>Starting XI</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="444"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="455"/>
         <source>B-Team</source>
         <translation>B-team</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="446"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="457"/>
         <source>Kadertiefe</source>
         <translation>Squad depth</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="450"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="461"/>
         <source>Reserve</source>
         <translation>Reserve</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="366"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="377"/>
         <source>Nicht-HG-Quote voll</source>
         <translation>Non-HG quota full</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="368"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="379"/>
         <source>nur noch Club-Grown-Plätze frei</source>
         <translation>only club-grown places left</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="372"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="383"/>
         <source>Liste voll</source>
         <translation>List full</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="512"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="523"/>
         <source>U21 unklar</source>
         <translation>U21 unclear</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="455"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="466"/>
         <source>✅ Melden</source>
         <translation>✅ Register</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="457"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="468"/>
         <source>🆓 Liste B</source>
         <translation>🆓 List B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="457"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="468"/>
         <source>🆓 U21</source>
         <translation>🆓 U21</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="461"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="472"/>
         <source>❌ Nicht melden</source>
         <translation>❌ Leave out</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="636"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="647"/>
         <source>Ungespeicherte Änderungen gegenüber der gespeicherten Liste: &lt;b&gt;%1&lt;/b&gt; neu gemeldet, &lt;b&gt;%2&lt;/b&gt; abgemeldet.</source>
         <translation>Unsaved changes compared with the saved list: &lt;b&gt;%1&lt;/b&gt; newly registered, &lt;b&gt;%2&lt;/b&gt; deregistered.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="645"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="656"/>
         <source>Empfohlen, aber nicht gemeldet: %1</source>
         <translation>Recommended but not registered: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="647"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="658"/>
         <source>Gemeldet, aber nicht empfohlen: %1</source>
         <translation>Registered but not recommended: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="677"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="688"/>
         <source>Zu viele Spieler gemeldet: %1 (höchstens %2).</source>
         <translation>Too many players registered: %1 (at most %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="681"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="692"/>
         <source>Zu viele Nicht-Home-Grown gemeldet: %1 (höchstens %2).</source>
         <translation>Too many non-home-grown players registered: %1 (at most %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="685"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="696"/>
         <source>Zu viele Spieler ohne Club-Grown gemeldet: %1 (höchstens %2).</source>
         <translation>Too many players who are not club-grown registered: %1 (at most %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="700"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="711"/>
         <source>%1 Plätze sind noch frei.</source>
         <translation>%1 places are still free.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="703"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="714"/>
         <source>Nur %1 Torhüter gemeldet (gewünscht: %2).</source>
         <translation>Only %1 goalkeepers registered (wanted: %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="721"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="732"/>
         <source>Steht noch auf der gespeicherten Liste, braucht aber keinen Platz mehr oder ist nicht mehr im Kader — wird beim Speichern entfernt: %1</source>
         <translation>Still on the saved list but no longer needs a slot or has left the squad — removed on saving: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="751"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="762"/>
         <source>Die Auswahl verletzt die Registrierungsregeln (siehe Warnungen). Trotzdem speichern?</source>
         <translation>The selection breaks the registration rules (see warnings). Save anyway?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="769"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="780"/>
         <source>Die gespeicherte Meldeliste ist bereits aktuell.</source>
         <translation>The saved squad list is already up to date.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="782"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="793"/>
         <source>Meldeliste gespeichert (%1 Spieler).</source>
         <translation>Squad list saved (%1 players).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="304"/>
+        <source>Für %1 sind noch keine Registrierungsregeln hinterlegt. Die Meldeliste steht bisher nur für FM24-Spielstände zur Verfügung.</source>
+        <translation>No registration rules are available for %1 yet. The squad list currently works for FM24 saves only.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="309"/>
+        <source>Hier stellst du die Meldeliste für Liga und Europapokal zusammen. Schalte dazu zuerst die Registrierungsregeln ein: Einstellungen → Verein → Registrierungsregeln.</source>
+        <translation>Build your squad list for league and European competitions here. First switch on the registration rules: Settings → Club → Registration rules.</translation>
     </message>
 </context>
 <context>
@@ -6015,155 +6025,106 @@ The original file is not modified.</translation>
 <context>
     <name>fm::StartScreen</name>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="46"/>
+        <location filename="../src/app/StartScreen.cpp" line="49"/>
         <source>heute, %1</source>
         <translation>today, %1</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="48"/>
+        <location filename="../src/app/StartScreen.cpp" line="51"/>
         <source>gestern, %1</source>
         <translation>yesterday, %1</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="60"/>
+        <location filename="../src/app/StartScreen.cpp" line="82"/>
         <source>Spielstand wechseln</source>
         <translation>Switch save</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="91"/>
-        <source>Version %1</source>
-        <translation>Version %1</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="106"/>
-        <source>＋  Neuer Spielstand</source>
-        <translation>＋  New save</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="107"/>
-        <source>Name, FM-Version, erster Import und Verein (Strg+N)</source>
-        <translation>Name, FM version, first import and club (Ctrl+N)</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="109"/>
+        <location filename="../src/app/StartScreen.cpp" line="162"/>
         <source>Spielstand-Datei öffnen …</source>
         <translation>Open save file …</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="110"/>
-        <source>Eine .db-Datei aus einem anderen Ordner oder Backup übernehmen</source>
-        <translation>Bring in a .db file from another folder or a backup</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="113"/>
-        <source>Alte Version übernehmen …</source>
-        <translation>Import old version …</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="114"/>
-        <source>Datenbank und Einstellungen der früheren Streamlit-Version importieren</source>
-        <translation>Import the database and settings of the former Streamlit version</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="144"/>
-        <location filename="../src/app/StartScreen.cpp" line="505"/>
+        <location filename="../src/app/StartScreen.cpp" line="202"/>
+        <location filename="../src/app/StartScreen.cpp" line="605"/>
         <source>Sprache</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="149"/>
-        <source>◐ Tag/Nacht</source>
-        <translation>◐ Day/Night</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="166"/>
+        <location filename="../src/app/StartScreen.cpp" line="252"/>
         <source>Zuletzt verwendet</source>
         <translation>Recently used</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="171"/>
+        <location filename="../src/app/StartScreen.cpp" line="257"/>
         <source>Spielstand suchen</source>
         <translation>Search saves</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="208"/>
+        <location filename="../src/app/StartScreen.cpp" line="294"/>
         <source>Beim Start immer den zuletzt verwendeten Spielstand öffnen</source>
         <translation>Always open the last used save at startup</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="211"/>
+        <location filename="../src/app/StartScreen.cpp" line="297"/>
         <source>Der Startbildschirm wird dann übersprungen. Mit gedrückter Umschalttaste beim Start erscheint er trotzdem. Abschaltbar in Einstellungen → Datenbank.</source>
         <translation>The start screen is then skipped. Holding Shift at startup still shows it. Can be turned off in Settings → Database.</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="218"/>
+        <location filename="../src/app/StartScreen.cpp" line="311"/>
         <source>Schließen</source>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="223"/>
-        <location filename="../src/app/StartScreen.cpp" line="386"/>
+        <location filename="../src/app/StartScreen.cpp" line="316"/>
+        <location filename="../src/app/StartScreen.cpp" line="486"/>
         <source>Öffnen</source>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="256"/>
+        <location filename="../src/app/StartScreen.cpp" line="349"/>
         <source>geöffnet</source>
         <translation>open</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="264"/>
+        <location filename="../src/app/StartScreen.cpp" line="357"/>
         <source>Noch kein Verein</source>
         <translation>No club yet</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="266"/>
+        <location filename="../src/app/StartScreen.cpp" line="359"/>
         <source>leer</source>
         <translation>empty</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="268"/>
+        <location filename="../src/app/StartScreen.cpp" line="361"/>
         <source>%1 Spieler</source>
         <translation>%1 players</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="270"/>
+        <location filename="../src/app/StartScreen.cpp" line="363"/>
         <source>nicht lesbar</source>
         <translation>unreadable</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="277"/>
-        <source>Zuletzt geöffnet
-%1</source>
-        <translation>Last opened
-%1</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="278"/>
-        <source>Zuletzt geändert
-%1</source>
-        <translation>Last changed
-%1</translation>
-    </message>
-    <message>
-        <location filename="../src/app/StartScreen.cpp" line="287"/>
+        <location filename="../src/app/StartScreen.cpp" line="387"/>
         <source>Weitere Aktionen</source>
         <translation>More actions</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="317"/>
+        <location filename="../src/app/StartScreen.cpp" line="417"/>
         <source>Noch keine Spielstände.
 Lege links mit „Neuer Spielstand“ deinen ersten an.</source>
         <translation>No saves yet.
 Create your first one with “New save” on the left.</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="374"/>
+        <location filename="../src/app/StartScreen.cpp" line="474"/>
         <source>Spielstand öffnen</source>
         <translation>Open save</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="375"/>
+        <location filename="../src/app/StartScreen.cpp" line="475"/>
         <source>„%1“ konnte nicht geöffnet werden:
 
 %2</source>
@@ -6172,89 +6133,89 @@ Create your first one with “New save” on the left.</translation>
 %2</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="388"/>
+        <location filename="../src/app/StartScreen.cpp" line="488"/>
         <source>Umbenennen …</source>
         <translation>Rename …</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="390"/>
+        <location filename="../src/app/StartScreen.cpp" line="490"/>
         <source>Duplizieren …</source>
         <translation>Duplicate …</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="391"/>
+        <location filename="../src/app/StartScreen.cpp" line="491"/>
         <source>Im Ordner zeigen</source>
         <translation>Show in folder</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="395"/>
+        <location filename="../src/app/StartScreen.cpp" line="495"/>
         <source>Löschen …</source>
         <translation>Delete …</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="398"/>
+        <location filename="../src/app/StartScreen.cpp" line="498"/>
         <source>Der geöffnete Spielstand kann nicht umbenannt werden.</source>
         <translation>The open save cannot be renamed.</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="399"/>
+        <location filename="../src/app/StartScreen.cpp" line="499"/>
         <source>Der geöffnete Spielstand kann nicht gelöscht werden.</source>
         <translation>The open save cannot be deleted.</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="419"/>
-        <location filename="../src/app/StartScreen.cpp" line="427"/>
-        <location filename="../src/app/StartScreen.cpp" line="436"/>
+        <location filename="../src/app/StartScreen.cpp" line="519"/>
+        <location filename="../src/app/StartScreen.cpp" line="527"/>
+        <location filename="../src/app/StartScreen.cpp" line="536"/>
         <source>Spielstand-Datei öffnen</source>
         <translation>Open save file</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="420"/>
+        <location filename="../src/app/StartScreen.cpp" line="520"/>
         <source>Spielstände (*.db);;Alle Dateien (*)</source>
         <translation>Saves (*.db);;All files (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="428"/>
+        <location filename="../src/app/StartScreen.cpp" line="528"/>
         <source>%1
 Unter welchem Namen soll der Spielstand übernommen werden?</source>
         <translation>%1
 Under which name should the save be added?</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="458"/>
-        <location filename="../src/app/StartScreen.cpp" line="464"/>
+        <location filename="../src/app/StartScreen.cpp" line="558"/>
+        <location filename="../src/app/StartScreen.cpp" line="564"/>
         <source>Spielstand umbenennen</source>
         <translation>Rename save</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="459"/>
+        <location filename="../src/app/StartScreen.cpp" line="559"/>
         <source>Neuer Name:</source>
         <translation>New name:</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="472"/>
-        <location filename="../src/app/StartScreen.cpp" line="478"/>
+        <location filename="../src/app/StartScreen.cpp" line="572"/>
+        <location filename="../src/app/StartScreen.cpp" line="578"/>
         <source>Spielstand duplizieren</source>
         <translation>Duplicate save</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="472"/>
+        <location filename="../src/app/StartScreen.cpp" line="572"/>
         <source>Name der Kopie:</source>
         <translation>Name of the copy:</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="473"/>
+        <location filename="../src/app/StartScreen.cpp" line="573"/>
         <source>%1 (Kopie)</source>
         <translation>%1 (copy)</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="485"/>
-        <location filename="../src/app/StartScreen.cpp" line="495"/>
+        <location filename="../src/app/StartScreen.cpp" line="585"/>
+        <location filename="../src/app/StartScreen.cpp" line="595"/>
         <source>Spielstand löschen</source>
         <translation>Delete save</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="486"/>
+        <location filename="../src/app/StartScreen.cpp" line="586"/>
         <source>„%1“ wirklich löschen?
 
 Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort lässt er sich über „Spielstand-Datei öffnen“ zurückholen.</source>
@@ -6263,9 +6224,119 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
 A backup is created automatically in the “backups” folder first. You can bring it back from there with “Open save file”.</translation>
     </message>
     <message>
-        <location filename="../src/app/StartScreen.cpp" line="506"/>
+        <location filename="../src/app/StartScreen.cpp" line="606"/>
         <source>Die Sprache wird nach einem Neustart geändert. Jetzt neu starten?</source>
         <translation>The language will change after a restart. Restart now?</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="61"/>
+        <source>vor %1 Min.</source>
+        <translation>%1 min ago</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="63"/>
+        <source>vor %1 Std.</source>
+        <translation>%1 h ago</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="66"/>
+        <source>vor 1 Tag</source>
+        <translation>1 day ago</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="68"/>
+        <source>vor %1 Tagen</source>
+        <translation>%1 days ago</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="70"/>
+        <source>vor %1 Wochen</source>
+        <translation>%1 weeks ago</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="71"/>
+        <source>am %1</source>
+        <translation>on %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="119"/>
+        <source>Version %1 · %2</source>
+        <translation>Version %1 · %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="120"/>
+        <source> und </source>
+        <translation> and </translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="159"/>
+        <source>Neuer Spielstand</source>
+        <translation>New save</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="160"/>
+        <source>FM-Version, erster Import und Verein</source>
+        <translation>FM version, first import and club</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="163"/>
+        <source>Datei aus anderem Ordner oder Backup</source>
+        <translation>File from another folder or a backup</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="165"/>
+        <source>FM24-Daten übernehmen …</source>
+        <translation>Take over FM24 data …</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="166"/>
+        <source>Alte Streamlit-Version (Migration)</source>
+        <translation>Old Streamlit version (migration)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="205"/>
+        <source>Tag/Nacht wechseln</source>
+        <translation>Toggle day/night</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="209"/>
+        <source>Hilfe</source>
+        <translation>Help</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="210"/>
+        <source>Über %1, Support und Kontakt</source>
+        <translation>About %1, support and contact</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="229"/>
+        <source>Nacht</source>
+        <translation>Night</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="229"/>
+        <source>Tag</source>
+        <translation>Day</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="304"/>
+        <source>Jederzeit in den Einstellungen wieder abschaltbar</source>
+        <translation>You can switch this off again in the settings at any time</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="365"/>
+        <source>Taktik %1</source>
+        <translation>Tactic %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="375"/>
+        <source>Import %1</source>
+        <translation>Import %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/StartScreen.cpp" line="377"/>
+        <source>noch kein Import</source>
+        <translation>no import yet</translation>
     </message>
 </context>
 <context>

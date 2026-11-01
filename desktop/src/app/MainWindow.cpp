@@ -247,8 +247,6 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         m_searchModelDirty = true;
         updateDbLabel();
         updateHeader();
-        if (m_context.registrationSettings().active() != m_registrationInMenu)
-            refreshMenuKeepingPage();
         // The store was just replaced; drop stale Player* held by hidden pages
         // before anything can access them (they rebuild on next activation).
         auto *current = qobject_cast<PageBase *>(m_stack->currentWidget());
@@ -432,9 +430,7 @@ void MainWindow::rebuildMenu(bool selectFirst)
         font.setLetterSpacing(QFont::AbsoluteSpacing, 0.8);
         item->setFont(font);
     };
-    // The registration page only exists while registration rules are active.
-    m_registrationInMenu = m_context.registrationSettings().active();
-    m_sidebar = Navigation::sidebar(national, m_registrationInMenu);
+    m_sidebar = Navigation::sidebar(national);
     for (const Navigation::Section &section : std::as_const(m_sidebar)) {
         addSection(section.heading);
         for (const Navigation::Group &group : section.groups) {
@@ -665,13 +661,6 @@ void MainWindow::navigateToGroup(const QString &groupId)
             return;
         }
     }
-}
-
-void MainWindow::refreshMenuKeepingPage()
-{
-    rebuildMenu(/*selectFirst*/ false);
-    selectMenuEntry(m_currentPageId);
-    updateTabBar(m_currentPageId);
 }
 
 void MainWindow::captureHistoryState()
@@ -936,10 +925,9 @@ void MainWindow::openPalette()
     const qreal dpr = devicePixelRatioF();
 
     // Pages of both modes; switching mode where needed.
-    const bool registration = m_context.registrationSettings().active();
     QSet<QString> seen;
     for (const bool national : {m_context.nationalUiMode(), !m_context.nationalUiMode()}) {
-        for (const Navigation::Section &section : Navigation::sidebar(national, registration)) {
+        for (const Navigation::Section &section : Navigation::sidebar(national)) {
             for (const Navigation::Group &group : section.groups) {
                 for (const Navigation::Tab &tab : group.tabs) {
                     if (seen.contains(tab.pageId))
@@ -953,7 +941,8 @@ void MainWindow::openPalette()
                     entries.append({tr("Seiten"),
                                     LineIcons::icon(LineIcons::forGroup(group.id), color, 18, dpr),
                                     title, detail,
-                                    foldForSearch(title + QLatin1Char(' ') + group.label),
+                                    foldForSearch(title + QLatin1Char(' ') + group.label + QLatin1Char(' ')
+                                                  + tab.keywords),
                                     [this, national, pageId = tab.pageId] {
                                         if (national != m_context.nationalUiMode()) {
                                             m_modeGroup->button(national ? 1 : 0)->setChecked(true);

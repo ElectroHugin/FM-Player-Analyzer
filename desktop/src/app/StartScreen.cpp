@@ -1,9 +1,12 @@
 #include "StartScreen.h"
 
+#include "AboutDialog.h"
 #include "AppContext.h"
 #include "MigrationWizard.h"
 #include "NewSaveWizard.h"
 #include "theming/ThemeManager.h"
+#include "widgets/LineIcons.h"
+#include "core/Constants.h"
 #include "core/Version.h"
 
 #include <QActionGroup>
@@ -49,6 +52,25 @@ QString relativeTime(const QDateTime &when)
     return when.date().toString(QStringLiteral("dd.MM.yyyy"));
 }
 
+// "vor 2 Std.", "vor 3 Tagen", "vor 3 Wochen" … (German is the source
+// language without plural forms, so singular and plural are separate texts).
+QString ageText(const QDateTime &when)
+{
+    const qint64 minutes = qMax<qint64>(1, when.secsTo(QDateTime::currentDateTime()) / 60);
+    if (minutes < 60)
+        return StartScreen::tr("vor %1 Min.").arg(minutes);
+    if (minutes < 24 * 60)
+        return StartScreen::tr("vor %1 Std.").arg(minutes / 60);
+    const qint64 days = minutes / (24 * 60);
+    if (days == 1)
+        return StartScreen::tr("vor 1 Tag");
+    if (days < 14)
+        return StartScreen::tr("vor %1 Tagen").arg(days);
+    if (days < 60)
+        return StartScreen::tr("vor %1 Wochen").arg(days / 7);
+    return StartScreen::tr("am %1").arg(when.date().toString(QStringLiteral("dd.MM.yyyy")));
+}
+
 } // namespace
 
 StartScreen::StartScreen(AppContext &context, ThemeManager &theme, Mode mode, QWidget *parent)
@@ -59,7 +81,7 @@ StartScreen::StartScreen(AppContext &context, ThemeManager &theme, Mode mode, QW
 {
     setWindowTitle(mode == Mode::Startup ? appName() : tr("Spielstand wechseln"));
     setObjectName(QStringLiteral("startScreen"));
-    resize(1000, 620);
+    resize(1040, 640);
     setMinimumSize(820, 520);
 
     auto *layout = new QHBoxLayout(this);
@@ -76,54 +98,90 @@ QWidget *StartScreen::buildHero()
 {
     auto *hero = new QFrame(this);
     hero->setObjectName(QStringLiteral("startHero"));
-    hero->setFixedWidth(320);
+    hero->setFixedWidth(350);
     auto *layout = new QVBoxLayout(hero);
-    layout->setContentsMargins(30, 34, 30, 22);
-    layout->setSpacing(10);
+    layout->setContentsMargins(30, 36, 30, 22);
+    layout->setSpacing(8);
 
     auto *logo = new QLabel(hero);
     logo->setPixmap(QApplication::windowIcon().pixmap(72, 72));
     layout->addWidget(logo);
+    layout->addSpacing(6);
     auto *title = new QLabel(appName(), hero);
     title->setObjectName(QStringLiteral("startTitle"));
     title->setWordWrap(true);
     layout->addWidget(title);
-    auto *version = new QLabel(tr("Version %1").arg(appVersion()), hero);
+    QStringList versions;
+    for (const FmDataVersion &version : fmDataVersions()) {
+        if (version.supported)
+            versions.prepend(SaveLibrary::shortVersionLabel(version.id));
+    }
+    auto *version = new QLabel(tr("Version %1 · %2")
+                                   .arg(appVersion(), versions.join(tr(" und "))),
+                               hero);
     version->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(version);
     layout->addSpacing(18);
 
-    const auto addAction = [&](const QString &text, const QString &toolTip, bool primary) {
-        auto *button = new QPushButton(text, hero);
+    // Big two-line action: icon, title and a short description underneath.
+    const auto addAction = [&](const QString &iconName, const QString &text,
+                               const QString &description, bool primary) {
+        auto *button = new QPushButton(hero);
         button->setObjectName(primary ? QStringLiteral("heroPrimary")
                                       : QStringLiteral("heroAction"));
-        button->setToolTip(toolTip);
         button->setCursor(Qt::PointingHandCursor);
         button->setAutoDefault(false);
+        button->setAccessibleName(text);
+        auto *row = new QHBoxLayout(button);
+        row->setContentsMargins(16, 11, 14, 11);
+        row->setSpacing(12);
+        auto *icon = new QLabel(button);
+        icon->setObjectName(QStringLiteral("heroIcon"));
+        icon->setProperty("iconName", iconName);
+        icon->setFixedSize(18, 18);
+        row->addWidget(icon, 0, Qt::AlignTop);
+        auto *texts = new QVBoxLayout;
+        texts->setSpacing(1);
+        auto *titleLabel = new QLabel(text, button);
+        titleLabel->setObjectName(QStringLiteral("heroActionTitle"));
+        auto *descLabel = new QLabel(description, button);
+        descLabel->setObjectName(QStringLiteral("heroActionText"));
+        descLabel->setWordWrap(true);
+        texts->addWidget(titleLabel);
+        texts->addWidget(descLabel);
+        row->addLayout(texts, 1);
+        for (QLabel *label : {icon, titleLabel, descLabel})
+            label->setAttribute(Qt::WA_TransparentForMouseEvents);
+        button->setMinimumHeight(64);
         layout->addWidget(button);
         return button;
     };
-    connect(addAction(tr("＋  Neuer Spielstand"),
-                      tr("Name, FM-Version, erster Import und Verein (Strg+N)"), true),
+    connect(addAction(QStringLiteral("plus"), tr("Neuer Spielstand"),
+                      tr("FM-Version, erster Import und Verein"), true),
             &QPushButton::clicked, this, &StartScreen::newSave);
-    connect(addAction(tr("Spielstand-Datei öffnen …"),
-                      tr("Eine .db-Datei aus einem anderen Ordner oder Backup übernehmen"),
-                      false),
+    connect(addAction(QStringLiteral("folder"), tr("Spielstand-Datei öffnen …"),
+                      tr("Datei aus anderem Ordner oder Backup"), false),
             &QPushButton::clicked, this, &StartScreen::openExternalFile);
-    connect(addAction(tr("Alte Version übernehmen …"),
-                      tr("Datenbank und Einstellungen der früheren Streamlit-Version "
-                         "importieren"),
-                      false),
+    connect(addAction(QStringLiteral("migrate"), tr("FM24-Daten übernehmen …"),
+                      tr("Alte Streamlit-Version (Migration)"), false),
             &QPushButton::clicked, this, &StartScreen::migrateLegacy);
 
     layout->addStretch(1);
 
     auto *foot = new QHBoxLayout;
-    foot->setSpacing(6);
-    auto *language = new QToolButton(hero);
-    language->setObjectName(QStringLiteral("flatButton"));
+    foot->setSpacing(2);
+    const auto footButton = [&](const QString &iconName) {
+        auto *button = new QToolButton(hero);
+        button->setObjectName(QStringLiteral("flatButton"));
+        button->setProperty("iconName", iconName);
+        button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        button->setIconSize(QSize(15, 15));
+        button->setCursor(Qt::PointingHandCursor);
+        foot->addWidget(button);
+        return button;
+    };
+    auto *language = footButton(QStringLiteral("globe"));
     language->setPopupMode(QToolButton::InstantPopup);
-    language->setCursor(Qt::PointingHandCursor);
     auto *languageMenu = new QMenu(language);
     auto *group = new QActionGroup(languageMenu);
     const QString current = m_context.paths().language();
@@ -136,23 +194,51 @@ QWidget *StartScreen::buildHero()
             code == current || (code == QLatin1String("en") && current.isEmpty());
         action->setChecked(active);
         if (active)
-            language->setText(label);
+            language->setText(label + QStringLiteral(" ▾"));
         group->addAction(action);
         connect(action, &QAction::triggered, this, [this, code] { changeLanguage(code); });
     }
     language->setMenu(languageMenu);
     language->setToolTip(tr("Sprache"));
-    foot->addWidget(language);
 
-    auto *themeButton = new QToolButton(hero);
-    themeButton->setObjectName(QStringLiteral("flatButton"));
-    themeButton->setText(tr("◐ Tag/Nacht"));
-    themeButton->setCursor(Qt::PointingHandCursor);
-    connect(themeButton, &QToolButton::clicked, this, [this] { m_theme.toggle(); });
-    foot->addWidget(themeButton);
+    m_themeButton = footButton(QStringLiteral("moon"));
+    m_themeButton->setToolTip(tr("Tag/Nacht wechseln"));
+    connect(m_themeButton, &QToolButton::clicked, this, [this] { m_theme.toggle(); });
+
+    auto *help = footButton(QStringLiteral("help"));
+    help->setText(tr("Hilfe"));
+    help->setToolTip(tr("Über %1, Support und Kontakt").arg(appName()));
+    connect(help, &QToolButton::clicked, this, [this] {
+        AboutDialog dialog(m_theme, this);
+        dialog.exec();
+    });
     foot->addStretch(1);
     layout->addLayout(foot);
+
+    updateThemedIcons();
+    connect(&m_theme, &ThemeManager::themeChanged, this, &StartScreen::updateThemedIcons);
     return hero;
+}
+
+void StartScreen::updateThemedIcons()
+{
+    const bool night = m_theme.mode() == QLatin1String("night");
+    if (m_themeButton) {
+        m_themeButton->setProperty("iconName", night ? QStringLiteral("moon")
+                                                     : QStringLiteral("sun"));
+        m_themeButton->setText(night ? tr("Nacht") : tr("Tag"));
+    }
+    QColor muted = m_theme.text();
+    muted.setAlphaF(0.7);
+    const qreal dpr = devicePixelRatioF();
+    for (QToolButton *button : findChildren<QToolButton *>(QStringLiteral("flatButton")))
+        button->setIcon(LineIcons::icon(button->property("iconName").toString(), muted, 15, dpr));
+    for (QLabel *icon : findChildren<QLabel *>(QStringLiteral("heroIcon"))) {
+        const bool primary = icon->parentWidget()->objectName() == QLatin1String("heroPrimary");
+        const QColor color = primary ? QColorConstants::White : m_theme.text();
+        icon->setPixmap(LineIcons::icon(icon->property("iconName").toString(), color, 18, dpr)
+                            .pixmap(18, 18));
+    }
 }
 
 QWidget *StartScreen::buildList()
@@ -212,7 +298,14 @@ QWidget *StartScreen::buildList()
            "Start erscheint er trotzdem. Abschaltbar in Einstellungen → Datenbank."));
     connect(m_autoOpenCheck, &QCheckBox::toggled, this,
             [this](bool on) { m_context.config().setAutoOpenLastDatabase(on); });
-    footerLayout->addWidget(m_autoOpenCheck);
+    auto *autoOpenText = new QVBoxLayout;
+    autoOpenText->setSpacing(0);
+    autoOpenText->addWidget(m_autoOpenCheck);
+    auto *autoOpenHint = new QLabel(tr("Jederzeit in den Einstellungen wieder abschaltbar"), footer);
+    autoOpenHint->setObjectName(QStringLiteral("kpiCaption"));
+    autoOpenHint->setIndent(28);
+    autoOpenText->addWidget(autoOpenHint);
+    footerLayout->addLayout(autoOpenText);
     footerLayout->addStretch(1);
     if (m_mode == Mode::Switch) {
         auto *close = new QPushButton(tr("Schließen"), footer);
@@ -268,14 +361,21 @@ QWidget *StartScreen::buildSaveCard(const SaveInfo &save)
         meta << tr("%1 Spieler").arg(QLocale().toString(save.playerCount));
     else
         meta << tr("nicht lesbar");
-    auto *metaLabel = new QLabel(meta.join(QStringLiteral("  ·  ")), card);
+    if (!save.tactic.isEmpty())
+        meta << tr("Taktik %1").arg(save.tactic);
+    auto *metaLabel = new QLabel(meta.join(QStringLiteral(" · ")), card);
     metaLabel->setObjectName(QStringLiteral("kpiCaption"));
     text->addWidget(metaLabel);
     layout->addLayout(text, 1);
 
-    const QString when = save.lastOpened.isValid()
-                             ? tr("Zuletzt geöffnet\n%1").arg(relativeTime(save.lastOpened))
-                             : tr("Zuletzt geändert\n%1").arg(relativeTime(save.modified));
+    const QString opened = relativeTime(save.lastOpened.isValid() ? save.lastOpened
+                                                                   : save.modified);
+    QString imported;
+    if (save.lastImport.isValid())
+        imported = tr("Import %1").arg(ageText(save.lastImport));
+    else if (save.playerCount == 0)
+        imported = tr("noch kein Import");
+    const QString when = imported.isEmpty() ? opened : opened + QLatin1Char('\n') + imported;
     auto *whenLabel = new QLabel(when, card);
     whenLabel->setObjectName(QStringLiteral("kpiCaption"));
     whenLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);

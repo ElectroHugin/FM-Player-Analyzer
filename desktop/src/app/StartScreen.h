@@ -12,6 +12,7 @@ class QListWidget;
 class QListWidgetItem;
 class QPushButton;
 class QStackedWidget;
+class QToolButton;
 
 namespace fm {
 
@@ -58,6 +59,7 @@ private:
     void duplicateSave(const QString &name);
     void deleteSave(const QString &name);
     void changeLanguage(const QString &language);
+    void updateThemedIcons();
 
     AppContext &m_context;
     ThemeManager &m_theme;
@@ -70,6 +72,7 @@ private:
     QLabel *m_emptyLabel;
     QCheckBox *m_autoOpenCheck;
     QPushButton *m_openButton;
+    QToolButton *m_themeButton = nullptr;
 };
 
 } // namespace fm
