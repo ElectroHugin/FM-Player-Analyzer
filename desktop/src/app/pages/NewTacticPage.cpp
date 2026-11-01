@@ -1,6 +1,7 @@
 #include "NewTacticPage.h"
 
 #include "../AppContext.h"
+#include "../widgets/TacticPitchWidget.h"
 #include "core/Constants.h"
 
 #include <QComboBox>
@@ -12,6 +13,7 @@
 #include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollArea>
@@ -23,22 +25,6 @@
 namespace fm {
 
 namespace {
-
-// Row caption of the editor (top = strikers, as in legacy new_tactic.py).
-QString stratumLabel(const QString &stratum)
-{
-    if (stratum == QLatin1String("Strikers"))
-        return QObject::tr("Sturm");
-    if (stratum == QLatin1String("Attacking Midfield"))
-        return QObject::tr("Offensives Mittelfeld");
-    if (stratum == QLatin1String("Midfield"))
-        return QObject::tr("Mittelfeld");
-    if (stratum == QLatin1String("Defensive Midfield"))
-        return QObject::tr("Defensives Mittelfeld");
-    if (stratum == QLatin1String("Defense"))
-        return QObject::tr("Abwehr");
-    return stratum;
-}
 
 // Editor rows from the pitch geometry, top (strikers) first, without alias
 // slots (WBL/WBR/ST).
@@ -58,8 +44,9 @@ QList<QPair<QString, QList<PitchSlot>>> editorRows(const PitchGeometry &geometry
 
 } // namespace
 
-NewTacticPage::NewTacticPage(AppContext &context, QWidget *parent)
+NewTacticPage::NewTacticPage(AppContext &context, ThemeManager &theme, QWidget *parent)
     : PageBase(context, parent)
+    , m_theme(theme)
 {
     auto *outer = new QVBoxLayout(this);
     outer->setContentsMargins(0, 0, 0, 0);
@@ -104,10 +91,14 @@ NewTacticPage::NewTacticPage(AppContext &context, QWidget *parent)
     // --- 2. Formation designer (two line-ups when roles have phases) ---
     m_phases[0].phase = QStringLiteral("oop");
     m_phases[1].phase = QStringLiteral("ip");
+    // Side by side like the game's tactics screen: with ball left, without
+    // ball right.
     buildPhaseEditor(m_phases[1], content);
     buildPhaseEditor(m_phases[0], content);
-    layout->addWidget(m_phases[1].box);
-    layout->addWidget(m_phases[0].box);
+    auto *phaseRow = new QHBoxLayout;
+    phaseRow->addWidget(m_phases[1].box, 1, Qt::AlignTop);
+    phaseRow->addWidget(m_phases[0].box, 1, Qt::AlignTop);
+    layout->addLayout(phaseRow);
 
     auto *buttonRow = new QHBoxLayout;
     buttonRow->addStretch(1);
@@ -143,42 +134,78 @@ void NewTacticPage::buildPhaseEditor(PhaseEditor &editor, QWidget *parent)
     editor.countLabel = new QLabel(editor.box);
     pitchLayout->addWidget(editor.countLabel);
 
-    auto *grid = new QGridLayout;
-    grid->setHorizontalSpacing(8);
-    grid->setVerticalSpacing(4);
-    int gridRow = 0;
+    // The combos hold the choice; the pitch shows and edits it.
     for (const auto &[stratum, specs] : editorRows(pitchGeometry(m_context.fmVersionId()))) {
-        auto *stratumTitle = new QLabel(stratumLabel(stratum), editor.box);
-        stratumTitle->setAlignment(Qt::AlignHCenter);
-        stratumTitle->setObjectName(QStringLiteral("kpiCaption"));
-        grid->addWidget(stratumTitle, gridRow++, 0, 1, 5);
+        Q_UNUSED(stratum);
         for (const PitchSlot &spec : specs) {
-            auto *cell = new QVBoxLayout;
-            auto *slotLabel = new QLabel(spec.label, editor.box);
-            slotLabel->setAlignment(Qt::AlignHCenter);
             auto *combo = new QComboBox(editor.box);
-            combo->setMinimumWidth(150);
+            combo->setVisible(false);
             editor.slotCombos.insert(spec.key, combo);
-            cell->addWidget(slotLabel);
-            cell->addWidget(combo);
-            auto *cellWidget = new QWidget(editor.box);
-            cellWidget->setLayout(cell);
-            grid->addWidget(cellWidget, gridRow, spec.displayColumn);
             connect(combo, &QComboBox::currentIndexChanged, this,
                     &NewTacticPage::updateFullName);
         }
-        ++gridRow;
     }
-    // Goalkeeper row spanning the width.
-    auto *gkTitle = new QLabel(tr("Torhüter"), editor.box);
-    gkTitle->setAlignment(Qt::AlignHCenter);
-    gkTitle->setObjectName(QStringLiteral("kpiCaption"));
-    grid->addWidget(gkTitle, gridRow++, 0, 1, 5);
     auto *gkCombo = new QComboBox(editor.box);
-    gkCombo->setMinimumWidth(220);
+    gkCombo->setVisible(false);
     editor.slotCombos.insert(QStringLiteral("GK"), gkCombo);
-    grid->addWidget(gkCombo, gridRow, 1, 1, 3);
-    pitchLayout->addLayout(grid);
+    connect(gkCombo, &QComboBox::currentIndexChanged, this, &NewTacticPage::updateFullName);
+
+    editor.pitch = new TacticPitchWidget(m_theme, editor.box);
+    editor.pitch->setFmVersionId(m_context.fmVersionId());
+    editor.pitch->setToolTip(tr("Klicke auf ein „+“, um dort eine Rolle aufzustellen, oder auf "
+                                "eine Rolle, um sie zu ändern."));
+    pitchLayout->addWidget(editor.pitch, 0, Qt::AlignHCenter);
+    connect(editor.pitch, &TacticPitchWidget::slotClicked, this,
+            [this, &editor](const QString &slot, const QPoint &globalPos) {
+                showSlotMenu(editor, slot, globalPos);
+            });
+}
+
+void NewTacticPage::showSlotMenu(PhaseEditor &editor, const QString &slot,
+                                 const QPoint &globalPos)
+{
+    QComboBox *combo = editor.slotCombos.value(slot);
+    if (!combo)
+        return;
+    const PitchSlot *spec = pitchGeometry(m_context.fmVersionId()).slot(slot);
+    const bool goalkeeper = slot == QLatin1String("GK");
+    QMenu menu(this);
+    auto *title = menu.addAction(spec && !spec->label.isEmpty() ? spec->label : slot);
+    title->setEnabled(false);
+    menu.addSeparator();
+    const int current = combo->currentIndex();
+    for (int i = goalkeeper ? 0 : 1; i < combo->count(); ++i) {
+        QString role = combo->itemData(i).toString();
+        if (role.endsWith(QLatin1String("-IP")))
+            role.chop(3);
+        else if (role.endsWith(QLatin1String("-OOP")))
+            role.chop(4);
+        auto *action = menu.addAction(QStringLiteral("%1  (%2)").arg(combo->itemText(i), role),
+                                      this, [combo, i] { combo->setCurrentIndex(i); });
+        action->setCheckable(true);
+        action->setChecked(i == current);
+    }
+    if (!goalkeeper && current > 0) {
+        menu.addSeparator();
+        menu.addAction(tr("✕ Platz leeren"), this, [combo] { combo->setCurrentIndex(0); });
+    }
+    menu.exec(globalPos);
+}
+
+void NewTacticPage::syncPitch(PhaseEditor &editor)
+{
+    QHash<QString, QString> roles;
+    int outfield = 0;
+    for (auto it = editor.slotCombos.constBegin(); it != editor.slotCombos.constEnd(); ++it) {
+        const QString role = it.value()->currentData().toString();
+        if (role.isEmpty())
+            continue;
+        roles.insert(it.key(), role);
+        if (it.key() != QLatin1String("GK"))
+            ++outfield;
+    }
+    // Ten outfield players: no more "+" boxes, a click on a role swaps it.
+    editor.pitch->setEditorSlots(roles, m_context.definitions().roleDisplayMap(), outfield < 10);
 }
 
 bool NewTacticPage::twoPhase() const
@@ -316,10 +343,12 @@ void NewTacticPage::refresh()
     m_info->setText(
         phased ? tr("Eine Taktik hat zwei Aufstellungen: eine mit Ball und eine ohne Ball, "
                     "jede mit einem Torhüter und zehn Feldspielern. Die Plätze müssen nicht "
-                    "zusammenpassen; der Analyzer verteilt die Spieler später selbst. Mit "
-                    "einer Vorlage aus dem Spiel bist du schneller.")
-               : tr("Baue deine Formation auf dem Feld unten. Wähle für jede aktive Position "
-                    "eine Rolle — genau ein Torhüter und zehn Feldspieler."));
+                    "zusammenpassen; der Analyzer verteilt die Spieler später selbst. Klicke "
+                    "auf ein „+“, um dort eine Rolle aufzustellen, oder auf eine Rolle, um sie "
+                    "zu ändern. Mit einer Vorlage aus dem Spiel bist du schneller.")
+               : tr("Baue deine Formation auf dem Feld unten: Klicke auf ein „+“, um dort "
+                    "eine Rolle aufzustellen, oder auf eine Rolle, um sie zu ändern — genau "
+                    "ein Torhüter und zehn Feldspieler."));
     m_phases[0].box->setTitle(phased ? tr("2b. Aufstellung ohne Ball")
                                      : tr("2. Formation gestalten"));
     m_phases[1].box->setTitle(tr("2a. Aufstellung mit Ball"));
@@ -347,6 +376,7 @@ void NewTacticPage::updateFullName()
             if (it.key() != QLatin1String("GK") && !it.value()->currentData().toString().isEmpty())
                 ++outfield;
         }
+        syncPitch(editor);
         editor.countLabel->setText(outfield == 10
                                        ? tr("✅ 10 Feldspieler ausgewählt.")
                                        : tr("Feldspieler ausgewählt: %1 / 10").arg(outfield));

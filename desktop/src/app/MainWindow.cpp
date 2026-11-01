@@ -557,7 +557,7 @@ PageBase *MainWindow::createPage(const QString &pageId)
     if (pageId == QLatin1String("new_role"))
         return new NewRolePage(m_context, this);
     if (pageId == QLatin1String("new_tactic"))
-        return new NewTacticPage(m_context, this);
+        return new NewTacticPage(m_context, m_theme, this);
     if (pageId == QLatin1String("settings")) {
         auto *page = new SettingsPage(m_context, m_theme, this);
         connect(page, &SettingsPage::recalcRequested, this, &MainWindow::startDwrsRecalc);

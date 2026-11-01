@@ -10,8 +10,12 @@ class QJsonObject;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QPoint;
 
 namespace fm {
+
+class TacticPitchWidget;
+class ThemeManager;
 
 // Editor for new tactical formations: pick a role per pitch slot (exactly one
 // goalkeeper and ten outfield players); writes tactic_roles + tactic_layouts
@@ -23,7 +27,7 @@ class NewTacticPage : public PageBase
     Q_OBJECT
 
 public:
-    explicit NewTacticPage(AppContext &context, QWidget *parent = nullptr);
+    NewTacticPage(AppContext &context, ThemeManager &theme, QWidget *parent = nullptr);
 
     void refresh() override;
 
@@ -36,10 +40,15 @@ private:
         QWidget *templateRow = nullptr;
         QComboBox *templateCombo = nullptr;
         QLabel *countLabel = nullptr;
-        QHash<QString, QComboBox *> slotCombos; // slot key -> role combo (incl. GK)
+        // slot key -> role combo (incl. GK); hidden, the pitch edits them.
+        QHash<QString, QComboBox *> slotCombos;
+        TacticPitchWidget *pitch = nullptr;
     };
 
     void buildPhaseEditor(PhaseEditor &editor, QWidget *parent);
+    // Click on a pitch box: menu with the roles of that slot.
+    void showSlotMenu(PhaseEditor &editor, const QString &slot, const QPoint &globalPos);
+    void syncPitch(PhaseEditor &editor);
     void refreshPhase(PhaseEditor &editor);
     void applyTemplate(PhaseEditor &editor);
     bool collectPhase(const PhaseEditor &editor, QJsonObject &roles,
@@ -52,6 +61,7 @@ private:
     void fillSlotCombo(QComboBox *combo, const QStringList &gamePositions,
                        const QString &phase);
 
+    ThemeManager &m_theme;
     QLineEdit *m_nameEdit = nullptr;
     QLineEdit *m_shapeEdit = nullptr;
     QLabel *m_fullNameLabel = nullptr;

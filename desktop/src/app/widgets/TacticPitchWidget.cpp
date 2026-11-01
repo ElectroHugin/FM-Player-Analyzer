@@ -82,6 +82,17 @@ void TacticPitchWidget::setSlotSubtexts(const QHash<QString, QString> &subtexts)
     update();
 }
 
+void TacticPitchWidget::setEditorSlots(const QHash<QString, QString> &roles,
+                                       const QHash<QString, QString> &roleNames,
+                                       bool showFreeSlots)
+{
+    m_editor = true;
+    m_editorRoles = roles;
+    m_roleNames = roleNames;
+    m_showFreeSlots = showFreeSlots;
+    update();
+}
+
 void TacticPitchWidget::clearData()
 {
     m_team.clear();
@@ -135,7 +146,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     painter.drawRect(QRectF(cx - goalW / 2, field.top(), goalW, goalH));
     painter.drawRect(QRectF(cx - goalW / 2, field.bottom() - goalH, goalW, goalH));
 
-    if (m_layout.isEmpty() && !m_positions.contains(QStringLiteral("GK"))) {
+    if (!m_editor && m_layout.isEmpty() && !m_positions.contains(QStringLiteral("GK"))) {
         painter.setPen(textColor);
         painter.drawText(pitch, Qt::AlignCenter, tr("Keine Daten"));
         return;
@@ -169,6 +180,97 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     smallFont.setPointSizeF(font().pointSizeF() * 0.78);
 
     m_boxRects.clear();
+    const PitchGeometry &geometry = pitchGeometry(m_fmVersionId);
+
+    if (m_editor) {
+        // Tactic editor: the slots in use as role cards, the free ones as
+        // dashed "+" boxes — a grid that shows only what can still be added.
+        const auto stripPhase = [](QString role) {
+            if (role.endsWith(QLatin1String("-IP")))
+                role.chop(3);
+            else if (role.endsWith(QLatin1String("-OOP")))
+                role.chop(4);
+            return role;
+        };
+        const auto drawSlot = [&](const QRectF &box, const QString &slot, const QString &label,
+                                  int row) {
+            const QString role = m_editorRoles.value(slot);
+            if (role.isEmpty() && !m_showFreeSlots)
+                return;
+            m_boxRects.insert(slot, box);
+            QPainterPath path;
+            path.addRoundedRect(box, 6, 6);
+            if (role.isEmpty()) {
+                painter.fillPath(path, QColor(255, 255, 255, night ? 10 : 20));
+                QPen dashed(QColor(255, 255, 255, 110), 1.2, Qt::DashLine);
+                painter.setPen(dashed);
+                painter.setBrush(Qt::NoBrush);
+                painter.drawPath(path);
+                QFont plus = font();
+                plus.setPointSizeF(font().pointSizeF() * 1.6);
+                painter.setFont(plus);
+                painter.setPen(QColor(255, 255, 255, 190));
+                painter.drawText(box.adjusted(0, 0, 0, -box.height() * 0.3), Qt::AlignCenter,
+                                 QStringLiteral("+"));
+                painter.setFont(smallFont);
+                painter.drawText(box.adjusted(2, box.height() * 0.55, -2, -2), Qt::AlignCenter,
+                                 label);
+                return;
+            }
+            painter.fillPath(path, cardBody);
+            const double headerH = box.height() * 0.32;
+            const QRectF header(box.left(), box.top(), box.width(), headerH);
+            painter.save();
+            painter.setClipPath(path, Qt::IntersectClip);
+            painter.fillRect(header, kLineColors[qBound(0, row, 6)]);
+            painter.restore();
+            painter.setPen(Qt::white);
+            painter.setFont(headerFont);
+            painter.drawText(header, Qt::AlignCenter,
+                             painter.fontMetrics().elidedText(
+                                 stripPhase(role), Qt::ElideRight,
+                                 static_cast<int>(header.width() - 4)));
+            const QRectF body = box.adjusted(4, headerH + 1, -4, -2);
+            const QRectF nameLine(body.left(), body.top(), body.width(), body.height() * 0.6);
+            // Role names are not person names: wrap onto two lines, shrink
+            // a little if needed, never abbreviate words.
+            painter.setPen(textColor);
+            QFont roleFont = nameFont;
+            const QString roleName = m_roleNames.value(role, role);
+            const int flags = Qt::AlignCenter | Qt::TextWordWrap;
+            for (int step = 0; step < 4; ++step) {
+                painter.setFont(roleFont);
+                const QRectF needed = painter.boundingRect(nameLine, flags, roleName);
+                if (needed.height() <= nameLine.height() && needed.width() <= nameLine.width())
+                    break;
+                roleFont.setPointSizeF(roleFont.pointSizeF() * 0.9);
+            }
+            painter.setFont(roleFont);
+            painter.drawText(nameLine, flags, roleName);
+            painter.setPen(secondaryText);
+            painter.setFont(smallFont);
+            painter.drawText(QRectF(body.left(), nameLine.bottom(), body.width(),
+                                    body.height() * 0.4),
+                             Qt::AlignCenter, label);
+            painter.setPen(QPen(cardBorder, 1));
+            painter.setBrush(Qt::NoBrush);
+            painter.drawPath(path);
+        };
+        for (const PitchRow &pitchRow : geometry.rows) {
+            const int row = geometry.drawingRow(pitchRow.stratum);
+            if (row < 0)
+                continue;
+            for (const PitchSlot &slot : pitchRow.pitchSlots) {
+                const int col = slot.displayColumn + 1;
+                if (!slot.inEditor || col < 1 || col > 5)
+                    continue;
+                drawSlot(cardRect(row, col), slot.key, slot.key, row);
+            }
+        }
+        drawSlot(cardRect(6, 3), QStringLiteral("GK"), QStringLiteral("GK"), 6);
+        return;
+    }
+
     const auto drawCard = [&](const QRectF &box, const QString &slot, int row) {
         m_boxRects.insert(slot, box);
         const XiCell cell = m_team.value(slot);
@@ -237,7 +339,6 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.drawPath(path);
     };
 
-    const PitchGeometry &geometry = pitchGeometry(m_fmVersionId);
     for (auto it = m_layout.constBegin(); it != m_layout.constEnd(); ++it) {
         const int row = geometry.drawingRow(it.key());
         if (row < 0)
@@ -268,6 +369,28 @@ QString TacticPitchWidget::uidAt(const QPoint &pos) const
     return QString();
 }
 
+QString TacticPitchWidget::slotAt(const QPoint &pos) const
+{
+    for (auto it = m_boxRects.constBegin(); it != m_boxRects.constEnd(); ++it) {
+        if (it.value().contains(pos))
+            return it.key();
+    }
+    return QString();
+}
+
+void TacticPitchWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (m_editor && (event->button() == Qt::LeftButton || event->button() == Qt::RightButton)) {
+        const QString slot = slotAt(event->pos());
+        if (!slot.isEmpty()) {
+            emit slotClicked(slot, event->globalPosition().toPoint());
+            event->accept();
+            return;
+        }
+    }
+    QWidget::mousePressEvent(event);
+}
+
 void TacticPitchWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
     const QString uid = uidAt(event->pos());
@@ -281,7 +404,9 @@ void TacticPitchWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void TacticPitchWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    setCursor(uidAt(event->pos()).isEmpty() ? Qt::ArrowCursor : Qt::PointingHandCursor);
+    const bool clickable = m_editor ? !slotAt(event->pos()).isEmpty()
+                                    : !uidAt(event->pos()).isEmpty();
+    setCursor(clickable ? Qt::PointingHandCursor : Qt::ArrowCursor);
     QWidget::mouseMoveEvent(event);
 }
 
