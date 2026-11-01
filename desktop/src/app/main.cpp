@@ -9,6 +9,7 @@
 #include "AppContext.h"
 #include "FirstRunDialog.h"
 #include "MainWindow.h"
+#include "ScreenshotTour.h"
 #include "StartScreen.h"
 #include "theming/ThemeManager.h"
 #include "core/Version.h"
@@ -87,6 +88,8 @@ int main(int argc, char *argv[])
 
     fm::MainWindow window(context, theme);
     window.show();
+    if (fm::ScreenshotTour::requested())
+        fm::ScreenshotTour::start(context, theme, &window);
 
     // --smoke: exit immediately after the event loop starts (build verification)
     if (smoke) {

@@ -83,7 +83,7 @@ ergeben. Startelf und B-Team stehen nebeneinander auf dem Spielfeld in deiner
 Formation, jeder Spieler mit Bewertung, Rolle und vereinbarter Spielzeit.
 Doppelklick auf einen Spieler öffnet sein Profil, Rechtsklick alles Weitere.
 
-<img src="docs/screenshots/de/best-xi.png" alt="Best-XI-Seite: Startelf und B-Team auf zwei Taktik-Spielfeldern, jeder Spieler mit Bewertung, Rolle und Spielzeit" width="100%">
+<img src="docs/screenshots/de/best-xi.png" alt="Best-XI-Seite: die Startelf mit Ball und ohne Ball nebeneinander, jeder Spieler mit Bewertung, Rolle und seinem Platz in der anderen Aufstellung" width="100%">
 
 **Beweisbar optimal — keine Faustregel.** Die meisten Tools gehen die
 Formation Position für Position durch und geben jeder ihren besten Spieler.

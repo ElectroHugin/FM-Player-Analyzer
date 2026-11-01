@@ -82,7 +82,7 @@ Starting XI and B-team stand side by side on the pitch in your formation, every
 player with his rating, his role and his agreed playing time. Double-click a
 player for his profile, right-click for everything else.
 
-<img src="docs/screenshots/en/best-xi.png" alt="Best XI page: starting eleven and B-team on two tactical pitches, each player with rating, role and playing time" width="100%">
+<img src="docs/screenshots/en/best-xi.png" alt="Best XI page: the starting eleven in possession and out of possession side by side, each player with rating, role and his place in the other line-up" width="100%">
 
 **Provably optimal — not a rule of thumb.** Most tools walk through the
 formation slot by slot and hand each one its best player. That breaks as soon

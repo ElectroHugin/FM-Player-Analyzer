@@ -1,5 +1,6 @@
 add_executable(fmplayeranalyzer
     main.cpp
+    ScreenshotTour.cpp
     AboutDialog.h
     AboutDialog.cpp
     AppContext.h

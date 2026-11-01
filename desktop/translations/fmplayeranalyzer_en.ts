@@ -927,12 +927,12 @@
         <translation type="vanished">B-team out of possession</translation>
     </message>
     <message>
-        <source>ohne Ball: %1</source>
-        <translation>out of possession: %1</translation>
+        <source>ohne: %1</source>
+        <translation>OOP: %1</translation>
     </message>
     <message>
-        <source>mit Ball: %1</source>
-        <translation>in possession: %1</translation>
+        <source>mit: %1</source>
+        <translation>IP: %1</translation>
     </message>
     <message>
         <source>Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle ohne Ball am höchsten ist; jeder Spieler braucht die Position in beiden Aufstellungen. Unter dem Namen steht sein Platz in der anderen Aufstellung. Den Anteil stellst du in den Einstellungen ein.</source>

@@ -661,8 +661,8 @@ void BestXiPage::rebuild()
                 if (!it->isFilled())
                     continue;
                 const auto pair = squad.slotsOfUid.value(it->playerUid);
-                texts.insert(it.key(), ipSide ? tr("ohne Ball: %1").arg(pair.second)
-                                              : tr("mit Ball: %1").arg(pair.first));
+                texts.insert(it.key(), ipSide ? tr("ohne: %1").arg(pair.second)
+                                              : tr("mit: %1").arg(pair.first));
             }
             return texts;
         };
