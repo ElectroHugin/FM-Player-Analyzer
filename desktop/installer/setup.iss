@@ -15,6 +15,15 @@ AppId={{8F2B6E7A-40A1-4C0D-9E3B-5D71C2A94F08}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher=ElectroHugin
+; Version info of the setup .exe (Properties > Details). Code signing
+; (SignPath) checks product name and version, so they must match the program
+; file (src/app/app.rc.in).
+VersionInfoVersion={#MyAppVersion}
+VersionInfoProductName={#MyAppName}
+VersionInfoProductVersion={#MyAppVersion}
+VersionInfoProductTextVersion={#MyAppVersion}
+VersionInfoCompany=ElectroHugin
+VersionInfoDescription={#MyAppName} Setup
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
