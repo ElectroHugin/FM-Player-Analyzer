@@ -534,7 +534,8 @@ void BestXiPage::rebuild()
                       slotOrder, positions);
     }
 
-    m_signingTab->setSquad(tactic, std::move(firstPool));
+    // A copy: the two-phase line-ups below still need the pool.
+    m_signingTab->setSquad(tactic, firstPool);
 
     const DevelopmentSquads dev = m_context.squadBuilder().calculateDevelopmentSquads(
         secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);
