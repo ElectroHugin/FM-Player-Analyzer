@@ -56,14 +56,14 @@ SigningAnalysis analyze(const SquadBuilder &builder, const std::vector<const Pla
                         const std::vector<const Player *> &market,
                         const QHash<QString, QString> &positions, const QStringList &slotOrder,
                         const RoleRatings &ratings, int candidatesPerSlot, int optionsPerSlot,
-                        const QString &tactic)
+                        const QString &tactic, const SquadBuilder::Bridges &bridges)
 {
     SigningAnalysis result;
     result.marketSize = static_cast<int>(market.size());
 
     const SquadResult base = tactic.isEmpty()
         ? builder.calculateSquadAndSurplus(squad, positions, slotOrder, ratings)
-        : builder.calculateSquadForTactic(squad, tactic, ratings);
+        : builder.calculateSquadForTactic(squad, tactic, ratings, true, bridges);
     result.xiTotal = teamTotal(base.startingXi, positions, ratings, base);
     result.bTeamTotal = teamTotal(base.bTeam, positions, ratings, base);
     const QHash<QString, Place> basePlaces = placesOf(base);
@@ -125,11 +125,35 @@ SigningAnalysis analyze(const SquadBuilder &builder, const std::vector<const Pla
         Player signing = *candidate;
         signing.agreedPlayingTime.clear(); // his new role in the squad is not agreed yet
         pool.back() = &signing;
-        const SquadResult after =
+        SquadResult after =
             tactic.isEmpty()
                 ? builder.calculateSquadAndSurplus(pool, positions, slotOrder, ratings)
-                : builder.calculateSquadForTactic(pool, tactic, ratings);
+                : builder.calculateSquadForTactic(pool, tactic, ratings, true, bridges);
         ++result.simulated;
+        // The signing may take a bridged player's place: drop that one bridge
+        // and keep the result only if the signing really ends up in one of
+        // that player's slots (otherwise the gain would just be the undone
+        // manual change, not the signing).
+        if (after.twoPhase && !bridges.isEmpty()) {
+            double bestTotal = teamTotal(after.startingXi, positions, ratings, after);
+            for (auto b = bridges.constBegin(); b != bridges.constEnd(); ++b) {
+                SquadBuilder::Bridges fewer = bridges;
+                fewer.remove(b.key());
+                SquadResult alt =
+                    builder.calculateSquadForTactic(pool, tactic, ratings, true, fewer);
+                const auto placed = alt.slotsOfUid.constFind(signing.uid);
+                if (placed == alt.slotsOfUid.constEnd())
+                    continue;
+                const bool takesHisPlace =
+                    (!b->first.isEmpty() && placed->first == b->first)
+                    || (!b->second.isEmpty() && placed->second == b->second);
+                const double total = teamTotal(alt.startingXi, positions, ratings, alt);
+                if (takesHisPlace && total > bestTotal + kMinGain) {
+                    bestTotal = total;
+                    after = std::move(alt);
+                }
+            }
+        }
 
         QString slot;
         for (auto it = after.startingXi.constBegin(); it != after.startingXi.constEnd(); ++it) {

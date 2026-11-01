@@ -1,5 +1,7 @@
 #include "SquadMatrixPage.h"
 
+#include "PageHelpers.h"
+
 #include "../AppContext.h"
 #include "../PlayerActions.h"
 #include "../widgets/PersonalityFilterWidget.h"
@@ -447,17 +449,10 @@ void SquadMatrixPage::buildTable(TableSection *section, const QString &title, QW
 QStringList SquadMatrixPage::selectedRoles() const
 {
     const QString tactic = m_tacticCombo->currentData().toString();
-    QStringList roles;
-    if (tactic.isEmpty()) { // "Alle Rollen"
-        roles = m_context.definitions().validRoles();
-    } else {
-        const auto positions = m_context.definitions().tacticRoles().value(tactic);
-        QSet<QString> roleSet;
-        for (auto it = positions.constBegin(); it != positions.constEnd(); ++it)
-            roleSet.insert(it.value());
-        roles = QStringList(roleSet.cbegin(), roleSet.cend());
-    }
-    return m_context.definitions().sortRolesNaturally(roles);
+    // All roles of the tactic, for FM27 both line-ups (with ball first).
+    if (tactic.isEmpty())
+        return m_context.definitions().sortRolesByPhase(m_context.definitions().validRoles());
+    return m_context.definitions().tacticRoleList(tactic);
 }
 
 QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
@@ -616,7 +611,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     for (const QString &role : roles) {
         const QHash<QString, double> roleRatings = ratings.value(role);
         QList<PlayerColumn> &target = role == focusRole ? focusColumns : columns;
-        target.append({role,
+        target.append({definitions->roleLabel(role),
                         [roleRatings](const Player &p) -> QVariant {
                             const auto it = roleRatings.constFind(p.uid);
                             if (it == roleRatings.constEnd())
@@ -632,7 +627,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                                 return {};
                             return dwrsCellStyle(it.value());
                         },
-                        Qt::AlignRight | Qt::AlignVCenter});
+                        Qt::AlignRight | Qt::AlignVCenter, roleHeaderToolTip(*definitions, role)});
         if (role == focusRole && benchmark >= 0.0) {
             const int best = qRound(benchmark);
             focusColumns.append(
@@ -976,7 +971,7 @@ void SquadMatrixPage::rebuildScoutedOnly()
     const QString wantedHeader = filterKey == QLatin1String("__talent")
                                      ? tr("Talent")
                                      : (!filterKey.startsWith(QLatin1String("__"))
-                                            ? filterKey
+                                            ? m_context.definitions().roleLabel(filterKey)
                                             : QString());
     if (!wantedHeader.isEmpty()) {
         for (int c = 0; c < m_scoutedSection.model->columnCount(); ++c) {

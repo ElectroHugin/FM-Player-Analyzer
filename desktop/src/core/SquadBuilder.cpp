@@ -375,7 +375,8 @@ void SquadBuilder::fillDepthOptions(const std::vector<const Player *> &pool,
 SquadResult SquadBuilder::calculateSquadForTactic(const std::vector<const Player *> &pool,
                                                   const QString &tactic,
                                                   const RoleRatings &ratings,
-                                                  bool applyAptWeight) const
+                                                  bool applyAptWeight,
+                                                  const Bridges &fixedBridges) const
 {
     if (!m_definitions.isTwoPhaseTactic(tactic)) {
         return calculateSquadAndSurplus(pool, m_definitions.tacticRoles().value(tactic),
@@ -383,11 +384,12 @@ SquadResult SquadBuilder::calculateSquadForTactic(const std::vector<const Player
                                         applyAptWeight);
     }
     const TwoPhaseSquadResult twoPhase = calculateTwoPhaseSquad(
-        pool, tactic, ratings, m_config.ipSharePercent() / 100.0, applyAptWeight);
+        pool, tactic, ratings, m_config.ipSharePercent() / 100.0, applyAptWeight, fixedBridges);
 
     SquadResult result;
     result.twoPhase = true;
     result.valueOfUid = twoPhase.valueOfUid;
+    result.slotsOfUid = twoPhase.slotsOfUid;
     // Slots of the line-up without ball (the base shape); the rating is the
     // player's value over both line-ups, so totals and averages compare
     // players and tactics fairly.

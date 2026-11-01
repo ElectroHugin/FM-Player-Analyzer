@@ -101,6 +101,19 @@ public:
     bool hasRolePhases() const { return !m_rolePhases.isEmpty(); }
     const QStringList &tacticNames() const { return m_tacticNames; }
 
+    // Every role a tactic uses: for a two-phase tactic both line-ups, the
+    // roles with ball first (each group in natural pitch order).
+    QStringList tacticRoleList(const QString &tactic) const;
+
+    // Short label of a role for tables and headers. Phase-split roles (FM27)
+    // all carry the phase the same way: "WB-IP", "SDM-OOP" (the ids only add
+    // it where an abbreviation exists in both phases). Other roles: the id.
+    QString roleLabel(const QString &role) const;
+    // Game abbreviation without the phase suffix ("CFD-OOP" -> "CFD").
+    static QString baseRoleAbbr(const QString &role);
+    // Natural order, roles with ball before roles without (FM27).
+    QStringList sortRolesByPhase(QStringList roles) const;
+
     // JSON-file insertion order (QJsonObject sorts keys alphabetically, but
     // the legacy Python dicts preserve file order, and squad-selection
     // tie-breaks depend on it). Falls back to alphabetical if the raw file

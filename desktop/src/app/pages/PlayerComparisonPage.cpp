@@ -240,14 +240,10 @@ void PlayerComparisonPage::rebuildRoleCombo()
     const QString tactic = m_tacticCombo->currentData().toString();
     QStringList roles;
     if (tactic.isEmpty()) {
-        roles = m_context.definitions().validRoles();
+        roles = m_context.definitions().sortRolesByPhase(m_context.definitions().validRoles());
     } else {
-        const auto positions = m_context.definitions().tacticRoles().value(tactic);
-        QSet<QString> roleSet;
-        for (auto it = positions.constBegin(); it != positions.constEnd(); ++it)
-            roleSet.insert(it.value());
-        roles = QStringList(roleSet.cbegin(), roleSet.cend());
-        std::sort(roles.begin(), roles.end());
+        // Both line-ups of an FM27 tactic.
+        roles = m_context.definitions().tacticRoleList(tactic);
     }
     const auto roleNames = m_context.definitions().roleDisplayMap();
     m_roleCombo->clear();
@@ -399,8 +395,26 @@ void PlayerComparisonPage::rebuildComparison()
     struct InfoRow {
         QString label;
         std::function<QString(const Player &)> value;
+        std::function<QString(const Player &)> toolTip = {};
     };
-    const auto roleNames = m_context.definitions().roleDisplayMap();
+    const Definitions *definitions = &m_context.definitions();
+    const RoleRatings *ratings = &m_context.ratings();
+    // Assigned roles, best DWRS first. Only the best few are shown so the
+    // table stays narrow; the tooltip lists them all.
+    const auto rolesByRating = [definitions, ratings](const Player &p) {
+        QList<QPair<double, QString>> rated;
+        for (const QString &r : p.assignedRoles)
+            rated.append({ratings->value(r).value(p.uid, -1.0), r});
+        std::stable_sort(rated.begin(), rated.end(),
+                         [](const auto &a, const auto &b) { return a.first > b.first; });
+        QStringList labels;
+        for (const auto &[rating, r] : rated)
+            labels << (rating >= 0.0 ? QStringLiteral("%1 %2").arg(definitions->roleLabel(r))
+                                           .arg(qRound(rating))
+                                     : definitions->roleLabel(r));
+        return labels;
+    };
+    constexpr int kShownRoles = 4;
     const QList<InfoRow> infoRows = {
         {tr("Alter"), [](const Player &p) { return QString::number(p.age); }},
         {tr("Verein"), [](const Player &p) { return p.club; }},
@@ -411,24 +425,30 @@ void PlayerComparisonPage::rebuildComparison()
         {tr("Gehalt"), [](const Player &p) { return p.wageRaw; }},
         {tr("Marktwert"), [](const Player &p) { return p.transferValueRaw; }},
         {tr("Spielzeit"), [](const Player &p) { return p.agreedPlayingTime; }},
-        {tr("Zugewiesene Rollen"),
-         [roleNames](const Player &p) {
-             QStringList names;
-             for (const QString &r : p.assignedRoles)
-                 names << r;
-             return names.join(QStringLiteral(", "));
+        {tr("Beste Rollen (DWRS)"),
+         [rolesByRating](const Player &p) {
+             const QStringList labels = rolesByRating(p);
+             QString text = labels.mid(0, kShownRoles).join(QStringLiteral(", "));
+             if (labels.size() > kShownRoles)
+                 text += QStringLiteral(" ") + tr("+%1 weitere").arg(labels.size() - kShownRoles);
+             return text;
+         },
+         [rolesByRating](const Player &p) {
+             return tr("Alle zugewiesenen Rollen:") + QStringLiteral("\n")
+                    + rolesByRating(p).join(QStringLiteral("\n"));
          }},
     };
 
     m_detailTable->setRowCount(static_cast<int>(infoRows.size()) + kAttrCount);
     QStringList rowLabels;
     int row = 0;
-    const Definitions *definitions = &m_context.definitions();
     for (const InfoRow &info : infoRows) {
         rowLabels << info.label;
         int column = 0;
         for (const Player *player : players) {
             auto *item = new QTableWidgetItem(info.value(*player));
+            if (info.toolTip)
+                item->setToolTip(info.toolTip(*player));
             if (info.label == tr("Persönlichkeit")) {
                 const CellStyle style = personalityCellStyle(
                     definitions->personalityCategory(player->personality));

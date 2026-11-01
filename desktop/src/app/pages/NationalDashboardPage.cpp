@@ -353,12 +353,8 @@ void NationalDashboardPage::rebuildCallUps()
     if (code.isEmpty() || tactic.isEmpty())
         return;
 
-    const auto positions = m_context.definitions().tacticRoles().value(tactic);
-    QSet<QString> roleSet;
-    for (auto it = positions.constBegin(); it != positions.constEnd(); ++it)
-        roleSet.insert(it.value());
-    QStringList roles(roleSet.cbegin(), roleSet.cend());
-    std::sort(roles.begin(), roles.end());
+    // Every role of the tactic, for FM27 both line-ups.
+    const QStringList roles = m_context.definitions().tacticRoleList(tactic);
 
     const RoleRatings &ratings = m_context.ratings();
     const auto roleNames = m_context.definitions().roleDisplayMap();

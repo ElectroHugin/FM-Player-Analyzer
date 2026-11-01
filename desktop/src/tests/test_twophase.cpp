@@ -1,7 +1,11 @@
+        // Kai is the better left player, so the analyzer puts him left; the
+        // user swapped him to the right by hand. The advisor must start from
+        // that line-up, and a left-only signing then replaces Lio, not Kai.
 #include "core/AppConfig.h"
 #include "core/Definitions.h"
 #include "core/MinCostFlow.h"
 #include "core/Player.h"
+#include "core/SigningAdvisor.h"
 #include "core/SquadBuilder.h"
 
 #include <QJsonObject>
@@ -341,6 +345,100 @@ private slots:
                                                       QStringLiteral("olise"), false, false);
         QCOMPARE(oopOptions.size(), 1);
         QCOMPARE(oopOptions[0].total, 147.5);
+    }
+    void rolesOfBothLineUpsAreLabelledAlike()
+    {
+        // Every role of an FM27 tactic counts (not only the line-up without
+        // ball), with ball first; every phase-split role carries its phase
+        // the same way, whether or not the id has a suffix.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AMR", "IF"}, {"DR", "FB"}}),
+                          slotMap({{"AMR", "TW"}, {"DR", "PFB"}})));
+        const QStringList roles = defs.tacticRoleList(QStringLiteral("T"));
+        QCOMPARE(roles.size(), 4);
+        QVERIFY(roles.indexOf(QStringLiteral("IF")) < roles.indexOf(QStringLiteral("TW")));
+        QVERIFY(roles.indexOf(QStringLiteral("FB")) < roles.indexOf(QStringLiteral("PFB")));
+        QCOMPARE(defs.roleLabel(QStringLiteral("IF")), QStringLiteral("IF-IP"));
+        QCOMPARE(defs.roleLabel(QStringLiteral("TW")), QStringLiteral("TW-OOP"));
+        QCOMPARE(defs.roleDisplayMap().value(QStringLiteral("TW")), QStringLiteral("TW (OOP)"));
+        QCOMPARE(Definitions::baseRoleAbbr(QStringLiteral("CFD-OOP")), QStringLiteral("CFD"));
+        QCOMPARE(Definitions::baseRoleAbbr(QStringLiteral("CM-IP")), QStringLiteral("CM"));
+        // Without phases (FM24) ids and names stay as they are.
+        Definitions plain;
+        QCOMPARE(plain.roleLabel(QStringLiteral("CM-S")), QStringLiteral("CM-S"));
+    }
+
+    void signingAdvisorFollowsManualBridges()
+    {
+        // Left: IF with ball, WM without; right the same. Kai is the better
+        // left player, so the analyzer puts him left; the user swapped him to
+        // the right by hand. The advisor must start from that line-up: a
+        // right-footed signing who only plays right replaces Lio on the right
+        // ... no, Kai stays right (bridged), so the right-only signing takes
+        // Kai's place only if it is clearly better (bridge dropped for him),
+        // and a left-only signing replaces Lio on the left.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AML", "IF"}, {"AMR", "W"}}),
+                          slotMap({{"ML", "WM"}, {"MR", "TW"}})));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("kai"), QStringLiteral("AM (RL), M (RL)")),
+            makePlayer(QStringLiteral("lio"), QStringLiteral("AM (RL), M (RL)"))};
+        const std::vector<Player> market = {
+            makePlayer(QStringLiteral("leftie"), QStringLiteral("AM (L), M (L)"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("kai"), 80}, {QStringLiteral("lio"), 60},
+                                         {QStringLiteral("leftie"), 85}};
+        ratings[QStringLiteral("W")] = {{QStringLiteral("kai"), 70}, {QStringLiteral("lio"), 70}};
+        ratings[QStringLiteral("WM")] = {{QStringLiteral("kai"), 70}, {QStringLiteral("lio"), 60},
+                                         {QStringLiteral("leftie"), 85}};
+        ratings[QStringLiteral("TW")] = {{QStringLiteral("kai"), 70}, {QStringLiteral("lio"), 70}};
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool, marketPool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+        for (const Player &p : market)
+            marketPool.push_back(&p);
+        const auto positions = defs.tacticRoles().value(QStringLiteral("T"));
+        const QStringList order = defs.tacticSlotOrder(QStringLiteral("T"));
+
+        // Without a manual change Kai plays left.
+        const SigningAnalysis free = SigningAdvisor::analyze(
+            builder, pool, marketPool, positions, order, ratings, 12, 15, QStringLiteral("T"));
+        const auto currentAt = [](const SigningAnalysis &a, const QString &slot) {
+            for (const SlotNeed &need : a.needs) {
+                if (need.slot == slot)
+                    return need.current.playerUid;
+            }
+            return QString();
+        };
+        QCOMPARE(currentAt(free, QStringLiteral("ML")), QStringLiteral("kai"));
+
+        // Swapped by hand: Kai right, Lio left - the advisor shows that line-up
+        // and the left-only signing replaces Lio, not Kai.
+        SquadBuilder::Bridges bridges;
+        bridges.insert(QStringLiteral("kai"), qMakePair(QStringLiteral("AMR"), QStringLiteral("MR")));
+        const SigningAnalysis manual =
+            SigningAdvisor::analyze(builder, pool, marketPool, positions, order, ratings, 12, 15,
+                                    QStringLiteral("T"), bridges);
+        QCOMPARE(currentAt(manual, QStringLiteral("ML")), QStringLiteral("lio"));
+        QCOMPARE(currentAt(manual, QStringLiteral("MR")), QStringLiteral("kai"));
+        QCOMPARE(manual.needs.front().slot, QStringLiteral("ML"));
+        QCOMPARE(manual.needs.front().options.size(), size_t(1));
+        const SigningOption &option = manual.needs.front().options.front();
+        QCOMPARE(option.player->uid, QStringLiteral("leftie"));
+        QCOMPARE(option.moves.size(), size_t(1));
+        QCOMPARE(option.moves.front().player->uid, QStringLiteral("lio"));
+
+        // Kai bridged left: the left-only signing may still take his place
+        // (his bridge is dropped for that simulation).
+        SquadBuilder::Bridges left;
+        left.insert(QStringLiteral("kai"), qMakePair(QStringLiteral("AML"), QStringLiteral("ML")));
+        const SigningAnalysis displaced =
+            SigningAdvisor::analyze(builder, pool, marketPool, positions, order, ratings, 12, 15,
+                                    QStringLiteral("T"), left);
+        QCOMPARE(currentAt(displaced, QStringLiteral("ML")), QStringLiteral("kai"));
+        QCOMPARE(displaced.needs.front().slot, QStringLiteral("ML"));
+        QCOMPARE(displaced.needs.front().options.size(), size_t(1));
     }
 };
 
