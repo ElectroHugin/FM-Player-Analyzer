@@ -146,7 +146,7 @@ private slots:
         QCOMPARE(m_defs.tacticNames(), QStringList{QStringLiteral("4-2-3-1 - Bavarian Blitz")});
         const auto blitz = m_defs.twoPhaseTactics().value(QStringLiteral("4-2-3-1 - Bavarian Blitz"));
         QCOMPARE(blitz.ip.value(QStringLiteral("AMR")), QStringLiteral("IW"));
-        QCOMPARE(blitz.ip.value(QStringLiteral("DMCL")), QStringLiteral("BBP"));
+        QCOMPARE(blitz.ip.value(QStringLiteral("DMCL")), QStringLiteral("DLP"));
         QCOMPARE(blitz.oop.value(QStringLiteral("AMR")), QStringLiteral("TW"));
         QCOMPARE(blitz.oop.value(QStringLiteral("DMC")), QStringLiteral("SDM"));
         QCOMPARE(blitz.oop.value(QStringLiteral("MCL")), QStringLiteral("PCM"));

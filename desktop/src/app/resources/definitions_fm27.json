@@ -1,6 +1,6 @@
 {
   "fm_version": "fm27",
-  "data_revision": 4,
+  "data_revision": 5,
   "retired_tactics": [
     "3-4-3 DM Narrow",
     "3-4-3 DM Wide",
@@ -2202,7 +2202,7 @@
         "DCL": "BCB",
         "DCR": "BCB",
         "DR": "WB-IP",
-        "DMCL": "BBP",
+        "DMCL": "DLP",
         "DMCR": "DM-IP",
         "AML": "IF",
         "AMC": "AM-IP",
