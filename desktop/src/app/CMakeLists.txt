@@ -105,7 +105,11 @@ add_executable(fmplayeranalyzer
 
 # Windows only: GUI subsystem (no console window) and the exe icon resource.
 if(WIN32)
-    target_sources(fmplayeranalyzer PRIVATE app.rc)
+    # Icon + version info; the version comes from project() in the top-level
+    # CMakeLists.txt.
+    set(FMPA_ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/favicon.ico")
+    configure_file(app.rc.in "${CMAKE_CURRENT_BINARY_DIR}/app.rc" @ONLY)
+    target_sources(fmplayeranalyzer PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/app.rc")
     set_target_properties(fmplayeranalyzer PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
