@@ -98,34 +98,42 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     painter.setRenderHint(QPainter::Antialiasing);
 
     const bool night = m_theme.mode() != QLatin1String("day");
-    const QColor pitchBg = night ? QColor(0x2a, 0x5d, 0x34) : QColor(0xD3, 0xEE, 0xD8);
-    const QColor markings = night ? QColor(255, 255, 255, 100) : QColor(0, 0, 0, 50);
-    const QColor boxBg = night ? QColor(0, 0, 0, 100) : QColor(255, 255, 255, 180);
-    const QColor boxBorder = night ? QColor(0x55, 0x55, 0x55) : QColor(0xB0, 0xB0, 0xB0);
-    const QColor textColor = night ? QColor(Qt::white) : QColor(0x31, 0x33, 0x3F);
-    const QColor secondaryText = night ? QColor(0xcc, 0xcc, 0xcc) : QColor(0x55, 0x55, 0x55);
+    // Pitch in the style of FM's tactics screen: dark green with mown stripes,
+    // compact player cards at their place on the pitch (not a full grid).
+    const QColor pitchBg = night ? QColor(0x0f, 0x4a, 0x3c) : QColor(0x2e, 0x7d, 0x5b);
+    const QColor stripe = night ? QColor(255, 255, 255, 10) : QColor(255, 255, 255, 18);
+    const QColor markings = QColor(255, 255, 255, night ? 90 : 120);
+    const QColor cardBody = night ? QColor(0x12, 0x16, 0x1c) : QColor(0xfb, 0xfb, 0xfd);
+    const QColor cardBorder = night ? QColor(255, 255, 255, 40) : QColor(0, 0, 0, 40);
+    const QColor textColor = night ? QColor(Qt::white) : QColor(0x1e, 0x22, 0x2b);
+    const QColor secondaryText = night ? QColor(0xb8, 0xbe, 0xc8) : QColor(0x5a, 0x60, 0x6c);
 
     const QRectF pitch = rect().adjusted(1, 1, -1, -1);
 
     // --- Pitch + markings ---
     QPainterPath pitchPath;
-    pitchPath.addRoundedRect(pitch, 10, 10);
+    pitchPath.addRoundedRect(pitch, 12, 12);
     painter.fillPath(pitchPath, pitchBg);
-    painter.setPen(QPen(markings, 2));
-    painter.drawPath(pitchPath);
     painter.setClipPath(pitchPath);
-
-    const double cx = pitch.center().x();
+    const int stripes = 10;
+    for (int i = 0; i < stripes; i += 2)
+        painter.fillRect(QRectF(pitch.left(), pitch.top() + i * pitch.height() / stripes,
+                                pitch.width(), pitch.height() / stripes),
+                         stripe);
+    const QRectF field = pitch.adjusted(8, 8, -8, -8);
     painter.setPen(QPen(markings, 1.5));
-    painter.drawLine(QPointF(pitch.left(), pitch.center().y()),
-                     QPointF(pitch.right(), pitch.center().y()));
-    painter.drawEllipse(pitch.center(), pitch.width() * 0.16, pitch.width() * 0.16);
-    const double penW = pitch.width() * 0.40, penH = pitch.height() * 0.18;
-    painter.drawRect(QRectF(cx - penW / 2, pitch.top(), penW, penH));
-    painter.drawRect(QRectF(cx - penW / 2, pitch.bottom() - penH, penW, penH));
-    const double goalW = pitch.width() * 0.20, goalH = pitch.height() * 0.07;
-    painter.drawRect(QRectF(cx - goalW / 2, pitch.top(), goalW, goalH));
-    painter.drawRect(QRectF(cx - goalW / 2, pitch.bottom() - goalH, goalW, goalH));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(field);
+    const double cx = field.center().x();
+    painter.drawLine(QPointF(field.left(), field.center().y()),
+                     QPointF(field.right(), field.center().y()));
+    painter.drawEllipse(field.center(), field.width() * 0.14, field.width() * 0.14);
+    const double penW = field.width() * 0.44, penH = field.height() * 0.16;
+    painter.drawRect(QRectF(cx - penW / 2, field.top(), penW, penH));
+    painter.drawRect(QRectF(cx - penW / 2, field.bottom() - penH, penW, penH));
+    const double goalW = field.width() * 0.20, goalH = field.height() * 0.06;
+    painter.drawRect(QRectF(cx - goalW / 2, field.top(), goalW, goalH));
+    painter.drawRect(QRectF(cx - goalW / 2, field.bottom() - goalH, goalW, goalH));
 
     if (m_layout.isEmpty() && !m_positions.contains(QStringLiteral("GK"))) {
         painter.setPen(textColor);
@@ -133,34 +141,40 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         return;
     }
 
-    // --- Cell grid: 5 columns x 6 rows, GK spanning the bottom row ---
-    const double padding = 10.0, gap = 6.0;
-    const double cellW = (pitch.width() - 2 * padding - 4 * gap) / 5.0;
-    const double cellH = (pitch.height() - 2 * padding - 5 * gap) / 6.0;
-    const auto cellRect = [&](int row, int col) {
-        return QRectF(pitch.left() + padding + (col - 1) * (cellW + gap),
-                      pitch.top() + padding + (row - 1) * (cellH + gap), cellW, cellH);
+    // --- Card placement: 5 columns, 6 lines (strikers at the top, GK last) ---
+    const double cardW = field.width() * 0.188;
+    const double cardH = field.height() * 0.125;
+    static const double kRowY[] = {0.0, 0.085, 0.255, 0.42, 0.585, 0.75, 0.915};
+    const auto cardRect = [&](int row, int col) {
+        const double x = field.left() + field.width() * (0.1 + 0.2 * (col - 1));
+        const double y = field.top() + field.height() * kRowY[qBound(1, row, 6)];
+        return QRectF(x - cardW / 2, y - cardH / 2, cardW, cardH);
     };
+    // Header colour per line, like the role colours in FM's tactics screen.
+    static const QColor kLineColors[] = {
+        QColor(0x4a, 0x4f, 0x63), QColor(0x9b, 0x23, 0x6f), QColor(0x5e, 0x2e, 0x8f),
+        QColor(0x27, 0x55, 0xa6), QColor(0x1e, 0x7a, 0x4a), QColor(0x0f, 0x72, 0x72),
+        QColor(0x4a, 0x4f, 0x63)};
 
+    QFont headerFont = font();
+    headerFont.setBold(true);
+    headerFont.setPointSizeF(font().pointSizeF() * 0.85);
     QFont nameFont = font();
     nameFont.setBold(true);
+    nameFont.setPointSizeF(font().pointSizeF() * 0.92);
     QFont ratingFont = font();
     ratingFont.setBold(true);
-    ratingFont.setPointSizeF(font().pointSizeF() * 1.1);
+    ratingFont.setPointSizeF(font().pointSizeF() * 1.05);
     QFont smallFont = font();
-    smallFont.setPointSizeF(font().pointSizeF() * 0.82);
-    smallFont.setItalic(true);
+    smallFont.setPointSizeF(font().pointSizeF() * 0.78);
 
     m_boxRects.clear();
-    const auto drawBox = [&](const QRectF &box, const QString &slot) {
+    const auto drawCard = [&](const QRectF &box, const QString &slot, int row) {
         m_boxRects.insert(slot, box);
         const XiCell cell = m_team.value(slot);
         QPainterPath path;
         path.addRoundedRect(box, 6, 6);
-        const QColor background = m_slotColors.value(slot, boxBg);
-        painter.fillPath(path, background);
-        painter.setPen(QPen(boxBorder, 1));
-        painter.drawPath(path);
+        painter.fillPath(path, m_slotColors.value(slot, cardBody));
 
         // FM27 ids carry the phase when an abbreviation exists in both
         // ("CFD-OOP"); the pitch belongs to one phase, so show the game's
@@ -173,31 +187,54 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         const QString apt = aptAbbreviations().value(cell.apt, cell.apt);
         const QString subtext = m_slotSubtexts.value(slot);
 
-        // Stack: name / rating / (role) / apt-or-subtext.
-        const double lineH = box.height() / 4.2;
-        QRectF line(box.left() + 2, box.top() + box.height() * 0.06, box.width() - 4, lineH);
-        painter.setPen(textColor);
-        drawFittedName(painter, line, cell.isFilled() ? cell.name : QStringLiteral("–"),
-                       nameFont);
-        line.translate(0, lineH);
+        // Header: role abbreviation on the line colour.
+        const double headerH = box.height() * 0.28;
+        const QRectF header(box.left(), box.top(), box.width(), headerH);
+        painter.save();
+        painter.setClipPath(path, Qt::IntersectClip);
+        painter.fillRect(header, kLineColors[qBound(0, row, 6)]);
+        painter.restore();
+        painter.setPen(Qt::white);
+        painter.setFont(headerFont);
+        painter.drawText(header, Qt::AlignCenter,
+                         painter.fontMetrics().elidedText(roleAbbr, Qt::ElideRight,
+                                                          static_cast<int>(header.width() - 4)));
+
+        // Rating with a slim bar, then the name, then the extra line.
+        const QRectF body = box.adjusted(4, headerH + 1, -4, -2);
+        const double lineH = body.height() / 3.0;
+        QRectF line(body.left(), body.top(), body.width(), lineH);
+        const double rating = cell.isFilled() ? cell.rating : 0.0;
         painter.setFont(ratingFont);
-        painter.drawText(line, Qt::AlignHCenter | Qt::AlignVCenter,
-                         cell.isFilled() ? QStringLiteral("%1%").arg(qRound(cell.rating))
-                                         : QStringLiteral("0%"));
+        painter.setPen(cell.isFilled() ? textColor : secondaryText);
+        painter.drawText(line.adjusted(0, 0, -body.width() * 0.45, 0),
+                         Qt::AlignLeft | Qt::AlignVCenter,
+                         cell.isFilled() ? QStringLiteral("%1%").arg(qRound(rating))
+                                         : QStringLiteral("–"));
+        const QRectF bar(line.left() + body.width() * 0.52, line.center().y() - 2,
+                         body.width() * 0.48, 4);
+        painter.fillRect(bar, night ? QColor(255, 255, 255, 30) : QColor(0, 0, 0, 25));
+        const QColor barColor = rating >= 75   ? QColor(0x3c, 0xc4, 0x6a)
+                                : rating >= 65 ? QColor(0xc9, 0xb8, 0x2c)
+                                               : QColor(0xd9, 0x6b, 0x2b);
+        painter.fillRect(QRectF(bar.left(), bar.top(), bar.width() * qBound(0.0, rating / 100.0, 1.0),
+                                bar.height()),
+                         barColor);
         line.translate(0, lineH);
-        painter.setPen(secondaryText);
-        painter.setFont(smallFont);
-        painter.drawText(line, Qt::AlignHCenter | Qt::AlignVCenter,
-                         painter.fontMetrics().elidedText(
-                             QStringLiteral("(%1)").arg(roleAbbr), Qt::ElideRight,
-                             static_cast<int>(line.width())));
+        painter.setPen(textColor);
+        drawFittedName(painter, line, cell.isFilled() ? cell.name : tr("unbesetzt"), nameFont);
         const QString lastLine = !subtext.isEmpty() ? subtext : (m_showApt ? apt : QString());
         if (!lastLine.isEmpty()) {
             line.translate(0, lineH);
+            painter.setPen(secondaryText);
+            painter.setFont(smallFont);
             painter.drawText(line, Qt::AlignHCenter | Qt::AlignVCenter,
                              painter.fontMetrics().elidedText(
                                  lastLine, Qt::ElideRight, static_cast<int>(line.width())));
         }
+        painter.setPen(QPen(cardBorder, 1));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawPath(path);
     };
 
     const PitchGeometry &geometry = pitchGeometry(m_fmVersionId);
@@ -214,16 +251,12 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             const int col = pitchSlot->displayColumn + 1;
             if (col < 1 || col > 5)
                 continue;
-            drawBox(cellRect(row, col), slot);
+            drawCard(cardRect(row, col), slot, row);
         }
     }
 
-    if (m_positions.contains(QStringLiteral("GK"))) {
-        const QRectF gkRect(pitch.left() + padding,
-                            pitch.top() + padding + 5 * (cellH + gap),
-                            pitch.width() - 2 * padding, cellH);
-        drawBox(gkRect, QStringLiteral("GK"));
-    }
+    if (m_positions.contains(QStringLiteral("GK")))
+        drawCard(cardRect(6, 3), QStringLiteral("GK"), 6);
 }
 
 QString TacticPitchWidget::uidAt(const QPoint &pos) const

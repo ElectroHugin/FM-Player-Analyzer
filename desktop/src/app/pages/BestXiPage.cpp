@@ -12,6 +12,10 @@
 #include "core/Utils.h"
 
 #include <QCheckBox>
+#include <QFrame>
+#include <QPushButton>
+#include <QStackedWidget>
+#include <QButtonGroup>
 #include <QComboBox>
 #include <QCursor>
 #include <QGroupBox>
@@ -156,54 +160,67 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     {
         auto *tab = new QWidget;
         auto *tabLayout = new QVBoxLayout(tab);
-        auto *pitchRow = new QHBoxLayout;
-        auto *xiColumn = new QVBoxLayout;
-        m_xiTitle = new QLabel(tr("Startelf"), tab);
-        m_xiTitle->setObjectName(QStringLiteral("sectionTitle"));
-        m_xiTitle->setAlignment(Qt::AlignHCenter);
-        m_xiPitch = new TacticPitchWidget(m_theme, tab);
-        xiColumn->addWidget(m_xiTitle);
-        xiColumn->addWidget(m_xiPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
-        auto *bColumn = new QVBoxLayout;
-        m_bTitle = new QLabel(tr("B-Team"), tab);
-        m_bTitle->setObjectName(QStringLiteral("sectionTitle"));
-        m_bTitle->setAlignment(Qt::AlignHCenter);
-        m_bTeamPitch = new TacticPitchWidget(m_theme, tab);
-        bColumn->addWidget(m_bTitle);
-        bColumn->addWidget(m_bTeamPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
-        pitchRow->addLayout(xiColumn, 1);
-        pitchRow->addLayout(bColumn, 1);
+        // Starting XI / B-team: one click apart, both line-ups (FM27: with
+        // ball left, without ball right, like the game) side by side.
+        auto *switchRow = new QHBoxLayout;
+        auto *segmented = new QFrame(tab);
+        segmented->setObjectName(QStringLiteral("segmented"));
+        auto *segLayout = new QHBoxLayout(segmented);
+        segLayout->setContentsMargins(3, 3, 3, 3);
+        segLayout->setSpacing(3);
+        m_xiButton = new QPushButton(tr("Startelf"), segmented);
+        m_bButton = new QPushButton(tr("B-Team"), segmented);
+        auto *teamGroup = new QButtonGroup(tab);
+        for (QPushButton *button : {m_xiButton, m_bButton}) {
+            button->setCheckable(true);
+            button->setObjectName(QStringLiteral("segmentButton"));
+            button->setCursor(Qt::PointingHandCursor);
+            button->setFocusPolicy(Qt::NoFocus);
+            button->setMinimumWidth(110);
+            teamGroup->addButton(button);
+            segLayout->addWidget(button);
+        }
+        m_xiButton->setChecked(true);
+        switchRow->addWidget(segmented);
+        switchRow->addStretch(1);
+        tabLayout->addLayout(switchRow);
 
-        // FM26+ tactics: the same players in the in-possession line-up. Under
-        // each name: the slot he takes in the other line-up.
         m_phaseNote = new QLabel(tab);
         m_phaseNote->setWordWrap(true);
         m_phaseNote->setObjectName(QStringLiteral("kpiCaption"));
-        m_ipRow = new QWidget(tab);
-        auto *ipRow = new QHBoxLayout(m_ipRow);
-        ipRow->setContentsMargins(0, 0, 0, 0);
-        auto *xiIpColumn = new QVBoxLayout;
-        auto *xiIpTitle = new QLabel(tr("Startelf mit Ball"), m_ipRow);
-        xiIpTitle->setObjectName(QStringLiteral("sectionTitle"));
-        xiIpTitle->setAlignment(Qt::AlignHCenter);
-        m_xiIpPitch = new TacticPitchWidget(m_theme, m_ipRow);
-        xiIpColumn->addWidget(xiIpTitle);
-        xiIpColumn->addWidget(m_xiIpPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
-        auto *bIpColumn = new QVBoxLayout;
-        auto *bIpTitle = new QLabel(tr("B-Team mit Ball"), m_ipRow);
-        bIpTitle->setObjectName(QStringLiteral("sectionTitle"));
-        bIpTitle->setAlignment(Qt::AlignHCenter);
-        m_bTeamIpPitch = new TacticPitchWidget(m_theme, m_ipRow);
-        bIpColumn->addWidget(bIpTitle);
-        bIpColumn->addWidget(m_bTeamIpPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
-        ipRow->addLayout(xiIpColumn, 1);
-        ipRow->addLayout(bIpColumn, 1);
-
-        tabLayout->addWidget(m_phaseNote);
-        tabLayout->addWidget(m_ipRow);
-        tabLayout->addLayout(pitchRow);
         m_phaseNote->setVisible(false);
-        m_ipRow->setVisible(false);
+        tabLayout->addWidget(m_phaseNote);
+
+        m_teamStack = new QStackedWidget(tab);
+        const auto makePage = [this](TacticPitchWidget *&ipPitch, TacticPitchWidget *&oopPitch,
+                                     QLabel *&ipTitle, QLabel *&oopTitle) {
+            auto *page = new QWidget;
+            auto *row = new QHBoxLayout(page);
+            row->setContentsMargins(0, 0, 0, 0);
+            auto *ipColumn = new QVBoxLayout;
+            ipTitle = new QLabel(tr("Mit Ball"), page);
+            ipTitle->setObjectName(QStringLiteral("sectionTitle"));
+            ipTitle->setAlignment(Qt::AlignHCenter);
+            ipPitch = new TacticPitchWidget(m_theme, page);
+            ipColumn->addWidget(ipTitle);
+            ipColumn->addWidget(ipPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
+            auto *oopColumn = new QVBoxLayout;
+            oopTitle = new QLabel(tr("Ohne Ball"), page);
+            oopTitle->setObjectName(QStringLiteral("sectionTitle"));
+            oopTitle->setAlignment(Qt::AlignHCenter);
+            oopPitch = new TacticPitchWidget(m_theme, page);
+            oopColumn->addWidget(oopTitle);
+            oopColumn->addWidget(oopPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
+            row->addLayout(ipColumn, 1);
+            row->addLayout(oopColumn, 1);
+            return page;
+        };
+        m_teamStack->addWidget(makePage(m_xiIpPitch, m_xiPitch, m_xiIpTitle, m_xiTitle));
+        m_teamStack->addWidget(makePage(m_bTeamIpPitch, m_bTeamPitch, m_bIpTitle, m_bTitle));
+        tabLayout->addWidget(m_teamStack);
+        connect(m_xiButton, &QPushButton::toggled, this, [this](bool xi) {
+            m_teamStack->setCurrentIndex(xi ? 0 : 1);
+        });
 
         m_depthBox = new QGroupBox(tr("Weitere Kader-Tiefe"), tab);
         auto *depthLayout = new QVBoxLayout(m_depthBox);
@@ -546,10 +563,10 @@ void BestXiPage::rebuild()
                                      m_secondXiPitch, m_youthXiPitch})
         pitch->setFmVersionId(m_context.fmVersionId());
     const bool twoPhase = m_context.definitions().isTwoPhaseTactic(tactic);
-    m_ipRow->setVisible(twoPhase);
+    for (QWidget *w : std::initializer_list<QWidget *>{m_xiIpPitch, m_bTeamIpPitch, m_xiIpTitle,
+                                                       m_bIpTitle, m_xiTitle, m_bTitle})
+        w->setVisible(twoPhase);
     m_phaseNote->setVisible(twoPhase);
-    m_xiTitle->setText(twoPhase ? tr("Startelf ohne Ball") : tr("Startelf"));
-    m_bTitle->setText(twoPhase ? tr("B-Team ohne Ball") : tr("B-Team"));
     if (twoPhase) {
         // Two free line-ups: who plays and where in each is one optimisation
         // (SquadBuilder::calculateTwoPhaseSquad); depth, injuries and the

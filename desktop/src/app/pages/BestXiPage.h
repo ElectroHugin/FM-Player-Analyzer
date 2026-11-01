@@ -11,6 +11,8 @@ class QCheckBox;
 class QComboBox;
 class QGroupBox;
 class QLabel;
+class QPushButton;
+class QStackedWidget;
 class QTableWidget;
 class QTabWidget;
 class QToolButton;
@@ -82,7 +84,11 @@ private:
     QLabel *m_bTitle = nullptr;
     TacticPitchWidget *m_xiPitch = nullptr;    // two-phase tactics: out of possession
     TacticPitchWidget *m_bTeamPitch = nullptr;
-    QWidget *m_ipRow = nullptr;                // two-phase tactics only
+    QPushButton *m_xiButton = nullptr;         // Startelf / B-Team switch
+    QPushButton *m_bButton = nullptr;
+    QStackedWidget *m_teamStack = nullptr;
+    QLabel *m_xiIpTitle = nullptr;
+    QLabel *m_bIpTitle = nullptr;
     QLabel *m_phaseNote = nullptr;
     TacticPitchWidget *m_xiIpPitch = nullptr;  // in possession
     TacticPitchWidget *m_bTeamIpPitch = nullptr;

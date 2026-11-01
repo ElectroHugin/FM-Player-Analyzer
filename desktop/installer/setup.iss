@@ -35,9 +35,13 @@ Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "fm27views"; Description: "Ansichten (Views) für den FM27-Export in den Ordner von Football Manager 27 kopieren"; GroupDescription: "Football Manager 27:"; Check: Fm27Installed
 
 [Files]
 Source: "staging\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; FM27 view filters: always next to the app, into the game's views folder on request.
+Source: "..\src\app\resources\views\*.fmf"; DestDir: "{app}\views"; Flags: ignoreversion
+Source: "..\src\app\resources\views\*.fmf"; DestDir: "{userdocs}\Sports Interactive\Football Manager 27\views"; Flags: ignoreversion; Tasks: fm27views
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -45,3 +49,10 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+// Offer the views only when Football Manager 27 has created its documents folder.
+function Fm27Installed: Boolean;
+begin
+  Result := DirExists(ExpandConstant('{userdocs}\Sports Interactive\Football Manager 27'));
+end;

@@ -18,6 +18,7 @@
 #include <QDoubleSpinBox>
 #include <QFile>
 #include <QFileDialog>
+#include <QStandardPaths>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -131,7 +132,7 @@ QWidget *SettingsPage::buildClubTab()
         tr("Bestimmt, wie die Spielerattribute aus dem Export gelesen werden, welche "
            "Rollen und Taktiken gelten und wie die Attribute gewichtet werden. Die "
            "Version wird beim Anlegen eines Spielstands gewählt und steht fest, sobald "
-           "er Spieler enthält. Aktuell wird Football Manager 2024 unterstützt."),
+           "er Spieler enthält. Unterstützt werden Football Manager 2024 und 2027."),
         versionGroup);
     versionHint->setWordWrap(true);
     versionHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -174,6 +175,52 @@ QWidget *SettingsPage::buildClubTab()
     });
     connect(importDirOpen, &QPushButton::clicked, this, [currentImportDir] {
         QDesktopServices::openUrl(QUrl::fromLocalFile(currentImportDir()));
+    });
+    // FM27 has no export of its own: the shipped view filters (.fmf) give the
+    // game's list screens the columns the analyzer reads.
+    auto *viewsButton = new QPushButton(tr("Ansichten für FM27 installieren"));
+    auto *viewsHint = new QLabel(
+        tr("Kopiert die mitgelieferten Ansichten (Kader, Spielerdatenbank, Shortlist) in "
+           "den Ordner 'views' von Football Manager 27. Im Spiel lädst du sie dann über "
+           "das Ansichten-Menü der Liste. Vorhandene Dateien mit demselben Namen werden "
+           "ersetzt, andere Ansichten bleiben unberührt."),
+        versionGroup);
+    viewsHint->setWordWrap(true);
+    viewsHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(tr("FM27-Ansichten:"), viewsButton);
+    versionForm->addRow(viewsHint);
+    connect(viewsButton, &QPushButton::clicked, this, [this] {
+        const QString target =
+            QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
+                .filePath(QStringLiteral("Sports Interactive/Football Manager 27/views"));
+        if (!QDir().mkpath(target)) {
+            QMessageBox::warning(this, tr("FM27-Ansichten"),
+                                 tr("Der Ordner %1 konnte nicht angelegt werden.")
+                                     .arg(QDir::toNativeSeparators(target)));
+            return;
+        }
+        QStringList copied;
+        const QDir source(QStringLiteral(":/views"));
+        for (const QString &name : source.entryList({QStringLiteral("*.fmf")}, QDir::Files)) {
+            const QString dest = QDir(target).filePath(name);
+            QFile::remove(dest);
+            if (QFile::copy(source.filePath(name), dest)) {
+                QFile::setPermissions(dest, QFile::ReadOwner | QFile::WriteOwner
+                                                | QFile::ReadUser | QFile::WriteUser);
+                copied << name;
+            }
+        }
+        if (copied.isEmpty()) {
+            QMessageBox::warning(this, tr("FM27-Ansichten"),
+                                 tr("Es konnte keine Ansicht nach %1 kopiert werden.")
+                                     .arg(QDir::toNativeSeparators(target)));
+            return;
+        }
+        QMessageBox::information(this, tr("FM27-Ansichten"),
+                                 tr("%1 Ansichten nach %2 kopiert:\n%3")
+                                     .arg(copied.size())
+                                     .arg(QDir::toNativeSeparators(target),
+                                          copied.join(QLatin1Char('\n'))));
     });
     layout->addWidget(versionGroup);
 
