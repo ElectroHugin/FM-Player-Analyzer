@@ -68,11 +68,16 @@ namespace SigningAdvisor {
 // With a tactic name, a two-phase tactic (FM27) is computed over both line-ups
 // (SquadBuilder::calculateSquadForTactic); positions/slotOrder must then be
 // that tactic's.
+// bridges: the user's manual bridges of a two-phase tactic (Best XI page).
+// Today's XI keeps them; a signing may take the place of a bridged player
+// (his bridge is then dropped for that simulation), but no bridge is dropped
+// just to reshuffle the others.
 SigningAnalysis analyze(const SquadBuilder &builder, const std::vector<const Player *> &squad,
                         const std::vector<const Player *> &market,
                         const QHash<QString, QString> &positions, const QStringList &slotOrder,
                         const RoleRatings &ratings, int candidatesPerSlot = 12,
-                        int optionsPerSlot = 15, const QString &tactic = QString());
+                        int optionsPerSlot = 15, const QString &tactic = QString(),
+                        const SquadBuilder::Bridges &bridges = {});
 
 } // namespace SigningAdvisor
 

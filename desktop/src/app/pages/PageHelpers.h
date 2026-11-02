@@ -4,6 +4,10 @@
 #include "core/TrainingAdvice.h"
 #include "core/Utils.h"
 
+#include <QCoreApplication>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QSet>
 #include <QStringList>
 
@@ -33,6 +37,51 @@ inline QStringList favoritesFirstTactics(AppContext &context, bool national)
             ordered << tactic;
     }
     return ordered;
+}
+
+// Header tooltip of a role column: the full name and, for FM27, in words
+// whether it is the role with or without ball.
+inline QString roleHeaderToolTip(const Definitions &definitions, const QString &role)
+{
+    QString text = definitions.roleDisplayMap().value(role, role);
+    const QString phase = definitions.rolePhase(role);
+    if (phase == QLatin1String("ip"))
+        text += QStringLiteral("\n")
+                + QCoreApplication::translate("fm::PageHelpers", "Rolle mit Ball");
+    else if (phase == QLatin1String("oop"))
+        text += QStringLiteral("\n")
+                + QCoreApplication::translate("fm::PageHelpers", "Rolle ohne Ball");
+    return text;
+}
+
+// Manual bridges of a two-phase tactic (Best XI page, right-click on a
+// starting-XI player): uid -> (slot with ball, slot without ball), stored per
+// tactic in the setting "bridges/<tactic>". With a pool, bridges of players
+// not in it (sold, injured, not registered) are left out.
+inline QHash<QString, QPair<QString, QString>>
+loadManualBridges(AppContext &context, const QString &tactic,
+                  const std::vector<const Player *> *pool = nullptr)
+{
+    QHash<QString, QPair<QString, QString>> bridges;
+    if (!context.definitions().isTwoPhaseTactic(tactic))
+        return bridges;
+    const QJsonObject obj =
+        QJsonDocument::fromJson(
+            context.database().setting(QStringLiteral("bridges/") + tactic).toUtf8())
+            .object();
+    QSet<QString> inPool;
+    if (pool) {
+        for (const Player *player : *pool)
+            inPool.insert(player->uid);
+    }
+    for (auto it = obj.begin(); it != obj.end(); ++it) {
+        if (pool && !inPool.contains(it.key()))
+            continue;
+        const QJsonArray pair = it.value().toArray();
+        if (pair.size() == 2)
+            bridges.insert(it.key(), {pair.at(0).toString(), pair.at(1).toString()});
+    }
+    return bridges;
 }
 
 // Training age windows from config ([Training] section).
@@ -67,10 +116,9 @@ inline QStringList trainingRoleChoices(AppContext &context, const Player &player
                 playerRoles.insert(role);
         }
     }
-    const auto tacticRoles = context.definitions().tacticRoles().value(tactic);
-    QSet<QString> tacticRoleSet;
-    for (auto it = tacticRoles.constBegin(); it != tacticRoles.constEnd(); ++it)
-        tacticRoleSet.insert(it.value());
+    // Both line-ups of an FM27 tactic count.
+    const QStringList tacticRoles = context.definitions().tacticRoleList(tactic);
+    const QSet<QString> tacticRoleSet(tacticRoles.cbegin(), tacticRoles.cend());
 
     QStringList result;
     for (const QString &role : playerRoles) {

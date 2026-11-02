@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 
 project(fm24analyzer
-    VERSION 2.0.3
+    VERSION 2.0.4
     DESCRIPTION "FM24 Player Analyzer - native desktop app"
     LANGUAGES CXX
 )

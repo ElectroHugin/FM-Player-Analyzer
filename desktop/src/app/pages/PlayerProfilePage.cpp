@@ -31,6 +31,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QVBoxLayout>
 
 #include <algorithm>
@@ -185,12 +186,35 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     detailLayout->setContentsMargins(0, 0, 0, 0);
     detailLayout->setSpacing(10);
 
-    auto *topRolesTitle = new QLabel(tr("Top-Rollen"), m_detailWidget);
+    auto *topRolesHeader = new QHBoxLayout;
+    auto *topRolesTitle = new QLabel(tr("Rollen (beste zuerst)"), m_detailWidget);
     topRolesTitle->setObjectName(QStringLiteral("sectionTitle"));
-    detailLayout->addWidget(topRolesTitle);
-    m_topRolesLayout = new QHBoxLayout;
+    topRolesHeader->addWidget(topRolesTitle);
+    topRolesHeader->addStretch(1);
+    m_roleFilterCombo = new QComboBox(m_detailWidget);
+    m_roleFilterCombo->addItem(tr("Alle Rollen"), QStringLiteral("all"));
+    m_roleFilterCombo->addItem(tr("Nur mit Ball (IP)"), QStringLiteral("ip"));
+    m_roleFilterCombo->addItem(tr("Nur ohne Ball (OOP)"), QStringLiteral("oop"));
+    m_roleFilterCombo->setToolTip(tr("Welche Rollen als Kacheln gezeigt werden. Seitlich "
+                                     "scrollen für alle Rollen."));
+    connect(m_roleFilterCombo, &QComboBox::currentIndexChanged, this,
+            [this] { fillRoleTiles(); });
+    topRolesHeader->addWidget(m_roleFilterCombo);
+    detailLayout->addLayout(topRolesHeader);
+
+    // Every assigned role as a tile; scroll sideways when they do not fit.
+    auto *tilesScroll = new QScrollArea(m_detailWidget);
+    tilesScroll->setWidgetResizable(true);
+    tilesScroll->setFrameShape(QFrame::NoFrame);
+    tilesScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    tilesScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    auto *tilesHost = new QWidget(tilesScroll);
+    m_topRolesLayout = new QHBoxLayout(tilesHost);
+    m_topRolesLayout->setContentsMargins(0, 0, 0, 0);
     m_topRolesLayout->setSpacing(12);
-    detailLayout->addLayout(m_topRolesLayout);
+    tilesScroll->setWidget(tilesHost);
+    detailLayout->addWidget(tilesScroll);
+    m_topRolesScroll = tilesScroll;
 
     m_talentBox = new QGroupBox(tr("🌱 Talent-Projektion"), m_detailWidget);
     auto *talentLayout = new QVBoxLayout(m_talentBox);
@@ -472,13 +496,7 @@ void PlayerProfilePage::showPlayer()
     }
     showTrainingAdvice(player);
 
-    // --- Top roles ---
-    while (QLayoutItem *item = m_topRolesLayout->takeAt(0)) {
-        if (item->widget())
-            item->widget()->deleteLater();
-        delete item;
-    }
-
+    // --- Roles (all of them, best first) ---
     // role -> uid -> (absolute, normalized), the shape topRolesForPlayer expects.
     QHash<QString, QHash<QString, QPair<double, double>>> ratingsByRole;
     const LatestRatings &latest = m_context.latestRatings();
@@ -487,31 +505,20 @@ void PlayerProfilePage::showPlayer()
         if (it != latest.constEnd())
             ratingsByRole[role].insert(player->uid, it.value());
     }
-    const auto topRoles =
-        RoleAnalysis::topRolesForPlayer(m_context.definitions(), *player, ratingsByRole, 5);
+    const auto topRoles = RoleAnalysis::topRolesForPlayer(
+        m_context.definitions(), *player, ratingsByRole,
+        static_cast<int>(player->assignedRoles.size()));
+
+    m_roleTiles.clear();
+    for (const auto &topRole : topRoles)
+        m_roleTiles.append({topRole.role, topRole.roleName, topRole.normalized});
+    m_roleFilterCombo->setVisible(m_context.definitions().hasRolePhases());
+    fillRoleTiles();
 
     if (topRoles.empty()) {
         m_detailWidget->setVisible(false);
         m_noRolesLabel->setVisible(true);
         return;
-    }
-
-    int index = 0;
-    for (const auto &topRole : topRoles) {
-        auto *tile = new QFrame(m_detailWidget);
-        tile->setObjectName(QStringLiteral("kpiTile"));
-        auto *tileLayout = new QVBoxLayout(tile);
-        tileLayout->setContentsMargins(14, 10, 14, 10);
-        auto *value = new QLabel(QStringLiteral("%1%").arg(topRole.normalized), tile);
-        value->setObjectName(QStringLiteral("kpiValue"));
-        auto *caption = new QLabel(
-            (index == 0 ? QStringLiteral("🥇 ") : QString()) + topRole.roleName, tile);
-        caption->setObjectName(QStringLiteral("kpiCaption"));
-        caption->setWordWrap(true);
-        tileLayout->addWidget(value);
-        tileLayout->addWidget(caption);
-        m_topRolesLayout->addWidget(tile, 1);
-        ++index;
     }
 
     // --- Talent projection (prospects only) ---
@@ -617,6 +624,49 @@ void PlayerProfilePage::showPlayer()
     else
         m_chart->setSeries(std::move(chartSeries), snapshotLabels,
                            LineChartWidget::ValueMode::Percent, markers);
+}
+
+void PlayerProfilePage::fillRoleTiles()
+{
+    while (QLayoutItem *item = m_topRolesLayout->takeAt(0)) {
+        if (item->widget())
+            item->widget()->deleteLater();
+        delete item;
+    }
+    const QString filter = m_context.definitions().hasRolePhases()
+                               ? m_roleFilterCombo->currentData().toString()
+                               : QStringLiteral("all");
+    bool first = true;
+    for (const RoleTile &entry : std::as_const(m_roleTiles)) {
+        if (filter != QLatin1String("all")
+            && m_context.definitions().rolePhase(entry.role) != filter)
+            continue;
+        auto *tile = new QFrame(m_topRolesLayout->parentWidget());
+        tile->setObjectName(QStringLiteral("kpiTile"));
+        tile->setFixedWidth(190);
+        auto *tileLayout = new QVBoxLayout(tile);
+        tileLayout->setContentsMargins(14, 10, 14, 10);
+        auto *value = new QLabel(QStringLiteral("%1%").arg(entry.value), tile);
+        value->setObjectName(QStringLiteral("kpiValue"));
+        auto *caption = new QLabel(
+            (first && entry.role == m_roleTiles.front().role ? QStringLiteral("🥇 ")
+                                                            : QString())
+                + entry.name,
+            tile);
+        caption->setObjectName(QStringLiteral("kpiCaption"));
+        caption->setWordWrap(true);
+        tile->setToolTip(m_context.definitions().roleLabel(entry.role));
+        tileLayout->addWidget(value);
+        tileLayout->addWidget(caption);
+        m_topRolesLayout->addWidget(tile);
+        first = false;
+    }
+    m_topRolesLayout->addStretch(1);
+    // As high as the tiles plus the sideways scroll bar.
+    m_topRolesLayout->activate();
+    m_topRolesScroll->setFixedHeight(
+        m_topRolesLayout->parentWidget()->sizeHint().height()
+        + m_topRolesScroll->horizontalScrollBar()->sizeHint().height() + 2);
 }
 
 void PlayerProfilePage::runManualUpdate()

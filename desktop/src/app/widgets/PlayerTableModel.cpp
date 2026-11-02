@@ -138,6 +138,9 @@ QVariant PlayerTableModel::headerData(int section, Qt::Orientation orientation, 
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole && section < m_columns.size())
         return m_columns.at(section).header;
+    if (orientation == Qt::Horizontal && role == Qt::ToolTipRole && section < m_columns.size()
+        && !m_columns.at(section).headerToolTip.isEmpty())
+        return m_columns.at(section).headerToolTip;
     return QAbstractTableModel::headerData(section, orientation, role);
 }
 

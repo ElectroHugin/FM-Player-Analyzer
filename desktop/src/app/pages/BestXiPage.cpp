@@ -707,17 +707,7 @@ void BestXiPage::rebuild()
 
 BestXiPage::Bridges BestXiPage::loadBridges(const QString &tactic) const
 {
-    Bridges bridges;
-    const QJsonObject obj =
-        QJsonDocument::fromJson(
-            m_context.database().setting(QStringLiteral("bridges/") + tactic).toUtf8())
-            .object();
-    for (auto it = obj.begin(); it != obj.end(); ++it) {
-        const QJsonArray pair = it.value().toArray();
-        if (pair.size() == 2)
-            bridges.insert(it.key(), {pair.at(0).toString(), pair.at(1).toString()});
-    }
-    return bridges;
+    return loadManualBridges(m_context, tactic);
 }
 
 void BestXiPage::saveBridges(const QString &tactic, const Bridges &bridges)

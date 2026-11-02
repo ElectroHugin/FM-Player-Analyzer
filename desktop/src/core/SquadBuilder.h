@@ -48,6 +48,7 @@ struct SquadResult {
     // both line-ups (valueOfUid, untruncated).
     bool twoPhase = false;
     QHash<QString, double> valueOfUid;
+    QHash<QString, QPair<QString, QString>> slotsOfUid; // uid -> (ip slot, oop slot)
 };
 
 // Best XI and B-team of a two-phase tactic (FM26+): every player of a team has
@@ -138,10 +139,12 @@ public:
 
     // Best XI, B-team and depth for a tactic by name: calculateSquadAndSurplus
     // for a one-line-up tactic, calculateTwoPhaseSquad (with the configured
-    // share "with ball") folded into a SquadResult for a two-phase tactic.
+    // share "with ball") folded into a SquadResult for a two-phase tactic,
+    // with the user's manual bridges (fixedBridges) if given.
     SquadResult calculateSquadForTactic(const std::vector<const Player *> &pool,
                                         const QString &tactic, const RoleRatings &ratings,
-                                        bool applyAptWeight = true) const;
+                                        bool applyAptWeight = true,
+                                        const Bridges &fixedBridges = {}) const;
 
     DevelopmentSquads calculateDevelopmentSquads(
         const std::vector<const Player *> &secondTeamPlayers,

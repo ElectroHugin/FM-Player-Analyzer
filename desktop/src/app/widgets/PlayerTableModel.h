@@ -24,6 +24,8 @@ struct PlayerColumn {
     // Optional background/text styling.
     std::function<CellStyle(const Player &)> style;
     Qt::Alignment alignment = Qt::AlignLeft | Qt::AlignVCenter;
+    // Optional header tooltip (e.g. the full role name behind "SDM-OOP").
+    QString headerToolTip = {};
 };
 
 // Builds a "Frische" (data-freshness) column: shows how many uploads ago a

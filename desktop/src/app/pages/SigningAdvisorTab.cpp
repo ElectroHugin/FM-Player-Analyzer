@@ -1,5 +1,7 @@
 #include "SigningAdvisorTab.h"
 
+#include "PageHelpers.h"
+
 #include "../AppContext.h"
 #include "../PlayerActions.h"
 #include "../widgets/NumericTableItem.h"
@@ -350,10 +352,14 @@ void SigningAdvisorTab::recompute()
     const auto positions = m_context.definitions().tacticRoles().value(m_tactic);
     const QStringList slotOrder = m_context.definitions().tacticSlotOrder(m_tactic);
     const RoleRatings &ratings = m_context.ratings();
+    // The user's manual changes to the line-up (Best XI page) count here too.
+    const SquadBuilder::Bridges bridges = loadManualBridges(m_context, m_tactic, &m_squad);
     m_analysis = SigningAdvisor::analyze(m_context.squadBuilder(), m_squad, marketPool(),
-                                         positions, slotOrder, ratings, 12, 15, m_tactic);
+                                         positions, slotOrder, ratings, 12, 15, m_tactic,
+                                         bridges);
     fillNeeds();
-    fillGapTables(m_context.squadBuilder().calculateSquadForTactic(m_squad, m_tactic, ratings));
+    fillGapTables(m_context.squadBuilder().calculateSquadForTactic(m_squad, m_tactic, ratings,
+                                                                   true, bridges));
     QApplication::restoreOverrideCursor();
 }
 

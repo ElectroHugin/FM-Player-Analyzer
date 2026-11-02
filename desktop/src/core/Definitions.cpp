@@ -190,6 +190,63 @@ QString Definitions::rolePhase(const QString &role) const
     return phase.isEmpty() ? QStringLiteral("both") : phase;
 }
 
+QString Definitions::baseRoleAbbr(const QString &role)
+{
+    if (role.endsWith(QLatin1String("-IP")))
+        return role.left(role.size() - 3);
+    if (role.endsWith(QLatin1String("-OOP")))
+        return role.left(role.size() - 4);
+    return role;
+}
+
+QString Definitions::roleLabel(const QString &role) const
+{
+    const QString phase = m_rolePhases.value(role);
+    if (phase == QLatin1String("ip"))
+        return baseRoleAbbr(role) + QStringLiteral("-IP");
+    if (phase == QLatin1String("oop"))
+        return baseRoleAbbr(role) + QStringLiteral("-OOP");
+    return role;
+}
+
+QStringList Definitions::tacticRoleList(const QString &tactic) const
+{
+    QStringList roles;
+    const auto twoPhase = m_twoPhaseTactics.constFind(tactic);
+    if (twoPhase != m_twoPhaseTactics.constEnd()) {
+        // Both line-ups: the roles with ball first, then those without.
+        QStringList ip, oop;
+        for (const QString &role : std::as_const(twoPhase->ip))
+            ip.append(role);
+        for (const QString &role : std::as_const(twoPhase->oop))
+            oop.append(role);
+        ip.removeDuplicates();
+        oop.removeDuplicates();
+        roles = sortRolesNaturally(ip) + sortRolesNaturally(oop);
+        roles.removeDuplicates();
+        return roles;
+    }
+    for (const QString &role : m_tacticRoles.value(tactic))
+        roles.append(role);
+    roles.removeDuplicates();
+    return sortRolesNaturally(roles);
+}
+
+QStringList Definitions::sortRolesByPhase(QStringList roles) const
+{
+    roles = sortRolesNaturally(roles);
+    if (!hasRolePhases())
+        return roles;
+    std::stable_sort(roles.begin(), roles.end(), [this](const QString &a, const QString &b) {
+        const auto rank = [this](const QString &r) {
+            const QString phase = m_rolePhases.value(r);
+            return phase == QLatin1String("ip") ? 0 : phase == QLatin1String("oop") ? 1 : 2;
+        };
+        return rank(a) < rank(b);
+    });
+    return roles;
+}
+
 QStringList Definitions::tacticSlotOrder(const QString &tactic) const
 {
     const auto twoPhase = m_twoPhaseTactics.constFind(tactic);
@@ -305,6 +362,15 @@ void Definitions::rebuildCache()
     const QJsonObject phases = m_root.value(QLatin1String("role_phases")).toObject();
     for (auto it = phases.begin(); it != phases.end(); ++it)
         m_rolePhases.insert(it.key(), it.value().toString());
+    // One marking for every phase-split role (FM27): the full name always ends
+    // in " (IP)" or " (OOP)", so "Central Midfielder" with and without ball
+    // can be told apart everywhere (FM's own terms, like the role names).
+    for (auto it = m_roleDisplayMap.begin(); it != m_roleDisplayMap.end(); ++it) {
+        const QString phase = m_rolePhases.value(it.key());
+        if (phase == QLatin1String("ip") || phase == QLatin1String("oop"))
+            it.value() += phase == QLatin1String("ip") ? QStringLiteral(" (IP)")
+                                                       : QStringLiteral(" (OOP)");
+    }
 
     m_tacticRoles.clear();
     m_twoPhaseTactics.clear();
