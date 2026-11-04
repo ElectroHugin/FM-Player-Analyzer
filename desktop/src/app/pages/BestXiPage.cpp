@@ -178,6 +178,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         // ball left, without ball right, like the game) side by side.
         auto *switchRow = new QHBoxLayout;
         auto *segmented = new QFrame(tab);
+        m_teamSwitch = segmented;
         segmented->setObjectName(QStringLiteral("segmented"));
         auto *segLayout = new QHBoxLayout(segmented);
         segLayout->setContentsMargins(3, 3, 3, 3);
@@ -248,10 +249,43 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         };
         m_teamStack->addWidget(makePage(m_xiIpPitch, m_xiPitch, m_xiIpTitle, m_xiTitle));
         m_teamStack->addWidget(makePage(m_bTeamIpPitch, m_bTeamPitch, m_bIpTitle, m_bTitle));
+        // FM24 (one line-up): starting XI and B-team side by side, as in 1.6.2.
+        {
+            QLabel *xiTitle = nullptr;
+            QLabel *bTitle = nullptr;
+            m_teamStack->addWidget(makePage(m_singleXiPitch, m_singleBPitch, xiTitle, bTitle));
+            xiTitle->setText(tr("Startelf"));
+            bTitle->setText(tr("B-Team"));
+        }
         tabLayout->addWidget(m_teamStack);
         connect(m_xiButton, &QPushButton::toggled, this, [this](bool xi) {
-            m_teamStack->setCurrentIndex(xi ? 0 : 1);
+            if (m_teamStack->currentIndex() != 2)
+                m_teamStack->setCurrentIndex(xi ? 0 : 1);
         });
+
+        m_outageBox = new QGroupBox(tr("Kadertiefe: Ausfall in der Startelf"), tab);
+        auto *outageLayout = new QVBoxLayout(m_outageBox);
+        m_outageNote = new QLabel(m_outageBox);
+        m_outageNote->setWordWrap(true);
+        m_outageNote->setObjectName(QStringLiteral("kpiCaption"));
+        outageLayout->addWidget(m_outageNote);
+        m_outageTable = new QTableWidget(m_outageBox);
+        m_outageTable->setColumnCount(7);
+        m_outageTable->setHorizontalHeaderLabels({tr("Ausfall"), tr("Plätze"), tr("Ersatz"),
+                                                  tr("Ersatz spielt"), tr("DWRS"),
+                                                  tr("Elf-Wert"), tr("Umstellungen")});
+        m_outageTable->horizontalHeaderItem(5)->setToolTip(
+            tr("Wie sich der Wert der Startelf (Summe der DWRS) mit dieser Lösung ändert."));
+        m_outageTable->verticalHeader()->setVisible(false);
+        m_outageTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        m_outageTable->setAlternatingRowColors(true);
+        m_outageTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+        m_outageTable->setWordWrap(false);
+        m_outageTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_outageTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        outageLayout->addWidget(m_outageTable);
+        m_outageBox->setVisible(false);
+        tabLayout->addWidget(m_outageBox);
 
         m_depthBox = new QGroupBox(tr("Weitere Kader-Tiefe"), tab);
         auto *depthLayout = new QVBoxLayout(m_depthBox);
@@ -356,7 +390,8 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
     // Player boxes on the pitches are interactive (M13).
     for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
-                                     m_secondXiPitch, m_youthXiPitch}) {
+                                     m_singleXiPitch, m_singleBPitch, m_secondXiPitch,
+                                     m_youthXiPitch}) {
         connect(pitch, &TacticPitchWidget::playerDoubleClicked, this,
                 [this](const QString &uid) { PlayerActions::openProfile(m_context, uid); });
         connect(pitch, &TacticPitchWidget::playerContextMenuRequested, this,
@@ -364,10 +399,25 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
                     // Starting XI of a two-phase tactic: bridges can be moved.
                     const bool startingXi = pitch == m_xiPitch || pitch == m_xiIpPitch;
                     if (startingXi && !m_bridge.tactic.isEmpty()
-                        && m_bridge.slotsOfUid.contains(uid))
+                        && m_bridge.slotsOfUid.contains(uid)) {
                         showBridgeMenu(uid, globalPos, pitch == m_xiIpPitch);
-                    else
-                        PlayerActions::showContextMenu(m_context, this, uid, globalPos);
+                        return;
+                    }
+                    QString slot;
+                    const PitchTeam team = m_pitchTeams.value(pitch);
+                    for (auto it = team.cells.cbegin(); it != team.cells.cend(); ++it) {
+                        if (it->playerUid == uid)
+                            slot = it.key();
+                    }
+                    PlayerActions::showContextMenu(
+                        m_context, this, uid, globalPos, [this, pitch, slot](QMenu &menu) {
+                            if (!slot.isEmpty())
+                                addScoutActions(menu, pitch, slot);
+                        });
+                });
+        connect(pitch, &TacticPitchWidget::emptySlotContextMenuRequested, this,
+                [this, pitch](const QString &slot, const QPoint &globalPos) {
+                    showEmptySlotMenu(pitch, slot, globalPos);
                 });
     }
     PlayerActions::attachToTableWidget(m_context, m_loanTable);
@@ -388,6 +438,7 @@ void BestXiPage::releaseStoreRows()
 {
     m_signingTab->clear();
     m_bridge = BridgeState(); // its pool points into the store
+    clearPitchTeams();
 }
 
 QString BestXiPage::algorithmHint()
@@ -445,11 +496,15 @@ void BestXiPage::rebuild()
     const QString secondClub = m_context.secondTeamClub();
     const QString tactic = m_tacticCombo->currentText();
 
+    clearPitchTeams();
     if (userClub.isEmpty() || tactic.isEmpty()) {
+        m_outageBox->setVisible(false);
         m_clubNotice->setVisible(true);
         m_registrationNote->setVisible(false);
         m_xiPitch->clearData();
         m_bTeamPitch->clearData();
+        m_singleXiPitch->clearData();
+        m_singleBPitch->clearData();
         m_xiIpPitch->clearData();
         m_bTeamIpPitch->clearData();
         m_secondXiPitch->clearData();
@@ -598,12 +653,14 @@ void BestXiPage::rebuild()
         secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);
 
     for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
-                                     m_secondXiPitch, m_youthXiPitch})
+                                     m_singleXiPitch, m_singleBPitch, m_secondXiPitch,
+                                     m_youthXiPitch})
         pitch->setFmVersionId(m_context.fmVersionId());
     const bool twoPhase = m_context.definitions().isTwoPhaseTactic(tactic);
-    for (QWidget *w : std::initializer_list<QWidget *>{m_xiIpPitch, m_bTeamIpPitch, m_xiIpTitle,
-                                                       m_bIpTitle, m_xiTitle, m_bTitle})
-        w->setVisible(twoPhase);
+    // Two line-ups (FM27): one team at a time, switched above the pitches.
+    // One line-up (FM24): starting XI and B-team next to each other.
+    m_teamSwitch->setVisible(twoPhase);
+    m_teamStack->setCurrentIndex(twoPhase ? (m_xiButton->isChecked() ? 0 : 1) : 2);
     m_phaseNote->setVisible(twoPhase);
     m_bridge = BridgeState();
     m_bridgeBar->setVisible(false);
@@ -674,6 +731,12 @@ void BestXiPage::rebuild()
         m_xiIpPitch->setSlotSubtexts(partnerTexts(squad.startingIp, true));
         m_bTeamIpPitch->setTeam(squad.bTeamIp, lineUps.ip, layoutOf(lineUps.ip), roleNames);
         m_bTeamIpPitch->setSlotSubtexts(partnerTexts(squad.bTeamIp, true));
+        // For the bridge search by right-click.
+        m_pitchTeams.insert(m_xiIpPitch, {squad.startingIp, lineUps.ip, lineUps.ipOrder, m_xiPitch, true});
+        m_pitchTeams.insert(m_xiPitch, {squad.startingOop, lineUps.oop, lineUps.oopOrder, m_xiIpPitch, false});
+        m_pitchTeams.insert(m_bTeamIpPitch, {squad.bTeamIp, lineUps.ip, lineUps.ipOrder, m_bTeamPitch, true});
+        m_pitchTeams.insert(m_bTeamPitch, {squad.bTeamOop, lineUps.oop, lineUps.oopOrder, m_bTeamIpPitch, false});
+        m_valueOfUid = squad.valueOfUid;
         m_phaseNote->setText(
             tr("Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer "
                "wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle "
@@ -685,11 +748,19 @@ void BestXiPage::rebuild()
                 .arg(share)
                 .arg(100 - share));
     } else {
-        m_xiPitch->setTeam(first.startingXi, positions, layout, roleNames);
-        m_bTeamPitch->setTeam(first.bTeam, positions, layout, roleNames);
-        m_xiPitch->setSlotSubtexts({});
-        m_bTeamPitch->setSlotSubtexts({});
+        m_singleXiPitch->setTeam(first.startingXi, positions, layout, roleNames);
+        m_singleBPitch->setTeam(first.bTeam, positions, layout, roleNames);
+        m_pitchTeams.insert(m_singleXiPitch,
+                            {first.startingXi, positions, slotOrder, nullptr, false});
+        m_pitchTeams.insert(m_singleBPitch, {first.bTeam, positions, slotOrder, nullptr, false});
     }
+    m_pitchTactic = tactic;
+
+    // Squad depth per missing starter: exactly one extra player, the others
+    // may move (manual bridges stay).
+    fillOutageTable(m_context.squadBuilder().replacementPlans(
+                        firstPool, tactic, ratings, true, twoPhase ? m_bridge.bridges : Bridges()),
+                    twoPhase);
     m_secondXiTitle->setText(secondClub.isEmpty()
                                  ? tr("Zweitteam-XI (aus Überschuss des Hauptvereins)")
                                  : tr("Zweitteam-XI (%1)").arg(secondClub));
@@ -737,6 +808,7 @@ void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, boo
     };
     PlayerActions::showContextMenu(m_context, this, uid, globalPos, [&](QMenu &menu) {
         const QPair<QString, QString> mine = state.slotsOfUid.value(uid);
+        addScoutActions(menu, ipPhase ? m_xiIpPitch : m_xiPitch, ipPhase ? mine.first : mine.second);
         const QString current = ipPhase ? mine.first : mine.second;
         QMenu *sub = menu.addMenu(ipPhase ? tr("↔ Platz mit Ball ändern (jetzt %1)").arg(current)
                                           : tr("↔ Platz ohne Ball ändern (jetzt %1)").arg(current));
@@ -1014,8 +1086,9 @@ void BestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>> &option
     m_depthTable->setVisible(true);
 
     // One row per (role, player) option, roles in natural pitch order.
+    // Natural order; FM27: roles with ball first, then without.
     QStringList roles = options.keys();
-    roles = m_context.definitions().sortRolesNaturally(roles);
+    roles = m_context.definitions().sortRolesByPhase(roles);
     int rowCount = 0;
     for (const QString &role : roles)
         rowCount += options.value(role).size();

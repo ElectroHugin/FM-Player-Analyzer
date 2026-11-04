@@ -10,6 +10,7 @@
 #include "core/PlayerStatus.h"
 #include "core/PlayerStore.h"
 #include "core/Registration.h"
+#include "core/ScoutSearch.h"
 #include "core/SquadBuilder.h"
 #include "core/TacticExplorer.h"
 
@@ -163,6 +164,22 @@ public:
         if (!m_pendingComparisonUids.contains(uid))
             m_pendingComparisonUids.append(uid);
     }
+    // Scouting search handed over from the Best XI (bridge search by
+    // right-click); the scouting page takes it on its next refresh.
+    void setPendingScoutSearch(const ScoutSearchRequest &request)
+    {
+        m_pendingScoutSearch = request;
+        m_hasPendingScoutSearch = true;
+    }
+    bool takePendingScoutSearch(ScoutSearchRequest *request)
+    {
+        if (!m_hasPendingScoutSearch)
+            return false;
+        *request = m_pendingScoutSearch;
+        m_pendingScoutSearch = ScoutSearchRequest();
+        m_hasPendingScoutSearch = false;
+        return true;
+    }
 
     // Background work (HTML import, DWRS recalcs) reads the engines and
     // definitions owned here from a worker thread. Every such job registers its
@@ -279,6 +296,8 @@ private:
     QString m_pendingProfileUid;
     QString m_pendingEditUid;
     QStringList m_pendingComparisonUids;
+    ScoutSearchRequest m_pendingScoutSearch;
+    bool m_hasPendingScoutSearch = false;
     bool m_nationalUiMode = false;
     QList<QFuture<void>> m_backgroundTasks;
 };

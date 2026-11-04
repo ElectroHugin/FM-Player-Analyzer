@@ -33,6 +33,7 @@ add_executable(fmplayeranalyzer
     pages/AssignRolesPage.cpp
     pages/BestXiPage.h
     pages/BestXiPage.cpp
+    pages/BestXiDepth.cpp
     pages/DashboardPage.h
     pages/DashboardPage.cpp
     pages/DwrsProgressPage.h
@@ -98,6 +99,8 @@ add_executable(fmplayeranalyzer
     widgets/PersonalityFilterWidget.cpp
     widgets/PlayerTableModel.h
     widgets/PlayerTableModel.cpp
+    widgets/ScoutRequirementsBar.h
+    widgets/ScoutRequirementsBar.cpp
     widgets/StrengthGridWidget.h
     widgets/StrengthGridWidget.cpp
     widgets/TacticPitchWidget.h

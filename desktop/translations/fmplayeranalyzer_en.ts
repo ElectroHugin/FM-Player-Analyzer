@@ -206,10 +206,6 @@
         <translation>New Role</translation>
     </message>
     <message>
-        <source>Neue Taktik</source>
-        <translation>New Tactic</translation>
-    </message>
-    <message>
         <source>Einstellungen</source>
         <translation>Settings</translation>
     </message>
@@ -308,6 +304,10 @@
     <message>
         <source>Registrierung Kaderliste Kadermeldung</source>
         <translation>registration squad list squad registration</translation>
+    </message>
+    <message>
+        <source>Taktiken</source>
+        <translation>Tactics</translation>
     </message>
 </context>
 <context>
@@ -1000,6 +1000,134 @@
     <message>
         <source>Die mitgelieferten Taktiken sind nur Beispiele. Im Taktik-Editor legst du deine eigenen an; Updates lassen sie unberührt.</source>
         <translation>The bundled tactics are only examples. Create your own in the tactic editor; updates leave them untouched.</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: Ersatz für %1 (%2).</source>
+        <translation>From Best XI: replacement for %1 (%2).</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: freier Platz %1.</source>
+        <translation>From Best XI: free place %1.</translation>
+    </message>
+    <message>
+        <source>🔍 Im Scouting suchen (%1)</source>
+        <translation>🔍 Search in scouting (%1)</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: Bridge von %1 (mit Ball %2, ohne Ball %3).</source>
+        <translation>From Best XI: bridge of %1 (in possession %2, out of possession %3).</translation>
+    </message>
+    <message>
+        <source>🔍 Bridge im Scouting suchen (mit Ball %1, ohne Ball %2)</source>
+        <translation>🔍 Search bridge in scouting (in possession %1, out of possession %2)</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: freie Plätze mit Ball %1 und ohne Ball %2.</source>
+        <translation>From Best XI: free places in possession %1 and out of possession %2.</translation>
+    </message>
+    <message>
+        <source>🔍 Bridge im Scouting suchen – Platz ohne Ball wählen</source>
+        <translation>🔍 Search bridge in scouting – choose the place out of possession</translation>
+    </message>
+    <message>
+        <source>🔍 Bridge im Scouting suchen – Platz mit Ball wählen</source>
+        <translation>🔍 Search bridge in scouting – choose the place in possession</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: freier Platz mit Ball %1.</source>
+        <translation>From Best XI: free place in possession %1.</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: freier Platz ohne Ball %1.</source>
+        <translation>From Best XI: free place out of possession %1.</translation>
+    </message>
+    <message>
+        <source>🔍 Nur mit Ball suchen (%1)</source>
+        <translation>🔍 Search in possession only (%1)</translation>
+    </message>
+    <message>
+        <source>🔍 Nur ohne Ball suchen (%1)</source>
+        <translation>🔍 Search out of possession only (%1)</translation>
+    </message>
+    <message>
+        <source>Freier Platz %1</source>
+        <translation>Free place %1</translation>
+    </message>
+    <message>
+        <source>Fällt ein Spieler der Startelf aus, kommt genau ein Spieler dazu. Die übrigen dürfen dafür ihre Plätze mit und ohne Ball tauschen. „Volle Bridge“ heißt: Der Ersatz übernimmt beide Plätze des Ausfalls. Von Hand gesetzte Plätze bleiben. Weitere Lösungen zeigt der Tooltip.</source>
+        <translation>If a starter is missing, exactly one player comes in. The others may swap their places in and out of possession for it. “Full bridge” means the replacement takes both places of the missing player. Places set by hand stay. The tooltip shows further solutions.</translation>
+    </message>
+    <message>
+        <source>Fällt ein Spieler der Startelf aus, kommt genau ein Spieler dazu. Die übrigen dürfen dafür ihre Plätze tauschen. Weitere Lösungen zeigt der Tooltip.</source>
+        <translation>If a starter is missing, exactly one player comes in. The others may swap places for it. The tooltip shows further solutions.</translation>
+    </message>
+    <message>
+        <source>mit %1 · ohne %2</source>
+        <translation>IP %1 · OOP %2</translation>
+    </message>
+    <message>
+        <source>mit %1 → %2</source>
+        <translation>IP %1 → %2</translation>
+    </message>
+    <message>
+        <source>ohne %1 → %2</source>
+        <translation>OOP %1 → %2</translation>
+    </message>
+    <message>
+        <source>keine</source>
+        <translation>none</translation>
+    </message>
+    <message>
+        <source>— niemand passt —</source>
+        <translation>— nobody fits —</translation>
+    </message>
+    <message>
+        <source>%1: %2, Umstellungen: %3, Elf %4</source>
+        <translation>%1: %2, moves: %3, XI %4</translation>
+    </message>
+    <message>
+        <source>Weitere Lösungen:</source>
+        <translation>Further solutions:</translation>
+    </message>
+    <message>
+        <source>Platz bleibt frei</source>
+        <translation>Place stays empty</translation>
+    </message>
+    <message>
+        <source>%1 (volle Bridge)</source>
+        <translation>%1 (full bridge)</translation>
+    </message>
+    <message>
+        <source>Kadertiefe: Ausfall in der Startelf</source>
+        <translation>Squad depth: a starter is missing</translation>
+    </message>
+    <message>
+        <source>Ausfall</source>
+        <translation>Missing</translation>
+    </message>
+    <message>
+        <source>Plätze</source>
+        <translation>Places</translation>
+    </message>
+    <message>
+        <source>Ersatz</source>
+        <translation>Replacement</translation>
+    </message>
+    <message>
+        <source>Ersatz spielt</source>
+        <translation>Replacement plays</translation>
+    </message>
+    <message>
+        <source>Elf-Wert</source>
+        <translation>XI value</translation>
+    </message>
+    <message>
+        <source>Umstellungen</source>
+        <translation>Moves</translation>
+    </message>
+    <message>
+        <source>Wie sich der Wert der Startelf (Summe der DWRS) mit dieser Lösung ändert.</source>
+        <translation>How the value of the starting XI (sum of DWRS) changes with this solution.</translation>
     </message>
 </context>
 <context>
@@ -2807,10 +2935,6 @@ The original file is not modified.</translation>
         <translation>Please select a goalkeeper role.</translation>
     </message>
     <message>
-        <source>Die Taktik wurde gespeichert, aber die Definitionen konnten nicht neu geladen werden: %1</source>
-        <translation>The tactic was saved, but the definitions could not be reloaded: %1</translation>
-    </message>
-    <message>
         <source>Taktik &apos;%1&apos; wurde erstellt und ist jetzt überall verfügbar.</source>
         <translation>Tactic &apos;%1&apos; has been created and is now available everywhere.</translation>
     </message>
@@ -2829,6 +2953,210 @@ The original file is not modified.</translation>
     <message>
         <source>Baue deine Formation auf dem Feld unten: Klicke auf ein „+“, um dort eine Rolle aufzustellen, oder auf eine Rolle, um sie zu ändern — genau ein Torhüter und zehn Feldspieler.</source>
         <translation>Build your formation on the pitch below: click a “+” to place a role there, or click a role to change it — exactly one goalkeeper and ten outfield players.</translation>
+    </message>
+    <message>
+        <source>Deine Taktiken</source>
+        <translation>Your tactics</translation>
+    </message>
+    <message>
+        <source>Bearbeiten</source>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <source>Öffnet die Taktik unten im Editor.</source>
+        <translation>Opens the tactic in the editor below.</translation>
+    </message>
+    <message>
+        <source>Umbenennen…</source>
+        <translation>Rename…</translation>
+    </message>
+    <message>
+        <source>Favoriten und gespeicherte Bridges ziehen mit.</source>
+        <translation>Favourites and saved bridges follow.</translation>
+    </message>
+    <message>
+        <source>Duplizieren…</source>
+        <translation>Duplicate…</translation>
+    </message>
+    <message>
+        <source>Legt eine Kopie unter neuem Namen an.</source>
+        <translation>Creates a copy under a new name.</translation>
+    </message>
+    <message>
+        <source>Löschen…</source>
+        <translation>Delete…</translation>
+    </message>
+    <message>
+        <source>Entfernt die Taktik aus diesem Spielstand. Auch mitgelieferte Beispiele lassen sich löschen; Updates bringen sie nicht zurück.</source>
+        <translation>Removes the tactic from this save. Bundled examples can be deleted too; updates do not bring them back.</translation>
+    </message>
+    <message>
+        <source>Exportieren…</source>
+        <translation>Export…</translation>
+    </message>
+    <message>
+        <source>Speichert die Taktik als Datei (.%1) für einen anderen Spielstand oder andere Nutzer, samt der verwendeten Rollen.</source>
+        <translation>Saves the tactic as a file (.%1) for another save or other users, including the roles it uses.</translation>
+    </message>
+    <message>
+        <source>Importieren…</source>
+        <translation>Import…</translation>
+    </message>
+    <message>
+        <source>Liest eine Taktik-Datei (.%1) in diesen Spielstand ein.</source>
+        <translation>Reads a tactic file (.%1) into this save.</translation>
+    </message>
+    <message>
+        <source>Taktiken gehören zum geöffneten Spielstand. Änderungen, Löschungen und Importe bleiben bei Updates erhalten; ein Update ergänzt höchstens neue Beispieltaktiken.</source>
+        <translation>Tactics belong to the open save. Edits, deletions and imports survive updates; an update at most adds new example tactics.</translation>
+    </message>
+    <message>
+        <source>Bearbeitung abbrechen</source>
+        <translation>Cancel editing</translation>
+    </message>
+    <message>
+        <source>Leert den Editor für eine neue Taktik; nichts wird gespeichert.</source>
+        <translation>Clears the editor for a new tactic; nothing is saved.</translation>
+    </message>
+    <message>
+        <source>Taktik speichern</source>
+        <translation>Save tactic</translation>
+    </message>
+    <message>
+        <source>Taktik &apos;%1&apos; wurde gespeichert.</source>
+        <translation>Tactic &apos;%1&apos; has been saved.</translation>
+    </message>
+    <message>
+        <source>Die Taktiken konnten nicht gespeichert werden: %1</source>
+        <translation>The tactics could not be saved: %1</translation>
+    </message>
+    <message>
+        <source>Taktik bearbeiten: %1</source>
+        <translation>Edit tactic: %1</translation>
+    </message>
+    <message>
+        <source>Änderungen speichern</source>
+        <translation>Save Changes</translation>
+    </message>
+    <message>
+        <source>Taktik umbenennen</source>
+        <translation>Rename tactic</translation>
+    </message>
+    <message>
+        <source>Neuer Name für &apos;%1&apos;:</source>
+        <translation>New name for &apos;%1&apos;:</translation>
+    </message>
+    <message>
+        <source>Eine Taktik namens &apos;%1&apos; existiert bereits.</source>
+        <translation>A tactic named &apos;%1&apos; already exists.</translation>
+    </message>
+    <message>
+        <source>Taktik duplizieren</source>
+        <translation>Duplicate tactic</translation>
+    </message>
+    <message>
+        <source>Name der Kopie:</source>
+        <translation>Name of the copy:</translation>
+    </message>
+    <message>
+        <source> (Kopie)</source>
+        <translation> (copy)</translation>
+    </message>
+    <message>
+        <source>Taktik löschen</source>
+        <translation>Delete tactic</translation>
+    </message>
+    <message>
+        <source>Die letzte Taktik eines Spielstands kann nicht gelöscht werden. Lege zuerst eine weitere an oder importiere eine.</source>
+        <translation>The last tactic of a save cannot be deleted. Create or import another one first.</translation>
+    </message>
+    <message>
+        <source>Taktik &apos;%1&apos; aus diesem Spielstand löschen?
+
+Ist sie ein Favorit, wird der Favorit zurückgesetzt; gespeicherte Bridges dieser Taktik werden entfernt. Updates stellen sie nicht wieder her. Wer sie später braucht, exportiert sie vorher.</source>
+        <translation>Delete tactic &apos;%1&apos; from this save?
+
+If it is a favourite, the favourite is reset; saved bridges of this tactic are removed. Updates do not restore it. If you may need it later, export it first.</translation>
+    </message>
+    <message>
+        <source>Taktik exportieren</source>
+        <translation>Export tactic</translation>
+    </message>
+    <message>
+        <source>Analyzer-Taktik (*.%1)</source>
+        <translation>Analyzer tactic (*.%1)</translation>
+    </message>
+    <message>
+        <source>Die Datei %1 konnte nicht geschrieben werden.</source>
+        <translation>The file %1 could not be written.</translation>
+    </message>
+    <message>
+        <source>Taktik &apos;%1&apos; wurde nach %2 exportiert.</source>
+        <translation>Tactic &apos;%1&apos; has been exported to %2.</translation>
+    </message>
+    <message>
+        <source>Taktik importieren</source>
+        <translation>Import tactic</translation>
+    </message>
+    <message>
+        <source>Analyzer-Taktik (*.%1);;Alle Dateien (*)</source>
+        <translation>Analyzer tactic (*.%1);;All files (*)</translation>
+    </message>
+    <message>
+        <source>Die Datei %1 konnte nicht gelesen werden.</source>
+        <translation>The file %1 could not be read.</translation>
+    </message>
+    <message>
+        <source>Die Datei ist keine gültige Taktik-Datei des Analyzers oder beschädigt.
+
+Details: %1</source>
+        <translation>The file is not a valid analyzer tactic file or is damaged.
+
+Details: %1</translation>
+    </message>
+    <message>
+        <source>Die Datei stammt aus einer neueren Version des Analyzers. Bitte aktualisiere den Analyzer, um sie zu importieren.</source>
+        <translation>The file comes from a newer version of the analyzer. Please update the analyzer to import it.</translation>
+    </message>
+    <message>
+        <source>Die Taktik &apos;%1&apos; gehört zu %2, dieser Spielstand nutzt %3. Rollen und Plätze der FM-Versionen passen nicht zueinander; importiere sie in einen Spielstand derselben Version.</source>
+        <translation>The tactic &apos;%1&apos; belongs to %2, this save uses %3. Roles and slots of the FM versions do not match; import it into a save of the same version.</translation>
+    </message>
+    <message>
+        <source>Die Taktik &apos;%1&apos; nutzt Rollen, die dieser Spielstand nicht kennt und die in der Datei nicht beschrieben sind: %2</source>
+        <translation>The tactic &apos;%1&apos; uses roles this save does not know and the file does not describe: %2</translation>
+    </message>
+    <message>
+        <source>Neue eigene Rollen werden mit angelegt: %1</source>
+        <translation>New custom roles will be added as well: %1</translation>
+    </message>
+    <message>
+        <source>Diese Rollen gibt es hier schon, mit anderen Gewichten oder Positionen; der Spielstand behält seine eigene Fassung: %1</source>
+        <translation>These roles already exist here with other weights or positions; the save keeps its own version: %1</translation>
+    </message>
+    <message>
+        <source>Es gibt schon eine Taktik namens &apos;%1&apos;.</source>
+        <translation>There already is a tactic named &apos;%1&apos;.</translation>
+    </message>
+    <message>
+        <source>Unter neuem Namen importieren</source>
+        <translation>Import under a new name</translation>
+    </message>
+    <message>
+        <source>Vorhandene ersetzen</source>
+        <translation>Replace existing</translation>
+    </message>
+    <message>
+        <source>Name der importierten Taktik:</source>
+        <translation>Name of the imported tactic:</translation>
+    </message>
+    <message>
+        <source>Taktik &apos;%1&apos; importieren?</source>
+        <translation>Import tactic &apos;%1&apos;?</translation>
+    </message>
+    <message>
+        <source>Taktik &apos;%1&apos; wurde importiert.</source>
+        <translation>Tactic &apos;%1&apos; has been imported.</translation>
     </message>
 </context>
 <context>
@@ -3792,6 +4120,57 @@ The original file is not modified.</translation>
     </message>
 </context>
 <context>
+    <name>fm::ScoutRequirementsBar</name>
+    <message>
+        <source>🧩 Anforderungen (ein Kandidat muss alle erfüllen)</source>
+        <translation>🧩 Requirements (a candidate must meet all of them)</translation>
+    </message>
+    <message>
+        <source>Keine. Wähle eine Position, eine Rolle oder beides und füge sie hinzu. Mehrere Anforderungen gelten zusammen; die DWRS-Spanne oben gilt für jede Rolle. Eine Bridge-Suche startest du per Rechtsklick auf einen Platz in Best XI.</source>
+        <translation>None. Pick a position, a role or both and add them. Several requirements apply together; the DWRS range above applies to every role. Start a bridge search by right-clicking a place in Best XI.</translation>
+    </message>
+    <message>
+        <source>Position:</source>
+        <translation>Position:</translation>
+    </message>
+    <message>
+        <source>Rolle:</source>
+        <translation>Role:</translation>
+    </message>
+    <message>
+        <source>+ Hinzufügen</source>
+        <translation>+ Add</translation>
+    </message>
+    <message>
+        <source>Position und Rolle zusammen: Der Spieler braucht die Position und die Rolle. Nur eines von beiden: Es zählt nur das.</source>
+        <translation>Position and role together: the player needs the position and the role. Only one of them: only that counts.</translation>
+    </message>
+    <message>
+        <source>Alle entfernen</source>
+        <translation>Remove all</translation>
+    </message>
+    <message>
+        <source>beliebig</source>
+        <translation>any</translation>
+    </message>
+    <message>
+        <source>Rolle %1</source>
+        <translation>Role %1</translation>
+    </message>
+    <message>
+        <source>Position %1</source>
+        <translation>Position %1</translation>
+    </message>
+    <message>
+        <source>Bridge: mit Ball %1 + ohne Ball %2</source>
+        <translation>Bridge: in possession %1 + out of possession %2</translation>
+    </message>
+    <message>
+        <source>Anforderung entfernen</source>
+        <translation>Remove requirement</translation>
+    </message>
+</context>
+<context>
     <name>fm::SettingsPage</name>
     <message>
         <source>Einstellungen</source>
@@ -4410,22 +4789,6 @@ The original file is not modified.</translation>
         </translation>
     </message>
     <message>
-        <source>Standardtaktik für FM27 installieren</source>
-        <translation>Install standard tactic for FM27</translation>
-    </message>
-    <message>
-        <source>Kopiert die mitgelieferte Standardtaktik (4-2-3-1 - Bavarian Blitz) als Spieldatei in den Ordner &apos;tactics&apos; von Football Manager 27. Im Spiel lädst du sie dann in der Taktik-Ansicht über das Laden einer Taktik. Im Analyzer ist sie schon eingebaut; eigene Taktiken legst du im Taktik-Editor an.</source>
-        <translation>Copies the bundled standard tactic (4-2-3-1 - Bavarian Blitz) as a game file into the &apos;tactics&apos; folder of Football Manager 27. In the game, load it from the tactics screen. The analyzer already includes it; create your own tactics in the tactic editor.</translation>
-    </message>
-    <message>
-        <source>FM27-Taktik:</source>
-        <translation>FM27 tactic:</translation>
-    </message>
-    <message>
-        <source>FM27-Taktik</source>
-        <translation>FM27 tactic</translation>
-    </message>
-    <message>
         <source>Das Logo konnte nicht gespeichert werden.
 %1</source>
         <translation>The logo could not be saved.
@@ -4456,6 +4819,22 @@ The original file is not modified.</translation>
         <translation>The settings could not be saved. The save keeps its previous state.
 
 %1</translation>
+    </message>
+    <message>
+        <source>Beispieltaktiken für FM27 installieren</source>
+        <translation>Install example tactics for FM27</translation>
+    </message>
+    <message>
+        <source>Kopiert die beiden mitgelieferten Beispieltaktiken (Control Press · 4-2-3-1 und Counter Surge · 3-4-2-1) als Spieldateien in den Ordner &apos;tactics&apos; von Football Manager 27. Im Spiel lädst du sie dann in der Taktik-Ansicht über das Laden einer Taktik. Im Analyzer sind sie schon eingebaut; eigene Taktiken legst du im Taktik-Editor an oder importierst sie.</source>
+        <translation>Copies the two bundled example tactics (Control Press · 4-2-3-1 and Counter Surge · 3-4-2-1) as game files into the &apos;tactics&apos; folder of Football Manager 27. In the game, load them from the tactics screen. The analyzer already includes them; create your own tactics in the tactic editor or import them.</translation>
+    </message>
+    <message>
+        <source>FM27-Taktiken:</source>
+        <translation>FM27 tactics:</translation>
+    </message>
+    <message>
+        <source>FM27-Taktiken</source>
+        <translation>FM27 tactics</translation>
     </message>
 </context>
 <context>
@@ -4958,6 +5337,22 @@ The original file is not modified.</translation>
     <message>
         <source>CSV-Dateien (*.csv)</source>
         <translation>CSV files (*.csv)</translation>
+    </message>
+    <message>
+        <source>⌀ Anforderungen</source>
+        <translation>⌀ Requirements</translation>
+    </message>
+    <message>
+        <source>Mittel der DWRS in den verlangten Rollen; bei einer Bridge gewichtet mit dem Anteil mit Ball aus den Einstellungen, wie in Best XI.</source>
+        <translation>Mean DWRS in the required roles; for a bridge weighted with the in-possession share from the settings, as in Best XI.</translation>
+    </message>
+    <message>
+        <source>Abstand zum Wert des Spielers, für den die Suche gestartet wurde.</source>
+        <translation>Difference to the value of the player the search was started for.</translation>
+    </message>
+    <message>
+        <source>Anforderungen (Wert)</source>
+        <translation>Requirements (value)</translation>
     </message>
 </context>
 <context>

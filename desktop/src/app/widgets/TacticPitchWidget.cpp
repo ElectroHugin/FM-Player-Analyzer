@@ -44,7 +44,26 @@ void drawFittedName(QPainter &painter, const QRectF &rect, const QString &fullNa
     painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, text);
 }
 
+TacticPitchWidget::ShiftSource &shiftSource()
+{
+    static TacticPitchWidget::ShiftSource source;
+    return source;
+}
+
 } // namespace
+
+void TacticPitchWidget::setShiftSource(ShiftSource source)
+{
+    shiftSource() = std::move(source);
+}
+
+double TacticPitchWidget::shiftPixels(const QString &role, const QString &slot,
+                                      double fieldHeight) const
+{
+    if (role.isEmpty() || !shiftSource())
+        return 0.0;
+    return -fieldHeight * shiftSource()(role, slot) / 100.0;
+}
 
 TacticPitchWidget::TacticPitchWidget(ThemeManager &theme, QWidget *parent)
     : QWidget(parent)
@@ -204,11 +223,12 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             return role;
         };
         // squeezed: free middle place between two cards that closed up.
-        const auto drawSlot = [&](const QRectF &box, const QString &slot, const QString &label,
+        const auto drawSlot = [&](const QRectF &baseBox, const QString &slot, const QString &label,
                                   int row, bool squeezed = false) {
             const QString role = m_editorRoles.value(slot);
             if (role.isEmpty() && !m_showFreeSlots)
                 return;
+            const QRectF box = baseBox.translated(0, shiftPixels(role, slot, field.height()));
             m_boxRects.insert(slot, box);
             QPainterPath path;
             path.addRoundedRect(box, 6, 6);
@@ -296,7 +316,9 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         return;
     }
 
-    const auto drawCard = [&](const QRectF &box, const QString &slot, int row) {
+    const auto drawCard = [&](const QRectF &baseBox, const QString &slot, int row) {
+        const QRectF box =
+            baseBox.translated(0, shiftPixels(m_positions.value(slot), slot, field.height()));
         m_boxRects.insert(slot, box);
         const XiCell cell = m_team.value(slot);
         QPainterPath path;
@@ -446,6 +468,14 @@ void TacticPitchWidget::contextMenuEvent(QContextMenuEvent *event)
         emit playerContextMenuRequested(uid, event->globalPos());
         event->accept();
         return;
+    }
+    if (!m_editor) {
+        const QString slot = slotAt(event->pos());
+        if (!slot.isEmpty()) {
+            emit emptySlotContextMenuRequested(slot, event->globalPos());
+            event->accept();
+            return;
+        }
     }
     QWidget::contextMenuEvent(event);
 }

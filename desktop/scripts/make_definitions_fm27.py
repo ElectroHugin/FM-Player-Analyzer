@@ -54,22 +54,33 @@ def category(position):
 # Real tactics only (Edmund 31.10.2026: formations are no tactics, they stay
 # templates for the tactic editor). Role ids as in role_id(); game
 # abbreviations from data/fm27/rollen-kuerzel-fm27.csv (checked in the game).
-DATA_REVISION = 6
+DATA_REVISION = 7
 # Formerly shipped (generated from formations); dropped from users' copies.
 RETIRED_TACTICS = ["3-4-3 DM Narrow", "3-4-3 DM Wide", "4-2-2-2 DM Wide",
                    "4-2-3-1 DM Wide / 4-3-3 DM Wide", "4-2-3-1 DM Wide / 4-4-1-1 2 DM",
                    "4-3-2-1 DM Narrow", "4-3-3 DM Wide", "4-4-2 Diamond Narrow", "5-1-2-2 DM WB",
                    "5-2-1-2 DM WB"]
+# Renamed templates: an untouched old copy becomes the new one (favorites and
+# bridges follow); edited or deleted copies stay as the user left them.
+RENAMED_TACTICS = {"4-2-3-1 - Bavarian Blitz": "Control Press \u00b7 4-2-3-1"}
 TACTICS = {
-    # Edmund's standard tactic (updated 01.11.2026 for 2.0.1). The game file
-    # ships as src/app/resources/tactics/*.fmf for import into FM27.
-    "4-2-3-1 - Bavarian Blitz": {
+    # The two example tactics of 2.1.0 (Edmund, 04.11.2026). The game files
+    # ship as src/app/resources/tactics/*.fmf for import into FM27.
+    "Control Press \u00b7 4-2-3-1": {
         "ip": {"GK": "BGK", "DL": "WB-IP", "DCL": "BCB", "DCR": "BCB", "DR": "WB-IP",
                "DMCL": "DLP", "DMCR": "DM-IP", "AML": "IF", "AMC": "AM-IP", "AMR": "IW",
                "STC": "DLF"},
         "oop": {"GK": "SK", "DL": "FB-OOP", "DCL": "CB-OOP", "DCR": "CB-OOP", "DR": "FB-OOP",
                 "DMC": "SDM", "MCL": "PCM", "MCR": "CM-OOP", "AML": "TW", "AMR": "TW",
                 "STC": "CFD-OOP"},
+    },
+    "Counter Surge \u00b7 3-4-2-1": {
+        "ip": {"GK": "GK-IP", "DCL": "WCB-IP", "DC": "BCB", "DCR": "WCB-IP", "DML": "WB-IP",
+               "DMCL": "BBM", "DMCR": "DLP", "DMR": "WB-IP", "AMCL": "AP", "AMCR": "CHM",
+               "STC": "TF"},
+        "oop": {"GK": "GK-OOP", "DL": "HFB", "DCL": "CWD", "DC": "CCB", "DCR": "CWD",
+                "DR": "HFB", "DMCL": "PDM", "DMCR": "SDM", "ML": "TWM", "MR": "OWM",
+                "STC": "OCF"},
     },
 }
 
@@ -172,6 +183,22 @@ def main():
                 layout.setdefault(slot_stratum(s), []).append(s)
         tactic_layouts[name] = layout
 
+    # Where the game draws a role's card, relative to its slot: percent of
+    # the pitch length, + towards the opponent goal (Edmund's measurements,
+    # data/fm27/rollen-verschiebung-fm27.json). Display only.
+    with open(os.path.join(DATA, "rollen-verschiebung-fm27.json"), encoding="utf-8") as f:
+        shift_data = json.load(f)
+    role_shifts = {}
+    for profile in shift_data["implementation"]["profiles"]:
+        role = profile["role_id"]
+        if role not in known_roles:
+            sys.exit("Verschiebung für unbekannte Rolle %s" % role)
+        value = float(profile["vertical_shift_percent"])
+        if value == 0:
+            continue
+        for position in profile["positions"]:
+            role_shifts.setdefault(role, {})[position] = value
+
     with open(FM24, encoding="utf-8") as f:
         personalities = json.load(f)["personalities"]
 
@@ -181,6 +208,7 @@ def main():
         # replaces their copy, keeping their own tactics).
         "data_revision": DATA_REVISION,
         "retired_tactics": RETIRED_TACTICS,
+        "renamed_tactics": RENAMED_TACTICS,
         "player_roles": player_roles,
         "role_phases": phases,
         "role_specific_weights": weights,
@@ -188,6 +216,7 @@ def main():
         "formation_templates": templates,
         "tactic_roles": tactic_roles,
         "tactic_layouts": tactic_layouts,
+        "role_shifts": role_shifts,
         "personalities": personalities,
     }
     with open(OUT, "w", encoding="utf-8", newline="\n") as f:

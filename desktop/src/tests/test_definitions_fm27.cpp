@@ -32,6 +32,9 @@ const QStringList kPositions = {
 
 } // namespace
 
+const QString kControlPress = QString::fromUtf8("Control Press \xc2\xb7 4-2-3-1");
+const QString kCounterSurge = QString::fromUtf8("Counter Surge \xc2\xb7 3-4-2-1");
+
 class TestDefinitionsFm27 : public QObject
 {
     Q_OBJECT
@@ -140,11 +143,13 @@ private slots:
             QCOMPARE(m_defs.tacticRoles().value(t.key()), t->oop);
             QCOMPARE(m_defs.tacticSlotOrder(t.key()), t->oopOrder);
         }
-        // Only real tactics ship (formations are editor templates):
-        // Edmund's own: 4-2-3-1 with ball, three in midfield and tracking
-        // wingers without ball (updated for 2.0.1).
-        QCOMPARE(m_defs.tacticNames(), QStringList{QStringLiteral("4-2-3-1 - Bavarian Blitz")});
-        const auto blitz = m_defs.twoPhaseTactics().value(QStringLiteral("4-2-3-1 - Bavarian Blitz"));
+        // Only real tactics ship (formations are editor templates): the two
+        // examples of 2.1.0. Control Press: 4-2-3-1 with ball, three in
+        // midfield and tracking wingers without ball.
+        QStringList names = m_defs.tacticNames();
+        names.sort();
+        QCOMPARE(names, (QStringList{kControlPress, kCounterSurge}));
+        const auto blitz = m_defs.twoPhaseTactics().value(kControlPress);
         QCOMPARE(blitz.ip.value(QStringLiteral("AMR")), QStringLiteral("IW"));
         QCOMPARE(blitz.ip.value(QStringLiteral("DMCL")), QStringLiteral("DLP"));
         QCOMPARE(blitz.ip.value(QStringLiteral("STC")), QStringLiteral("DLF"));
@@ -152,6 +157,28 @@ private slots:
         QCOMPARE(blitz.oop.value(QStringLiteral("DMC")), QStringLiteral("SDM"));
         QCOMPARE(blitz.oop.value(QStringLiteral("MCL")), QStringLiteral("PCM"));
         QVERIFY(!blitz.oop.contains(QStringLiteral("MR")));
+        // Counter Surge: back three with ball, back five without.
+        const auto surge = m_defs.twoPhaseTactics().value(kCounterSurge);
+        QCOMPARE(surge.ip.value(QStringLiteral("DC")), QStringLiteral("BCB"));
+        QCOMPARE(surge.ip.value(QStringLiteral("STC")), QStringLiteral("TF"));
+        QCOMPARE(surge.oop.value(QStringLiteral("DC")), QStringLiteral("CCB"));
+        QCOMPARE(surge.oop.value(QStringLiteral("MR")), QStringLiteral("OWM"));
+        QCOMPARE(surge.oop.size(), 11);
+    }
+
+    void roleShiftsFollowTheGame()
+    {
+        // PDM higher than SDM, OWM higher than TWM (percent of pitch length).
+        QVERIFY(m_defs.roleShiftPercent(QStringLiteral("PDM"), QStringLiteral("DMCL")) > 0);
+        QVERIFY(m_defs.roleShiftPercent(QStringLiteral("SDM"), QStringLiteral("DMCR")) < 0);
+        QVERIFY(m_defs.roleShiftPercent(QStringLiteral("OWM"), QStringLiteral("MR")) > 0);
+        QVERIFY(m_defs.roleShiftPercent(QStringLiteral("TWM"), QStringLiteral("ML")) < 0);
+        QCOMPARE(m_defs.roleShiftPercent(QStringLiteral("DM-OOP"), QStringLiteral("DMC")), 0.0);
+        // Per position: a wing-back on DL (D (L)) and on DML (WB (L)).
+        QCOMPARE(m_defs.roleShiftPercent(QStringLiteral("WB-IP"), QStringLiteral("DL")), 2.2);
+        QCOMPARE(m_defs.roleShiftPercent(QStringLiteral("WB-IP"), QStringLiteral("DML")), 2.3);
+        QCOMPARE(m_defs.roleShiftPercent(QStringLiteral("AM-IP"), QStringLiteral("AMC")), 0.0);
+        QCOMPARE(m_defs.roleShiftPercent(QStringLiteral("AM-IP"), QStringLiteral("MCL")), 2.3);
     }
 
     void shippedUpdateKeepsOwnTactics()
@@ -160,7 +187,7 @@ private slots:
         QVERIFY(shipped.value(QLatin1String("data_revision")).toInt() >= 2);
         const QJsonObject blitz = shipped.value(QLatin1String("tactic_roles"))
                                       .toObject()
-                                      .value(QLatin1String("4-2-3-1 - Bavarian Blitz"))
+                                      .value(kControlPress)
                                       .toObject();
         // An older copy: a retired generated tactic, an own tactic, an own
         // tactic with a role that no longer exists.
@@ -178,7 +205,7 @@ private slots:
         };
         QVERIFY(Definitions::applyShippedUpdate(shipped, user));
         const QJsonObject tactics = user.value(QLatin1String("tactic_roles")).toObject();
-        QCOMPARE(tactics.keys(), (QStringList{QStringLiteral("4-2-3-1 - Bavarian Blitz"),
+        QCOMPARE(tactics.keys(), (QStringList{kControlPress, kCounterSurge,
                                               QStringLiteral("Meine Taktik")}));
         QVERIFY(user.value(QLatin1String("tactic_layouts")).toObject().contains(
             QStringLiteral("Meine Taktik")));
@@ -186,7 +213,7 @@ private slots:
         QVERIFY(!Definitions::applyShippedUpdate(shipped, user));
     }
 
-    void blitzPicksTheBayernSquad()
+    void controlPressFillsASquad()
     {
         // Edmund's squad as FM27 lists it, roles auto-assigned on import
         // (every role of every position, both phases), every role rated.
@@ -227,7 +254,8 @@ private slots:
         QTemporaryDir dir;
         AppConfig config(dir.filePath(QStringLiteral("config.ini")));
         SquadBuilder builder(m_defs, config);
-        const QString tactic = QStringLiteral("4-2-3-1 - Bavarian Blitz");
+        // (This squad has no second central midfielder for Counter Surge.)
+        for (const QString &tactic : {kControlPress}) {
         const TwoPhaseSquadResult r =
             builder.calculateTwoPhaseSquad(pool, tactic, ratings, 0.5);
         int filled = 0;
@@ -239,6 +267,7 @@ private slots:
         for (const XiCell &cell : folded.startingXi)
             filled += cell.isFilled();
         QCOMPARE(filled, 11);
+        }
     }
 };
 
