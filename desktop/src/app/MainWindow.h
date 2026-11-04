@@ -26,6 +26,8 @@ class QToolButton;
 
 namespace fm {
 
+class ClubHeaderBar;
+
 class AppContext;
 class BusyProgressDialog;
 class PageBase;
@@ -119,8 +121,7 @@ private:
     QLabel *m_toast = nullptr;
     QTimer m_toastTimer;
     QToolButton *m_saveSwitcher = nullptr;
-    QLabel *m_headerLogo = nullptr;     // optional club logo (user PNG)
-    QLabel *m_headerIdentity = nullptr; // club/national name + stadium
+    ClubHeaderBar *m_headerBar = nullptr; // crest, club name, club colors
     QStackedWidget *m_stack = nullptr;
     QHash<QString, PageBase *> m_pages; // by host page id (Navigation::hostPage), lazily created
     QString m_currentPageId;            // page id shown (not its host)

@@ -41,7 +41,7 @@ AssignRolesPage::AssignRolesPage(AppContext &context, QWidget *parent)
     layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(10);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Rollen zuweisen")), this);
+    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Rollen zuweisen")), this);
     layout->addWidget(heading);
 
     // --- Filter row ---

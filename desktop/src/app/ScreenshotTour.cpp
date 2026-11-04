@@ -6,6 +6,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QTabWidget>
 #include <QTimer>
 #include <QWidget>
 
@@ -54,7 +55,23 @@ void start(AppContext &context, ThemeManager &theme, QWidget *window)
     const auto page = [&context](const QString &id) {
         return [&context, id] { context.requestNavigation(id); };
     };
-    auto steps = std::make_shared<QList<Step>>(QList<Step>{
+    // FMPA_SCREENSHOT_SET=ui: the views of the UI review (club header, colors)
+    // in both modes, for checking club color profiles.
+    const bool uiSet = qEnvironmentVariable("FMPA_SCREENSHOT_SET") == QLatin1String("ui");
+    const auto mode = [&theme](const QString &m) { return [&theme, m] { theme.setMode(m); }; };
+    auto uiSteps = QList<Step>{
+        {mode(QStringLiteral("night")), {}},
+        {page(QStringLiteral("dashboard")), QStringLiteral("night-dashboard.png")},
+        {page(QStringLiteral("best_xi")), QStringLiteral("night-best-xi.png")},
+        {page(QStringLiteral("scouting_matrix")), QStringLiteral("night-scouting.png")},
+        {page(QStringLiteral("settings")), QStringLiteral("night-settings.png")},
+        {mode(QStringLiteral("day")), {}},
+        {page(QStringLiteral("dashboard")), QStringLiteral("day-dashboard.png")},
+        {page(QStringLiteral("best_xi")), QStringLiteral("day-best-xi.png")},
+        {page(QStringLiteral("scouting_matrix")), QStringLiteral("day-scouting.png")},
+        {page(QStringLiteral("settings")), QStringLiteral("day-settings.png")},
+    };
+    auto steps = std::make_shared<QList<Step>>(uiSet ? uiSteps : QList<Step>{
         {[&theme] { theme.setMode(QStringLiteral("night")); }, {}},
         {page(QStringLiteral("dashboard")), QStringLiteral("dashboard.png")},
         {page(QStringLiteral("best_xi")), QStringLiteral("best-xi.png")},
@@ -78,17 +95,33 @@ void start(AppContext &context, ThemeManager &theme, QWidget *window)
          },
          QStringLiteral("dashboard-light.png")},
     });
+    // Settings: open the design tab.
+    for (Step &step : *steps) {
+        if (step.file.endsWith(QLatin1String("settings.png"))) {
+            const auto open = step.prepare;
+            step.prepare = [open, window] {
+                open();
+                for (QTabWidget *tabs : window->findChildren<QTabWidget *>()) {
+                    for (int i = 0; i < tabs->count(); ++i) {
+                        if (tabs->tabText(i) == QCoreApplication::translate("fm::SettingsPage",
+                                                                            "Design"))
+                            tabs->setCurrentIndex(i);
+                    }
+                }
+            };
+        }
+    }
 
     auto index = std::make_shared<int>(0);
     auto next = std::make_shared<std::function<void()>>();
-    *next = [steps, index, next, window, dir] {
+    *next = [steps, index, next, window, dir, uiSet] {
         if (*index >= steps->size()) {
             QCoreApplication::quit();
             return;
         }
         const Step step = steps->at(*index);
         step.prepare();
-        QTimer::singleShot(2500, window, [steps, index, next, window, dir, step] {
+        QTimer::singleShot(uiSet ? 1500 : 2500, window, [steps, index, next, window, dir, step] {
             if (!step.file.isEmpty())
                 window->grab().save(QDir(dir).filePath(step.file));
             ++*index;

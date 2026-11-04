@@ -280,6 +280,17 @@ QByteArray AppContext::profileImage(ProfileImage image)
     return data;
 }
 
+QByteArray AppContext::headerCrest()
+{
+    if (nationalUiMode())
+        return profileImage(ProfileImage::NationalFlag);
+    const QByteArray own = profileImage(ProfileImage::ClubLogo);
+    if (!own.isEmpty() || !m_database)
+        return own;
+    // Graphics folder (off by default: then this stays empty as before).
+    return m_graphics->clubLogoFile(clubFmId(userClub()));
+}
+
 bool AppContext::setProfileImage(ProfileImage image, const QByteArray &png, QString *errorOut)
 {
     const QString document = image == ProfileImage::ClubLogo ? ProfileStore::clubLogoDocument()

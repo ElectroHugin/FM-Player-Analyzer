@@ -84,6 +84,9 @@ const QHash<QString, QString> &themeDefaults()
     static const QHash<QString, QString> defaults = {
         {QStringLiteral("current_mode"), QStringLiteral("night")},
         {QStringLiteral("theme_preset"), QStringLiteral("neutral")},
+        // Club header: "gradient" (club colors + crest) or "solid" (header color).
+        {QStringLiteral("header_style"), QStringLiteral("gradient")},
+        {QStringLiteral("header_crest_watermark"), QStringLiteral("true")},
         // --- Night ---
         {QStringLiteral("night_background_color"), QStringLiteral("#262626")},
         {QStringLiteral("night_surface_color"), QStringLiteral("#343434")},

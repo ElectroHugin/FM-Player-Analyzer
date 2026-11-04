@@ -65,7 +65,8 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    m_heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Best XI")), content);
+    m_heading = new QLabel(tr("Best XI"), content);
+    m_heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(m_heading);
 
     auto *tacticRow = new QHBoxLayout;
@@ -336,7 +337,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         tabLayout->addLayout(pitchRow);
 
         auto *manageHint = new QLabel(
-            tr("✔️ Zum Verwalten dieser Spieler dient Transfers → Leihen & Verkäufe."), tab);
+            tr("Zum Verwalten dieser Spieler dient Transfers → Leihen & Verkäufe."), tab);
         tabLayout->addWidget(manageHint);
 
         const auto makeTable = [tab](const QStringList &headers) {
@@ -375,7 +376,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
     // --- Tab 3: where buying really improves the line-up ---
     m_signingTab = new SigningAdvisorTab(m_context);
-    m_tabs->addTab(m_signingTab, tr("🛒 Kaufberatung"));
+    m_tabs->addTab(m_signingTab, tr("Kaufberatung"));
 
     // The main window's tabs choose the view (showSection).
     m_tabs->tabBar()->hide();
@@ -430,8 +431,7 @@ void BestXiPage::showSection(const QString &pageId)
 {
     const bool signing = pageId == QLatin1String("signing_advisor");
     m_tabs->setCurrentIndex(signing ? 2 : pageId == QLatin1String("best_xi_youth") ? 1 : 0);
-    m_heading->setText(
-        QStringLiteral("<h2>%1</h2>").arg(signing ? tr("Kaufberatung") : tr("Best XI")));
+    m_heading->setText(signing ? tr("Kaufberatung") : tr("Best XI"));
 }
 
 void BestXiPage::releaseStoreRows()
@@ -622,7 +622,7 @@ void BestXiPage::rebuild()
 
     QString note;
     if (listedCompetition && !restricted)
-        note = tr("⚠️ Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
+        note = tr("Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
                   "rechnet mit allen Spielern. Speichere sie unter Transfers → Meldeliste.");
     SquadResult full;
     std::vector<const Player *> firstPool;
@@ -696,7 +696,7 @@ void BestXiPage::rebuild()
         if (!bridges.isEmpty()) {
             const double loss = m_bridge.optimum - m_bridge.current;
             m_bridgeNote->setText(
-                tr("✋ Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer "
+                tr("Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer "
                    "als der Vorschlag des Analyzers.",
                    nullptr, static_cast<int>(bridges.size()))
                     .arg(QLocale().toString(std::max(0.0, loss), 'f', 1)));
@@ -891,7 +891,7 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
                                      : bLoss < 0 ? QStringLiteral("+%1").arg(-bLoss)
                                                  : QStringLiteral("±0"));
     m_injuryNote->setText(text);
-    m_injuryBox->setTitle(tr("🚑 Langzeitverletzt (%1)").arg(injured.size()));
+    m_injuryBox->setTitle(tr("Langzeitverletzt (%1)").arg(injured.size()));
 
     struct Change {
         QString team;
@@ -970,7 +970,7 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
         auto *before = playerItem(change.before);
         if (const Player *p = m_context.store().findByUid(change.before.playerUid);
             p && p->longTermInjured)
-            before->setText(QStringLiteral("🚑 ") + before->text());
+            before->setText(tr("%1 (verletzt)").arg(before->text()));
         m_injuryTable->setItem(row, 3, before);
         m_injuryTable->setItem(row, 4, dwrsItem(change.before));
         m_injuryTable->setItem(row, 5, playerItem(change.after));
@@ -1059,11 +1059,9 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
         table->setItem(row, column++, attrItem(Attr::Determination));
         table->setItem(row, column++, attrItem(Attr::WorkRate));
         table->setItem(row, column++,
-                       new QTableWidgetItem(player->transferStatus ? QStringLiteral("✅")
-                                                                   : QStringLiteral("❌")));
+                       new QTableWidgetItem(player->transferStatus ? tr("ja") : tr("nein")));
         table->setItem(row, column++,
-                       new QTableWidgetItem(player->loanStatus ? QStringLiteral("✅")
-                                                               : QStringLiteral("❌")));
+                       new QTableWidgetItem(player->loanStatus ? tr("ja") : tr("nein")));
         ++row;
     }
     table->setSortingEnabled(true);

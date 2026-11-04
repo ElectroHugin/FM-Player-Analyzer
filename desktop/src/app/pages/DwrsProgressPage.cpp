@@ -167,7 +167,7 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
 
     auto *headRow = new QHBoxLayout;
     headRow->addWidget(
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("DWRS-Entwicklung")), this));
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("DWRS-Entwicklung")), this));
     headRow->addStretch(1);
     m_explainToggle = new QToolButton(this);
     m_explainToggle->setText(tr("So wird gerechnet"));

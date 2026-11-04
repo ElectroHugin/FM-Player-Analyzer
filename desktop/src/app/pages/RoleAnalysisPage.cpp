@@ -42,7 +42,7 @@ RoleAnalysisPage::RoleAnalysisPage(AppContext &context, QWidget *parent)
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    m_heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Rollen-Abdeckung")), content);
+    m_heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Rollen-Abdeckung")), content);
     layout->addWidget(m_heading);
 
     auto *controlRow = new QHBoxLayout;
@@ -57,11 +57,11 @@ RoleAnalysisPage::RoleAnalysisPage(AppContext &context, QWidget *parent)
     layout->addWidget(m_personalityFilter);
 
     m_tabs = new QTabWidget(content);
-    m_tabs->addTab(buildGroupTab(&m_myClub), tr("🏠 Mein Verein"));
+    m_tabs->addTab(buildGroupTab(&m_myClub), tr("Mein Verein"));
     m_myClub.tabIndex = 0;
-    m_tabs->addTab(buildGroupTab(&m_secondTeam), tr("🔄 Zweitteam"));
+    m_tabs->addTab(buildGroupTab(&m_secondTeam), tr("Zweitteam"));
     m_secondTeam.tabIndex = 1;
-    m_tabs->addTab(buildGroupTab(&m_scouted), tr("🔍 Gescoutete Spieler"));
+    m_tabs->addTab(buildGroupTab(&m_scouted), tr("Gescoutete Spieler"));
     m_scouted.tabIndex = 2;
     m_tabs->setMinimumHeight(420);
     layout->addWidget(m_tabs, 1);
@@ -85,9 +85,9 @@ RoleAnalysisPage::RoleAnalysisPage(AppContext &context, QWidget *parent)
         m_scopeGroup->addButton(radio, id);
         scopeLayout->addWidget(radio);
     };
-    addScope(tr("🏠 Mein Verein"), MyClub, true);
-    addScope(tr("🔄 Zweitteam"), SecondTeam);
-    addScope(tr("🔍 Gescoutete"), Scouted);
+    addScope(tr("Mein Verein"), MyClub, true);
+    addScope(tr("Zweitteam"), SecondTeam);
+    addScope(tr("Gescoutete"), Scouted);
     scopeLayout->addSpacing(16);
     m_playerCombo = new QComboBox(m_scopeRow);
     m_playerCombo->setMinimumWidth(320);
@@ -154,7 +154,7 @@ QString RoleAnalysisPage::selectedRole() const
 void RoleAnalysisPage::showSection(const QString &pageId)
 {
     m_scoutedView = pageId == QLatin1String("scouting_roles");
-    m_heading->setText(QStringLiteral("<h2>%1</h2>").arg(
+    m_heading->setText(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(
         m_scoutedView ? tr("Scouting nach Rolle") : tr("Rollen-Abdeckung")));
     applySectionVisibility();
     m_tabs->setCurrentIndex(m_scoutedView ? m_scouted.tabIndex : m_myClub.tabIndex);
@@ -291,10 +291,10 @@ void RoleAnalysisPage::rebuildTables()
         m_tabs->setTabText(group.tabIndex, tr("%1 (%2)").arg(tabText).arg(count));
     };
     apply(m_myClub, std::move(mine),
-          tr("🏠 %1").arg(userClub.isEmpty() ? tr("Mein Verein") : userClub));
+          tr("%1").arg(userClub.isEmpty() ? tr("Mein Verein") : userClub));
     apply(m_secondTeam, std::move(second),
-          tr("🔄 %1").arg(secondClub.isEmpty() ? tr("Zweitteam") : secondClub));
-    apply(m_scouted, std::move(scouted), tr("🔍 Gescoutete Spieler"));
+          tr("%1").arg(secondClub.isEmpty() ? tr("Zweitteam") : secondClub));
+    apply(m_scouted, std::move(scouted), tr("Gescoutete Spieler"));
 
     const auto roleNames = m_context.definitions().roleDisplayMap();
     m_prosConsTitle->setText(
@@ -347,9 +347,9 @@ void RoleAnalysisPage::rebuildProsCons()
     const RoleAnalysis::RoleReport report = RoleAnalysis::analyzePlayerForRole(
         m_context.definitions(), *player, selectedRole());
 
-    QString prosHtml = QStringLiteral("<b>✅ %1</b><ul>").arg(tr("Stärken"));
+    QString prosHtml = QStringLiteral("<b>%1</b><ul>").arg(tr("Stärken"));
     if (report.pros.empty()) {
-        prosHtml = QStringLiteral("<b>✅ %1</b><p>%2</p>")
+        prosHtml = QStringLiteral("<b>%1</b><p>%2</p>")
                        .arg(tr("Stärken"), tr("Keine herausragenden Stärken für diese Rolle."));
     } else {
         for (const auto &pro : report.pros)
@@ -357,9 +357,9 @@ void RoleAnalysisPage::rebuildProsCons()
                             .arg(RoleAnalysis::formatProLine(pro, report.roleName).toHtmlEscaped());
         prosHtml += QStringLiteral("</ul>");
     }
-    QString consHtml = QStringLiteral("<b>⚠️ %1</b><ul>").arg(tr("Schwächen"));
+    QString consHtml = QStringLiteral("<b>%1</b><ul>").arg(tr("Schwächen"));
     if (report.cons.empty()) {
-        consHtml = QStringLiteral("<b>⚠️ %1</b><p>%2</p>")
+        consHtml = QStringLiteral("<b>%1</b><p>%2</p>")
                        .arg(tr("Schwächen"), tr("Keine nennenswerten Schwächen für diese Rolle."));
     } else {
         for (const auto &con : report.cons)

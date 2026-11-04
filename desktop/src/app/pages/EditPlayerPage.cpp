@@ -39,7 +39,7 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Spieler bearbeiten")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Spieler bearbeiten")), content);
     layout->addWidget(heading);
 
     // --- Selection: club players (with completeness markers) or global search.

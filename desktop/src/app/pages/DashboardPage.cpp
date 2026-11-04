@@ -178,7 +178,8 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
     layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(12);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Übersicht")), content);
+    auto *heading = new QLabel(tr("Übersicht"), content);
+    heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(heading);
 
     layout->addWidget(buildImportSection(content));
@@ -204,7 +205,7 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
 
 QWidget *DashboardPage::buildImportSection(QWidget *parent)
 {
-    auto *box = new QGroupBox(tr("⬆️ Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), parent);
+    auto *box = new QGroupBox(tr("Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), parent);
     auto *layout = new QVBoxLayout(box);
 
     auto *fileRow = new QHBoxLayout;
@@ -356,7 +357,7 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
 
 QWidget *DashboardPage::buildSuggestionSection(QWidget *parent)
 {
-    auto *box = new QGroupBox(tr("🎯 Transferziele"), parent);
+    auto *box = new QGroupBox(tr("Transferziele"), parent);
     auto *layout = new QVBoxLayout(box);
 
     auto *info = new QLabel(tr("Mögliche Verstärkungen aus deiner Scouting-Datenbank, "
@@ -699,7 +700,7 @@ void DashboardPage::rebuildSuggestions()
 
     if (suggestions.empty()) {
         m_suggestionStatus->setText(
-            tr("✅ Dein Kader ist gut aufgestellt! Keine klaren Verstärkungen "
+            tr("Dein Kader ist gut aufgestellt. Keine klaren Verstärkungen "
                "innerhalb der Filterkriterien gefunden."));
         return;
     }
@@ -716,28 +717,36 @@ void DashboardPage::rebuildSuggestions()
 
         const Player *player = suggestion.player;
         const QString roleName = roleNames.value(suggestion.role, suggestion.role);
-        auto *header = new QLabel(QStringLiteral("<b>%1</b><br/><span>%2</span>")
-                                      .arg(player->name.toHtmlEscaped(),
-                                           tr("Upgrade für <b>%1</b>").arg(roleName.toHtmlEscaped())),
-                                  card);
+        auto *header = new QLabel(player->name, card);
+        header->setObjectName(QStringLiteral("cardTitle"));
         header->setWordWrap(true);
         cardLayout->addWidget(header);
+        auto *role = new QLabel(tr("Upgrade für %1").arg(roleName), card);
+        role->setObjectName(QStringLiteral("kpiCaption"));
+        role->setWordWrap(true);
+        cardLayout->addWidget(role);
+        cardLayout->addSpacing(4);
 
-        auto *line = new QFrame(card);
-        line->setFrameShape(QFrame::HLine);
-        cardLayout->addWidget(line);
-
-        auto *body = new QLabel(
-            tr("🎯 <b>Bewertung:</b> %1 %% (dein Bester: %2 %%)<br/>"
-               "💰 <b>Wert:</b> %3<br/>"
-               "🎂 <b>Alter:</b> %4")
-                .arg(qRound(suggestion.rating))
-                .arg(qRound(suggestion.myBest))
-                .arg(player->transferValueRaw.toHtmlEscaped())
-                .arg(player->age),
-            card);
-        body->setWordWrap(true);
-        cardLayout->addWidget(body);
+        // Figures as a small aligned table: label left, value right.
+        auto *figures = new QGridLayout;
+        figures->setHorizontalSpacing(12);
+        figures->setVerticalSpacing(2);
+        const QList<QPair<QString, QString>> rows = {
+            {tr("Bewertung"), tr("%1 % (dein Bester %2 %)")
+                                  .arg(qRound(suggestion.rating))
+                                  .arg(qRound(suggestion.myBest))},
+            {tr("Wert"), player->transferValueRaw},
+            {tr("Alter"), QString::number(player->age)},
+        };
+        for (int row = 0; row < rows.size(); ++row) {
+            auto *label = new QLabel(rows[row].first, card);
+            label->setObjectName(QStringLiteral("kpiCaption"));
+            auto *value = new QLabel(rows[row].second, card);
+            figures->addWidget(label, row, 0);
+            figures->addWidget(value, row, 1);
+        }
+        figures->setColumnStretch(1, 1);
+        cardLayout->addLayout(figures);
 
         auto *footer = new QLabel(tr("Verein: %1<br/>Positionen: %2")
                                       .arg(player->club.toHtmlEscaped(),
@@ -797,7 +806,7 @@ void DashboardPage::importFinished(const ImportPipelineResult &result)
     if (!result.import.success) {
         QMessageBox::critical(
             this, tr("Import fehlgeschlagen"),
-            tr("❌ Die Datei konnte nicht importiert werden.\n\n%1\n\n"
+            tr("Die Datei konnte nicht importiert werden.\n\n%1\n\n"
                "Mögliche Ursachen: keine 'UID'-Spalte oder kein gültiger "
                "Football-Manager-Export (HTML oder CSV).")
                 .arg(importErrorText(result.import)));

@@ -16,6 +16,8 @@
 #include <QComboBox>
 #include <QStandardItemModel>
 #include <QDesktopServices>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QDir>
 #include <QDoubleSpinBox>
 #include <QFile>
@@ -105,7 +107,8 @@ SettingsPage::SettingsPage(AppContext &context, ThemeManager &theme, QWidget *pa
     , m_theme(theme)
 {
     auto *layout = new QVBoxLayout(this);
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Einstellungen")), this);
+    auto *heading = new QLabel(tr("Einstellungen"), this);
+    heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(heading);
 
     auto *tabs = new QTabWidget(this);
@@ -856,24 +859,27 @@ QWidget *SettingsPage::buildThemeTab()
     m_presetCombo = new QComboBox;
     m_presetCombo->setMinimumWidth(280);
     m_presetCombo->setMaxVisibleItems(20);
-    // Grouped by league: a disabled league caption above its clubs.
-    QString league;
-    for (const ClubTheme &preset : clubThemes()) {
-        if (preset.league != league) {
-            league = preset.league;
-            m_presetCombo->insertSeparator(m_presetCombo->count());
-            m_presetCombo->addItem(QStringLiteral("— %1 —").arg(league));
-            if (auto *model = qobject_cast<QStandardItemModel *>(m_presetCombo->model()))
-                model->item(m_presetCombo->count() - 1)->setEnabled(false);
-        }
-        m_presetCombo->addItem(preset.displayName, preset.id);
-    }
-    m_presetCombo->insertSeparator(m_presetCombo->count());
-    m_presetCombo->addItem(tr("Benutzerdefiniert"), QStringLiteral("custom"));
+    m_templates = std::make_unique<ColorTemplateStore>(m_context.paths().colorTemplatesFile());
+    m_templates->load();
+    fillPresetCombo();
     m_modeCombo = new QComboBox;
     m_modeCombo->addItem(tr("Nacht (dunkel)"), QStringLiteral("night"));
     m_modeCombo->addItem(tr("Tag (hell)"), QStringLiteral("day"));
-    topForm->addRow(tr("Vereins-/Farbvorlage:"), m_presetCombo);
+    auto *presetRow = new QHBoxLayout;
+    presetRow->setSpacing(8);
+    presetRow->addWidget(m_presetCombo, 1);
+    auto *saveTemplateButton = new QPushButton(tr("Als eigene Vorlage speichern …"));
+    saveTemplateButton->setToolTip(
+        tr("Speichert die Farben unten (Tag und Nacht) als eigene Vorlage. Eigene Vorlagen "
+           "stehen in allen Spielständen zur Wahl und bleiben bei Updates erhalten."));
+    m_deleteTemplateButton = new QPushButton(tr("Vorlage löschen"));
+    m_deleteTemplateButton->setEnabled(false);
+    presetRow->addWidget(saveTemplateButton);
+    presetRow->addWidget(m_deleteTemplateButton);
+    connect(saveTemplateButton, &QPushButton::clicked, this, &SettingsPage::saveColorTemplate);
+    connect(m_deleteTemplateButton, &QPushButton::clicked, this,
+            &SettingsPage::deleteColorTemplate);
+    topForm->addRow(tr("Vereins-/Farbvorlage:"), presetRow);
     topForm->addRow(tr("Aktiver Modus:"), m_modeCombo);
     auto *presetHint = new QLabel(
         tr("Eine Vorlage setzt eine ruhige Anthrazit-Basis und nur die Vereinsfarben als "
@@ -887,10 +893,34 @@ QWidget *SettingsPage::buildThemeTab()
 
     connect(m_presetCombo, &QComboBox::activated, this, [this] {
         const QString id = m_presetCombo->currentData().toString();
+        m_deleteTemplateButton->setEnabled(ColorTemplateStore::isTemplateId(id));
         if (id == QLatin1String("custom"))
             return;
         applyPresetToPending(id);
     });
+
+    // --- Club header ---
+    auto *headerGroup = new QGroupBox(tr("Vereinskopf"), content);
+    auto *headerForm = new QFormLayout(headerGroup);
+    m_headerStyleCombo = new QComboBox;
+    m_headerStyleCombo->addItem(tr("Vereinsfarben mit Wappen"), QStringLiteral("gradient"));
+    m_headerStyleCombo->addItem(tr("Einfarbig (Farbe „Kopfzeile“)"), QStringLiteral("solid"));
+    headerForm->addRow(tr("Darstellung:"), m_headerStyleCombo);
+    m_watermarkCheck = new QCheckBox(tr("Wappen zusätzlich als dezente Silhouette zeigen"));
+    headerForm->addRow(QString(), m_watermarkCheck);
+    auto *headerHint = new QLabel(
+        tr("Der Vereinskopf nutzt die Farbe „Primär“ als Fläche und „Interaktion“ als "
+           "schmalen Streifen. Sind die Farben zu hell oder zu grell, dunkelt der Analyzer "
+           "die Fläche so weit ab, dass Name und Stadion lesbar bleiben."),
+        headerGroup);
+    headerHint->setWordWrap(true);
+    headerHint->setObjectName(QStringLiteral("kpiCaption"));
+    headerForm->addRow(headerHint);
+    connect(m_headerStyleCombo, &QComboBox::currentIndexChanged, this, [this] {
+        m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
+                                     != QLatin1String("solid"));
+    });
+    layout->addWidget(headerGroup);
 
     // --- Per-mode color roles ---
     const QList<QPair<QString, QString>> colorKeys = {
@@ -938,9 +968,160 @@ QWidget *SettingsPage::buildThemeTab()
     return wrapScrollable(content);
 }
 
+void SettingsPage::fillPresetCombo()
+{
+    QSignalBlocker blocker(m_presetCombo);
+    m_presetCombo->clear();
+
+    struct Entry {
+        QString league;
+        QString name;
+        QString id;
+    };
+    QList<Entry> entries;
+    for (const ClubTheme &preset : clubThemes())
+        entries.append({preset.league, preset.displayName, preset.id});
+    const QString customLeague = tr("Custom");
+    for (const ColorTemplate &own : m_templates->templates()) {
+        entries.append({own.league.isEmpty() ? customLeague : own.league,
+                        tr("%1 (eigene)").arg(own.name), own.id});
+    }
+    // Neutral first (empty league), leagues alphabetically, "Custom" last.
+    std::stable_sort(entries.begin(), entries.end(), [&](const Entry &a, const Entry &b) {
+        const auto rank = [&](const Entry &e) {
+            return e.league.isEmpty() ? 0 : (e.league == customLeague ? 2 : 1);
+        };
+        if (rank(a) != rank(b))
+            return rank(a) < rank(b);
+        const int league = QString::localeAwareCompare(a.league, b.league);
+        if (league != 0)
+            return league < 0;
+        return QString::localeAwareCompare(a.name, b.name) < 0;
+    });
+
+    // Grouped by league: a disabled league caption above its entries.
+    QString league;
+    for (const Entry &entry : std::as_const(entries)) {
+        if (entry.league != league) {
+            league = entry.league;
+            m_presetCombo->insertSeparator(m_presetCombo->count());
+            m_presetCombo->addItem(QStringLiteral("— %1 —").arg(league));
+            if (auto *model = qobject_cast<QStandardItemModel *>(m_presetCombo->model()))
+                model->item(m_presetCombo->count() - 1)->setEnabled(false);
+        }
+        m_presetCombo->addItem(entry.name, entry.id);
+    }
+    m_presetCombo->insertSeparator(m_presetCombo->count());
+    m_presetCombo->addItem(tr("Benutzerdefiniert (nicht gespeichert)"), QStringLiteral("custom"));
+}
+
+void SettingsPage::selectPresetInCombo(const QString &presetId)
+{
+    QSignalBlocker blocker(m_presetCombo);
+    const int index = m_presetCombo->findData(presetId);
+    m_presetCombo->setCurrentIndex(index >= 0 ? index
+                                              : m_presetCombo->findData(QStringLiteral("custom")));
+    if (m_deleteTemplateButton)
+        m_deleteTemplateButton->setEnabled(ColorTemplateStore::isTemplateId(
+            m_presetCombo->currentData().toString()));
+}
+
+void SettingsPage::saveColorTemplate()
+{
+    QDialog dialog(this);
+    dialog.setWindowTitle(tr("Eigene Farbvorlage speichern"));
+    auto *form = new QFormLayout(&dialog);
+    auto *nameEdit = new QLineEdit(&dialog);
+    if (const ColorTemplate *current = m_templates->find(m_pendingPreset))
+        nameEdit->setText(current->name);
+    auto *leagueCombo = new QComboBox(&dialog);
+    leagueCombo->setEditable(true);
+    leagueCombo->addItem(tr("Custom"), QString());
+    QStringList leagues;
+    for (const ClubTheme &preset : clubThemes()) {
+        if (!preset.league.isEmpty() && !leagues.contains(preset.league))
+            leagues << preset.league;
+    }
+    for (const QString &own : m_templates->leagues()) {
+        if (!leagues.contains(own))
+            leagues << own;
+    }
+    std::sort(leagues.begin(), leagues.end(), [](const QString &a, const QString &b) {
+        return QString::localeAwareCompare(a, b) < 0;
+    });
+    for (const QString &league : std::as_const(leagues))
+        leagueCombo->addItem(league, league);
+    if (const ColorTemplate *current = m_templates->find(m_pendingPreset)) {
+        const int index = leagueCombo->findData(current->league);
+        if (index >= 0)
+            leagueCombo->setCurrentIndex(index);
+    }
+    form->addRow(tr("Name:"), nameEdit);
+    form->addRow(tr("Liga:"), leagueCombo);
+    auto *hint = new QLabel(tr("Eine Liga sortiert die Vorlage zu den Vereinen dieser Liga. "
+                               "„Custom“ sammelt Vorlagen ohne Liga. Gleicher Name in "
+                               "derselben Liga überschreibt die Vorlage."),
+                            &dialog);
+    hint->setWordWrap(true);
+    hint->setObjectName(QStringLiteral("kpiCaption"));
+    form->addRow(hint);
+    auto *buttons =
+        new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, &dialog);
+    form->addRow(buttons);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    connect(nameEdit, &QLineEdit::textChanged, &dialog, [buttons](const QString &text) {
+        buttons->button(QDialogButtonBox::Save)->setEnabled(!text.trimmed().isEmpty());
+    });
+    buttons->button(QDialogButtonBox::Save)->setEnabled(!nameEdit->text().trimmed().isEmpty());
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    // Typed league text that matches no entry: use it as a new league.
+    QString league = leagueCombo->currentText().trimmed();
+    if (league == tr("Custom"))
+        league.clear();
+    const QString id = m_templates->save(nameEdit->text(), league, m_pendingColors);
+    if (id.isEmpty()) {
+        QMessageBox::critical(this, tr("Farbvorlage"),
+                              tr("Die Vorlage konnte nicht gespeichert werden.\n\n%1")
+                                  .arg(m_templates->lastError()));
+        return;
+    }
+    m_pendingPreset = id;
+    fillPresetCombo();
+    selectPresetInCombo(id);
+}
+
+void SettingsPage::deleteColorTemplate()
+{
+    const QString id = m_presetCombo->currentData().toString();
+    const ColorTemplate *entry = m_templates->find(id);
+    if (!entry)
+        return;
+    if (QMessageBox::question(this, tr("Farbvorlage löschen"),
+                              tr("Die eigene Vorlage „%1“ löschen? Spielstände, die sie "
+                                 "nutzen, behalten ihre Farben.")
+                                  .arg(entry->name))
+        != QMessageBox::Yes)
+        return;
+    if (!m_templates->remove(id)) {
+        QMessageBox::critical(this, tr("Farbvorlage"),
+                              tr("Die Vorlage konnte nicht gelöscht werden.\n\n%1")
+                                  .arg(m_templates->lastError()));
+        return;
+    }
+    // The colors stay; they are just no longer a named template.
+    m_pendingPreset = QStringLiteral("custom");
+    fillPresetCombo();
+    selectPresetInCombo(m_pendingPreset);
+}
+
 void SettingsPage::applyPresetToPending(const QString &presetId)
 {
-    const QHash<QString, QString> preset = presetThemeSettings(presetId);
+    QHash<QString, QString> preset = presetThemeSettings(presetId);
+    if (const ColorTemplate *own = m_templates->find(presetId))
+        preset = own->colors;
     for (auto it = m_colorButtons.begin(); it != m_colorButtons.end(); ++it) {
         const QString value = preset.value(it.key());
         if (value.isEmpty())
@@ -956,11 +1137,7 @@ void SettingsPage::applyPresetToPending(const QString &presetId)
 void SettingsPage::markCustomPreset()
 {
     m_pendingPreset = QStringLiteral("custom");
-    const int index = m_presetCombo->findData(QStringLiteral("custom"));
-    if (index >= 0) {
-        QSignalBlocker blocker(m_presetCombo);
-        m_presetCombo->setCurrentIndex(index);
-    }
+    selectPresetInCombo(m_pendingPreset);
 }
 
 QWidget *SettingsPage::buildDatabaseTab()
@@ -1175,13 +1352,20 @@ void SettingsPage::refresh()
         themeSettings.value(QStringLiteral("current_mode")) == QLatin1String("day") ? 1 : 0);
     m_pendingPreset = themeSettings.value(QStringLiteral("theme_preset"),
                                           QStringLiteral("custom"));
+    m_templates->load(); // another save's settings page may have added one
+    fillPresetCombo();
+    selectPresetInCombo(m_pendingPreset);
     {
-        QSignalBlocker blocker(m_presetCombo);
-        const int presetIndex = m_presetCombo->findData(m_pendingPreset);
-        m_presetCombo->setCurrentIndex(
-            presetIndex >= 0 ? presetIndex
-                             : m_presetCombo->findData(QStringLiteral("custom")));
+        QSignalBlocker blocker(m_headerStyleCombo);
+        const int style = m_headerStyleCombo->findData(
+            themeSettings.value(QStringLiteral("header_style"), QStringLiteral("gradient")));
+        m_headerStyleCombo->setCurrentIndex(std::max(0, style));
     }
+    m_watermarkCheck->setChecked(
+        themeSettings.value(QStringLiteral("header_crest_watermark"), QStringLiteral("true"))
+        != QLatin1String("false"));
+    m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
+                                 != QLatin1String("solid"));
     m_pendingColors.clear();
     for (auto it = m_colorButtons.begin(); it != m_colorButtons.end(); ++it) {
         const QString value = themeSettings.value(it.key());
@@ -1209,13 +1393,13 @@ void SettingsPage::updateContrastWarning()
         if (text.isValid() && bg.isValid()) {
             const double ratio = contrastRatio(text, bg);
             if (ratio < 4.5) {
-                warnings << tr("⚠ %1: Kontrast Text/Hintergrund nur %2:1 (WCAG empfiehlt ≥ 4,5:1)")
+                warnings << tr("%1: Kontrast Text/Hintergrund nur %2:1 (WCAG empfiehlt mindestens 4,5:1)")
                                 .arg(mode == QLatin1String("night") ? tr("Nacht") : tr("Tag"))
                                 .arg(ratio, 0, 'f', 1);
             }
         }
     }
-    m_contrastLabel->setText(warnings.isEmpty() ? tr("✓ Kontrastwerte in Ordnung")
+    m_contrastLabel->setText(warnings.isEmpty() ? tr("Kontrast Text/Hintergrund in Ordnung")
                                                 : warnings.join(QLatin1Char('\n')));
 }
 
@@ -1328,6 +1512,11 @@ void SettingsPage::saveAll()
                                                    : m_pendingPreset);
     for (auto it = m_pendingColors.constBegin(); it != m_pendingColors.constEnd(); ++it)
         themeSettings.insert(it.key(), it.value());
+    themeSettings.insert(QStringLiteral("header_style"),
+                         m_headerStyleCombo->currentData().toString());
+    themeSettings.insert(QStringLiteral("header_crest_watermark"),
+                         m_watermarkCheck->isChecked() ? QStringLiteral("true")
+                                                       : QStringLiteral("false"));
     config.saveThemeSettings(themeSettings);
 
     QString error = clubSettingsOk ? QString() : db.errorString();

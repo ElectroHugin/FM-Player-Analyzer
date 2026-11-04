@@ -82,7 +82,7 @@ NewRolePage::NewRolePage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Neue Rolle erstellen")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Neue Rolle erstellen")), content);
     layout->addWidget(heading);
     auto *info = new QLabel(
         tr("Definiere eine neue Feldspieler-Rolle. Das Kürzel wird beim Tippen automatisch "

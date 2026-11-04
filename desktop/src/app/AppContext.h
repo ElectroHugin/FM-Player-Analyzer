@@ -95,6 +95,10 @@ public:
     // id. Null pixmap = none (pages then show nothing, as before).
     QPixmap clubCrest(const QString &clubName, int size);
 
+    // The image the club header shows (club crest, or the flag in national
+    // mode). Club mode: the PNG stored in the profile, otherwise (graphics
+    // folder on) the own club's crest by club id. Empty = none.
+    QByteArray headerCrest();
     // Writes the edited definitions (definitions().setRoot()) into the open
     // save's profile and reloads them with the engines.
     bool saveDefinitions(QString *errorOut = nullptr);

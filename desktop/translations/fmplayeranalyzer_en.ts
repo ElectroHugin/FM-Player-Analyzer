@@ -727,6 +727,10 @@
         <translation>Youth XI</translation>
     </message>
     <message>
+        <source>Zum Verwalten dieser Spieler dient Transfers → Leihen &amp; Verkäufe.</source>
+        <translation>Manage these players under Transfers → Loans &amp; Sales.</translation>
+    </message>
+    <message>
         <source>Vielversprechende Talente zum Verleihen (nach Talent-Score)</source>
         <translation>Promising talents to loan out (by talent score)</translation>
     </message>
@@ -803,8 +807,19 @@
         <translation>Suitability</translation>
     </message>
     <message>
-        <source>✔️ Zum Verwalten dieser Spieler dient Transfers → Leihen &amp; Verkäufe.</source>
-        <translation>✔️ Manage these players under Transfers → Loans &amp; Sales.</translation>
+        <source>Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI rechnet mit allen Spielern. Speichere sie unter Transfers → Meldeliste.</source>
+        <translation>No squad list saved for this competition yet — Best XI uses all players. Save it under Transfers → Squad List.</translation>
+    </message>
+    <message numerus="yes">
+        <source>Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer als der Vorschlag des Analyzers.</source>
+        <translation>
+            <numerusform>Adjusted by hand (%n player). The XI is %1 DWRS points weaker than the analyzer&apos;s suggestion.</numerusform>
+            <numerusform>Adjusted by hand (%n players). The XI is %1 DWRS points weaker than the analyzer&apos;s suggestion.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Langzeitverletzt (%1)</source>
+        <translation>Long-term injured (%1)</translation>
     </message>
     <message>
         <source>Position</source>
@@ -847,10 +862,6 @@
         <translation>Youth &amp;&amp; Second Team</translation>
     </message>
     <message>
-        <source>🛒 Kaufberatung</source>
-        <translation>🛒 Signing advisor</translation>
-    </message>
-    <message>
         <source>Kaufberatung</source>
         <translation>Signing Advisor</translation>
     </message>
@@ -891,10 +902,6 @@
         <translation>Without the squad list these would be in the starting XI or B-team: %1</translation>
     </message>
     <message>
-        <source>⚠️ Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI rechnet mit allen Spielern. Speichere sie unter Transfers → Meldeliste.</source>
-        <translation>⚠️ No squad list saved for this competition yet — Best XI uses all players. Save it under Transfers → Squad List.</translation>
-    </message>
-    <message>
         <source>ohne: %1</source>
         <translation>OOP: %1</translation>
     </message>
@@ -927,12 +934,20 @@
         <translation>This is how the squad makes up for it — starting XI %1, B-team %2 DWRS points (sum over all positions):</translation>
     </message>
     <message>
-        <source>🚑 Langzeitverletzt (%1)</source>
-        <translation>🚑 Long-term injured (%1)</translation>
-    </message>
-    <message>
         <source>— unbesetzt —</source>
         <translation>— unfilled —</translation>
+    </message>
+    <message>
+        <source>%1 (verletzt)</source>
+        <translation>%1 (injured)</translation>
+    </message>
+    <message>
+        <source>ja</source>
+        <translation>yes</translation>
+    </message>
+    <message>
+        <source>nein</source>
+        <translation>no</translation>
     </message>
     <message>
         <source>Keine weiteren Spieler als Tiefen-Optionen für diese Taktik geeignet.</source>
@@ -949,13 +964,6 @@
     <message>
         <source>Ohne Ball</source>
         <translation>Out of possession</translation>
-    </message>
-    <message numerus="yes">
-        <source>✋ Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer als der Vorschlag des Analyzers.</source>
-        <translation>
-            <numerusform>✋ Adjusted by hand (%n player). The XI is %1 DWRS points weaker than the analyzer&apos;s suggestion.</numerusform>
-            <numerusform>✋ Adjusted by hand (%n players). The XI is %1 DWRS points weaker than the analyzer&apos;s suggestion.</numerusform>
-        </translation>
     </message>
     <message>
         <source>Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle ohne Ball am höchsten ist; jeder Spieler braucht die Position in beiden Aufstellungen. Unter dem Namen steht sein Platz in der anderen Aufstellung. Den Anteil stellst du in den Einstellungen ein. Per Rechtsklick auf einen Spieler der Startelf verschiebst du ihn selbst; der Analyzer zeigt, was jeder Platz kostet.</source>
@@ -1152,8 +1160,8 @@
         <translation>Overview</translation>
     </message>
     <message>
-        <source>⬆️ Neue Spielerdaten importieren (FM-Export, HTML oder CSV)</source>
-        <translation>⬆️ Import new player data (FM export, HTML or CSV)</translation>
+        <source>Neue Spielerdaten importieren (FM-Export, HTML oder CSV)</source>
+        <translation>Import new player data (FM export, HTML or CSV)</translation>
     </message>
     <message>
         <source>Keine Datei ausgewählt…</source>
@@ -1240,8 +1248,28 @@
         <translation>Market Value</translation>
     </message>
     <message>
-        <source>🎯 Transferziele</source>
-        <translation>🎯 Transfer Targets</translation>
+        <source>Transferziele</source>
+        <translation>Transfer targets</translation>
+    </message>
+    <message>
+        <source>Dein Kader ist gut aufgestellt. Keine klaren Verstärkungen innerhalb der Filterkriterien gefunden.</source>
+        <translation>Your squad is well set up. No clear reinforcements found within the filter criteria.</translation>
+    </message>
+    <message>
+        <source>Upgrade für %1</source>
+        <translation>Upgrade for %1</translation>
+    </message>
+    <message>
+        <source>Bewertung</source>
+        <translation>Rating</translation>
+    </message>
+    <message>
+        <source>%1 % (dein Bester %2 %)</source>
+        <translation>%1 % (your best %2 %)</translation>
+    </message>
+    <message>
+        <source>Wert</source>
+        <translation>Value</translation>
     </message>
     <message>
         <source>Mögliche Verstärkungen aus deiner Scouting-Datenbank, basierend auf den Rollen der gewählten Taktik.</source>
@@ -1272,18 +1300,6 @@
         <translation>Players at %1 (%2)</translation>
     </message>
     <message>
-        <source>✅ Dein Kader ist gut aufgestellt! Keine klaren Verstärkungen innerhalb der Filterkriterien gefunden.</source>
-        <translation>✅ Your squad is well set up! No clear reinforcements found within the filter criteria.</translation>
-    </message>
-    <message>
-        <source>Upgrade für &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation>Upgrade for &lt;b&gt;%1&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>🎯 &lt;b&gt;Bewertung:&lt;/b&gt; %1 %% (dein Bester: %2 %%)&lt;br/&gt;💰 &lt;b&gt;Wert:&lt;/b&gt; %3&lt;br/&gt;🎂 &lt;b&gt;Alter:&lt;/b&gt; %4</source>
-        <translation>🎯 &lt;b&gt;Rating:&lt;/b&gt; %1 %% (your best: %2 %%)&lt;br/&gt;💰 &lt;b&gt;Value:&lt;/b&gt; %3&lt;br/&gt;🎂 &lt;b&gt;Age:&lt;/b&gt; %4</translation>
-    </message>
-    <message>
         <source>Verein: %1&lt;br/&gt;Positionen: %2</source>
         <translation>Club: %1&lt;br/&gt;Positions: %2</translation>
     </message>
@@ -1296,20 +1312,20 @@
         <translation>FM exports (*.html *.htm *.csv);;All files (*)</translation>
     </message>
     <message>
-        <source>❌ Die Datei konnte nicht importiert werden.
+        <source>Import fehlgeschlagen</source>
+        <translation>Import failed</translation>
+    </message>
+    <message>
+        <source>Die Datei konnte nicht importiert werden.
 
 %1
 
 Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Manager-Export (HTML oder CSV).</source>
-        <translation>❌ The file could not be imported.
+        <translation>The file could not be imported.
 
 %1
 
 Possible causes: no &apos;UID&apos; column, or not a valid Football Manager export (HTML or CSV).</translation>
-    </message>
-    <message>
-        <source>Import fehlgeschlagen</source>
-        <translation>Import failed</translation>
     </message>
     <message>
         <source>Import abgeschlossen</source>
@@ -4011,22 +4027,6 @@ Details: %1</translation>
         <translation>Role:</translation>
     </message>
     <message>
-        <source>🏠 Mein Verein</source>
-        <translation>🏠 My Club</translation>
-    </message>
-    <message>
-        <source>🔄 Zweitteam</source>
-        <translation>🔄 Second Team</translation>
-    </message>
-    <message>
-        <source>🔍 Gescoutete Spieler</source>
-        <translation>🔍 Scouted Players</translation>
-    </message>
-    <message>
-        <source>🔍 Gescoutete</source>
-        <translation>🔍 Scouted</translation>
-    </message>
-    <message>
         <source>Scouting nach Rolle</source>
         <translation>Scouting by Role</translation>
     </message>
@@ -4079,20 +4079,24 @@ Details: %1</translation>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <source>🏠 %1</source>
-        <translation>🏠 %1</translation>
-    </message>
-    <message>
         <source>Mein Verein</source>
         <translation>My Club</translation>
     </message>
     <message>
-        <source>🔄 %1</source>
-        <translation>🔄 %1</translation>
-    </message>
-    <message>
         <source>Zweitteam</source>
         <translation>Second Team</translation>
+    </message>
+    <message>
+        <source>Gescoutete Spieler</source>
+        <translation>Scouted Players</translation>
+    </message>
+    <message>
+        <source>Gescoutete</source>
+        <translation>Scouted</translation>
+    </message>
+    <message>
+        <source>%1</source>
+        <translation>%1</translation>
     </message>
     <message>
         <source>Stärken und Schwächen als %1</source>
@@ -4605,16 +4609,24 @@ Details: %1</translation>
         <translation>Colour Scheme</translation>
     </message>
     <message>
-        <source>Benutzerdefiniert</source>
-        <translation>Custom</translation>
-    </message>
-    <message>
         <source>Nacht (dunkel)</source>
         <translation>Night (dark)</translation>
     </message>
     <message>
         <source>Tag (hell)</source>
         <translation>Day (light)</translation>
+    </message>
+    <message>
+        <source>Als eigene Vorlage speichern …</source>
+        <translation>Save as own template …</translation>
+    </message>
+    <message>
+        <source>Speichert die Farben unten (Tag und Nacht) als eigene Vorlage. Eigene Vorlagen stehen in allen Spielständen zur Wahl und bleiben bei Updates erhalten.</source>
+        <translation>Saves the colors below (day and night) as your own template. Own templates are available in every save and are kept across updates.</translation>
+    </message>
+    <message>
+        <source>Vorlage löschen</source>
+        <translation>Delete template</translation>
     </message>
     <message>
         <source>Vereins-/Farbvorlage:</source>
@@ -4627,6 +4639,30 @@ Details: %1</translation>
     <message>
         <source>Eine Vorlage setzt eine ruhige Anthrazit-Basis und nur die Vereinsfarben als Akzent (Kopfzeile, Buttons, Interaktion). Farben unten lassen sich danach frei anpassen — das schaltet auf &apos;Benutzerdefiniert&apos;.</source>
         <translation>A preset sets a calm anthracite base and uses only the club colours as accents (header, buttons, interaction). Colours below can then be freely adjusted — that switches to &apos;Custom&apos;.</translation>
+    </message>
+    <message>
+        <source>Vereinskopf</source>
+        <translation>Club header</translation>
+    </message>
+    <message>
+        <source>Vereinsfarben mit Wappen</source>
+        <translation>Club colors with crest</translation>
+    </message>
+    <message>
+        <source>Einfarbig (Farbe „Kopfzeile“)</source>
+        <translation>Single color (&quot;Header&quot; color)</translation>
+    </message>
+    <message>
+        <source>Darstellung:</source>
+        <translation>Style:</translation>
+    </message>
+    <message>
+        <source>Wappen zusätzlich als dezente Silhouette zeigen</source>
+        <translation>Also show the crest as a subtle silhouette</translation>
+    </message>
+    <message>
+        <source>Der Vereinskopf nutzt die Farbe „Primär“ als Fläche und „Interaktion“ als schmalen Streifen. Sind die Farben zu hell oder zu grell, dunkelt der Analyzer die Fläche so weit ab, dass Name und Stadion lesbar bleiben.</source>
+        <translation>The club header uses the &quot;Primary&quot; color as its surface and &quot;Interaction&quot; as a narrow stripe. If the colors are too light or too bright, the Analyzer darkens the surface just enough to keep name and stadium readable.</translation>
     </message>
     <message>
         <source>Hintergrund</source>
@@ -4667,6 +4703,58 @@ Details: %1</translation>
     <message>
         <source>Farbe wählen</source>
         <translation>Choose colour</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Custom</translation>
+    </message>
+    <message>
+        <source>%1 (eigene)</source>
+        <translation>%1 (own)</translation>
+    </message>
+    <message>
+        <source>Benutzerdefiniert (nicht gespeichert)</source>
+        <translation>Custom (not saved)</translation>
+    </message>
+    <message>
+        <source>Eigene Farbvorlage speichern</source>
+        <translation>Save own color template</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>Name:</translation>
+    </message>
+    <message>
+        <source>Eine Liga sortiert die Vorlage zu den Vereinen dieser Liga. „Custom“ sammelt Vorlagen ohne Liga. Gleicher Name in derselben Liga überschreibt die Vorlage.</source>
+        <translation>A league files the template with the clubs of that league. &quot;Custom&quot; collects templates without a league. The same name in the same league replaces the template.</translation>
+    </message>
+    <message>
+        <source>Farbvorlage</source>
+        <translation>Color template</translation>
+    </message>
+    <message>
+        <source>Die Vorlage konnte nicht gespeichert werden.
+
+%1</source>
+        <translation>The template could not be saved.
+
+%1</translation>
+    </message>
+    <message>
+        <source>Farbvorlage löschen</source>
+        <translation>Delete color template</translation>
+    </message>
+    <message>
+        <source>Die eigene Vorlage „%1“ löschen? Spielstände, die sie nutzen, behalten ihre Farben.</source>
+        <translation>Delete your template &quot;%1&quot;? Saves that use it keep their colors.</translation>
+    </message>
+    <message>
+        <source>Die Vorlage konnte nicht gelöscht werden.
+
+%1</source>
+        <translation>The template could not be deleted.
+
+%1</translation>
     </message>
     <message>
         <source>Aktive Datenbank</source>
@@ -4723,20 +4811,12 @@ Details: %1</translation>
         <translation>Weights for %1 saves.</translation>
     </message>
     <message>
-        <source>⚠ %1: Kontrast Text/Hintergrund nur %2:1 (WCAG empfiehlt ≥ 4,5:1)</source>
-        <translation>⚠ %1: text/background contrast only %2:1 (WCAG recommends ≥ 4.5:1)</translation>
-    </message>
-    <message>
         <source>Nacht</source>
         <translation>Night</translation>
     </message>
     <message>
         <source>Tag</source>
         <translation>Day</translation>
-    </message>
-    <message>
-        <source>✓ Kontrastwerte in Ordnung</source>
-        <translation>✓ Contrast values OK</translation>
     </message>
     <message>
         <source>Einstellungen gespeichert.</source>
@@ -4811,6 +4891,14 @@ Details: %1</translation>
 %1</source>
         <translation>The flag could not be removed.
 %1</translation>
+    </message>
+    <message>
+        <source>%1: Kontrast Text/Hintergrund nur %2:1 (WCAG empfiehlt mindestens 4,5:1)</source>
+        <translation>%1: text/background contrast only %2:1 (WCAG recommends at least 4.5:1)</translation>
+    </message>
+    <message>
+        <source>Kontrast Text/Hintergrund in Ordnung</source>
+        <translation>Text/background contrast OK</translation>
     </message>
     <message>
         <source>Die Einstellungen konnten nicht gespeichert werden. Der Spielstand behält seinen bisherigen Stand.
@@ -5063,10 +5151,6 @@ Details: %1</translation>
         <translation>Extra details</translation>
     </message>
     <message>
-        <source>🌱 Talent-Filter</source>
-        <translation>🌱 Talent Filter</translation>
-    </message>
-    <message>
         <source>Nationalität:</source>
         <translation>Nationality:</translation>
     </message>
@@ -5097,6 +5181,10 @@ Details: %1</translation>
     <message>
         <source>Talent-Score = bester DWRS der angezeigten Rollen + 2 je Jahr unter der Altersgrenze + (Ent + Arb − 20) / 4 + 3 (gute) / − 5 (schlechte Persönlichkeit).</source>
         <translation>Talent score = best DWRS of the displayed roles + 2 per year under the age limit + (Det + Wor − 20) / 4 + 3 (good) / − 5 (bad personality).</translation>
+    </message>
+    <message>
+        <source>Attribut-Schwellen</source>
+        <translation>Attribute thresholds</translation>
     </message>
     <message>
         <source>Mein Verein</source>
@@ -5135,14 +5223,6 @@ Details: %1</translation>
         <translation>Nation:</translation>
     </message>
     <message>
-        <source>🔍 Scouting</source>
-        <translation>🔍 Scouting</translation>
-    </message>
-    <message>
-        <source>🏠 Mein Kader</source>
-        <translation>🏠 My Squad</translation>
-    </message>
-    <message>
         <source>Squad Matrix – Scouting</source>
         <translation>Squad Matrix – Scouting</translation>
     </message>
@@ -5169,10 +5249,6 @@ Details: %1</translation>
     <message>
         <source>Max. Wert:</source>
         <translation>Max. Value:</translation>
-    </message>
-    <message>
-        <source>🎯 Attribut-Schwellen</source>
-        <translation>🎯 Attribute thresholds</translation>
     </message>
     <message>
         <source>Hebt Spieler hervor, deren Attribut die Schwelle erreicht, z. B. Decisions für einen AM(C) oder Crossing für Außenverteidiger. Jede Schwelle bekommt eine eigene Spalte, „Schwellen“ zählt die erfüllten. Gerechnet wird mit der Mitte der gescouteten Spanne.</source>
@@ -5295,12 +5371,24 @@ Details: %1</translation>
         <translation>Domestic (%1)</translation>
     </message>
     <message>
+        <source>Scouting</source>
+        <translation>Scouting</translation>
+    </message>
+    <message>
+        <source>Mein Kader</source>
+        <translation>My Squad</translation>
+    </message>
+    <message>
         <source>Retired/veraltete ausblenden</source>
         <translation>Hide retired/stale</translation>
     </message>
     <message>
         <source>Blendet Spieler aus, deren Verein auf &apos;Retired&apos; steht oder die in den letzten Komplett-Exporten fehlten (außer eigenem Verein und Shortlist).</source>
         <translation>Hides players whose club is set to &apos;Retired&apos; or who were missing from the latest full exports (except your own club and the shortlist).</translation>
+    </message>
+    <message>
+        <source>Talent-Filter</source>
+        <translation>Talent Filter</translation>
     </message>
     <message>
         <source>Nur Jugend (bis %1, TW bis %2)</source>

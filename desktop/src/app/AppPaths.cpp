@@ -66,6 +66,11 @@ QString AppPaths::backupsDir() const
     return QDir(dataDir()).filePath(QStringLiteral("backups"));
 }
 
+QString AppPaths::colorTemplatesFile() const
+{
+    return QDir(dataDir()).filePath(QStringLiteral("color_templates.json"));
+}
+
 QString AppPaths::assetsDir() const
 {
     return QDir(dataDir()).filePath(QStringLiteral("assets"));

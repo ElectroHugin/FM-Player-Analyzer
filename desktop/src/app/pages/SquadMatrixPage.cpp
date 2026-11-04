@@ -111,7 +111,8 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    m_heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Squad Matrix")), content);
+    m_heading = new QLabel(tr("Squad Matrix"), content);
+    m_heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(m_heading);
 
     // --- Options shared by both tabs ---
@@ -126,8 +127,8 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     layout->addLayout(optionsRow);
 
     m_tabs = new QTabWidget(content);
-    m_tabs->addTab(buildScoutingTab(), tr("🔍 Scouting"));
-    m_tabs->addTab(buildSquadTab(), tr("🏠 Mein Kader"));
+    m_tabs->addTab(buildScoutingTab(), tr("Scouting"));
+    m_tabs->addTab(buildSquadTab(), tr("Mein Kader"));
     m_tabs->tabBar()->hide(); // the main window's tabs choose (showSection)
     layout->addWidget(m_tabs, 1);
 
@@ -204,8 +205,7 @@ void SquadMatrixPage::showSection(const QString &pageId)
 {
     const bool scouting = pageId == QLatin1String("scouting_matrix");
     m_tabs->setCurrentIndex(scouting ? TabScouting : TabSquad);
-    m_heading->setText(QStringLiteral("<h2>%1</h2>").arg(
-        scouting ? tr("Squad Matrix – Scouting") : tr("Squad Matrix – Mein Kader")));
+    m_heading->setText(scouting ? tr("Squad Matrix – Scouting") : tr("Squad Matrix – Mein Kader"));
 }
 
 QWidget *SquadMatrixPage::buildScoutingTab()
@@ -288,7 +288,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     layout->addWidget(m_personalityFilter);
 
     // --- Talent filter ---
-    m_talentBox = new QGroupBox(tr("🌱 Talent-Filter"), tab);
+    m_talentBox = new QGroupBox(tr("Talent-Filter"), tab);
     m_talentBox->setCheckable(true);
     m_talentBox->setChecked(false);
     auto *talentLayout = collapsibleBody(m_talentBox);
@@ -338,7 +338,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     layout->addWidget(m_talentBox);
 
     // --- Attribute thresholds ---
-    m_attrBox = new QGroupBox(tr("🎯 Attribut-Schwellen"), tab);
+    m_attrBox = new QGroupBox(tr("Attribut-Schwellen"), tab);
     m_attrBox->setCheckable(true);
     m_attrBox->setChecked(false);
     auto *attrLayout = collapsibleBody(m_attrBox);
