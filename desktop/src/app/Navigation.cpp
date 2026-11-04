@@ -29,7 +29,7 @@ Section adminSection()
                 QStringLiteral("assign_roles")},
                {QCoreApplication::translate("Navigation", "Neue Rolle"),
                 QStringLiteral("new_role")},
-               {QCoreApplication::translate("Navigation", "Neue Taktik"),
+               {QCoreApplication::translate("Navigation", "Taktiken"),
                 QStringLiteral("new_tactic")}}},
              {QStringLiteral("settings"),
               QCoreApplication::translate("Navigation", "Einstellungen"),

@@ -3,6 +3,7 @@
 
 #include "core/Database.h"
 #include "core/Definitions.h"
+#include "core/ProfileStore.h"
 #include "core/TacticLibrary.h"
 
 #include <QFile>
@@ -176,6 +177,40 @@ private slots:
             QVERIFY(!tactics(user).contains(kControlPress));
             QVERIFY(tactics(user).contains(kCounterSurge));
         }
+    }
+
+    void updateMovesFavoritesOfRenamedTemplate()
+    {
+        // A 2.0.4 save: Bavarian Blitz as favorite with bridges, profile
+        // document of the previous data revision.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("rename"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("alt.db"))));
+        ProfileStore store(db);
+        QVERIFY(store.ensureTables());
+        QJsonObject user = olderCopy(m_shipped);
+        QJsonObject t = tactics(user);
+        t.insert(kOldName, t.value(kControlPress));
+        t.remove(kControlPress);
+        t.remove(kCounterSurge);
+        user.insert(QStringLiteral("tactic_roles"), t);
+        QVERIFY(store.saveDefinitions(QStringLiteral("fm27"), QJsonDocument(user).toJson()));
+        db.setSetting(QStringLiteral("favorite_tactic_1"), kOldName);
+        db.setSetting(QStringLiteral("bridges/") + kOldName, QStringLiteral("{\"u\":[\"DL\",\"DL\"]}"));
+
+        ProfileStore::DefinitionsResult result;
+        QVERIFY(store.loadDefinitions(QStringLiteral("fm27"), QJsonDocument(m_shipped).toJson(), {},
+                                      result));
+        QVERIFY(!result.beforeUpdate.isEmpty());
+        QCOMPARE(result.renamedTactics.size(), 1);
+        QCOMPARE(db.setting(QStringLiteral("favorite_tactic_1")), kControlPress);
+        QVERIFY(db.setting(QStringLiteral("bridges/") + kOldName).isEmpty());
+        QVERIFY(!db.setting(QStringLiteral("bridges/") + kControlPress).isEmpty());
+        const QJsonObject after = QJsonDocument::fromJson(result.json).object();
+        QVERIFY(tactics(after).contains(kControlPress));
+        QVERIFY(tactics(after).contains(kCounterSurge));
+        QVERIFY(!tactics(after).contains(kOldName));
+        db.close();
     }
 
     void exportImportRoundTrip()

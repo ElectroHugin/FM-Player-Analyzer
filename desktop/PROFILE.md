@@ -134,11 +134,23 @@ Spieler ansetzen (eigenes Paket).
 * **Neue Einstellung, die zum Spielstand gehört:** Abschnitt in
   `isProfileSection()` (AppConfig.cpp) eintragen und den Standardwert in
   `profileDefaults()`. App-weite Einstellungen bleiben außerhalb der Liste.
-* **Taktiken pro Spielstand bearbeiten/löschen:** `definitions().setRoot()` +
-  `context.saveDefinitions()` schreibt ins Profil. Damit Updates gelöschte
-  Vorlagen nicht zurückbringen, gelöschte mitgelieferte Taktiken im Dokument
-  vermerken (z. B. eine Liste neben `retired_tactics`) und in
-  `Definitions::applyShippedUpdate` beachten.
+* **Taktiken pro Spielstand (umgesetzt in 2.1.0):** `core/TacticLibrary`
+  bearbeitet das Dokument `definitions_<version>`. Neben den Taktiken stehen
+  `edited_tactics` (vom Nutzer gespeichert, ein Update behält seine Fassung),
+  `deleted_tactics` (gelöscht oder umbenannt, ein Update holt sie nicht zurück)
+  und `custom_roles` (eigene oder importierte Rollen, überleben Updates).
+  Mitgelieferte Daten können eine Vorlage umbenennen (`renamed_tactics`
+  {alt: neu}); unveränderte Kopien werden dann umbenannt und Favoriten
+  (`favorite_tactic_1/2`, `national_fav_tactic_1/2`) sowie `bridges/<Taktik>`
+  ziehen mit (`TacticLibrary::renameTacticReferences`).
+* **Taktik-Austauschformat `.fmpatactic`:** JSON mit `format`
+  („fm-player-analyzer-tactic“), `format_version` (aktuell 1), `app_version`,
+  `fm_version`, `tactic` (`name`, `ip`/`oop` bzw. `lineup`, `layout`) und
+  `roles` (Name, Kategorie, Phase, Positionen, Key/Preferable jeder benutzten
+  Rolle). Beim Import fehlende Rollen werden aus der Datei angelegt; andere
+  FM-Version, neueres Format, kaputte Datei oder unbeschriebene Rollen werden
+  abgelehnt (`TacticLibrary::checkImport`). Neue Felder: `format_version`
+  hochzählen und ältere Dateien weiter lesen.
 * **Eigene Farbvorlagen:** Vorlagen sind app-weit (über Spielstände und Updates
   hinweg). Sie gehören daher nicht ins Profil, sondern in den Datenordner.
   Das Anwenden einer Vorlage schreibt die `ThemeSettings/…`-Werte über eine

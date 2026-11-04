@@ -172,9 +172,12 @@ die Abdeckung (kannst du alle elf Positionen besetzen?), dann die Stärke je
 Mannschaftsteil. Ein Klick auf eine Taktik zeigt, wie viele passende Spieler du
 für jeden Slot hast. Die mitgelieferten Taktiken sind aus der
 [FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/)
-nachgebaut, eigene kannst du ergänzen. Für FM27 liegt meine Standardtaktik bei
-(„4-2-3-1 - Bavarian Blitz“), auch als Spieldatei zum Import in FM27; deine
-eigenen Taktiken legst du im Taktik-Editor an, Updates lassen sie unberührt.
+nachgebaut, eigene kannst du ergänzen. Für FM27 liegen zwei Beispieltaktiken bei
+(„Control Press · 4-2-3-1“ und „Counter Surge · 3-4-2-1“), auch als Spieldateien
+zum Import in FM27. Unter *Rollen & Taktiken → Taktiken* bearbeitest, benennst
+um, duplizierst, löschst, exportierst und importierst du Taktiken je Spielstand
+(Austauschdatei `.fmpatactic`); Updates überschreiben deine Änderungen nicht und
+holen gelöschte Beispiele nicht zurück.
 
 <img src="docs/screenshots/de/tactic-explorer.png" alt="Taktik-Explorer mit Taktiken, sortiert nach Abdeckung und Median-Bewertung je Mannschaftsteil" width="100%">
 
@@ -258,11 +261,11 @@ CSV-Datei. Den Spielstand legst du im Analyzer mit der Version *Football
 Manager 2027* an (Standard für neue Spielstände). Spaltenzuordnung und Details:
 [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
 
-> **Standardtaktik im Spiel ausprobieren:** Der Analyzer enthält meine
-> FM27-Standardtaktik „4-2-3-1 - Bavarian Blitz“ schon. Dieselbe Taktik liegt
-> als Spieldatei (`.fmf`) bei: Der Installer kann sie in deinen FM27-Ordner
-> `tactics` kopieren, später geht das über *Einstellungen → Verein →
-> Standardtaktik für FM27 installieren*.
+> **Beispieltaktiken im Spiel ausprobieren:** Der Analyzer enthält die
+> FM27-Beispieltaktiken „Control Press · 4-2-3-1“ und „Counter Surge · 3-4-2-1“
+> schon. Beide liegen als Spieldateien (`.fmf`) bei: Der Installer kann sie in
+> deinen FM27-Ordner `tactics` kopieren, später geht das über *Einstellungen →
+> Verein → Beispieltaktiken für FM27 installieren*.
 >
 > **Noch mit FM24 unterwegs?** Exportiere den Kader als HTML (*Rechtsklick →
 > Drucken/Exportieren → Webseite (.html)*) mit einer Ansicht, die die Spalte
