@@ -1,5 +1,7 @@
 #include "ProfileStore.h"
 
+#include "TacticLibrary.h"
+
 #include "Database.h"
 #include "Definitions.h"
 
@@ -229,12 +231,14 @@ bool ProfileStore::loadDefinitions(const QString &fmVersionId, const QByteArray 
 
     const QJsonObject shipped = QJsonDocument::fromJson(shippedJson).object();
     QJsonObject user = QJsonDocument::fromJson(out.json).object();
-    if (!shipped.isEmpty() && !user.isEmpty() && Definitions::applyShippedUpdate(shipped, user)) {
+    if (!shipped.isEmpty() && !user.isEmpty() && Definitions::applyShippedUpdate(shipped, user, &out.renamedTactics)) {
         const QByteArray updated = QJsonDocument(user).toJson(QJsonDocument::Indented);
         if (!writeDocument(name, updated, true))
             return false;
         out.beforeUpdate = out.json;
         out.json = updated;
+        for (const auto &rename : std::as_const(out.renamedTactics))
+            TacticLibrary::renameTacticReferences(m_db, rename.first, rename.second);
     }
     return true;
 }

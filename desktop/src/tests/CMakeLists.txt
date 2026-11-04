@@ -94,3 +94,9 @@ set_tests_properties(test_profileswitch PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
     ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
 )
+
+# Tactics per save: edit/delete, shipped updates, exchange files.
+fm_add_test(test_tacticlibrary)
+target_compile_definitions(test_tacticlibrary PRIVATE
+    DEFINITIONS_FM27="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json"
+    DEFINITIONS_FM24="${CMAKE_SOURCE_DIR}/src/app/resources/definitions.json")

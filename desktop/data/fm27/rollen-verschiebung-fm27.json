@@ -1,0 +1,4546 @@
+{
+  "schema_version": 1,
+  "source": {
+    "repository": "FM-Player-Analyzer",
+    "path": "desktop/src/app/resources/definitions_fm27.json",
+    "fm_version": "fm27",
+    "data_revision": 6
+  },
+  "roles": {
+    "BGK": {
+      "name": "Ball-Playing Goalkeeper",
+      "phase": "ip",
+      "allowed_positions": [
+        "GK"
+      ]
+    },
+    "GK-IP": {
+      "name": "Goalkeeper",
+      "phase": "ip",
+      "allowed_positions": [
+        "GK"
+      ]
+    },
+    "NGK": {
+      "name": "No-Nonsense Goalkeeper",
+      "phase": "ip",
+      "allowed_positions": [
+        "GK"
+      ]
+    },
+    "GK-OOP": {
+      "name": "Goalkeeper",
+      "phase": "oop",
+      "allowed_positions": [
+        "GK"
+      ]
+    },
+    "LHK": {
+      "name": "Line-Holding Goalkeeper",
+      "phase": "oop",
+      "allowed_positions": [
+        "GK"
+      ]
+    },
+    "SK": {
+      "name": "Sweeper Keeper",
+      "phase": "oop",
+      "allowed_positions": [
+        "GK"
+      ]
+    },
+    "ACB": {
+      "name": "Advanced Centre-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "BCB": {
+      "name": "Ball-Playing Centre-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "CB-IP": {
+      "name": "Centre-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "NCB": {
+      "name": "No-Nonsense Centre-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "OCB": {
+      "name": "Overlapping Centre-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "WCB-IP": {
+      "name": "Wide Centre-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "FB-IP": {
+      "name": "Full-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (L)",
+        "D (R)"
+      ]
+    },
+    "IFB": {
+      "name": "Inside Full-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (L)",
+        "D (R)"
+      ]
+    },
+    "IWB": {
+      "name": "Inside Wing-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (L)",
+        "D (R)",
+        "WB (L)",
+        "WB (R)"
+      ]
+    },
+    "PWB-IP": {
+      "name": "Playmaking Wing-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (L)",
+        "D (R)",
+        "WB (L)",
+        "WB (R)"
+      ]
+    },
+    "WB-IP": {
+      "name": "Wing-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "D (L)",
+        "D (R)",
+        "WB (L)",
+        "WB (R)"
+      ]
+    },
+    "AWB": {
+      "name": "Advanced Wing-Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "WB (L)",
+        "WB (R)"
+      ]
+    },
+    "CB-OOP": {
+      "name": "Centre-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "CCB": {
+      "name": "Covering Centre-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "CWD": {
+      "name": "Covering Wide Centre-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "SCB": {
+      "name": "Stopping Centre-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "SWD": {
+      "name": "Stopping Wide Centre-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "WCB-OOP": {
+      "name": "Wide Centre-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (C)"
+      ]
+    },
+    "FB-OOP": {
+      "name": "Full-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (L)",
+        "D (R)"
+      ]
+    },
+    "HFB": {
+      "name": "Holding Full-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (L)",
+        "D (R)"
+      ]
+    },
+    "PFB": {
+      "name": "Pressing Full-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "D (L)",
+        "D (R)"
+      ]
+    },
+    "HWB": {
+      "name": "Holding Wing-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "WB (L)",
+        "WB (R)"
+      ]
+    },
+    "PWB-OOP": {
+      "name": "Pressing Wing-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "WB (L)",
+        "WB (R)"
+      ]
+    },
+    "WB-OOP": {
+      "name": "Wing-Back",
+      "phase": "oop",
+      "allowed_positions": [
+        "WB (L)",
+        "WB (R)"
+      ]
+    },
+    "BBM": {
+      "name": "Box-To-Box Midfielder",
+      "phase": "ip",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "BBP": {
+      "name": "Box-To-Box Playmaker",
+      "phase": "ip",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "DLP": {
+      "name": "Deep-Lying Playmaker",
+      "phase": "ip",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "DM-IP": {
+      "name": "Defensive Midfielder",
+      "phase": "ip",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "HB": {
+      "name": "Half Back",
+      "phase": "ip",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "AP": {
+      "name": "Advanced Playmaker",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (C)",
+        "AM (C)"
+      ]
+    },
+    "AM-IP": {
+      "name": "Attacking Midfielder",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (C)",
+        "AM (C)"
+      ]
+    },
+    "CM-IP": {
+      "name": "Central Midfielder",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (C)"
+      ]
+    },
+    "CHM": {
+      "name": "Channel Midfielder",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (C)",
+        "AM (C)"
+      ]
+    },
+    "MPM": {
+      "name": "Midfield Playmaker",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (C)"
+      ]
+    },
+    "WCM-IP": {
+      "name": "Wide Central Midfielder",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (C)"
+      ]
+    },
+    "IW": {
+      "name": "Inside Winger",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (L)",
+        "M (R)",
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "PW": {
+      "name": "Playmaking Winger",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (L)",
+        "M (R)",
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "WM": {
+      "name": "Wide Midfielder",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (L)",
+        "M (R)"
+      ]
+    },
+    "W-IP": {
+      "name": "Winger",
+      "phase": "ip",
+      "allowed_positions": [
+        "M (L)",
+        "M (R)",
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "DM-OOP": {
+      "name": "Defensive Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "DDM": {
+      "name": "Dropping Defensive Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "PDM": {
+      "name": "Pressing Defensive Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "SDM": {
+      "name": "Screening Defensive Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "WDM": {
+      "name": "Wide Covering Defensive Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "DM"
+      ]
+    },
+    "CM-OOP": {
+      "name": "Central Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "M (C)"
+      ]
+    },
+    "PCM": {
+      "name": "Pressing Central Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "M (C)"
+      ]
+    },
+    "SCM": {
+      "name": "Screening Central Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "M (C)"
+      ]
+    },
+    "WCM-OOP": {
+      "name": "Wide Covering Central Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "M (C)"
+      ]
+    },
+    "TWM": {
+      "name": "Tracking Wide Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "M (L)",
+        "M (R)"
+      ]
+    },
+    "WMF": {
+      "name": "Wide Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "M (L)",
+        "M (R)"
+      ]
+    },
+    "OWM": {
+      "name": "Wide Outlet Wide Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "M (L)",
+        "M (R)"
+      ]
+    },
+    "FR": {
+      "name": "Free Role",
+      "phase": "ip",
+      "allowed_positions": [
+        "AM (C)"
+      ]
+    },
+    "SS": {
+      "name": "Second Striker",
+      "phase": "ip",
+      "allowed_positions": [
+        "AM (C)"
+      ]
+    },
+    "IF": {
+      "name": "Inside Forward",
+      "phase": "ip",
+      "allowed_positions": [
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "WFD": {
+      "name": "Wide Forward",
+      "phase": "ip",
+      "allowed_positions": [
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "CFD-IP": {
+      "name": "Centre Forward",
+      "phase": "ip",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "CHF": {
+      "name": "Channel Forward",
+      "phase": "ip",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "DLF": {
+      "name": "Deep-Lying Forward",
+      "phase": "ip",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "F9": {
+      "name": "False Nine",
+      "phase": "ip",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "P": {
+      "name": "Poacher",
+      "phase": "ip",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "TF": {
+      "name": "Target Forward",
+      "phase": "ip",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "AM-OOP": {
+      "name": "Attacking Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "AM (C)"
+      ]
+    },
+    "OAM": {
+      "name": "Central Outlet Attacking Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "AM (C)"
+      ]
+    },
+    "SAM": {
+      "name": "Splitting Outlet Attacking Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "AM (C)"
+      ]
+    },
+    "TAM": {
+      "name": "Tracking Attacking Midfielder",
+      "phase": "oop",
+      "allowed_positions": [
+        "AM (C)"
+      ]
+    },
+    "IOW": {
+      "name": "Inside Outlet Winger",
+      "phase": "oop",
+      "allowed_positions": [
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "TW": {
+      "name": "Tracking Winger",
+      "phase": "oop",
+      "allowed_positions": [
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "WOW": {
+      "name": "Wide Outlet Winger",
+      "phase": "oop",
+      "allowed_positions": [
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "W-OOP": {
+      "name": "Winger",
+      "phase": "oop",
+      "allowed_positions": [
+        "AM (L)",
+        "AM (R)"
+      ]
+    },
+    "OCF": {
+      "name": "Central Outlet Centre Forward",
+      "phase": "oop",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "CFD-OOP": {
+      "name": "Centre Forward",
+      "phase": "oop",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "SCF": {
+      "name": "Splitting Outlet Centre Forward",
+      "phase": "oop",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    },
+    "TCF": {
+      "name": "Tracking Centre Forward",
+      "phase": "oop",
+      "allowed_positions": [
+        "ST (C)"
+      ]
+    }
+  },
+  "default_role_position_status": "open",
+  "screenshots": [
+    {
+      "screenshot_id": "S01",
+      "kind": "baseline",
+      "status": "received",
+      "attachment": "codex-clipboard-30b5114b-1fc2-4af4-bb3a-0773408d2ad5.png",
+      "slots_by_phase": {
+        "ip": [
+          "GK",
+          "DL",
+          "DCL",
+          "DCR",
+          "DR",
+          "DMCL",
+          "DMCR",
+          "ML",
+          "MR",
+          "AMC",
+          "STC"
+        ],
+        "oop": [
+          "GK",
+          "DL",
+          "DCL",
+          "DCR",
+          "DR",
+          "DMC",
+          "MCL",
+          "MCR",
+          "AML",
+          "AMR",
+          "STC"
+        ]
+      },
+      "baseline_excluded_slots": [
+        {
+          "phase": "ip",
+          "slot": "STC"
+        }
+      ]
+    },
+    {
+      "screenshot_id": "S02",
+      "status": "received",
+      "attachment": "codex-clipboard-67cb9a26-b2c8-42e3-a741-722dc7288761.png"
+    },
+    {
+      "screenshot_id": "S03",
+      "status": "received",
+      "attachment": "codex-clipboard-a6bce380-4f1b-4677-a963-e38ba7eaaa77.png"
+    },
+    {
+      "screenshot_id": "S04",
+      "status": "received",
+      "attachment": "codex-clipboard-16579f95-fb5d-463c-9e31-d4389bc0d460.png"
+    },
+    {
+      "screenshot_id": "S05",
+      "status": "received",
+      "attachment": "codex-clipboard-ea653cbb-d176-4796-b192-47fc102919ea.png"
+    },
+    {
+      "screenshot_id": "S06",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-76e4fe5e-1148-4f14-94c8-24b2ef0ca22f.png"
+    },
+    {
+      "screenshot_id": "S07",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-953446b8-4568-4d65-ab7f-a0f759011fdb.png"
+    },
+    {
+      "screenshot_id": "S08",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-21a97b60-c1dd-4798-a1c2-294b299d241a.png"
+    },
+    {
+      "screenshot_id": "S09",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-7666acbe-1a23-4de5-82b8-015f8980b50d.png"
+    },
+    {
+      "screenshot_id": "S10",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-355f2655-cc01-41ff-ac9f-53597ff021d6.png"
+    },
+    {
+      "screenshot_id": "S11",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-9196cee7-fa94-418a-b47f-263f2da1da65.png"
+    },
+    {
+      "screenshot_id": "S12",
+      "status": "received",
+      "phase": "oop",
+      "attachment": "codex-clipboard-7bdb0d7e-13bb-49f1-bf89-585a9a1f3d89.png"
+    },
+    {
+      "screenshot_id": "S13",
+      "status": "received",
+      "phase": "oop",
+      "attachment": "codex-clipboard-64bfa57d-d64f-45df-ac83-19a8ed85c5b9.png"
+    },
+    {
+      "screenshot_id": "S14",
+      "status": "received",
+      "phase": "oop",
+      "attachment": "codex-clipboard-04643d68-cbfa-4289-aae4-c6728d359a97.png"
+    },
+    {
+      "screenshot_id": "S15",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-2c348fb2-ef63-4665-baf6-2fe3c9f70992.png"
+    },
+    {
+      "screenshot_id": "S16",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-0f2b1f0a-1d73-477e-8048-c5963249addb.png"
+    },
+    {
+      "screenshot_id": "S17",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-6c1b02da-eb75-4238-9af2-04d08d8470e4.png"
+    },
+    {
+      "screenshot_id": "S18",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-693ac514-ef59-42d2-bfa4-f8c4c99d2f3c.png"
+    },
+    {
+      "screenshot_id": "S19",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-1e1076ea-3a51-4f8d-af5a-29316c17d8bf.png"
+    },
+    {
+      "screenshot_id": "S20",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-afc17b47-12c4-4755-8696-5c85a569f372.png"
+    },
+    {
+      "screenshot_id": "S21",
+      "status": "received",
+      "phase": "ip",
+      "attachment": "codex-clipboard-82c0c5d1-7ce8-4715-833f-420ef0c54ec3.png"
+    },
+    {
+      "screenshot_id": "S22",
+      "status": "received",
+      "kind": "baseline",
+      "phase": "oop",
+      "attachment": "codex-clipboard-3fe46a0e-c937-4a8f-b810-42b4f645b760.png",
+      "lineup": {
+        "GK": "GK-OOP",
+        "DL": "FB-OOP",
+        "DR": "FB-OOP",
+        "DML": "WB-OOP",
+        "DMCL": "DM-OOP",
+        "DMCR": "DM-OOP",
+        "DMR": "WB-OOP",
+        "AML": "W-OOP",
+        "AMC": "AM-OOP",
+        "AMR": "W-OOP",
+        "STC": "CFD-OOP"
+      }
+    },
+    {
+      "screenshot_id": "S23",
+      "status": "received",
+      "phase": "oop",
+      "formation_from": "S22",
+      "attachment": "codex-clipboard-0154a29e-e244-45c8-b337-44fa298ccdf1.png"
+    },
+    {
+      "screenshot_id": "S24",
+      "status": "received",
+      "phase": "oop",
+      "formation_from": "S22",
+      "attachment": "codex-clipboard-0f7e1d92-6e83-4f4c-9944-2261286df4dd.png"
+    },
+    {
+      "screenshot_id": "S25",
+      "status": "received",
+      "phase": "oop",
+      "formation_from": "S22",
+      "attachment": "codex-clipboard-15cf5914-0314-4d5c-aef2-413fd828eda4.png"
+    },
+    {
+      "screenshot_id": "S26",
+      "status": "received",
+      "phase": "oop",
+      "formation_from": "S22",
+      "attachment": "codex-clipboard-315f6236-1f47-453e-b71c-f0c002f9d2cc.png"
+    },
+    {
+      "screenshot_id": "S27",
+      "status": "received",
+      "phase": "oop",
+      "formation_from": "S22",
+      "attachment": "codex-clipboard-b696beba-0427-40cb-b8a5-f27bf2944e79.png"
+    },
+    {
+      "screenshot_id": "S28",
+      "status": "received",
+      "phase": "oop",
+      "formation_from": "S22",
+      "attachment": "codex-clipboard-5a73526b-2eba-4dd0-90ae-5ce2c069bcfd.png"
+    },
+    {
+      "screenshot_id": "S29",
+      "status": "received",
+      "phase": "ip",
+      "defensive_line": "back_three",
+      "attachment": "codex-clipboard-d13d6288-2fde-47bc-9eb4-46c2fd5fc585.png",
+      "defensive_lineup": {
+        "DCL": "CB-IP",
+        "DC": "ACB",
+        "DCR": "CB-IP"
+      }
+    },
+    {
+      "screenshot_id": "S30",
+      "status": "received",
+      "phase": "ip",
+      "defensive_line": "back_three",
+      "attachment": "codex-clipboard-03bc8dcf-addb-45e4-a2aa-1a43e9215999.png",
+      "defensive_lineup": {
+        "DCL": "CB-IP",
+        "DC": "BCB",
+        "DCR": "CB-IP"
+      }
+    },
+    {
+      "screenshot_id": "S31",
+      "status": "received",
+      "phase": "ip",
+      "defensive_line": "back_three",
+      "attachment": "codex-clipboard-f29851ac-bb11-43a1-9677-353f1ade33e9.png",
+      "defensive_lineup": {
+        "DCL": "CB-IP",
+        "DC": "NCB",
+        "DCR": "CB-IP"
+      }
+    },
+    {
+      "screenshot_id": "S32",
+      "status": "received",
+      "phase": "oop",
+      "defensive_line": "back_three",
+      "attachment": "codex-clipboard-f6b1a0f6-a7bc-43b9-8654-94e03b46be41.png",
+      "defensive_lineup": {
+        "DCL": "CB-OOP",
+        "DC": "SCB",
+        "DCR": "CB-OOP"
+      }
+    },
+    {
+      "screenshot_id": "S33",
+      "status": "received",
+      "phase": "oop",
+      "defensive_line": "back_three",
+      "attachment": "codex-clipboard-b389772a-4e14-4f24-85f8-35a4949c9e34.png",
+      "defensive_lineup": {
+        "DCL": "CB-OOP",
+        "DC": "CCB",
+        "DCR": "CB-OOP"
+      }
+    },
+    {
+      "screenshot_id": "S34",
+      "status": "received",
+      "defensive_line": "back_three",
+      "attachment": "codex-clipboard-4f24e92b-35b2-4140-b9b0-36455f2ba0a0.png",
+      "defensive_lineup": {
+        "ip": {
+          "DCL": "WCB-IP",
+          "DC": "CB-IP",
+          "DCR": "CB-IP"
+        },
+        "oop": {
+          "DCL": "WCB-OOP",
+          "DC": "CB-OOP",
+          "DCR": "CB-OOP"
+        }
+      }
+    },
+    {
+      "screenshot_id": "S35",
+      "status": "received",
+      "defensive_line": "back_three",
+      "attachment": "codex-clipboard-ad087c59-fc21-4eb5-9580-e6eaf12f4700.png",
+      "defensive_lineup": {
+        "ip": {
+          "DCL": "OCB",
+          "DC": "CB-IP",
+          "DCR": "CB-IP"
+        },
+        "oop": {
+          "DCL": "SWD",
+          "DC": "CB-OOP",
+          "DCR": "CB-OOP"
+        }
+      }
+    },
+    {
+      "screenshot_id": "S36",
+      "status": "received",
+      "defensive_line": "back_three",
+      "attachment": "codex-clipboard-c94d3a86-4e16-4160-a428-1b78849bfff3.png",
+      "defensive_lineup": {
+        "ip": {
+          "DCL": "CB-IP",
+          "DC": "CB-IP",
+          "DCR": "CB-IP"
+        },
+        "oop": {
+          "DCL": "CWD",
+          "DC": "CB-OOP",
+          "DCR": "CB-OOP"
+        }
+      }
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "received",
+      "kind": "baseline",
+      "attachment": "codex-clipboard-00385d4f-675e-45d8-a36b-8d67eb3bdcf3.png",
+      "slots": [
+        "GK",
+        "DCL",
+        "DC",
+        "DCR",
+        "DMC",
+        "ML",
+        "MCL",
+        "MCR",
+        "MR",
+        "AMC",
+        "STC"
+      ],
+      "midfield_lineup": {
+        "ip": {
+          "ML": "WM",
+          "MCL": "CM-IP",
+          "MCR": "CM-IP",
+          "MR": "WM"
+        },
+        "oop": {
+          "ML": "WMF",
+          "MCL": "CM-OOP",
+          "MCR": "CM-OOP",
+          "MR": "WMF"
+        }
+      }
+    },
+    {
+      "screenshot_id": "S38",
+      "status": "received",
+      "formation_from": "S37",
+      "attachment": "codex-clipboard-a0466839-c932-4b5e-b58c-35fc11e0dbdd.png"
+    },
+    {
+      "screenshot_id": "S39",
+      "status": "received",
+      "formation_from": "S37",
+      "attachment": "codex-clipboard-07cd17e5-1226-497d-94f8-725ba2a69d8e.png"
+    },
+    {
+      "screenshot_id": "S40",
+      "status": "received",
+      "formation_from": "S37",
+      "attachment": "codex-clipboard-e44e8329-0c4c-40ee-832c-2c5b1b66eddd.png"
+    },
+    {
+      "screenshot_id": "S41",
+      "status": "received",
+      "formation_from": "S37",
+      "attachment": "codex-clipboard-e35b25af-fdd7-4911-9042-4d9eb9bb3f02.png"
+    },
+    {
+      "screenshot_id": "S42",
+      "status": "received",
+      "formation_from": "S37",
+      "attachment": "codex-clipboard-1b69ede7-4613-4d51-ab97-ea516727b647.png"
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "received",
+      "kind": "baseline",
+      "attachment": "codex-clipboard-15361d75-34a4-40e4-ae2c-85fe47f50e9b.png",
+      "slots": [
+        "GK",
+        "DCL",
+        "DC",
+        "DCR",
+        "DMC",
+        "AML",
+        "AMCL",
+        "AMC",
+        "AMCR",
+        "AMR",
+        "STC"
+      ],
+      "attacking_midfield_lineup": {
+        "ip": {
+          "AML": "W-IP",
+          "AMCL": "AM-IP",
+          "AMC": "AM-IP",
+          "AMCR": "AM-IP",
+          "AMR": "W-IP"
+        },
+        "oop": {
+          "AML": "W-OOP",
+          "AMCL": "AM-OOP",
+          "AMC": "AM-OOP",
+          "AMCR": "AM-OOP",
+          "AMR": "W-OOP"
+        }
+      }
+    },
+    {
+      "screenshot_id": "S44",
+      "status": "received",
+      "formation_from": "S43",
+      "attachment": "codex-clipboard-400d36cf-2df8-4986-baf5-0aeead6db515.png"
+    },
+    {
+      "screenshot_id": "S45",
+      "status": "received",
+      "formation_from": "S43",
+      "attachment": "codex-clipboard-d81e5813-d713-48a2-aff9-47810487a7e5.png"
+    },
+    {
+      "screenshot_id": "S46",
+      "status": "received",
+      "formation_from": "S43",
+      "attachment": "codex-clipboard-25cebb60-9ded-4d96-9ac3-983b817f8072.png"
+    },
+    {
+      "screenshot_id": "S47",
+      "status": "received",
+      "kind": "baseline",
+      "attachment": "codex-clipboard-8ca89b4b-6eab-4955-a344-c091b93cd343.png",
+      "slots": [
+        "GK",
+        "DCL",
+        "DC",
+        "DCR",
+        "DMC",
+        "MCL",
+        "MCR",
+        "MR",
+        "STL",
+        "STC",
+        "STR"
+      ],
+      "striker_lineup": {
+        "ip": {
+          "STL": "CFD-IP",
+          "STC": "CFD-IP",
+          "STR": "CFD-IP"
+        },
+        "oop": {
+          "STL": "CFD-OOP",
+          "STC": "CFD-OOP",
+          "STR": "CFD-OOP"
+        }
+      }
+    },
+    {
+      "screenshot_id": "S48",
+      "status": "received",
+      "formation_from": "S47",
+      "attachment": "codex-clipboard-5524aa36-6bdf-439e-a108-75cf932a8657.png",
+      "striker_lineup": {
+        "ip": {
+          "STL": "DLF",
+          "STC": "CFD-IP",
+          "STR": "F9"
+        },
+        "oop": {
+          "STL": "TCF",
+          "STC": "CFD-OOP",
+          "STR": "OCF"
+        }
+      }
+    },
+    {
+      "screenshot_id": "S49",
+      "status": "received",
+      "formation_from": "S47",
+      "attachment": "codex-clipboard-70dc9e62-4474-4607-bb66-b22c1f89dac5.png",
+      "striker_lineup": {
+        "ip": {
+          "STL": "CHF",
+          "STC": "CFD-IP",
+          "STR": "P"
+        },
+        "oop": {
+          "STL": "SCF",
+          "STC": "CFD-OOP",
+          "STR": "OCF"
+        }
+      }
+    },
+    {
+      "screenshot_id": "S50",
+      "status": "received",
+      "phase": "ip",
+      "formation_from": "S47",
+      "attachment": "codex-clipboard-b201558d-44a5-424d-afea-ced35c0e168d.png",
+      "striker_lineup": {
+        "STL": "TF",
+        "STC": "CFD-IP",
+        "STR": "P"
+      }
+    },
+    {
+      "screenshot_id": "S51",
+      "status": "received",
+      "phase": "ip",
+      "formation_from": "S47",
+      "attachment": "codex-clipboard-609a3a73-c15f-4c1e-b394-9a3ae12d4c02.png",
+      "central_midfield_lineup": {
+        "MCL": "AM-IP",
+        "MCR": "CM-IP"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "GK",
+      "slot": "GK",
+      "role_id": "GK-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "D (L)",
+      "slot": "DL",
+      "role_id": "FB-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "CB-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCR",
+      "role_id": "CB-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "D (R)",
+      "slot": "DR",
+      "role_id": "FB-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "DM-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "DM",
+      "slot": "DMCR",
+      "role_id": "DM-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "M (L)",
+      "slot": "ML",
+      "role_id": "WM",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "M (R)",
+      "slot": "MR",
+      "role_id": "WM",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMC",
+      "role_id": "AM-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "GK",
+      "slot": "GK",
+      "role_id": "GK-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "D (L)",
+      "slot": "DL",
+      "role_id": "FB-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "CB-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DCR",
+      "role_id": "CB-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "D (R)",
+      "slot": "DR",
+      "role_id": "FB-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "DM",
+      "slot": "DMC",
+      "role_id": "DM-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "CM-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "M (C)",
+      "slot": "MCR",
+      "role_id": "CM-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "W-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "AM (R)",
+      "slot": "AMR",
+      "role_id": "W-OOP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S01",
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline",
+      "phase": "oop",
+      "position": "ST (C)",
+      "slot": "STC",
+      "role_id": "CFD-OOP",
+      "shift": "none"
+    },
+    {
+      "status": "confirmed",
+      "evidence": "user_confirmed_baseline_correction",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STC",
+      "role_id": "CFD-IP",
+      "shift": "none"
+    },
+    {
+      "screenshot_id": "S02",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "GK",
+      "slot": "GK",
+      "role_id": "NGK",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S01",
+        "role_id": "GK-IP"
+      }
+    },
+    {
+      "screenshot_id": "S03",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "GK",
+      "slot": "GK",
+      "role_id": "BGK",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S01",
+        "role_id": "GK-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "comparison_screenshot_id": "S02",
+        "comparison_role_id": "NGK",
+        "method": "Compared the top edge of the goalkeeper role card relative to the own goal line in both equally scaled screenshots."
+      }
+    },
+    {
+      "screenshot_id": "S04",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "GK",
+      "slot": "GK",
+      "role_id": "SK",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S01",
+        "role_id": "GK-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared the top edge of the goalkeeper role card relative to the own goal line. The screenshots have slightly different pitch heights."
+      }
+    },
+    {
+      "screenshot_id": "S05",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "GK",
+      "slot": "GK",
+      "role_id": "LHK",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S01",
+        "role_id": "GK-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared the top edge of the goalkeeper role card relative to the own goal line. The screenshots have slightly different pitch heights."
+      }
+    },
+    {
+      "screenshot_id": "S07",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "ACB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S06",
+        "slot": "DCL",
+        "role_id": "CB-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "DCR",
+        "role_id": "CB-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of role cards with the unchanged mirrored control. The original setup in S06 shows both slots at equal height."
+      }
+    },
+    {
+      "screenshot_id": "S08",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "NCB",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S06",
+        "slot": "DCL",
+        "role_id": "CB-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "DCR",
+        "role_id": "CB-IP"
+      }
+    },
+    {
+      "screenshot_id": "S08",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (L)",
+      "slot": "DL",
+      "role_id": "WB-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S06",
+        "slot": "DL",
+        "role_id": "FB-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "DR",
+        "role_id": "FB-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.2,
+        "method": "Compared top edges of role cards with the unchanged mirrored control. The original setup in S06 shows both slots at equal height."
+      }
+    },
+    {
+      "screenshot_id": "S09",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "BCB",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S06",
+        "slot": "DCL",
+        "role_id": "CB-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "DCR",
+        "role_id": "CB-IP"
+      }
+    },
+    {
+      "screenshot_id": "S09",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (L)",
+      "slot": "DL",
+      "role_id": "IWB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S06",
+        "slot": "DL",
+        "role_id": "FB-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "DR",
+        "role_id": "FB-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of role cards with the unchanged mirrored control. The original setup in S06 shows both slots at equal height."
+      }
+    },
+    {
+      "screenshot_id": "S10",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (L)",
+      "slot": "DL",
+      "role_id": "IFB",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S06",
+        "slot": "DL",
+        "role_id": "FB-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "DR",
+        "role_id": "FB-IP"
+      }
+    },
+    {
+      "screenshot_id": "S11",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (L)",
+      "slot": "DL",
+      "role_id": "PWB-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S06",
+        "slot": "DL",
+        "role_id": "FB-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "DR",
+        "role_id": "FB-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.2,
+        "method": "Compared top edges of role cards with the unchanged mirrored control. The original setup in S06 shows both slots at equal height."
+      }
+    },
+    {
+      "screenshot_id": "S12",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (L)",
+      "slot": "DL",
+      "role_id": "PFB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S14",
+        "slot": "DL",
+        "role_id": "FB-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DR",
+        "role_id": "FB-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control. S14 shows both slots at equal height."
+      }
+    },
+    {
+      "screenshot_id": "S12",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "SCB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S14",
+        "slot": "DCL",
+        "role_id": "CB-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DCR",
+        "role_id": "CB-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control. S14 shows both slots at equal height."
+      }
+    },
+    {
+      "screenshot_id": "S13",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (L)",
+      "slot": "DL",
+      "role_id": "HFB",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S14",
+        "slot": "DL",
+        "role_id": "FB-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DR",
+        "role_id": "FB-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of role cards with the unchanged mirrored control. S14 shows both slots at equal height."
+      }
+    },
+    {
+      "screenshot_id": "S13",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "CCB",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S14",
+        "slot": "DCL",
+        "role_id": "CB-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DCR",
+        "role_id": "CB-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.1,
+        "method": "Compared top edges of role cards with the unchanged mirrored control. S14 shows both slots at equal height."
+      }
+    },
+    {
+      "screenshot_id": "S15",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "WB (L)",
+      "slot": "DML",
+      "role_id": "WB-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S15",
+        "slot": "DMCR",
+        "role_id": "DM-IP",
+        "kind": "central_dm_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards against the unchanged DM-IP within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S15",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "WB (R)",
+      "slot": "DMR",
+      "role_id": "WB-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S15",
+        "slot": "DMCR",
+        "role_id": "DM-IP",
+        "kind": "central_dm_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards against the unchanged DM-IP within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S16",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "BBM",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S16",
+        "slot": "DMCR",
+        "role_id": "DM-IP",
+        "kind": "same_row_mirrored_slot"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards against the unchanged DM-IP within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S17",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "HB",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S17",
+        "slot": "DMCR",
+        "role_id": "DM-IP",
+        "kind": "same_row_mirrored_slot"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards against the unchanged DM-IP within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S18",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "BBP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S18",
+        "slot": "DMCR",
+        "role_id": "DM-IP",
+        "kind": "same_row_mirrored_slot"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards against the unchanged DM-IP within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S19",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "WB (L)",
+      "slot": "DML",
+      "role_id": "AWB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S19",
+        "slot": "DMCR",
+        "role_id": "DM-IP",
+        "kind": "central_dm_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 33,
+        "approximate_pitch_height_percent": 4.5,
+        "method": "Compared top edges of role cards against the unchanged DM-IP within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S20",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "WB (L)",
+      "slot": "DML",
+      "role_id": "IWB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S20",
+        "slot": "DMCR",
+        "role_id": "DM-IP",
+        "kind": "central_dm_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of role cards against the unchanged DM-IP within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S21",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "WB (L)",
+      "slot": "DML",
+      "role_id": "PWB-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S21",
+        "slot": "DMCR",
+        "role_id": "DM-IP",
+        "kind": "central_dm_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards against the unchanged DM-IP within the same screenshot."
+      }
+    },
+    {
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "DM",
+      "role_id": "DLP",
+      "shift": "none",
+      "evidence": "inferred_from_user_statement_that_all_roles_with_shift_are_shown"
+    },
+    {
+      "screenshot_id": "S22",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "DM-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DMCR",
+        "role_id": "DM-OOP",
+        "kind": "central_dm_line"
+      }
+    },
+    {
+      "screenshot_id": "S22",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "DM",
+      "slot": "DMCR",
+      "role_id": "DM-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DMCR",
+        "role_id": "DM-OOP",
+        "kind": "central_dm_line"
+      }
+    },
+    {
+      "screenshot_id": "S22",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "WB (L)",
+      "slot": "DML",
+      "role_id": "WB-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DMCR",
+        "role_id": "DM-OOP",
+        "kind": "central_dm_line"
+      }
+    },
+    {
+      "screenshot_id": "S22",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "WB (R)",
+      "slot": "DMR",
+      "role_id": "WB-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DMCR",
+        "role_id": "DM-OOP",
+        "kind": "central_dm_line"
+      }
+    },
+    {
+      "screenshot_id": "S23",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "DDM",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DMCL",
+        "role_id": "DM-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DMCR",
+        "role_id": "DM-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S24",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "PDM",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DMCL",
+        "role_id": "DM-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DMCR",
+        "role_id": "DM-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.1,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S25",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "SDM",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DMCL",
+        "role_id": "DM-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DMCR",
+        "role_id": "DM-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 9,
+        "approximate_pitch_height_percent": 1.2,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S26",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "DM",
+      "slot": "DMCL",
+      "role_id": "WDM",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DMCL",
+        "role_id": "DM-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DMCR",
+        "role_id": "DM-OOP"
+      }
+    },
+    {
+      "screenshot_id": "S27",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "WB (L)",
+      "slot": "DML",
+      "role_id": "PWB-OOP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DML",
+        "role_id": "WB-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DMR",
+        "role_id": "WB-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.1,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S28",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "WB (L)",
+      "slot": "DML",
+      "role_id": "HWB",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S22",
+        "slot": "DML",
+        "role_id": "WB-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "DMR",
+        "role_id": "WB-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 9,
+        "approximate_pitch_height_percent": 1.2,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S29",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DC",
+      "role_id": "ACB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S29",
+        "slots": [
+          "DCL",
+          "DCR"
+        ],
+        "role_id": "CB-IP",
+        "kind": "same_screenshot_outer_cb_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of the center and outer defender role cards within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S30",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DC",
+      "role_id": "BCB",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S30",
+        "slots": [
+          "DCL",
+          "DCR"
+        ],
+        "role_id": "CB-IP",
+        "kind": "same_screenshot_outer_cb_line"
+      }
+    },
+    {
+      "screenshot_id": "S31",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DC",
+      "role_id": "NCB",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S31",
+        "slots": [
+          "DCL",
+          "DCR"
+        ],
+        "role_id": "CB-IP",
+        "kind": "same_screenshot_outer_cb_line"
+      }
+    },
+    {
+      "screenshot_id": "S32",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DC",
+      "role_id": "SCB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S32",
+        "slots": [
+          "DCL",
+          "DCR"
+        ],
+        "role_id": "CB-OOP",
+        "kind": "same_screenshot_outer_cb_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of the center and outer defender role cards within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S33",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DC",
+      "role_id": "CCB",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S33",
+        "slots": [
+          "DCL",
+          "DCR"
+        ],
+        "role_id": "CB-OOP",
+        "kind": "same_screenshot_outer_cb_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.1,
+        "method": "Compared top edges of the center and outer defender role cards within the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S34",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "WCB-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S34",
+        "slots": [
+          "DC",
+          "DCR"
+        ],
+        "role_id": "CB-IP",
+        "kind": "same_screenshot_cb_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of the role cards within the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S34",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "WCB-OOP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S34",
+        "slots": [
+          "DC",
+          "DCR"
+        ],
+        "role_id": "CB-OOP",
+        "kind": "same_screenshot_cb_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of the role cards within the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S35",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "OCB",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S35",
+        "slots": [
+          "DC",
+          "DCR"
+        ],
+        "role_id": "CB-IP",
+        "kind": "same_screenshot_cb_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.2,
+        "method": "Compared top edges of the role cards within the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S35",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "SWD",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S35",
+        "slots": [
+          "DC",
+          "DCR"
+        ],
+        "role_id": "CB-OOP",
+        "kind": "same_screenshot_cb_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 25,
+        "approximate_pitch_height_percent": 3.4,
+        "method": "Compared top edges of the role cards within the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S36",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "CWD",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S36",
+        "slots": [
+          "DC",
+          "DCR"
+        ],
+        "role_id": "CB-OOP",
+        "kind": "same_screenshot_cb_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of the role cards within the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S36",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCL",
+      "role_id": "CB-IP",
+      "shift": "none",
+      "evidence": "same_screenshot_cb_line"
+    },
+    {
+      "screenshot_id": "S36",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DC",
+      "role_id": "CB-IP",
+      "shift": "none",
+      "evidence": "same_screenshot_cb_line"
+    },
+    {
+      "screenshot_id": "S36",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "D (C)",
+      "slot": "DCR",
+      "role_id": "CB-IP",
+      "shift": "none",
+      "evidence": "same_screenshot_cb_line"
+    },
+    {
+      "screenshot_id": "S36",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DC",
+      "role_id": "CB-OOP",
+      "shift": "none",
+      "evidence": "same_screenshot_cb_line"
+    },
+    {
+      "screenshot_id": "S36",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "D (C)",
+      "slot": "DCR",
+      "role_id": "CB-OOP",
+      "shift": "none",
+      "evidence": "same_screenshot_cb_line"
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (L)",
+      "slot": "ML",
+      "role_id": "WM",
+      "shift": "none",
+      "evidence": "same_screenshot_midfield_line"
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "CM-IP",
+      "shift": "none",
+      "evidence": "same_screenshot_midfield_line"
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCR",
+      "role_id": "CM-IP",
+      "shift": "none",
+      "evidence": "same_screenshot_midfield_line"
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (R)",
+      "slot": "MR",
+      "role_id": "WM",
+      "shift": "none",
+      "evidence": "same_screenshot_midfield_line"
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (L)",
+      "slot": "ML",
+      "role_id": "WMF",
+      "shift": "none",
+      "evidence": "same_screenshot_midfield_line"
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "CM-OOP",
+      "shift": "none",
+      "evidence": "same_screenshot_midfield_line"
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (C)",
+      "slot": "MCR",
+      "role_id": "CM-OOP",
+      "shift": "none",
+      "evidence": "same_screenshot_midfield_line"
+    },
+    {
+      "screenshot_id": "S37",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (R)",
+      "slot": "MR",
+      "role_id": "WMF",
+      "shift": "none",
+      "evidence": "same_screenshot_midfield_line"
+    },
+    {
+      "screenshot_id": "S38",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (L)",
+      "slot": "ML",
+      "role_id": "IW",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "ML",
+        "role_id": "WM"
+      },
+      "same_screenshot_control": {
+        "slot": "MR",
+        "role_id": "WM"
+      }
+    },
+    {
+      "screenshot_id": "S38",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "CHM",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "MCL",
+        "role_id": "CM-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S38",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (L)",
+      "slot": "ML",
+      "role_id": "OWM",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "ML",
+        "role_id": "WMF"
+      },
+      "same_screenshot_control": {
+        "slot": "MR",
+        "role_id": "WMF"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S38",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "PCM",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "MCL",
+        "role_id": "CM-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S39",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (L)",
+      "slot": "ML",
+      "role_id": "PW",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "ML",
+        "role_id": "WM"
+      },
+      "same_screenshot_control": {
+        "slot": "MR",
+        "role_id": "WM"
+      }
+    },
+    {
+      "screenshot_id": "S39",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "AP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "MCL",
+        "role_id": "CM-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S39",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (L)",
+      "slot": "ML",
+      "role_id": "TWM",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "ML",
+        "role_id": "WMF"
+      },
+      "same_screenshot_control": {
+        "slot": "MR",
+        "role_id": "WMF"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S39",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "SCM",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "MCL",
+        "role_id": "CM-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S40",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (L)",
+      "slot": "ML",
+      "role_id": "W-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "ML",
+        "role_id": "WM"
+      },
+      "same_screenshot_control": {
+        "slot": "MR",
+        "role_id": "WM"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 25,
+        "approximate_pitch_height_percent": 3.4,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S40",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "MPM",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "MCL",
+        "role_id": "CM-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-IP"
+      }
+    },
+    {
+      "screenshot_id": "S40",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "WCM-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "MCL",
+        "role_id": "CM-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-OOP"
+      }
+    },
+    {
+      "screenshot_id": "S41",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "AM-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "MCL",
+        "role_id": "CM-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S42",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "WCM-IP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S37",
+        "slot": "MCL",
+        "role_id": "CM-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-IP"
+      }
+    },
+    {
+      "screenshot_id": "S42",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMC",
+      "role_id": "AM-IP",
+      "shift": "none",
+      "evidence": "standard_role_baseline_for_same_slot_comparisons"
+    },
+    {
+      "screenshot_id": "S42",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (C)",
+      "slot": "AMC",
+      "role_id": "AM-OOP",
+      "shift": "none",
+      "evidence": "standard_role_baseline_for_same_slot_comparisons"
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "W-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 24,
+        "approximate_pitch_height_percent": 3.2,
+        "method": "Compared the top edge of the wide role card with the central AM card in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMCL",
+      "role_id": "AM-IP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMC",
+      "role_id": "AM-IP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMCR",
+      "role_id": "AM-IP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (R)",
+      "slot": "AMR",
+      "role_id": "W-IP",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 24,
+        "approximate_pitch_height_percent": 3.2,
+        "method": "Compared the top edge of the wide role card with the central AM card in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "W-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (C)",
+      "slot": "AMCL",
+      "role_id": "AM-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (C)",
+      "slot": "AMC",
+      "role_id": "AM-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (C)",
+      "slot": "AMCR",
+      "role_id": "AM-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S43",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (R)",
+      "slot": "AMR",
+      "role_id": "W-OOP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S43",
+        "slot": "AMC",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S44",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "IW",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S44",
+        "slot": "AMCR",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      },
+      "wide_role_comparison": {
+        "screenshot_id": "S44",
+        "slot": "AMR",
+        "role_id": "W-IP",
+        "shift": "backward",
+        "approximate_pixels": 24
+      }
+    },
+    {
+      "screenshot_id": "S44",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMCL",
+      "role_id": "AP",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S44",
+        "slot": "AMCR",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S44",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMC",
+      "role_id": "CHM",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S44",
+        "slot": "AMCR",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.2,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S44",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "WOW",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S44",
+        "slot": "AMCR",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.2,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      },
+      "wide_role_comparison": {
+        "screenshot_id": "S44",
+        "slot": "AMR",
+        "role_id": "W-OOP",
+        "shift": "forward",
+        "approximate_pixels": 16
+      }
+    },
+    {
+      "screenshot_id": "S44",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (C)",
+      "slot": "AMCL",
+      "role_id": "OAM",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S44",
+        "slot": "AMCR",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S44",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (C)",
+      "slot": "AMC",
+      "role_id": "TAM",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S44",
+        "slot": "AMCR",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.2,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S45",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "IF",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S45",
+        "slot": "AMCR",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 24,
+        "approximate_pitch_height_percent": 3.2,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      },
+      "wide_role_comparison": {
+        "screenshot_id": "S45",
+        "slot": "AMR",
+        "role_id": "W-IP",
+        "shift": "none"
+      }
+    },
+    {
+      "screenshot_id": "S45",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMCL",
+      "role_id": "FR",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S45",
+        "slot": "AMCR",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      }
+    },
+    {
+      "screenshot_id": "S45",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (C)",
+      "slot": "AMC",
+      "role_id": "SS",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S45",
+        "slot": "AMCR",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.2,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S45",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "IOW",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S45",
+        "slot": "AMCR",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      },
+      "wide_role_comparison": {
+        "screenshot_id": "S45",
+        "slot": "AMR",
+        "role_id": "W-OOP",
+        "shift": "forward",
+        "approximate_pixels": 17
+      }
+    },
+    {
+      "screenshot_id": "S45",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (C)",
+      "slot": "AMCL",
+      "role_id": "SAM",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S45",
+        "slot": "AMCR",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S46",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "PW",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S46",
+        "slot": "AMCR",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      },
+      "wide_role_comparison": {
+        "screenshot_id": "S43",
+        "slot": "AML",
+        "role_id": "W-IP",
+        "shift": "backward",
+        "approximate_pixels": 24
+      }
+    },
+    {
+      "screenshot_id": "S46",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "AM (R)",
+      "slot": "AMR",
+      "role_id": "WFD",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S46",
+        "slot": "AMCR",
+        "role_id": "AM-IP",
+        "kind": "central_am_line"
+      },
+      "wide_role_comparison": {
+        "screenshot_id": "S43",
+        "slot": "AMR",
+        "role_id": "W-IP",
+        "shift": "none"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 25,
+        "approximate_pitch_height_percent": 3.4,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S46",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "AM (L)",
+      "slot": "AML",
+      "role_id": "TW",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S46",
+        "slot": "AMCR",
+        "role_id": "AM-OOP",
+        "kind": "central_am_line"
+      },
+      "wide_role_comparison": {
+        "screenshot_id": "S46",
+        "slot": "AMR",
+        "role_id": "W-OOP",
+        "shift": "backward",
+        "approximate_pixels": 16
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.2,
+        "method": "Compared the top edges of the role cards in the same pitch."
+      }
+    },
+    {
+      "screenshot_id": "S47",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STL",
+      "role_id": "CFD-IP",
+      "shift": "none",
+      "evidence": "same_screenshot_striker_line"
+    },
+    {
+      "screenshot_id": "S47",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STC",
+      "role_id": "CFD-IP",
+      "shift": "none",
+      "evidence": "same_screenshot_striker_line"
+    },
+    {
+      "screenshot_id": "S47",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STR",
+      "role_id": "CFD-IP",
+      "shift": "none",
+      "evidence": "same_screenshot_striker_line"
+    },
+    {
+      "screenshot_id": "S47",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "ST (C)",
+      "slot": "STL",
+      "role_id": "CFD-OOP",
+      "shift": "none",
+      "evidence": "same_screenshot_striker_line"
+    },
+    {
+      "screenshot_id": "S47",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "ST (C)",
+      "slot": "STC",
+      "role_id": "CFD-OOP",
+      "shift": "none",
+      "evidence": "same_screenshot_striker_line"
+    },
+    {
+      "screenshot_id": "S47",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "ST (C)",
+      "slot": "STR",
+      "role_id": "CFD-OOP",
+      "shift": "none",
+      "evidence": "same_screenshot_striker_line"
+    },
+    {
+      "screenshot_id": "S47",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCR",
+      "role_id": "AM-IP",
+      "shift": "forward",
+      "same_screenshot_control": {
+        "slot": "MCL",
+        "role_id": "CM-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 25,
+        "approximate_pitch_height_percent": 3.4,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      },
+      "note": "S41 shows a smaller forward offset at MCL in a different setup. The effect of slot versus formation is open."
+    },
+    {
+      "screenshot_id": "S48",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STL",
+      "role_id": "DLF",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S47",
+        "slot": "STL",
+        "role_id": "CFD-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "STC",
+        "role_id": "CFD-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of role cards with the central control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S48",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STR",
+      "role_id": "F9",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S47",
+        "slot": "STR",
+        "role_id": "CFD-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "STC",
+        "role_id": "CFD-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 25,
+        "approximate_pitch_height_percent": 3.4,
+        "method": "Compared top edges of role cards with the central control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S48",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "ST (C)",
+      "slot": "STL",
+      "role_id": "TCF",
+      "shift": "backward",
+      "reference": {
+        "screenshot_id": "S47",
+        "slot": "STL",
+        "role_id": "CFD-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "STC",
+        "role_id": "CFD-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the central control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S48",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "ST (C)",
+      "slot": "STR",
+      "role_id": "OCF",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S47",
+        "slot": "STR",
+        "role_id": "CFD-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "STC",
+        "role_id": "CFD-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the central control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S49",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STL",
+      "role_id": "CHF",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S47",
+        "slot": "STL",
+        "role_id": "CFD-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "STC",
+        "role_id": "CFD-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 8,
+        "approximate_pitch_height_percent": 1.1,
+        "method": "Compared top edges of role cards with the central control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S49",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STR",
+      "role_id": "P",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S47",
+        "slot": "STR",
+        "role_id": "CFD-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "STC",
+        "role_id": "CFD-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 17,
+        "approximate_pitch_height_percent": 2.3,
+        "method": "Compared top edges of role cards with the central control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S49",
+      "status": "confirmed",
+      "phase": "oop",
+      "position": "ST (C)",
+      "slot": "STL",
+      "role_id": "SCF",
+      "shift": "forward",
+      "reference": {
+        "screenshot_id": "S47",
+        "slot": "STL",
+        "role_id": "CFD-OOP"
+      },
+      "same_screenshot_control": {
+        "slot": "STC",
+        "role_id": "CFD-OOP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 16,
+        "approximate_pitch_height_percent": 2.1,
+        "method": "Compared top edges of role cards with the central control in the same screenshot."
+      }
+    },
+    {
+      "screenshot_id": "S50",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "ST (C)",
+      "slot": "STL",
+      "role_id": "TF",
+      "shift": "none",
+      "reference": {
+        "screenshot_id": "S47",
+        "slot": "STL",
+        "role_id": "CFD-IP"
+      },
+      "same_screenshot_control": {
+        "slot": "STC",
+        "role_id": "CFD-IP"
+      }
+    },
+    {
+      "screenshot_id": "S51",
+      "status": "confirmed",
+      "phase": "ip",
+      "position": "M (C)",
+      "slot": "MCL",
+      "role_id": "AM-IP",
+      "shift": "forward",
+      "same_screenshot_control": {
+        "slot": "MCR",
+        "role_id": "CM-IP"
+      },
+      "screenshot_estimate": {
+        "approximate_pixels": 25,
+        "approximate_pitch_height_percent": 3.4,
+        "method": "Compared top edges of role cards with the unchanged mirrored control in the same screenshot."
+      }
+    }
+  ],
+  "symmetry_assumptions": [
+    {
+      "positions": [
+        "D (L)",
+        "D (R)"
+      ],
+      "phases": [
+        "ip",
+        "oop"
+      ],
+      "applies_to": "vertical_shift",
+      "evidence": "user_directed_design_rule"
+    },
+    {
+      "positions": [
+        "WB (L)",
+        "WB (R)"
+      ],
+      "phases": [
+        "ip",
+        "oop"
+      ],
+      "applies_to": "vertical_shift",
+      "evidence": "user_directed_design_rule"
+    },
+    {
+      "positions": [
+        "M (L)",
+        "M (R)"
+      ],
+      "phases": [
+        "ip",
+        "oop"
+      ],
+      "applies_to": "vertical_shift",
+      "evidence": "user_directed_design_rule"
+    },
+    {
+      "positions": [
+        "AM (L)",
+        "AM (R)"
+      ],
+      "phases": [
+        "ip",
+        "oop"
+      ],
+      "applies_to": "vertical_shift",
+      "evidence": "user_directed_design_rule"
+    }
+  ],
+  "open_cases": [],
+  "context_findings": [
+    {
+      "phase": "ip",
+      "position": "M (C)",
+      "role_id": "AM-IP",
+      "shift": "forward",
+      "comparisons": [
+        {
+          "formation_from": "S37",
+          "screenshot_ids": [
+            "S41"
+          ],
+          "slots": [
+            "MCL"
+          ],
+          "approximate_pixels": 17
+        },
+        {
+          "formation_from": "S47",
+          "screenshot_ids": [
+            "S47",
+            "S51"
+          ],
+          "slots": [
+            "MCR",
+            "MCL"
+          ],
+          "approximate_pixels": 25
+        }
+      ],
+      "conclusion": "The larger offset occurs on both sides in the S47 setup. The same MCL slot has different offsets across the two setups. The specific trigger is unverified."
+    }
+  ],
+  "implementation": {
+    "unit": "percent_of_visible_pitch_height",
+    "denominator": "Distance between the two goal lines of the rendered pitch in the same coordinate system as the player markers. Exclude panel borders, padding, toolbar and any overflow of the role cards.",
+    "measurement": "Measure the longitudinal difference between matching anchors on the subject and reference role cards, then divide by the goal-line-to-goal-line pitch height and multiply by 100.",
+    "sign_convention": "Positive is toward the opponent goal, negative is toward the own goal, zero leaves the base position unchanged.",
+    "application": "Displacement along the attack direction = pitch height * vertical_shift_percent / 100. For a screen y-axis increasing downward and the opponent goal at the top, subtract that displacement from the base y.",
+    "base_position": "Use the unshifted slot row. For WB (L/R), use the central DM row at the wide slot x. For AM (L/R), use the central AM row at the wide slot x. Apply the stored value once, including for WB-IP and W-IP.",
+    "symmetry": "A profile covering a mirrored pair uses the same vertical value on both sides. The shift never changes the slot x coordinate.",
+    "estimates": "Percent values are rounded screenshot estimates or zero-line assignments. The observations retain the original evidence and pixel estimates.",
+    "profiles": [
+      {
+        "role_id": "BGK",
+        "phase": "ip",
+        "positions": [
+          "GK"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S03"
+        ]
+      },
+      {
+        "role_id": "GK-IP",
+        "phase": "ip",
+        "positions": [
+          "GK"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01"
+        ]
+      },
+      {
+        "role_id": "NGK",
+        "phase": "ip",
+        "positions": [
+          "GK"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S02"
+        ]
+      },
+      {
+        "role_id": "GK-OOP",
+        "phase": "oop",
+        "positions": [
+          "GK"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01"
+        ]
+      },
+      {
+        "role_id": "LHK",
+        "phase": "oop",
+        "positions": [
+          "GK"
+        ],
+        "vertical_shift_percent": -2.3,
+        "screenshot_ids": [
+          "S05"
+        ]
+      },
+      {
+        "role_id": "SK",
+        "phase": "oop",
+        "positions": [
+          "GK"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S04"
+        ]
+      },
+      {
+        "role_id": "ACB",
+        "phase": "ip",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 1.1,
+        "screenshot_ids": [
+          "S07",
+          "S29"
+        ]
+      },
+      {
+        "role_id": "BCB",
+        "phase": "ip",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S09",
+          "S30"
+        ]
+      },
+      {
+        "role_id": "CB-IP",
+        "phase": "ip",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01",
+          "S36"
+        ]
+      },
+      {
+        "role_id": "NCB",
+        "phase": "ip",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S08",
+          "S31"
+        ]
+      },
+      {
+        "role_id": "OCB",
+        "phase": "ip",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 2.2,
+        "screenshot_ids": [
+          "S35"
+        ]
+      },
+      {
+        "role_id": "WCB-IP",
+        "phase": "ip",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 1.1,
+        "screenshot_ids": [
+          "S34"
+        ]
+      },
+      {
+        "role_id": "FB-IP",
+        "phase": "ip",
+        "positions": [
+          "D (L)",
+          "D (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01"
+        ]
+      },
+      {
+        "role_id": "IFB",
+        "phase": "ip",
+        "positions": [
+          "D (L)",
+          "D (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S10"
+        ]
+      },
+      {
+        "role_id": "IWB",
+        "phase": "ip",
+        "positions": [
+          "D (L)",
+          "D (R)"
+        ],
+        "vertical_shift_percent": 1.1,
+        "screenshot_ids": [
+          "S09"
+        ]
+      },
+      {
+        "role_id": "IWB",
+        "phase": "ip",
+        "positions": [
+          "WB (L)",
+          "WB (R)"
+        ],
+        "vertical_shift_percent": 1.1,
+        "screenshot_ids": [
+          "S20"
+        ]
+      },
+      {
+        "role_id": "PWB-IP",
+        "phase": "ip",
+        "positions": [
+          "D (L)",
+          "D (R)"
+        ],
+        "vertical_shift_percent": 2.2,
+        "screenshot_ids": [
+          "S11"
+        ]
+      },
+      {
+        "role_id": "PWB-IP",
+        "phase": "ip",
+        "positions": [
+          "WB (L)",
+          "WB (R)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S21"
+        ]
+      },
+      {
+        "role_id": "WB-IP",
+        "phase": "ip",
+        "positions": [
+          "D (L)",
+          "D (R)"
+        ],
+        "vertical_shift_percent": 2.2,
+        "screenshot_ids": [
+          "S08"
+        ]
+      },
+      {
+        "role_id": "WB-IP",
+        "phase": "ip",
+        "positions": [
+          "WB (L)",
+          "WB (R)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S15"
+        ]
+      },
+      {
+        "role_id": "AWB",
+        "phase": "ip",
+        "positions": [
+          "WB (L)",
+          "WB (R)"
+        ],
+        "vertical_shift_percent": 4.5,
+        "screenshot_ids": [
+          "S19"
+        ]
+      },
+      {
+        "role_id": "CB-OOP",
+        "phase": "oop",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01",
+          "S36"
+        ]
+      },
+      {
+        "role_id": "CCB",
+        "phase": "oop",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": -2.1,
+        "screenshot_ids": [
+          "S13",
+          "S33"
+        ]
+      },
+      {
+        "role_id": "CWD",
+        "phase": "oop",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": -1.1,
+        "screenshot_ids": [
+          "S36"
+        ]
+      },
+      {
+        "role_id": "SCB",
+        "phase": "oop",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S12",
+          "S32"
+        ]
+      },
+      {
+        "role_id": "SWD",
+        "phase": "oop",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 3.4,
+        "screenshot_ids": [
+          "S35"
+        ]
+      },
+      {
+        "role_id": "WCB-OOP",
+        "phase": "oop",
+        "positions": [
+          "D (C)"
+        ],
+        "vertical_shift_percent": 1.1,
+        "screenshot_ids": [
+          "S34"
+        ]
+      },
+      {
+        "role_id": "FB-OOP",
+        "phase": "oop",
+        "positions": [
+          "D (L)",
+          "D (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01"
+        ]
+      },
+      {
+        "role_id": "HFB",
+        "phase": "oop",
+        "positions": [
+          "D (L)",
+          "D (R)"
+        ],
+        "vertical_shift_percent": -1.1,
+        "screenshot_ids": [
+          "S13"
+        ]
+      },
+      {
+        "role_id": "PFB",
+        "phase": "oop",
+        "positions": [
+          "D (L)",
+          "D (R)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S12"
+        ]
+      },
+      {
+        "role_id": "HWB",
+        "phase": "oop",
+        "positions": [
+          "WB (L)",
+          "WB (R)"
+        ],
+        "vertical_shift_percent": -1.2,
+        "screenshot_ids": [
+          "S28"
+        ]
+      },
+      {
+        "role_id": "PWB-OOP",
+        "phase": "oop",
+        "positions": [
+          "WB (L)",
+          "WB (R)"
+        ],
+        "vertical_shift_percent": 2.1,
+        "screenshot_ids": [
+          "S27"
+        ]
+      },
+      {
+        "role_id": "WB-OOP",
+        "phase": "oop",
+        "positions": [
+          "WB (L)",
+          "WB (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S22"
+        ]
+      },
+      {
+        "role_id": "BBM",
+        "phase": "ip",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S16"
+        ]
+      },
+      {
+        "role_id": "BBP",
+        "phase": "ip",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S18"
+        ]
+      },
+      {
+        "role_id": "DLP",
+        "phase": "ip",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [],
+        "evidence": [
+          "inferred_from_user_statement_that_all_roles_with_shift_are_shown"
+        ]
+      },
+      {
+        "role_id": "DM-IP",
+        "phase": "ip",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01"
+        ]
+      },
+      {
+        "role_id": "HB",
+        "phase": "ip",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": -2.3,
+        "screenshot_ids": [
+          "S17"
+        ]
+      },
+      {
+        "role_id": "AP",
+        "phase": "ip",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S44"
+        ]
+      },
+      {
+        "role_id": "AP",
+        "phase": "ip",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S39"
+        ]
+      },
+      {
+        "role_id": "AM-IP",
+        "phase": "ip",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01",
+          "S42",
+          "S43"
+        ]
+      },
+      {
+        "role_id": "AM-IP",
+        "phase": "ip",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S41",
+          "S47",
+          "S51"
+        ],
+        "default_basis": "Use the smaller observed shift as the default because the exact trigger for the larger shift is unverified.",
+        "context_overrides": [
+          {
+            "vertical_shift_percent": 3.4,
+            "applies_to": "observed S47 IP slot layout",
+            "formation_from": "S47",
+            "screenshot_ids": [
+              "S47",
+              "S51"
+            ]
+          }
+        ]
+      },
+      {
+        "role_id": "CM-IP",
+        "phase": "ip",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S37"
+        ]
+      },
+      {
+        "role_id": "CHM",
+        "phase": "ip",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": 2.2,
+        "screenshot_ids": [
+          "S44"
+        ]
+      },
+      {
+        "role_id": "CHM",
+        "phase": "ip",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S38"
+        ]
+      },
+      {
+        "role_id": "MPM",
+        "phase": "ip",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S40"
+        ]
+      },
+      {
+        "role_id": "WCM-IP",
+        "phase": "ip",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S42"
+        ]
+      },
+      {
+        "role_id": "IW",
+        "phase": "ip",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S44"
+        ]
+      },
+      {
+        "role_id": "IW",
+        "phase": "ip",
+        "positions": [
+          "M (L)",
+          "M (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S38"
+        ]
+      },
+      {
+        "role_id": "PW",
+        "phase": "ip",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S46"
+        ]
+      },
+      {
+        "role_id": "PW",
+        "phase": "ip",
+        "positions": [
+          "M (L)",
+          "M (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S39"
+        ]
+      },
+      {
+        "role_id": "WM",
+        "phase": "ip",
+        "positions": [
+          "M (L)",
+          "M (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01",
+          "S37"
+        ]
+      },
+      {
+        "role_id": "W-IP",
+        "phase": "ip",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": 3.2,
+        "screenshot_ids": [
+          "S43"
+        ]
+      },
+      {
+        "role_id": "W-IP",
+        "phase": "ip",
+        "positions": [
+          "M (L)",
+          "M (R)"
+        ],
+        "vertical_shift_percent": 3.4,
+        "screenshot_ids": [
+          "S40"
+        ]
+      },
+      {
+        "role_id": "DM-OOP",
+        "phase": "oop",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01",
+          "S22"
+        ]
+      },
+      {
+        "role_id": "DDM",
+        "phase": "oop",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": -2.3,
+        "screenshot_ids": [
+          "S23"
+        ]
+      },
+      {
+        "role_id": "PDM",
+        "phase": "oop",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": 2.1,
+        "screenshot_ids": [
+          "S24"
+        ]
+      },
+      {
+        "role_id": "SDM",
+        "phase": "oop",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": -1.2,
+        "screenshot_ids": [
+          "S25"
+        ]
+      },
+      {
+        "role_id": "WDM",
+        "phase": "oop",
+        "positions": [
+          "DM"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S26"
+        ]
+      },
+      {
+        "role_id": "CM-OOP",
+        "phase": "oop",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01",
+          "S37"
+        ]
+      },
+      {
+        "role_id": "PCM",
+        "phase": "oop",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S38"
+        ]
+      },
+      {
+        "role_id": "SCM",
+        "phase": "oop",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": -1.1,
+        "screenshot_ids": [
+          "S39"
+        ]
+      },
+      {
+        "role_id": "WCM-OOP",
+        "phase": "oop",
+        "positions": [
+          "M (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S40"
+        ]
+      },
+      {
+        "role_id": "TWM",
+        "phase": "oop",
+        "positions": [
+          "M (L)",
+          "M (R)"
+        ],
+        "vertical_shift_percent": -2.3,
+        "screenshot_ids": [
+          "S39"
+        ]
+      },
+      {
+        "role_id": "WMF",
+        "phase": "oop",
+        "positions": [
+          "M (L)",
+          "M (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S37"
+        ]
+      },
+      {
+        "role_id": "OWM",
+        "phase": "oop",
+        "positions": [
+          "M (L)",
+          "M (R)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S38"
+        ]
+      },
+      {
+        "role_id": "FR",
+        "phase": "ip",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S45"
+        ]
+      },
+      {
+        "role_id": "SS",
+        "phase": "ip",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": 2.2,
+        "screenshot_ids": [
+          "S45"
+        ]
+      },
+      {
+        "role_id": "IF",
+        "phase": "ip",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": 3.2,
+        "screenshot_ids": [
+          "S45"
+        ]
+      },
+      {
+        "role_id": "WFD",
+        "phase": "ip",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": 3.4,
+        "screenshot_ids": [
+          "S46"
+        ]
+      },
+      {
+        "role_id": "CFD-IP",
+        "phase": "ip",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S47"
+        ]
+      },
+      {
+        "role_id": "CHF",
+        "phase": "ip",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": 1.1,
+        "screenshot_ids": [
+          "S49"
+        ]
+      },
+      {
+        "role_id": "DLF",
+        "phase": "ip",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": -1.1,
+        "screenshot_ids": [
+          "S48"
+        ]
+      },
+      {
+        "role_id": "F9",
+        "phase": "ip",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": -3.4,
+        "screenshot_ids": [
+          "S48"
+        ]
+      },
+      {
+        "role_id": "P",
+        "phase": "ip",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S49"
+        ]
+      },
+      {
+        "role_id": "TF",
+        "phase": "ip",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S50"
+        ]
+      },
+      {
+        "role_id": "AM-OOP",
+        "phase": "oop",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S42",
+          "S43"
+        ]
+      },
+      {
+        "role_id": "OAM",
+        "phase": "oop",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S44"
+        ]
+      },
+      {
+        "role_id": "SAM",
+        "phase": "oop",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S45"
+        ]
+      },
+      {
+        "role_id": "TAM",
+        "phase": "oop",
+        "positions": [
+          "AM (C)"
+        ],
+        "vertical_shift_percent": -2.2,
+        "screenshot_ids": [
+          "S44"
+        ]
+      },
+      {
+        "role_id": "IOW",
+        "phase": "oop",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S45"
+        ]
+      },
+      {
+        "role_id": "TW",
+        "phase": "oop",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": -2.2,
+        "screenshot_ids": [
+          "S46"
+        ]
+      },
+      {
+        "role_id": "WOW",
+        "phase": "oop",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": 2.2,
+        "screenshot_ids": [
+          "S44"
+        ]
+      },
+      {
+        "role_id": "W-OOP",
+        "phase": "oop",
+        "positions": [
+          "AM (L)",
+          "AM (R)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01",
+          "S43"
+        ]
+      },
+      {
+        "role_id": "OCF",
+        "phase": "oop",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": 2.3,
+        "screenshot_ids": [
+          "S48"
+        ]
+      },
+      {
+        "role_id": "CFD-OOP",
+        "phase": "oop",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": 0.0,
+        "screenshot_ids": [
+          "S01",
+          "S47"
+        ]
+      },
+      {
+        "role_id": "SCF",
+        "phase": "oop",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": 2.1,
+        "screenshot_ids": [
+          "S49"
+        ]
+      },
+      {
+        "role_id": "TCF",
+        "phase": "oop",
+        "positions": [
+          "ST (C)"
+        ],
+        "vertical_shift_percent": -2.3,
+        "screenshot_ids": [
+          "S48"
+        ]
+      }
+    ]
+  }
+}

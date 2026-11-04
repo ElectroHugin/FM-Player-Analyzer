@@ -242,20 +242,21 @@ QWidget *SettingsPage::buildClubTab()
         installIntoFm27(QStringLiteral(":/views"), QStringLiteral("views"),
                         tr("FM27-Ansichten"));
     });
-    auto *tacticButton = new QPushButton(tr("Standardtaktik für FM27 installieren"));
+    auto *tacticButton = new QPushButton(tr("Beispieltaktiken für FM27 installieren"));
     auto *tacticHint = new QLabel(
-        tr("Kopiert die mitgelieferte Standardtaktik (4-2-3-1 - Bavarian Blitz) als "
-           "Spieldatei in den Ordner 'tactics' von Football Manager 27. Im Spiel lädst du "
-           "sie dann in der Taktik-Ansicht über das Laden einer Taktik. Im Analyzer ist sie "
-           "schon eingebaut; eigene Taktiken legst du im Taktik-Editor an."),
+        tr("Kopiert die beiden mitgelieferten Beispieltaktiken (Control Press · 4-2-3-1 und "
+           "Counter Surge · 3-4-2-1) als Spieldateien in den Ordner 'tactics' von Football "
+           "Manager 27. Im Spiel lädst du sie dann in der Taktik-Ansicht über das Laden einer "
+           "Taktik. Im Analyzer sind sie schon eingebaut; eigene Taktiken legst du im "
+           "Taktik-Editor an oder importierst sie."),
         versionGroup);
     tacticHint->setWordWrap(true);
     tacticHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(tr("FM27-Taktik:"), tacticButton);
+    versionForm->addRow(tr("FM27-Taktiken:"), tacticButton);
     versionForm->addRow(tacticHint);
     connect(tacticButton, &QPushButton::clicked, this, [this, installIntoFm27] {
         installIntoFm27(QStringLiteral(":/tactics"), QStringLiteral("tactics"),
-                        tr("FM27-Taktik"));
+                        tr("FM27-Taktiken"));
     });
     layout->addWidget(versionGroup);
 

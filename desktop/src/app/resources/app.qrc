@@ -13,9 +13,10 @@
     </qresource>
     <!-- Edmund's standard tactic as a game file (.fmf) for import into FM27
          (Settings -> Club, installer task). The analyzer's own copy of it is
-         "4-2-3-1 - Bavarian Blitz" in definitions_fm27.json. -->
+         the example tactics in definitions_fm27.json. -->
     <qresource prefix="/tactics">
-        <file alias="FM27-PlayerAnalyzer-Tactic-4-2-3-1-Bavarian-Blitz.fmf">tactics/FM27-PlayerAnalyzer-Tactic-4-2-3-1-Bavarian-Blitz.fmf</file>
+        <file alias="FM27-PlayerAnalyzer-Tactic-Control-Press-4-2-3-1.fmf">tactics/FM27-PlayerAnalyzer-Tactic-Control-Press-4-2-3-1.fmf</file>
+        <file alias="FM27-PlayerAnalyzer-Tactic-Counter-Surge-3-4-2-1.fmf">tactics/FM27-PlayerAnalyzer-Tactic-Counter-Surge-3-4-2-1.fmf</file>
     </qresource>
     <qresource prefix="/app">
         <file>favicon.ico</file>

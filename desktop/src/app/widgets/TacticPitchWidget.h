@@ -8,6 +8,8 @@
 #include <QStringList>
 #include <QWidget>
 
+#include <functional>
+
 namespace fm {
 
 class ThemeManager;
@@ -42,6 +44,13 @@ public:
     void setEditorSlots(const QHash<QString, QString> &roles,
                         const QHash<QString, QString> &roleNames, bool showFreeSlots);
 
+    // Role-dependent card shift (FM27: a pressing DM stands higher than a
+    // screening one): percent of the pitch length, + towards the opponent
+    // goal, for (role id, slot). Set once for every pitch (MainWindow);
+    // display only.
+    using ShiftSource = std::function<double(const QString &role, const QString &slot)>;
+    static void setShiftSource(ShiftSource source);
+
     // FM version whose pitch geometry places the slots (empty = default).
     void setFmVersionId(const QString &versionId) { m_fmVersionId = versionId; }
 
@@ -72,6 +81,8 @@ private:
     static constexpr int kHintWidth = 480;
 
     QString uidAt(const QPoint &pos) const;
+    // Vertical offset in pixels for a role on a slot (negative = up).
+    double shiftPixels(const QString &role, const QString &slot, double fieldHeight) const;
     QString slotAt(const QPoint &pos) const;
 
     ThemeManager &m_theme;

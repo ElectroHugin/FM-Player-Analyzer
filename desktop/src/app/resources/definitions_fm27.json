@@ -1,6 +1,6 @@
 {
   "fm_version": "fm27",
-  "data_revision": 6,
+  "data_revision": 7,
   "retired_tactics": [
     "3-4-3 DM Narrow",
     "3-4-3 DM Wide",
@@ -13,6 +13,9 @@
     "5-1-2-2 DM WB",
     "5-2-1-2 DM WB"
   ],
+  "renamed_tactics": {
+    "4-2-3-1 - Bavarian Blitz": "Control Press · 4-2-3-1"
+  },
   "player_roles": {
     "Goalkeepers": {
       "BGK": "Ball-Playing Goalkeeper",
@@ -2195,7 +2198,7 @@
     }
   },
   "tactic_roles": {
-    "4-2-3-1 - Bavarian Blitz": {
+    "Control Press · 4-2-3-1": {
       "ip": {
         "GK": "BGK",
         "DL": "WB-IP",
@@ -2222,10 +2225,38 @@
         "AMR": "TW",
         "STC": "CFD-OOP"
       }
+    },
+    "Counter Surge · 3-4-2-1": {
+      "ip": {
+        "GK": "GK-IP",
+        "DCL": "WCB-IP",
+        "DC": "BCB",
+        "DCR": "WCB-IP",
+        "DML": "WB-IP",
+        "DMCL": "BBM",
+        "DMCR": "DLP",
+        "DMR": "WB-IP",
+        "AMCL": "AP",
+        "AMCR": "CHM",
+        "STC": "TF"
+      },
+      "oop": {
+        "GK": "GK-OOP",
+        "DL": "HFB",
+        "DCL": "CWD",
+        "DC": "CCB",
+        "DCR": "CWD",
+        "DR": "HFB",
+        "DMCL": "PDM",
+        "DMCR": "SDM",
+        "ML": "TWM",
+        "MR": "OWM",
+        "STC": "OCF"
+      }
     }
   },
   "tactic_layouts": {
-    "4-2-3-1 - Bavarian Blitz": {
+    "Control Press · 4-2-3-1": {
       "Defense": [
         "DL",
         "DCL",
@@ -2246,6 +2277,200 @@
       "Strikers": [
         "STC"
       ]
+    },
+    "Counter Surge · 3-4-2-1": {
+      "Defense": [
+        "DL",
+        "DCL",
+        "DC",
+        "DCR",
+        "DR"
+      ],
+      "Defensive Midfield": [
+        "DMCL",
+        "DMCR"
+      ],
+      "Midfield": [
+        "ML",
+        "MR"
+      ],
+      "Strikers": [
+        "STC"
+      ]
+    }
+  },
+  "role_shifts": {
+    "BGK": {
+      "GK": 2.3
+    },
+    "LHK": {
+      "GK": -2.3
+    },
+    "SK": {
+      "GK": 2.3
+    },
+    "ACB": {
+      "D (C)": 1.1
+    },
+    "OCB": {
+      "D (C)": 2.2
+    },
+    "WCB-IP": {
+      "D (C)": 1.1
+    },
+    "IWB": {
+      "D (L)": 1.1,
+      "D (R)": 1.1,
+      "WB (L)": 1.1,
+      "WB (R)": 1.1
+    },
+    "PWB-IP": {
+      "D (L)": 2.2,
+      "D (R)": 2.2,
+      "WB (L)": 2.3,
+      "WB (R)": 2.3
+    },
+    "WB-IP": {
+      "D (L)": 2.2,
+      "D (R)": 2.2,
+      "WB (L)": 2.3,
+      "WB (R)": 2.3
+    },
+    "AWB": {
+      "WB (L)": 4.5,
+      "WB (R)": 4.5
+    },
+    "CCB": {
+      "D (C)": -2.1
+    },
+    "CWD": {
+      "D (C)": -1.1
+    },
+    "SCB": {
+      "D (C)": 2.3
+    },
+    "SWD": {
+      "D (C)": 3.4
+    },
+    "WCB-OOP": {
+      "D (C)": 1.1
+    },
+    "HFB": {
+      "D (L)": -1.1,
+      "D (R)": -1.1
+    },
+    "PFB": {
+      "D (L)": 2.3,
+      "D (R)": 2.3
+    },
+    "HWB": {
+      "WB (L)": -1.2,
+      "WB (R)": -1.2
+    },
+    "PWB-OOP": {
+      "WB (L)": 2.1,
+      "WB (R)": 2.1
+    },
+    "BBM": {
+      "DM": 2.3
+    },
+    "BBP": {
+      "DM": 2.3
+    },
+    "HB": {
+      "DM": -2.3
+    },
+    "AP": {
+      "M (C)": 2.3
+    },
+    "AM-IP": {
+      "M (C)": 2.3
+    },
+    "CHM": {
+      "AM (C)": 2.2,
+      "M (C)": 2.3
+    },
+    "W-IP": {
+      "AM (L)": 3.2,
+      "AM (R)": 3.2,
+      "M (L)": 3.4,
+      "M (R)": 3.4
+    },
+    "DDM": {
+      "DM": -2.3
+    },
+    "PDM": {
+      "DM": 2.1
+    },
+    "SDM": {
+      "DM": -1.2
+    },
+    "PCM": {
+      "M (C)": 2.3
+    },
+    "SCM": {
+      "M (C)": -1.1
+    },
+    "TWM": {
+      "M (L)": -2.3,
+      "M (R)": -2.3
+    },
+    "OWM": {
+      "M (L)": 2.3,
+      "M (R)": 2.3
+    },
+    "SS": {
+      "AM (C)": 2.2
+    },
+    "IF": {
+      "AM (L)": 3.2,
+      "AM (R)": 3.2
+    },
+    "WFD": {
+      "AM (L)": 3.4,
+      "AM (R)": 3.4
+    },
+    "CHF": {
+      "ST (C)": 1.1
+    },
+    "DLF": {
+      "ST (C)": -1.1
+    },
+    "F9": {
+      "ST (C)": -3.4
+    },
+    "P": {
+      "ST (C)": 2.3
+    },
+    "OAM": {
+      "AM (C)": 2.3
+    },
+    "SAM": {
+      "AM (C)": 2.3
+    },
+    "TAM": {
+      "AM (C)": -2.2
+    },
+    "IOW": {
+      "AM (L)": 2.3,
+      "AM (R)": 2.3
+    },
+    "TW": {
+      "AM (L)": -2.2,
+      "AM (R)": -2.2
+    },
+    "WOW": {
+      "AM (L)": 2.2,
+      "AM (R)": 2.2
+    },
+    "OCF": {
+      "ST (C)": 2.3
+    },
+    "SCF": {
+      "ST (C)": 2.1
+    },
+    "TCF": {
+      "ST (C)": -2.3
     }
   },
   "personalities": {
