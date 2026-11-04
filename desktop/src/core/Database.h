@@ -140,9 +140,16 @@ public:
     bool setRegistrations(const std::vector<std::pair<int, PlayerRegistration>> &byId);
 
     // --- Maintenance ---
-    // Copies the db file to <backupsDir>/<name>_backup_<ts>.db, keeps newest 3.
+    // Copies the db file to <backupsDir>/<name>_backup_<ts>.db and keeps the
+    // newest 3 backups of exactly this save (other saves' backups and the one
+    // just written are never rotated away). True only if the new backup exists.
     static bool createBackup(const QString &dbFilePath, const QString &backupsDir,
                              QString *errorOut = nullptr);
+    // Consistent copy of an SQLite file (VACUUM INTO), including committed
+    // changes still in its -wal sidecar. Opens the source read-only; the
+    // target must not exist and is removed again on failure.
+    static bool snapshotTo(const QString &sourcePath, const QString &targetPath,
+                           QString *errorOut = nullptr);
 
     QSqlDatabase &handle() { return m_db; }
 

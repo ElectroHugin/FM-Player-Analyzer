@@ -8,10 +8,12 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QSet>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QUuid>
 #include <QVariant>
 
 #include <algorithm>
@@ -903,6 +905,33 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
         return false;
     }
 
+    // The user's own decisions on the duplicate survive the merge instead of
+    // vanishing with its row (CASCADE): national squad, shortlist and
+    // long-term injury are kept if either record had them; a training role
+    // moves over only when the surviving player has none (it wins, like the
+    // fill-empty merge above). HtmlImporter's mergeAppManaged mirrors this in
+    // memory.
+    const QStringList carryOver = {
+        QStringLiteral("INSERT OR IGNORE INTO national_squad (player_id) "
+                       "SELECT ? FROM national_squad WHERE player_id = ?"),
+        QStringLiteral("INSERT OR IGNORE INTO shortlist (player_id) "
+                       "SELECT ? FROM shortlist WHERE player_id = ?"),
+        QStringLiteral("INSERT OR IGNORE INTO long_term_injuries (player_id) "
+                       "SELECT ? FROM long_term_injuries WHERE player_id = ?"),
+        QStringLiteral("INSERT OR IGNORE INTO training_roles (player_id, role) "
+                       "SELECT ?, role FROM training_roles WHERE player_id = ?"),
+    };
+    for (const QString &sql : carryOver) {
+        query.prepare(sql);
+        query.bindValue(0, goodPlayerId);
+        query.bindValue(1, badPlayerId);
+        if (!query.exec()) {
+            m_error = query.lastError().text();
+            rollbackTransaction();
+            return false;
+        }
+    }
+
     query.prepare(QStringLiteral("DELETE FROM players WHERE id = ?"));
     query.bindValue(0, badPlayerId);
     if (!query.exec()) {
@@ -1331,51 +1360,104 @@ bool Database::createBackup(const QString &dbFilePath, const QString &backupsDir
         return true; // nothing to back up
 
     QDir().mkpath(backupsDir);
+    const QDir dir(backupsDir);
     const QString baseName = QFileInfo(dbFilePath).completeBaseName();
     const QString timestamp =
         QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd_HH-mm-ss"));
-    const QString backupName =
-        QStringLiteral("%1_backup_%2.db").arg(baseName, timestamp);
-    const QString backupPath = QDir(backupsDir).filePath(backupName);
+    // Two backups within one second (e.g. delete right after an import) get a
+    // counter instead of failing on the existing file.
+    QString backupName = QStringLiteral("%1_backup_%2.db").arg(baseName, timestamp);
+    for (int n = 2; dir.exists(backupName); ++n)
+        backupName = QStringLiteral("%1_backup_%2_%3.db").arg(baseName, timestamp).arg(n);
+    const QString backupPath = dir.filePath(backupName);
 
     // VACUUM INTO writes a transactionally consistent snapshot that already
     // folds in any committed WAL frames. A plain file copy would miss data
     // still living in the -wal sidecar (the DB runs in WAL mode), so a
     // pre-import backup could silently lose the latest changes.
-    bool ok = false;
     QString error;
-    const QString connName = QStringLiteral("backup_%1").arg(timestamp);
-    {
-        QSqlDatabase src = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connName);
-        src.setDatabaseName(dbFilePath);
-        if (!src.open()) {
-            error = src.lastError().text();
-        } else {
-            QSqlQuery query(src);
-            query.prepare(QStringLiteral("VACUUM INTO ?"));
-            query.bindValue(0, backupPath);
-            ok = query.exec();
-            if (!ok)
-                error = query.lastError().text();
-            src.close();
-        }
-    }
-    QSqlDatabase::removeDatabase(connName);
-
-    if (!ok) {
+    if (!snapshotTo(dbFilePath, backupPath, &error)) {
         if (errorOut)
             *errorOut = QStringLiteral("Backup (VACUUM INTO) failed: %1").arg(error);
         return false;
     }
 
-    // Rotation: keep the 3 newest backups of this database.
-    QStringList backups = QDir(backupsDir)
-                              .entryList({QStringLiteral("%1_backup_*.db").arg(baseName)},
-                                         QDir::Files, QDir::Name);
+    // Rotation: keep the 3 newest backups of exactly this save. The name must
+    // match <save>_backup_<timestamp>[_<n>].db in full: a plain prefix glob
+    // would also catch the backups of a save called "<save>_backup_x" and
+    // could rotate away the one just written.
+    const QRegularExpression ownBackup(
+        QStringLiteral("^%1_backup_(\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2})(?:_(\\d+))?\\.db$")
+            .arg(QRegularExpression::escape(baseName)));
+    struct Entry {
+        QString file;
+        QString stamp;
+        int counter = 1;
+    };
+    QList<Entry> backups;
+    for (const QString &file : dir.entryList({QStringLiteral("*.db")}, QDir::Files)) {
+        const QRegularExpressionMatch match = ownBackup.match(file);
+        if (match.hasMatch())
+            backups.append({file, match.captured(1),
+                            match.captured(2).isEmpty() ? 1 : match.captured(2).toInt()});
+    }
+    std::sort(backups.begin(), backups.end(), [](const Entry &a, const Entry &b) {
+        return a.stamp != b.stamp ? a.stamp < b.stamp : a.counter < b.counter;
+    });
     while (backups.size() > 3) {
-        QFile::remove(QDir(backupsDir).filePath(backups.takeFirst()));
+        const Entry oldest = backups.takeFirst();
+        if (oldest.file != backupName) // never the one just written
+            QFile::remove(dir.filePath(oldest.file));
+    }
+    if (!QFile::exists(backupPath)) {
+        if (errorOut)
+            *errorOut = QStringLiteral("Backup %1 is missing after rotation.").arg(backupPath);
+        return false;
     }
     return true;
+}
+
+bool Database::snapshotTo(const QString &sourcePath, const QString &targetPath, QString *errorOut)
+{
+    // Read-only: the source may be another installation's file; nothing of it
+    // is changed. SQLite still reads committed frames from its -wal sidecar.
+    if (QFileInfo::exists(targetPath)) {
+        // Never touch an existing file (VACUUM INTO would refuse anyway, and
+        // the cleanup below must only remove what this call wrote).
+        if (errorOut)
+            *errorOut = QStringLiteral("Target already exists: %1").arg(targetPath);
+        return false;
+    }
+    bool ok = false;
+    QString error;
+    const QString connName =
+        QStringLiteral("snapshot_%1").arg(QUuid::createUuid().toString(QUuid::Id128));
+    {
+        QSqlDatabase src = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connName);
+        src.setDatabaseName(sourcePath);
+        src.setConnectOptions(QStringLiteral("QSQLITE_OPEN_READONLY;QSQLITE_BUSY_TIMEOUT=2000"));
+        if (!src.open()) {
+            error = src.lastError().text();
+        } else {
+            QSqlQuery query(src);
+            query.prepare(QStringLiteral("VACUUM INTO ?"));
+            query.bindValue(0, targetPath);
+            ok = query.exec();
+            if (!ok)
+                error = query.lastError().text();
+            query.finish();
+            src.close();
+        }
+    }
+    QSqlDatabase::removeDatabase(connName);
+    if (!ok) {
+        // No half-written file under the target name.
+        if (QFile::exists(targetPath))
+            QFile::remove(targetPath);
+        if (errorOut)
+            *errorOut = error;
+    }
+    return ok;
 }
 
 } // namespace fm

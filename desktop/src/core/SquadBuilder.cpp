@@ -33,6 +33,20 @@ bool pinnedToOtherRole(const Player &player, const QString &role)
            && player.assignedRoles.contains(player.primaryRole);
 }
 
+// Two-phase rule (FM26+): the pin only binds within the primary role's own
+// phase. In the other phase the player stays free for any role. `phase` is the
+// phase the role is played in ("ip", "oop" or "both" for a one-line-up role).
+// Starting XI, B-team and depth options all go through this one rule.
+bool pinnedOutInPhase(const Player &player, const QString &role, const QString &phase,
+                      const Definitions &definitions)
+{
+    if (!pinnedToOtherRole(player, role))
+        return false;
+    const QString pinnedPhase = definitions.rolePhase(player.primaryRole);
+    return pinnedPhase == phase || pinnedPhase == QLatin1String("both")
+           || phase == QLatin1String("both");
+}
+
 // Legacy youth checks parse the TEXT age and fall back to 99 when it is not a
 // plain digit string; our migrator stores unparseable ages as 0.
 inline int effectiveAge(const Player &p)
@@ -333,9 +347,13 @@ void SquadBuilder::fillDepthOptions(const std::vector<const Player *> &pool,
         for (const QString &role : uniqueRoles) {
             const QHash<QString, double> roleRatings = ratings.value(role);
             std::vector<const Player *> sortedCandidates = availableDepth;
-            // Same pin as the team selection: no depth option for other roles.
-            std::erase_if(sortedCandidates,
-                          [&role](const Player *p) { return pinnedToOtherRole(*p, role); });
+            // Same pin as the team selection: no depth option for another role
+            // of the primary role's phase (a one-line-up role is "both", so
+            // there the pin covers every other role as before).
+            const QString phase = m_definitions.rolePhase(role);
+            std::erase_if(sortedCandidates, [&](const Player *p) {
+                return pinnedOutInPhase(*p, role, phase, m_definitions);
+            });
             std::stable_sort(sortedCandidates.begin(), sortedCandidates.end(),
                              [&](const Player *a, const Player *b) {
                                  return roleRatings.value(a->uid, -1.0)
@@ -550,11 +568,7 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
     // Pinned to his primary role: in that role's phase the player may only
     // take slots of exactly that role.
     const auto pinnedOut = [&](const Player &player, const QString &role, const QString &phase) {
-        if (player.primaryRole.isEmpty() || player.primaryRole == role
-            || !player.assignedRoles.contains(player.primaryRole))
-            return false;
-        const QString pinnedPhase = m_definitions.rolePhase(player.primaryRole);
-        return pinnedPhase == phase || pinnedPhase == QLatin1String("both");
+        return pinnedOutInPhase(player, role, phase, m_definitions);
     };
 
     struct Option {
