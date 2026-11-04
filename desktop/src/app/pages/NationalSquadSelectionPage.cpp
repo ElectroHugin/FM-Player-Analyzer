@@ -42,7 +42,7 @@ NationalSquadSelectionPage::NationalSquadSelectionPage(AppContext &context, QWid
     layout->setSpacing(10);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Nationalkader-Auswahl")), this);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nationalkader-Auswahl")), this);
     layout->addWidget(heading);
 
     m_hint = new QLabel(this);

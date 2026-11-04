@@ -1,5 +1,7 @@
 #include "MainWindow.h"
 
+#include "widgets/ClubHeaderBar.h"
+
 #include "AboutDialog.h"
 #include "AppContext.h"
 #include "NewSaveWizard.h"
@@ -106,11 +108,15 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     auto *contentColumn = new QVBoxLayout;
     contentColumn->setContentsMargins(0, 0, 0, 0);
     contentColumn->setSpacing(0);
-    auto *headerBar = new QFrame(central);
-    headerBar->setObjectName(QStringLiteral("headerBar"));
+    // Club header: crest and name on a block in the club colors, then
+    // navigation, breadcrumb, search and import on the neutral part.
+    m_headerBar = new ClubHeaderBar(m_theme, central);
+    auto *headerBar = m_headerBar;
     auto *headerLayout = new QHBoxLayout(headerBar);
-    headerLayout->setContentsMargins(18, 8, 18, 8);
+    headerLayout->setContentsMargins(0, 0, 20, 0);
     headerLayout->setSpacing(12);
+    headerLayout->addWidget(m_headerBar->identityWidget());
+    headerLayout->addSpacing(ClubHeaderBar::kBlockTail - 4);
 
     // Browser-style navigation, present above every page: Back / Forward / Home.
     auto *navLayout = new QHBoxLayout;
@@ -119,7 +125,8 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
                                    void (MainWindow::*slot)()) {
         auto *button = new QToolButton(headerBar);
         button->setObjectName(QStringLiteral("navButton"));
-        button->setText(glyph);
+        button->setProperty("lineIcon", glyph);
+        button->setIconSize(QSize(16, 16));
         button->setToolTip(toolTip);
         button->setCursor(Qt::PointingHandCursor);
         button->setFocusPolicy(Qt::NoFocus); // never steal focus from page inputs
@@ -127,25 +134,29 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         navLayout->addWidget(button);
         return button;
     };
-    m_backButton = makeNavButton(QStringLiteral("←"), tr("Zurück (Alt+←)"), &MainWindow::goBack);
-    m_forwardButton =
-        makeNavButton(QStringLiteral("→"), tr("Vorwärts (Alt+→)"), &MainWindow::goForward);
+    m_backButton =
+        makeNavButton(QStringLiteral("arrow-left"), tr("Zurück (Alt+←)"), &MainWindow::goBack);
+    m_forwardButton = makeNavButton(QStringLiteral("arrow-right"), tr("Vorwärts (Alt+→)"),
+                                    &MainWindow::goForward);
     m_homeButton =
-        makeNavButton(QStringLiteral("⌂"), tr("Startseite (Alt+Pos1)"), &MainWindow::goHome);
+        makeNavButton(QStringLiteral("home"), tr("Startseite (Alt+Pos1)"), &MainWindow::goHome);
+    const auto tintNavButtons = [this] {
+        QColor color = m_theme.text();
+        color.setAlphaF(0.80);
+        for (QToolButton *button : {m_backButton, m_forwardButton, m_homeButton})
+            button->setIcon(LineIcons::icon(button->property("lineIcon").toString(), color, 16,
+                                            devicePixelRatioF()));
+    };
+    tintNavButtons();
+    connect(&m_theme, &ThemeManager::themeChanged, this, tintNavButtons);
     headerLayout->addLayout(navLayout);
     new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Left), this, this, &MainWindow::goBack);
     new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Right), this, this, &MainWindow::goForward);
     new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Home), this, this, &MainWindow::goHome);
     qApp->installEventFilter(this);
 
-    m_headerLogo = new QLabel(headerBar);
-    m_headerLogo->setFixedHeight(34);
-    m_headerLogo->hide();
-    m_headerIdentity = new QLabel(headerBar);
     m_breadcrumb = new QLabel(headerBar);
     m_breadcrumb->setObjectName(QStringLiteral("breadcrumb"));
-    headerLayout->addWidget(m_headerLogo);
-    headerLayout->addWidget(m_headerIdentity);
     headerLayout->addWidget(m_breadcrumb, 1);
 
     // Ctrl+K: search players, pages and actions in one field.
@@ -427,12 +438,13 @@ void MainWindow::rebuildMenu(bool selectFirst)
     m_menu->clear();
 
     const auto addSection = [this](const QString &heading) {
-        auto *item = new QListWidgetItem(heading, m_menu);
+        // Sentence case, no tracking: a quiet label, not a shouted one.
+        const QString text = heading.left(1).toUpper() + heading.mid(1).toLower();
+        auto *item = new QListWidgetItem(text, m_menu);
         item->setFlags(Qt::NoItemFlags);
         QFont font = item->font();
-        font.setBold(true);
-        font.setPointSizeF(font.pointSizeF() * 0.8);
-        font.setLetterSpacing(QFont::AbsoluteSpacing, 0.8);
+        font.setWeight(QFont::DemiBold);
+        font.setPointSizeF(font.pointSizeF() * 0.88);
         item->setFont(font);
     };
     m_sidebar = Navigation::sidebar(national);
@@ -821,41 +833,26 @@ void MainWindow::startDwrsRecalc()
 
 void MainWindow::updateHeader()
 {
-    // Optional header image (user-provided PNG, per database): the national
-    // flag while in national mode, otherwise the club logo.
-    QPixmap headerImage;
-    if (headerImage.loadFromData(m_context.profileImage(
-            m_context.nationalUiMode() ? AppContext::ProfileImage::NationalFlag
-                                       : AppContext::ProfileImage::ClubLogo))) {
-        m_headerLogo->setPixmap(headerImage.scaledToHeight(34, Qt::SmoothTransformation));
-        m_headerLogo->show();
-    } else {
-        m_headerLogo->clear();
-        m_headerLogo->hide();
-    }
+    // Crest (or the national flag in national mode); without one the header
+    // shows a monogram badge. AppContext::headerCrest() is the single source.
+    QPixmap crest;
+    crest.loadFromData(m_context.headerCrest());
 
-    QString identity;
+    QString title;
+    QString subtitle;
     if (m_context.nationalUiMode()) {
         const QString name = m_context.nationalTeamName();
-        const QString code = m_context.nationalTeamCode();
-        identity = QStringLiteral("<b style='font-size:13pt;'>%1</b>")
-                       .arg((name.isEmpty() ? tr("Nationalteam") : name).toHtmlEscaped());
-        if (!code.isEmpty())
-            identity += QStringLiteral(" &nbsp;<span>(%1)</span>").arg(code.toHtmlEscaped());
+        title = name.isEmpty() ? tr("Nationalteam") : name;
+        subtitle = m_context.nationalTeamCode();
     } else {
         const QString fullName =
             m_context.database().setting(QStringLiteral("full_club_name"));
-        const QString stadium = m_context.database().setting(QStringLiteral("stadium_name"));
-        const QString display = !fullName.isEmpty()
-                                    ? fullName
+        title = !fullName.isEmpty() ? fullName
                                     : (!m_context.userClub().isEmpty() ? m_context.userClub()
                                                                        : tr("FM Dashboard"));
-        identity = QStringLiteral("<b style='font-size:13pt;'>%1</b>")
-                       .arg(display.toHtmlEscaped());
-        if (!stadium.isEmpty())
-            m_headerIdentity->setToolTip(stadium);
+        subtitle = m_context.database().setting(QStringLiteral("stadium_name"));
     }
-    m_headerIdentity->setText(identity);
+    m_headerBar->setIdentity(crest, title, subtitle);
 }
 
 void MainWindow::updateMenuIcons()

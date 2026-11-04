@@ -43,7 +43,7 @@ TrainingPlanPage::TrainingPlanPage(AppContext &context, QWidget *parent)
     layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(10);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Trainingsplan")), this);
+    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Trainingsplan")), this);
     layout->addWidget(heading);
 
     auto *tacticRow = new QHBoxLayout;

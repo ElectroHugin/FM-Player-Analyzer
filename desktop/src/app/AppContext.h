@@ -80,6 +80,10 @@ public:
     enum class ProfileImage { ClubLogo, NationalFlag };
     QByteArray profileImage(ProfileImage image);
     bool setProfileImage(ProfileImage image, const QByteArray &png, QString *errorOut = nullptr);
+    // The image the club header shows (club crest, or the flag in national
+    // mode). Single place to plug in further sources (e.g. the FM graphics
+    // folder): today it is the PNG stored in the profile.
+    QByteArray headerCrest();
     // Writes the edited definitions (definitions().setRoot()) into the open
     // save's profile and reloads them with the engines.
     bool saveDefinitions(QString *errorOut = nullptr);

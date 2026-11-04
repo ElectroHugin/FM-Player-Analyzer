@@ -591,7 +591,7 @@ QString NewTacticPage::selectedTactic() const
 void NewTacticPage::updateEditMode()
 {
     const bool editing = !m_editingName.isEmpty();
-    m_heading->setText(QStringLiteral("<h2>%1</h2>")
+    m_heading->setText(QStringLiteral("<h2 style='font-weight:600'>%1</h2>")
                            .arg(editing ? tr("Taktik bearbeiten: %1").arg(m_editingName.toHtmlEscaped())
                                         : tr("Neue Taktik erstellen")));
     m_createButton->setText(editing ? tr("Änderungen speichern") : tr("Neue Taktik erstellen"));

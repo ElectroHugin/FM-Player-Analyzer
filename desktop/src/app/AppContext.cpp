@@ -275,6 +275,11 @@ QByteArray AppContext::profileImage(ProfileImage image)
     return data;
 }
 
+QByteArray AppContext::headerCrest()
+{
+    return profileImage(nationalUiMode() ? ProfileImage::NationalFlag : ProfileImage::ClubLogo);
+}
+
 bool AppContext::setProfileImage(ProfileImage image, const QByteArray &png, QString *errorOut)
 {
     const QString document = image == ProfileImage::ClubLogo ? ProfileStore::clubLogoDocument()

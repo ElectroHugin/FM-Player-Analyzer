@@ -82,9 +82,11 @@ add_executable(fmplayeranalyzer
     widgets/CommandPalette.h
     widgets/CommandPalette.cpp
     widgets/DropZone.h
+    widgets/ClubHeaderBar.h
     widgets/LineIcons.h
     widgets/LineIcons.cpp
     widgets/DropZone.cpp
+    widgets/ClubHeaderBar.cpp
     widgets/BusyProgressDialog.h
     widgets/BusyProgressDialog.cpp
     widgets/CellStyleDelegate.h

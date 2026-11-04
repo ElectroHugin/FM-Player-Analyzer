@@ -79,7 +79,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Spieler-Profil")), content);
+    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Spieler-Profil")), content);
     layout->addWidget(heading);
 
     // --- Selection row ---

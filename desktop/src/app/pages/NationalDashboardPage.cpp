@@ -49,7 +49,7 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Nationalteam-Übersicht")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nationalteam-Übersicht")), content);
     layout->addWidget(heading);
 
     // --- Import section ---
