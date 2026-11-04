@@ -2,9 +2,12 @@
 
 #include "PageBase.h"
 
+#include "core/SquadBuilder.h"
+
 #include <QHash>
 #include <QList>
 #include <QPair>
+#include <QStringList>
 
 #include <vector>
 
@@ -12,6 +15,7 @@ class QCheckBox;
 class QComboBox;
 class QGroupBox;
 class QLabel;
+class QMenu;
 class QPushButton;
 class QStackedWidget;
 class QTableWidget;
@@ -73,6 +77,23 @@ private:
                           bool includeTalent);
     void fillDepthTable(const QHash<QString, QList<DepthOption>> &options);
 
+    // --- Bridge search and squad depth per missing starter (BestXiDepth.cpp) ---
+    // What a pitch shows, so a right-click can hand its place over to the
+    // scouting search. partner: the other line-up of the same team (FM27).
+    struct PitchTeam {
+        QHash<QString, XiCell> cells;    // slot -> player
+        QHash<QString, QString> lineUp;  // slot -> role
+        QStringList order;               // slots in pitch order
+        TacticPitchWidget *partner = nullptr;
+        bool ip = false;                 // the line-up with ball
+    };
+    void clearPitchTeams();
+    // "Search in scouting" entries for a place of a pitch (filled or empty).
+    void addScoutActions(QMenu &menu, TacticPitchWidget *pitch, const QString &slot);
+    void showEmptySlotMenu(TacticPitchWidget *pitch, const QString &slot, const QPoint &globalPos);
+    // One row per starter: the extra player who covers his absence and who moves.
+    void fillOutageTable(const QList<OutageCover> &covers, bool twoPhase);
+
     ThemeManager &m_theme;
 
     QLabel *m_heading = nullptr;
@@ -116,6 +137,12 @@ private:
     } m_bridge;
     TacticPitchWidget *m_xiIpPitch = nullptr;  // in possession
     TacticPitchWidget *m_bTeamIpPitch = nullptr;
+    QHash<TacticPitchWidget *, PitchTeam> m_pitchTeams;
+    QString m_pitchTactic;
+    QHash<QString, double> m_valueOfUid; // starting XI value per player (reference)
+    QGroupBox *m_outageBox = nullptr;
+    QLabel *m_outageNote = nullptr;
+    QTableWidget *m_outageTable = nullptr;
     QGroupBox *m_depthBox = nullptr;
     QTableWidget *m_depthTable = nullptr;
     QLabel *m_depthEmpty = nullptr;

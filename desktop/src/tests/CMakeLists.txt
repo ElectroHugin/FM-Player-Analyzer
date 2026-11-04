@@ -40,6 +40,7 @@ fm_add_test(test_tacticexplorer)
 fm_add_test(test_talentengine)
 fm_add_test(test_ratingsupdater)
 fm_add_test(test_twophase)
+fm_add_test(test_scoutsearch)
 fm_add_test(test_profile)
 
 # Widget test for an app-side class: compiles the widget source directly (the

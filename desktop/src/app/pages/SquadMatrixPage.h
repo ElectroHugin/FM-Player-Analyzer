@@ -26,6 +26,7 @@ namespace fm {
 
 struct Player;
 class PersonalityFilterWidget;
+class ScoutRequirementsBar;
 class PlayerTableModel;
 class PlayerFilterProxy;
 struct PlayerColumn;
@@ -68,6 +69,10 @@ private:
     QWidget *buildSquadTab();
     void buildTable(TableSection *section, const QString &title, QWidget *parent, bool scouted);
     QList<PlayerColumn> buildColumns(bool clubTable) const;
+    // Takes a search handed over from the Best XI (bridge search).
+    void applyPendingScoutSearch();
+    // Game positions of the open save's FM version, pitch order.
+    QStringList gamePositionChoices() const;
     void rebuildAll();
     void rebuildScoutedOnly();
     QStringList selectedRoles() const;
@@ -106,6 +111,13 @@ private:
     QSpinBox *m_maxAgeSpin = nullptr;
     QSlider *m_maxValueSlider = nullptr;
     QLabel *m_maxValueLabel = nullptr;
+
+    // Several requirements at once (AND), e.g. a bridge from the Best XI.
+    ScoutRequirementsBar *m_requirements = nullptr;
+    QString m_referenceName;      // benchmark of a handed-over search ("" = none)
+    double m_referenceValue = -1.0;
+    QHash<QString, double> m_requirementValues; // uid -> combined value (rows shown)
+    bool m_sortByRequirements = false;           // select that sort on next rebuild
 
     // Talent filter (scouting)
     QGroupBox *m_talentBox = nullptr;

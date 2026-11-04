@@ -469,6 +469,14 @@ void TacticPitchWidget::contextMenuEvent(QContextMenuEvent *event)
         event->accept();
         return;
     }
+    if (!m_editor) {
+        const QString slot = slotAt(event->pos());
+        if (!slot.isEmpty()) {
+            emit emptySlotContextMenuRequested(slot, event->globalPos());
+            event->accept();
+            return;
+        }
+    }
     QWidget::contextMenuEvent(event);
 }
 
