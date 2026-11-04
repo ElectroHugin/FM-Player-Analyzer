@@ -1,6 +1,8 @@
 #include <QtTest>
 
 #include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -240,6 +242,199 @@ private slots:
         QCOMPARE(restored[0].uid, QStringLiteral("r-42"));
         QCOMPARE(restored[0].name, QStringLiteral("Müller"));
         backup.close();
+    }
+
+    void snapshotIncludesWalOfOpenSource()
+    {
+        // Review 2026-11-02 (P1): taking over an external analyzer database
+        // must include committed changes that only live in its -wal sidecar
+        // while another connection still has it open. A plain QFile::copy of
+        // the main file returned zero players here.
+        QTemporaryDir dir;
+        const QString source = dir.filePath(QStringLiteral("external.db"));
+        const QString target = dir.filePath(QStringLiteral("taken_over.db"));
+        Database db(QStringLiteral("test_snapshot_src"));
+        QVERIFY(db.open(source));
+        {
+            QSqlQuery checkpoint(db.handle());
+            QVERIFY(checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)")));
+        }
+        std::vector<Player> batch(1);
+        batch[0].uid = QStringLiteral("r-7");
+        batch[0].name = QStringLiteral("Wal Only");
+        QVERIFY2(db.upsertPlayers(batch), qPrintable(db.errorString()));
+        QVERIFY(QFileInfo(source + QStringLiteral("-wal")).size() > 0);
+
+        QString error;
+        QVERIFY2(Database::snapshotTo(source, target, &error), qPrintable(error));
+        {
+            Database copy(QStringLiteral("test_snapshot_dst"));
+            QVERIFY(copy.open(target));
+            const std::vector<Player> players = copy.loadPlayers();
+            QCOMPARE(static_cast<int>(players.size()), 1);
+            QCOMPARE(players[0].uid, QStringLiteral("r-7"));
+            copy.close();
+        }
+
+        // The source stays as it was (read-only): its WAL is not folded in.
+        QVERIFY(QFileInfo(source + QStringLiteral("-wal")).size() > 0);
+        QCOMPARE(static_cast<int>(db.loadPlayers().size()), 1);
+        db.close();
+
+        // An existing target is never overwritten; a failed copy leaves
+        // nothing behind under a new name.
+        QVERIFY(!Database::snapshotTo(source, target, &error));
+        QVERIFY(QFileInfo::exists(target));
+        const QString broken = dir.filePath(QStringLiteral("broken.db"));
+        {
+            QFile junk(broken);
+            QVERIFY(junk.open(QIODevice::WriteOnly));
+            junk.write(QByteArray(4096, 'x'));
+        }
+        const QString fromBroken = dir.filePath(QStringLiteral("from_broken.db"));
+        QVERIFY(!Database::snapshotTo(broken, fromBroken, &error));
+        QVERIFY(!error.isEmpty());
+        QVERIFY(!QFileInfo::exists(fromBroken));
+    }
+
+    void snapshotOfCrashedSourceWithLeftoverWal()
+    {
+        // A source whose writer died: main file + -wal (+ -shm) on disk, no
+        // open connection. The copy must still contain the WAL changes.
+        QTemporaryDir dir;
+        const QString live = dir.filePath(QStringLiteral("live.db"));
+        Database db(QStringLiteral("test_snapshot_crash"));
+        QVERIFY(db.open(live));
+        {
+            QSqlQuery checkpoint(db.handle());
+            QVERIFY(checkpoint.exec(QStringLiteral("PRAGMA wal_checkpoint(TRUNCATE)")));
+        }
+        std::vector<Player> batch(2);
+        batch[0].uid = QStringLiteral("1");
+        batch[0].name = QStringLiteral("One");
+        batch[1].uid = QStringLiteral("2");
+        batch[1].name = QStringLiteral("Two");
+        QVERIFY(db.upsertPlayers(batch));
+        // Freeze the three files as a crash would leave them (copied while
+        // the writer still holds them open).
+        const QString crashed = dir.filePath(QStringLiteral("crashed.db"));
+        for (const QString &suffix : {QString(), QStringLiteral("-wal"), QStringLiteral("-shm")})
+            QVERIFY(QFile::copy(live + suffix, crashed + suffix));
+        db.close();
+
+        const QString target = dir.filePath(QStringLiteral("rescued.db"));
+        QString error;
+        QVERIFY2(Database::snapshotTo(crashed, target, &error), qPrintable(error));
+        Database copy(QStringLiteral("test_snapshot_rescued"));
+        QVERIFY(copy.open(target));
+        QCOMPARE(static_cast<int>(copy.loadPlayers().size()), 2);
+        copy.close();
+    }
+
+    void backupRotationKeepsOtherSavesAndNewBackup()
+    {
+        // Review 2026-11-02 (P1): save "A" must not rotate the backups of
+        // save "A_backup_B", nor delete the backup it has just written.
+        QTemporaryDir dir;
+        const QString backupsDir = dir.filePath(QStringLiteral("backups"));
+        QVERIFY(QDir().mkpath(backupsDir));
+        const QStringList foreign = {
+            QStringLiteral("A_backup_B_backup_2000-01-01_00-00-00.db"),
+            QStringLiteral("A_backup_B_backup_2000-01-02_00-00-00.db"),
+            QStringLiteral("A_backup_B_backup_2000-01-03_00-00-00.db"),
+        };
+        for (const QString &name : foreign) {
+            QFile f(QDir(backupsDir).filePath(name));
+            QVERIFY(f.open(QIODevice::WriteOnly));
+        }
+
+        const QString saveA = dir.filePath(QStringLiteral("A.db"));
+        {
+            Database db(QStringLiteral("test_rotation_a"));
+            QVERIFY(db.open(saveA));
+            std::vector<Player> batch(1);
+            batch[0].uid = QStringLiteral("1");
+            batch[0].name = QStringLiteral("Keeper");
+            QVERIFY(db.upsertPlayers(batch));
+            db.close();
+        }
+
+        QString error;
+        QVERIFY2(Database::createBackup(saveA, backupsDir, &error), qPrintable(error));
+        const QDir bdir(backupsDir);
+        QStringList ownA;
+        for (const QString &file : bdir.entryList({QStringLiteral("*.db")}, QDir::Files)) {
+            if (!foreign.contains(file))
+                ownA << file;
+        }
+        QCOMPARE(ownA.size(), 1);
+        for (const QString &name : foreign)
+            QVERIFY2(bdir.exists(name), qPrintable(name));
+        {
+            Database backup(QStringLiteral("test_rotation_check"));
+            QVERIFY(backup.open(bdir.filePath(ownA.first())));
+            QCOMPARE(static_cast<int>(backup.loadPlayers().size()), 1);
+            backup.close();
+        }
+
+        // Rotation of A's own backups: old ones go, the newest three stay —
+        // including two taken within the same second.
+        for (const QString &old : {QStringLiteral("A_backup_1999-01-01_00-00-00.db"),
+                                   QStringLiteral("A_backup_1999-01-02_00-00-00.db"),
+                                   QStringLiteral("A_backup_1999-01-03_00-00-00.db")}) {
+            QFile f(bdir.filePath(old));
+            QVERIFY(f.open(QIODevice::WriteOnly));
+        }
+        QVERIFY2(Database::createBackup(saveA, backupsDir, &error), qPrintable(error));
+        QVERIFY2(Database::createBackup(saveA, backupsDir, &error), qPrintable(error));
+        QStringList afterRotation;
+        for (const QString &file : bdir.entryList({QStringLiteral("*.db")}, QDir::Files)) {
+            if (!foreign.contains(file))
+                afterRotation << file;
+        }
+        QCOMPARE(afterRotation.size(), 3);
+        for (const QString &file : afterRotation)
+            QVERIFY2(!file.startsWith(QStringLiteral("A_backup_1999")), qPrintable(file));
+        for (const QString &name : foreign)
+            QVERIFY2(bdir.exists(name), qPrintable(name));
+    }
+
+    void mergeKeepsUserDecisions()
+    {
+        // Review 2026-11-02 (P2): national squad, shortlist, training role and
+        // long-term injury of the merged-away duplicate survive the merge.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("test_merge_user_state"));
+        QVERIFY2(db.open(dir.filePath(QStringLiteral("t.db"))), qPrintable(db.errorString()));
+        std::vector<Player> batch(4);
+        batch[0].uid = QStringLiteral("55");
+        batch[1].uid = QStringLiteral("r-55");
+        batch[2].uid = QStringLiteral("66");
+        batch[3].uid = QStringLiteral("r-66");
+        for (Player &p : batch)
+            p.name = p.uid;
+        QVERIFY(db.upsertPlayers(batch));
+
+        QVERIFY(db.setNationalSquadIds({batch[0].id}));
+        QVERIFY(db.setShortlistIds({batch[0].id}));
+        QVERIFY(db.setTrainingRole(batch[0].id, QStringLiteral("AF-A")));
+        QVERIFY(db.setLongTermInjured(batch[0].id, true));
+        QVERIFY(db.mergePlayerInto(batch[0].id, batch[1].id));
+
+        const Player merged = db.loadPlayers(QList<int>{batch[1].id}).front();
+        QVERIFY(merged.inNationalSquad);
+        QVERIFY(merged.onShortlist);
+        QVERIFY(merged.longTermInjured);
+        QCOMPARE(merged.trainingRole, QStringLiteral("AF-A"));
+
+        // Conflicting training roles: the surviving record keeps its own.
+        QVERIFY(db.setTrainingRole(batch[2].id, QStringLiteral("CM-S")));
+        QVERIFY(db.setTrainingRole(batch[3].id, QStringLiteral("BWM-D")));
+        QVERIFY(db.mergePlayerInto(batch[2].id, batch[3].id));
+        const Player kept = db.loadPlayers(QList<int>{batch[3].id}).front();
+        QCOMPARE(kept.trainingRole, QStringLiteral("BWM-D"));
+        QVERIFY(!kept.inNationalSquad);
+        QVERIFY(!kept.longTermInjured);
     }
 
     // dwrs_latest must always hold the newest rating per (player, role), and an

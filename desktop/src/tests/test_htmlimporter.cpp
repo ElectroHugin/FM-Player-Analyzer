@@ -383,6 +383,50 @@ private slots:
         QCOMPARE(ratings.value({players[0].id, QStringLiteral("W-S")}).second, 60.0);
     }
 
+    void unificationKeepsUserDecisions()
+    {
+        // Review 2026-11-02 (P2) with the real importer: the numeric newgen
+        // record carries national squad, shortlist, training role and
+        // long-term injury; importing r-55 merges it away. All four must
+        // survive — in the database and in the returned player list.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("import_test_merge_state"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+
+        std::vector<Player> seed(2);
+        seed[0].uid = QStringLiteral("55");
+        seed[0].name = QStringLiteral("Dup Regen");
+        seed[1].uid = QStringLiteral("r-55");
+        seed[1].name = QStringLiteral("Dup Regen");
+        QVERIFY(db.upsertPlayers(seed));
+        QVERIFY(db.setNationalSquadIds({seed[0].id}));
+        QVERIFY(db.setShortlistIds({seed[0].id}));
+        QVERIFY(db.setTrainingRole(seed[0].id, QStringLiteral("AF-A")));
+        QVERIFY(db.setLongTermInjured(seed[0].id, true));
+
+        const QString html = htmlExport({
+            playerRow(QStringLiteral("r-55"), QStringLiteral("Dup Regen"),
+                      QStringLiteral("22"), QStringLiteral("FC Test")),
+        });
+        std::vector<Player> inMemory = db.loadPlayers();
+        const ImportResult result =
+            HtmlImporter::importHtml(html, db, inMemory, {}, QString(), {}, &inMemory);
+        QVERIFY2(result.success, qPrintable(result.error));
+
+        const auto check = [](const std::vector<Player> &players) {
+            QCOMPARE(static_cast<int>(players.size()), 1);
+            QCOMPARE(players[0].uid, QStringLiteral("r-55"));
+            QVERIFY(players[0].inNationalSquad);
+            QVERIFY(players[0].onShortlist);
+            QVERIFY(players[0].longTermInjured);
+            QCOMPARE(players[0].trainingRole, QStringLiteral("AF-A"));
+        };
+        check(inMemory);
+        check(db.loadPlayers());
+        QCOMPARE(db.nationalSquadIds(), QList<int>{inMemory[0].id});
+        QCOMPARE(db.shortlistIds(), QList<int>{inMemory[0].id});
+    }
+
     void forceUpdateSinglePlayer()
     {
         QTemporaryDir dir;
