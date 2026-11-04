@@ -522,9 +522,14 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
             good.preferredSide = bad.preferredSide;
         if (good.agreedPlayingTime.isEmpty())
             good.agreedPlayingTime = bad.agreedPlayingTime;
-        // Mirrors Database::mergePlayerInto, which moved the row already.
+        // Mirrors Database::mergePlayerInto, which moved the rows already.
         if (good.registration.isDefault())
             good.registration = bad.registration;
+        if (good.trainingRole.isEmpty())
+            good.trainingRole = bad.trainingRole;
+        good.inNationalSquad = good.inNationalSquad || bad.inNationalSquad;
+        good.onShortlist = good.onShortlist || bad.onShortlist;
+        good.longTermInjured = good.longTermInjured || bad.longTermInjured;
     };
 
     // uid -> merged-away duplicate whose app-managed data must be folded in.

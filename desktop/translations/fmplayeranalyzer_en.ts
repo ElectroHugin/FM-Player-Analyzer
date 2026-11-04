@@ -475,8 +475,8 @@
         <translation>The file %1 could not be deleted.</translation>
     </message>
     <message>
-        <source>Die Datei konnte nicht in den Datenordner kopiert werden.</source>
-        <translation>The file could not be copied into the data folder.</translation>
+        <source>Die Datei konnte nicht in den Datenordner kopiert werden: %1</source>
+        <translation>The file could not be copied into the data folder: %1</translation>
     </message>
 </context>
 <context>

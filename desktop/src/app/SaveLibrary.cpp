@@ -272,27 +272,10 @@ bool duplicate(AppContext &context, const QString &name, const QString &newName,
         return false;
     }
     // VACUUM INTO writes a consistent copy including committed WAL frames.
-    const QString target = context.paths().databaseFile(newName.trimmed());
-    const QString connName =
-        QStringLiteral("duplicate_%1").arg(QUuid::createUuid().toString(QUuid::Id128));
-    bool ok = false;
     QString dbError;
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connName);
-        db.setDatabaseName(context.paths().databaseFile(name));
-        if (db.open()) {
-            QSqlQuery query(db);
-            query.prepare(QStringLiteral("VACUUM INTO ?"));
-            query.bindValue(0, target);
-            ok = query.exec();
-            if (!ok)
-                dbError = query.lastError().text();
-            db.close();
-        } else {
-            dbError = db.lastError().text();
-        }
-    }
-    QSqlDatabase::removeDatabase(connName);
+    const bool ok = Database::snapshotTo(context.paths().databaseFile(name),
+                                         context.paths().databaseFile(newName.trimmed()),
+                                         &dbError);
     if (!ok && errorOut)
         *errorOut = SaveText::tr("Der Spielstand konnte nicht kopiert werden: %1").arg(dbError);
     return ok;
@@ -337,9 +320,15 @@ bool importFile(AppContext &context, const QString &sourcePath, const QString &n
         return false;
     }
     QDir().mkpath(context.paths().databasesDir());
-    if (!QFile::copy(sourcePath, context.paths().databaseFile(newName.trimmed()))) {
+    // A plain file copy would miss committed changes that still live in the
+    // source's -wal sidecar (open elsewhere or not cleanly closed). VACUUM INTO
+    // writes a consistent snapshot and leaves the source untouched.
+    QString dbError;
+    if (!Database::snapshotTo(sourcePath, context.paths().databaseFile(newName.trimmed()),
+                              &dbError)) {
         if (errorOut)
-            *errorOut = SaveText::tr("Die Datei konnte nicht in den Datenordner kopiert werden.");
+            *errorOut = SaveText::tr("Die Datei konnte nicht in den Datenordner kopiert werden: %1")
+                            .arg(dbError);
         return false;
     }
     return true;

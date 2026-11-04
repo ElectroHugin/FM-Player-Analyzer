@@ -302,6 +302,68 @@ private slots:
         QVERIFY(squad.coreSquadUids.contains(QStringLiteral("musiala")));
         QCOMPARE(squad.depthPool.size(), size_t(1));
     }
+    void primaryRoleWithBallKeepsDepthWithoutBall()
+    {
+        // Review 2026-11-02 (P2): a primary role with ball pins only the phase
+        // with ball. The depth options must apply the same rule as starting XI
+        // and B-team: the third player stays a depth option for TW (without
+        // ball) although IF (with ball) is his primary role.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AMR", "IF"}}), slotMap({{"AMR", "TW"}})));
+        std::vector<Player> players = {makePlayer(QStringLiteral("a"), QStringLiteral("AM (R)")),
+                                       makePlayer(QStringLiteral("b"), QStringLiteral("AM (R)")),
+                                       makePlayer(QStringLiteral("c"), QStringLiteral("AM (R)"))};
+        for (Player &p : players)
+            p.assignedRoles = {QStringLiteral("IF"), QStringLiteral("TW")};
+        RoleRatings ratings;
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("a"), 90}, {QStringLiteral("b"), 80},
+                                         {QStringLiteral("c"), 70}};
+        ratings[QStringLiteral("TW")] = {{QStringLiteral("a"), 90}, {QStringLiteral("b"), 80},
+                                         {QStringLiteral("c"), 70}};
+
+        SquadBuilder builder(defs, *m_config);
+        const auto depthFor = [&](const QString &role) {
+            std::vector<const Player *> pool;
+            for (const Player &p : players)
+                pool.push_back(&p);
+            const SquadResult squad =
+                builder.calculateSquadForTactic(pool, QStringLiteral("T"), ratings, false);
+            return squad.bestDepthOptions.value(role);
+        };
+
+        QCOMPARE(depthFor(QStringLiteral("TW")).size(), 1);
+        QCOMPARE(depthFor(QStringLiteral("TW")).first().playerUid, QStringLiteral("c"));
+
+        players[2].primaryRole = QStringLiteral("IF");
+        QCOMPARE(depthFor(QStringLiteral("TW")).size(), 1);
+        QCOMPARE(depthFor(QStringLiteral("TW")).first().playerUid, QStringLiteral("c"));
+        QCOMPARE(depthFor(QStringLiteral("IF")).first().playerUid, QStringLiteral("c"));
+
+        // Within its own phase the pin still holds: pinned to TW (without
+        // ball), he is no depth option for another role without ball, and a
+        // role with ball stays open to him.
+        Definitions defs2;
+        defs2.setRoot(root(slotMap({{"AMR", "IF"}}), slotMap({{"MR", "WM"}})));
+        std::vector<Player> wide = {makePlayer(QStringLiteral("a"), QStringLiteral("AM (R), M (R)")),
+                                    makePlayer(QStringLiteral("b"), QStringLiteral("AM (R), M (R)")),
+                                    makePlayer(QStringLiteral("c"), QStringLiteral("AM (R), M (R)"))};
+        for (Player &p : wide)
+            p.assignedRoles = {QStringLiteral("IF"), QStringLiteral("WM"), QStringLiteral("TW")};
+        wide[2].primaryRole = QStringLiteral("TW");
+        RoleRatings ratings2;
+        ratings2[QStringLiteral("IF")] = ratings[QStringLiteral("IF")];
+        ratings2[QStringLiteral("WM")] = ratings[QStringLiteral("TW")];
+        SquadBuilder builder2(defs2, *m_config);
+        std::vector<const Player *> pool2;
+        for (const Player &p : wide)
+            pool2.push_back(&p);
+        const SquadResult squad2 =
+            builder2.calculateSquadForTactic(pool2, QStringLiteral("T"), ratings2, false);
+        QVERIFY(squad2.bestDepthOptions.value(QStringLiteral("WM")).isEmpty());
+        QCOMPARE(squad2.bestDepthOptions.value(QStringLiteral("IF")).value(0).playerUid,
+                 QStringLiteral("c"));
+    }
+
     void manualBridgeCostsValue()
     {
         // Olise is the better inside forward, Musiala the better winger in the
