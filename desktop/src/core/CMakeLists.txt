@@ -60,6 +60,8 @@ add_library(fmcore STATIC
     SigningAdvisor.cpp
     SquadBuilder.h
     SquadBuilder.cpp
+    TacticLibrary.h
+    TacticLibrary.cpp
     TacticExplorer.h
     TacticExplorer.cpp
     TrainingAdvice.h

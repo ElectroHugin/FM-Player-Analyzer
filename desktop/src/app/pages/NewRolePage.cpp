@@ -294,6 +294,13 @@ void NewRolePage::createRole()
         posMap.insert(position, QJsonArray::fromStringList(roleList));
     }
     root.insert(QStringLiteral("position_to_role_mapping"), posMap);
+    // Own roles survive shipped data updates (Definitions::applyShippedUpdate).
+    {
+        QJsonArray custom = root.value(QLatin1String("custom_roles")).toArray();
+        if (!custom.contains(abbr))
+            custom.append(abbr);
+        root.insert(QStringLiteral("custom_roles"), custom);
+    }
 
     m_context.definitions().setRoot(root);
     if (!m_context.definitions().save()) {

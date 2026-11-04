@@ -116,7 +116,10 @@ private:
     TacticPitchWidget *m_bTeamPitch = nullptr;
     QPushButton *m_xiButton = nullptr;         // Startelf / B-Team switch
     QPushButton *m_bButton = nullptr;
-    QStackedWidget *m_teamStack = nullptr;
+    QStackedWidget *m_teamStack = nullptr;     // 0/1: FM27 XI/B-team, 2: FM24 both
+    QWidget *m_teamSwitch = nullptr;           // the switch (two-phase tactics only)
+    TacticPitchWidget *m_singleXiPitch = nullptr; // FM24: starting XI ...
+    TacticPitchWidget *m_singleBPitch = nullptr;  // ... and B-team side by side
     QLabel *m_xiIpTitle = nullptr;
     QLabel *m_bIpTitle = nullptr;
     QLabel *m_phaseNote = nullptr;

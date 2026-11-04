@@ -165,9 +165,11 @@ first (can you fill all eleven positions?), then strength per line. Click a
 tactic to see how many suitable players you have for each slot. The bundled
 tactics are rebuilt from the
 [FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/), and
-you can add your own. FM27 ships with my standard tactic
-("4-2-3-1 - Bavarian Blitz"), also as a game file to import into FM27; create
-your own tactics in the tactic editor, updates leave them untouched.
+you can add your own. FM27 ships with two example tactics ("Control Press ·
+4-2-3-1" and "Counter Surge · 3-4-2-1"), also as game files to import into FM27.
+In *Roles & Tactics → Tactics* you edit, rename, duplicate, delete, export and
+import tactics per save (exchange file `.fmpatactic`); updates neither overwrite
+your changes nor bring deleted examples back.
 
 <img src="docs/screenshots/en/tactic-explorer.png" alt="Tactic Explorer ranking tactics by coverage and median rating per team part" width="100%">
 
@@ -246,10 +248,10 @@ that view and press **F9**. The plugin writes a CSV file. Create the save in the
 analyzer for *Football Manager 2027* (the default for new saves). Column mapping
 and details: [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
 
-> **Try the standard tactic in the game:** the analyzer already includes my
-> FM27 standard tactic "4-2-3-1 - Bavarian Blitz". The same tactic ships as a
-> game file (`.fmf`): the installer can copy it into your FM27 `tactics` folder,
-> later via *Settings → Club → Install standard tactic for FM27*.
+> **Try the example tactics in the game:** the analyzer already includes the
+> FM27 example tactics "Control Press · 4-2-3-1" and "Counter Surge · 3-4-2-1".
+> Both ship as game files (`.fmf`): the installer can copy them into your FM27
+> `tactics` folder, later via *Settings → Club → Install example tactics for FM27*.
 >
 > **Still on FM24?** Export the squad as HTML (*right-click → Print/Export → Web
 > page (.html)*) with a view that contains the **UID** column, for example the

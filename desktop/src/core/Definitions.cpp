@@ -3,6 +3,7 @@
 #include <QSet>
 
 #include "Constants.h"
+#include "PitchGeometry.h"
 
 #include <QFile>
 #include <QJsonArray>
@@ -142,19 +143,79 @@ QStringList Definitions::pitchOrder(QStringList slotKeys) const
     return slotKeys;
 }
 
-bool Definitions::applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user)
+bool Definitions::applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user,
+                                     QList<QPair<QString, QString>> *renamedOut)
 {
     const int shippedRevision = shipped.value(QLatin1String("data_revision")).toInt(0);
     if (shippedRevision <= user.value(QLatin1String("data_revision")).toInt(0))
         return false;
 
+    const auto names = [](const QJsonValue &value) {
+        QSet<QString> out;
+        for (const QJsonValue &v : value.toArray())
+            out.insert(v.toString());
+        return out;
+    };
+    // What the user did with tactics (TacticLibrary): his own or edited
+    // versions win, deleted templates stay deleted.
+    const QSet<QString> edited = names(user.value(QLatin1String("edited_tactics")));
+    QSet<QString> deleted = names(user.value(QLatin1String("deleted_tactics")));
+    const QSet<QString> customRoles = names(user.value(QLatin1String("custom_roles")));
+
+    QJsonObject merged = shipped;
+
+    // Roles the user made himself (role editor, tactic import) survive the
+    // update unless the shipped data now has a role with the same id.
     QSet<QString> knownRoles;
-    const QJsonObject categories = shipped.value(QLatin1String("player_roles")).toObject();
-    for (auto cat = categories.begin(); cat != categories.end(); ++cat) {
-        const QJsonObject roles = cat.value().toObject();
-        for (auto role = roles.begin(); role != roles.end(); ++role)
-            knownRoles.insert(role.key());
+    {
+        QJsonObject categories = merged.value(QLatin1String("player_roles")).toObject();
+        for (auto cat = categories.begin(); cat != categories.end(); ++cat) {
+            const QJsonObject roles = cat.value().toObject();
+            for (auto role = roles.begin(); role != roles.end(); ++role)
+                knownRoles.insert(role.key());
+        }
+        const QJsonObject userCategories = user.value(QLatin1String("player_roles")).toObject();
+        QJsonObject weights = merged.value(QLatin1String("role_specific_weights")).toObject();
+        QJsonObject mapping = merged.value(QLatin1String("position_to_role_mapping")).toObject();
+        QJsonObject phases = merged.value(QLatin1String("role_phases")).toObject();
+        const QJsonObject userWeights = user.value(QLatin1String("role_specific_weights")).toObject();
+        const QJsonObject userMapping =
+            user.value(QLatin1String("position_to_role_mapping")).toObject();
+        const QJsonObject userPhases = user.value(QLatin1String("role_phases")).toObject();
+        QStringList keptCustom;
+        for (auto cat = userCategories.begin(); cat != userCategories.end(); ++cat) {
+            const QJsonObject roles = cat.value().toObject();
+            for (auto role = roles.begin(); role != roles.end(); ++role) {
+                if (!customRoles.contains(role.key()) || knownRoles.contains(role.key()))
+                    continue;
+                QJsonObject category = categories.value(cat.key()).toObject();
+                category.insert(role.key(), role.value());
+                categories.insert(cat.key(), category);
+                weights.insert(role.key(), userWeights.value(role.key()));
+                for (auto pos = userMapping.begin(); pos != userMapping.end(); ++pos) {
+                    if (!pos.value().toArray().contains(role.key()))
+                        continue;
+                    QJsonArray list = mapping.value(pos.key()).toArray();
+                    if (!list.contains(role.key()))
+                        list.append(role.key());
+                    mapping.insert(pos.key(), list);
+                }
+                if (userPhases.contains(role.key()))
+                    phases.insert(role.key(), userPhases.value(role.key()));
+                knownRoles.insert(role.key());
+                keptCustom << role.key();
+            }
+        }
+        merged.insert(QStringLiteral("player_roles"), categories);
+        merged.insert(QStringLiteral("role_specific_weights"), weights);
+        merged.insert(QStringLiteral("position_to_role_mapping"), mapping);
+        if (!phases.isEmpty())
+            merged.insert(QStringLiteral("role_phases"), phases);
+        keptCustom.sort();
+        if (!keptCustom.isEmpty())
+            merged.insert(QStringLiteral("custom_roles"), QJsonArray::fromStringList(keptCustom));
     }
+
     const auto rolesKnown = [&knownRoles](const QJsonValue &tactic) {
         // One line-up {slot: role} or two {"ip": {...}, "oop": {...}}.
         const QJsonObject obj = tactic.toObject();
@@ -175,23 +236,51 @@ bool Definitions::applyShippedUpdate(const QJsonObject &shipped, QJsonObject &us
         return true;
     };
 
-    QSet<QString> retired;
-    for (const QJsonValue &name : shipped.value(QLatin1String("retired_tactics")).toArray())
-        retired.insert(name.toString());
-
-    QJsonObject merged = shipped;
+    QSet<QString> retired = names(shipped.value(QLatin1String("retired_tactics")));
     QJsonObject tactics = merged.value(QLatin1String("tactic_roles")).toObject();
     QJsonObject layouts = merged.value(QLatin1String("tactic_layouts")).toObject();
     const QJsonObject userTactics = user.value(QLatin1String("tactic_roles")).toObject();
     const QJsonObject userLayouts = user.value(QLatin1String("tactic_layouts")).toObject();
+
+    // Renamed templates ("renamed_tactics": {old: new}): an untouched old
+    // copy becomes the new one (favorites and bridges follow, renamedOut);
+    // an edited one stays the user's; a deleted one keeps the new one away.
+    const QJsonObject renamed = shipped.value(QLatin1String("renamed_tactics")).toObject();
+    for (auto it = renamed.begin(); it != renamed.end(); ++it) {
+        const QString oldName = it.key();
+        const QString newName = it.value().toString();
+        retired.insert(oldName);
+        if (deleted.contains(oldName)) {
+            deleted.insert(newName);
+        } else if (userTactics.contains(oldName) && !edited.contains(oldName)
+                   && !deleted.contains(newName) && renamedOut) {
+            renamedOut->append({oldName, newName});
+        }
+    }
+
+    for (const QString &name : std::as_const(deleted)) {
+        tactics.remove(name);
+        layouts.remove(name);
+    }
     for (auto it = userTactics.begin(); it != userTactics.end(); ++it) {
-        if (tactics.contains(it.key()) || retired.contains(it.key()) || !rolesKnown(it.value()))
+        const bool own = edited.contains(it.key());
+        if (!rolesKnown(it.value()))
+            continue;
+        if (!own && (tactics.contains(it.key()) || retired.contains(it.key())))
             continue;
         tactics.insert(it.key(), it.value());
         layouts.insert(it.key(), userLayouts.value(it.key()));
     }
     merged.insert(QStringLiteral("tactic_roles"), tactics);
     merged.insert(QStringLiteral("tactic_layouts"), layouts);
+    merged.remove(QStringLiteral("renamed_tactics"));
+    if (!edited.isEmpty())
+        merged.insert(QStringLiteral("edited_tactics"), user.value(QLatin1String("edited_tactics")));
+    if (!deleted.isEmpty()) {
+        QStringList list(deleted.begin(), deleted.end());
+        list.sort();
+        merged.insert(QStringLiteral("deleted_tactics"), QJsonArray::fromStringList(list));
+    }
     user = merged;
     return true;
 }
@@ -325,8 +414,32 @@ QStringList Definitions::roleCategoryOrder()
             QStringLiteral("Midfield"), QStringLiteral("Attack")};
 }
 
+double Definitions::roleShiftPercent(const QString &role, const QString &slot) const
+{
+    const auto it = m_roleShifts.constFind(role);
+    if (it == m_roleShifts.constEnd())
+        return 0.0;
+    const PitchSlot *pitchSlot = pitchGeometry(m_fmVersionId).slot(slot);
+    if (!pitchSlot)
+        return 0.0;
+    for (const QString &position : pitchSlot->gamePositions) {
+        const auto value = it->constFind(position);
+        if (value != it->constEnd())
+            return *value;
+    }
+    return 0.0;
+}
+
 void Definitions::rebuildCache()
 {
+    m_roleShifts.clear();
+    const QJsonObject shifts = m_root.value(QLatin1String("role_shifts")).toObject();
+    for (auto it = shifts.begin(); it != shifts.end(); ++it) {
+        const QJsonObject perPosition = it.value().toObject();
+        for (auto pos = perPosition.begin(); pos != perPosition.end(); ++pos)
+            m_roleShifts[it.key()].insert(pos.key(), pos.value().toDouble());
+    }
+
     // Roles: category -> {abbr -> display name}, the flat display map and the
     // sorted list of valid abbreviations.
     m_playerRoles.clear();

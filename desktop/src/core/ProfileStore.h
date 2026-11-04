@@ -2,6 +2,8 @@
 
 #include <QByteArray>
 #include <QHash>
+#include <QList>
+#include <QPair>
 #include <QString>
 #include <QStringList>
 
@@ -85,6 +87,9 @@ public:
         QByteArray json;
         bool seeded = false;      // document was created now
         QByteArray beforeUpdate;  // set when a shipped update was applied
+        // Templates the update renamed (old, new); favorites and bridges of
+        // the save have already been moved along.
+        QList<QPair<QString, QString>> renamedTactics;
     };
     bool loadDefinitions(const QString &fmVersionId, const QByteArray &shippedJson,
                          const QByteArray &sharedJson, DefinitionsResult &out);

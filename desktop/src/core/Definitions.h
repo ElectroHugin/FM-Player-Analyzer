@@ -75,8 +75,14 @@ public:
     // roles/abbreviations/weights must reach existing users), keeping the
     // user's own tactics: every tactic the shipped file does not have and
     // does not list under "retired_tactics", if all its roles still exist.
+    // Templates the user edited ("edited_tactics") keep his version, deleted
+    // ones ("deleted_tactics") stay away, roles he made ("custom_roles") stay
+    // (see TacticLibrary). A shipped "renamed_tactics" {old: new} replaces an
+    // untouched old template; renamedOut lists those (old, new) pairs so
+    // favorites and bridges can follow.
     // Returns false (user untouched) when no update is due.
-    static bool applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user);
+    static bool applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user,
+                                   QList<QPair<QString, QString>> *renamedOut = nullptr);
 
     // All role abbreviations, sorted (get_valid_roles).
     const QStringList &validRoles() const { return m_validRoles; }
@@ -162,6 +168,12 @@ public:
     // Sorts the given role abbreviations naturally (stable within equal keys).
     QStringList sortRolesNaturally(QStringList roles) const;
 
+    // Where the game draws a role's card relative to its slot (FM27, display
+    // only): percent of the pitch length, positive towards the opponent goal.
+    // JSON: "role_shifts": {role: {game position: percent}}. 0 for roles
+    // without a shift (FM24, own roles).
+    double roleShiftPercent(const QString &role, const QString &slot) const;
+
     // Raw access for editing (New Role / New Tactic pages).
     QJsonObject root() const { return m_root; }
     void setRoot(const QJsonObject &root)
@@ -200,6 +212,7 @@ private:
     QHash<QString, QString> m_personalitiesLower; // lowercased name -> category
     QHash<QString, QString> m_roleDisplayMap;
     QHash<QString, QPair<int, int>> m_naturalSorter;
+    QHash<QString, QHash<QString, double>> m_roleShifts; // role -> position -> %
 };
 
 } // namespace fm

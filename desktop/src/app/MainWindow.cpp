@@ -6,6 +6,7 @@
 #include "SaveLibrary.h"
 #include "StartScreen.h"
 #include "widgets/DropZone.h"
+#include "widgets/TacticPitchWidget.h"
 #include "pages/AssignRolesPage.h"
 #include "pages/BestXiPage.h"
 #include "pages/DashboardPage.h"
@@ -80,6 +81,10 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     , m_theme(theme)
 {
     setWindowTitle(appName());
+    // Every pitch draws role-dependent card shifts of the open save's roles.
+    TacticPitchWidget::setShiftSource([this](const QString &role, const QString &slot) {
+        return m_context.definitions().roleShiftPercent(role, slot);
+    });
     resize(1600, 950);
     setMinimumSize(1100, 700);
     setAcceptDrops(true); // drop an FM export anywhere to import it
