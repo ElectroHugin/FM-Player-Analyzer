@@ -101,7 +101,7 @@ PlayerComparisonPage::PlayerComparisonPage(AppContext &context, ThemeManager &th
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Spieler-Vergleich")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Spieler-Vergleich")), content);
     layout->addWidget(heading);
 
     // --- Filter row ---

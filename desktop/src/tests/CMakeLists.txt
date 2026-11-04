@@ -16,6 +16,7 @@ endfunction()
 
 fm_add_test(test_smoke)
 fm_add_test(test_utils)
+fm_add_test(test_themecolors)
 fm_add_test(test_definitions)
 fm_add_test(test_appconfig)
 fm_add_test(test_playerstore)

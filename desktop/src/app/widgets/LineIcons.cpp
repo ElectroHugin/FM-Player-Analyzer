@@ -14,7 +14,17 @@ namespace {
 QPainterPath pathFor(const QString &name)
 {
     QPainterPath p;
-    if (name == QLatin1String("home")) {
+    if (name == QLatin1String("arrow-left")) {
+        p.moveTo(19, 12); p.lineTo(5, 12);
+        p.moveTo(11, 6); p.lineTo(5, 12); p.lineTo(11, 18);
+    } else if (name == QLatin1String("arrow-right")) {
+        p.moveTo(5, 12); p.lineTo(19, 12);
+        p.moveTo(13, 6); p.lineTo(19, 12); p.lineTo(13, 18);
+    } else if (name == QLatin1String("alert")) {
+        p.moveTo(12, 4); p.lineTo(21, 19.5); p.lineTo(3, 19.5); p.closeSubpath();
+        p.moveTo(12, 10); p.lineTo(12, 14);
+        p.addEllipse(QPointF(12, 16.8), 0.4, 0.4);
+    } else if (name == QLatin1String("home")) {
         p.moveTo(3, 11.5); p.lineTo(12, 4); p.lineTo(21, 11.5);
         p.moveTo(5.5, 10); p.lineTo(5.5, 20); p.lineTo(18.5, 20); p.lineTo(18.5, 10);
         p.moveTo(10, 20); p.lineTo(10, 14.5); p.lineTo(14, 14.5); p.lineTo(14, 20);

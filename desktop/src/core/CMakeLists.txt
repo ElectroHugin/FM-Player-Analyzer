@@ -66,6 +66,10 @@ add_library(fmcore STATIC
     TalentEngine.cpp
     Utils.h
     Utils.cpp
+    ThemeColors.h
+    ThemeColors.cpp
+    ColorTemplates.h
+    ColorTemplates.cpp
     Version.h
     Version.cpp
 )

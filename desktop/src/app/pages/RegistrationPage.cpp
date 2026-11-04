@@ -93,7 +93,7 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     headLayout->setContentsMargins(18, 14, 18, 6);
     headLayout->setSpacing(8);
     headLayout->addWidget(
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Meldeliste")), head));
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Meldeliste")), head));
     m_controls = new QWidget(head);
     auto *controlsLayout = new QVBoxLayout(m_controls);
     controlsLayout->setContentsMargins(0, 0, 0, 0);

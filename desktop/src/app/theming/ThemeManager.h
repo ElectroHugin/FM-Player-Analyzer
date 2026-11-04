@@ -5,6 +5,8 @@
 #include <QString>
 #include <QStringList>
 
+#include "core/ThemeColors.h"
+
 namespace fm {
 
 class AppConfig;
@@ -57,6 +59,18 @@ public:
     // Backward-compatible alias used by custom-painted widgets.
     QColor secondaryBackground() const { return m_surface; }
 
+    // --- Derived, contrast-safe colors (club colors can be anything) ---
+    // The accent as text/icon on background and cards (>= 4.5:1).
+    QColor accentText() const { return m_accentText; }
+    // The accent for focus rings, underlines, outlines (>= 3:1, WCAG 1.4.11).
+    QColor accentUi() const { return m_accentUi; }
+    // Club header: "gradient" (club colors, default) or "solid" (header color).
+    QString headerStyle() const { return m_headerStyle; }
+    // Faint crest silhouette in the club header.
+    bool crestWatermark() const { return m_crestWatermark; }
+    // Colors of the club header block for the current mode.
+    ClubHeaderPalette headerPalette() const { return m_headerPalette; }
+
 signals:
     void themeChanged();
 
@@ -67,6 +81,10 @@ private:
     AppConfig &m_config;
     QString m_mode;
     QColor m_background, m_surface, m_sidebar, m_header, m_primary, m_interactive, m_text;
+    QColor m_accentText, m_accentUi;
+    QString m_headerStyle;
+    bool m_crestWatermark = true;
+    ClubHeaderPalette m_headerPalette;
 };
 
 } // namespace fm

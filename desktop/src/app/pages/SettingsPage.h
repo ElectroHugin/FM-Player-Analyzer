@@ -1,5 +1,9 @@
 #pragma once
 
+#include "core/ColorTemplates.h"
+
+#include <memory>
+
 #include "PageBase.h"
 
 #include <QHash>
@@ -75,12 +79,22 @@ private:
     // Theme tab: preset picker + color buttons per mode+role.
     QComboBox *m_modeCombo = nullptr;
     QComboBox *m_presetCombo = nullptr;
+    QPushButton *m_deleteTemplateButton = nullptr;
+    QComboBox *m_headerStyleCombo = nullptr;
+    QCheckBox *m_watermarkCheck = nullptr;
+    std::unique_ptr<ColorTemplateStore> m_templates;
     QHash<QString, QPushButton *> m_colorButtons; // "night_primary_color" etc.
     QHash<QString, QString> m_pendingColors;
     QString m_pendingPreset;
     QLabel *m_contrastLabel = nullptr;
 
     void applyPresetToPending(const QString &presetId);
+    // Built-in presets and the user's templates, grouped by league; own
+    // templates without a league under "Custom".
+    void fillPresetCombo();
+    void saveColorTemplate();
+    void deleteColorTemplate();
+    void selectPresetInCombo(const QString &presetId);
     void markCustomPreset();
 
     // Database tab.

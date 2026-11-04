@@ -61,7 +61,7 @@ NewTacticPage::NewTacticPage(AppContext &context, ThemeManager &theme, QWidget *
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Neue Taktik erstellen")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Neue Taktik erstellen")), content);
     layout->addWidget(heading);
     m_info = new QLabel(content);
     m_info->setWordWrap(true);

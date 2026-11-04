@@ -39,7 +39,7 @@ NationalBestXiPage::NationalBestXiPage(AppContext &context, ThemeManager &theme,
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Nationale Best XI")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nationale Best XI")), content);
     layout->addWidget(heading);
 
     auto *tacticRow = new QHBoxLayout;

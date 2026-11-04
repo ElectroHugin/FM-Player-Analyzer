@@ -16,6 +16,8 @@ einer fremden Datenbank nehmen das Profil deshalb automatisch mit.
 | Eigene Rollen, Taktiken (pro FM-Version) | Profil, `profile_documents` `definitions_<version>` | `context.definitions()`, Speichern mit `context.saveDefinitions()` |
 | Vereinslogo, National-Flagge | Profil, `profile_documents` `club_logo` / `national_flag` (PNG) | `context.profileImage()` / `setProfileImage()` |
 | Verein, zweite Mannschaft, Land, Stadion, Favoriten-Taktiken, Nationalteam, Meldelisten-Regeln, Bridges, Seitenzustände (Filter, Budget …) | Spielstand, Tabelle `settings` (unverändert seit 1.x) | `context.database().setting()` |
+| Vereinskopf: Darstellung (`header_style` = `gradient`/`solid`), Wappen-Silhouette (`header_crest_watermark`) | Profil, `profile_settings` (`ThemeSettings/…`) | `ThemeManager::headerStyle()`, `crestWatermark()` |
+| Eigene Farbvorlagen | App-weit, `<Datenordner>/color_templates.json` | `ColorTemplateStore` (core) |
 | Sprache, Fenstergröße, Datenordner | App-weit, `bootstrap.ini` | `context.paths()` |
 | Zuletzt geöffneter Spielstand, „immer letzten öffnen“, Liste der zuletzt geöffneten | App-weit, `config.ini` | `config().dbName()` usw. |
 | Aussehen des Startbildschirms | App-weit, `config.ini` `[StartTheme]` (Kopie des zuletzt geöffneten Profils) | automatisch |
@@ -139,12 +141,18 @@ Spieler ansetzen (eigenes Paket).
   Vorlagen nicht zurückbringen, gelöschte mitgelieferte Taktiken im Dokument
   vermerken (z. B. eine Liste neben `retired_tactics`) und in
   `Definitions::applyShippedUpdate` beachten.
-* **Eigene Farbvorlagen:** Vorlagen sind app-weit (über Spielstände und Updates
-  hinweg). Sie gehören daher nicht ins Profil, sondern in den Datenordner.
-  Das Anwenden einer Vorlage schreibt die `ThemeSettings/…`-Werte über eine
-  `AppConfig::Transaction` ins geöffnete Profil.
-* **Vereinskopf mit Wappen:** Logo über `context.profileImage(ClubLogo)`,
-  Farben über `config().themeSettings()`, neu zeichnen bei
-  `AppContext::profileChanged`.
+* **Eigene Farbvorlagen (umgesetzt):** app-weit in
+  `<Datenordner>/color_templates.json` (`ColorTemplateStore`, atomar per
+  `QSaveFile` geschrieben, Installer und Updates fassen den Datenordner nicht
+  an). Jede Vorlage hält alle 14 Farben, einen Namen und optional eine Liga
+  (leer = „Custom“). Die Id `user:<uuid>` steht als `ThemeSettings/theme_preset`
+  im Profil. Anwenden setzt die Farben auf der Design-Seite, der
+  Speichern-Knopf schreibt sie über die `AppConfig::Transaction` ins Profil.
+  Löschen einer Vorlage lässt Spielstände, die sie nutzen, unverändert.
+* **Vereinskopf (umgesetzt):** `ClubHeaderBar` zeichnet den Block in den
+  Vereinsfarben; Farben und Kontrast kommen aus `clubHeaderPalette()`
+  (`core/ThemeColors`). Das Wappen holt der Kopf ausschließlich über
+  `AppContext::headerCrest()`. Weitere Quellen (z. B. der FM-Graphics-Ordner)
+  docken dort an, ohne den Kopf zu ändern.
 * **Formatänderungen:** `Profile/format` hochzählen und die Umstellung in
   `AppConfig::attachProfile` ergänzen.
