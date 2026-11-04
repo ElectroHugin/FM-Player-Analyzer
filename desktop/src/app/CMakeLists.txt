@@ -8,6 +8,8 @@ add_executable(fmplayeranalyzer
     AppPaths.h
     AppPaths.cpp
     FirstRunDialog.h
+    GraphicsLibrary.h
+    GraphicsLibrary.cpp
     FirstRunDialog.cpp
     MainWindow.h
     MainWindow.cpp

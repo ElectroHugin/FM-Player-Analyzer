@@ -188,6 +188,16 @@ public:
     // Configured folder if set and existing, otherwise defaultHtmlExportDir().
     QString effectiveHtmlExportDir(const QString &fmVersionId) const;
 
+    // [Graphics] — player portraits and club logos from the FM graphics
+    // folder (face/logo packs). Opt-in per save, off by default. Folder empty
+    // = "<Documents>/Sports Interactive/<game folder>/graphics".
+    bool graphicsEnabled() const;
+    bool setGraphicsEnabled(bool enabled);
+    QString graphicsDir() const;
+    bool setGraphicsDir(const QString &dir);
+    static QString defaultGraphicsDir(const QString &fmVersionId);
+    QString effectiveGraphicsDir(const QString &fmVersionId) const;
+
 private:
     void ensureDefaults();
     static QString iniKey(const QString &name); // "Star Player" -> "star_player"

@@ -116,6 +116,7 @@ bool isProfileSection(const QString &section)
         QStringLiteral("GapAnalysis"),      QStringLiteral("Freshness"),
         QStringLiteral("Training"),         QStringLiteral("ThemeSettings"),
         QStringLiteral("Import"),           QStringLiteral("Profile"),
+        QStringLiteral("Graphics"),
     };
     if (sections.contains(section))
         return true;
@@ -194,6 +195,8 @@ QHash<QString, QString> AppConfig::profileDefaults()
 
     put(QStringLiteral("SelectionBonuses/natural_position_multiplier"), QStringLiteral("1.00"));
     put(QStringLiteral("Phases/ip_share_percent"), QStringLiteral("50"));
+    // Portraits/logos from the FM graphics folder: opt-in, off by default.
+    put(QStringLiteral("Graphics/enabled"), QStringLiteral("false"));
 
     const auto &squad = squadManagementDefaults();
     for (auto it = squad.constBegin(); it != squad.constEnd(); ++it)
@@ -913,6 +916,49 @@ QString AppConfig::effectiveHtmlExportDir(const QString &fmVersionId) const
     if (!configured.isEmpty() && QDir(configured).exists())
         return configured;
     return defaultHtmlExportDir(fmVersionId);
+}
+
+bool AppConfig::graphicsEnabled() const
+{
+    return readValue(QStringLiteral("Graphics/enabled"), QStringLiteral("false"))
+           == QLatin1String("true");
+}
+
+bool AppConfig::setGraphicsEnabled(bool enabled)
+{
+    return writeValue(QStringLiteral("Graphics/enabled"),
+                      enabled ? QStringLiteral("true") : QStringLiteral("false"));
+}
+
+QString AppConfig::graphicsDir() const
+{
+    return readValue(QStringLiteral("Graphics/folder"));
+}
+
+bool AppConfig::setGraphicsDir(const QString &dir)
+{
+    if (dir.isEmpty())
+        return removeValue(QStringLiteral("Graphics/folder"));
+    return writeValue(QStringLiteral("Graphics/folder"), dir);
+}
+
+QString AppConfig::defaultGraphicsDir(const QString &fmVersionId)
+{
+    const QString documents =
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    // The game's own folder (not the export folder: FM27 exports go to the
+    // FM View Exporter's folder). Up to FM24 the folder carries the full
+    // year, from FM26 on the short number ("Football Manager 27").
+    QString game = QStringLiteral("Football Manager ");
+    const QString number = fmVersionId.mid(2);
+    game += number.toInt() <= 24 ? QStringLiteral("20") + number : number;
+    return documents + QStringLiteral("/Sports Interactive/") + game + QStringLiteral("/graphics");
+}
+
+QString AppConfig::effectiveGraphicsDir(const QString &fmVersionId) const
+{
+    const QString configured = graphicsDir();
+    return configured.isEmpty() ? defaultGraphicsDir(fmVersionId) : configured;
 }
 
 } // namespace fm

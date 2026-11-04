@@ -40,6 +40,9 @@ namespace fm {
 
 namespace {
 
+constexpr int kPortraitSize = 96;
+constexpr int kCrestSize = 56;
+
 enum Scope { MyClub = 0, SecondTeam = 1, Scouted = 2, All = 3, NationalSquad = 4 };
 
 QString pill(const QString &label, const QString &value, const QString &color,
@@ -126,9 +129,32 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_tagsLabel = new QLabel(content);
     m_tagsLabel->setTextFormat(Qt::RichText);
     m_tagsLabel->setWordWrap(true);
-    layout->addWidget(m_nameLabel);
-    layout->addWidget(m_vitalsLabel);
-    layout->addWidget(m_tagsLabel);
+    // Portrait left, club crest right (both only with graphics enabled and
+    // found; otherwise the header looks as before).
+    m_portraitLabel = new QLabel(content);
+    m_portraitLabel->setFixedSize(kPortraitSize, kPortraitSize);
+    m_portraitLabel->setAlignment(Qt::AlignCenter);
+    m_portraitLabel->setVisible(false);
+    m_crestLabel = new QLabel(content);
+    m_crestLabel->setFixedSize(kCrestSize, kCrestSize);
+    m_crestLabel->setAlignment(Qt::AlignCenter);
+    m_crestLabel->setVisible(false);
+    auto *headerRow = new QHBoxLayout;
+    headerRow->setSpacing(14);
+    auto *headerText = new QVBoxLayout;
+    headerText->setSpacing(4);
+    headerText->addWidget(m_nameLabel);
+    headerText->addWidget(m_vitalsLabel);
+    headerText->addWidget(m_tagsLabel);
+    headerText->addStretch(1);
+    headerRow->addWidget(m_portraitLabel, 0, Qt::AlignTop);
+    headerRow->addLayout(headerText, 1);
+    headerRow->addWidget(m_crestLabel, 0, Qt::AlignTop);
+    layout->addLayout(headerRow);
+    connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this, [this] {
+        if (isVisible())
+            showPlayer();
+    });
 
     // --- Manual single-player update ---
     m_updateBox = new QGroupBox(tr("🔁 Diesen Spieler aus einer Exportdatei (HTML oder CSV) aktualisieren"),
@@ -420,6 +446,8 @@ void PlayerProfilePage::showPlayer()
         m_nameLabel->setText(tr("<h3>Kein Spieler ausgewählt.</h3>"));
         m_vitalsLabel->clear();
         m_tagsLabel->clear();
+        m_portraitLabel->setVisible(false);
+        m_crestLabel->setVisible(false);
         return;
     }
 
@@ -433,6 +461,16 @@ void PlayerProfilePage::showPlayer()
     if (!player->positionRaw.isEmpty())
         vitals << tr("<b>Position:</b> %1").arg(player->positionRaw.toHtmlEscaped());
     m_vitalsLabel->setText(vitals.join(QStringLiteral(" &nbsp;|&nbsp; ")));
+
+    const QPixmap portrait = m_context.graphics().portrait(player->uid, kPortraitSize);
+    m_portraitLabel->setPixmap(portrait);
+    m_portraitLabel->setVisible(!portrait.isNull());
+    const QPixmap crest = m_context.graphics().isReady()
+                              ? m_context.clubCrest(player->club, kCrestSize)
+                              : QPixmap();
+    m_crestLabel->setPixmap(crest);
+    m_crestLabel->setToolTip(player->club);
+    m_crestLabel->setVisible(!crest.isNull());
 
     const auto roleNames = m_context.definitions().roleDisplayMap();
     QString tags;

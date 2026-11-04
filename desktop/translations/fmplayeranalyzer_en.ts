@@ -3890,6 +3890,58 @@ The original file is not modified.</translation>
         <translation>Club logo:</translation>
     </message>
     <message>
+        <source>Spielerporträts und Vereinswappen aus dem Graphics-Ordner (optional)</source>
+        <translation>Player portraits and club crests from the graphics folder (optional)</translation>
+    </message>
+    <message>
+        <source>Nur sinnvoll, wenn du Grafikpakete (Spielergesichter, Vereinslogos) für Football Manager installiert hast. Der Analyzer liest die Zuordnungen aus den config.xml-Dateien der Pakete und zeigt Porträts über die Spieler-ID und Wappen über die Vereins-ID. Am Graphics-Ordner wird nichts verändert.</source>
+        <translation>Only useful if you have installed graphics packs (player faces, club logos) for Football Manager. The analyzer reads the mappings from the packs&apos; config.xml files and shows portraits by player ID and crests by club ID. Nothing in the graphics folder is changed.</translation>
+    </message>
+    <message>
+        <source>Neu einlesen</source>
+        <translation>Rescan</translation>
+    </message>
+    <message>
+        <source>Liest den Ordner erneut ein, z. B. nach dem Installieren eines neuen Grafikpakets.</source>
+        <translation>Reads the folder again, e.g. after installing a new graphics pack.</translation>
+    </message>
+    <message>
+        <source>Graphics-Ordner:</source>
+        <translation>Graphics folder:</translation>
+    </message>
+    <message>
+        <source>Wappen im Ordner wählen…</source>
+        <translation>Choose crest in folder…</translation>
+    </message>
+    <message>
+        <source>Vereins-ID meines Vereins:</source>
+        <translation>Club ID of my club:</translation>
+    </message>
+    <message>
+        <source>Die Exporte enthalten keine Vereins-IDs. Trage die ID deines Vereins ein oder wähle sein Wappen im Logo-Paket aus (die Zahl im Dateinamen, z. B. 1234_club.png, ist die ID). Ein oben selbst gewähltes Vereinslogo hat Vorrang.</source>
+        <translation>The exports contain no club IDs. Enter your club&apos;s ID or pick its crest in the logo pack (the number in the file name, e.g. 1234_club.png, is the ID). A club logo you chose yourself above takes precedence.</translation>
+    </message>
+    <message>
+        <source>Graphics-Ordner wählen</source>
+        <translation>Choose graphics folder</translation>
+    </message>
+    <message>
+        <source>Wappen des eigenen Vereins wählen</source>
+        <translation>Choose your club&apos;s crest</translation>
+    </message>
+    <message>
+        <source>Bilder (*.png *.jpg *.jpeg);;Alle Dateien (*)</source>
+        <translation>Images (*.png *.jpg *.jpeg);;All files (*)</translation>
+    </message>
+    <message>
+        <source>Vereins-ID</source>
+        <translation>Club ID</translation>
+    </message>
+    <message>
+        <source>Im Dateinamen steht keine Vereins-ID. Bitte die ID von Hand eintragen oder das Bild oben als Vereinslogo wählen.</source>
+        <translation>The file name contains no club ID. Please enter the ID by hand or choose the image above as club logo.</translation>
+    </message>
+    <message>
         <source>Lieblings-Taktiken</source>
         <translation>Favourite Tactics</translation>
     </message>
@@ -3972,6 +4024,30 @@ The original file is not modified.</translation>
     <message>
         <source>Diese Einstellungen gelten pro Datenbank (Spielstand). Das Vereins-Land steuert den Inland-Filter beim Scouting; die Lieblings-Taktiken werden auf Übersicht, Aufstellung, Kader und Transfers vorausgewählt, die erste bestimmt die Rollen auf der Seite Entwicklung. Die Nationalteam-Angaben aktivieren das National-Management.</source>
         <translation>These settings apply per database (save). The club country controls the domestic filter in scouting; the favorite tactics are preselected on Overview, Line-up, Squad and Transfers, and the first one sets the roles on the Development page. The national team details enable national management.</translation>
+    </message>
+    <message>
+        <source>Wird beim Speichern eingelesen.</source>
+        <translation>Will be read when you save.</translation>
+    </message>
+    <message>
+        <source>Ordner nicht gefunden oder ohne Grafikpakete (config.xml): %1</source>
+        <translation>Folder not found or without graphics packs (config.xml): %1</translation>
+    </message>
+    <message>
+        <source>Grafikpakete werden eingelesen…</source>
+        <translation>Reading graphics packs…</translation>
+    </message>
+    <message>
+        <source>%1 Porträts und %2 Vereinswappen gefunden.</source>
+        <translation>%1 portraits and %2 club crests found.</translation>
+    </message>
+    <message>
+        <source>Keine Porträts oder Wappen gefunden. Liegen die Pakete mit ihrer config.xml in diesem Ordner?</source>
+        <translation>No portraits or crests found. Are the packs with their config.xml in this folder?</translation>
+    </message>
+    <message>
+        <source>Zu dieser Vereins-ID gibt es im Ordner kein Wappen.</source>
+        <translation>There is no crest for this club ID in the folder.</translation>
     </message>
     <message>
         <source>Vereinslogo wählen</source>

@@ -28,7 +28,11 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QFileInfo>
+#include <QLocale>
 #include <QPixmap>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QSet>
 #include <QPushButton>
 #include <QScrollArea>
@@ -298,6 +302,110 @@ QWidget *SettingsPage::buildClubTab()
     connect(m_logoRemoveButton, &QPushButton::clicked, this, &SettingsPage::removeLogo);
     layout->addWidget(clubGroup);
 
+    // Optional: portraits and crests from the game's graphics folder (face
+    // and logo packs). Off by default; without it nothing changes anywhere.
+    m_graphicsGroup = new QGroupBox(
+        tr("Spielerporträts und Vereinswappen aus dem Graphics-Ordner (optional)"), content);
+    m_graphicsGroup->setCheckable(true);
+    m_graphicsGroup->setChecked(false);
+    auto *graphicsOuter = new QVBoxLayout(m_graphicsGroup);
+    auto *graphicsInner = new QWidget(m_graphicsGroup);
+    graphicsOuter->addWidget(graphicsInner);
+    auto *graphicsForm = new QFormLayout(graphicsInner);
+    graphicsForm->setContentsMargins(0, 0, 0, 0);
+    auto *graphicsIntro = new QLabel(
+        tr("Nur sinnvoll, wenn du Grafikpakete (Spielergesichter, Vereinslogos) für "
+           "Football Manager installiert hast. Der Analyzer liest die Zuordnungen aus den "
+           "config.xml-Dateien der Pakete und zeigt Porträts über die Spieler-ID und Wappen "
+           "über die Vereins-ID. Am Graphics-Ordner wird nichts verändert."),
+        graphicsInner);
+    graphicsIntro->setWordWrap(true);
+    graphicsIntro->setObjectName(QStringLiteral("kpiCaption"));
+    graphicsForm->addRow(graphicsIntro);
+
+    m_graphicsDirEdit = new QLineEdit;
+    m_graphicsDirEdit->setMinimumWidth(260);
+    auto *graphicsBrowse = new QPushButton(tr("Durchsuchen…"));
+    auto *graphicsRescan = new QPushButton(tr("Neu einlesen"));
+    graphicsRescan->setToolTip(tr("Liest den Ordner erneut ein, z. B. nach dem Installieren "
+                                  "eines neuen Grafikpakets."));
+    auto *graphicsDirButtons = new QHBoxLayout;
+    graphicsDirButtons->setContentsMargins(0, 0, 0, 0);
+    graphicsDirButtons->addWidget(m_graphicsDirEdit, 1);
+    graphicsDirButtons->addWidget(graphicsBrowse);
+    graphicsDirButtons->addWidget(graphicsRescan);
+    auto *graphicsDirRow = new QWidget;
+    graphicsDirRow->setLayout(graphicsDirButtons);
+    graphicsForm->addRow(tr("Graphics-Ordner:"), graphicsDirRow);
+    m_graphicsStatus = new QLabel(graphicsInner);
+    m_graphicsStatus->setWordWrap(true);
+    m_graphicsStatus->setObjectName(QStringLiteral("kpiCaption"));
+    graphicsForm->addRow(QString(), m_graphicsStatus);
+
+    // The own club's FM id: exports carry no club ids, so it is set once
+    // here (typed, or read from the file name of the chosen crest).
+    m_clubFmIdEdit = new QLineEdit;
+    m_clubFmIdEdit->setMaximumWidth(140);
+    m_clubFmIdEdit->setValidator(new QRegularExpressionValidator(
+        QRegularExpression(QStringLiteral("\\d{0,10}")), m_clubFmIdEdit));
+    m_graphicsCrestPreview = new QLabel;
+    m_graphicsCrestPreview->setFixedSize(48, 48);
+    m_graphicsCrestPreview->setAlignment(Qt::AlignCenter);
+    auto *pickCrest = new QPushButton(tr("Wappen im Ordner wählen…"));
+    auto *crestRowLayout = new QHBoxLayout;
+    crestRowLayout->setContentsMargins(0, 0, 0, 0);
+    crestRowLayout->addWidget(m_clubFmIdEdit);
+    crestRowLayout->addWidget(m_graphicsCrestPreview);
+    crestRowLayout->addWidget(pickCrest);
+    crestRowLayout->addStretch(1);
+    auto *crestRow = new QWidget;
+    crestRow->setLayout(crestRowLayout);
+    graphicsForm->addRow(tr("Vereins-ID meines Vereins:"), crestRow);
+    auto *crestHint = new QLabel(
+        tr("Die Exporte enthalten keine Vereins-IDs. Trage die ID deines Vereins ein oder "
+           "wähle sein Wappen im Logo-Paket aus (die Zahl im Dateinamen, z. B. "
+           "1234_club.png, ist die ID). Ein oben selbst gewähltes Vereinslogo hat Vorrang."),
+        graphicsInner);
+    crestHint->setWordWrap(true);
+    crestHint->setObjectName(QStringLiteral("kpiCaption"));
+    graphicsForm->addRow(crestHint);
+    graphicsInner->setVisible(false);
+    connect(m_graphicsGroup, &QGroupBox::toggled, graphicsInner, &QWidget::setVisible);
+    layout->addWidget(m_graphicsGroup);
+
+    const auto currentGraphicsDir = [this] {
+        const QString text = m_graphicsDirEdit->text().trimmed();
+        return text.isEmpty() ? AppConfig::defaultGraphicsDir(m_context.fmVersionId()) : text;
+    };
+    connect(graphicsBrowse, &QPushButton::clicked, this, [this, currentGraphicsDir] {
+        const QString dir = QFileDialog::getExistingDirectory(
+            this, tr("Graphics-Ordner wählen"), currentGraphicsDir());
+        if (!dir.isEmpty())
+            m_graphicsDirEdit->setText(QDir::toNativeSeparators(dir));
+    });
+    connect(graphicsRescan, &QPushButton::clicked, this,
+            [this] { m_context.applyGraphicsSettings(true); });
+    connect(pickCrest, &QPushButton::clicked, this, [this, currentGraphicsDir] {
+        const QString file = QFileDialog::getOpenFileName(
+            this, tr("Wappen des eigenen Vereins wählen"), currentGraphicsDir(),
+            tr("Bilder (*.png *.jpg *.jpeg);;Alle Dateien (*)"));
+        if (file.isEmpty())
+            return;
+        const QRegularExpressionMatch match =
+            QRegularExpression(QStringLiteral("^(\\d{1,10})")).match(QFileInfo(file).baseName());
+        if (!match.hasMatch()) {
+            QMessageBox::information(
+                this, tr("Vereins-ID"),
+                tr("Im Dateinamen steht keine Vereins-ID. Bitte die ID von Hand eintragen "
+                   "oder das Bild oben als Vereinslogo wählen."));
+            return;
+        }
+        m_clubFmIdEdit->setText(match.captured(1));
+    });
+    connect(m_clubFmIdEdit, &QLineEdit::textChanged, this, &SettingsPage::updateGraphicsStatus);
+    connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this,
+            &SettingsPage::updateGraphicsStatus);
+
     auto *tacticGroup = new QGroupBox(tr("Lieblings-Taktiken"), content);
     auto *tacticForm = new QFormLayout(tacticGroup);
     m_favTactic1Combo = new QComboBox;
@@ -390,6 +498,48 @@ QWidget *SettingsPage::buildClubTab()
     layout->addStretch(1);
 
     return wrapScrollable(content);
+}
+
+void SettingsPage::updateGraphicsStatus()
+{
+    if (!m_graphicsStatus)
+        return;
+    const GraphicsLibrary &graphics = m_context.graphics();
+    const QLocale locale;
+    QString text;
+    switch (graphics.state()) {
+    case GraphicsLibrary::State::Off:
+        text = m_graphicsGroup->isChecked()
+                   ? tr("Wird beim Speichern eingelesen.")
+                   : QString();
+        break;
+    case GraphicsLibrary::State::Missing:
+        text = tr("Ordner nicht gefunden oder ohne Grafikpakete (config.xml): %1")
+                   .arg(QDir::toNativeSeparators(graphics.folder()));
+        break;
+    case GraphicsLibrary::State::Indexing:
+        text = tr("Grafikpakete werden eingelesen…");
+        break;
+    case GraphicsLibrary::State::Ready: {
+        const GraphicsIndex::Stats stats = graphics.stats();
+        text = tr("%1 Porträts und %2 Vereinswappen gefunden.")
+                   .arg(locale.toString(stats.portraits), locale.toString(stats.clubLogos));
+        if (stats.portraits == 0 && stats.clubLogos == 0)
+            text = tr("Keine Porträts oder Wappen gefunden. Liegen die Pakete mit ihrer "
+                      "config.xml in diesem Ordner?");
+        break;
+    }
+    }
+    m_graphicsStatus->setText(text);
+    m_graphicsStatus->setVisible(!text.isEmpty());
+
+    const quint32 id = GraphicsIndex::parseId(m_clubFmIdEdit->text());
+    const QPixmap crest = graphics.clubLogo(id, m_graphicsCrestPreview->width());
+    m_graphicsCrestPreview->setPixmap(crest);
+    m_graphicsCrestPreview->setToolTip(
+        crest.isNull() && id != 0 && graphics.isReady()
+            ? tr("Zu dieser Vereins-ID gibt es im Ordner kein Wappen.")
+            : QString());
 }
 
 void SettingsPage::chooseLogo()
@@ -910,6 +1060,12 @@ void SettingsPage::refresh()
     m_importDirEdit->setText(QDir::toNativeSeparators(config.htmlExportDir()));
     m_importDirEdit->setPlaceholderText(
         QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir(m_context.fmVersionId())));
+    m_graphicsGroup->setChecked(config.graphicsEnabled());
+    m_graphicsDirEdit->setText(QDir::toNativeSeparators(config.graphicsDir()));
+    m_graphicsDirEdit->setPlaceholderText(
+        QDir::toNativeSeparators(AppConfig::defaultGraphicsDir(m_context.fmVersionId())));
+    m_clubFmIdEdit->setText(m_context.database().setting(QStringLiteral("club_fm_id")));
+    updateGraphicsStatus();
 
     QSet<QString> clubSet;
     for (const Player &player : m_context.store().players()) {
@@ -1086,6 +1242,9 @@ void SettingsPage::saveAll()
 
     // --- Club tab (per-database settings) ---
     config.setHtmlExportDir(m_importDirEdit->text().trimmed());
+    config.setGraphicsEnabled(m_graphicsGroup->isChecked());
+    config.setGraphicsDir(QDir::fromNativeSeparators(m_graphicsDirEdit->text().trimmed()));
+    saveSetting(QStringLiteral("club_fm_id"), m_clubFmIdEdit->text().trimmed());
     saveSetting(QStringLiteral("user_club"), m_userClubCombo->currentText());
     saveSetting(QStringLiteral("second_team_club"), m_secondClubCombo->currentText());
     saveSetting(QStringLiteral("club_country_code"),
@@ -1183,6 +1342,7 @@ void SettingsPage::saveAll()
     }
 
     m_context.reloadEngines();
+    m_context.applyGraphicsSettings();
     m_theme.setMode(m_modeCombo->currentData().toString());
     m_theme.apply();
     m_context.notifySettingsChanged();
