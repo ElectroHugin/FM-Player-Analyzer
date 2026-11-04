@@ -178,6 +178,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         // ball left, without ball right, like the game) side by side.
         auto *switchRow = new QHBoxLayout;
         auto *segmented = new QFrame(tab);
+        m_teamSwitch = segmented;
         segmented->setObjectName(QStringLiteral("segmented"));
         auto *segLayout = new QHBoxLayout(segmented);
         segLayout->setContentsMargins(3, 3, 3, 3);
@@ -248,9 +249,18 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         };
         m_teamStack->addWidget(makePage(m_xiIpPitch, m_xiPitch, m_xiIpTitle, m_xiTitle));
         m_teamStack->addWidget(makePage(m_bTeamIpPitch, m_bTeamPitch, m_bIpTitle, m_bTitle));
+        // FM24 (one line-up): starting XI and B-team side by side, as in 1.6.2.
+        {
+            QLabel *xiTitle = nullptr;
+            QLabel *bTitle = nullptr;
+            m_teamStack->addWidget(makePage(m_singleXiPitch, m_singleBPitch, xiTitle, bTitle));
+            xiTitle->setText(tr("Startelf"));
+            bTitle->setText(tr("B-Team"));
+        }
         tabLayout->addWidget(m_teamStack);
         connect(m_xiButton, &QPushButton::toggled, this, [this](bool xi) {
-            m_teamStack->setCurrentIndex(xi ? 0 : 1);
+            if (m_teamStack->currentIndex() != 2)
+                m_teamStack->setCurrentIndex(xi ? 0 : 1);
         });
 
         m_depthBox = new QGroupBox(tr("Weitere Kader-Tiefe"), tab);
@@ -356,7 +366,8 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
     // Player boxes on the pitches are interactive (M13).
     for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
-                                     m_secondXiPitch, m_youthXiPitch}) {
+                                     m_singleXiPitch, m_singleBPitch, m_secondXiPitch,
+                                     m_youthXiPitch}) {
         connect(pitch, &TacticPitchWidget::playerDoubleClicked, this,
                 [this](const QString &uid) { PlayerActions::openProfile(m_context, uid); });
         connect(pitch, &TacticPitchWidget::playerContextMenuRequested, this,
@@ -450,6 +461,8 @@ void BestXiPage::rebuild()
         m_registrationNote->setVisible(false);
         m_xiPitch->clearData();
         m_bTeamPitch->clearData();
+        m_singleXiPitch->clearData();
+        m_singleBPitch->clearData();
         m_xiIpPitch->clearData();
         m_bTeamIpPitch->clearData();
         m_secondXiPitch->clearData();
@@ -598,12 +611,14 @@ void BestXiPage::rebuild()
         secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);
 
     for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
-                                     m_secondXiPitch, m_youthXiPitch})
+                                     m_singleXiPitch, m_singleBPitch, m_secondXiPitch,
+                                     m_youthXiPitch})
         pitch->setFmVersionId(m_context.fmVersionId());
     const bool twoPhase = m_context.definitions().isTwoPhaseTactic(tactic);
-    for (QWidget *w : std::initializer_list<QWidget *>{m_xiIpPitch, m_bTeamIpPitch, m_xiIpTitle,
-                                                       m_bIpTitle, m_xiTitle, m_bTitle})
-        w->setVisible(twoPhase);
+    // Two line-ups (FM27): one team at a time, switched above the pitches.
+    // One line-up (FM24): starting XI and B-team next to each other.
+    m_teamSwitch->setVisible(twoPhase);
+    m_teamStack->setCurrentIndex(twoPhase ? (m_xiButton->isChecked() ? 0 : 1) : 2);
     m_phaseNote->setVisible(twoPhase);
     m_bridge = BridgeState();
     m_bridgeBar->setVisible(false);
@@ -685,10 +700,8 @@ void BestXiPage::rebuild()
                 .arg(share)
                 .arg(100 - share));
     } else {
-        m_xiPitch->setTeam(first.startingXi, positions, layout, roleNames);
-        m_bTeamPitch->setTeam(first.bTeam, positions, layout, roleNames);
-        m_xiPitch->setSlotSubtexts({});
-        m_bTeamPitch->setSlotSubtexts({});
+        m_singleXiPitch->setTeam(first.startingXi, positions, layout, roleNames);
+        m_singleBPitch->setTeam(first.bTeam, positions, layout, roleNames);
     }
     m_secondXiTitle->setText(secondClub.isEmpty()
                                  ? tr("Zweitteam-XI (aus Überschuss des Hauptvereins)")
