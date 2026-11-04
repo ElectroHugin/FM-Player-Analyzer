@@ -9,3 +9,6 @@ target_link_libraries(fmsquad PRIVATE fmcore)
 
 add_executable(fmbench bench_cli.cpp)
 target_link_libraries(fmbench PRIVATE fmcore)
+
+add_executable(fmprofilebench profilebench_cli.cpp)
+target_link_libraries(fmprofilebench PRIVATE fmcore)

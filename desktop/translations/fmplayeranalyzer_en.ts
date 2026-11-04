@@ -557,12 +557,16 @@
         <translation>A save named “%1” already exists.</translation>
     </message>
     <message>
-        <source>Rollen und Taktiken für %1 konnten nicht angelegt werden (%2).</source>
-        <translation>Roles and tactics for %1 could not be created (%2).</translation>
-    </message>
-    <message>
         <source>Die Football-Manager-Version ist an den Spielstand gebunden, sobald er Spieler enthält. Für eine andere Version bitte einen neuen Spielstand anlegen.</source>
         <translation>The Football Manager version is tied to the save once it contains players. Please create a new save for a different version.</translation>
+    </message>
+    <message>
+        <source>Rollen und Taktiken für %1 konnten nicht geladen werden (%2).</source>
+        <translation>Roles and tactics for %1 could not be loaded (%2).</translation>
+    </message>
+    <message>
+        <source>Kein Spielstand geöffnet.</source>
+        <translation>No save is open.</translation>
     </message>
 </context>
 <context>
@@ -2687,6 +2691,22 @@ The original file is not modified.</translation>
         <source>z. B. Mein Verein 2027</source>
         <translation>e.g. My club 2027</translation>
     </message>
+    <message>
+        <source>Einstellungen</source>
+        <translation>Settings</translation>
+    </message>
+    <message>
+        <source>Standardeinstellungen</source>
+        <translation>Default settings</translation>
+    </message>
+    <message>
+        <source>Übernehmen von „%1“</source>
+        <translation>Copy from “%1”</translation>
+    </message>
+    <message>
+        <source>Übernimmt Gewichte, Farben, Analyse-Optionen, Rollen, Taktiken und das Logo. Verein, Spieler und Favoriten bringt der neue Spielstand selbst mit.</source>
+        <translation>Copies weights, colors, analysis options, roles, tactics and the logo. Club, players and favorites come from the new save itself.</translation>
+    </message>
 </context>
 <context>
     <name>fm::NewTacticPage</name>
@@ -3970,10 +3990,6 @@ The original file is not modified.</translation>
         <translation>The file could not be loaded as an image.</translation>
     </message>
     <message>
-        <source>Das Logo konnte nicht gespeichert werden.</source>
-        <translation>The logo could not be saved.</translation>
-    </message>
-    <message>
         <source>(kein Logo)</source>
         <translation>(no logo)</translation>
     </message>
@@ -3984,10 +4000,6 @@ The original file is not modified.</translation>
     <message>
         <source>National-Flagge</source>
         <translation>National flag</translation>
-    </message>
-    <message>
-        <source>Die Flagge konnte nicht gespeichert werden.</source>
-        <translation>The flag could not be saved.</translation>
     </message>
     <message>
         <source>(keine Flagge)</source>
@@ -4336,6 +4348,38 @@ The original file is not modified.</translation>
     <message>
         <source>FM27-Taktik</source>
         <translation>FM27 tactic</translation>
+    </message>
+    <message>
+        <source>Das Logo konnte nicht gespeichert werden.
+%1</source>
+        <translation>The logo could not be saved.
+%1</translation>
+    </message>
+    <message>
+        <source>Das Logo konnte nicht entfernt werden.
+%1</source>
+        <translation>The logo could not be removed.
+%1</translation>
+    </message>
+    <message>
+        <source>Die Flagge konnte nicht gespeichert werden.
+%1</source>
+        <translation>The flag could not be saved.
+%1</translation>
+    </message>
+    <message>
+        <source>Die Flagge konnte nicht entfernt werden.
+%1</source>
+        <translation>The flag could not be removed.
+%1</translation>
+    </message>
+    <message>
+        <source>Die Einstellungen konnten nicht gespeichert werden. Der Spielstand behält seinen bisherigen Stand.
+
+%1</source>
+        <translation>The settings could not be saved. The save keeps its previous state.
+
+%1</translation>
     </message>
 </context>
 <context>

@@ -3,6 +3,7 @@
 #include "AppContext.h"
 #include "core/Constants.h"
 #include "core/Database.h"
+#include "core/ProfileStore.h"
 #include "core/Utils.h"
 #include "theming/ThemePresets.h"
 
@@ -70,6 +71,7 @@ void readInfo(SaveInfo &info)
                 }
                 info.clubName = fullName.isEmpty() ? userClub : fullName;
             }
+            ProfileStore::readDocument(connName, ProfileStore::clubLogoDocument(), info.logoData);
             QSqlQuery count(db);
             if (count.exec(QStringLiteral("SELECT COUNT(*) FROM players")) && count.next())
                 info.playerCount = count.value(0).toInt();
@@ -96,7 +98,7 @@ SaveInfo current(AppContext &context)
     info.fmVersionId = context.fmVersionId();
     const QString fullName = context.database().setting(QStringLiteral("full_club_name"));
     info.clubName = fullName.isEmpty() ? context.userClub() : fullName;
-    info.logoPath = context.database().setting(QStringLiteral("club_logo_path"));
+    info.logoData = context.profileImage(AppContext::ProfileImage::ClubLogo);
     info.playerCount = static_cast<int>(context.store().size());
     info.tactic = context.database().setting(QStringLiteral("favorite_tactic_1"));
     info.lastImport = QDateTime::fromString(
@@ -136,17 +138,16 @@ QPixmap crest(const SaveInfo &save, int size, qreal dpr)
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
 
-    if (!save.logoPath.isEmpty()) {
-        const QPixmap logo(save.logoPath);
-        if (!logo.isNull()) {
-            const QPixmap scaled = logo.scaled(QSize(px, px), Qt::KeepAspectRatio,
-                                               Qt::SmoothTransformation);
-            const QSizeF logoSize = QSizeF(scaled.size()) / dpr;
-            painter.drawPixmap(QPointF((size - logoSize.width()) / 2.0,
-                                       (size - logoSize.height()) / 2.0),
-                               scaled);
-            return pixmap;
-        }
+    QPixmap logo;
+    if (!logo.loadFromData(save.logoData) && !save.logoPath.isEmpty())
+        logo.load(save.logoPath);
+    if (!logo.isNull()) {
+        const QPixmap scaled =
+            logo.scaled(QSize(px, px), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        const QSizeF logoSize = QSizeF(scaled.size()) / dpr;
+        painter.drawPixmap(
+            QPointF((size - logoSize.width()) / 2.0, (size - logoSize.height()) / 2.0), scaled);
+        return pixmap;
     }
 
     const QString source = save.clubName.isEmpty() ? save.name : save.clubName;

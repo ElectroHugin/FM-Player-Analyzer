@@ -818,12 +818,10 @@ void MainWindow::updateHeader()
 {
     // Optional header image (user-provided PNG, per database): the national
     // flag while in national mode, otherwise the club logo.
-    const QString imagePath =
-        m_context.nationalUiMode()
-            ? m_context.database().setting(QStringLiteral("national_flag_path"))
-            : m_context.database().setting(QStringLiteral("club_logo_path"));
     QPixmap headerImage;
-    if (!imagePath.isEmpty() && headerImage.load(imagePath)) {
+    if (headerImage.loadFromData(m_context.profileImage(
+            m_context.nationalUiMode() ? AppContext::ProfileImage::NationalFlag
+                                       : AppContext::ProfileImage::ClubLogo))) {
         m_headerLogo->setPixmap(headerImage.scaledToHeight(34, Qt::SmoothTransformation));
         m_headerLogo->show();
     } else {

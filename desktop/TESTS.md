@@ -28,6 +28,8 @@ Abgedeckte Kernmodule (Auszug):
 | Talentwert | `test_talentengine` |
 | Import CSV/HTML | `test_csvimport`, `test_htmlimporter` |
 | Spielfeld-Geometrie je Version | `test_pitchgeometry` |
+| Spielstandprofile (Trennung, Migration von 2.0.4, atomares Speichern) | `test_profile` |
+| Profile über AppContext: Wechsel A → B → A, Neustart, Kopie, Logo | `test_profileswitch` |
 
 Die Tests nutzen `legacy/config/definitions.json` als feste Datengrundlage
 (FM24). Neue Versionsprofile (FM27) bekommen eigene Testfälle, sobald ihre

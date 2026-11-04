@@ -10,6 +10,7 @@
 #include "core/Constants.h"
 #include "core/Utils.h"
 
+#include <QBuffer>
 #include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
@@ -42,6 +43,19 @@
 namespace fm {
 
 namespace {
+
+// An image as PNG bytes for the save's profile (large pictures are scaled
+// down: the header shows them at 34 px, the start screen at 64 px).
+QByteArray pngBytes(QPixmap pixmap)
+{
+    if (pixmap.width() > 512 || pixmap.height() > 512)
+        pixmap = pixmap.scaled(512, 512, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QByteArray bytes;
+    QBuffer buffer(&bytes);
+    buffer.open(QIODevice::WriteOnly);
+    pixmap.save(&buffer, "PNG");
+    return bytes;
+}
 
 const QStringList &weightCategoryOrder()
 {
@@ -393,39 +407,32 @@ void SettingsPage::chooseLogo()
         return;
     }
 
-    // Copy into the data folder's assets dir under a database-specific name so
-    // each save keeps its own logo and the original file can move freely.
-    const QString assetsDir = m_context.paths().assetsDir();
-    QDir().mkpath(assetsDir);
-    const QString dest = QDir(assetsDir).filePath(
-        QStringLiteral("logo_%1.png").arg(m_context.currentDbName()));
-    QFile::remove(dest);
-    if (!pixmap.save(dest, "PNG")) {
+    // Stored inside the save's profile: duplicates and backups carry it
+    // along, and the original file can move freely.
+    QString error;
+    if (!m_context.setProfileImage(AppContext::ProfileImage::ClubLogo, pngBytes(pixmap), &error)) {
         QMessageBox::warning(this, tr("Vereinslogo"),
-                             tr("Das Logo konnte nicht gespeichert werden."));
+                             tr("Das Logo konnte nicht gespeichert werden.\n%1").arg(error));
         return;
     }
-
-    m_context.database().setSetting(QStringLiteral("club_logo_path"), dest);
     updateLogoPreview();
     m_context.notifySettingsChanged(); // refreshes the header
 }
 
 void SettingsPage::removeLogo()
 {
-    const QString path = m_context.database().setting(QStringLiteral("club_logo_path"));
-    if (!path.isEmpty())
-        QFile::remove(path);
-    m_context.database().removeSetting(QStringLiteral("club_logo_path"));
+    QString error;
+    if (!m_context.setProfileImage(AppContext::ProfileImage::ClubLogo, {}, &error))
+        QMessageBox::warning(this, tr("Vereinslogo"),
+                             tr("Das Logo konnte nicht entfernt werden.\n%1").arg(error));
     updateLogoPreview();
     m_context.notifySettingsChanged();
 }
 
 void SettingsPage::updateLogoPreview()
 {
-    const QString path = m_context.database().setting(QStringLiteral("club_logo_path"));
     QPixmap pixmap;
-    if (!path.isEmpty() && pixmap.load(path)) {
+    if (pixmap.loadFromData(m_context.profileImage(AppContext::ProfileImage::ClubLogo))) {
         m_logoPreview->setPixmap(
             pixmap.scaled(m_logoPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
         m_logoRemoveButton->setEnabled(true);
@@ -452,39 +459,31 @@ void SettingsPage::chooseFlag()
         return;
     }
 
-    // Copy into the data folder's assets dir under a database-specific name so
-    // each save keeps its own flag and the original file can move freely.
-    const QString assetsDir = m_context.paths().assetsDir();
-    QDir().mkpath(assetsDir);
-    const QString dest = QDir(assetsDir).filePath(
-        QStringLiteral("flag_%1.png").arg(m_context.currentDbName()));
-    QFile::remove(dest);
-    if (!pixmap.save(dest, "PNG")) {
+    QString error;
+    if (!m_context.setProfileImage(AppContext::ProfileImage::NationalFlag, pngBytes(pixmap),
+                                   &error)) {
         QMessageBox::warning(this, tr("National-Flagge"),
-                             tr("Die Flagge konnte nicht gespeichert werden."));
+                             tr("Die Flagge konnte nicht gespeichert werden.\n%1").arg(error));
         return;
     }
-
-    m_context.database().setSetting(QStringLiteral("national_flag_path"), dest);
     updateFlagPreview();
     m_context.notifySettingsChanged(); // refreshes the header
 }
 
 void SettingsPage::removeFlag()
 {
-    const QString path = m_context.database().setting(QStringLiteral("national_flag_path"));
-    if (!path.isEmpty())
-        QFile::remove(path);
-    m_context.database().removeSetting(QStringLiteral("national_flag_path"));
+    QString error;
+    if (!m_context.setProfileImage(AppContext::ProfileImage::NationalFlag, {}, &error))
+        QMessageBox::warning(this, tr("National-Flagge"),
+                             tr("Die Flagge konnte nicht entfernt werden.\n%1").arg(error));
     updateFlagPreview();
     m_context.notifySettingsChanged();
 }
 
 void SettingsPage::updateFlagPreview()
 {
-    const QString path = m_context.database().setting(QStringLiteral("national_flag_path"));
     QPixmap pixmap;
-    if (!path.isEmpty() && pixmap.load(path)) {
+    if (pixmap.loadFromData(m_context.profileImage(AppContext::ProfileImage::NationalFlag))) {
         m_flagPreview->setPixmap(
             pixmap.scaled(m_flagPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
         m_flagRemoveButton->setEnabled(true);
@@ -1067,20 +1066,25 @@ void SettingsPage::saveAll()
 {
     AppConfig &config = m_context.config();
 
-    // --- Club tab (per-database settings) ---
-    Database &db = m_context.database();
-    const auto saveSetting = [&db](const QString &key, const QString &value) {
-        if (value.isEmpty())
-            db.removeSetting(key);
-        else
-            db.setSetting(key, value);
-    };
     // The weight spins show the version the page was refreshed for; a version
     // switch below must not redirect them to the new one.
     const QString weightsVersion = m_context.fmVersionId();
     QString versionError;
     if (!m_context.setFmVersion(m_fmVersionCombo->currentData().toString(), &versionError))
         QMessageBox::warning(this, tr("Football-Manager-Version"), versionError);
+
+    // Everything below belongs to the open save's profile and is written as
+    // one transaction: either all of it reaches the save, or nothing does.
+    AppConfig::Transaction transaction(config);
+    Database &db = m_context.database();
+    bool clubSettingsOk = transaction.isActive();
+    const auto saveSetting = [&db, &clubSettingsOk](const QString &key, const QString &value) {
+        if (!clubSettingsOk)
+            return;
+        clubSettingsOk = value.isEmpty() ? db.removeSetting(key) : db.setSetting(key, value);
+    };
+
+    // --- Club tab (per-database settings) ---
     config.setHtmlExportDir(m_importDirEdit->text().trimmed());
     saveSetting(QStringLiteral("user_club"), m_userClubCombo->currentText());
     saveSetting(QStringLiteral("second_team_club"), m_secondClubCombo->currentText());
@@ -1165,6 +1169,18 @@ void SettingsPage::saveAll()
     for (auto it = m_pendingColors.constBegin(); it != m_pendingColors.constEnd(); ++it)
         themeSettings.insert(it.key(), it.value());
     config.saveThemeSettings(themeSettings);
+
+    QString error = clubSettingsOk ? QString() : db.errorString();
+    if (!clubSettingsOk || !transaction.commit(&error)) {
+        // Nothing was written; the page shows the stored state again.
+        QMessageBox::critical(
+            this, tr("Einstellungen"),
+            tr("Die Einstellungen konnten nicht gespeichert werden. Der Spielstand behält "
+               "seinen bisherigen Stand.\n\n%1")
+                .arg(error.isEmpty() ? config.lastError() : error));
+        refresh();
+        return;
+    }
 
     m_context.reloadEngines();
     m_theme.setMode(m_modeCombo->currentData().toString());

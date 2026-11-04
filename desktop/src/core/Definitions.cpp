@@ -26,29 +26,41 @@ bool Definitions::load(const QString &filePath, const QString &fmVersionId)
         m_error = QStringLiteral("Cannot open %1: %2").arg(filePath, file.errorString());
         return false;
     }
+    if (!loadFromJson(file.readAll(), fmVersionId, filePath))
+        return false;
+    m_saveHandler = nullptr; // file mode: save() writes back to filePath
+    return true;
+}
 
+bool Definitions::loadFromJson(const QByteArray &json, const QString &fmVersionId,
+                               const QString &sourceLabel)
+{
+    m_error.clear();
     QJsonParseError parseError;
-    const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
+    const QJsonDocument doc = QJsonDocument::fromJson(json, &parseError);
     if (parseError.error != QJsonParseError::NoError) {
         m_error = QStringLiteral("Invalid JSON in %1: %2")
-                      .arg(filePath, parseError.errorString());
+                      .arg(sourceLabel, parseError.errorString());
         return false;
     }
     if (!doc.isObject()) {
-        m_error = QStringLiteral("Definitions root must be a JSON object: %1").arg(filePath);
+        m_error = QStringLiteral("Definitions root must be a JSON object: %1").arg(sourceLabel);
         return false;
     }
 
     // Path and version only change on success: after a failed load, save()
-    // must still write to the file the live definitions came from.
-    m_filePath = filePath;
+    // must still write to the place the live definitions came from.
+    m_filePath = sourceLabel;
     m_fmVersionId = fmVersionId;
     m_root = doc.object();
     rebuildCache();
-
-    file.seek(0);
-    indexTacticOrder(file.readAll());
+    indexTacticOrder(json);
     return true;
+}
+
+QByteArray Definitions::toJson() const
+{
+    return QJsonDocument(m_root).toJson(QJsonDocument::Indented);
 }
 
 void Definitions::indexTacticOrder(const QByteArray &json)
@@ -261,6 +273,14 @@ QStringList Definitions::tacticSlotOrder(const QString &tactic) const
 bool Definitions::save()
 {
     m_error.clear();
+    if (m_saveHandler) {
+        QString error;
+        if (!m_saveHandler(toJson(), &error)) {
+            m_error = error;
+            return false;
+        }
+        return true;
+    }
     if (m_filePath.isEmpty()) {
         m_error = QStringLiteral("No file path set; call load() first.");
         return false;
@@ -278,7 +298,7 @@ bool Definitions::save()
 
     // 2. Write the new data.
     QFile file(m_filePath);
-    const QByteArray json = QJsonDocument(m_root).toJson(QJsonDocument::Indented);
+    const QByteArray json = toJson();
     const bool written = file.open(QIODevice::WriteOnly | QIODevice::Truncate)
                          && file.write(json) == json.size();
     file.close();

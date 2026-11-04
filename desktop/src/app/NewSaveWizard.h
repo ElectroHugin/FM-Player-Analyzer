@@ -51,6 +51,7 @@ private:
     QLineEdit *m_nameEdit;
     QLabel *m_nameError;
     QButtonGroup *m_versionGroup;
+    QComboBox *m_profileSourceCombo;
     DropZone *m_dropZone;
     QCheckBox *m_autoAssignCheck;
     QLabel *m_importResult;

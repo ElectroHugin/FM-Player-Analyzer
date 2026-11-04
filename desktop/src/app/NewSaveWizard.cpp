@@ -199,6 +199,24 @@ QWidget *NewSaveWizard::buildNamePage()
            "seiner FM-Version. Für einen anderen Football Manager legst du deshalb einen "
            "eigenen Spielstand an. Deine bisherigen Spielstände bleiben unverändert."),
         page));
+
+    // Each save has its own profile; a new one starts clean or as a copy.
+    layout->addSpacing(14);
+    auto *profileLabel = new QLabel(tr("Einstellungen"), page);
+    profileLabel->setObjectName(QStringLiteral("fieldLabel"));
+    layout->addWidget(profileLabel);
+    m_profileSourceCombo = new QComboBox(page);
+    m_profileSourceCombo->addItem(tr("Standardeinstellungen"), QString());
+    for (const QString &save : m_context.availableDatabases())
+        m_profileSourceCombo->addItem(tr("Übernehmen von „%1“").arg(save), save);
+    layout->addWidget(m_profileSourceCombo);
+    auto *profileHint = new QLabel(
+        tr("Übernimmt Gewichte, Farben, Analyse-Optionen, Rollen, Taktiken und das Logo. "
+           "Verein, Spieler und Favoriten bringt der neue Spielstand selbst mit."),
+        page);
+    profileHint->setObjectName(QStringLiteral("kpiCaption"));
+    profileHint->setWordWrap(true);
+    layout->addWidget(profileHint);
     layout->addStretch(1);
     return page;
 }
@@ -342,7 +360,8 @@ bool NewSaveWizard::createSave()
             m_versionGroup->checkedButton()
                 ? m_versionGroup->checkedButton()->property("versionId").toString()
                 : newestFmVersionId();
-        if (m_context.createDatabase(name, versionId, &error))
+        if (m_context.createDatabase(name, versionId,
+                                     m_profileSourceCombo->currentData().toString(), &error))
             m_createdName = name;
     }
     if (m_createdName.isEmpty()) {

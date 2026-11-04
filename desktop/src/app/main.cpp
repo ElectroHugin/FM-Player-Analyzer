@@ -60,6 +60,9 @@ int main(int argc, char *argv[])
 
     fm::ThemeManager theme(context.config());
     theme.apply();
+    // Every save brings its own colors and day/night mode.
+    QObject::connect(&context, &fm::AppContext::profileChanged, &theme,
+                     &fm::ThemeManager::reload);
 
     if (!smoke) {
         // "Always open the last save" skips the start screen; holding Shift

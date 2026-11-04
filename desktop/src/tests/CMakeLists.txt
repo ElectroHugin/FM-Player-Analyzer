@@ -40,6 +40,7 @@ fm_add_test(test_tacticexplorer)
 fm_add_test(test_talentengine)
 fm_add_test(test_ratingsupdater)
 fm_add_test(test_twophase)
+fm_add_test(test_profile)
 
 # Widget test for an app-side class: compiles the widget source directly (the
 # app is an executable, not a library) and runs headless on the offscreen QPA.
@@ -79,3 +80,17 @@ set_tests_properties(test_navigation PROPERTIES
 fm_add_test(test_definitions_fm27)
 target_compile_definitions(test_definitions_fm27 PRIVATE
     DEFINITIONS_FM27="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json")
+
+# Save profiles end to end (app/AppContext + bundled definitions): open,
+# switch, restart, update from 2.0.4. Temporary data folder, headless.
+add_executable(test_profileswitch test_profileswitch.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/AppContext.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/AppPaths.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/resources/app.qrc)
+target_include_directories(test_profileswitch PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_profileswitch PRIVATE fmcore Qt6::Gui Qt6::Concurrent Qt6::Test)
+add_test(NAME test_profileswitch COMMAND test_profileswitch)
+set_tests_properties(test_profileswitch PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+    ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
+)

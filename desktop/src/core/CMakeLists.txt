@@ -44,6 +44,8 @@ add_library(fmcore STATIC
     PlayerStatus.cpp
     PlayerStore.h
     PlayerStore.cpp
+    ProfileStore.h
+    ProfileStore.cpp
     RatingsUpdater.h
     RatingsUpdater.cpp
     Registration.h

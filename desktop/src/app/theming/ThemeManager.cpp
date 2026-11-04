@@ -102,9 +102,15 @@ void ThemeManager::setMode(const QString &mode)
     if (mode == m_mode)
         return;
     m_mode = mode;
-    auto settings = m_config.themeSettings();
-    settings.insert(QStringLiteral("current_mode"), mode);
-    m_config.saveThemeSettings(settings);
+    // Only the mode changes: one row in the save's profile.
+    m_config.saveThemeSettings({{QStringLiteral("current_mode"), mode}});
+    apply();
+}
+
+void ThemeManager::reload()
+{
+    m_mode = m_config.themeSettings().value(QStringLiteral("current_mode"),
+                                            QStringLiteral("night"));
     apply();
 }
 

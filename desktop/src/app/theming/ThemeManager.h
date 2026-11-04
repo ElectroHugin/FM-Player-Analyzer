@@ -9,8 +9,9 @@ namespace fm {
 
 class AppConfig;
 
-// Applies the day/night theme from [ThemeSettings] in config.ini as an
-// app-wide stylesheet and exposes the palette to custom-painted widgets.
+// Applies the day/night theme of the open save's profile (AppConfig
+// themeSettings(); the start screen without a save uses the last save's look)
+// as an app-wide stylesheet and exposes the palette to custom-painted widgets.
 //
 // The theme is described by seven named color roles per mode so color can be
 // distributed instead of one "secondary background" tinting everything:
@@ -42,6 +43,8 @@ public:
 
     // Re-read colors from config (after the settings page saved them).
     void apply();
+    // Re-read mode and colors (another save's profile was loaded).
+    void reload();
 
     // --- Role colors (current mode) ---
     QColor background() const { return m_background; }

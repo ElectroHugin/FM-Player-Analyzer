@@ -8,6 +8,8 @@
 #include <QString>
 #include <QStringList>
 
+#include <functional>
+
 namespace fm {
 
 // Role key/preferable attribute lists (role_specific_weights entry).
@@ -36,8 +38,22 @@ public:
     // intact in that case.
     bool load(const QString &filePath, const QString &fmVersionId = defaultFmVersionId());
 
-    // Saves back to the file given to load(). Creates a .bak first, restores
-    // it on failure (same semantics as legacy save_definitions).
+    // Same from JSON text, e.g. the definitions document of a save's profile
+    // (ProfileStore). sourceLabel names the source in errors and becomes
+    // filePath(). Leaves the save handler untouched.
+    bool loadFromJson(const QByteArray &json, const QString &fmVersionId,
+                      const QString &sourceLabel = QStringLiteral("profile"));
+    // The current root as indented JSON (what save() writes).
+    QByteArray toJson() const;
+
+    // Where save() writes when set (the open save's profile); load() from a
+    // file clears it again.
+    using SaveHandler = std::function<bool(const QByteArray &json, QString *errorOut)>;
+    void setSaveHandler(SaveHandler handler) { m_saveHandler = std::move(handler); }
+
+    // Saves via the save handler, or back to the file given to load(): then a
+    // .bak is created first and restored on failure (same semantics as legacy
+    // save_definitions).
     bool save();
 
     QString errorString() const { return m_error; }
@@ -162,6 +178,7 @@ private:
     QHash<QString, QPair<int, int>> buildNaturalRoleSorter() const;
 
     QJsonObject m_root;
+    SaveHandler m_saveHandler;
     QString m_filePath;
     QString m_fmVersionId = defaultFmVersionId();
     QString m_error;
