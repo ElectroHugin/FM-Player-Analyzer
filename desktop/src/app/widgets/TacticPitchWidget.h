@@ -49,6 +49,8 @@ signals:
     // Player interactions (M13): boxes are clickable.
     void playerDoubleClicked(const QString &uid);
     void playerContextMenuRequested(const QString &uid, const QPoint &globalPos);
+    // Right-click on an empty place of a team (not in editor mode).
+    void emptySlotContextMenuRequested(const QString &slot, const QPoint &globalPos);
     // Editor mode: a slot (in use or free) was clicked.
     void slotClicked(const QString &slot, const QPoint &globalPos);
 

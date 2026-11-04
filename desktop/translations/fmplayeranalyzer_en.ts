@@ -1001,6 +1001,134 @@
         <source>Die mitgelieferten Taktiken sind nur Beispiele. Im Taktik-Editor legst du deine eigenen an; Updates lassen sie unberührt.</source>
         <translation>The bundled tactics are only examples. Create your own in the tactic editor; updates leave them untouched.</translation>
     </message>
+    <message>
+        <source>Aus Best XI: Ersatz für %1 (%2).</source>
+        <translation>From Best XI: replacement for %1 (%2).</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: freier Platz %1.</source>
+        <translation>From Best XI: free place %1.</translation>
+    </message>
+    <message>
+        <source>🔍 Im Scouting suchen (%1)</source>
+        <translation>🔍 Search in scouting (%1)</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: Bridge von %1 (mit Ball %2, ohne Ball %3).</source>
+        <translation>From Best XI: bridge of %1 (in possession %2, out of possession %3).</translation>
+    </message>
+    <message>
+        <source>🔍 Bridge im Scouting suchen (mit Ball %1, ohne Ball %2)</source>
+        <translation>🔍 Search bridge in scouting (in possession %1, out of possession %2)</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: freie Plätze mit Ball %1 und ohne Ball %2.</source>
+        <translation>From Best XI: free places in possession %1 and out of possession %2.</translation>
+    </message>
+    <message>
+        <source>🔍 Bridge im Scouting suchen – Platz ohne Ball wählen</source>
+        <translation>🔍 Search bridge in scouting – choose the place out of possession</translation>
+    </message>
+    <message>
+        <source>🔍 Bridge im Scouting suchen – Platz mit Ball wählen</source>
+        <translation>🔍 Search bridge in scouting – choose the place in possession</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: freier Platz mit Ball %1.</source>
+        <translation>From Best XI: free place in possession %1.</translation>
+    </message>
+    <message>
+        <source>Aus Best XI: freier Platz ohne Ball %1.</source>
+        <translation>From Best XI: free place out of possession %1.</translation>
+    </message>
+    <message>
+        <source>🔍 Nur mit Ball suchen (%1)</source>
+        <translation>🔍 Search in possession only (%1)</translation>
+    </message>
+    <message>
+        <source>🔍 Nur ohne Ball suchen (%1)</source>
+        <translation>🔍 Search out of possession only (%1)</translation>
+    </message>
+    <message>
+        <source>Freier Platz %1</source>
+        <translation>Free place %1</translation>
+    </message>
+    <message>
+        <source>Fällt ein Spieler der Startelf aus, kommt genau ein Spieler dazu. Die übrigen dürfen dafür ihre Plätze mit und ohne Ball tauschen. „Volle Bridge“ heißt: Der Ersatz übernimmt beide Plätze des Ausfalls. Von Hand gesetzte Plätze bleiben. Weitere Lösungen zeigt der Tooltip.</source>
+        <translation>If a starter is missing, exactly one player comes in. The others may swap their places in and out of possession for it. “Full bridge” means the replacement takes both places of the missing player. Places set by hand stay. The tooltip shows further solutions.</translation>
+    </message>
+    <message>
+        <source>Fällt ein Spieler der Startelf aus, kommt genau ein Spieler dazu. Die übrigen dürfen dafür ihre Plätze tauschen. Weitere Lösungen zeigt der Tooltip.</source>
+        <translation>If a starter is missing, exactly one player comes in. The others may swap places for it. The tooltip shows further solutions.</translation>
+    </message>
+    <message>
+        <source>mit %1 · ohne %2</source>
+        <translation>IP %1 · OOP %2</translation>
+    </message>
+    <message>
+        <source>mit %1 → %2</source>
+        <translation>IP %1 → %2</translation>
+    </message>
+    <message>
+        <source>ohne %1 → %2</source>
+        <translation>OOP %1 → %2</translation>
+    </message>
+    <message>
+        <source>keine</source>
+        <translation>none</translation>
+    </message>
+    <message>
+        <source>— niemand passt —</source>
+        <translation>— nobody fits —</translation>
+    </message>
+    <message>
+        <source>%1: %2, Umstellungen: %3, Elf %4</source>
+        <translation>%1: %2, moves: %3, XI %4</translation>
+    </message>
+    <message>
+        <source>Weitere Lösungen:</source>
+        <translation>Further solutions:</translation>
+    </message>
+    <message>
+        <source>Platz bleibt frei</source>
+        <translation>Place stays empty</translation>
+    </message>
+    <message>
+        <source>%1 (volle Bridge)</source>
+        <translation>%1 (full bridge)</translation>
+    </message>
+    <message>
+        <source>Kadertiefe: Ausfall in der Startelf</source>
+        <translation>Squad depth: a starter is missing</translation>
+    </message>
+    <message>
+        <source>Ausfall</source>
+        <translation>Missing</translation>
+    </message>
+    <message>
+        <source>Plätze</source>
+        <translation>Places</translation>
+    </message>
+    <message>
+        <source>Ersatz</source>
+        <translation>Replacement</translation>
+    </message>
+    <message>
+        <source>Ersatz spielt</source>
+        <translation>Replacement plays</translation>
+    </message>
+    <message>
+        <source>Elf-Wert</source>
+        <translation>XI value</translation>
+    </message>
+    <message>
+        <source>Umstellungen</source>
+        <translation>Moves</translation>
+    </message>
+    <message>
+        <source>Wie sich der Wert der Startelf (Summe der DWRS) mit dieser Lösung ändert.</source>
+        <translation>How the value of the starting XI (sum of DWRS) changes with this solution.</translation>
+    </message>
 </context>
 <context>
     <name>fm::CommandPalette</name>
@@ -3792,6 +3920,57 @@ The original file is not modified.</translation>
     </message>
 </context>
 <context>
+    <name>fm::ScoutRequirementsBar</name>
+    <message>
+        <source>🧩 Anforderungen (ein Kandidat muss alle erfüllen)</source>
+        <translation>🧩 Requirements (a candidate must meet all of them)</translation>
+    </message>
+    <message>
+        <source>Keine. Wähle eine Position, eine Rolle oder beides und füge sie hinzu. Mehrere Anforderungen gelten zusammen; die DWRS-Spanne oben gilt für jede Rolle. Eine Bridge-Suche startest du per Rechtsklick auf einen Platz in Best XI.</source>
+        <translation>None. Pick a position, a role or both and add them. Several requirements apply together; the DWRS range above applies to every role. Start a bridge search by right-clicking a place in Best XI.</translation>
+    </message>
+    <message>
+        <source>Position:</source>
+        <translation>Position:</translation>
+    </message>
+    <message>
+        <source>Rolle:</source>
+        <translation>Role:</translation>
+    </message>
+    <message>
+        <source>+ Hinzufügen</source>
+        <translation>+ Add</translation>
+    </message>
+    <message>
+        <source>Position und Rolle zusammen: Der Spieler braucht die Position und die Rolle. Nur eines von beiden: Es zählt nur das.</source>
+        <translation>Position and role together: the player needs the position and the role. Only one of them: only that counts.</translation>
+    </message>
+    <message>
+        <source>Alle entfernen</source>
+        <translation>Remove all</translation>
+    </message>
+    <message>
+        <source>beliebig</source>
+        <translation>any</translation>
+    </message>
+    <message>
+        <source>Rolle %1</source>
+        <translation>Role %1</translation>
+    </message>
+    <message>
+        <source>Position %1</source>
+        <translation>Position %1</translation>
+    </message>
+    <message>
+        <source>Bridge: mit Ball %1 + ohne Ball %2</source>
+        <translation>Bridge: in possession %1 + out of possession %2</translation>
+    </message>
+    <message>
+        <source>Anforderung entfernen</source>
+        <translation>Remove requirement</translation>
+    </message>
+</context>
+<context>
     <name>fm::SettingsPage</name>
     <message>
         <source>Einstellungen</source>
@@ -4882,6 +5061,22 @@ The original file is not modified.</translation>
     <message>
         <source>CSV-Dateien (*.csv)</source>
         <translation>CSV files (*.csv)</translation>
+    </message>
+    <message>
+        <source>⌀ Anforderungen</source>
+        <translation>⌀ Requirements</translation>
+    </message>
+    <message>
+        <source>Mittel der DWRS in den verlangten Rollen; bei einer Bridge gewichtet mit dem Anteil mit Ball aus den Einstellungen, wie in Best XI.</source>
+        <translation>Mean DWRS in the required roles; for a bridge weighted with the in-possession share from the settings, as in Best XI.</translation>
+    </message>
+    <message>
+        <source>Abstand zum Wert des Spielers, für den die Suche gestartet wurde.</source>
+        <translation>Difference to the value of the player the search was started for.</translation>
+    </message>
+    <message>
+        <source>Anforderungen (Wert)</source>
+        <translation>Requirements (value)</translation>
     </message>
 </context>
 <context>
