@@ -1848,6 +1848,17 @@ You can change the folder later in the settings.</translation>
     </message>
 </context>
 <context>
+    <name>fm::LiveSaveWatcher</name>
+    <message>
+        <source>Spielstand „%1“ konnte nicht eingelesen werden: %2</source>
+        <translation>Could not read save “%1”: %2</translation>
+    </message>
+    <message>
+        <source>Spielstand „%1“ eingelesen (%2): %3 Spieler aktualisiert.</source>
+        <translation>Read save “%1” (%2): %3 players updated.</translation>
+    </message>
+</context>
+<context>
     <name>fm::MainWindow</name>
     <message>
         <source>Zurück (Alt+←)</source>
@@ -4943,6 +4954,26 @@ Details: %1</translation>
     <message>
         <source>FM27-Spielstände:</source>
         <translation>FM27 saves:</translation>
+    </message>
+    <message>
+        <source>Spielstand live verfolgen</source>
+        <translation>Follow save live</translation>
+    </message>
+    <message>
+        <source>FM27-Spielstand (.fm) wählen</source>
+        <translation>Choose an FM27 save (.fm)</translation>
+    </message>
+    <message>
+        <source>Solange der Analyzer offen ist, liest er diesen Spielstand automatisch neu ein, sobald das Spiel ihn gespeichert hat, auch nach einem Autosave. Er nimmt immer die neueste Datei der Karriere, auch die Versionen „(v02)“, „(v03)“. Wenn du im Spiel unter einem neuen Namen speicherst, wähle die neue Datei hier aus.</source>
+        <translation>While the Analyzer is open, it reads this save again automatically as soon as the game has saved it, autosaves included. It always takes the newest file of the career, including the versions “(v02)”, “(v03)”. If you save under a new name in the game, choose the new file here.</translation>
+    </message>
+    <message>
+        <source>FM27-Spielstand auswählen</source>
+        <translation>Choose FM27 save</translation>
+    </message>
+    <message>
+        <source>FM27-Spielstände (*.fm);;Alle Dateien (*)</source>
+        <translation>FM27 saves (*.fm);;All files (*)</translation>
     </message>
 </context>
 <context>

@@ -100,6 +100,8 @@ private:
     // Database tab.
     QCheckBox *m_autoOpenCheck = nullptr;
     QCheckBox *m_attributeMaskingCheck = nullptr; // per save: FM27 save-game import
+    QCheckBox *m_liveSaveCheck = nullptr;          // per save: follow an FM27 save
+    QLineEdit *m_liveSaveEdit = nullptr;
     QComboBox *m_dbCombo = nullptr;
 
     // Club tab (settings table keys, same as legacy).

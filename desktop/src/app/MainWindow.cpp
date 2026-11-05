@@ -1,5 +1,7 @@
 #include "MainWindow.h"
 
+#include "LiveSaveWatcher.h"
+
 #include "widgets/ClubHeaderBar.h"
 
 #include "AboutDialog.h"
@@ -242,6 +244,8 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     m_toast->hide();
     m_toastTimer.setSingleShot(true);
     connect(&m_toastTimer, &QTimer::timeout, m_toast, &QWidget::hide);
+    // Reads the followed FM27 save in whenever the game wrote a newer one.
+    new LiveSaveWatcher(m_context, this, [this](const QString &text) { showToast(text); });
 
     m_palette = new CommandPalette(this);
     rootLayout->addLayout(contentColumn, 1);
