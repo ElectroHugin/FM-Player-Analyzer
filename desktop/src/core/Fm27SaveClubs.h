@@ -17,6 +17,7 @@ struct ClubInfo {
     quint32 uniqueId = 0; // database Unique ID (what graphics packs use)
     QString name;         // long name, e.g. "Manchester City"
     QString shortName;    // the name the game's lists show, e.g. "Man City"
+    bool women = false;   // a women's club (the game keeps them as separate clubs)
 };
 
 struct ClubTeams {

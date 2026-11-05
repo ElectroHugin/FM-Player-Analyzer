@@ -268,6 +268,7 @@ std::vector<Record> scanClubRecords(const QByteArray &d)
 struct TeamList {
     std::vector<quint32> teamIds;
     std::vector<quint32> affiliateTeamIds;
+    int gender = -1; // 0 men, 1 women, -1 unknown
 };
 
 std::vector<quint32> readIds(const QByteArray &d, qint64 at, int count)
@@ -307,6 +308,9 @@ std::optional<TeamList> parseTeamList(const QByteArray &d, qint64 listStart, qin
     if (idsStart + 4 * teamCount > recordEnd)
         return std::nullopt;
     TeamList list;
+    // The byte before the team count codes the club's gender (0 men, 1 women).
+    if (teamCountAt - 1 >= listStart)
+        list.gender = uint8_t(d[teamCountAt - 1]);
     list.teamIds = readIds(d, idsStart, teamCount);
     for (quint32 id : list.teamIds) {
         if (id < 1 || id > kTeamIdMax)
@@ -430,6 +434,7 @@ bool readClubTeams(const QByteArray &d, ClubTeams *out, QString *error)
             info.uniqueId = b.row.uniqueId;
         info.name = b.record.name;
         info.shortName = b.record.shortName;
+        info.women = b.teams.gender == 1;
         for (quint32 team : b.teams.teamIds) {
             if (storingClub.contains(team))
                 return fail(QStringLiteral("a team is listed by two clubs"));

@@ -911,6 +911,7 @@ bool readSave(const QString &path, SaveData *out, QString *error, const Progress
                 player.clubUniqueId = club->uniqueId;
                 player.clubName = club->name;
                 player.clubShortName = club->shortName;
+                player.women = club->women;
             }
             if (const ClubInfo *fielding = clubs.fieldingClubForTeam(player.teamId))
                 player.fieldingClubUid = fielding->uid;
