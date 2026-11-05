@@ -109,6 +109,11 @@ struct SavePlayer {
     quint32 fieldingClubUid = 0;
     // The player's club is a women's club (the analyzer leaves these out).
     bool women = false;
+
+    // Money in the save's base currency (pounds); 0 / -1 = not stored.
+    qint64 transferValue = 0; // the club's valuation (the game shows a range around it)
+    qint64 weeklyWage = -1;   // from the contract in effect
+    int squadStatus = -1;     // the contract's agreed playing time (game code)
 };
 
 struct SaveData {

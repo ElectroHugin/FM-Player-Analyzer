@@ -7,6 +7,7 @@
 #include "core/Fm27SaveFamily.h"
 #include "core/Fm27SaveImport.h"
 #include "core/HtmlImporter.h"
+#include "core/Utils.h"
 
 #include <QElapsedTimer>
 #include <QRegularExpression>
@@ -197,6 +198,15 @@ private slots:
             makePlayer(16, 7, QStringLiteral("Free Agent"), 0, QString(), 9),
             makePlayer(17, 8, QStringLiteral("Reserve Player"), 501, QStringLiteral("Home FC II"), 9),
         };
+        save.players.append(makePlayer(18, 9, QStringLiteral("Famous Woman"), 700,
+                                       QStringLiteral("Away FC Women"), 15));
+        save.players[8].worldReputation = 9000;
+        save.players[8].women = true; // a men's career leaves women's clubs out
+        save.players[0].weeklyWage = 10000;
+        save.players[0].transferValue = 2000000;
+        save.players[0].squadStatus = 3;
+        save.players[2].weeklyWage = 50000; // a scouted player's contract stays unknown
+        save.players[2].squadStatus = 1;
         save.players[1].worldReputation = 8000;
         save.players[7].fieldingClubUid = 500; // reserve side fielded by the user's club
         save.knowledgeByPindex = {{3, 95}, {4, 62}, {5, 40}};
@@ -214,12 +224,24 @@ private slots:
         for (const char *hidden : {"Consistency", "Dirtiness", "Important Matches", "Injury Proneness",
                                    "Versatility", "Current Ability", "Potential Ability", "CA", "PA"})
             QVERIFY2(!table.headers.contains(QString::fromLatin1(hidden)), hidden);
-        QCOMPARE(table.headers.size(), 9 + 47);
+        QCOMPARE(table.headers.size(), 12 + 47);
+        QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Wage"))), QStringLiteral("€12K p/w"));
+        QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Playing Time"))),
+                 QStringLiteral("Regular Starter"));
+        {
+            // The valuation is a range around the true value (€2.33M).
+            const QString value = table.rows.at(0).at(column(table, QStringLiteral("Transfer Value")));
+            const QStringList parts = value.split(QStringLiteral(" - "));
+            QCOMPARE(parts.size(), 2);
+            QVERIFY(valueToFloat(parts[0]) <= 2.33e6 && valueToFloat(parts[1]) >= 2.32e6);
+        }
+        QVERIFY(table.rows.at(2).at(column(table, QStringLiteral("Wage"))).isEmpty());
+        QVERIFY(table.rows.at(2).at(column(table, QStringLiteral("Playing Time"))).isEmpty());
 
         const QRegularExpression range(QStringLiteral("^(\\d+)-(\\d+)$"));
         const auto countRanges = [&](const QStringList &row) {
             int ranges = 0;
-            for (int c = 9; c < row.size(); ++c) {
+            for (int c = 12; c < row.size(); ++c) {
                 const auto m = range.match(row.at(c));
                 if (m.hasMatch()) {
                     ++ranges;
@@ -248,7 +270,7 @@ private slots:
         Fm27SaveImport::buildTable(save, {false}, &all);
         QCOMPARE(all.rows.size(), 7);
         for (const QStringList &row : all.rows) {
-            for (int c = 9; c < row.size(); ++c)
+            for (int c = 12; c < row.size(); ++c)
                 QVERIFY(!row.at(c).contains(QLatin1Char('-')));
         }
     }

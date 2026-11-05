@@ -461,6 +461,8 @@ constexpr int kAttributeBytes = 54;
 constexpr int kLeftFootByte = 24;
 constexpr int kRightFootByte = 25;
 constexpr int kHeightOffset = 121;
+constexpr int kTransferValueOffset = 93;
+constexpr quint32 kTransferValuePlaceholder = 300000000u;
 constexpr int kDecodeExtent = 122;
 constexpr quint32 kAllocatedUidMinimum = 2000000000u;
 constexpr int kAttributeMax = 100;
@@ -801,6 +803,78 @@ bool isKnownBuild(const QString &build)
     return known.contains(build);
 }
 
+// --- Contracts ---------------------------------------------------------------------
+// After fmsave's contract reader: a player's contract records sit in his record
+// window as the tag 01 00 6c 07 with (pindex + 1) five bytes on, the team id at
+// +9 and the weekly wage at +17. The record's tail, carrying the agreed squad
+// status, lies 66 bytes before the tag, 29 bytes further back per stored event,
+// and is marked by a 3 and a 4 (u32) at +3/+4 and its event count at +42.
+
+constexpr int kContractWindowStart = -30;
+constexpr int kContractWindowEndBack = -30;
+constexpr int kContractSelectorOffset = 5;
+constexpr int kContractStartOffset = -19;
+constexpr int kContractTeamOffset = 9;
+constexpr int kContractWageOffset = 17;
+constexpr int kContractTailBase = 66;
+constexpr int kContractTailStep = 29;
+constexpr int kContractTailMaxEvents = 200;
+constexpr int kContractTailStatusOffset = 36;
+constexpr int kContractTailEventsOffset = 42;
+constexpr int kContractTailSize = 46;
+
+struct ContractRecord {
+    quint32 teamId = 0;
+    quint32 wage = 0;
+    std::optional<QDate> start;
+    int squadStatus = -1; // -1 = no tail found
+};
+
+int contractTailStatus(const QByteArray &db, qint64 tag)
+{
+    const char *d = db.constData();
+    for (int events = 0; events <= kContractTailMaxEvents; ++events) {
+        const qint64 e = tag - kContractTailBase - qint64(events) * kContractTailStep;
+        if (e < 0)
+            break;
+        if (e + kContractTailSize > db.size())
+            continue;
+        if (d[e] == 0 && d[e + 1] == 0 && uint8_t(d[e + 3]) == 3 && u32(d + e + 4) == 4
+            && u32(d + e + kContractTailEventsOffset) == quint32(events))
+            return uint8_t(d[e + kContractTailStatusOffset]);
+    }
+    return -1;
+}
+
+std::vector<ContractRecord> contractRecords(const QByteArray &db, qint64 record, qint64 windowEnd,
+                                            bool lastRecord, quint32 pindex)
+{
+    static const QByteArray tag = QByteArray::fromHex("01006c07");
+    std::vector<ContractRecord> out;
+    const qint64 from = std::max<qint64>(0, record + kContractWindowStart);
+    const qint64 to = lastRecord ? windowEnd : windowEnd + kContractWindowEndBack;
+    const char *d = db.constData();
+    for (qint64 at = from; at < to && at + kContractWageOffset + 4 <= db.size(); ++at) {
+        if (u32(d + at + kContractSelectorOffset) != pindex + 1)
+            continue;
+        // Some records carry a date where the tag belongs; they count when that
+        // and the start decode as dates (the caller also wants a known team).
+        const bool tagged = std::memcmp(d + at, tag.constData(), 4) == 0;
+        if (!tagged
+            && (!decodeDate(db, at) || at + kContractStartOffset < 0
+                || !decodeDate(db, at + kContractStartOffset)))
+            continue;
+        ContractRecord c;
+        c.teamId = u32(d + at + kContractTeamOffset);
+        c.wage = u32(d + at + kContractWageOffset);
+        if (at + kContractStartOffset >= 0)
+            c.start = decodeDate(db, at + kContractStartOffset);
+        c.squadStatus = contractTailStatus(db, at);
+        out.push_back(c);
+    }
+    return out;
+}
+
 bool readSave(const QString &path, SaveData *out, QString *error, const ProgressCallback &progress)
 {
     const auto report = [&](int percent) {
@@ -890,6 +964,9 @@ bool readSave(const QString &path, SaveData *out, QString *error, const Progress
                 player.attributes[out54++] = scale(raw);
         }
         player.heightCm = ub[c.offset + kHeightOffset];
+        const quint32 value = u32(r + kTransferValueOffset);
+        if (value != kMissing && value != kTransferValuePlaceholder)
+            player.transferValue = value;
 
         const std::optional<quint32> nextUid =
             lastRecord ? std::nullopt : std::optional<quint32>(u32(p + windowEnd + kUidOffset));
@@ -915,6 +992,29 @@ bool readSave(const QString &path, SaveData *out, QString *error, const Progress
             }
             if (const ClubInfo *fielding = clubs.fieldingClubForTeam(player.teamId))
                 player.fieldingClubUid = fielding->uid;
+        }
+        // The contract in effect: a record at the player's club with a tail
+        // wins; among those the one started last, never one starting later
+        // than today (an agreed move).
+        if (player.clubUid) {
+            const ContractRecord *best = nullptr;
+            const auto records = contractRecords(db, c.offset, windowEnd, lastRecord, c.pindex);
+            for (const ContractRecord &k : records) {
+                const ClubInfo *club = clubsOk ? clubs.clubForTeam(k.teamId) : nullptr;
+                if (!club || (club->uid != player.clubUid && club->uid != player.fieldingClubUid))
+                    continue;
+                if (k.start && *k.start > data.gameDate)
+                    continue;
+                const bool better = !best || (k.squadStatus >= 0) > (best->squadStatus >= 0)
+                                    || ((k.squadStatus >= 0) == (best->squadStatus >= 0)
+                                        && k.start.value_or(QDate()) > best->start.value_or(QDate()));
+                if (better)
+                    best = &k;
+            }
+            if (best) {
+                player.weeklyWage = best->wage;
+                player.squadStatus = best->squadStatus;
+            }
         }
         data.players.append(std::move(player));
         if (i % 4096 == 0)
