@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AppPaths.h"
+#include "GraphicsLibrary.h"
 #include "core/AppConfig.h"
 #include "core/Constants.h"
 #include "core/Database.h"
@@ -80,9 +81,23 @@ public:
     enum class ProfileImage { ClubLogo, NationalFlag };
     QByteArray profileImage(ProfileImage image);
     bool setProfileImage(ProfileImage image, const QByteArray &png, QString *errorOut = nullptr);
+    // --- Optional pictures from the FM graphics folder (off by default) ---
+    // graphics() is idle unless the open save enabled it (config().graphicsEnabled()).
+    GraphicsLibrary &graphics() { return *m_graphics; }
+    // Re-applies the save's graphics settings (after open/settings save).
+    void applyGraphicsSettings(bool forceRescan = false);
+    // FM club id for a club name: the own club's id (setting "club_fm_id")
+    // or one remembered in "club_fm_ids" (JSON {name: id}). 0 = unknown.
+    quint32 clubFmId(const QString &clubName);
+    bool setClubFmId(const QString &clubName, quint32 id);
+    // Crest for any club, scaled to size: for the own club the logo stored in
+    // the profile wins (a deliberate choice), then the graphics folder by club
+    // id. Null pixmap = none (pages then show nothing, as before).
+    QPixmap clubCrest(const QString &clubName, int size);
+
     // The image the club header shows (club crest, or the flag in national
-    // mode). Single place to plug in further sources (e.g. the FM graphics
-    // folder): today it is the PNG stored in the profile.
+    // mode). Club mode: the PNG stored in the profile, otherwise (graphics
+    // folder on) the own club's crest by club id. Empty = none.
     QByteArray headerCrest();
     // Writes the edited definitions (definitions().setRoot()) into the open
     // save's profile and reloads them with the engines.
@@ -279,6 +294,7 @@ private:
     std::unique_ptr<DwrsEngine> m_dwrsEngine;
     std::unique_ptr<SquadBuilder> m_squadBuilder;
     std::unique_ptr<TacticExplorer> m_tacticExplorer;
+    std::unique_ptr<GraphicsLibrary> m_graphics;
     RoleRatings m_ratings;
     LatestRatings m_latestRatings;
     QString m_pendingProfileUid;

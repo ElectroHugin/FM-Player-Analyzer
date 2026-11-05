@@ -87,6 +87,10 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     TacticPitchWidget::setShiftSource([this](const QString &role, const QString &slot) {
         return m_context.definitions().roleShiftPercent(role, slot);
     });
+    // Small portraits on the pitch cards, only with the graphics folder on.
+    TacticPitchWidget::setPortraitSource([this](const QString &uid, int size) {
+        return m_context.graphics().portrait(uid, size);
+    });
     resize(1600, 950);
     setMinimumSize(1100, 700);
     setAcceptDrops(true); // drop an FM export anywhere to import it
@@ -246,6 +250,11 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     updateDbLabel();
     updateHeader();
 
+    connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this, [this] {
+        for (TacticPitchWidget *pitch : findChildren<TacticPitchWidget *>())
+            pitch->update();
+        updateHeader(); // the crest may come from the graphics folder
+    });
     connect(&m_context, &AppContext::navigationRequested, this, &MainWindow::navigateTo);
     connect(&m_context, &AppContext::databaseChanged, this, [this](const QString &) {
         updateDbLabel();

@@ -4,6 +4,7 @@
 
 #include <QColor>
 #include <QHash>
+#include <QPixmap>
 #include <QString>
 #include <QStringList>
 #include <QWidget>
@@ -50,6 +51,12 @@ public:
     // display only.
     using ShiftSource = std::function<double(const QString &role, const QString &slot)>;
     static void setShiftSource(ShiftSource source);
+
+    // Optional small portrait per player card (graphics folder, see
+    // GraphicsLibrary). Returns a null pixmap when off or missing: the card
+    // then looks as before. Set once (MainWindow).
+    using PortraitSource = std::function<QPixmap(const QString &uid, int size)>;
+    static void setPortraitSource(PortraitSource source);
 
     // FM version whose pitch geometry places the slots (empty = default).
     void setFmVersionId(const QString &versionId) { m_fmVersionId = versionId; }

@@ -23,6 +23,8 @@ add_library(fmcore STATIC
     GapAnalysis.h
     GapAnalysis.cpp
     GistRainbowLut.h
+    GraphicsIndex.h
+    GraphicsIndex.cpp
     HtmlImporter.h
     HtmlImporter.cpp
     ImportSchema.h

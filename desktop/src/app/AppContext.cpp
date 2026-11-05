@@ -3,7 +3,10 @@
 #include "core/ProfileStore.h"
 #include "core/RatingsUpdater.h"
 
+#include <QCryptographicHash>
 #include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -13,6 +16,7 @@ namespace fm {
 
 AppContext::AppContext(QObject *parent)
     : QObject(parent)
+    , m_graphics(std::make_unique<GraphicsLibrary>())
 {
 }
 
@@ -160,6 +164,7 @@ bool AppContext::openDatabaseImpl(const QString &dbName, const QString &copyProf
     // Colors and header first (they are ready in milliseconds), then the
     // players, which take most of the time on large saves.
     emit profileChanged();
+    applyGraphicsSettings();
 
     reloadFromDatabase();
     emit databaseChanged(dbName);
@@ -277,7 +282,13 @@ QByteArray AppContext::profileImage(ProfileImage image)
 
 QByteArray AppContext::headerCrest()
 {
-    return profileImage(nationalUiMode() ? ProfileImage::NationalFlag : ProfileImage::ClubLogo);
+    if (nationalUiMode())
+        return profileImage(ProfileImage::NationalFlag);
+    const QByteArray own = profileImage(ProfileImage::ClubLogo);
+    if (!own.isEmpty() || !m_database)
+        return own;
+    // Graphics folder (off by default: then this stays empty as before).
+    return m_graphics->clubLogoFile(clubFmId(userClub()));
 }
 
 bool AppContext::setProfileImage(ProfileImage image, const QByteArray &png, QString *errorOut)
@@ -554,6 +565,7 @@ bool AppContext::reloadConfigAndDefinitions()
                                                 &error)
                         && activateFmVersion(*m_database, fmVersionId(), &error);
         emit profileChanged();
+        applyGraphicsSettings();
     }
     reloadEngines();
     emit dataChanged();
@@ -568,6 +580,70 @@ bool AppContext::saveDefinitions(QString *errorOut)
         return false;
     }
     return reloadConfigAndDefinitions();
+}
+
+void AppContext::applyGraphicsSettings(bool forceRescan)
+{
+    if (!m_database || !m_config->graphicsEnabled()) {
+        m_graphics->configure(false, {}, {});
+        return;
+    }
+    const QString folder = QDir(m_config->effectiveGraphicsDir(fmVersionId())).absolutePath();
+    // One cache per folder, outside the graphics folder (never written to).
+    const QByteArray hash = QCryptographicHash::hash(QDir::cleanPath(folder).toLower().toUtf8(),
+                                                     QCryptographicHash::Sha1)
+                                .toHex()
+                                .left(12);
+    const QString cacheFile = m_paths.dataDir() + QStringLiteral("/cache/graphics_")
+                              + QString::fromLatin1(hash) + QStringLiteral(".bin");
+    m_graphics->configure(true, folder, cacheFile, forceRescan);
+}
+
+quint32 AppContext::clubFmId(const QString &clubName)
+{
+    if (!m_database || clubName.isEmpty())
+        return 0;
+    if (clubName == userClub()) {
+        const quint32 own = GraphicsIndex::parseId(
+            m_database->setting(QStringLiteral("club_fm_id")));
+        if (own != 0)
+            return own;
+    }
+    const QJsonObject map =
+        QJsonDocument::fromJson(m_database->setting(QStringLiteral("club_fm_ids")).toUtf8())
+            .object();
+    return GraphicsIndex::parseId(map.value(clubName).toVariant().toString());
+}
+
+bool AppContext::setClubFmId(const QString &clubName, quint32 id)
+{
+    if (!m_database || clubName.isEmpty())
+        return false;
+    if (clubName == userClub())
+        return m_database->setSetting(QStringLiteral("club_fm_id"),
+                                      id ? QString::number(id) : QString());
+    QJsonObject map =
+        QJsonDocument::fromJson(m_database->setting(QStringLiteral("club_fm_ids")).toUtf8())
+            .object();
+    if (id)
+        map.insert(clubName, QString::number(id));
+    else
+        map.remove(clubName);
+    return m_database->setSetting(
+        QStringLiteral("club_fm_ids"),
+        QString::fromUtf8(QJsonDocument(map).toJson(QJsonDocument::Compact)));
+}
+
+QPixmap AppContext::clubCrest(const QString &clubName, int size)
+{
+    if (!m_database || clubName.isEmpty() || size <= 0)
+        return {};
+    if (clubName == userClub()) {
+        QPixmap own;
+        if (own.loadFromData(profileImage(ProfileImage::ClubLogo)))
+            return own.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+    return m_graphics->clubLogo(clubFmId(clubName), size);
 }
 
 } // namespace fm

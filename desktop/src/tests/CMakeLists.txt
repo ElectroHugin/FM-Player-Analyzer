@@ -16,6 +16,7 @@ endfunction()
 
 fm_add_test(test_smoke)
 fm_add_test(test_utils)
+fm_add_test(test_graphicsindex)
 fm_add_test(test_themecolors)
 fm_add_test(test_definitions)
 fm_add_test(test_appconfig)
@@ -87,6 +88,8 @@ target_compile_definitions(test_definitions_fm27 PRIVATE
 # switch, restart, update from 2.0.4. Temporary data folder, headless.
 add_executable(test_profileswitch test_profileswitch.cpp
     ${CMAKE_SOURCE_DIR}/src/app/AppContext.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/GraphicsLibrary.h
+    ${CMAKE_SOURCE_DIR}/src/app/GraphicsLibrary.cpp
     ${CMAKE_SOURCE_DIR}/src/app/AppPaths.cpp
     ${CMAKE_SOURCE_DIR}/src/app/resources/app.qrc)
 target_include_directories(test_profileswitch PRIVATE ${CMAKE_SOURCE_DIR}/src/app)

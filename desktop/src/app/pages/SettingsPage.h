@@ -115,6 +115,13 @@ private:
     void chooseLogo();
     void removeLogo();
     void updateLogoPreview();
+    // Optional portraits/crests from the FM graphics folder.
+    QGroupBox *m_graphicsGroup = nullptr;
+    QLineEdit *m_graphicsDirEdit = nullptr;
+    QLineEdit *m_clubFmIdEdit = nullptr;
+    QLabel *m_graphicsStatus = nullptr;
+    QLabel *m_graphicsCrestPreview = nullptr;
+    void updateGraphicsStatus();
     QComboBox *m_favTactic1Combo = nullptr;
     QComboBox *m_favTactic2Combo = nullptr;
     QGroupBox *m_registrationGroup = nullptr;

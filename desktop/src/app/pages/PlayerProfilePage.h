@@ -56,6 +56,9 @@ private:
     QLabel *m_nameLabel = nullptr;
     QLabel *m_vitalsLabel = nullptr;
     QLabel *m_tagsLabel = nullptr;
+    // Optional pictures from the FM graphics folder; hidden without them.
+    QLabel *m_portraitLabel = nullptr;
+    QLabel *m_crestLabel = nullptr;
 
     QGroupBox *m_updateBox = nullptr;
     QLineEdit *m_updateFileEdit = nullptr;
