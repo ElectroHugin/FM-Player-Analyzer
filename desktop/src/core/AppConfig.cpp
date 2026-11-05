@@ -921,6 +921,18 @@ QString AppConfig::effectiveHtmlExportDir(const QString &fmVersionId) const
     return defaultHtmlExportDir(fmVersionId);
 }
 
+bool AppConfig::attributeMasking() const
+{
+    return readValue(QStringLiteral("Import/attribute_masking"), QStringLiteral("true"))
+           != QLatin1String("false");
+}
+
+bool AppConfig::setAttributeMasking(bool enabled)
+{
+    return writeValue(QStringLiteral("Import/attribute_masking"),
+                      enabled ? QStringLiteral("true") : QStringLiteral("false"));
+}
+
 bool AppConfig::graphicsEnabled() const
 {
     return readValue(QStringLiteral("Graphics/enabled"), QStringLiteral("false"))

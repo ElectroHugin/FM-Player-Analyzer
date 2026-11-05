@@ -265,6 +265,19 @@ QWidget *SettingsPage::buildClubTab()
         installIntoFm27(QStringLiteral(":/tactics"), QStringLiteral("tactics"),
                         tr("FM27-Taktiken"));
     });
+    m_attributeMaskingCheck = new QCheckBox(tr("Attribut-Maskierung wie im Spiel"), versionGroup);
+    auto *maskingHint = new QLabel(
+        tr("Gilt, wenn du einen FM27-Spielstand (.fm) einliest. Eingeschaltet übernimmt der "
+           "Analyzer nur Spieler, die du kennst: deinen Kader, Spieler mit sehr hoher "
+           "Reputation und Spieler aus deinem Scouting. Teilweise bekannte Spieler bekommen "
+           "Spannen, die der Analyzer selbst bildet; sie können von den Spannen im Spiel "
+           "abweichen. Ausgeschaltet übernimmt er alle Spieler mit ihren echten Werten. "
+           "Verdeckte Werte wie das Potenzial liest er nie aus."),
+        versionGroup);
+    maskingHint->setWordWrap(true);
+    maskingHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(tr("FM27-Spielstände:"), m_attributeMaskingCheck);
+    versionForm->addRow(maskingHint);
     layout->addWidget(versionGroup);
 
     auto *clubGroup = new QGroupBox(tr("Vereins-Zuordnung"), content);
@@ -1239,6 +1252,7 @@ void SettingsPage::refresh()
     m_importDirEdit->setPlaceholderText(
         QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir(m_context.fmVersionId())));
     m_graphicsGroup->setChecked(config.graphicsEnabled());
+    m_attributeMaskingCheck->setChecked(config.attributeMasking());
     m_graphicsDirEdit->setText(QDir::toNativeSeparators(config.graphicsDir()));
     m_graphicsDirEdit->setPlaceholderText(
         QDir::toNativeSeparators(AppConfig::defaultGraphicsDir(m_context.fmVersionId())));
@@ -1428,6 +1442,7 @@ void SettingsPage::saveAll()
     // --- Club tab (per-database settings) ---
     config.setHtmlExportDir(m_importDirEdit->text().trimmed());
     config.setGraphicsEnabled(m_graphicsGroup->isChecked());
+    config.setAttributeMasking(m_attributeMaskingCheck->isChecked());
     config.setGraphicsDir(QDir::fromNativeSeparators(m_graphicsDirEdit->text().trimmed()));
     saveSetting(QStringLiteral("club_fm_id"), m_clubFmIdEdit->text().trimmed());
     saveSetting(QStringLiteral("user_club"), m_userClubCombo->currentText());

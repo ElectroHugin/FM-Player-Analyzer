@@ -58,7 +58,7 @@ bool DropZone::isImportableFile(const QString &path)
 {
     const QString suffix = QFileInfo(path).suffix().toLower();
     return suffix == QLatin1String("html") || suffix == QLatin1String("htm")
-           || suffix == QLatin1String("csv");
+           || suffix == QLatin1String("csv") || suffix == QLatin1String("fm");
 }
 
 QString DropZone::importableFileFrom(const QMimeData *mime)
@@ -79,8 +79,8 @@ void DropZone::mousePressEvent(QMouseEvent *event)
         return;
     }
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("FM-Export (HTML oder CSV) auswählen"), m_startDir,
-        tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
+        this, tr("FM-Export oder FM27-Spielstand auswählen"), m_startDir,
+        tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
     if (!path.isEmpty()) {
         setFile(path);
         emit fileChosen(path);
