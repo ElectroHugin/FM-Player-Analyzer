@@ -1,5 +1,7 @@
 #include "ImportRunner.h"
 
+#include "core/Fm27SaveImport.h"
+
 #include "AppContext.h"
 #include "widgets/BusyProgressDialog.h"
 
@@ -34,6 +36,8 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
     request.backupsDir = context.paths().backupsDir();
     request.autoAssign = autoAssign;
     request.fmVersionId = context.fmVersionId();
+    // A save game (.fm) is filtered on the worker by the save's masking option.
+    Fm27SaveImport::setAttributeMasking(context.config().attributeMasking());
     const Definitions *definitions = &context.definitions();
     const DwrsEngine *engine = &context.dwrsEngine();
 
@@ -207,6 +211,11 @@ QString importErrorText(const ImportError &error)
             .arg(error.arg);
     case ImportErrorCode::TargetNotFound:
         return ImportText::tr("Zielspieler %1 nicht gefunden.").arg(error.arg);
+    case ImportErrorCode::SaveUnreadable:
+        return ImportText::tr("Der Spielstand konnte nicht gelesen werden. Wenn das Spiel gerade "
+                              "speichert, warte kurz und versuche es noch einmal. Nach einem "
+                              "FM-Patch braucht der Analyzer eventuell ein Update.\n\nDetails: %1")
+            .arg(error.arg);
     }
     return error.message;
 }

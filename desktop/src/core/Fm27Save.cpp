@@ -912,11 +912,31 @@ bool readSave(const QString &path, SaveData *out, QString *error, const Progress
                 player.clubName = club->name;
                 player.clubShortName = club->shortName;
             }
+            if (const ClubInfo *fielding = clubs.fieldingClubForTeam(player.teamId))
+                player.fieldingClubUid = fielding->uid;
         }
         data.players.append(std::move(player));
         if (i % 4096 == 0)
             report(45 + int(50 * double(i) / double(records.size())));
     }
+    // A patch that moved fields shows up as players without a person block,
+    // Unique ID or club: refuse rather than import wrong data.
+    qsizetype withPerson = 0, withUniqueId = 0, withClub = 0;
+    for (const SavePlayer &player : data.players) {
+        withPerson += player.personFound;
+        withUniqueId += player.uniqueId != 0;
+        withClub += player.clubUid != 0;
+    }
+    const double count = double(data.players.size());
+    if (!clubsOk || withPerson < 0.95 * count || withUniqueId < 0.95 * count || withClub < 0.5 * count)
+        return fail(error, QStringLiteral("%1: the save layout of build %2 differs from the known builds "
+                                          "(players %3, names %4, ids %5, clubs %6%7)")
+                               .arg(fileName, data.build)
+                               .arg(data.players.size())
+                               .arg(withPerson)
+                               .arg(withUniqueId)
+                               .arg(withClub)
+                               .arg(clubsOk ? QString() : QStringLiteral("; ") + clubError));
     report(100);
     *out = std::move(data);
     return true;

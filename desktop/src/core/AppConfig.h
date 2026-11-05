@@ -188,6 +188,13 @@ public:
     // Configured folder if set and existing, otherwise defaultHtmlExportDir().
     QString effectiveHtmlExportDir(const QString &fmVersionId) const;
 
+    // [Import] attribute_masking — FM27 save games: show only what the user's
+    // scouting knows (ranges for partly known players), like the game's own
+    // attribute masking. Per save, on by default. Off = real values of every
+    // player; hidden values (ability, consistency, ...) are never imported.
+    bool attributeMasking() const;
+    bool setAttributeMasking(bool enabled);
+
     // [Graphics] — player portraits and club logos from the FM graphics
     // folder (face/logo packs). Opt-in per save, off by default. Folder empty
     // = "<Documents>/Sports Interactive/<game folder>/graphics".

@@ -1058,8 +1058,8 @@ void MainWindow::importExport(QString filePath)
 {
     if (filePath.isEmpty()) {
         filePath = QFileDialog::getOpenFileName(
-            this, tr("FM-Export (HTML oder CSV) auswählen"), m_context.htmlExportDir(),
-            tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
+            this, tr("FM-Export oder FM27-Spielstand auswählen"), m_context.htmlExportDir(),
+            tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
         if (filePath.isEmpty())
             return;
     }

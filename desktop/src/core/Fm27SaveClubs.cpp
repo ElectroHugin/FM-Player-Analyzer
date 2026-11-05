@@ -451,7 +451,7 @@ bool readClubTeams(const QByteArray &d, ClubTeams *out, QString *error)
         }
         for (quint32 team : linked) {
             claimed.insert(team);
-            result.clubByTeam.insert(team, i);
+            result.fieldingByTeam.insert(team, i);
         }
     }
     *out = std::move(result);

@@ -2,9 +2,12 @@
 // against reference data. Developer tool: the output contains hidden values
 // and is never shown in the app.
 //
-//   fm27savedump SAVE.fm OUT.csv
+//   fm27savedump SAVE.fm OUT.csv                 every player, raw (hidden values too)
+//   fm27savedump SAVE.fm OUT.csv --table [--unmasked]
+//                                                the import table the app would build
 
 #include "core/Fm27Save.h"
+#include "core/Fm27SaveImport.h"
 
 #include <QCoreApplication>
 #include <QFile>
@@ -18,9 +21,36 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     const QStringList args = app.arguments();
-    if (args.size() != 3) {
-        std::fprintf(stderr, "usage: fm27savedump SAVE.fm OUT.csv\n");
+    if (args.size() < 3) {
+        std::fprintf(stderr, "usage: fm27savedump SAVE.fm OUT.csv [--table [--unmasked]]\n");
         return 2;
+    }
+    if (args.contains(QStringLiteral("--table"))) {
+        fm::Fm27SaveImport::Options options;
+        options.attributeMasking = !args.contains(QStringLiteral("--unmasked"));
+        fm::ImportTable table;
+        fm::ImportError importError;
+        if (!fm::Fm27SaveImport::buildTable(args[1], options, &table, &importError)) {
+            std::fprintf(stderr, "error: %s\n", qPrintable(importError.message));
+            return 1;
+        }
+        QFile file(args[2]);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            return 1;
+        QTextStream out(&file);
+        const auto quoted = [](QString s) { return QLatin1Char('"') + s.replace(QLatin1Char('"'), QLatin1String("\"\"")) + QLatin1Char('"'); };
+        QStringList header;
+        for (const QString &h : table.headers)
+            header << quoted(h);
+        out << header.join(QLatin1Char(',')) << "\n";
+        for (const QStringList &row : table.rows) {
+            QStringList cells;
+            for (const QString &c : row)
+                cells << quoted(c);
+            out << cells.join(QLatin1Char(',')) << "\n";
+        }
+        std::fprintf(stderr, "%lld rows\n", qlonglong(table.rows.size()));
+        return 0;
     }
     SaveData data;
     QString error;

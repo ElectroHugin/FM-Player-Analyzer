@@ -21,12 +21,20 @@ struct ClubInfo {
 
 struct ClubTeams {
     QList<ClubInfo> clubs;
-    QHash<quint32, int> clubByTeam; // team id -> index in clubs (fielding club)
+    QHash<quint32, int> clubByTeam;     // team id -> index in clubs (club that stores the team)
+    QHash<quint32, int> fieldingByTeam; // affiliated team id -> index of the club fielding it
 
+    // The club the game names for the team (a reserve side shows as "... II").
     const ClubInfo *clubForTeam(quint32 teamId) const
     {
         const auto it = clubByTeam.constFind(teamId);
         return it == clubByTeam.constEnd() ? nullptr : &clubs[*it];
+    }
+    // The club that fields the team: the parent for an affiliated team.
+    const ClubInfo *fieldingClubForTeam(quint32 teamId) const
+    {
+        const auto it = fieldingByTeam.constFind(teamId);
+        return it == fieldingByTeam.constEnd() ? clubForTeam(teamId) : &clubs[*it];
     }
 };
 

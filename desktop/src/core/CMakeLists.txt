@@ -22,6 +22,8 @@ add_library(fmcore STATIC
     Fm27Save.cpp
     Fm27SaveClubs.h
     Fm27SaveClubs.cpp
+    Fm27SaveImport.h
+    Fm27SaveImport.cpp
     Freshness.h
     Freshness.cpp
     GapAnalysis.h

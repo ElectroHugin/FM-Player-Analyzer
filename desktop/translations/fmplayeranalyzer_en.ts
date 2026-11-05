@@ -170,6 +170,14 @@
         <source>Zielspieler %1 nicht gefunden.</source>
         <translation>Target player %1 not found.</translation>
     </message>
+    <message>
+        <source>Der Spielstand konnte nicht gelesen werden. Wenn das Spiel gerade speichert, warte kurz und versuche es noch einmal. Nach einem FM-Patch braucht der Analyzer eventuell ein Update.
+
+Details: %1</source>
+        <translation>The save could not be read. If the game is saving right now, wait a moment and try again. After an FM patch the analyzer may need an update.
+
+Details: %1</translation>
+    </message>
 </context>
 <context>
     <name>Navigation</name>
@@ -1304,14 +1312,6 @@
         <translation>Club: %1&lt;br/&gt;Positions: %2</translation>
     </message>
     <message>
-        <source>FM-Export (HTML oder CSV) auswählen</source>
-        <translation>Select FM export (HTML or CSV)</translation>
-    </message>
-    <message>
-        <source>FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)</source>
-        <translation>FM exports (*.html *.htm *.csv);;All files (*)</translation>
-    </message>
-    <message>
         <source>Import fehlgeschlagen</source>
         <translation>Import failed</translation>
     </message>
@@ -1339,6 +1339,14 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
         <source>%1 Spieler-Datensätze aktualisiert.</source>
         <translation>%1 player records updated.</translation>
     </message>
+    <message>
+        <source>FM-Export oder FM27-Spielstand auswählen</source>
+        <translation>Choose an FM export or FM27 save</translation>
+    </message>
+    <message>
+        <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
+        <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
+    </message>
 </context>
 <context>
     <name>fm::DropZone</name>
@@ -1355,12 +1363,12 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
         <translation>Click to choose another file</translation>
     </message>
     <message>
-        <source>FM-Export (HTML oder CSV) auswählen</source>
-        <translation>Select FM export (HTML or CSV)</translation>
+        <source>FM-Export oder FM27-Spielstand auswählen</source>
+        <translation>Choose an FM export or FM27 save</translation>
     </message>
     <message>
-        <source>FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)</source>
-        <translation>FM exports (*.html *.htm *.csv);;All files (*)</translation>
+        <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
+        <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
 </context>
 <context>
@@ -2002,12 +2010,12 @@ You can change the folder later in the settings.</translation>
         <translation>All saves …</translation>
     </message>
     <message>
-        <source>FM-Export (HTML oder CSV) auswählen</source>
-        <translation>Select FM export (HTML or CSV)</translation>
+        <source>FM-Export oder FM27-Spielstand auswählen</source>
+        <translation>Choose an FM export or FM27 save</translation>
     </message>
     <message>
-        <source>FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)</source>
-        <translation>FM exports (*.html *.htm *.csv);;All files (*)</translation>
+        <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
+        <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
 </context>
 <context>
@@ -2400,14 +2408,6 @@ The original file is not modified.</translation>
         <translation>When enabled, the current national squad is cleared and replaced with ALL players from this export file — handy for quick squad updates.</translation>
     </message>
     <message>
-        <source>FM-Export (HTML oder CSV) auswählen</source>
-        <translation>Select FM export (HTML or CSV)</translation>
-    </message>
-    <message>
-        <source>FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)</source>
-        <translation>FM exports (*.html *.htm *.csv);;All files (*)</translation>
-    </message>
-    <message>
         <source>Kader-Analyse</source>
         <translation>Squad Analysis</translation>
     </message>
@@ -2514,6 +2514,14 @@ The original file is not modified.</translation>
     <message>
         <source>Import abgeschlossen</source>
         <translation>Import complete</translation>
+    </message>
+    <message>
+        <source>FM-Export oder FM27-Spielstand auswählen</source>
+        <translation>Choose an FM export or FM27 save</translation>
+    </message>
+    <message>
+        <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
+        <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
 </context>
 <context>
@@ -4923,6 +4931,18 @@ Details: %1</translation>
     <message>
         <source>FM27-Taktiken</source>
         <translation>FM27 tactics</translation>
+    </message>
+    <message>
+        <source>Attribut-Maskierung wie im Spiel</source>
+        <translation>Attribute masking as in the game</translation>
+    </message>
+    <message>
+        <source>Gilt, wenn du einen FM27-Spielstand (.fm) einliest. Eingeschaltet übernimmt der Analyzer nur Spieler, die du kennst: deinen Kader, Spieler mit sehr hoher Reputation und Spieler aus deinem Scouting. Teilweise bekannte Spieler bekommen Spannen, die der Analyzer selbst bildet; sie können von den Spannen im Spiel abweichen. Ausgeschaltet übernimmt er alle Spieler mit ihren echten Werten. Verdeckte Werte wie das Potenzial liest er nie aus.</source>
+        <translation>Applies when you read an FM27 save (.fm). When on, the analyzer takes over only players you know: your squad, players with a very high reputation and players from your scouting. Partly known players get ranges the analyzer draws itself; they can differ from the ranges in the game. When off, it takes over every player with his real values. Hidden values such as potential are never read.</translation>
+    </message>
+    <message>
+        <source>FM27-Spielstände:</source>
+        <translation>FM27 saves:</translation>
     </message>
 </context>
 <context>
