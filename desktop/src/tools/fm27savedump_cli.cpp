@@ -80,7 +80,7 @@ int main(int argc, char **argv)
             << (p.birthDate.isValid() ? p.birthDate.toString(Qt::ISODate) : QString()) << ','
             << (p.age >= 0 ? QString::number(p.age) : QString()) << ',' << p.nationId << ',' << p.heightCm << ','
             << p.leftFoot << ',' << p.rightFoot << ',' << p.clubUid << ",\"" << p.clubShortName << "\","
-            << p.clubUniqueId << ',' << p.worldReputation << ','
+            << p.clubUniqueId << (p.women ? "w" : "") << ',' << p.worldReputation << ','
             << data.knowledgeByPindex.value(p.pindex, -1);
         for (int i = 0; i < SavePositionCount; ++i)
             out << ',' << p.positions[i];

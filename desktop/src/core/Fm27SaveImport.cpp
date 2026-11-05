@@ -96,12 +96,27 @@ QString attrText(int lo, int hi)
     return lo == hi ? QString::number(lo) : QStringLiteral("%1-%2").arg(lo).arg(hi);
 }
 
-int findOwnClub(const SaveData &save)
+// Whether the user plays a women's career. A club's men's and women's sides
+// are separate clubs of the same name, so the summary's club name does not
+// tell; the user's scouting does, as it only covers one of them. Without any
+// scouting knowledge the career counts as a men's one.
+bool womensCareer(const SaveData &save)
+{
+    qsizetype women = 0, men = 0;
+    for (const SavePlayer &p : save.players) {
+        if (!save.knowledgeByPindex.contains(p.pindex) || !p.clubUid)
+            continue;
+        (p.women ? women : men) += 1;
+    }
+    return women > men;
+}
+
+int findOwnClub(const SaveData &save, bool women)
 {
     // The summary names the user's club the way lists do (short name).
     QHash<quint32, int> counts;
     for (const SavePlayer &p : save.players) {
-        if (p.clubUid && p.clubShortName == save.clubName)
+        if (p.clubUid && p.women == women && p.clubShortName == save.clubName)
             ++counts[p.clubUid];
     }
     quint32 best = 0;
@@ -277,10 +292,15 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
         out->headers << QString::fromLatin1(a.column);
     out->rows.clear();
     out->malformedRows = 0;
-    const quint32 ownClub = quint32(findOwnClub(save));
+    // Only the career's side of the game: a men's career leaves out every
+    // women's club and the other way round.
+    const bool women = womensCareer(save);
+    const quint32 ownClub = quint32(findOwnClub(save, women));
 
     for (const SavePlayer &p : save.players) {
         if (!p.personFound || p.uniqueId == 0 || p.name.isEmpty())
+            continue;
+        if (p.women != women)
             continue;
         int ranged = 0;
         int knowledge = 100;

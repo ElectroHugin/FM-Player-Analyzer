@@ -107,6 +107,8 @@ struct SavePlayer {
     // The club fielding the player's team: differs from clubUid for an
     // affiliated side (e.g. a reserve team), which plays for its parent.
     quint32 fieldingClubUid = 0;
+    // The player's club is a women's club (the analyzer leaves these out).
+    bool women = false;
 };
 
 struct SaveData {

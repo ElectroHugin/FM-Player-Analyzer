@@ -15,6 +15,8 @@
 //     store its ranges; the analyzer draws its own, once per player and
 //     attribute (stable across imports), with the true value at a random place
 //     inside, never in the middle by rule. Fewer ranges the more is known.
+// Only the career's side of the game is read: a men's career leaves out
+// women's clubs and the other way round (the user's scouting tells which).
 // Everyone else is left out. Hidden values (ability, potential, consistency,
 // injury proneness, important matches, dirtiness, versatility) are never put
 // into the table, whatever the setting.
