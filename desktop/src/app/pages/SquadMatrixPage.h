@@ -27,6 +27,7 @@ namespace fm {
 struct Player;
 class PersonalityFilterWidget;
 class ScoutRequirementsBar;
+class ColumnChooser;
 class PlayerTableModel;
 class PlayerFilterProxy;
 struct PlayerColumn;
@@ -56,6 +57,7 @@ private:
         PlayerTableModel *model = nullptr;
         PlayerFilterProxy *proxy = nullptr;
         QTableView *table = nullptr;
+        ColumnChooser *columns = nullptr;
     };
 
     // One "attribute >= threshold" row of the attribute-threshold panel.
@@ -69,6 +71,8 @@ private:
     QWidget *buildSquadTab();
     void buildTable(TableSection *section, const QString &title, QWidget *parent, bool scouted);
     QList<PlayerColumn> buildColumns(bool clubTable) const;
+    // False while no player of the save has a known personality (FM27).
+    bool m_personalityKnown = true;
     // Takes a search handed over from the Best XI (bridge search).
     void applyPendingScoutSearch();
     // Game positions of the open save's FM version, pitch order.

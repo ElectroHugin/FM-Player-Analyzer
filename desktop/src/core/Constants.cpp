@@ -79,7 +79,8 @@ const QList<FmDataVersion> &fmDataVersions()
     static const QList<FmDataVersion> versions = {
         {QStringLiteral("fm27"), QStringLiteral("Football Manager 2027"), true,
          QStringLiteral("definitions_fm27.json"), QStringLiteral("FM View Exporter"),
-         {QStringLiteral("csv"), QStringLiteral("html"), QStringLiteral("fm")}, /*provisionalWeights*/ true, /*registrationRules*/ true},
+         {QStringLiteral("csv"), QStringLiteral("html"), QStringLiteral("fm")}, /*provisionalWeights*/ true, /*registrationRules*/ true,
+         /*unratedAttributes*/ {}, /*customRoles*/ false},
         {QStringLiteral("fm24"), QStringLiteral("Football Manager 2024"), true,
          QStringLiteral("definitions.json"), QStringLiteral("Football Manager 2024"),
          {QStringLiteral("html"), QStringLiteral("csv")}, /*provisionalWeights*/ false, /*registrationRules*/ true,

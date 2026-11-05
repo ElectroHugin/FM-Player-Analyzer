@@ -1,5 +1,7 @@
 #include "MainWindow.h"
 
+#include "core/Constants.h"
+
 #include "LiveSaveWatcher.h"
 
 #include "widgets/ClubHeaderBar.h"
@@ -265,6 +267,10 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         updateHeader();
         m_searchModelDirty = true;
         m_noticeBar->hide(); // hints belong to the previous save
+        // Another FM version may offer other pages ("Neue Rolle" only where
+        // roles can be added).
+        if (fmDataVersion(m_context.fmVersionId()).customRoles != m_sidebarCustomRoles)
+            rebuildMenu();
         for (PageBase *page : std::as_const(m_pages))
             page->refresh();
         // Another database: earlier steps (e.g. a player's profile) may not
@@ -460,7 +466,8 @@ void MainWindow::rebuildMenu(bool selectFirst)
         font.setPointSizeF(font.pointSizeF() * 0.88);
         item->setFont(font);
     };
-    m_sidebar = Navigation::sidebar(national);
+    m_sidebarCustomRoles = fmDataVersion(m_context.fmVersionId()).customRoles;
+    m_sidebar = Navigation::sidebar(national, m_sidebarCustomRoles);
     for (const Navigation::Section &section : std::as_const(m_sidebar)) {
         addSection(section.heading);
         for (const Navigation::Group &group : section.groups) {
@@ -940,7 +947,8 @@ void MainWindow::openPalette()
     // Pages of both modes; switching mode where needed.
     QSet<QString> seen;
     for (const bool national : {m_context.nationalUiMode(), !m_context.nationalUiMode()}) {
-        for (const Navigation::Section &section : Navigation::sidebar(national)) {
+        for (const Navigation::Section &section : Navigation::sidebar(
+                 national, fmDataVersion(m_context.fmVersionId()).customRoles)) {
             for (const Navigation::Group &group : section.groups) {
                 for (const Navigation::Tab &tab : group.tabs) {
                     if (seen.contains(tab.pageId))

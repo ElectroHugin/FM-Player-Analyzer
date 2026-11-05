@@ -143,6 +143,7 @@ private:
 
     QStringList m_searchKeys; // folded "name club" per store row, for the palette
     bool m_searchModelDirty = true;
+    bool m_sidebarCustomRoles = true;
 };
 
 } // namespace fm

@@ -15,6 +15,7 @@ class QCheckBox;
 class QWidget;
 
 namespace fm {
+class FlowLayout;
 
 struct Player;
 class LineChartWidget;
@@ -66,7 +67,7 @@ private:
     QPushButton *m_updateButton = nullptr;
 
     QWidget *m_detailWidget = nullptr;
-    QHBoxLayout *m_topRolesLayout = nullptr;
+    FlowLayout *m_topRolesLayout = nullptr;
     // All of the player's roles as tiles, best first, in a horizontal scroll
     // area; for FM27 filterable by phase (with / without ball).
     struct RoleTile {
@@ -76,7 +77,6 @@ private:
     };
     QList<RoleTile> m_roleTiles;
     QComboBox *m_roleFilterCombo = nullptr;
-    QScrollArea *m_topRolesScroll = nullptr;
     void fillRoleTiles();
     QGroupBox *m_talentBox = nullptr;
     QLabel *m_talentLabel = nullptr;

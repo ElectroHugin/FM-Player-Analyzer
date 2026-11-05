@@ -20,17 +20,18 @@ Group playersGroup()
               QStringLiteral("edit_player")}}};
 }
 
-Section adminSection()
+Section adminSection(bool customRoles)
 {
+    QList<Tab> roleTabs = {{QCoreApplication::translate("Navigation", "Rollen zuweisen"),
+                            QStringLiteral("assign_roles")}};
+    if (customRoles)
+        roleTabs.append({QCoreApplication::translate("Navigation", "Neue Rolle"),
+                         QStringLiteral("new_role")});
+    roleTabs.append({QCoreApplication::translate("Navigation", "Taktiken"),
+                     QStringLiteral("new_tactic")});
     return {QCoreApplication::translate("Navigation", "VERWALTUNG"),
             {{QStringLiteral("roles_tactics"),
-              QCoreApplication::translate("Navigation", "Rollen & Taktiken"),
-              {{QCoreApplication::translate("Navigation", "Rollen zuweisen"),
-                QStringLiteral("assign_roles")},
-               {QCoreApplication::translate("Navigation", "Neue Rolle"),
-                QStringLiteral("new_role")},
-               {QCoreApplication::translate("Navigation", "Taktiken"),
-                QStringLiteral("new_tactic")}}},
+              QCoreApplication::translate("Navigation", "Rollen & Taktiken"), roleTabs},
              {QStringLiteral("settings"),
               QCoreApplication::translate("Navigation", "Einstellungen"),
               {{QCoreApplication::translate("Navigation", "Einstellungen"),
@@ -39,7 +40,7 @@ Section adminSection()
 
 } // namespace
 
-QList<Section> sidebar(bool national)
+QList<Section> sidebar(bool national, bool customRoles)
 {
     if (national) {
         return {
@@ -67,7 +68,7 @@ QList<Section> sidebar(bool national)
                {{QCoreApplication::translate("Navigation", "Entwicklung"),
                  QStringLiteral("dwrs_development")}}},
               playersGroup()}},
-            adminSection(),
+            adminSection(customRoles),
         };
     }
 
@@ -116,7 +117,7 @@ QList<Section> sidebar(bool national)
             {QCoreApplication::translate("Navigation", "Nach Rolle"),
              QStringLiteral("scouting_roles")}}},
           playersGroup()}},
-        adminSection(),
+        adminSection(customRoles),
     };
 }
 

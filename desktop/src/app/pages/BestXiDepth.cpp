@@ -2,6 +2,7 @@
 // the squad depth per missing starter. Kept apart from BestXiPage.cpp, which
 // holds the layout and the team calculation.
 #include "BestXiPage.h"
+#include "PageHelpers.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -247,14 +248,9 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
         ++row;
     }
     m_outageTable->setSortingEnabled(true);
-    m_outageTable->resizeColumnsToContents();
-    m_outageTable->horizontalHeader()->setStretchLastSection(true);
-    m_outageTable->resizeRowsToContents();
-    int height = m_outageTable->horizontalHeader()->sizeHint().height()
-                 + 2 * m_outageTable->frameWidth();
-    for (int r = 0; r < row; ++r)
-        height += m_outageTable->rowHeight(r);
-    m_outageTable->setFixedHeight(height);
+    // Long move lists wrap instead of widening the table.
+    fitTableToContents(m_outageTable, false,
+                       m_outageTable->fontMetrics().averageCharWidth() * 60);
 }
 
 } // namespace fm

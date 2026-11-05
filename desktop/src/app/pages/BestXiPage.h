@@ -144,7 +144,9 @@ private:
     QLabel *m_outageNote = nullptr;
     QTableWidget *m_outageTable = nullptr;
     QGroupBox *m_depthBox = nullptr;
-    QTableWidget *m_depthTable = nullptr;
+    // [0] = with ball (or the only table), [1] = without ball, side by side.
+    QTableWidget *m_depthTables[2] = {nullptr, nullptr};
+    QLabel *m_depthCaptions[2] = {nullptr, nullptr};
     QLabel *m_depthEmpty = nullptr;
 
     QLabel *m_secondXiTitle = nullptr;

@@ -1145,6 +1145,41 @@ Details: %1</translation>
         <source>Wie sich der Wert der Startelf (Summe der DWRS) mit dieser Lösung ändert.</source>
         <translation>How the value of the starting XI (sum of DWRS) changes with this solution.</translation>
     </message>
+    <message>
+        <source>Mit Ball (IP)</source>
+        <translation>In possession (IP)</translation>
+    </message>
+    <message>
+        <source>Ohne Ball (OOP)</source>
+        <translation>Out of possession (OOP)</translation>
+    </message>
+</context>
+<context>
+    <name>fm::ColumnChooser</name>
+    <message>
+        <source>Spalten…</source>
+        <translation>Columns…</translation>
+    </message>
+    <message>
+        <source>Spalten ein- oder ausblenden. Auch per Rechtsklick auf die Kopfzeile der Tabelle.</source>
+        <translation>Show or hide columns. Also by right-clicking the table header.</translation>
+    </message>
+    <message>
+        <source>Alle Spalten zeigen</source>
+        <translation>Show all columns</translation>
+    </message>
+    <message>
+        <source>Standard wiederherstellen</source>
+        <translation>Restore default</translation>
+    </message>
+    <message>
+        <source>Alle Rollen mit Ball (IP)</source>
+        <translation>All in-possession roles (IP)</translation>
+    </message>
+    <message>
+        <source>Alle Rollen ohne Ball (OOP)</source>
+        <translation>All out-of-possession roles (OOP)</translation>
+    </message>
 </context>
 <context>
     <name>fm::CommandPalette</name>
@@ -3670,7 +3705,11 @@ Details: %1</translation>
     </message>
     <message>
         <source>Welche Rollen als Kacheln gezeigt werden. Seitlich scrollen für alle Rollen.</source>
-        <translation>Which roles are shown as tiles. Scroll sideways for all roles.</translation>
+        <translation type="vanished">Which roles are shown as tiles. Scroll sideways for all roles.</translation>
+    </message>
+    <message>
+        <source>Welche Rollen als Kacheln gezeigt werden.</source>
+        <translation>Which roles are shown as tiles.</translation>
     </message>
 </context>
 <context>
@@ -5492,6 +5531,14 @@ Details: %1</translation>
     <message>
         <source>Anforderungen (Wert)</source>
         <translation>Requirements (value)</translation>
+    </message>
+    <message>
+        <source>Frische</source>
+        <translation>Freshness</translation>
+    </message>
+    <message>
+        <source>Daten veraltet: seit %1 Komplett-Exporten nicht mehr gesehen.</source>
+        <translation>Data outdated: not seen in the last %1 full exports.</translation>
     </message>
 </context>
 <context>

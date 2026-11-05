@@ -4,6 +4,7 @@
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
+#include "../widgets/ColumnChooser.h"
 #include "../widgets/PersonalityFilterWidget.h"
 #include "../widgets/PlayerTableModel.h"
 #include "../widgets/ScoutRequirementsBar.h"
@@ -424,13 +425,19 @@ void SquadMatrixPage::buildTable(TableSection *section, const QString &title, QW
     section->search->setClearButtonEnabled(true);
     auto *exportButton = new QPushButton(tr("CSV exportieren"), section->box);
     searchRow->addWidget(section->search, 1);
-    searchRow->addWidget(exportButton);
     layout->addLayout(searchRow);
 
     section->model = new PlayerTableModel(this);
     section->proxy = new PlayerFilterProxy(section->model, this);
     section->table = new QTableView(section->box);
     section->table->setModel(section->proxy);
+    // Freshness only shows up as a warning on the name; the column is opt-in.
+    section->columns = new ColumnChooser(
+        m_context, section->table, section->model,
+        scouted ? QStringLiteral("squad_matrix_scouted") : QStringLiteral("squad_matrix_club"),
+        {tr("Frische")}, this);
+    searchRow->addWidget(section->columns->createButton(section->box));
+    searchRow->addWidget(exportButton);
     section->table->setSortingEnabled(true);
     // Start A-Z by name (Qt's default indicator would sort the first column Z-A).
     section->table->sortByColumn(scouted ? 1 : 0, Qt::AscendingOrder);
@@ -495,8 +502,37 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                         [](const Player &p) { return p.onShortlist ? 1 : 0; }, nullptr,
                         Qt::AlignCenter});
     }
-    columns.append({tr("Name"), [](const Player &p) { return p.name; },
-                    [](const Player &p) { return getLastName(p.name); }, nullptr, {}});
+    if (clubTable) {
+        columns.append({tr("Name"), [](const Player &p) { return p.name; },
+                        [](const Player &p) { return getLastName(p.name); }, nullptr, {}});
+    } else {
+        // Outdated data shows as a warning sign on the name (details in the
+        // tooltip); the full "Frische" column is optional.
+        const int counter = m_context.updateCounter();
+        const int retirementAge =
+            m_context.config().freshnessSetting(QStringLiteral("retirement_age"));
+        const int staleAfter =
+            m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads"));
+        const QString userClub = m_context.userClub();
+        const auto outdated = [=](const Player &p) {
+            return Freshness::isStale(p, counter, staleAfter)
+                   || Freshness::isRetired(p, counter, retirementAge, staleAfter, userClub);
+        };
+        PlayerColumn name{tr("Name"),
+                          [outdated](const Player &p) -> QVariant {
+                              return outdated(p) ? QStringLiteral("⚠ ") + p.name : p.name;
+                          },
+                          [](const Player &p) { return getLastName(p.name); }, nullptr, {}};
+        name.toolTip = [=](const Player &p) {
+            if (!outdated(p))
+                return QString();
+            return tr("Daten veraltet: seit %1 Komplett-Exporten nicht mehr gesehen.")
+                .arg(Freshness::uploadsSinceSeen(p, counter));
+        };
+        columns.append(name);
+    }
+    for (PlayerColumn &column : columns)
+        column.pinned = true; // star + name always stay
     columns.append({tr("Alter"), [](const Player &p) { return p.age; }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});
     if (talentOn) {
@@ -515,13 +551,15 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     const qsizetype focusIndex = columns.size();
     columns.append(
         {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}});
-    columns.append({tr("Persönlichkeit"), [](const Player &p) { return p.personality; },
-                    nullptr,
-                    [definitions](const Player &p) {
-                        return personalityCellStyle(
-                            definitions->personalityCategory(p.personality));
-                    },
-                    {}});
+    if (m_personalityKnown) {
+        columns.append({tr("Persönlichkeit"), [](const Player &p) { return p.personality; },
+                        nullptr,
+                        [definitions](const Player &p) {
+                            return personalityCellStyle(
+                                definitions->personalityCategory(p.personality));
+                        },
+                        {}});
+    }
     if (!clubTable) {
         columns.append(
             {tr("Verein"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}});
@@ -716,6 +754,8 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
         }
     }
     focusColumns.append(thresholdColumns);
+    for (PlayerColumn &column : focusColumns)
+        column.pinned = true; // what is being searched for always stays visible
     for (qsizetype i = 0; i < focusColumns.size(); ++i)
         columns.insert(focusIndex + i, focusColumns.at(i));
     return columns;
@@ -775,6 +815,10 @@ void SquadMatrixPage::refresh()
     QStringList personalities(personalitySet.cbegin(), personalitySet.cend());
     std::sort(personalities.begin(), personalities.end());
     m_personalityFilter->setAvailablePersonalities(personalities);
+    // Without any known personality (FM27 for now) the filters are no help.
+    m_personalityKnown = !personalities.isEmpty();
+    m_personalityFilter->setVisible(m_personalityKnown);
+    m_talentGoodOnlyCheck->setVisible(m_personalityKnown);
 
     const QString clubCountry = m_context.database().setting(QStringLiteral("club_country_code"));
 
@@ -867,7 +911,7 @@ void SquadMatrixPage::rebuildAll()
 
     const int talentAgeCap = m_talentAgeSlider->value();
     const int talentMinMentality = m_talentMentalitySlider->value();
-    const bool talentGoodOnly = m_talentGoodOnlyCheck->isChecked();
+    const bool talentGoodOnly = m_personalityKnown && m_talentGoodOnlyCheck->isChecked();
     const int talentScope = m_talentScope->checkedId();
 
     m_talentScores.clear();
@@ -913,7 +957,7 @@ void SquadMatrixPage::rebuildAll()
         }
         if (hideRetired && PlayerStatus::isInactive(player, freshness))
             continue;
-        if (!m_personalityFilter->allows(player.personality))
+        if (m_personalityKnown && !m_personalityFilter->allows(player.personality))
             continue;
         if (!passesTalent(player))
             continue;

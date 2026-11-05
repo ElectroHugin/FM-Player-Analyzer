@@ -80,6 +80,16 @@ const Player *PlayerTableModel::playerAt(int row) const
     return m_rows[static_cast<size_t>(row)];
 }
 
+QString PlayerTableModel::headerText(int column) const
+{
+    return column >= 0 && column < m_columns.size() ? m_columns.at(column).header : QString();
+}
+
+bool PlayerTableModel::isPinned(int column) const
+{
+    return column >= 0 && column < m_columns.size() && m_columns.at(column).pinned;
+}
+
 int PlayerTableModel::rowCount(const QModelIndex &parent) const
 {
     return parent.isValid() ? 0 : static_cast<int>(m_rows.size());
@@ -123,6 +133,11 @@ QVariant PlayerTableModel::data(const QModelIndex &index, int role) const
     case Qt::TextAlignmentRole:
         return QVariant::fromValue(column.alignment);
     case Qt::ToolTipRole: {
+        if (column.toolTip) {
+            const QString tip = column.toolTip(player);
+            if (!tip.isEmpty())
+                return tip;
+        }
         // Full text for cells cut off by fitColumnsCompact().
         if (!column.value)
             return {};

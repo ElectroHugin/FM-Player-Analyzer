@@ -281,7 +281,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_outageTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         m_outageTable->setAlternatingRowColors(true);
         m_outageTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-        m_outageTable->setWordWrap(false);
+        m_outageTable->setWordWrap(true);
         m_outageTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_outageTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         outageLayout->addWidget(m_outageTable);
@@ -294,20 +294,34 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_depthEmpty->setWordWrap(true);
         m_depthEmpty->setObjectName(QStringLiteral("kpiCaption"));
         depthLayout->addWidget(m_depthEmpty);
-        m_depthTable = new QTableWidget(m_depthBox);
-        m_depthTable->setColumnCount(5);
-        m_depthTable->setHorizontalHeaderLabels(
-            {tr("Rolle"), tr("Name"), tr("Alter"), tr("DWRS"), tr("Eignung")});
-        m_depthTable->verticalHeader()->setVisible(false);
-        m_depthTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        m_depthTable->setAlternatingRowColors(true);
-        m_depthTable->setSortingEnabled(true);
-        m_depthTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-        m_depthTable->horizontalHeader()->setStretchLastSection(true);
-        m_depthTable->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-        m_depthTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_depthTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        depthLayout->addWidget(m_depthTable);
+        // Two tables side by side (with / without ball) when the version
+        // has role phases; otherwise only the first one is used.
+        auto *depthRow = new QHBoxLayout;
+        depthRow->setSpacing(24);
+        for (int i = 0; i < 2; ++i) {
+            auto *column = new QVBoxLayout;
+            m_depthCaptions[i] = new QLabel(i == 0 ? tr("Mit Ball (IP)") : tr("Ohne Ball (OOP)"),
+                                            m_depthBox);
+            m_depthCaptions[i]->setObjectName(QStringLiteral("sectionTitle"));
+            column->addWidget(m_depthCaptions[i]);
+            auto *table = new QTableWidget(m_depthBox);
+            table->setColumnCount(5);
+            table->setHorizontalHeaderLabels(
+                {tr("Rolle"), tr("Name"), tr("Alter"), tr("DWRS"), tr("Eignung")});
+            table->verticalHeader()->setVisible(false);
+            table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            table->setAlternatingRowColors(true);
+            table->setSortingEnabled(true);
+            table->setSelectionBehavior(QAbstractItemView::SelectRows);
+            table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            column->addWidget(table);
+            column->addStretch(1);
+            depthRow->addLayout(column);
+            m_depthTables[i] = table;
+        }
+        depthRow->addStretch(1);
+        depthLayout->addLayout(depthRow);
         tabLayout->addWidget(m_depthBox);
         tabLayout->addStretch(1);
         m_tabs->addTab(tab, tr("Erste Mannschaft"));
@@ -424,7 +438,8 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     PlayerActions::attachToTableWidget(m_context, m_loanTable);
     PlayerActions::attachToTableWidget(m_context, m_sellTable);
     // The depth options carry a player uid in column 1 (Name).
-    PlayerActions::attachToTableWidget(m_context, m_depthTable, 1);
+    PlayerActions::attachToTableWidget(m_context, m_depthTables[0], 1);
+    PlayerActions::attachToTableWidget(m_context, m_depthTables[1], 1);
 }
 
 void BestXiPage::showSection(const QString &pageId)
@@ -1071,71 +1086,80 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
 void BestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>> &options)
 {
     const auto roleNames = m_context.definitions().roleDisplayMap();
+    const bool twoPhase = m_context.definitions().hasRolePhases();
 
     if (options.isEmpty()) {
         m_depthEmpty->setText(
             tr("Keine weiteren Spieler als Tiefen-Optionen für diese Taktik geeignet."));
         m_depthEmpty->setVisible(true);
-        m_depthTable->setVisible(false);
-        m_depthTable->setRowCount(0);
+        for (int i = 0; i < 2; ++i) {
+            m_depthTables[i]->setVisible(false);
+            m_depthTables[i]->setRowCount(0);
+            m_depthCaptions[i]->setVisible(false);
+        }
         return;
     }
     m_depthEmpty->setVisible(false);
-    m_depthTable->setVisible(true);
 
-    // One row per (role, player) option, roles in natural pitch order.
-    // Natural order; FM27: roles with ball first, then without.
-    QStringList roles = options.keys();
-    roles = m_context.definitions().sortRolesByPhase(roles);
-    int rowCount = 0;
-    for (const QString &role : roles)
-        rowCount += options.value(role).size();
-
-    m_depthTable->setSortingEnabled(false);
-    m_depthTable->clearContents();
-    m_depthTable->setRowCount(rowCount);
-    int row = 0;
+    // Natural pitch order; FM27: with ball left, without ball right.
+    const QStringList roles = m_context.definitions().sortRolesByPhase(options.keys());
+    QStringList split[2];
     for (const QString &role : roles) {
-        for (const DepthOption &option : options.value(role)) {
-            int column = 0;
-            m_depthTable->setItem(row, column++,
-                                  new QTableWidgetItem(roleNames.value(role, role)));
-
-            auto *nameItem = new NameItem(option.name);
-            nameItem->setData(Qt::UserRole, option.playerUid);
-            m_depthTable->setItem(row, column++, nameItem);
-
-            m_depthTable->setItem(row, column++,
-                                  new NumericItem(QString::number(option.age), option.age));
-
-            auto *dwrsItem =
-                new NumericItem(QStringLiteral("%1%").arg(qRound(option.rating)), option.rating);
-            dwrsItem->setTextAlignment(Qt::AlignCenter);
-            const CellStyle style = dwrsCellStyle(option.rating);
-            if (style.isValid()) {
-                dwrsItem->setBackground(style.background);
-                dwrsItem->setForeground(style.text);
-            }
-            m_depthTable->setItem(row, column++, dwrsItem);
-
-            m_depthTable->setItem(row, column++,
-                                  new QTableWidgetItem(option.apt.isEmpty()
-                                                           ? QStringLiteral("–")
-                                                           : option.apt));
-            ++row;
-        }
+        const bool oop = twoPhase
+                         && m_context.definitions().rolePhase(role) == QLatin1String("oop");
+        split[oop ? 1 : 0] << role;
     }
-    m_depthTable->setSortingEnabled(true);
-    m_depthTable->resizeColumnsToContents();
-    m_depthTable->horizontalHeader()->setStretchLastSection(true);
 
-    // Size the table to its content so no inner scrollbar and no dead space
-    // appears between it and the pitches above.
-    m_depthTable->resizeRowsToContents();
-    int height = m_depthTable->horizontalHeader()->height() + 2 * m_depthTable->frameWidth();
-    for (int r = 0; r < rowCount; ++r)
-        height += m_depthTable->rowHeight(r);
-    m_depthTable->setFixedHeight(height);
+    for (int i = 0; i < 2; ++i) {
+        QTableWidget *table = m_depthTables[i];
+        const QStringList &tableRoles = split[i];
+        const bool show = !tableRoles.isEmpty();
+        table->setVisible(show);
+        m_depthCaptions[i]->setVisible(show && twoPhase);
+        int rowCount = 0;
+        for (const QString &role : tableRoles)
+            rowCount += options.value(role).size();
+        table->setSortingEnabled(false);
+        table->clearContents();
+        table->setRowCount(rowCount);
+        int row = 0;
+        for (const QString &role : tableRoles) {
+            // In the split view the phase is in the caption; drop the suffix.
+            QString roleName = roleNames.value(role, role);
+            if (twoPhase) {
+                roleName.remove(QStringLiteral(" (IP)"));
+                roleName.remove(QStringLiteral(" (OOP)"));
+            }
+            for (const DepthOption &option : options.value(role)) {
+                int column = 0;
+                table->setItem(row, column++, new QTableWidgetItem(roleName));
+
+                auto *nameItem = new NameItem(option.name);
+                nameItem->setData(Qt::UserRole, option.playerUid);
+                table->setItem(row, column++, nameItem);
+
+                table->setItem(row, column++,
+                               new NumericItem(QString::number(option.age), option.age));
+
+                auto *dwrsItem = new NumericItem(QStringLiteral("%1%").arg(qRound(option.rating)),
+                                                 option.rating);
+                dwrsItem->setTextAlignment(Qt::AlignCenter);
+                const CellStyle style = dwrsCellStyle(option.rating);
+                if (style.isValid()) {
+                    dwrsItem->setBackground(style.background);
+                    dwrsItem->setForeground(style.text);
+                }
+                table->setItem(row, column++, dwrsItem);
+
+                table->setItem(row, column++,
+                               new QTableWidgetItem(option.apt.isEmpty() ? QStringLiteral("–")
+                                                                         : option.apt));
+                ++row;
+            }
+        }
+        table->setSortingEnabled(true);
+        fitTableToContents(table, /*fixedWidth*/ true);
+    }
 }
 
 } // namespace fm
