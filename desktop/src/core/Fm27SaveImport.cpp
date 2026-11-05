@@ -96,6 +96,76 @@ QString attrText(int lo, int hi)
     return lo == hi ? QString::number(lo) : QStringLiteral("%1-%2").arg(lo).arg(hi);
 }
 
+// Money as the game writes it in euros: "€950", "€9.5K", "€375K", "€1.4M",
+// "€72M". The save keeps pounds; the game's own rate converts them.
+constexpr double kEurosPerPound = 1.1641;
+
+QString moneyText(double euros)
+{
+    const auto trimmed = [](double v, int decimals) {
+        QString t = QString::number(v, 'f', decimals);
+        if (t.contains(QLatin1Char('.'))) {
+            while (t.endsWith(QLatin1Char('0')))
+                t.chop(1);
+            if (t.endsWith(QLatin1Char('.')))
+                t.chop(1);
+        }
+        return t;
+    };
+    if (euros >= 1e6)
+        return QStringLiteral("€") + trimmed(euros / 1e6, euros >= 1e7 ? 0 : 1) + QStringLiteral("M");
+    if (euros >= 1e3)
+        return QStringLiteral("€") + trimmed(euros / 1e3, euros >= 1e4 ? 0 : 1) + QStringLiteral("K");
+    return QStringLiteral("€") + QString::number(qRound(euros));
+}
+
+QString wageText(qint64 poundsPerWeek)
+{
+    return moneyText(double(poundsPerWeek) * kEurosPerPound) + QStringLiteral(" p/w");
+}
+
+// The game shows a club's valuation as a range; the analyzer draws its own
+// around the true value (stable per player), the value never in the middle by
+// rule.
+QString valueRangeText(quint32 uniqueId, qint64 pounds)
+{
+    const double value = double(pounds) * kEurosPerPound;
+    const double width = 0.10 + 0.25 * unit(uniqueId, 900, 11); // 10-35 % of the value
+    const double below = width * (0.15 + 0.7 * unit(uniqueId, 901, 12));
+    const double lo = value * (1.0 - below);
+    const double hi = value * (1.0 - below + width);
+    const QString loText = moneyText(lo), hiText = moneyText(hi);
+    return loText == hiText ? loText : loText + QStringLiteral(" - ") + hiText;
+}
+
+// The contract's agreed playing time in the game's words ("" when unknown).
+QString playingTimeText(int status, bool keeper)
+{
+    switch (status) {
+    case 1: return QStringLiteral("Star Player");
+    case 2: return QStringLiteral("Important Player");
+    case 3: return QStringLiteral("Regular Starter");
+    case 4: return QStringLiteral("Squad Player");
+    case 5: return QStringLiteral("Impact Sub");
+    case 7: return QStringLiteral("Fringe Player");
+    case 9: return QStringLiteral("Emergency Backup");
+    case 10: return QStringLiteral("Breakthrough Prospect");
+    case 11: return QStringLiteral("Future Prospect");
+    case 13: return QStringLiteral("Youngster");
+    case 14: return QStringLiteral("2nd Team Regular");
+    case 15: return QStringLiteral("First-Choice Goalkeeper");
+    case 16:
+    case 17:
+    case 18: return QStringLiteral("Cup Goalkeeper");
+    case 20: return QStringLiteral("Backup");
+    case 21: return QStringLiteral("Emergency Backup");
+    case 22: return QStringLiteral("Surplus to Requirements");
+    default: break;
+    }
+    Q_UNUSED(keeper);
+    return {};
+}
+
 // Whether the user plays a women's career. A club's men's and women's sides
 // are separate clubs of the same name, so the summary's club name does not
 // tell; the user's scouting does, as it only covers one of them. Without any
@@ -287,7 +357,8 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
 {
     out->headers = {QStringLiteral("Unique ID"), QStringLiteral("Player"), QStringLiteral("Age"),
                     QStringLiteral("Club"), QStringLiteral("Nation"), QStringLiteral("Position"),
-                    QStringLiteral("Height"), QStringLiteral("Left Foot"), QStringLiteral("Right Foot")};
+                    QStringLiteral("Height"), QStringLiteral("Left Foot"), QStringLiteral("Right Foot"),
+                    QStringLiteral("Wage"), QStringLiteral("Transfer Value"), QStringLiteral("Playing Time")};
     for (const VisibleAttr &a : kVisible)
         out->headers << QString::fromLatin1(a.column);
     out->rows.clear();
@@ -304,8 +375,13 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
             continue;
         int ranged = 0;
         int knowledge = 100;
+        // Contract and valuation: what the game shows of the user's own
+        // players (all players without masking).
+        bool contractKnown = !options.attributeMasking;
         if (options.attributeMasking) {
-            switch (knowledgeOf(p, save, ownClub)) {
+            const Knowledge how = knowledgeOf(p, save, ownClub);
+            contractKnown = how == Knowledge::OwnClub;
+            switch (how) {
             case Knowledge::OwnClub:
             case Knowledge::Famous:
             case Knowledge::Scouted:
@@ -342,6 +418,13 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
             << p.clubShortName << nationCode(p.nationId) << positionText(p.positions)
             << (p.heightCm > 0 ? QStringLiteral("%1 cm").arg(p.heightCm) : QString())
             << footText(p.leftFoot) << footText(p.rightFoot);
+        if (contractKnown) {
+            row << (p.weeklyWage >= 0 ? wageText(p.weeklyWage) : QString())
+                << (p.transferValue > 0 ? valueRangeText(p.uniqueId, p.transferValue) : QString())
+                << playingTimeText(p.squadStatus, p.positions[PosGK] >= 15);
+        } else {
+            row << QString() << QString() << QString();
+        }
         for (const VisibleAttr &a : kVisible) {
             const int value = p.attributes[size_t(a.saveIndex)];
             if (asRange[a.saveIndex]) {
