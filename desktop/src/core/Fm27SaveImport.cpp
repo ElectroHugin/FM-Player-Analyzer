@@ -358,7 +358,8 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
     out->headers = {QStringLiteral("Unique ID"), QStringLiteral("Player"), QStringLiteral("Age"),
                     QStringLiteral("Club"), QStringLiteral("Nation"), QStringLiteral("Position"),
                     QStringLiteral("Height"), QStringLiteral("Left Foot"), QStringLiteral("Right Foot"),
-                    QStringLiteral("Wage"), QStringLiteral("Transfer Value"), QStringLiteral("Playing Time")};
+                    QStringLiteral("Wage"), QStringLiteral("Transfer Value"), QStringLiteral("Playing Time"),
+                    QStringLiteral("Rating")};
     for (const VisibleAttr &a : kVisible)
         out->headers << QString::fromLatin1(a.column);
     out->rows.clear();
@@ -425,6 +426,8 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
         } else {
             row << QString() << QString() << QString();
         }
+        // Season statistics are public: the average rating of everyone imported.
+        row << (p.averageRating > 0 ? QString::number(p.averageRating, 'f', 2) : QString());
         for (const VisibleAttr &a : kVisible) {
             const int value = p.attributes[size_t(a.saveIndex)];
             if (asRange[a.saveIndex]) {
