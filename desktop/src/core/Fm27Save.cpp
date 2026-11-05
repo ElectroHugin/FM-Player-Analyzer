@@ -141,6 +141,7 @@ bool Container::open(const QString &path, QString *error)
         return fail(error, QStringLiteral("%1: the save directory is missing or damaged. If the game "
                                           "was saving, wait for it to finish and try again.")
                                .arg(fileName));
+    m_trailerOffset = trailerOffset;
     if (!file.seek(qint64(trailerOffset)))
         return fail(error, file.errorString());
     const QByteArray trailer = file.readAll();
@@ -226,6 +227,72 @@ bool Container::readSection(const QString &name, QByteArray *out, QString *error
         return fail(error, QStringLiteral("%1: section %2 could not be decompressed").arg(fileName, name));
     *out = std::move(data);
     return true;
+}
+
+bool Container::readUnlistedFrame(const QString &after, const QByteArray &head, QByteArray *out,
+                                  QString *error) const
+{
+    const QString fileName = QFileInfo(m_path).fileName();
+    const auto it = std::find_if(m_entries.cbegin(), m_entries.cend(),
+                                 [&](const DirectoryEntry &e) { return e.name == after; });
+    if (it == m_entries.cend())
+        return fail(error, QStringLiteral("%1: section %2 is missing").arg(fileName, after));
+    const quint64 start = it->frameOffset + it->compressedSize;
+    quint64 end = m_trailerOffset;
+    for (const DirectoryEntry &e : m_entries) {
+        if (e.frameOffset >= start && e.frameOffset < end)
+            end = e.frameOffset;
+    }
+    if (end <= start || end - start > kMaxSectionBytes)
+        return fail(error, QStringLiteral("%1: no data after section %2").arg(fileName, after));
+    QFile file(m_path);
+    if (!file.open(QIODevice::ReadOnly) || file.size() != m_fileSize || !file.seek(qint64(start)))
+        return fail(error, QStringLiteral("%1 changed while it was read").arg(fileName));
+    const QByteArray region = file.read(qint64(end - start));
+    if (quint64(region.size()) != end - start)
+        return fail(error, QStringLiteral("%1: the data after %2 is truncated").arg(fileName, after));
+
+    const char *base = region.constData();
+    const size_t size = size_t(region.size());
+    size_t pos = 0;
+    std::optional<std::pair<size_t, size_t>> found;
+    ZSTD_DStream *stream = ZSTD_createDStream();
+    while (pos + 8 <= size) {
+        const quint32 magic = u32(base + pos);
+        if (magic >= 0x184D2A50u && magic <= 0x184D2A5Fu) { // skippable frame
+            pos += 8 + size_t(u32(base + pos + 4));
+            continue;
+        }
+        const size_t frameSize = ZSTD_findFrameCompressedSize(base + pos, size - pos);
+        if (ZSTD_isError(frameSize))
+            break;
+        // Decompress just the first bytes of the frame to see what it holds.
+        ZSTD_initDStream(stream);
+        std::vector<char> prefix(size_t(head.size()));
+        ZSTD_inBuffer input{base + pos, frameSize, 0};
+        ZSTD_outBuffer output{prefix.data(), prefix.size(), 0};
+        while (output.pos < output.size && input.pos < input.size) {
+            const size_t ret = ZSTD_decompressStream(stream, &output, &input);
+            if (ZSTD_isError(ret) || ret == 0)
+                break;
+        }
+        if (output.pos == output.size && std::memcmp(prefix.data(), head.constData(), prefix.size()) == 0) {
+            if (found) {
+                ZSTD_freeDStream(stream);
+                return fail(error, QStringLiteral("%1: two frames after %2 match").arg(fileName, after));
+            }
+            found = std::make_pair(pos, frameSize);
+        }
+        pos += frameSize;
+    }
+    ZSTD_freeDStream(stream);
+    if (!found)
+        return fail(error, QStringLiteral("%1: no matching frame after %2").arg(fileName, after));
+    return decompressUnknown(region.mid(qsizetype(found->first), qsizetype(found->second)), out,
+                             kMaxSectionBytes)
+               ? true
+               : fail(error, QStringLiteral("%1: a frame after %2 could not be decompressed")
+                                 .arg(fileName, after));
 }
 
 // --- Small sections --------------------------------------------------------------
@@ -875,6 +942,87 @@ std::vector<ContractRecord> contractRecords(const QByteArray &db, qint64 record,
     return out;
 }
 
+// --- Season statistics ------------------------------------------------------------
+// After fmsave: an unlisted frame after "non_pl_hist_ls" starting "\x03\x01tad."
+// + u16 15. Records: 1, key (pindex + 1), 16 header bytes, 8 slots (absent 0
+// or a 155-byte line marked 01 07), 20 bytes, other teams (u32 count; each a
+// lead byte, a team id and 6 slots), rating items (u32 count x 8 bytes), form
+// (u8 count x 3 bytes); a 0 ends the list. A line holds the rating sum (u16,
+// tenths) at +2 and the rated appearances at +8; slot 5 is the club total.
+
+bool readAverageRatings(const QByteArray &body, QHash<quint32, double> *ratingByPindex)
+{
+    static const QByteArray magic = QByteArray("\x03\x01tad.\x0f\x00", 8);
+    if (!body.startsWith(magic))
+        return false;
+    const char *d = body.constData();
+    const qsizetype end = body.size();
+    constexpr int kHeader = 16, kOwnSlots = 8, kOtherSlots = 6, kLine = 155, kBlock = 20;
+    constexpr int kOverallSlot = 5;
+    qsizetype pos = magic.size();
+    const auto readSlots = [&](qsizetype &at, int count, qsizetype *overall) {
+        for (int i = 0; i < count; ++i) {
+            if (at >= end)
+                return false;
+            if (d[at] == 0) {
+                ++at;
+            } else if (at + kLine <= end && d[at] == 1 && d[at + 1] == 7) {
+                if (overall && i == kOverallSlot)
+                    *overall = at;
+                at += kLine;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    };
+    QHash<quint32, double> result;
+    while (true) {
+        if (pos >= end)
+            return false;
+        if (d[pos] == 0)
+            break;
+        if (d[pos] != 1 || pos + 5 + kHeader > end)
+            return false;
+        const quint32 key = u32(d + pos + 1);
+        pos += 5 + kHeader;
+        qsizetype overall = -1;
+        if (!readSlots(pos, kOwnSlots, &overall))
+            return false;
+        pos += kBlock;
+        if (pos + 4 > end)
+            return false;
+        const quint32 others = u32(d + pos);
+        if (others > 16)
+            return false;
+        pos += 4;
+        for (quint32 t = 0; t < others; ++t) {
+            pos += 1 + 4;
+            if (!readSlots(pos, kOtherSlots, nullptr))
+                return false;
+        }
+        if (pos + 4 > end)
+            return false;
+        const quint32 items = u32(d + pos);
+        if (items > 256)
+            return false;
+        pos += 4 + qsizetype(items) * 8;
+        if (pos >= end)
+            return false;
+        const int form = uint8_t(d[pos]);
+        if (form > 16)
+            return false;
+        pos += 1 + form * 3;
+        if (overall >= 0 && key > 0) {
+            const int rated = uint8_t(d[overall + 8]);
+            if (rated > 0)
+                result.insert(key - 1, double(u16(d + overall + 2)) / (rated * 10.0));
+        }
+    }
+    *ratingByPindex = std::move(result);
+    return true;
+}
+
 bool readSave(const QString &path, SaveData *out, QString *error, const ProgressCallback &progress)
 {
     const auto report = [&](int percent) {
@@ -1019,6 +1167,17 @@ bool readSave(const QString &path, SaveData *out, QString *error, const Progress
         data.players.append(std::move(player));
         if (i % 4096 == 0)
             report(45 + int(50 * double(i) / double(records.size())));
+    }
+    // Average ratings (optional: a save without them still imports).
+    {
+        QByteArray season;
+        QHash<quint32, double> ratings;
+        if (container.readUnlistedFrame(QStringLiteral("non_pl_hist_ls"),
+                                        QByteArray("\x03\x01tad.\x0f\x00", 8), &season, nullptr)
+            && readAverageRatings(season, &ratings)) {
+            for (SavePlayer &player : data.players)
+                player.averageRating = ratings.value(player.pindex, -1.0);
+        }
     }
     // A patch that moved fields shows up as players without a person block,
     // Unique ID or club: refuse rather than import wrong data.

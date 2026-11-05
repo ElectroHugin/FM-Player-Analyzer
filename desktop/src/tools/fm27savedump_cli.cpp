@@ -65,7 +65,7 @@ int main(int argc, char **argv)
     }
     QTextStream out(&file);
     out << "uid,unique_id,pindex,offset,name,birth,age,nation,height,lf,rf,club_uid,club_short,club_unique,"
-           "world_rep,knowledge,value,wage,status";
+           "world_rep,knowledge,value,wage,status,rating";
     for (int i = 0; i < SavePositionCount; ++i)
         out << ",pos" << i;
     for (int i = 0; i < SaveAttrCount; ++i)
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
             << p.leftFoot << ',' << p.rightFoot << ',' << p.clubUid << ",\"" << p.clubShortName << "\","
             << p.clubUniqueId << (p.women ? "w" : "") << ',' << p.worldReputation << ','
             << data.knowledgeByPindex.value(p.pindex, -1) << ',' << p.transferValue << ','
-            << p.weeklyWage << ',' << p.squadStatus;
+            << p.weeklyWage << ',' << p.squadStatus << ',' << p.averageRating;
         for (int i = 0; i < SavePositionCount; ++i)
             out << ',' << p.positions[i];
         for (int i = 0; i < SaveAttrCount; ++i)

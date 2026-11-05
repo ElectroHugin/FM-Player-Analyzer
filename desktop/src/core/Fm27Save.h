@@ -39,6 +39,11 @@ public:
     // Decompressed bytes of one section ("game_db", "fog_of_war", ...).
     bool readSection(const QString &name, QByteArray *out, QString *error) const;
     bool hasSection(const QString &name) const;
+    // The data between the frames of section `after` and the next listed one
+    // holds unnamed frames; returns the one frame whose body starts with
+    // `head` (decompressed), false when there is none or more than one.
+    bool readUnlistedFrame(const QString &after, const QByteArray &head, QByteArray *out,
+                           QString *error) const;
 
     QString saveName() const { return m_saveName; }
     const QList<DirectoryEntry> &entries() const { return m_entries; }
@@ -47,6 +52,7 @@ private:
     QString m_path;
     QString m_saveName;
     qint64 m_fileSize = 0;
+    quint64 m_trailerOffset = 0;
     QList<DirectoryEntry> m_entries;
 };
 
@@ -114,6 +120,7 @@ struct SavePlayer {
     qint64 transferValue = 0; // the club's valuation (the game shows a range around it)
     qint64 weeklyWage = -1;   // from the contract in effect
     int squadStatus = -1;     // the contract's agreed playing time (game code)
+    double averageRating = -1; // this season's average rating for his club (-1 = none)
 };
 
 struct SaveData {

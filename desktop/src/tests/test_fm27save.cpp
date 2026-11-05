@@ -205,6 +205,7 @@ private slots:
         save.players[0].weeklyWage = 10000;
         save.players[0].transferValue = 2000000;
         save.players[0].squadStatus = 3;
+        save.players[0].averageRating = 7.1375;
         save.players[2].weeklyWage = 50000; // a scouted player's contract stays unknown
         save.players[2].squadStatus = 1;
         save.players[1].worldReputation = 8000;
@@ -224,7 +225,7 @@ private slots:
         for (const char *hidden : {"Consistency", "Dirtiness", "Important Matches", "Injury Proneness",
                                    "Versatility", "Current Ability", "Potential Ability", "CA", "PA"})
             QVERIFY2(!table.headers.contains(QString::fromLatin1(hidden)), hidden);
-        QCOMPARE(table.headers.size(), 12 + 47);
+        QCOMPARE(table.headers.size(), 13 + 47);
         QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Wage"))), QStringLiteral("€12K p/w"));
         QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Playing Time"))),
                  QStringLiteral("Regular Starter"));
@@ -235,13 +236,14 @@ private slots:
             QCOMPARE(parts.size(), 2);
             QVERIFY(valueToFloat(parts[0]) <= 2.33e6 && valueToFloat(parts[1]) >= 2.32e6);
         }
+        QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Rating"))), QStringLiteral("7.14"));
         QVERIFY(table.rows.at(2).at(column(table, QStringLiteral("Wage"))).isEmpty());
         QVERIFY(table.rows.at(2).at(column(table, QStringLiteral("Playing Time"))).isEmpty());
 
         const QRegularExpression range(QStringLiteral("^(\\d+)-(\\d+)$"));
         const auto countRanges = [&](const QStringList &row) {
             int ranges = 0;
-            for (int c = 12; c < row.size(); ++c) {
+            for (int c = 13; c < row.size(); ++c) {
                 const auto m = range.match(row.at(c));
                 if (m.hasMatch()) {
                     ++ranges;
@@ -270,7 +272,7 @@ private slots:
         Fm27SaveImport::buildTable(save, {false}, &all);
         QCOMPARE(all.rows.size(), 7);
         for (const QStringList &row : all.rows) {
-            for (int c = 12; c < row.size(); ++c)
+            for (int c = 13; c < row.size(); ++c)
                 QVERIFY(!row.at(c).contains(QLatin1Char('-')));
         }
     }
