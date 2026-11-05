@@ -195,6 +195,17 @@ public:
     bool attributeMasking() const;
     bool setAttributeMasking(bool enabled);
 
+    // [Import] live_save_* — follow an FM27 save while the app is open: the
+    // newest file of the chosen career (autosaves and "(v02)" versions too) is
+    // read in as soon as the game has written it. Per save, off by default.
+    // last_mtime = modification time (ms since epoch) of the file read last.
+    bool liveSaveEnabled() const;
+    bool setLiveSaveEnabled(bool enabled);
+    QString liveSavePath() const;
+    bool setLiveSavePath(const QString &path);
+    qint64 liveSaveLastModified() const;
+    bool setLiveSaveLastModified(qint64 msecsSinceEpoch);
+
     // [Graphics] — player portraits and club logos from the FM graphics
     // folder (face/logo packs). Opt-in per save, off by default. Folder empty
     // = "<Documents>/Sports Interactive/<game folder>/graphics".

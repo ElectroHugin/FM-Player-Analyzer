@@ -278,6 +278,43 @@ QWidget *SettingsPage::buildClubTab()
     maskingHint->setObjectName(QStringLiteral("kpiCaption"));
     versionForm->addRow(tr("FM27-Spielstände:"), m_attributeMaskingCheck);
     versionForm->addRow(maskingHint);
+
+    m_liveSaveCheck = new QCheckBox(tr("Spielstand live verfolgen"), versionGroup);
+    m_liveSaveEdit = new QLineEdit(versionGroup);
+    m_liveSaveEdit->setMinimumWidth(260);
+    m_liveSaveEdit->setPlaceholderText(tr("FM27-Spielstand (.fm) wählen"));
+    auto *liveSaveBrowse = new QPushButton(tr("Durchsuchen…"), versionGroup);
+    auto *liveSaveRow = new QHBoxLayout;
+    liveSaveRow->setContentsMargins(0, 0, 0, 0);
+    liveSaveRow->addWidget(m_liveSaveCheck);
+    liveSaveRow->addWidget(m_liveSaveEdit, 1);
+    liveSaveRow->addWidget(liveSaveBrowse);
+    auto *liveSaveWidget = new QWidget(versionGroup);
+    liveSaveWidget->setLayout(liveSaveRow);
+    auto *liveSaveHint = new QLabel(
+        tr("Solange der Analyzer offen ist, liest er diesen Spielstand automatisch neu ein, "
+           "sobald das Spiel ihn gespeichert hat, auch nach einem Autosave. Er nimmt immer die "
+           "neueste Datei der Karriere, auch die Versionen „(v02)“, „(v03)“. Wenn du im "
+           "Spiel unter einem neuen Namen speicherst, wähle die neue Datei hier aus."),
+        versionGroup);
+    liveSaveHint->setWordWrap(true);
+    liveSaveHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(QString(), liveSaveWidget);
+    versionForm->addRow(liveSaveHint);
+    connect(liveSaveBrowse, &QPushButton::clicked, this, [this] {
+        QString start = m_liveSaveEdit->text().trimmed();
+        if (start.isEmpty())
+            start = QFileInfo(AppConfig::defaultGraphicsDir(m_context.fmVersionId()))
+                        .absolutePath()
+                    + QStringLiteral("/games");
+        const QString path = QFileDialog::getOpenFileName(
+            this, tr("FM27-Spielstand auswählen"), start,
+            tr("FM27-Spielstände (*.fm);;Alle Dateien (*)"));
+        if (path.isEmpty())
+            return;
+        m_liveSaveEdit->setText(QDir::toNativeSeparators(path));
+        m_liveSaveCheck->setChecked(true);
+    });
     layout->addWidget(versionGroup);
 
     auto *clubGroup = new QGroupBox(tr("Vereins-Zuordnung"), content);
@@ -1253,6 +1290,8 @@ void SettingsPage::refresh()
         QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir(m_context.fmVersionId())));
     m_graphicsGroup->setChecked(config.graphicsEnabled());
     m_attributeMaskingCheck->setChecked(config.attributeMasking());
+    m_liveSaveCheck->setChecked(config.liveSaveEnabled());
+    m_liveSaveEdit->setText(QDir::toNativeSeparators(config.liveSavePath()));
     m_graphicsDirEdit->setText(QDir::toNativeSeparators(config.graphicsDir()));
     m_graphicsDirEdit->setPlaceholderText(
         QDir::toNativeSeparators(AppConfig::defaultGraphicsDir(m_context.fmVersionId())));
@@ -1443,6 +1482,14 @@ void SettingsPage::saveAll()
     config.setHtmlExportDir(m_importDirEdit->text().trimmed());
     config.setGraphicsEnabled(m_graphicsGroup->isChecked());
     config.setAttributeMasking(m_attributeMaskingCheck->isChecked());
+    {
+        // A different save (or masking switched) is read in afresh.
+        const QString livePath = QDir::fromNativeSeparators(m_liveSaveEdit->text().trimmed());
+        if (livePath != config.liveSavePath() || !config.liveSaveEnabled())
+            config.setLiveSaveLastModified(0);
+        config.setLiveSavePath(livePath);
+        config.setLiveSaveEnabled(m_liveSaveCheck->isChecked() && !livePath.isEmpty());
+    }
     config.setGraphicsDir(QDir::fromNativeSeparators(m_graphicsDirEdit->text().trimmed()));
     saveSetting(QStringLiteral("club_fm_id"), m_clubFmIdEdit->text().trimmed());
     saveSetting(QStringLiteral("user_club"), m_userClubCombo->currentText());

@@ -933,6 +933,39 @@ bool AppConfig::setAttributeMasking(bool enabled)
                       enabled ? QStringLiteral("true") : QStringLiteral("false"));
 }
 
+bool AppConfig::liveSaveEnabled() const
+{
+    return readValue(QStringLiteral("Import/live_save_enabled"), QStringLiteral("false"))
+           == QLatin1String("true");
+}
+
+bool AppConfig::setLiveSaveEnabled(bool enabled)
+{
+    return writeValue(QStringLiteral("Import/live_save_enabled"),
+                      enabled ? QStringLiteral("true") : QStringLiteral("false"));
+}
+
+QString AppConfig::liveSavePath() const
+{
+    return readValue(QStringLiteral("Import/live_save_path"));
+}
+
+bool AppConfig::setLiveSavePath(const QString &path)
+{
+    return writeValue(QStringLiteral("Import/live_save_path"), path);
+}
+
+qint64 AppConfig::liveSaveLastModified() const
+{
+    return readValue(QStringLiteral("Import/live_save_last_mtime"), QStringLiteral("0")).toLongLong();
+}
+
+bool AppConfig::setLiveSaveLastModified(qint64 msecsSinceEpoch)
+{
+    return writeValue(QStringLiteral("Import/live_save_last_mtime"),
+                      QString::number(msecsSinceEpoch));
+}
+
 bool AppConfig::graphicsEnabled() const
 {
     return readValue(QStringLiteral("Graphics/enabled"), QStringLiteral("false"))

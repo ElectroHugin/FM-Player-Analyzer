@@ -25,6 +25,8 @@ add_executable(fmplayeranalyzer
     Navigation.cpp
     ImportRunner.h
     ImportRunner.cpp
+    LiveSaveWatcher.h
+    LiveSaveWatcher.cpp
     PlayerActions.h
     PlayerActions.cpp
     RecalcHelper.h

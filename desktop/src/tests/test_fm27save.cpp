@@ -4,6 +4,7 @@
 
 #include "core/Database.h"
 #include "core/Fm27Save.h"
+#include "core/Fm27SaveFamily.h"
 #include "core/Fm27SaveImport.h"
 #include "core/HtmlImporter.h"
 
@@ -67,6 +68,36 @@ class TestFm27Save : public QObject {
     Q_OBJECT
 
 private slots:
+    void saveFamily()
+    {
+        using namespace fm::Fm27SaveFamily;
+        QCOMPARE(baseName(QStringLiteral("/g/Career (v02).fm")), QStringLiteral("Career"));
+        QCOMPARE(baseName(QStringLiteral("/g/A - B -  Versuch D.fm")),
+                 QStringLiteral("A - B -  Versuch D"));
+        QVERIFY(baseName(QStringLiteral("/g/config.xml")).isEmpty());
+        QVERIFY(belongsTo(QStringLiteral("Career (v13).fm"), QStringLiteral("Career")));
+        QVERIFY(!belongsTo(QStringLiteral("Career 2.fm"), QStringLiteral("Career")));
+        QVERIFY(!belongsTo(QStringLiteral("last save overwrite backup.fm"),
+                           QStringLiteral("Career")));
+
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const auto write = [&dir](const QString &name, const QDateTime &time) {
+            QFile file(dir.filePath(name));
+            QVERIFY(file.open(QIODevice::WriteOnly));
+            file.write("x");
+            QVERIFY(file.setFileTime(time, QFileDevice::FileModificationTime));
+        };
+        const QDateTime base = QDateTime::currentDateTime().addDays(-1);
+        write(QStringLiteral("Career.fm"), base);
+        write(QStringLiteral("Career (v02).fm"), base.addSecs(60));
+        write(QStringLiteral("Career (v03).fm"), base.addSecs(-60));
+        write(QStringLiteral("Other.fm"), base.addSecs(600));
+        const Member newestMember = newest(dir.filePath(QStringLiteral("Career.fm")));
+        QCOMPARE(QFileInfo(newestMember.path).fileName(), QStringLiteral("Career (v02).fm"));
+        QVERIFY(newest(dir.filePath(QStringLiteral("Missing.fm"))).path.isEmpty());
+    }
+
     void fogOfWar()
     {
         QHash<quint32, int> knowledge;
