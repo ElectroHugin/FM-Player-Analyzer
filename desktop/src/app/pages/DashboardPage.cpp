@@ -11,6 +11,9 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QMouseEvent>
 #include <QCoreApplication>
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -36,6 +39,39 @@
 namespace fm {
 
 namespace {
+
+// Opens a menu on left or right click anywhere on a card (the labels inside
+// pass their clicks on to the card).
+class CardClickFilter : public QObject
+{
+public:
+    CardClickFilter(std::function<void(const QPoint &)> open, QObject *parent)
+        : QObject(parent), m_open(std::move(open)) {}
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override
+    {
+        if (event->type() == QEvent::MouseButtonRelease) {
+            auto *mouse = static_cast<QMouseEvent *>(event);
+            if (mouse->button() == Qt::LeftButton) {
+                m_open(mouse->globalPosition().toPoint());
+                return true;
+            }
+        } else if (event->type() == QEvent::ContextMenu) {
+            m_open(static_cast<QContextMenuEvent *>(event)->globalPos());
+            return true;
+        }
+        return QObject::eventFilter(watched, event);
+    }
+
+private:
+    std::function<void(const QPoint &)> m_open;
+};
+
+void installClickMenu(QWidget *card, std::function<void(const QPoint &)> open)
+{
+    card->installEventFilter(new CardClickFilter(std::move(open), card));
+}
 
 QString formatMillions(double value)
 {
@@ -178,7 +214,8 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
     layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(12);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Übersicht")), content);
+    auto *heading = new QLabel(tr("Übersicht"), content);
+    heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(heading);
 
     layout->addWidget(buildImportSection(content));
@@ -204,7 +241,7 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
 
 QWidget *DashboardPage::buildImportSection(QWidget *parent)
 {
-    auto *box = new QGroupBox(tr("⬆️ Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), parent);
+    auto *box = new QGroupBox(tr("Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), parent);
     auto *layout = new QVBoxLayout(box);
 
     auto *fileRow = new QHBoxLayout;
@@ -356,7 +393,7 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
 
 QWidget *DashboardPage::buildSuggestionSection(QWidget *parent)
 {
-    auto *box = new QGroupBox(tr("🎯 Transferziele"), parent);
+    auto *box = new QGroupBox(tr("Transferziele"), parent);
     auto *layout = new QVBoxLayout(box);
 
     auto *info = new QLabel(tr("Mögliche Verstärkungen aus deiner Scouting-Datenbank, "
@@ -653,6 +690,9 @@ void DashboardPage::rebuildSuggestions()
         const Player *player;
         double rating;
         double myBest;
+        // Own players rated for the role, best first (the card compares
+        // the target with them).
+        std::vector<std::pair<const Player *, double>> mine;
     };
     std::vector<Suggestion> suggestions;
 
@@ -667,11 +707,18 @@ void DashboardPage::rebuildSuggestions()
 
         // Best rating for the role inside my own club.
         double myBest = 0.0;
+        std::vector<std::pair<const Player *, double>> mine;
         for (auto it = rated.constBegin(); it != rated.constEnd(); ++it) {
             const Player *player = store.findByUid(it.key());
-            if (player && player->club == userClub)
+            if (player && player->club == userClub) {
                 myBest = std::max(myBest, it.value());
+                mine.emplace_back(player, it.value());
+            }
         }
+        std::sort(mine.begin(), mine.end(),
+                  [](const auto &a, const auto &b) { return a.second > b.second; });
+        if (mine.size() > 3)
+            mine.resize(3);
 
         const Player *bestUpgrade = nullptr;
         double bestUpgradeRating = 0.0;
@@ -694,12 +741,12 @@ void DashboardPage::rebuildSuggestions()
             bestUpgradeRating = rating;
         }
         if (bestUpgrade)
-            suggestions.push_back({role, bestUpgrade, bestUpgradeRating, myBest});
+            suggestions.push_back({role, bestUpgrade, bestUpgradeRating, myBest, mine});
     }
 
     if (suggestions.empty()) {
         m_suggestionStatus->setText(
-            tr("✅ Dein Kader ist gut aufgestellt! Keine klaren Verstärkungen "
+            tr("Dein Kader ist gut aufgestellt. Keine klaren Verstärkungen "
                "innerhalb der Filterkriterien gefunden."));
         return;
     }
@@ -716,28 +763,36 @@ void DashboardPage::rebuildSuggestions()
 
         const Player *player = suggestion.player;
         const QString roleName = roleNames.value(suggestion.role, suggestion.role);
-        auto *header = new QLabel(QStringLiteral("<b>%1</b><br/><span>%2</span>")
-                                      .arg(player->name.toHtmlEscaped(),
-                                           tr("Upgrade für <b>%1</b>").arg(roleName.toHtmlEscaped())),
-                                  card);
+        auto *header = new QLabel(player->name, card);
+        header->setObjectName(QStringLiteral("cardTitle"));
         header->setWordWrap(true);
         cardLayout->addWidget(header);
+        auto *role = new QLabel(tr("Upgrade für %1").arg(roleName), card);
+        role->setObjectName(QStringLiteral("kpiCaption"));
+        role->setWordWrap(true);
+        cardLayout->addWidget(role);
+        cardLayout->addSpacing(4);
 
-        auto *line = new QFrame(card);
-        line->setFrameShape(QFrame::HLine);
-        cardLayout->addWidget(line);
-
-        auto *body = new QLabel(
-            tr("🎯 <b>Bewertung:</b> %1 %% (dein Bester: %2 %%)<br/>"
-               "💰 <b>Wert:</b> %3<br/>"
-               "🎂 <b>Alter:</b> %4")
-                .arg(qRound(suggestion.rating))
-                .arg(qRound(suggestion.myBest))
-                .arg(player->transferValueRaw.toHtmlEscaped())
-                .arg(player->age),
-            card);
-        body->setWordWrap(true);
-        cardLayout->addWidget(body);
+        // Figures as a small aligned table: label left, value right.
+        auto *figures = new QGridLayout;
+        figures->setHorizontalSpacing(12);
+        figures->setVerticalSpacing(2);
+        const QList<QPair<QString, QString>> rows = {
+            {tr("Bewertung"), tr("%1 % (dein Bester %2 %)")
+                                  .arg(qRound(suggestion.rating))
+                                  .arg(qRound(suggestion.myBest))},
+            {tr("Wert"), player->transferValueRaw},
+            {tr("Alter"), QString::number(player->age)},
+        };
+        for (int row = 0; row < rows.size(); ++row) {
+            auto *label = new QLabel(rows[row].first, card);
+            label->setObjectName(QStringLiteral("kpiCaption"));
+            auto *value = new QLabel(rows[row].second, card);
+            figures->addWidget(label, row, 0);
+            figures->addWidget(value, row, 1);
+        }
+        figures->setColumnStretch(1, 1);
+        cardLayout->addLayout(figures);
 
         auto *footer = new QLabel(tr("Verein: %1<br/>Positionen: %2")
                                       .arg(player->club.toHtmlEscaped(),
@@ -746,6 +801,45 @@ void DashboardPage::rebuildSuggestions()
         footer->setObjectName(QStringLiteral("kpiCaption"));
         footer->setWordWrap(true);
         cardLayout->addWidget(footer);
+
+        // Left or right click: the player menu, with comparisons against the
+        // own players this target would replace.
+        card->setCursor(Qt::PointingHandCursor);
+        card->setToolTip(tr("Klicken für Aktionen: Profil, Shortlist, Vergleich"));
+        const QString targetUid = player->uid;
+        const QString targetRole = suggestion.role;
+        std::vector<std::pair<QString, QString>> ownEntries; // uid, label
+        for (const auto &[own, ownRating] : suggestion.mine)
+            ownEntries.emplace_back(own->uid,
+                                    tr("%1 (%2 %)").arg(own->name).arg(qRound(ownRating)));
+        const auto showMenu = [this, targetUid, targetRole, ownEntries](const QPoint &pos) {
+            // The window, not the card, owns the menu: a shortlist toggle
+            // rebuilds the cards while the menu is still open.
+            PlayerActions::showContextMenu(
+                m_context, window(), targetUid, pos,
+                [this, targetUid, targetRole, ownEntries](QMenu &menu) {
+                    const auto compare = [this, targetUid, targetRole](const QStringList &own) {
+                        m_context.addPendingComparisonUid(targetUid);
+                        for (const QString &uid : own)
+                            m_context.addPendingComparisonUid(uid);
+                        m_context.setPendingComparisonRole(targetRole);
+                        m_context.requestNavigation(QStringLiteral("player_comparison"));
+                    };
+                    for (const auto &[uid, label] : ownEntries) {
+                        menu.addAction(tr("Vergleichen mit %1").arg(label),
+                                       [compare, uid] { compare({uid}); });
+                    }
+                    if (ownEntries.size() > 1) {
+                        QStringList all;
+                        for (const auto &entry : ownEntries)
+                            all << entry.first;
+                        menu.addAction(tr("Vergleichen mit allen %n", nullptr,
+                                          static_cast<int>(all.size())),
+                                       [compare, all] { compare(all); });
+                    }
+                });
+        };
+        installClickMenu(card, showMenu);
 
         m_cardsLayout->addWidget(card, index / columns, index % columns);
         ++index;
@@ -757,8 +851,8 @@ void DashboardPage::rebuildSuggestions()
 void DashboardPage::chooseImportFile()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("FM-Export (HTML oder CSV) auswählen"), m_context.htmlExportDir(),
-        tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
+        this, tr("FM-Export oder FM27-Spielstand auswählen"), m_context.htmlExportDir(),
+        tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
     if (path.isEmpty())
         return;
     m_filePathEdit->setText(path);
@@ -797,7 +891,7 @@ void DashboardPage::importFinished(const ImportPipelineResult &result)
     if (!result.import.success) {
         QMessageBox::critical(
             this, tr("Import fehlgeschlagen"),
-            tr("❌ Die Datei konnte nicht importiert werden.\n\n%1\n\n"
+            tr("Die Datei konnte nicht importiert werden.\n\n%1\n\n"
                "Mögliche Ursachen: keine 'UID'-Spalte oder kein gültiger "
                "Football-Manager-Export (HTML oder CSV).")
                 .arg(importErrorText(result.import)));

@@ -26,6 +26,8 @@ class QToolButton;
 
 namespace fm {
 
+class ClubHeaderBar;
+
 class AppContext;
 class BusyProgressDialog;
 class PageBase;
@@ -87,6 +89,10 @@ private:
     void updateDbLabel();
     void fillSaveMenu(QMenu *menu);
     void newSave();
+    // Welcome assistant: opens on its own once the save has its first players
+    // (WelcomeWizard::shouldOffer), waiting for open dialogs to close first.
+    void maybeShowWelcome();
+    void showWelcome();
     void switchSave();
     // Opens the import of the current mode's overview with filePath (asks
     // for a file when empty).
@@ -119,8 +125,7 @@ private:
     QLabel *m_toast = nullptr;
     QTimer m_toastTimer;
     QToolButton *m_saveSwitcher = nullptr;
-    QLabel *m_headerLogo = nullptr;     // optional club logo (user PNG)
-    QLabel *m_headerIdentity = nullptr; // club/national name + stadium
+    ClubHeaderBar *m_headerBar = nullptr; // crest, club name, club colors
     QStackedWidget *m_stack = nullptr;
     QHash<QString, PageBase *> m_pages; // by host page id (Navigation::hostPage), lazily created
     QString m_currentPageId;            // page id shown (not its host)
@@ -142,6 +147,10 @@ private:
 
     QStringList m_searchKeys; // folded "name club" per store row, for the palette
     bool m_searchModelDirty = true;
+    bool m_welcomeOpen = false;
+    QTimer m_welcomeTimer;
+    QStringList m_welcomeLater; // saves whose assistant was closed for this session
+    bool m_sidebarCustomRoles = true;
 };
 
 } // namespace fm

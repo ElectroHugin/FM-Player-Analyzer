@@ -4,9 +4,12 @@
 
 #include <QColor>
 #include <QHash>
+#include <QPixmap>
 #include <QString>
 #include <QStringList>
 #include <QWidget>
+
+#include <functional>
 
 namespace fm {
 
@@ -42,6 +45,19 @@ public:
     void setEditorSlots(const QHash<QString, QString> &roles,
                         const QHash<QString, QString> &roleNames, bool showFreeSlots);
 
+    // Role-dependent card shift (FM27: a pressing DM stands higher than a
+    // screening one): percent of the pitch length, + towards the opponent
+    // goal, for (role id, slot). Set once for every pitch (MainWindow);
+    // display only.
+    using ShiftSource = std::function<double(const QString &role, const QString &slot)>;
+    static void setShiftSource(ShiftSource source);
+
+    // Optional small portrait per player card (graphics folder, see
+    // GraphicsLibrary). Returns a null pixmap when off or missing: the card
+    // then looks as before. Set once (MainWindow).
+    using PortraitSource = std::function<QPixmap(const QString &uid, int size)>;
+    static void setPortraitSource(PortraitSource source);
+
     // FM version whose pitch geometry places the slots (empty = default).
     void setFmVersionId(const QString &versionId) { m_fmVersionId = versionId; }
 
@@ -49,6 +65,8 @@ signals:
     // Player interactions (M13): boxes are clickable.
     void playerDoubleClicked(const QString &uid);
     void playerContextMenuRequested(const QString &uid, const QPoint &globalPos);
+    // Right-click on an empty place of a team (not in editor mode).
+    void emptySlotContextMenuRequested(const QString &slot, const QPoint &globalPos);
     // Editor mode: a slot (in use or free) was clicked.
     void slotClicked(const QString &slot, const QPoint &globalPos);
 
@@ -72,6 +90,8 @@ private:
     static constexpr int kHintWidth = 480;
 
     QString uidAt(const QPoint &pos) const;
+    // Vertical offset in pixels for a role on a slot (negative = up).
+    double shiftPixels(const QString &role, const QString &slot, double fieldHeight) const;
     QString slotAt(const QPoint &pos) const;
 
     ThemeManager &m_theme;

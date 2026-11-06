@@ -8,11 +8,15 @@ add_executable(fmplayeranalyzer
     AppPaths.h
     AppPaths.cpp
     FirstRunDialog.h
+    GraphicsLibrary.h
+    GraphicsLibrary.cpp
     FirstRunDialog.cpp
     MainWindow.h
     MainWindow.cpp
     NewSaveWizard.h
     NewSaveWizard.cpp
+    WelcomeWizard.h
+    WelcomeWizard.cpp
     SaveLibrary.h
     SaveLibrary.cpp
     StartScreen.h
@@ -23,6 +27,8 @@ add_executable(fmplayeranalyzer
     Navigation.cpp
     ImportRunner.h
     ImportRunner.cpp
+    LiveSaveWatcher.h
+    LiveSaveWatcher.cpp
     PlayerActions.h
     PlayerActions.cpp
     RecalcHelper.h
@@ -31,6 +37,7 @@ add_executable(fmplayeranalyzer
     pages/AssignRolesPage.cpp
     pages/BestXiPage.h
     pages/BestXiPage.cpp
+    pages/BestXiDepth.cpp
     pages/DashboardPage.h
     pages/DashboardPage.cpp
     pages/DwrsProgressPage.h
@@ -81,9 +88,17 @@ add_executable(fmplayeranalyzer
     widgets/CommandPalette.h
     widgets/CommandPalette.cpp
     widgets/DropZone.h
+    widgets/ColumnChooser.h
+    widgets/ColumnChooser.cpp
+    widgets/FlowLayout.h
+    widgets/FlowLayout.cpp
+    widgets/RolePhaseSwitch.h
+    widgets/RolePhaseSwitch.cpp
+    widgets/ClubHeaderBar.h
     widgets/LineIcons.h
     widgets/LineIcons.cpp
     widgets/DropZone.cpp
+    widgets/ClubHeaderBar.cpp
     widgets/BusyProgressDialog.h
     widgets/BusyProgressDialog.cpp
     widgets/CellStyleDelegate.h
@@ -96,6 +111,8 @@ add_executable(fmplayeranalyzer
     widgets/PersonalityFilterWidget.cpp
     widgets/PlayerTableModel.h
     widgets/PlayerTableModel.cpp
+    widgets/ScoutRequirementsBar.h
+    widgets/ScoutRequirementsBar.cpp
     widgets/StrengthGridWidget.h
     widgets/StrengthGridWidget.cpp
     widgets/TacticPitchWidget.h

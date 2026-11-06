@@ -1,5 +1,9 @@
 #pragma once
 
+#include "core/ColorTemplates.h"
+
+#include <memory>
+
 #include "PageBase.h"
 
 #include <QHash>
@@ -75,16 +79,29 @@ private:
     // Theme tab: preset picker + color buttons per mode+role.
     QComboBox *m_modeCombo = nullptr;
     QComboBox *m_presetCombo = nullptr;
+    QPushButton *m_deleteTemplateButton = nullptr;
+    QComboBox *m_headerStyleCombo = nullptr;
+    QCheckBox *m_watermarkCheck = nullptr;
+    std::unique_ptr<ColorTemplateStore> m_templates;
     QHash<QString, QPushButton *> m_colorButtons; // "night_primary_color" etc.
     QHash<QString, QString> m_pendingColors;
     QString m_pendingPreset;
     QLabel *m_contrastLabel = nullptr;
 
     void applyPresetToPending(const QString &presetId);
+    // Built-in presets and the user's templates, grouped by league; own
+    // templates without a league under "Custom".
+    void fillPresetCombo();
+    void saveColorTemplate();
+    void deleteColorTemplate();
+    void selectPresetInCombo(const QString &presetId);
     void markCustomPreset();
 
     // Database tab.
     QCheckBox *m_autoOpenCheck = nullptr;
+    QCheckBox *m_attributeMaskingCheck = nullptr; // per save: FM27 save-game import
+    QCheckBox *m_liveSaveCheck = nullptr;          // per save: follow an FM27 save
+    QLineEdit *m_liveSaveEdit = nullptr;
     QComboBox *m_dbCombo = nullptr;
 
     // Club tab (settings table keys, same as legacy).
@@ -101,6 +118,13 @@ private:
     void chooseLogo();
     void removeLogo();
     void updateLogoPreview();
+    // Optional portraits/crests from the FM graphics folder.
+    QGroupBox *m_graphicsGroup = nullptr;
+    QLineEdit *m_graphicsDirEdit = nullptr;
+    QLineEdit *m_clubFmIdEdit = nullptr;
+    QLabel *m_graphicsStatus = nullptr;
+    QLabel *m_graphicsCrestPreview = nullptr;
+    void updateGraphicsStatus();
     QComboBox *m_favTactic1Combo = nullptr;
     QComboBox *m_favTactic2Combo = nullptr;
     QGroupBox *m_registrationGroup = nullptr;

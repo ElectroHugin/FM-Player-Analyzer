@@ -1,14 +1,19 @@
 #include "SquadMatrixPage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "PageHelpers.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
+#include "../widgets/ColumnChooser.h"
 #include "../widgets/PersonalityFilterWidget.h"
 #include "../widgets/PlayerTableModel.h"
+#include "../widgets/ScoutRequirementsBar.h"
 #include "core/Attributes.h"
 #include "core/Constants.h"
 #include "core/Freshness.h"
+#include "core/PitchGeometry.h"
+#include "core/ScoutSearch.h"
 #include "core/TalentEngine.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
@@ -108,7 +113,8 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    m_heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Squad Matrix")), content);
+    m_heading = new QLabel(tr("Squad Matrix"), content);
+    m_heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(m_heading);
 
     // --- Options shared by both tabs ---
@@ -123,8 +129,8 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     layout->addLayout(optionsRow);
 
     m_tabs = new QTabWidget(content);
-    m_tabs->addTab(buildScoutingTab(), tr("🔍 Scouting"));
-    m_tabs->addTab(buildSquadTab(), tr("🏠 Mein Kader"));
+    m_tabs->addTab(buildScoutingTab(), tr("Scouting"));
+    m_tabs->addTab(buildSquadTab(), tr("Mein Kader"));
     m_tabs->tabBar()->hide(); // the main window's tabs choose (showSection)
     layout->addWidget(m_tabs, 1);
 
@@ -178,6 +184,15 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
             });
     updateMaxValueLabel();
 
+    connect(m_requirements, &ScoutRequirementsBar::criteriaChanged, this, [this] {
+        // The benchmark belonged to the handed-over search only.
+        m_referenceName.clear();
+        m_referenceValue = -1.0;
+        m_sortByRequirements = !m_requirements->criteria().isEmpty();
+        if (!m_updating)
+            rebuildAll();
+    });
+
     connect(m_attrBox, &QGroupBox::toggled, this, [this](bool on) {
         // Switching the panel on without a row starts with a useful example.
         if (on && m_attrRows.isEmpty() && !m_updating)
@@ -192,8 +207,7 @@ void SquadMatrixPage::showSection(const QString &pageId)
 {
     const bool scouting = pageId == QLatin1String("scouting_matrix");
     m_tabs->setCurrentIndex(scouting ? TabScouting : TabSquad);
-    m_heading->setText(QStringLiteral("<h2>%1</h2>").arg(
-        scouting ? tr("Squad Matrix – Scouting") : tr("Squad Matrix – Mein Kader")));
+    m_heading->setText(scouting ? tr("Squad Matrix – Scouting") : tr("Squad Matrix – Mein Kader"));
 }
 
 QWidget *SquadMatrixPage::buildScoutingTab()
@@ -211,6 +225,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     m_scoutedFilterCombo->setToolTip(
         tr("Nach einer Rolle sortieren und filtern. Dann zeigt eine Spalte „Δ“, wie weit der "
            "Spieler über oder unter dem besten Spieler deiner ersten Mannschaft liegt."));
+    filterRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_scoutedFilterCombo, m_scoutedFilterCombo->parentWidget()));
     filterRow->addWidget(m_scoutedFilterCombo);
     filterRow->addWidget(new QLabel(tr("Nation:"), tab));
     m_scoutedNatCombo = new QComboBox(tab);
@@ -269,11 +284,14 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     rangeRow->addStretch(1);
     layout->addLayout(rangeRow);
 
+    m_requirements = new ScoutRequirementsBar(m_context.definitions(), tab);
+    layout->addWidget(m_requirements);
+
     m_personalityFilter = new PersonalityFilterWidget(m_context.definitions(), tab);
     layout->addWidget(m_personalityFilter);
 
     // --- Talent filter ---
-    m_talentBox = new QGroupBox(tr("🌱 Talent-Filter"), tab);
+    m_talentBox = new QGroupBox(tr("Talent-Filter"), tab);
     m_talentBox->setCheckable(true);
     m_talentBox->setChecked(false);
     auto *talentLayout = collapsibleBody(m_talentBox);
@@ -323,7 +341,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     layout->addWidget(m_talentBox);
 
     // --- Attribute thresholds ---
-    m_attrBox = new QGroupBox(tr("🎯 Attribut-Schwellen"), tab);
+    m_attrBox = new QGroupBox(tr("Attribut-Schwellen"), tab);
     m_attrBox->setCheckable(true);
     m_attrBox->setChecked(false);
     auto *attrLayout = collapsibleBody(m_attrBox);
@@ -409,13 +427,19 @@ void SquadMatrixPage::buildTable(TableSection *section, const QString &title, QW
     section->search->setClearButtonEnabled(true);
     auto *exportButton = new QPushButton(tr("CSV exportieren"), section->box);
     searchRow->addWidget(section->search, 1);
-    searchRow->addWidget(exportButton);
     layout->addLayout(searchRow);
 
     section->model = new PlayerTableModel(this);
     section->proxy = new PlayerFilterProxy(section->model, this);
     section->table = new QTableView(section->box);
     section->table->setModel(section->proxy);
+    // Freshness only shows up as a warning on the name; the column is opt-in.
+    section->columns = new ColumnChooser(
+        m_context, section->table, section->model,
+        scouted ? QStringLiteral("squad_matrix_scouted") : QStringLiteral("squad_matrix_club"),
+        {tr("Frische")}, this);
+    searchRow->addWidget(section->columns->createButton(section->box));
+    searchRow->addWidget(exportButton);
     section->table->setSortingEnabled(true);
     // Start A-Z by name (Qt's default indicator would sort the first column Z-A).
     section->table->sortByColumn(scouted ? 1 : 0, Qt::AscendingOrder);
@@ -459,7 +483,14 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
 {
     const bool talentOn = !clubTable && m_talentBox->isChecked();
     const bool extraDetails = m_extraDetailsCheck->isChecked();
-    const QStringList roles = selectedRoles();
+    // Roles asked for by the requirements always get a column, up front.
+    const QStringList requiredRoles =
+        clubTable ? QStringList() : ScoutSearch::requiredRoles(m_requirements->criteria());
+    QStringList roles = selectedRoles();
+    for (const QString &role : requiredRoles) {
+        if (!roles.contains(role))
+            roles.append(role);
+    }
     const RoleRatings &ratings = m_context.ratings();
     const Definitions *definitions = &m_context.definitions();
     const QHash<QString, double> talentScores = m_talentScores;
@@ -473,8 +504,37 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                         [](const Player &p) { return p.onShortlist ? 1 : 0; }, nullptr,
                         Qt::AlignCenter});
     }
-    columns.append({tr("Name"), [](const Player &p) { return p.name; },
-                    [](const Player &p) { return getLastName(p.name); }, nullptr, {}});
+    if (clubTable) {
+        columns.append({tr("Name"), [](const Player &p) { return p.name; },
+                        [](const Player &p) { return getLastName(p.name); }, nullptr, {}});
+    } else {
+        // Outdated data shows as a warning sign on the name (details in the
+        // tooltip); the full "Frische" column is optional.
+        const int counter = m_context.updateCounter();
+        const int retirementAge =
+            m_context.config().freshnessSetting(QStringLiteral("retirement_age"));
+        const int staleAfter =
+            m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads"));
+        const QString userClub = m_context.userClub();
+        const auto outdated = [=](const Player &p) {
+            return Freshness::isStale(p, counter, staleAfter)
+                   || Freshness::isRetired(p, counter, retirementAge, staleAfter, userClub);
+        };
+        PlayerColumn name{tr("Name"),
+                          [outdated](const Player &p) -> QVariant {
+                              return outdated(p) ? QStringLiteral("⚠ ") + p.name : p.name;
+                          },
+                          [](const Player &p) { return getLastName(p.name); }, nullptr, {}};
+        name.toolTip = [=](const Player &p) {
+            if (!outdated(p))
+                return QString();
+            return tr("Daten veraltet: seit %1 Komplett-Exporten nicht mehr gesehen.")
+                .arg(Freshness::uploadsSinceSeen(p, counter));
+        };
+        columns.append(name);
+    }
+    for (PlayerColumn &column : columns)
+        column.pinned = true; // star + name always stay
     columns.append({tr("Alter"), [](const Player &p) { return p.age; }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});
     if (talentOn) {
@@ -493,13 +553,15 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     const qsizetype focusIndex = columns.size();
     columns.append(
         {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}});
-    columns.append({tr("Persönlichkeit"), [](const Player &p) { return p.personality; },
-                    nullptr,
-                    [definitions](const Player &p) {
-                        return personalityCellStyle(
-                            definitions->personalityCategory(p.personality));
-                    },
-                    {}});
+    if (m_personalityKnown) {
+        columns.append({tr("Persönlichkeit"), [](const Player &p) { return p.personality; },
+                        nullptr,
+                        [definitions](const Player &p) {
+                            return personalityCellStyle(
+                                definitions->personalityCategory(p.personality));
+                        },
+                        {}});
+    }
     if (!clubTable) {
         columns.append(
             {tr("Verein"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}});
@@ -608,9 +670,50 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     }
 
     QList<PlayerColumn> focusColumns;
+    if (!clubTable && !m_requirements->criteria().isEmpty()) {
+        const QHash<QString, double> values = m_requirementValues;
+        const auto valueOf = [values](const Player &p) { return values.value(p.uid, -1.0); };
+        focusColumns.append(
+            {tr("⌀ Anforderungen"),
+             [valueOf](const Player &p) -> QVariant {
+                 const double v = valueOf(p);
+                 return v < 0.0 ? QVariant(QStringLiteral("–")) : QVariant(qRound(v));
+             },
+             valueOf,
+             [valueOf](const Player &p) -> CellStyle {
+                 const double v = valueOf(p);
+                 return v < 0.0 ? CellStyle{} : dwrsCellStyle(v);
+             },
+             Qt::AlignRight | Qt::AlignVCenter,
+             tr("Mittel der DWRS in den verlangten Rollen; bei einer Bridge gewichtet mit dem "
+                "Anteil mit Ball aus den Einstellungen, wie in Best XI.")});
+        if (!m_referenceName.isEmpty() && m_referenceValue >= 0.0) {
+            const int best = qRound(m_referenceValue);
+            focusColumns.append(
+                {tr("Δ %1 (%2)").arg(m_referenceName).arg(best),
+                 [valueOf, best](const Player &p) -> QVariant {
+                     const double v = valueOf(p);
+                     if (v < 0.0)
+                         return QStringLiteral("–");
+                     const int delta = qRound(v) - best;
+                     return delta > 0 ? QStringLiteral("+%1").arg(delta) : QString::number(delta);
+                 },
+                 [valueOf, best](const Player &p) {
+                     const double v = valueOf(p);
+                     return v < 0.0 ? -1000 : qRound(v) - best;
+                 },
+                 [valueOf, best](const Player &p) -> CellStyle {
+                     const double v = valueOf(p);
+                     return v >= 0.0 && qRound(v) > best ? thresholdMetStyle() : CellStyle{};
+                 },
+                 Qt::AlignRight | Qt::AlignVCenter,
+                 tr("Abstand zum Wert des Spielers, für den die Suche gestartet wurde.")});
+        }
+    }
     for (const QString &role : roles) {
         const QHash<QString, double> roleRatings = ratings.value(role);
-        QList<PlayerColumn> &target = role == focusRole ? focusColumns : columns;
+        QList<PlayerColumn> &target =
+            role == focusRole || requiredRoles.contains(role) ? focusColumns : columns;
         target.append({definitions->roleLabel(role),
                         [roleRatings](const Player &p) -> QVariant {
                             const auto it = roleRatings.constFind(p.uid);
@@ -653,6 +756,8 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
         }
     }
     focusColumns.append(thresholdColumns);
+    for (PlayerColumn &column : focusColumns)
+        column.pinned = true; // what is being searched for always stays visible
     for (qsizetype i = 0; i < focusColumns.size(); ++i)
         columns.insert(focusIndex + i, focusColumns.at(i));
     return columns;
@@ -698,6 +803,8 @@ void SquadMatrixPage::refresh()
     } else if (!hadSelection && !fav1.isEmpty()) {
         m_tacticCombo->setCurrentIndex(1); // first favorite (legacy default)
     }
+    m_requirements->setPositionChoices(gamePositionChoices());
+    applyPendingScoutSearch();
 
     QSet<QString> personalitySet;
     QSet<QString> nationalitySet;
@@ -710,6 +817,10 @@ void SquadMatrixPage::refresh()
     QStringList personalities(personalitySet.cbegin(), personalitySet.cend());
     std::sort(personalities.begin(), personalities.end());
     m_personalityFilter->setAvailablePersonalities(personalities);
+    // Without any known personality (FM27 for now) the filters are no help.
+    m_personalityKnown = !personalities.isEmpty();
+    m_personalityFilter->setVisible(m_personalityKnown);
+    m_talentGoodOnlyCheck->setVisible(m_personalityKnown);
 
     const QString clubCountry = m_context.database().setting(QStringLiteral("club_country_code"));
 
@@ -755,6 +866,41 @@ void SquadMatrixPage::refresh()
     rebuildAll();
 }
 
+void SquadMatrixPage::applyPendingScoutSearch()
+{
+    ScoutSearchRequest request;
+    if (!m_context.takePendingScoutSearch(&request))
+        return;
+    if (!request.tactic.isEmpty()) {
+        const int index = m_tacticCombo->findData(request.tactic);
+        if (index >= 0)
+            m_tacticCombo->setCurrentIndex(index);
+    }
+    m_requirements->setCriteria(request.criteria, request.source);
+    m_referenceName = request.referenceName;
+    m_referenceValue = request.referenceValue;
+    m_sortByRequirements = true;
+    m_tabs->setCurrentIndex(TabScouting);
+}
+
+QStringList SquadMatrixPage::gamePositionChoices() const
+{
+    const PitchGeometry &geometry = pitchGeometry(m_context.fmVersionId());
+    QStringList positions = geometry.goalkeeper.gamePositions;
+    for (const PitchRow &row : geometry.rows) {
+        for (const PitchSlot &slot : row.pitchSlots) {
+            for (const QString &position : slot.gamePositions) {
+                if (!positions.contains(position))
+                    positions.append(position);
+            }
+        }
+    }
+    std::stable_sort(positions.begin(), positions.end(), [](const QString &a, const QString &b) {
+        return positionSortKey(a) < positionSortKey(b);
+    });
+    return positions;
+}
+
 void SquadMatrixPage::rebuildAll()
 {
     const QString userClub = m_context.userClub();
@@ -767,7 +913,7 @@ void SquadMatrixPage::rebuildAll()
 
     const int talentAgeCap = m_talentAgeSlider->value();
     const int talentMinMentality = m_talentMentalitySlider->value();
-    const bool talentGoodOnly = m_talentGoodOnlyCheck->isChecked();
+    const bool talentGoodOnly = m_personalityKnown && m_talentGoodOnlyCheck->isChecked();
     const int talentScope = m_talentScope->checkedId();
 
     m_talentScores.clear();
@@ -813,7 +959,7 @@ void SquadMatrixPage::rebuildAll()
         }
         if (hideRetired && PlayerStatus::isInactive(player, freshness))
             continue;
-        if (!m_personalityFilter->allows(player.personality))
+        if (m_personalityKnown && !m_personalityFilter->allows(player.personality))
             continue;
         if (!passesTalent(player))
             continue;
@@ -873,11 +1019,16 @@ void SquadMatrixPage::rebuildAll()
     m_scoutedFilterCombo->addItem(tr("Shortlist"), QStringLiteral("__shortlist"));
     if (talentOn)
         m_scoutedFilterCombo->addItem(tr("Talent"), QStringLiteral("__talent"));
+    if (!m_requirements->criteria().isEmpty())
+        m_scoutedFilterCombo->addItem(tr("Anforderungen (Wert)"), QStringLiteral("__requirements"));
     for (const QString &role : roles)
         m_scoutedFilterCombo->addItem(roleNames.value(role, role), role);
-    const int previousIndex = m_scoutedFilterCombo->findData(previousFilter);
+    const int previousIndex = m_scoutedFilterCombo->findData(
+        m_sortByRequirements ? QStringLiteral("__requirements") : previousFilter);
     if (previousIndex >= 0)
         m_scoutedFilterCombo->setCurrentIndex(previousIndex);
+    m_sortByRequirements = false;
+    m_requirements->setRoleChoices(roles);
     m_updating = false;
 
     m_scoutedPool = std::move(scouted);
@@ -920,8 +1071,21 @@ void SquadMatrixPage::rebuildScoutedOnly()
         }
         return p->nationality == natScope || p->secondNationality == natScope;
     };
+    // Several requirements: every one must be met (DWRS range per role).
+    const QList<ScoutCriterion> &criteria = m_requirements->criteria();
+    const bool parsePositions = ScoutSearch::needsPositions(criteria);
+    const auto passesRequirements = [&](const Player *p) -> bool {
+        if (criteria.isEmpty())
+            return true;
+        return ScoutSearch::meetsAll(*p,
+                                     parsePositions ? parsePositionString(p->positionRaw)
+                                                    : QSet<QString>(),
+                                     criteria, ratings, minDwrs, maxDwrs);
+    };
     const auto passesIdentity = [&](const Player *p) -> bool {
         if (freeAgentsOnly && !isFreeAgent(p->club, p->transferValueRaw))
+            return false;
+        if (!passesRequirements(p))
             return false;
         for (const auto &[attrIndex, minimum] : thresholds) {
             if (p->attrMean(attrIndex) < minimum)
@@ -959,6 +1123,16 @@ void SquadMatrixPage::rebuildScoutedOnly()
         }
     }
 
+    m_requirementValues.clear();
+    if (!criteria.isEmpty()) {
+        const double ipShare = m_context.config().ipSharePercent() / 100.0;
+        for (const Player *player : rows)
+            m_requirementValues.insert(player->uid,
+                                       ScoutSearch::combinedValue(*player, criteria, ratings,
+                                                                  m_context.definitions(),
+                                                                  ipShare));
+    }
+
     m_scoutedSection.box->setTitle(freeAgentsOnly
                                        ? tr("Free Agents (%1)").arg(rows.size())
                                        : tr("Gescoutete Spieler (%1)").arg(rows.size()));
@@ -968,7 +1142,9 @@ void SquadMatrixPage::rebuildScoutedOnly()
     // Sort by the chosen role/talent column, otherwise by name.
     int sortColumn = 1; // Name (column 0 is the shortlist star)
     Qt::SortOrder order = Qt::AscendingOrder;
-    const QString wantedHeader = filterKey == QLatin1String("__talent")
+    const QString wantedHeader = filterKey == QLatin1String("__requirements")
+                                     ? tr("⌀ Anforderungen")
+                                 : filterKey == QLatin1String("__talent")
                                      ? tr("Talent")
                                      : (!filterKey.startsWith(QLatin1String("__"))
                                             ? m_context.definitions().roleLabel(filterKey)

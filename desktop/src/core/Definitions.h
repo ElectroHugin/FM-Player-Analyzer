@@ -8,6 +8,8 @@
 #include <QString>
 #include <QStringList>
 
+#include <functional>
+
 namespace fm {
 
 // Role key/preferable attribute lists (role_specific_weights entry).
@@ -36,8 +38,22 @@ public:
     // intact in that case.
     bool load(const QString &filePath, const QString &fmVersionId = defaultFmVersionId());
 
-    // Saves back to the file given to load(). Creates a .bak first, restores
-    // it on failure (same semantics as legacy save_definitions).
+    // Same from JSON text, e.g. the definitions document of a save's profile
+    // (ProfileStore). sourceLabel names the source in errors and becomes
+    // filePath(). Leaves the save handler untouched.
+    bool loadFromJson(const QByteArray &json, const QString &fmVersionId,
+                      const QString &sourceLabel = QStringLiteral("profile"));
+    // The current root as indented JSON (what save() writes).
+    QByteArray toJson() const;
+
+    // Where save() writes when set (the open save's profile); load() from a
+    // file clears it again.
+    using SaveHandler = std::function<bool(const QByteArray &json, QString *errorOut)>;
+    void setSaveHandler(SaveHandler handler) { m_saveHandler = std::move(handler); }
+
+    // Saves via the save handler, or back to the file given to load(): then a
+    // .bak is created first and restored on failure (same semantics as legacy
+    // save_definitions).
     bool save();
 
     QString errorString() const { return m_error; }
@@ -59,8 +75,14 @@ public:
     // roles/abbreviations/weights must reach existing users), keeping the
     // user's own tactics: every tactic the shipped file does not have and
     // does not list under "retired_tactics", if all its roles still exist.
+    // Templates the user edited ("edited_tactics") keep his version, deleted
+    // ones ("deleted_tactics") stay away, roles he made ("custom_roles") stay
+    // (see TacticLibrary). A shipped "renamed_tactics" {old: new} replaces an
+    // untouched old template; renamedOut lists those (old, new) pairs so
+    // favorites and bridges can follow.
     // Returns false (user untouched) when no update is due.
-    static bool applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user);
+    static bool applyShippedUpdate(const QJsonObject &shipped, QJsonObject &user,
+                                   QList<QPair<QString, QString>> *renamedOut = nullptr);
 
     // All role abbreviations, sorted (get_valid_roles).
     const QStringList &validRoles() const { return m_validRoles; }
@@ -146,6 +168,12 @@ public:
     // Sorts the given role abbreviations naturally (stable within equal keys).
     QStringList sortRolesNaturally(QStringList roles) const;
 
+    // Where the game draws a role's card relative to its slot (FM27, display
+    // only): percent of the pitch length, positive towards the opponent goal.
+    // JSON: "role_shifts": {role: {game position: percent}}. 0 for roles
+    // without a shift (FM24, own roles).
+    double roleShiftPercent(const QString &role, const QString &slot) const;
+
     // Raw access for editing (New Role / New Tactic pages).
     QJsonObject root() const { return m_root; }
     void setRoot(const QJsonObject &root)
@@ -162,6 +190,7 @@ private:
     QHash<QString, QPair<int, int>> buildNaturalRoleSorter() const;
 
     QJsonObject m_root;
+    SaveHandler m_saveHandler;
     QString m_filePath;
     QString m_fmVersionId = defaultFmVersionId();
     QString m_error;
@@ -183,6 +212,7 @@ private:
     QHash<QString, QString> m_personalitiesLower; // lowercased name -> category
     QHash<QString, QString> m_roleDisplayMap;
     QHash<QString, QPair<int, int>> m_naturalSorter;
+    QHash<QString, QHash<QString, double>> m_roleShifts; // role -> position -> %
 };
 
 } // namespace fm

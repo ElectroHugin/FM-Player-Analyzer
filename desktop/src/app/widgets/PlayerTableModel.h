@@ -26,6 +26,10 @@ struct PlayerColumn {
     Qt::Alignment alignment = Qt::AlignLeft | Qt::AlignVCenter;
     // Optional header tooltip (e.g. the full role name behind "SDM-OOP").
     QString headerToolTip = {};
+    // Optional per-cell tooltip (default: the display text).
+    std::function<QString(const Player &)> toolTip = {};
+    // Pinned columns cannot be hidden by the column chooser.
+    bool pinned = false;
 };
 
 // Builds a "Frische" (data-freshness) column: shows how many uploads ago a
@@ -52,6 +56,8 @@ public:
     void setRows(std::vector<const Player *> rows);
 
     const Player *playerAt(int row) const;
+    QString headerText(int column) const;
+    bool isPinned(int column) const;
     const std::vector<const Player *> &rows() const { return m_rows; }
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

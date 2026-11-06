@@ -82,7 +82,7 @@ NewRolePage::NewRolePage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Neue Rolle erstellen")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Neue Rolle erstellen")), content);
     layout->addWidget(heading);
     auto *info = new QLabel(
         tr("Definiere eine neue Feldspieler-Rolle. Das Kürzel wird beim Tippen automatisch "
@@ -294,6 +294,13 @@ void NewRolePage::createRole()
         posMap.insert(position, QJsonArray::fromStringList(roleList));
     }
     root.insert(QStringLiteral("position_to_role_mapping"), posMap);
+    // Own roles survive shipped data updates (Definitions::applyShippedUpdate).
+    {
+        QJsonArray custom = root.value(QLatin1String("custom_roles")).toArray();
+        if (!custom.contains(abbr))
+            custom.append(abbr);
+        root.insert(QStringLiteral("custom_roles"), custom);
+    }
 
     m_context.definitions().setRoot(root);
     if (!m_context.definitions().save()) {

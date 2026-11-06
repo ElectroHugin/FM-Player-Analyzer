@@ -1,16 +1,28 @@
 #include "AppContext.h"
 
+#include "core/ProfileStore.h"
 #include "core/RatingsUpdater.h"
 
+#include <QCryptographicHash>
+#include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QSet>
 
 namespace fm {
 
 AppContext::AppContext(QObject *parent)
     : QObject(parent)
+    , m_graphics(std::make_unique<GraphicsLibrary>())
 {
+    // Connected first, so the copy is current before pages redraw.
+    connect(m_graphics.get(), &GraphicsLibrary::stateChanged, this,
+            &AppContext::refreshCachedCrest);
+    connect(this, &AppContext::dataChanged, this, &AppContext::refreshCachedCrest);
+    connect(this, &AppContext::databaseChanged, this, &AppContext::refreshCachedCrest);
 }
 
 AppContext::~AppContext()
@@ -84,6 +96,12 @@ QStringList AppContext::availableDatabases() const
 
 bool AppContext::openDatabase(const QString &dbName, QString *errorOut)
 {
+    return openDatabaseImpl(dbName, QString(), errorOut);
+}
+
+bool AppContext::openDatabaseImpl(const QString &dbName, const QString &copyProfileFrom,
+                                  QString *errorOut)
+{
     // Reopening the already-active database is a no-op: it would otherwise clash
     // on the (name-derived) connection string with the live connection and cost
     // a needless full reload.
@@ -114,14 +132,44 @@ bool AppContext::openDatabase(const QString &dbName, QString *errorOut)
         database->setSetting(QStringLiteral("dwrs_scheme"), QString::number(kDwrsSchemeVersion));
     }
 
-    // Load the database's version profile before switching: if it fails, the
-    // previous database stays active with its own definitions.
-    if (!activateFmVersion(
-            database->setting(QStringLiteral("fm_version"), defaultFmVersionId()), errorOut))
+    // The save's profile (weights, colors, options, roles and tactics) is
+    // loaded before anything else. A save without one was last used by 2.0.x
+    // and takes over the settings all saves shared until then; a new save
+    // starts from the defaults (or a copy of another save's profile). If
+    // anything fails, the previous save stays active with its own profile.
+    if (!m_config->attachProfile(*database,
+                                 isNew ? AppConfig::ProfileSeed::Defaults
+                                       : AppConfig::ProfileSeed::SharedConfig,
+                                 errorOut)) {
         return false;
+    }
+    const auto restorePrevious = [this] {
+        if (m_database)
+            m_config->attachProfile(*m_database, AppConfig::ProfileSeed::SharedConfig);
+        else
+            m_config->detachProfile();
+    };
+    if (isNew && !copyProfileFrom.isEmpty() && !copyProfile(*database, copyProfileFrom, errorOut)) {
+        restorePrevious();
+        database->close();
+        QFile::remove(path);
+        return false;
+    }
+    migrateProfileImages(*database);
+
+    if (!activateFmVersion(*database,
+                           database->setting(QStringLiteral("fm_version"), defaultFmVersionId()),
+                           errorOut)) {
+        restorePrevious();
+        return false;
+    }
     m_database = std::move(database);
     m_config->setDbName(dbName);
     m_config->touchDatabaseLastOpened(dbName);
+    // Colors and header first (they are ready in milliseconds), then the
+    // players, which take most of the time on large saves.
+    emit profileChanged();
+    applyGraphicsSettings();
 
     reloadFromDatabase();
     emit databaseChanged(dbName);
@@ -131,30 +179,240 @@ bool AppContext::openDatabase(const QString &dbName, QString *errorOut)
 bool AppContext::createDatabase(const QString &dbName, const QString &fmVersionId,
                                 QString *errorOut)
 {
+    return createDatabase(dbName, fmVersionId, QString(), errorOut);
+}
+
+bool AppContext::createDatabase(const QString &dbName, const QString &fmVersionId,
+                                const QString &copyProfileFrom, QString *errorOut)
+{
     if (QFile::exists(m_paths.databaseFile(dbName))) {
         if (errorOut)
             *errorOut = tr("Ein Spielstand mit dem Namen „%1“ existiert bereits.").arg(dbName);
         return false;
     }
-    return openDatabase(dbName, errorOut) && setFmVersion(fmVersionId, errorOut);
+    return openDatabaseImpl(dbName, copyProfileFrom, errorOut)
+           && setFmVersion(fmVersionId, errorOut);
 }
 
-bool AppContext::activateFmVersion(const QString &versionId, QString *errorOut)
+bool AppContext::copyProfile(Database &target, const QString &sourceName, QString *errorOut)
 {
-    if (!m_definitions->filePath().isEmpty() && m_definitions->fmVersionId() == versionId)
-        return true;
-    if (!m_paths.ensureDefinitionsFile(versionId)) {
+    const auto fail = [errorOut](const QString &error) {
         if (errorOut)
-            *errorOut = tr("Rollen und Taktiken für %1 konnten nicht angelegt werden (%2).")
-                            .arg(fmDataVersion(versionId).displayName,
-                                 QDir::toNativeSeparators(m_paths.definitionsFile(versionId)));
+            *errorOut = error;
+        return false;
+    };
+    // Read the source through its own connection and without writing to it.
+    // A source last used with 2.0.x has no profile yet: it used the shared
+    // settings, which are then what gets copied.
+    Database source(Database::uniqueConnectionName(QStringLiteral("profilecopy")));
+    if (!source.open(m_paths.databaseFile(sourceName)))
+        return fail(source.errorString());
+    ProfileStore from(source);
+    const bool sourceHasProfile = from.isInitialized();
+    QHash<QString, QString> values;
+    if (sourceHasProfile) {
+        if (!from.loadSettings(values))
+            return fail(from.errorString());
+    } else {
+        values = m_config->sharedProfileValues();
+    }
+    if (!m_config->replaceProfileValues(values, QStringLiteral("copy:") + sourceName, errorOut))
+        return false;
+
+    // Roles/tactics of every FM version the source has, and its images.
+    ProfileStore to(target);
+    ScopedTransaction tx(target);
+    for (const FmDataVersion &version : fmDataVersions()) {
+        QByteArray json;
+        if (sourceHasProfile) {
+            from.readDocument(ProfileStore::definitionsDocument(version.id), json);
+        } else {
+            QFile file(m_paths.definitionsFile(version.id));
+            if (file.open(QIODevice::ReadOnly))
+                json = file.readAll();
+        }
+        if (!json.isEmpty() && !to.saveDefinitions(version.id, json))
+            return fail(to.errorString());
+    }
+    const QList<QPair<QString, QString>> images = {
+        {QStringLiteral("club_logo_path"), ProfileStore::clubLogoDocument()},
+        {QStringLiteral("national_flag_path"), ProfileStore::nationalFlagDocument()},
+    };
+    for (const auto &[settingKey, document] : images) {
+        QByteArray image;
+        const QString legacyPath = source.setting(settingKey);
+        if (!from.readDocument(document, image) && !legacyPath.isEmpty()) {
+            QFile file(legacyPath);
+            if (file.open(QIODevice::ReadOnly))
+                image = file.readAll();
+        }
+        if (!image.isEmpty() && !to.writeDocument(document, image, false))
+            return fail(to.errorString());
+    }
+    if (!tx.commit())
+        return fail(target.errorString());
+    return true;
+}
+
+void AppContext::migrateProfileImages(Database &db)
+{
+    // Up to 2.0.4 logo and flag were PNG files in the assets folder, named
+    // after the save, so a duplicated save pointed at — and could delete — the
+    // original's file. From 2.1.0 on they live inside the save's profile.
+    ProfileStore store(db);
+    const QList<QPair<QString, QString>> images = {
+        {QStringLiteral("club_logo_path"), ProfileStore::clubLogoDocument()},
+        {QStringLiteral("national_flag_path"), ProfileStore::nationalFlagDocument()},
+    };
+    for (const auto &[settingKey, document] : images) {
+        const QString path = db.setting(settingKey);
+        if (path.isEmpty() || store.hasDocument(document))
+            continue;
+        QFile file(path);
+        if (file.open(QIODevice::ReadOnly))
+            store.writeDocument(document, file.readAll(), false);
+    }
+}
+
+QByteArray AppContext::profileImage(ProfileImage image)
+{
+    QByteArray data;
+    if (m_database)
+        ProfileStore(*m_database).readDocument(image == ProfileImage::ClubLogo
+                                                   ? ProfileStore::clubLogoDocument()
+                                                   : ProfileStore::nationalFlagDocument(),
+                                               data);
+    return data;
+}
+
+QByteArray AppContext::headerCrest()
+{
+    if (nationalUiMode())
+        return profileImage(ProfileImage::NationalFlag);
+    return ownClubCrestData();
+}
+
+QByteArray AppContext::ownClubCrestData()
+{
+    const QByteArray own = profileImage(ProfileImage::ClubLogo);
+    if (!own.isEmpty() || !m_database)
+        return own;
+    const quint32 id = clubFmId(userClub());
+    // Graphics folder (off by default: then this stays empty as before).
+    const QByteArray live = m_graphics->clubLogoFile(id);
+    if (!live.isEmpty())
+        return live;
+    // The copy kept in the save, as long as it belongs to the own club.
+    if (id == 0 || m_database->setting(QStringLiteral("graphics_crest_id")).toUInt() != id)
+        return {};
+    QByteArray cached;
+    ProfileStore(*m_database).readDocument(ProfileStore::graphicsCrestDocument(), cached);
+    return cached;
+}
+
+void AppContext::refreshCachedCrest()
+{
+    if (!m_database)
+        return;
+    const quint32 id = clubFmId(userClub());
+    const quint32 cachedId = m_database->setting(QStringLiteral("graphics_crest_id")).toUInt();
+    ProfileStore store(*m_database);
+    const QByteArray live = m_graphics->clubLogoFile(id);
+    if (!live.isEmpty()) {
+        QByteArray cached;
+        store.readDocument(ProfileStore::graphicsCrestDocument(), cached);
+        if (cachedId != id || cached != live) { // new club or a new logo file
+            store.writeDocument(ProfileStore::graphicsCrestDocument(), live, false);
+            m_database->setSetting(QStringLiteral("graphics_crest_id"), QString::number(id));
+        }
+        return;
+    }
+    // No crest in the folder right now (folder off, missing or still
+    // loading): keep the copy, unless it belongs to a club we no longer are.
+    if (cachedId != 0 && cachedId != id && id != 0) {
+        store.removeDocument(ProfileStore::graphicsCrestDocument());
+        m_database->removeSetting(QStringLiteral("graphics_crest_id"));
+    }
+}
+
+bool AppContext::setProfileImage(ProfileImage image, const QByteArray &png, QString *errorOut)
+{
+    const QString document = image == ProfileImage::ClubLogo ? ProfileStore::clubLogoDocument()
+                                                             : ProfileStore::nationalFlagDocument();
+    const QString settingKey = image == ProfileImage::ClubLogo
+                                   ? QStringLiteral("club_logo_path")
+                                   : QStringLiteral("national_flag_path");
+    ProfileStore store(*m_database);
+    ScopedTransaction tx(*m_database);
+    // The old file reference goes, so it is never migrated in again.
+    const bool ok = (png.isEmpty() ? store.removeDocument(document)
+                                   : store.writeDocument(document, png, false))
+                    && m_database->removeSetting(settingKey) && tx.commit();
+    if (!ok && errorOut)
+        *errorOut = store.errorString().isEmpty() ? m_database->errorString()
+                                                  : store.errorString();
+    return ok;
+}
+
+bool AppContext::activateFmVersion(Database &db, const QString &versionId, QString *errorOut)
+{
+    const FmDataVersion &version = fmDataVersion(versionId);
+    QByteArray shipped;
+    {
+        QFile bundled(QStringLiteral(":/defaults/") + version.definitionsFileName);
+        if (bundled.open(QIODevice::ReadOnly))
+            shipped = bundled.readAll();
+    }
+    // Saves from 2.0.x keep the roles and tactics they shared until now.
+    QByteArray shared;
+    if (m_config->profileSeed() == QLatin1String("config.ini")) {
+        QFile file(m_paths.definitionsFile(versionId));
+        if (file.open(QIODevice::ReadOnly))
+            shared = file.readAll();
+    }
+    ProfileStore store(db);
+    ProfileStore::DefinitionsResult result;
+    if (!store.loadDefinitions(versionId, shipped, shared, result)) {
+        if (errorOut)
+            *errorOut = tr("Rollen und Taktiken für %1 konnten nicht geladen werden (%2).")
+                            .arg(version.displayName, store.errorString());
         return false;
     }
-    if (!m_definitions->load(m_paths.definitionsFile(versionId), versionId)) {
+    if (!result.beforeUpdate.isEmpty()) {
+        // Newer shipped data replaced roles (user tactics kept): keep the
+        // previous state next to the backups.
+        QDir().mkpath(m_paths.backupsDir());
+        QFile backup(QDir(m_paths.backupsDir())
+                         .filePath(QStringLiteral("%1_definitions_%2_vor_update_%3.json")
+                                       .arg(QFileInfo(db.filePath()).completeBaseName(), versionId,
+                                            QDateTime::currentDateTime().toString(
+                                                QStringLiteral("yyyyMMdd_HHmmss")))));
+        if (backup.open(QIODevice::WriteOnly))
+            backup.write(result.beforeUpdate);
+    }
+    if (!m_definitions->loadFromJson(result.json, versionId,
+                                     QStringLiteral("%1 (%2)").arg(
+                                         QDir::toNativeSeparators(db.filePath()),
+                                         ProfileStore::definitionsDocument(versionId)))) {
         if (errorOut)
             *errorOut = m_definitions->errorString();
         return false;
     }
+    // Edits (New Role / New Tactic pages) go back into this save's profile.
+    m_definitions->setSaveHandler([this, versionId](const QByteArray &json, QString *error) {
+        if (!m_database) {
+            if (error)
+                *error = tr("Kein Spielstand geöffnet.");
+            return false;
+        }
+        ProfileStore target(*m_database);
+        if (!target.saveDefinitions(versionId, json)) {
+            if (error)
+                *error = target.errorString();
+            return false;
+        }
+        return true;
+    });
     reloadEngines();
     return true;
 }
@@ -171,7 +429,7 @@ bool AppContext::setFmVersion(const QString &versionId, QString *errorOut)
                            "neuen Spielstand anlegen.");
         return false;
     }
-    if (!activateFmVersion(versionId, errorOut))
+    if (!activateFmVersion(*m_database, versionId, errorOut))
         return false;
     if (!m_database->setSetting(QStringLiteral("fm_version"), versionId)) {
         if (errorOut)
@@ -341,13 +599,95 @@ bool AppContext::reloadConfigAndDefinitions()
 {
     waitForBackgroundTasks(); // workers read the definitions being replaced
     m_config->reload();
-    // load() leaves the current definitions untouched if it fails, so a bad
-    // file after a migration/edit does not wipe the running configuration.
-    const bool definitionsOk = m_definitions->load(
-        m_paths.definitionsFile(m_definitions->fmVersionId()), m_definitions->fmVersionId());
+    bool definitionsOk = true;
+    if (m_database) {
+        // The open save's profile: re-read its values and roles/tactics. A
+        // failed load leaves the current definitions untouched, so a bad
+        // document does not wipe the running configuration.
+        QString error;
+        definitionsOk = m_config->attachProfile(*m_database, AppConfig::ProfileSeed::SharedConfig,
+                                                &error)
+                        && activateFmVersion(*m_database, fmVersionId(), &error);
+        emit profileChanged();
+        applyGraphicsSettings();
+    }
     reloadEngines();
     emit dataChanged();
     return definitionsOk;
+}
+
+bool AppContext::saveDefinitions(QString *errorOut)
+{
+    if (!m_definitions->save()) {
+        if (errorOut)
+            *errorOut = m_definitions->errorString();
+        return false;
+    }
+    return reloadConfigAndDefinitions();
+}
+
+void AppContext::applyGraphicsSettings(bool forceRescan)
+{
+    if (!m_database || !m_config->graphicsEnabled()) {
+        m_graphics->configure(false, {}, {});
+        return;
+    }
+    const QString folder = QDir(m_config->effectiveGraphicsDir(fmVersionId())).absolutePath();
+    // One cache per folder, outside the graphics folder (never written to).
+    const QByteArray hash = QCryptographicHash::hash(QDir::cleanPath(folder).toLower().toUtf8(),
+                                                     QCryptographicHash::Sha1)
+                                .toHex()
+                                .left(12);
+    const QString cacheFile = m_paths.dataDir() + QStringLiteral("/cache/graphics_")
+                              + QString::fromLatin1(hash) + QStringLiteral(".bin");
+    m_graphics->configure(true, folder, cacheFile, forceRescan);
+}
+
+quint32 AppContext::clubFmId(const QString &clubName)
+{
+    if (!m_database || clubName.isEmpty())
+        return 0;
+    if (clubName == userClub()) {
+        const quint32 own = GraphicsIndex::parseId(
+            m_database->setting(QStringLiteral("club_fm_id")));
+        if (own != 0)
+            return own;
+    }
+    const QJsonObject map =
+        QJsonDocument::fromJson(m_database->setting(QStringLiteral("club_fm_ids")).toUtf8())
+            .object();
+    return GraphicsIndex::parseId(map.value(clubName).toVariant().toString());
+}
+
+bool AppContext::setClubFmId(const QString &clubName, quint32 id)
+{
+    if (!m_database || clubName.isEmpty())
+        return false;
+    if (clubName == userClub())
+        return m_database->setSetting(QStringLiteral("club_fm_id"),
+                                      id ? QString::number(id) : QString());
+    QJsonObject map =
+        QJsonDocument::fromJson(m_database->setting(QStringLiteral("club_fm_ids")).toUtf8())
+            .object();
+    if (id)
+        map.insert(clubName, QString::number(id));
+    else
+        map.remove(clubName);
+    return m_database->setSetting(
+        QStringLiteral("club_fm_ids"),
+        QString::fromUtf8(QJsonDocument(map).toJson(QJsonDocument::Compact)));
+}
+
+QPixmap AppContext::clubCrest(const QString &clubName, int size)
+{
+    if (!m_database || clubName.isEmpty() || size <= 0)
+        return {};
+    if (clubName == userClub()) {
+        QPixmap own;
+        if (own.loadFromData(profileImage(ProfileImage::ClubLogo)))
+            return own.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+    return m_graphics->clubLogo(clubFmId(clubName), size);
 }
 
 } // namespace fm

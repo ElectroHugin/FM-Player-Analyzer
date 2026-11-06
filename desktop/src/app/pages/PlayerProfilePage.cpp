@@ -1,4 +1,5 @@
 #include "PlayerProfilePage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
 #include "../ImportRunner.h"
@@ -27,18 +28,27 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QLocale>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
+#include "widgets/FlowLayout.h"
+
 #include <QScrollArea>
+#include <QSet>
 #include <QScrollBar>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include <algorithm>
+#include <array>
 
 namespace fm {
 
 namespace {
+
+constexpr int kPortraitSize = 96;
+constexpr int kCrestSize = 56;
 
 enum Scope { MyClub = 0, SecondTeam = 1, Scouted = 2, All = 3, NationalSquad = 4 };
 
@@ -79,7 +89,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Spieler-Profil")), content);
+    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Spieler-Profil")), content);
     layout->addWidget(heading);
 
     // --- Selection row ---
@@ -114,6 +124,18 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_searchCompleter->setMaxVisibleItems(12);
     m_searchEdit->setCompleter(m_searchCompleter);
     selectRow->addWidget(m_searchEdit, 1);
+    // Small squads (own club, second team, national squad): pick from a
+    // menu grouped by position instead of typing a name.
+    m_squadButton = new QToolButton(content);
+    m_squadButton->setText(tr("Kader"));
+    m_squadButton->setToolTip(tr("Spieler aus der Liste wählen, nach Mannschaftsteil sortiert"));
+    m_squadButton->setPopupMode(QToolButton::InstantPopup);
+    m_squadButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    m_squadButton->setCursor(Qt::PointingHandCursor);
+    auto *squadMenu = new QMenu(m_squadButton);
+    m_squadButton->setMenu(squadMenu);
+    connect(squadMenu, &QMenu::aboutToShow, this, [this, squadMenu] { fillSquadMenu(squadMenu); });
+    selectRow->insertWidget(selectRow->indexOf(m_searchEdit), m_squadButton);
     layout->addLayout(selectRow);
 
     auto *divider = new QFrame(content);
@@ -126,9 +148,32 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_tagsLabel = new QLabel(content);
     m_tagsLabel->setTextFormat(Qt::RichText);
     m_tagsLabel->setWordWrap(true);
-    layout->addWidget(m_nameLabel);
-    layout->addWidget(m_vitalsLabel);
-    layout->addWidget(m_tagsLabel);
+    // Portrait left, club crest right (both only with graphics enabled and
+    // found; otherwise the header looks as before).
+    m_portraitLabel = new QLabel(content);
+    m_portraitLabel->setFixedSize(kPortraitSize, kPortraitSize);
+    m_portraitLabel->setAlignment(Qt::AlignCenter);
+    m_portraitLabel->setVisible(false);
+    m_crestLabel = new QLabel(content);
+    m_crestLabel->setFixedSize(kCrestSize, kCrestSize);
+    m_crestLabel->setAlignment(Qt::AlignCenter);
+    m_crestLabel->setVisible(false);
+    auto *headerRow = new QHBoxLayout;
+    headerRow->setSpacing(14);
+    auto *headerText = new QVBoxLayout;
+    headerText->setSpacing(4);
+    headerText->addWidget(m_nameLabel);
+    headerText->addWidget(m_vitalsLabel);
+    headerText->addWidget(m_tagsLabel);
+    headerText->addStretch(1);
+    headerRow->addWidget(m_portraitLabel, 0, Qt::AlignTop);
+    headerRow->addLayout(headerText, 1);
+    headerRow->addWidget(m_crestLabel, 0, Qt::AlignTop);
+    layout->addLayout(headerRow);
+    connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this, [this] {
+        if (isVisible())
+            showPlayer();
+    });
 
     // --- Manual single-player update ---
     m_updateBox = new QGroupBox(tr("🔁 Diesen Spieler aus einer Exportdatei (HTML oder CSV) aktualisieren"),
@@ -190,31 +235,44 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     auto *topRolesTitle = new QLabel(tr("Rollen (beste zuerst)"), m_detailWidget);
     topRolesTitle->setObjectName(QStringLiteral("sectionTitle"));
     topRolesHeader->addWidget(topRolesTitle);
+    topRolesHeader->addSpacing(16);
+    // Legend for the outlined tiles: roles of the favorite tactic.
+    m_tacticLegend = new QWidget(m_detailWidget);
+    auto *legend = new QHBoxLayout(m_tacticLegend);
+    legend->setContentsMargins(0, 0, 0, 0);
+    legend->setSpacing(8);
+    const auto addSwatch = [&](const QString &name, const QString &text) {
+        auto *swatch = new QFrame(m_tacticLegend);
+        swatch->setObjectName(name);
+        swatch->setFixedSize(12, 12);
+        legend->addWidget(swatch);
+        auto *label = new QLabel(text, m_tacticLegend);
+        label->setObjectName(QStringLiteral("kpiCaption"));
+        legend->addWidget(label);
+        legend->addSpacing(8);
+    };
+    m_tacticLegendLabel = new QLabel(m_tacticLegend);
+    m_tacticLegendLabel->setObjectName(QStringLiteral("kpiCaption"));
+    legend->addWidget(m_tacticLegendLabel);
+    addSwatch(QStringLiteral("ipSwatch"), tr("mit Ball"));
+    addSwatch(QStringLiteral("oopSwatch"), tr("ohne Ball"));
+    topRolesHeader->addWidget(m_tacticLegend);
     topRolesHeader->addStretch(1);
     m_roleFilterCombo = new QComboBox(m_detailWidget);
     m_roleFilterCombo->addItem(tr("Alle Rollen"), QStringLiteral("all"));
     m_roleFilterCombo->addItem(tr("Nur mit Ball (IP)"), QStringLiteral("ip"));
     m_roleFilterCombo->addItem(tr("Nur ohne Ball (OOP)"), QStringLiteral("oop"));
-    m_roleFilterCombo->setToolTip(tr("Welche Rollen als Kacheln gezeigt werden. Seitlich "
-                                     "scrollen für alle Rollen."));
+    m_roleFilterCombo->setToolTip(tr("Welche Rollen als Kacheln gezeigt werden."));
     connect(m_roleFilterCombo, &QComboBox::currentIndexChanged, this,
             [this] { fillRoleTiles(); });
     topRolesHeader->addWidget(m_roleFilterCombo);
     detailLayout->addLayout(topRolesHeader);
 
-    // Every assigned role as a tile; scroll sideways when they do not fit.
-    auto *tilesScroll = new QScrollArea(m_detailWidget);
-    tilesScroll->setWidgetResizable(true);
-    tilesScroll->setFrameShape(QFrame::NoFrame);
-    tilesScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    tilesScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    auto *tilesHost = new QWidget(tilesScroll);
-    m_topRolesLayout = new QHBoxLayout(tilesHost);
-    m_topRolesLayout->setContentsMargins(0, 0, 0, 0);
-    m_topRolesLayout->setSpacing(12);
-    tilesScroll->setWidget(tilesHost);
-    detailLayout->addWidget(tilesScroll);
-    m_topRolesScroll = tilesScroll;
+    // Every assigned role as a compact tile; the tiles wrap into rows so all
+    // of them stay readable without scrolling sideways.
+    auto *tilesHost = new QWidget(m_detailWidget);
+    m_topRolesLayout = new FlowLayout(tilesHost, 10, 10);
+    detailLayout->addWidget(tilesHost);
 
     m_talentBox = new QGroupBox(tr("🌱 Talent-Projektion"), m_detailWidget);
     auto *talentLayout = new QVBoxLayout(m_talentBox);
@@ -229,6 +287,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     trainingRoleRow->addWidget(new QLabel(tr("Rolle:"), m_trainingBox));
     m_trainingRoleCombo = new QComboBox(m_trainingBox);
     m_trainingRoleCombo->setMinimumWidth(220);
+    trainingRoleRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_trainingRoleCombo, m_trainingRoleCombo->parentWidget()));
     trainingRoleRow->addWidget(m_trainingRoleCombo);
     trainingRoleRow->addStretch(1);
     trainingLayout->addLayout(trainingRoleRow);
@@ -333,6 +392,9 @@ void PlayerProfilePage::refresh()
 
 void PlayerProfilePage::updateScopeAvailability()
 {
+    const int checkedScope = m_scopeGroup->checkedId();
+    m_squadButton->setVisible(checkedScope == MyClub || checkedScope == SecondTeam
+                              || checkedScope == NationalSquad);
     const QString secondClub = m_context.secondTeamClub();
     m_scopeGroup->button(SecondTeam)->setVisible(!secondClub.isEmpty());
 
@@ -359,6 +421,68 @@ void PlayerProfilePage::onScopeChanged()
     m_searchEdit->clear();
     m_currentUid.clear();
     showPlayer();
+}
+
+void PlayerProfilePage::fillSquadMenu(QMenu *menu)
+{
+    menu->clear();
+    const QString userClub = m_context.userClub();
+    const QString secondClub = m_context.secondTeamClub();
+    const int scope = m_scopeGroup->checkedId();
+
+    // Grouped by the first position FM lists (FM lists them from the back
+    // to the front, so a full-back who also plays wing-back sits in defence).
+    enum Group { Keepers, Defence, Midfield, Attack, GroupCount };
+    const QStringList groupNames = {tr("Torhüter"), tr("Abwehr"), tr("Mittelfeld"),
+                                    tr("Angriff")};
+    const auto groupOf = [](const Player &player) {
+        if (player.isGoalkeeper())
+            return Keepers;
+        QString first = player.positionRaw.section(QLatin1Char(','), 0, 0).trimmed();
+        first = first.section(QLatin1Char(' '), 0, 0).section(QLatin1Char('/'), 0, 0);
+        if (first == QLatin1String("D") || first == QLatin1String("WB"))
+            return Defence;
+        if (first == QLatin1String("DM") || first == QLatin1String("M"))
+            return Midfield;
+        if (first == QLatin1String("AM") || first == QLatin1String("ST"))
+            return Attack;
+        return Midfield;
+    };
+
+    std::array<std::vector<const Player *>, GroupCount> groups;
+    for (const Player &player : m_context.store().players()) {
+        const bool include = (scope == MyClub && !userClub.isEmpty() && player.club == userClub)
+                             || (scope == SecondTeam && !secondClub.isEmpty()
+                                 && player.club == secondClub)
+                             || (scope == NationalSquad && player.inNationalSquad);
+        if (include)
+            groups[groupOf(player)].push_back(&player);
+    }
+    bool any = false;
+    for (int g = 0; g < GroupCount; ++g) {
+        auto &pool = groups[g];
+        if (pool.empty())
+            continue;
+        any = true;
+        std::sort(pool.begin(), pool.end(), [](const Player *a, const Player *b) {
+            return getLastName(a->name).localeAwareCompare(getLastName(b->name)) < 0;
+        });
+        QMenu *sub = menu->addMenu(QStringLiteral("%1 (%2)").arg(groupNames.at(g)).arg(pool.size()));
+        for (const Player *player : pool) {
+            QAction *action = sub->addAction(
+                QStringLiteral("%1   ·   %2").arg(player->name, player->positionRaw));
+            action->setCheckable(true);
+            action->setChecked(player->uid == m_currentUid);
+            const QString uid = player->uid;
+            const QString label = QStringLiteral("%1 (%2)").arg(player->name, player->club);
+            connect(action, &QAction::triggered, this, [this, uid, label] {
+                m_searchEdit->setText(label);
+                selectPlayer(uid);
+            });
+        }
+    }
+    if (!any)
+        menu->addAction(tr("Keine Spieler in dieser Auswahl"))->setEnabled(false);
 }
 
 void PlayerProfilePage::rebuildSearchModel()
@@ -420,6 +544,8 @@ void PlayerProfilePage::showPlayer()
         m_nameLabel->setText(tr("<h3>Kein Spieler ausgewählt.</h3>"));
         m_vitalsLabel->clear();
         m_tagsLabel->clear();
+        m_portraitLabel->setVisible(false);
+        m_crestLabel->setVisible(false);
         return;
     }
 
@@ -433,6 +559,16 @@ void PlayerProfilePage::showPlayer()
     if (!player->positionRaw.isEmpty())
         vitals << tr("<b>Position:</b> %1").arg(player->positionRaw.toHtmlEscaped());
     m_vitalsLabel->setText(vitals.join(QStringLiteral(" &nbsp;|&nbsp; ")));
+
+    const QPixmap portrait = m_context.graphics().portrait(player->uid, kPortraitSize);
+    m_portraitLabel->setPixmap(portrait);
+    m_portraitLabel->setVisible(!portrait.isNull());
+    const QPixmap crest = m_context.graphics().isReady()
+                              ? m_context.clubCrest(player->club, kCrestSize)
+                              : QPixmap();
+    m_crestLabel->setPixmap(crest);
+    m_crestLabel->setToolTip(player->club);
+    m_crestLabel->setVisible(!crest.isNull());
 
     const auto roleNames = m_context.definitions().roleDisplayMap();
     QString tags;
@@ -478,8 +614,12 @@ void PlayerProfilePage::showPlayer()
     m_updateConfirm->setText(
         tr("Ja, diese Datei ist sicher ein Update für %1.").arg(player->name));
 
-    // --- Training advice: populate the role picker, then render for it. ---
-    {
+    // --- Training advice: own players only (first or second team). ---
+    const bool ownPlayer =
+        (!m_context.userClub().isEmpty() && player->club == m_context.userClub())
+        || (!m_context.secondTeamClub().isEmpty() && player->club == m_context.secondTeamClub());
+    m_trainingBox->setVisible(ownPlayer);
+    if (ownPlayer) {
         const QString tactic = m_context.database().setting(QStringLiteral("favorite_tactic_1"));
         const QStringList choices = tactic.isEmpty()
                                         ? QStringList()
@@ -493,8 +633,8 @@ void PlayerProfilePage::showPlayer()
         const int idx = m_trainingRoleCombo->findData(effective);
         m_trainingRoleCombo->setCurrentIndex(idx >= 0 ? idx : 0);
         m_updating = false;
+        showTrainingAdvice(player);
     }
-    showTrainingAdvice(player);
 
     // --- Roles (all of them, best first) ---
     // role -> uid -> (absolute, normalized), the shape topRolesForPlayer expects.
@@ -636,6 +776,16 @@ void PlayerProfilePage::fillRoleTiles()
     const QString filter = m_context.definitions().hasRolePhases()
                                ? m_roleFilterCombo->currentData().toString()
                                : QStringLiteral("all");
+    // Roles of the favorite tactic get an outline per phase.
+    const QString tactic =
+        m_context.database().setting(QStringLiteral("favorite_tactic_1"));
+    const Definitions &definitions = m_context.definitions();
+    QSet<QString> tacticRoles;
+    if (!tactic.isEmpty() && definitions.tacticNames().contains(tactic)) {
+        for (const QString &role : definitions.tacticRoleList(tactic))
+            tacticRoles.insert(role);
+    }
+    bool anyMarked = false;
     bool first = true;
     for (const RoleTile &entry : std::as_const(m_roleTiles)) {
         if (filter != QLatin1String("all")
@@ -643,11 +793,19 @@ void PlayerProfilePage::fillRoleTiles()
             continue;
         auto *tile = new QFrame(m_topRolesLayout->parentWidget());
         tile->setObjectName(QStringLiteral("kpiTile"));
-        tile->setFixedWidth(190);
+        tile->setFixedWidth(168);
+        if (tacticRoles.contains(entry.role)) {
+            const bool oop = definitions.hasRolePhases()
+                             && definitions.rolePhase(entry.role) == QLatin1String("oop");
+            tile->setProperty("tacticPhase", oop ? QStringLiteral("oop") : QStringLiteral("ip"));
+            anyMarked = true;
+        }
         auto *tileLayout = new QVBoxLayout(tile);
-        tileLayout->setContentsMargins(14, 10, 14, 10);
+        tileLayout->setContentsMargins(12, 8, 12, 8);
+        tileLayout->setSpacing(2);
         auto *value = new QLabel(QStringLiteral("%1%").arg(entry.value), tile);
         value->setObjectName(QStringLiteral("kpiValue"));
+        value->setStyleSheet(QStringLiteral("font-size: 15pt;"));
         auto *caption = new QLabel(
             (first && entry.role == m_roleTiles.front().role ? QStringLiteral("🥇 ")
                                                             : QString())
@@ -655,18 +813,27 @@ void PlayerProfilePage::fillRoleTiles()
             tile);
         caption->setObjectName(QStringLiteral("kpiCaption"));
         caption->setWordWrap(true);
+        // Two caption lines for every tile, so the rows line up evenly.
+        caption->setMinimumHeight(2 * caption->fontMetrics().lineSpacing());
+        caption->setAlignment(Qt::AlignLeft | Qt::AlignTop);
         tile->setToolTip(m_context.definitions().roleLabel(entry.role));
         tileLayout->addWidget(value);
         tileLayout->addWidget(caption);
         m_topRolesLayout->addWidget(tile);
         first = false;
     }
-    m_topRolesLayout->addStretch(1);
-    // As high as the tiles plus the sideways scroll bar.
-    m_topRolesLayout->activate();
-    m_topRolesScroll->setFixedHeight(
-        m_topRolesLayout->parentWidget()->sizeHint().height()
-        + m_topRolesScroll->horizontalScrollBar()->sizeHint().height() + 2);
+    m_topRolesLayout->invalidate();
+    m_tacticLegend->setVisible(anyMarked);
+    m_tacticLegendLabel->setText(tr("Rahmen = Rolle in „%1“:").arg(tactic));
+    // Without phases (FM24) a single color says "in the tactic".
+    m_tacticLegend->findChild<QFrame *>(QStringLiteral("oopSwatch"))
+        ->setVisible(definitions.hasRolePhases());
+    for (QLabel *label : m_tacticLegend->findChildren<QLabel *>()) {
+        if (label->text() == tr("ohne Ball"))
+            label->setVisible(definitions.hasRolePhases());
+        else if (label->text() == tr("mit Ball"))
+            label->setVisible(definitions.hasRolePhases());
+    }
 }
 
 void PlayerProfilePage::runManualUpdate()

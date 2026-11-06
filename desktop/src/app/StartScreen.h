@@ -44,6 +44,7 @@ protected:
 private:
     QWidget *buildHero();
     QWidget *buildList();
+    QWidget *buildEmptyState(QWidget *parent);
     QWidget *buildSaveCard(const SaveInfo &save);
 
     void reload();
@@ -69,7 +70,7 @@ private:
     QLineEdit *m_search;
     QStackedWidget *m_listStack;
     QListWidget *m_list;
-    QLabel *m_emptyLabel;
+    QLabel *m_listHeading = nullptr;
     QCheckBox *m_autoOpenCheck;
     QPushButton *m_openButton;
     QToolButton *m_themeButton = nullptr;

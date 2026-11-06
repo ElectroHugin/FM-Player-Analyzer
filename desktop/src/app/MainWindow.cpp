@@ -1,11 +1,20 @@
 #include "MainWindow.h"
 
+#include "core/Constants.h"
+
+#include "LiveSaveWatcher.h"
+
+#include "widgets/ClubHeaderBar.h"
+
 #include "AboutDialog.h"
 #include "AppContext.h"
 #include "NewSaveWizard.h"
+#include "ScreenshotTour.h"
+#include "WelcomeWizard.h"
 #include "SaveLibrary.h"
 #include "StartScreen.h"
 #include "widgets/DropZone.h"
+#include "widgets/TacticPitchWidget.h"
 #include "pages/AssignRolesPage.h"
 #include "pages/BestXiPage.h"
 #include "pages/DashboardPage.h"
@@ -80,6 +89,14 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     , m_theme(theme)
 {
     setWindowTitle(appName());
+    // Every pitch draws role-dependent card shifts of the open save's roles.
+    TacticPitchWidget::setShiftSource([this](const QString &role, const QString &slot) {
+        return m_context.definitions().roleShiftPercent(role, slot);
+    });
+    // Small portraits on the pitch cards, only with the graphics folder on.
+    TacticPitchWidget::setPortraitSource([this](const QString &uid, int size) {
+        return m_context.graphics().portrait(uid, size);
+    });
     resize(1600, 950);
     setMinimumSize(1100, 700);
     setAcceptDrops(true); // drop an FM export anywhere to import it
@@ -101,11 +118,15 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     auto *contentColumn = new QVBoxLayout;
     contentColumn->setContentsMargins(0, 0, 0, 0);
     contentColumn->setSpacing(0);
-    auto *headerBar = new QFrame(central);
-    headerBar->setObjectName(QStringLiteral("headerBar"));
+    // Club header: crest and name on a block in the club colors, then
+    // navigation, breadcrumb, search and import on the neutral part.
+    m_headerBar = new ClubHeaderBar(m_theme, central);
+    auto *headerBar = m_headerBar;
     auto *headerLayout = new QHBoxLayout(headerBar);
-    headerLayout->setContentsMargins(18, 8, 18, 8);
+    headerLayout->setContentsMargins(0, 0, 20, 0);
     headerLayout->setSpacing(12);
+    headerLayout->addWidget(m_headerBar->identityWidget());
+    headerLayout->addSpacing(ClubHeaderBar::kBlockTail - 4);
 
     // Browser-style navigation, present above every page: Back / Forward / Home.
     auto *navLayout = new QHBoxLayout;
@@ -114,7 +135,8 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
                                    void (MainWindow::*slot)()) {
         auto *button = new QToolButton(headerBar);
         button->setObjectName(QStringLiteral("navButton"));
-        button->setText(glyph);
+        button->setProperty("lineIcon", glyph);
+        button->setIconSize(QSize(16, 16));
         button->setToolTip(toolTip);
         button->setCursor(Qt::PointingHandCursor);
         button->setFocusPolicy(Qt::NoFocus); // never steal focus from page inputs
@@ -122,25 +144,29 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         navLayout->addWidget(button);
         return button;
     };
-    m_backButton = makeNavButton(QStringLiteral("←"), tr("Zurück (Alt+←)"), &MainWindow::goBack);
-    m_forwardButton =
-        makeNavButton(QStringLiteral("→"), tr("Vorwärts (Alt+→)"), &MainWindow::goForward);
+    m_backButton =
+        makeNavButton(QStringLiteral("arrow-left"), tr("Zurück (Alt+←)"), &MainWindow::goBack);
+    m_forwardButton = makeNavButton(QStringLiteral("arrow-right"), tr("Vorwärts (Alt+→)"),
+                                    &MainWindow::goForward);
     m_homeButton =
-        makeNavButton(QStringLiteral("⌂"), tr("Startseite (Alt+Pos1)"), &MainWindow::goHome);
+        makeNavButton(QStringLiteral("home"), tr("Startseite (Alt+Pos1)"), &MainWindow::goHome);
+    const auto tintNavButtons = [this] {
+        QColor color = m_theme.text();
+        color.setAlphaF(0.80);
+        for (QToolButton *button : {m_backButton, m_forwardButton, m_homeButton})
+            button->setIcon(LineIcons::icon(button->property("lineIcon").toString(), color, 16,
+                                            devicePixelRatioF()));
+    };
+    tintNavButtons();
+    connect(&m_theme, &ThemeManager::themeChanged, this, tintNavButtons);
     headerLayout->addLayout(navLayout);
     new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Left), this, this, &MainWindow::goBack);
     new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Right), this, this, &MainWindow::goForward);
     new QShortcut(QKeySequence(Qt::ALT | Qt::Key_Home), this, this, &MainWindow::goHome);
     qApp->installEventFilter(this);
 
-    m_headerLogo = new QLabel(headerBar);
-    m_headerLogo->setFixedHeight(34);
-    m_headerLogo->hide();
-    m_headerIdentity = new QLabel(headerBar);
     m_breadcrumb = new QLabel(headerBar);
     m_breadcrumb->setObjectName(QStringLiteral("breadcrumb"));
-    headerLayout->addWidget(m_headerLogo);
-    headerLayout->addWidget(m_headerIdentity);
     headerLayout->addWidget(m_breadcrumb, 1);
 
     // Ctrl+K: search players, pages and actions in one field.
@@ -222,6 +248,8 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     m_toast->hide();
     m_toastTimer.setSingleShot(true);
     connect(&m_toastTimer, &QTimer::timeout, m_toast, &QWidget::hide);
+    // Reads the followed FM27 save in whenever the game wrote a newer one.
+    new LiveSaveWatcher(m_context, this, [this](const QString &text) { showToast(text); });
 
     m_palette = new CommandPalette(this);
     rootLayout->addLayout(contentColumn, 1);
@@ -230,18 +258,34 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     updateDbLabel();
     updateHeader();
 
+    m_welcomeTimer.setSingleShot(true);
+    m_welcomeTimer.setInterval(600);
+    connect(&m_welcomeTimer, &QTimer::timeout, this, &MainWindow::maybeShowWelcome);
+    QTimer::singleShot(0, this, &MainWindow::maybeShowWelcome);
+
+    connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this, [this] {
+        for (TacticPitchWidget *pitch : findChildren<TacticPitchWidget *>())
+            pitch->update();
+        updateHeader(); // the crest may come from the graphics folder
+        updateDbLabel(); // and the save switcher shows the same crest
+    });
     connect(&m_context, &AppContext::navigationRequested, this, &MainWindow::navigateTo);
     connect(&m_context, &AppContext::databaseChanged, this, [this](const QString &) {
         updateDbLabel();
         updateHeader();
         m_searchModelDirty = true;
         m_noticeBar->hide(); // hints belong to the previous save
+        // Another FM version may offer other pages ("Neue Rolle" only where
+        // roles can be added).
+        if (fmDataVersion(m_context.fmVersionId()).customRoles != m_sidebarCustomRoles)
+            rebuildMenu();
         for (PageBase *page : std::as_const(m_pages))
             page->refresh();
         // Another database: earlier steps (e.g. a player's profile) may not
         // exist here, so the history starts over.
         resetHistory();
         offerRecalcIfOutdated();
+        maybeShowWelcome();
     });
     connect(&m_context, &AppContext::dataChanged, this, [this] {
         m_searchModelDirty = true;
@@ -256,6 +300,10 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         }
         if (current)
             current->refresh();
+        // Not right here: dataChanged fires in the middle of an import's last
+        // step, and an assistant opened inside it would hold that step until
+        // it closes. Shortly afterwards, once the import is done.
+        m_welcomeTimer.start();
     });
     connect(&m_recalcWatcher, &QFutureWatcher<RatingsUpdater::Result>::finished, this, [this] {
         const RatingsUpdater::Result result = m_recalcWatcher.result();
@@ -422,15 +470,17 @@ void MainWindow::rebuildMenu(bool selectFirst)
     m_menu->clear();
 
     const auto addSection = [this](const QString &heading) {
-        auto *item = new QListWidgetItem(heading, m_menu);
+        // Sentence case, no tracking: a quiet label, not a shouted one.
+        const QString text = heading.left(1).toUpper() + heading.mid(1).toLower();
+        auto *item = new QListWidgetItem(text, m_menu);
         item->setFlags(Qt::NoItemFlags);
         QFont font = item->font();
-        font.setBold(true);
-        font.setPointSizeF(font.pointSizeF() * 0.8);
-        font.setLetterSpacing(QFont::AbsoluteSpacing, 0.8);
+        font.setWeight(QFont::DemiBold);
+        font.setPointSizeF(font.pointSizeF() * 0.88);
         item->setFont(font);
     };
-    m_sidebar = Navigation::sidebar(national);
+    m_sidebarCustomRoles = fmDataVersion(m_context.fmVersionId()).customRoles;
+    m_sidebar = Navigation::sidebar(national, m_sidebarCustomRoles);
     for (const Navigation::Section &section : std::as_const(m_sidebar)) {
         addSection(section.heading);
         for (const Navigation::Group &group : section.groups) {
@@ -488,6 +538,7 @@ void MainWindow::buildMenuBar()
     }
 
     auto *helpMenu = menuBar()->addMenu(tr("&Hilfe"));
+    helpMenu->addAction(tr("Willkommens-Assistent …"), this, &MainWindow::showWelcome);
     auto *about = helpMenu->addAction(tr("Über %1 …").arg(appName()));
     about->setMenuRole(QAction::AboutRole);
     connect(about, &QAction::triggered, this, &MainWindow::showAbout);
@@ -816,43 +867,26 @@ void MainWindow::startDwrsRecalc()
 
 void MainWindow::updateHeader()
 {
-    // Optional header image (user-provided PNG, per database): the national
-    // flag while in national mode, otherwise the club logo.
-    const QString imagePath =
-        m_context.nationalUiMode()
-            ? m_context.database().setting(QStringLiteral("national_flag_path"))
-            : m_context.database().setting(QStringLiteral("club_logo_path"));
-    QPixmap headerImage;
-    if (!imagePath.isEmpty() && headerImage.load(imagePath)) {
-        m_headerLogo->setPixmap(headerImage.scaledToHeight(34, Qt::SmoothTransformation));
-        m_headerLogo->show();
-    } else {
-        m_headerLogo->clear();
-        m_headerLogo->hide();
-    }
+    // Crest (or the national flag in national mode); without one the header
+    // shows a monogram badge. AppContext::headerCrest() is the single source.
+    QPixmap crest;
+    crest.loadFromData(m_context.headerCrest());
 
-    QString identity;
+    QString title;
+    QString subtitle;
     if (m_context.nationalUiMode()) {
         const QString name = m_context.nationalTeamName();
-        const QString code = m_context.nationalTeamCode();
-        identity = QStringLiteral("<b style='font-size:13pt;'>%1</b>")
-                       .arg((name.isEmpty() ? tr("Nationalteam") : name).toHtmlEscaped());
-        if (!code.isEmpty())
-            identity += QStringLiteral(" &nbsp;<span>(%1)</span>").arg(code.toHtmlEscaped());
+        title = name.isEmpty() ? tr("Nationalteam") : name;
+        subtitle = m_context.nationalTeamCode();
     } else {
         const QString fullName =
             m_context.database().setting(QStringLiteral("full_club_name"));
-        const QString stadium = m_context.database().setting(QStringLiteral("stadium_name"));
-        const QString display = !fullName.isEmpty()
-                                    ? fullName
+        title = !fullName.isEmpty() ? fullName
                                     : (!m_context.userClub().isEmpty() ? m_context.userClub()
                                                                        : tr("FM Dashboard"));
-        identity = QStringLiteral("<b style='font-size:13pt;'>%1</b>")
-                       .arg(display.toHtmlEscaped());
-        if (!stadium.isEmpty())
-            m_headerIdentity->setToolTip(stadium);
+        subtitle = m_context.database().setting(QStringLiteral("stadium_name"));
     }
-    m_headerIdentity->setText(identity);
+    m_headerBar->setIdentity(crest, title, subtitle);
 }
 
 void MainWindow::updateMenuIcons()
@@ -927,7 +961,8 @@ void MainWindow::openPalette()
     // Pages of both modes; switching mode where needed.
     QSet<QString> seen;
     for (const bool national : {m_context.nationalUiMode(), !m_context.nationalUiMode()}) {
-        for (const Navigation::Section &section : Navigation::sidebar(national)) {
+        for (const Navigation::Section &section : Navigation::sidebar(
+                 national, fmDataVersion(m_context.fmVersionId()).customRoles)) {
             for (const Navigation::Group &group : section.groups) {
                 for (const Navigation::Tab &tab : group.tabs) {
                     if (seen.contains(tab.pageId))
@@ -1039,6 +1074,35 @@ void MainWindow::newSave()
     wizard.exec();
 }
 
+void MainWindow::maybeShowWelcome()
+{
+    if (m_welcomeOpen || ScreenshotTour::requested() || !WelcomeWizard::shouldOffer(m_context)
+        || m_welcomeLater.contains(m_context.currentDbName()))
+        return;
+    // An import result, the new-save assistant or a busy dialog comes first:
+    // try again once nothing modal is open any more.
+    if (QApplication::activeModalWidget() || !isVisible()) {
+        if (!m_welcomeTimer.isActive())
+            m_welcomeTimer.start();
+        return;
+    }
+    showWelcome();
+}
+
+void MainWindow::showWelcome()
+{
+    if (m_welcomeOpen || !m_context.hasDatabase())
+        return;
+    m_welcomeOpen = true;
+    m_welcomeTimer.stop();
+    const QString dbName = m_context.currentDbName();
+    WelcomeWizard wizard(m_context, m_theme, this);
+    // Closed with the window button: ask again the next time this save opens.
+    if (wizard.exec() != QDialog::Accepted && !m_welcomeLater.contains(dbName))
+        m_welcomeLater.append(dbName);
+    m_welcomeOpen = false;
+}
+
 void MainWindow::switchSave()
 {
     StartScreen screen(m_context, m_theme, StartScreen::Mode::Switch, this);
@@ -1049,8 +1113,8 @@ void MainWindow::importExport(QString filePath)
 {
     if (filePath.isEmpty()) {
         filePath = QFileDialog::getOpenFileName(
-            this, tr("FM-Export (HTML oder CSV) auswählen"), m_context.htmlExportDir(),
-            tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
+            this, tr("FM-Export oder FM27-Spielstand auswählen"), m_context.htmlExportDir(),
+            tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
         if (filePath.isEmpty())
             return;
     }

@@ -5,12 +5,15 @@
 #include <QString>
 #include <QStringList>
 
+#include "core/ThemeColors.h"
+
 namespace fm {
 
 class AppConfig;
 
-// Applies the day/night theme from [ThemeSettings] in config.ini as an
-// app-wide stylesheet and exposes the palette to custom-painted widgets.
+// Applies the day/night theme of the open save's profile (AppConfig
+// themeSettings(); the start screen without a save uses the last save's look)
+// as an app-wide stylesheet and exposes the palette to custom-painted widgets.
 //
 // The theme is described by seven named color roles per mode so color can be
 // distributed instead of one "secondary background" tinting everything:
@@ -42,6 +45,8 @@ public:
 
     // Re-read colors from config (after the settings page saved them).
     void apply();
+    // Re-read mode and colors (another save's profile was loaded).
+    void reload();
 
     // --- Role colors (current mode) ---
     QColor background() const { return m_background; }
@@ -54,6 +59,18 @@ public:
     // Backward-compatible alias used by custom-painted widgets.
     QColor secondaryBackground() const { return m_surface; }
 
+    // --- Derived, contrast-safe colors (club colors can be anything) ---
+    // The accent as text/icon on background and cards (>= 4.5:1).
+    QColor accentText() const { return m_accentText; }
+    // The accent for focus rings, underlines, outlines (>= 3:1, WCAG 1.4.11).
+    QColor accentUi() const { return m_accentUi; }
+    // Club header: "gradient" (club colors, default) or "solid" (header color).
+    QString headerStyle() const { return m_headerStyle; }
+    // Faint crest silhouette in the club header.
+    bool crestWatermark() const { return m_crestWatermark; }
+    // Colors of the club header block for the current mode.
+    ClubHeaderPalette headerPalette() const { return m_headerPalette; }
+
 signals:
     void themeChanged();
 
@@ -64,6 +81,10 @@ private:
     AppConfig &m_config;
     QString m_mode;
     QColor m_background, m_surface, m_sidebar, m_header, m_primary, m_interactive, m_text;
+    QColor m_accentText, m_accentUi;
+    QString m_headerStyle;
+    bool m_crestWatermark = true;
+    ClubHeaderPalette m_headerPalette;
 };
 
 } // namespace fm

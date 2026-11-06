@@ -22,6 +22,39 @@ Vertrag zwischen ihnen.
 Die Version hängt am Spielstand. Ein FM24-Spielstand lehnt FM27-Dateien ab
 („Pflichtspalte UID fehlt“), weil FM27 die Spalten anders nennt.
 
+## Spielstand direkt einlesen (ab 2.1.0)
+
+Statt eines Exports lässt sich auch der Spielstand selbst wählen
+(`Dokumente\Sports Interactive\Football Manager 27\games\*.fm`). Der Analyzer liest
+die Datei nur, er schreibt nie hinein. Am besten eine gerade gespeicherte Datei nehmen,
+nicht während das Spiel speichert.
+
+Was übernommen wird, regelt die Einstellung **Attribut-Maskierung wie im Spiel**
+(Einstellungen → Verein, Kasten „Football-Manager-Version“, je Spielstand, Standard an):
+
+| Spieler | Maskierung an | Maskierung aus |
+| --- | --- | --- |
+| eigener Kader (auch zweite Mannschaft) | exakte Werte | exakte Werte |
+| Weltreputation ab 8.000 | exakte Werte | exakte Werte |
+| eigenes Scouting, Kenntnisgrad ab 78 % | exakte Werte | exakte Werte |
+| eigenes Scouting, 56 bis 77 % | teils Spannen (vom Analyzer gebildet) | exakte Werte |
+| übrige Spieler | nicht übernommen | exakte Werte, alle Spieler mit Verein |
+
+- Der Kenntnisgrad steht im Spielstand (Abschnitt `fog_of_war`). Die Spannen des Spiels
+  stehen nicht darin; der Analyzer würfelt eigene, einmal fest je Spieler und Attribut.
+  Der wahre Wert liegt irgendwo darin, nicht nach Regel in der Mitte. Mit mehr
+  Kenntnis werden es weniger und schmalere Spannen.
+- Verdeckte Werte (Potenzial, Fähigkeit, Konstanz, Verletzungsanfälligkeit, wichtige
+  Spiele, Härte, Vielseitigkeit) liest der Analyzer nie in die Datenbank.
+- Noch nicht aus dem Spielstand: Persönlichkeit, Medienverhalten, Gehalt, Marktwert,
+  Durchschnittsnote, Spielzeit. Bereits vorhandene Werte aus früheren Exporten bleiben
+  erhalten. Nationen sind für die 152 Länder hinterlegt, die in Exporten vorkamen.
+- Kooperationsvereine und Gegner, die das Spiel ohne Scoutbericht zeigt, fehlen noch.
+- Nach einem FM-Patch kann sich das Dateiformat ändern. Dann bricht der Import mit einer
+  Meldung ab, statt falsche Werte zu übernehmen.
+- Das Format folgt [fmsave](https://github.com/rhiever/fmsave) (MIT), siehe
+  `THIRD_PARTY_NOTICES.md`. Werkzeug zum Abgleich: `fm27savedump`.
+
 ## Spaltenzuordnung
 
 FM24 exportierte Kürzel (`Acc`, `UID`, ...). Der Exporter schreibt dagegen genau die

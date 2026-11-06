@@ -74,6 +74,35 @@ struct BridgeOption {
     double total = 0.0; // starting-XI value with it (SquadBuilder::startingValue)
 };
 
+// A starting-XI player who changes his place in a replacement plan.
+// Slots are (with ball, without ball); a one-line-up tactic repeats the slot.
+struct PlaceMove {
+    QString uid;
+    QPair<QString, QString> from;
+    QPair<QString, QString> to;
+};
+
+// How the starting XI copes when one of its players is missing: exactly one
+// extra player comes in, the others may change places
+// (SquadBuilder::replacementPlans).
+struct ReplacementPlan {
+    QString inUid;                   // the extra player ("" = nobody fits)
+    QPair<QString, QString> inSlots; // where he plays (ip, oop)
+    QList<PlaceMove> moves;          // other starters who change place
+    double inValue = 0.0;            // his value over both line-ups (DWRS)
+    double total = 0.0;              // starting-XI value with the plan
+    bool complete = false;           // every place the XI had is filled again
+};
+
+// Plans for the absence of one starting-XI player, best first.
+struct OutageCover {
+    QString outUid;
+    QPair<QString, QString> outSlots; // his places (ip, oop)
+    double outValue = 0.0;            // his value over both line-ups (DWRS)
+    double current = 0.0;             // starting-XI value with him
+    QList<ReplacementPlan> plans;     // empty plans[0].inUid = no one fits
+};
+
 // Result of calculate_development_squads.
 struct DevelopmentSquads {
     QHash<QString, XiCell> youthXi;
@@ -145,6 +174,19 @@ public:
                                         const QString &tactic, const RoleRatings &ratings,
                                         bool applyAptWeight = true,
                                         const Bridges &fixedBridges = {}) const;
+
+    // Squad depth per starting-XI player: if he is missing, which ONE extra
+    // player of the pool restores the XI best, and who of the other starters
+    // changes place for it (they may be redistributed; the manual bridges of
+    // the others stay). A plan is complete when the extra player and every
+    // remaining starter get a place again; complete plans come first, then
+    // the higher starting-XI value. At most maxPlans plans per player.
+    // Works for both kinds of tactic (one line-up: ip == oop slot).
+    QList<OutageCover> replacementPlans(const std::vector<const Player *> &pool,
+                                        const QString &tactic, const RoleRatings &ratings,
+                                        bool applyAptWeight = true,
+                                        const Bridges &fixedBridges = {},
+                                        int maxPlans = 3) const;
 
     DevelopmentSquads calculateDevelopmentSquads(
         const std::vector<const Player *> &secondTeamPlayers,

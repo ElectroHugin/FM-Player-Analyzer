@@ -65,7 +65,8 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    m_heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Best XI")), content);
+    m_heading = new QLabel(tr("Best XI"), content);
+    m_heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(m_heading);
 
     auto *tacticRow = new QHBoxLayout;
@@ -178,6 +179,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         // ball left, without ball right, like the game) side by side.
         auto *switchRow = new QHBoxLayout;
         auto *segmented = new QFrame(tab);
+        m_teamSwitch = segmented;
         segmented->setObjectName(QStringLiteral("segmented"));
         auto *segLayout = new QHBoxLayout(segmented);
         segLayout->setContentsMargins(3, 3, 3, 3);
@@ -248,10 +250,43 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         };
         m_teamStack->addWidget(makePage(m_xiIpPitch, m_xiPitch, m_xiIpTitle, m_xiTitle));
         m_teamStack->addWidget(makePage(m_bTeamIpPitch, m_bTeamPitch, m_bIpTitle, m_bTitle));
+        // FM24 (one line-up): starting XI and B-team side by side, as in 1.6.2.
+        {
+            QLabel *xiTitle = nullptr;
+            QLabel *bTitle = nullptr;
+            m_teamStack->addWidget(makePage(m_singleXiPitch, m_singleBPitch, xiTitle, bTitle));
+            xiTitle->setText(tr("Startelf"));
+            bTitle->setText(tr("B-Team"));
+        }
         tabLayout->addWidget(m_teamStack);
         connect(m_xiButton, &QPushButton::toggled, this, [this](bool xi) {
-            m_teamStack->setCurrentIndex(xi ? 0 : 1);
+            if (m_teamStack->currentIndex() != 2)
+                m_teamStack->setCurrentIndex(xi ? 0 : 1);
         });
+
+        m_outageBox = new QGroupBox(tr("Kadertiefe: Ausfall in der Startelf"), tab);
+        auto *outageLayout = new QVBoxLayout(m_outageBox);
+        m_outageNote = new QLabel(m_outageBox);
+        m_outageNote->setWordWrap(true);
+        m_outageNote->setObjectName(QStringLiteral("kpiCaption"));
+        outageLayout->addWidget(m_outageNote);
+        m_outageTable = new QTableWidget(m_outageBox);
+        m_outageTable->setColumnCount(7);
+        m_outageTable->setHorizontalHeaderLabels({tr("Ausfall"), tr("Plätze"), tr("Ersatz"),
+                                                  tr("Ersatz spielt"), tr("DWRS"),
+                                                  tr("Elf-Wert"), tr("Umstellungen")});
+        m_outageTable->horizontalHeaderItem(5)->setToolTip(
+            tr("Wie sich der Wert der Startelf (Summe der DWRS) mit dieser Lösung ändert."));
+        m_outageTable->verticalHeader()->setVisible(false);
+        m_outageTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        m_outageTable->setAlternatingRowColors(true);
+        m_outageTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+        m_outageTable->setWordWrap(true);
+        m_outageTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_outageTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        outageLayout->addWidget(m_outageTable);
+        m_outageBox->setVisible(false);
+        tabLayout->addWidget(m_outageBox);
 
         m_depthBox = new QGroupBox(tr("Weitere Kader-Tiefe"), tab);
         auto *depthLayout = new QVBoxLayout(m_depthBox);
@@ -259,20 +294,34 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_depthEmpty->setWordWrap(true);
         m_depthEmpty->setObjectName(QStringLiteral("kpiCaption"));
         depthLayout->addWidget(m_depthEmpty);
-        m_depthTable = new QTableWidget(m_depthBox);
-        m_depthTable->setColumnCount(5);
-        m_depthTable->setHorizontalHeaderLabels(
-            {tr("Rolle"), tr("Name"), tr("Alter"), tr("DWRS"), tr("Eignung")});
-        m_depthTable->verticalHeader()->setVisible(false);
-        m_depthTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        m_depthTable->setAlternatingRowColors(true);
-        m_depthTable->setSortingEnabled(true);
-        m_depthTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-        m_depthTable->horizontalHeader()->setStretchLastSection(true);
-        m_depthTable->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-        m_depthTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_depthTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        depthLayout->addWidget(m_depthTable);
+        // Two tables side by side (with / without ball) when the version
+        // has role phases; otherwise only the first one is used.
+        auto *depthRow = new QHBoxLayout;
+        depthRow->setSpacing(24);
+        for (int i = 0; i < 2; ++i) {
+            auto *column = new QVBoxLayout;
+            m_depthCaptions[i] = new QLabel(i == 0 ? tr("Mit Ball (IP)") : tr("Ohne Ball (OOP)"),
+                                            m_depthBox);
+            m_depthCaptions[i]->setObjectName(QStringLiteral("sectionTitle"));
+            column->addWidget(m_depthCaptions[i]);
+            auto *table = new QTableWidget(m_depthBox);
+            table->setColumnCount(5);
+            table->setHorizontalHeaderLabels(
+                {tr("Rolle"), tr("Name"), tr("Alter"), tr("DWRS"), tr("Eignung")});
+            table->verticalHeader()->setVisible(false);
+            table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            table->setAlternatingRowColors(true);
+            table->setSortingEnabled(true);
+            table->setSelectionBehavior(QAbstractItemView::SelectRows);
+            table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            column->addWidget(table);
+            column->addStretch(1);
+            depthRow->addLayout(column);
+            m_depthTables[i] = table;
+        }
+        depthRow->addStretch(1);
+        depthLayout->addLayout(depthRow);
         tabLayout->addWidget(m_depthBox);
         tabLayout->addStretch(1);
         m_tabs->addTab(tab, tr("Erste Mannschaft"));
@@ -302,7 +351,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         tabLayout->addLayout(pitchRow);
 
         auto *manageHint = new QLabel(
-            tr("✔️ Zum Verwalten dieser Spieler dient Transfers → Leihen & Verkäufe."), tab);
+            tr("Zum Verwalten dieser Spieler dient Transfers → Leihen & Verkäufe."), tab);
         tabLayout->addWidget(manageHint);
 
         const auto makeTable = [tab](const QStringList &headers) {
@@ -341,7 +390,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
     // --- Tab 3: where buying really improves the line-up ---
     m_signingTab = new SigningAdvisorTab(m_context);
-    m_tabs->addTab(m_signingTab, tr("🛒 Kaufberatung"));
+    m_tabs->addTab(m_signingTab, tr("Kaufberatung"));
 
     // The main window's tabs choose the view (showSection).
     m_tabs->tabBar()->hide();
@@ -356,7 +405,8 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
     // Player boxes on the pitches are interactive (M13).
     for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
-                                     m_secondXiPitch, m_youthXiPitch}) {
+                                     m_singleXiPitch, m_singleBPitch, m_secondXiPitch,
+                                     m_youthXiPitch}) {
         connect(pitch, &TacticPitchWidget::playerDoubleClicked, this,
                 [this](const QString &uid) { PlayerActions::openProfile(m_context, uid); });
         connect(pitch, &TacticPitchWidget::playerContextMenuRequested, this,
@@ -364,30 +414,46 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
                     // Starting XI of a two-phase tactic: bridges can be moved.
                     const bool startingXi = pitch == m_xiPitch || pitch == m_xiIpPitch;
                     if (startingXi && !m_bridge.tactic.isEmpty()
-                        && m_bridge.slotsOfUid.contains(uid))
+                        && m_bridge.slotsOfUid.contains(uid)) {
                         showBridgeMenu(uid, globalPos, pitch == m_xiIpPitch);
-                    else
-                        PlayerActions::showContextMenu(m_context, this, uid, globalPos);
+                        return;
+                    }
+                    QString slot;
+                    const PitchTeam team = m_pitchTeams.value(pitch);
+                    for (auto it = team.cells.cbegin(); it != team.cells.cend(); ++it) {
+                        if (it->playerUid == uid)
+                            slot = it.key();
+                    }
+                    PlayerActions::showContextMenu(
+                        m_context, this, uid, globalPos, [this, pitch, slot](QMenu &menu) {
+                            if (!slot.isEmpty())
+                                addScoutActions(menu, pitch, slot);
+                        });
+                });
+        connect(pitch, &TacticPitchWidget::emptySlotContextMenuRequested, this,
+                [this, pitch](const QString &slot, const QPoint &globalPos) {
+                    showEmptySlotMenu(pitch, slot, globalPos);
                 });
     }
     PlayerActions::attachToTableWidget(m_context, m_loanTable);
     PlayerActions::attachToTableWidget(m_context, m_sellTable);
     // The depth options carry a player uid in column 1 (Name).
-    PlayerActions::attachToTableWidget(m_context, m_depthTable, 1);
+    PlayerActions::attachToTableWidget(m_context, m_depthTables[0], 1);
+    PlayerActions::attachToTableWidget(m_context, m_depthTables[1], 1);
 }
 
 void BestXiPage::showSection(const QString &pageId)
 {
     const bool signing = pageId == QLatin1String("signing_advisor");
     m_tabs->setCurrentIndex(signing ? 2 : pageId == QLatin1String("best_xi_youth") ? 1 : 0);
-    m_heading->setText(
-        QStringLiteral("<h2>%1</h2>").arg(signing ? tr("Kaufberatung") : tr("Best XI")));
+    m_heading->setText(signing ? tr("Kaufberatung") : tr("Best XI"));
 }
 
 void BestXiPage::releaseStoreRows()
 {
     m_signingTab->clear();
     m_bridge = BridgeState(); // its pool points into the store
+    clearPitchTeams();
 }
 
 QString BestXiPage::algorithmHint()
@@ -445,11 +511,15 @@ void BestXiPage::rebuild()
     const QString secondClub = m_context.secondTeamClub();
     const QString tactic = m_tacticCombo->currentText();
 
+    clearPitchTeams();
     if (userClub.isEmpty() || tactic.isEmpty()) {
+        m_outageBox->setVisible(false);
         m_clubNotice->setVisible(true);
         m_registrationNote->setVisible(false);
         m_xiPitch->clearData();
         m_bTeamPitch->clearData();
+        m_singleXiPitch->clearData();
+        m_singleBPitch->clearData();
         m_xiIpPitch->clearData();
         m_bTeamIpPitch->clearData();
         m_secondXiPitch->clearData();
@@ -567,7 +637,7 @@ void BestXiPage::rebuild()
 
     QString note;
     if (listedCompetition && !restricted)
-        note = tr("⚠️ Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
+        note = tr("Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
                   "rechnet mit allen Spielern. Speichere sie unter Transfers → Meldeliste.");
     SquadResult full;
     std::vector<const Player *> firstPool;
@@ -598,12 +668,14 @@ void BestXiPage::rebuild()
         secondPlayers, full.depthPool, positions, slotOrder, ratings, full.depthPlayerUids);
 
     for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
-                                     m_secondXiPitch, m_youthXiPitch})
+                                     m_singleXiPitch, m_singleBPitch, m_secondXiPitch,
+                                     m_youthXiPitch})
         pitch->setFmVersionId(m_context.fmVersionId());
     const bool twoPhase = m_context.definitions().isTwoPhaseTactic(tactic);
-    for (QWidget *w : std::initializer_list<QWidget *>{m_xiIpPitch, m_bTeamIpPitch, m_xiIpTitle,
-                                                       m_bIpTitle, m_xiTitle, m_bTitle})
-        w->setVisible(twoPhase);
+    // Two line-ups (FM27): one team at a time, switched above the pitches.
+    // One line-up (FM24): starting XI and B-team next to each other.
+    m_teamSwitch->setVisible(twoPhase);
+    m_teamStack->setCurrentIndex(twoPhase ? (m_xiButton->isChecked() ? 0 : 1) : 2);
     m_phaseNote->setVisible(twoPhase);
     m_bridge = BridgeState();
     m_bridgeBar->setVisible(false);
@@ -639,7 +711,7 @@ void BestXiPage::rebuild()
         if (!bridges.isEmpty()) {
             const double loss = m_bridge.optimum - m_bridge.current;
             m_bridgeNote->setText(
-                tr("✋ Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer "
+                tr("Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer "
                    "als der Vorschlag des Analyzers.",
                    nullptr, static_cast<int>(bridges.size()))
                     .arg(QLocale().toString(std::max(0.0, loss), 'f', 1)));
@@ -674,6 +746,12 @@ void BestXiPage::rebuild()
         m_xiIpPitch->setSlotSubtexts(partnerTexts(squad.startingIp, true));
         m_bTeamIpPitch->setTeam(squad.bTeamIp, lineUps.ip, layoutOf(lineUps.ip), roleNames);
         m_bTeamIpPitch->setSlotSubtexts(partnerTexts(squad.bTeamIp, true));
+        // For the bridge search by right-click.
+        m_pitchTeams.insert(m_xiIpPitch, {squad.startingIp, lineUps.ip, lineUps.ipOrder, m_xiPitch, true});
+        m_pitchTeams.insert(m_xiPitch, {squad.startingOop, lineUps.oop, lineUps.oopOrder, m_xiIpPitch, false});
+        m_pitchTeams.insert(m_bTeamIpPitch, {squad.bTeamIp, lineUps.ip, lineUps.ipOrder, m_bTeamPitch, true});
+        m_pitchTeams.insert(m_bTeamPitch, {squad.bTeamOop, lineUps.oop, lineUps.oopOrder, m_bTeamIpPitch, false});
+        m_valueOfUid = squad.valueOfUid;
         m_phaseNote->setText(
             tr("Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer "
                "wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle "
@@ -685,11 +763,19 @@ void BestXiPage::rebuild()
                 .arg(share)
                 .arg(100 - share));
     } else {
-        m_xiPitch->setTeam(first.startingXi, positions, layout, roleNames);
-        m_bTeamPitch->setTeam(first.bTeam, positions, layout, roleNames);
-        m_xiPitch->setSlotSubtexts({});
-        m_bTeamPitch->setSlotSubtexts({});
+        m_singleXiPitch->setTeam(first.startingXi, positions, layout, roleNames);
+        m_singleBPitch->setTeam(first.bTeam, positions, layout, roleNames);
+        m_pitchTeams.insert(m_singleXiPitch,
+                            {first.startingXi, positions, slotOrder, nullptr, false});
+        m_pitchTeams.insert(m_singleBPitch, {first.bTeam, positions, slotOrder, nullptr, false});
     }
+    m_pitchTactic = tactic;
+
+    // Squad depth per missing starter: exactly one extra player, the others
+    // may move (manual bridges stay).
+    fillOutageTable(m_context.squadBuilder().replacementPlans(
+                        firstPool, tactic, ratings, true, twoPhase ? m_bridge.bridges : Bridges()),
+                    twoPhase);
     m_secondXiTitle->setText(secondClub.isEmpty()
                                  ? tr("Zweitteam-XI (aus Überschuss des Hauptvereins)")
                                  : tr("Zweitteam-XI (%1)").arg(secondClub));
@@ -737,6 +823,7 @@ void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, boo
     };
     PlayerActions::showContextMenu(m_context, this, uid, globalPos, [&](QMenu &menu) {
         const QPair<QString, QString> mine = state.slotsOfUid.value(uid);
+        addScoutActions(menu, ipPhase ? m_xiIpPitch : m_xiPitch, ipPhase ? mine.first : mine.second);
         const QString current = ipPhase ? mine.first : mine.second;
         QMenu *sub = menu.addMenu(ipPhase ? tr("↔ Platz mit Ball ändern (jetzt %1)").arg(current)
                                           : tr("↔ Platz ohne Ball ändern (jetzt %1)").arg(current));
@@ -819,7 +906,7 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
                                      : bLoss < 0 ? QStringLiteral("+%1").arg(-bLoss)
                                                  : QStringLiteral("±0"));
     m_injuryNote->setText(text);
-    m_injuryBox->setTitle(tr("🚑 Langzeitverletzt (%1)").arg(injured.size()));
+    m_injuryBox->setTitle(tr("Langzeitverletzt (%1)").arg(injured.size()));
 
     struct Change {
         QString team;
@@ -898,7 +985,7 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
         auto *before = playerItem(change.before);
         if (const Player *p = m_context.store().findByUid(change.before.playerUid);
             p && p->longTermInjured)
-            before->setText(QStringLiteral("🚑 ") + before->text());
+            before->setText(tr("%1 (verletzt)").arg(before->text()));
         m_injuryTable->setItem(row, 3, before);
         m_injuryTable->setItem(row, 4, dwrsItem(change.before));
         m_injuryTable->setItem(row, 5, playerItem(change.after));
@@ -987,11 +1074,9 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
         table->setItem(row, column++, attrItem(Attr::Determination));
         table->setItem(row, column++, attrItem(Attr::WorkRate));
         table->setItem(row, column++,
-                       new QTableWidgetItem(player->transferStatus ? QStringLiteral("✅")
-                                                                   : QStringLiteral("❌")));
+                       new QTableWidgetItem(player->transferStatus ? tr("ja") : tr("nein")));
         table->setItem(row, column++,
-                       new QTableWidgetItem(player->loanStatus ? QStringLiteral("✅")
-                                                               : QStringLiteral("❌")));
+                       new QTableWidgetItem(player->loanStatus ? tr("ja") : tr("nein")));
         ++row;
     }
     table->setSortingEnabled(true);
@@ -1001,70 +1086,80 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
 void BestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>> &options)
 {
     const auto roleNames = m_context.definitions().roleDisplayMap();
+    const bool twoPhase = m_context.definitions().hasRolePhases();
 
     if (options.isEmpty()) {
         m_depthEmpty->setText(
             tr("Keine weiteren Spieler als Tiefen-Optionen für diese Taktik geeignet."));
         m_depthEmpty->setVisible(true);
-        m_depthTable->setVisible(false);
-        m_depthTable->setRowCount(0);
+        for (int i = 0; i < 2; ++i) {
+            m_depthTables[i]->setVisible(false);
+            m_depthTables[i]->setRowCount(0);
+            m_depthCaptions[i]->setVisible(false);
+        }
         return;
     }
     m_depthEmpty->setVisible(false);
-    m_depthTable->setVisible(true);
 
-    // One row per (role, player) option, roles in natural pitch order.
-    QStringList roles = options.keys();
-    roles = m_context.definitions().sortRolesNaturally(roles);
-    int rowCount = 0;
-    for (const QString &role : roles)
-        rowCount += options.value(role).size();
-
-    m_depthTable->setSortingEnabled(false);
-    m_depthTable->clearContents();
-    m_depthTable->setRowCount(rowCount);
-    int row = 0;
+    // Natural pitch order; FM27: with ball left, without ball right.
+    const QStringList roles = m_context.definitions().sortRolesByPhase(options.keys());
+    QStringList split[2];
     for (const QString &role : roles) {
-        for (const DepthOption &option : options.value(role)) {
-            int column = 0;
-            m_depthTable->setItem(row, column++,
-                                  new QTableWidgetItem(roleNames.value(role, role)));
-
-            auto *nameItem = new NameItem(option.name);
-            nameItem->setData(Qt::UserRole, option.playerUid);
-            m_depthTable->setItem(row, column++, nameItem);
-
-            m_depthTable->setItem(row, column++,
-                                  new NumericItem(QString::number(option.age), option.age));
-
-            auto *dwrsItem =
-                new NumericItem(QStringLiteral("%1%").arg(qRound(option.rating)), option.rating);
-            dwrsItem->setTextAlignment(Qt::AlignCenter);
-            const CellStyle style = dwrsCellStyle(option.rating);
-            if (style.isValid()) {
-                dwrsItem->setBackground(style.background);
-                dwrsItem->setForeground(style.text);
-            }
-            m_depthTable->setItem(row, column++, dwrsItem);
-
-            m_depthTable->setItem(row, column++,
-                                  new QTableWidgetItem(option.apt.isEmpty()
-                                                           ? QStringLiteral("–")
-                                                           : option.apt));
-            ++row;
-        }
+        const bool oop = twoPhase
+                         && m_context.definitions().rolePhase(role) == QLatin1String("oop");
+        split[oop ? 1 : 0] << role;
     }
-    m_depthTable->setSortingEnabled(true);
-    m_depthTable->resizeColumnsToContents();
-    m_depthTable->horizontalHeader()->setStretchLastSection(true);
 
-    // Size the table to its content so no inner scrollbar and no dead space
-    // appears between it and the pitches above.
-    m_depthTable->resizeRowsToContents();
-    int height = m_depthTable->horizontalHeader()->height() + 2 * m_depthTable->frameWidth();
-    for (int r = 0; r < rowCount; ++r)
-        height += m_depthTable->rowHeight(r);
-    m_depthTable->setFixedHeight(height);
+    for (int i = 0; i < 2; ++i) {
+        QTableWidget *table = m_depthTables[i];
+        const QStringList &tableRoles = split[i];
+        const bool show = !tableRoles.isEmpty();
+        table->setVisible(show);
+        m_depthCaptions[i]->setVisible(show && twoPhase);
+        int rowCount = 0;
+        for (const QString &role : tableRoles)
+            rowCount += options.value(role).size();
+        table->setSortingEnabled(false);
+        table->clearContents();
+        table->setRowCount(rowCount);
+        int row = 0;
+        for (const QString &role : tableRoles) {
+            // In the split view the phase is in the caption; drop the suffix.
+            QString roleName = roleNames.value(role, role);
+            if (twoPhase) {
+                roleName.remove(QStringLiteral(" (IP)"));
+                roleName.remove(QStringLiteral(" (OOP)"));
+            }
+            for (const DepthOption &option : options.value(role)) {
+                int column = 0;
+                table->setItem(row, column++, new QTableWidgetItem(roleName));
+
+                auto *nameItem = new NameItem(option.name);
+                nameItem->setData(Qt::UserRole, option.playerUid);
+                table->setItem(row, column++, nameItem);
+
+                table->setItem(row, column++,
+                               new NumericItem(QString::number(option.age), option.age));
+
+                auto *dwrsItem = new NumericItem(QStringLiteral("%1%").arg(qRound(option.rating)),
+                                                 option.rating);
+                dwrsItem->setTextAlignment(Qt::AlignCenter);
+                const CellStyle style = dwrsCellStyle(option.rating);
+                if (style.isValid()) {
+                    dwrsItem->setBackground(style.background);
+                    dwrsItem->setForeground(style.text);
+                }
+                table->setItem(row, column++, dwrsItem);
+
+                table->setItem(row, column++,
+                               new QTableWidgetItem(option.apt.isEmpty() ? QStringLiteral("–")
+                                                                         : option.apt));
+                ++row;
+            }
+        }
+        table->setSortingEnabled(true);
+        fitTableToContents(table, /*fixedWidth*/ true);
+    }
 }
 
 } // namespace fm

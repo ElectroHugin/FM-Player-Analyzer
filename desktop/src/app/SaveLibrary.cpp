@@ -1,8 +1,13 @@
 #include "SaveLibrary.h"
+#include <QJsonObject>
+#include <QJsonDocument>
+#include "core/GraphicsIndex.h"
+#include "GraphicsLibrary.h"
 
 #include "AppContext.h"
 #include "core/Constants.h"
 #include "core/Database.h"
+#include "core/ProfileStore.h"
 #include "core/Utils.h"
 #include "theming/ThemePresets.h"
 
@@ -36,7 +41,8 @@ QStringList sidecars(const QString &dbPath)
     return {dbPath, dbPath + QStringLiteral("-wal"), dbPath + QStringLiteral("-shm")};
 }
 
-void readInfo(SaveInfo &info)
+// clubFmIdOut: the own club's game id, for a crest from the graphics folder.
+void readInfo(SaveInfo &info, quint32 *clubFmIdOut)
 {
     const QString connName =
         QStringLiteral("saveinfo_%1").arg(QUuid::createUuid().toString(QUuid::Id128));
@@ -49,9 +55,12 @@ void readInfo(SaveInfo &info)
             if (settings.exec(QStringLiteral("SELECT key, value FROM settings WHERE key IN "
                                              "('fm_version','user_club','full_club_name',"
                                              "'club_logo_path','last_import_at',"
-                                             "'favorite_tactic_1')"))) {
+                                             "'favorite_tactic_1','club_fm_id','club_fm_ids','graphics_crest_id')"))) {
                 QString userClub;
                 QString fullName;
+                QString ownId;
+                QString idMap;
+                QString crestId;
                 while (settings.next()) {
                     const QString key = settings.value(0).toString();
                     const QString value = settings.value(1).toString();
@@ -67,9 +76,29 @@ void readInfo(SaveInfo &info)
                         info.lastImport = QDateTime::fromString(value, Qt::ISODate);
                     else if (key == QLatin1String("favorite_tactic_1"))
                         info.tactic = value;
+                    else if (key == QLatin1String("club_fm_id"))
+                        ownId = value;
+                    else if (key == QLatin1String("club_fm_ids"))
+                        idMap = value;
+                    else if (key == QLatin1String("graphics_crest_id"))
+                        crestId = value;
                 }
                 info.clubName = fullName.isEmpty() ? userClub : fullName;
+                quint32 id = GraphicsIndex::parseId(ownId);
+                if (id == 0 && !userClub.isEmpty())
+                    id = GraphicsIndex::parseId(QJsonDocument::fromJson(idMap.toUtf8())
+                                                    .object()
+                                                    .value(userClub)
+                                                    .toVariant()
+                                                    .toString());
+                *clubFmIdOut = id;
+                // The saved copy of the graphics-folder crest, when it is
+                // the own club's; no folder needed for it.
+                if (id != 0 && crestId.toUInt() == id)
+                    ProfileStore::readDocument(connName, ProfileStore::graphicsCrestDocument(),
+                                               info.cachedCrest);
             }
+            ProfileStore::readDocument(connName, ProfileStore::clubLogoDocument(), info.logoData);
             QSqlQuery count(db);
             if (count.exec(QStringLiteral("SELECT COUNT(*) FROM players")) && count.next())
                 info.playerCount = count.value(0).toInt();
@@ -96,7 +125,8 @@ SaveInfo current(AppContext &context)
     info.fmVersionId = context.fmVersionId();
     const QString fullName = context.database().setting(QStringLiteral("full_club_name"));
     info.clubName = fullName.isEmpty() ? context.userClub() : fullName;
-    info.logoPath = context.database().setting(QStringLiteral("club_logo_path"));
+    // Same crest as the club header: own logo, graphics folder, saved copy.
+    info.logoData = context.ownClubCrestData();
     info.playerCount = static_cast<int>(context.store().size());
     info.tactic = context.database().setting(QStringLiteral("favorite_tactic_1"));
     info.lastImport = QDateTime::fromString(
@@ -113,7 +143,14 @@ QList<SaveInfo> scan(AppContext &context)
         info.filePath = context.paths().databaseFile(name);
         info.modified = QFileInfo(info.filePath).lastModified();
         info.lastOpened = context.config().databaseLastOpened(name);
-        readInfo(info);
+        quint32 clubFmId = 0;
+        readInfo(info, &clubFmId);
+        if (info.logoData.isEmpty() && info.logoPath.isEmpty()) {
+            info.logoData = clubFmId != 0 ? context.graphics().clubLogoFile(clubFmId)
+                                          : QByteArray();
+            if (info.logoData.isEmpty())
+                info.logoData = info.cachedCrest;
+        }
         saves.append(info);
     }
     std::sort(saves.begin(), saves.end(), [](const SaveInfo &a, const SaveInfo &b) {
@@ -136,17 +173,16 @@ QPixmap crest(const SaveInfo &save, int size, qreal dpr)
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
 
-    if (!save.logoPath.isEmpty()) {
-        const QPixmap logo(save.logoPath);
-        if (!logo.isNull()) {
-            const QPixmap scaled = logo.scaled(QSize(px, px), Qt::KeepAspectRatio,
-                                               Qt::SmoothTransformation);
-            const QSizeF logoSize = QSizeF(scaled.size()) / dpr;
-            painter.drawPixmap(QPointF((size - logoSize.width()) / 2.0,
-                                       (size - logoSize.height()) / 2.0),
-                               scaled);
-            return pixmap;
-        }
+    QPixmap logo;
+    if (!logo.loadFromData(save.logoData) && !save.logoPath.isEmpty())
+        logo.load(save.logoPath);
+    if (!logo.isNull()) {
+        const QPixmap scaled =
+            logo.scaled(QSize(px, px), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        const QSizeF logoSize = QSizeF(scaled.size()) / dpr;
+        painter.drawPixmap(
+            QPointF((size - logoSize.width()) / 2.0, (size - logoSize.height()) / 2.0), scaled);
+        return pixmap;
     }
 
     const QString source = save.clubName.isEmpty() ? save.name : save.clubName;
@@ -272,27 +308,10 @@ bool duplicate(AppContext &context, const QString &name, const QString &newName,
         return false;
     }
     // VACUUM INTO writes a consistent copy including committed WAL frames.
-    const QString target = context.paths().databaseFile(newName.trimmed());
-    const QString connName =
-        QStringLiteral("duplicate_%1").arg(QUuid::createUuid().toString(QUuid::Id128));
-    bool ok = false;
     QString dbError;
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connName);
-        db.setDatabaseName(context.paths().databaseFile(name));
-        if (db.open()) {
-            QSqlQuery query(db);
-            query.prepare(QStringLiteral("VACUUM INTO ?"));
-            query.bindValue(0, target);
-            ok = query.exec();
-            if (!ok)
-                dbError = query.lastError().text();
-            db.close();
-        } else {
-            dbError = db.lastError().text();
-        }
-    }
-    QSqlDatabase::removeDatabase(connName);
+    const bool ok = Database::snapshotTo(context.paths().databaseFile(name),
+                                         context.paths().databaseFile(newName.trimmed()),
+                                         &dbError);
     if (!ok && errorOut)
         *errorOut = SaveText::tr("Der Spielstand konnte nicht kopiert werden: %1").arg(dbError);
     return ok;
@@ -337,9 +356,15 @@ bool importFile(AppContext &context, const QString &sourcePath, const QString &n
         return false;
     }
     QDir().mkpath(context.paths().databasesDir());
-    if (!QFile::copy(sourcePath, context.paths().databaseFile(newName.trimmed()))) {
+    // A plain file copy would miss committed changes that still live in the
+    // source's -wal sidecar (open elsewhere or not cleanly closed). VACUUM INTO
+    // writes a consistent snapshot and leaves the source untouched.
+    QString dbError;
+    if (!Database::snapshotTo(sourcePath, context.paths().databaseFile(newName.trimmed()),
+                              &dbError)) {
         if (errorOut)
-            *errorOut = SaveText::tr("Die Datei konnte nicht in den Datenordner kopiert werden.");
+            *errorOut = SaveText::tr("Die Datei konnte nicht in den Datenordner kopiert werden: %1")
+                            .arg(dbError);
         return false;
     }
     return true;

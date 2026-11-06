@@ -33,6 +33,20 @@ bool pinnedToOtherRole(const Player &player, const QString &role)
            && player.assignedRoles.contains(player.primaryRole);
 }
 
+// Two-phase rule (FM26+): the pin only binds within the primary role's own
+// phase. In the other phase the player stays free for any role. `phase` is the
+// phase the role is played in ("ip", "oop" or "both" for a one-line-up role).
+// Starting XI, B-team and depth options all go through this one rule.
+bool pinnedOutInPhase(const Player &player, const QString &role, const QString &phase,
+                      const Definitions &definitions)
+{
+    if (!pinnedToOtherRole(player, role))
+        return false;
+    const QString pinnedPhase = definitions.rolePhase(player.primaryRole);
+    return pinnedPhase == phase || pinnedPhase == QLatin1String("both")
+           || phase == QLatin1String("both");
+}
+
 // Legacy youth checks parse the TEXT age and fall back to 99 when it is not a
 // plain digit string; our migrator stores unparseable ages as 0.
 inline int effectiveAge(const Player &p)
@@ -333,9 +347,13 @@ void SquadBuilder::fillDepthOptions(const std::vector<const Player *> &pool,
         for (const QString &role : uniqueRoles) {
             const QHash<QString, double> roleRatings = ratings.value(role);
             std::vector<const Player *> sortedCandidates = availableDepth;
-            // Same pin as the team selection: no depth option for other roles.
-            std::erase_if(sortedCandidates,
-                          [&role](const Player *p) { return pinnedToOtherRole(*p, role); });
+            // Same pin as the team selection: no depth option for another role
+            // of the primary role's phase (a one-line-up role is "both", so
+            // there the pin covers every other role as before).
+            const QString phase = m_definitions.rolePhase(role);
+            std::erase_if(sortedCandidates, [&](const Player *p) {
+                return pinnedOutInPhase(*p, role, phase, m_definitions);
+            });
             std::stable_sort(sortedCandidates.begin(), sortedCandidates.end(),
                              [&](const Player *a, const Player *b) {
                                  return roleRatings.value(a->uid, -1.0)
@@ -550,11 +568,7 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
     // Pinned to his primary role: in that role's phase the player may only
     // take slots of exactly that role.
     const auto pinnedOut = [&](const Player &player, const QString &role, const QString &phase) {
-        if (player.primaryRole.isEmpty() || player.primaryRole == role
-            || !player.assignedRoles.contains(player.primaryRole))
-            return false;
-        const QString pinnedPhase = m_definitions.rolePhase(player.primaryRole);
-        return pinnedPhase == phase || pinnedPhase == QLatin1String("both");
+        return pinnedOutInPhase(player, role, phase, m_definitions);
     };
 
     struct Option {
@@ -756,6 +770,157 @@ double SquadBuilder::startingValue(const TwoPhaseSquadResult &squad)
             total += squad.valueOfUid.value(cell.playerUid);
     }
     return total;
+}
+
+QList<OutageCover> SquadBuilder::replacementPlans(const std::vector<const Player *> &pool,
+                                                  const QString &tactic,
+                                                  const RoleRatings &ratings, bool applyAptWeight,
+                                                  const Bridges &fixedBridges, int maxPlans) const
+{
+    QList<OutageCover> covers;
+    const bool twoPhase = m_definitions.isTwoPhaseTactic(tactic);
+    if (!twoPhase && !m_definitions.tacticRoles().contains(tactic))
+        return covers;
+    const double ipShare = std::clamp(m_config.ipSharePercent() / 100.0, 0.0, 1.0);
+    const QHash<QString, QString> positions = m_definitions.tacticRoles().value(tactic);
+    const QStringList slotOrder = twoPhase ? m_definitions.twoPhaseTactics().value(tactic).ipOrder
+                                           : m_definitions.tacticSlotOrder(tactic);
+
+    // The starting XI of a pool: places, values and the total.
+    struct Xi {
+        QHash<QString, QPair<QString, QString>> places;
+        QHash<QString, double> value;
+        double total = 0.0;
+    };
+    const auto startingXi = [&](const std::vector<const Player *> &players,
+                                const Bridges &fixed) {
+        Xi xi;
+        if (twoPhase) {
+            const TwoPhaseSquadResult r =
+                calculateTwoPhaseSquad(players, tactic, ratings, ipShare, applyAptWeight, fixed);
+            for (const XiCell &cell : r.startingIp) {
+                if (!cell.isFilled())
+                    continue;
+                xi.places.insert(cell.playerUid, r.slotsOfUid.value(cell.playerUid));
+                xi.value.insert(cell.playerUid, r.valueOfUid.value(cell.playerUid));
+            }
+            xi.total = startingValue(r);
+        } else {
+            const SquadResult r = calculateSquadAndSurplus(players, positions, slotOrder,
+                                                           ratings, applyAptWeight);
+            for (auto it = r.startingXi.cbegin(); it != r.startingXi.cend(); ++it) {
+                if (!it->isFilled())
+                    continue;
+                xi.places.insert(it->playerUid, {it.key(), it.key()});
+                xi.value.insert(it->playerUid, it->rating);
+                xi.total += it->rating;
+            }
+        }
+        return xi;
+    };
+    // Manual bridges only bind players who are still in the pool.
+    const auto bridgesFor = [&](const QSet<QString> &uids) {
+        Bridges kept;
+        for (auto it = fixedBridges.cbegin(); it != fixedBridges.cend(); ++it) {
+            if (uids.contains(it.key()))
+                kept.insert(it.key(), it.value());
+        }
+        return kept;
+    };
+
+    const Xi current = startingXi(pool, twoPhase ? fixedBridges : Bridges());
+    std::vector<const Player *> bench;
+    for (const Player *p : pool) {
+        if (!current.places.contains(p->uid))
+            bench.push_back(p);
+    }
+
+    // Starters in pitch order of the line-up with ball.
+    QStringList outOrder;
+    for (const QString &slot : slotOrder) {
+        for (auto it = current.places.cbegin(); it != current.places.cend(); ++it) {
+            if (it->first == slot && !outOrder.contains(it.key()))
+                outOrder.append(it.key());
+        }
+    }
+
+    for (const QString &outUid : std::as_const(outOrder)) {
+        OutageCover cover;
+        cover.outUid = outUid;
+        cover.outSlots = current.places.value(outUid);
+        cover.outValue = current.value.value(outUid);
+        cover.current = current.total;
+
+        QSet<QString> rest;
+        for (auto it = current.places.cbegin(); it != current.places.cend(); ++it) {
+            if (it.key() != outUid)
+                rest.insert(it.key());
+        }
+        const auto planFrom = [&](const Xi &xi, const QString &inUid) {
+            ReplacementPlan plan;
+            plan.inUid = inUid;
+            plan.total = xi.total;
+            if (!inUid.isEmpty()) {
+                plan.inSlots = xi.places.value(inUid);
+                plan.inValue = xi.value.value(inUid);
+            }
+            for (const QString &uid : std::as_const(outOrder)) {
+                if (!rest.contains(uid))
+                    continue;
+                const auto from = current.places.value(uid);
+                const auto to = xi.places.value(uid);
+                if (from != to)
+                    plan.moves.append({uid, from, to});
+            }
+            plan.complete = !inUid.isEmpty();
+            return plan;
+        };
+
+        QList<ReplacementPlan> plans;
+        for (const Player *candidate : bench) {
+            QSet<QString> uids = rest;
+            uids.insert(candidate->uid);
+            std::vector<const Player *> trial;
+            for (const Player *p : pool) {
+                if (uids.contains(p->uid))
+                    trial.push_back(p);
+            }
+            Xi xi = startingXi(trial, twoPhase ? bridgesFor(rest) : Bridges());
+            // Exactly one extra player: he and every remaining starter play.
+            if (xi.places.size() != uids.size())
+                continue;
+            if (twoPhase) {
+                // Among equally good line-ups, the one where nobody else moves
+                // (e.g. not a centre-back swapping sides for no gain).
+                Bridges stay = bridgesFor(rest);
+                for (const QString &uid : std::as_const(rest))
+                    stay.insert(uid, current.places.value(uid));
+                const Xi still = startingXi(trial, stay);
+                if (still.places.size() == uids.size() && still.total >= xi.total - 1e-6)
+                    xi = still;
+            }
+            plans.append(planFrom(xi, candidate->uid));
+        }
+        std::stable_sort(plans.begin(), plans.end(),
+                         [](const ReplacementPlan &a, const ReplacementPlan &b) {
+                             return a.total > b.total + 1e-9;
+                         });
+        if (plans.size() > maxPlans)
+            plans.resize(std::max(1, maxPlans));
+        if (plans.isEmpty()) {
+            // Nobody fits: the others close ranks, one place stays empty.
+            std::vector<const Player *> trial;
+            for (const Player *p : pool) {
+                if (rest.contains(p->uid))
+                    trial.push_back(p);
+            }
+            plans.append(planFrom(startingXi(trial, twoPhase ? bridgesFor(rest) : Bridges()),
+                                  QString()));
+        }
+        cover.plans = std::move(plans);
+        covers.append(std::move(cover));
+    }
+    return covers;
 }
 
 QList<BridgeOption> SquadBuilder::bridgeOptions(const std::vector<const Player *> &pool,

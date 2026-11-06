@@ -59,7 +59,7 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Nominierungs-Assistent")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nominierungs-Assistent")), content);
     layout->addWidget(heading);
 
     m_hint = new QLabel(content);

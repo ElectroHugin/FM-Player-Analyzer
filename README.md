@@ -17,9 +17,11 @@ built for.
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078d4)
 ![Football Manager 2024 | 2027](https://img.shields.io/badge/Football%20Manager-2024%20%7C%202027-6f42c1)
 
-**Playing FM27?** The game has no export of its own any more. Use my free
-companion plugin **[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)**
-to turn any player list into a CSV the analyzer reads.
+**Playing FM27?** Just pick your save file: the analyzer reads it directly
+(read-only) and picks up the new data every time you save in the game.
+Alternatively, the free plugin
+**[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)** turns
+any player list into a CSV file.
 
 **🇬🇧 English** · [🇩🇪 Deutsch](README.de.md)
 
@@ -48,7 +50,7 @@ and builds everything else on top of it.
 | You ask | The app answers |
 |---|---|
 | *"Who is my best player for this exact role?"* | A 0–100 role-fit score (**DWRS**) for every player in every role, colour-coded, sortable, comparable across positions. |
-| *"What is my strongest eleven?"* | The mathematically optimal Best XI and B-team on a tactical pitch — plus youth and second team, per competition. |
+| *"What is my strongest eleven?"* | The mathematically optimal Best XI on a tactical pitch, for FM27 in and out of possession, plus B-team, youth, second team and squad depth for every absence. |
 | *"Where do I really need to buy?"* | A signing advisor that tries the best players your budget affords in your squad and measures how much each one lifts the optimal XI — so you buy the ball-playing defender you lack, not yet another DM. |
 | *"Which tactic suits this squad?"* | Every bundled tactic ranked by how well your players fill it. Ideal when you take over a new club. |
 | *"Who should I sign?"* | Your whole scouting database ranked for the role you need, with filters for age, value, nationality and personality. |
@@ -56,20 +58,18 @@ and builds everything else on top of it.
 | *"What should he train?"* | The training methods that raise his rating for his role the most, in order. |
 | *"Who do I register?"* | A squad-list assistant for league quotas (FM27: eleven leagues) and the Champions / Europa / Conference League. |
 
-> 🧮 **The heart of it: a provably optimal Best XI.** Starting XI and B-team
-> are solved together as an assignment problem with the
-> [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm). No
-> other line-up of your players has a stronger starting eleven — and of all
-> equally strong ones you get the strongest B-team.
+> 🧮 **The heart of it: a provably optimal Best XI.** The app doesn't guess, it
+> solves exactly: no other line-up of your players has a stronger starting
+> eleven, and of all equally strong ones you get the strongest B-team.
 > [How it works ↓](#-your-provably-optimal-best-xi--the-heart-of-the-app)
 
 **And it respects your time and your save:**
 
 - 🆓 **Free and open source.** No ads, no account, no subscription.
 - 🔌 **Fully offline.** The app never connects to the internet. Your data stays on your PC.
-- 🛡️ **Your save game is never touched.** It only reads the HTML files you export from FM yourself.
+- 🛡️ **Your save game stays untouched.** The app reads exports or your FM27 save file, but never writes to it.
 - ⚡ **Fast.** A native Windows app built for huge databases — an 11,000-player scouting export is imported and rated in a few seconds, and it stays smooth with 80,000+ players.
-- 🎯 **No cheating.** It sees exactly what you see in the game. Unscouted attribute ranges like `12–15` stay ranges.
+- 🎯 **No cheating.** It shows what you see in the game. Attributes you haven't fully scouted stay ranges like `12–15`, also when reading the FM27 save.
 
 ---
 
@@ -84,69 +84,82 @@ player for his profile, right-click for everything else.
 
 <img src="docs/screenshots/en/best-xi.png" alt="Best XI page: the starting eleven in possession and out of possession side by side, each player with rating, role and his place in the other line-up" width="100%">
 
-**Provably optimal — not a rule of thumb.** Most tools walk through the
-formation slot by slot and hand each one its best player. That breaks as soon
-as a player is the best option for two positions: whichever slot comes first
-gets him, the other one is left with the scraps. Smarter heuristics help, but
-they still guess. This app doesn't: it treats starting XI and B-team as one
-**assignment problem** and solves it **exactly** with the
+**Provably optimal, not a rule of thumb.** Most tools walk through the
+formation slot by slot and hand each one its best player. That breaks as soon as
+a player is the best option for two positions. This app works out the whole
+line-up at once and guarantees:
+
+1. **No stronger starting XI exists** among your players.
+2. **The best B-team that XI allows.** A versatile centre-back who can also
+   play defensive midfield starts where his absence from the B-team costs least.
+3. **Your rules always hold:** only players who can really play a slot, optionally
+   weighted by playing time and natural positions. A player you pin plays there.
+
+**FM27: two line-ups, the same eleven.** In FM27 every tactic has a line-up in
+possession and one out of possession. The analyzer finds the eleven players who
+are strongest across both, and you decide how much possession counts. If a
+player drops out, **squad depth** shows who comes in and how the others swap
+places for it. No suitable cover? Right-click the slot to start a **bridge
+search** in scouting: it finds players who can play both roles of that slot.
+
+The youth XI and second-team XI are built the same way. Switch the competition at
+the top and everything is rebuilt from the players registered for it.
+
+<details>
+<summary><b>How the maths works</b></summary>
+
+<br>
+
+Starting XI and B-team are an **assignment problem**: players on one side,
+positions on the other, and the gain of "player X in position Y" is his rating
+for that position's role (DWRS). Every player gets at most one position, every
+position at most one player. For FM24 the analyzer solves this exactly with the
 [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm)
-(Kuhn–Munkres), the classic mathematics for pairing workers with jobs.
+(Kuhn–Munkres). For the two FM27 line-ups it becomes a minimum-cost flow: every
+player gets one place in possession and one out of possession, and his value is
+the weighted average of both roles.
 
-**How a line-up maps onto it.** The Hungarian algorithm pairs two groups one
-to one so that the total gain is as large as possible. Here the two groups are
-your **players** and the **positions** of starting XI and B-team, and the gain
-of putting a player in a position is his **rating for that position's role**
-(DWRS, weighted as you set it up). Every player gets at most one position and
-every position at most one player — exactly the one-to-one assignment the
-method solves.
-
-What you get is guaranteed, in this order:
-
-1. **No stronger starting XI exists.** Of every possible line-up of your
-   players, none fills more slots or reaches a higher total rating.
-2. **The best B-team that XI allows.** Among all equally strong starting
-   elevens, the one that leaves the strongest B-team wins — a versatile
-   centre-back who can also play defensive midfield starts where his absence
-   from the B-team costs least.
-3. **Your rules always hold.** Only players who can really play a slot are
-   considered, rated by their DWRS for that slot's role, optionally weighted by
-   agreed playing time and natural positions. A player you pinned to a primary
-   role only ever plays there.
-4. **Finishing touch.** Two players sharing a role on mirrored slots — two
-   centre-backs, say — are swapped if that puts them on their preferred side.
+As a finishing touch, two players sharing a role on mirrored slots, two
+centre-backs say, swap sides if that puts them on their preferred side.
 
 *A real case:* a step-by-step picker started a defender at centre-back,
-although he was the better defensive midfielder — so the B-team had to field a
+although he was the better defensive midfielder, so the B-team had to field a
 49% teenager in midfield. The exact method found the line-up in which **both**
 teams are stronger.
-
-"Optimal" means optimal for the ratings: DWRS decides how good a player is in a
-role, and no line-up built from those ratings can beat this one. The youth XI
-and second-team XI are computed the same exact way, followed by the best depth
-options per role. Switch the competition at the top and everything is rebuilt
-from the players who are actually registered for it.
 
 <sub>Sources: H. W. Kuhn, *The Hungarian method for the assignment problem*,
 Naval Research Logistics Quarterly 2 (1955), 83–97 · J. Munkres, *Algorithms
 for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
 32–38.</sub>
 
+</details>
+
+### Your FM27 save, directly and live
+
+No export, no scrolling through lists: pick the `.fm` file of your career and
+the analyzer reads your squad and every player your scouting knows. Turn on
+**Follow save live** under *Settings → Club* and it reads the newest file on its
+own after every save in the game. **Attribute masking as in the game** (on by
+default) makes sure you only see what your scouts know. Details are in
+[docs/IMPORT-FM27.md](docs/IMPORT-FM27.md) (German).
+
 ### Scout by role, not by reputation
 
-Pick a role and get your own squad and your entire scouting list ranked for it —
-here 8,542 scouted players as Advanced Forward. Filter by personality with one
-click, then read each player's strengths and weaknesses *for that role* in plain
-language.
+Pick a role and get your own squad and your entire scouting list ranked for it.
+Filter by age, value and personality, then read each player's strengths and
+weaknesses *for that role* in plain language. In FM27 you switch the role lists
+between **In possession** and **Out of possession**, and you choose which
+columns the scouting table shows.
 
-<img src="docs/screenshots/en/role-analysis.png" alt="Role analysis listing scouted players ranked by their rating as Advanced Forward" width="100%">
+<img src="docs/screenshots/en/role-analysis.png" alt="Role coverage: players ranked by their rating as Advanced Centre-Back (IP), with strengths and weaknesses for that role" width="100%">
 
 ### Everything about one player on one page
 
-Top five roles, talent projection, a personal training recommendation,
-strengths and weaknesses, key attributes and the rating history. Right-click any
-player anywhere in the app to open his profile, compare him, edit him or put
-him on the transfer, loan or shortlist.
+All roles by rating (the roles of your tactic outlined in colour), talent
+projection, a training recommendation for your own players, strengths and
+weaknesses and the rating history. Right-click any player anywhere in the app to
+open his profile, compare him, edit him or put him on the transfer, loan or
+shortlist.
 
 <img src="docs/screenshots/en/profile.png" alt="Player profile with top roles, training recommendation and strengths" width="100%">
 
@@ -164,10 +177,10 @@ The tactic comparison (Line-up → Tactic Comparison) rates your squad against e
 first (can you fill all eleven positions?), then strength per line. Click a
 tactic to see how many suitable players you have for each slot. The bundled
 tactics are rebuilt from the
-[FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/), and
-you can add your own. FM27 ships with my standard tactic
-("4-2-3-1 - Bavarian Blitz"), also as a game file to import into FM27; create
-your own tactics in the tactic editor, updates leave them untouched.
+[FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/).
+FM27 ships with two example tactics ("Control Press · 4-2-3-1" and "Counter
+Surge · 3-4-2-1"), also as game files for FM27. Build your own tactics in the
+tactic editor and share them with others as a file.
 
 <img src="docs/screenshots/en/tactic-explorer.png" alt="Tactic Explorer ranking tactics by coverage and median rating per team part" width="100%">
 
@@ -203,8 +216,9 @@ counts.
 
 ### Make it yours
 
-Dark and light mode, 37 club colour presets grouped by league, your own
-colours and your club's logo in the header.
+Dark and light mode, colour presets grouped by league, your own colours and
+your club's logo in the header. If you have a graphics folder with crests and
+portraits for FM, the analyzer can use it too (optional, off by default).
 
 <img src="docs/screenshots/en/dashboard-light.png" alt="The dashboard in light mode" width="100%">
 
@@ -214,8 +228,10 @@ colours and your club's logo in the header.
 - **Squad Matrix** — every player against every role of a tactic in one colour-coded table. Under *Scouting* it adds talent, personality and attribute-threshold filters (e.g. Decisions ≥ 15 for an AM(C)), a free-agent search and a Δ to your best player in the chosen role; under *Squad* it shows your first team, second team or youth. CSV export on both.
 - **Long-term injuries** — mark a player as out for months and Best XI plans without him: the squad is lined up optimally again, and a table shows slot by slot who takes over.
 - **Gap analysis** — in the signing advisor's tab, collapsed: flags slots that drop off against the team and players pulled away from their best position or onto the wrong side.
+- **Transfer targets** — the overview suggests the best player within your filters for every role of your tactic. Click the card to shortlist him, open his profile or compare him with your players in that role.
 - **Transfers and loans** — suggests promising talents to loan out and surplus players to sell.
-- **Your own roles and tactics** — built-in editors; new entries are available everywhere immediately.
+- **Your own tactics** — built-in editor, new tactics are available everywhere immediately. For FM24 you can add your own roles too; for FM27 every role of the game is already included.
+- **One profile per save** — club, tactics, colours and settings belong to the save. Switch careers and everything switches with it.
 - **Smart imports** — newgens keep their identity across exports, departures are detected, and new players get their roles assigned automatically.
 - **Small things that matter** — global player search that finds "Müller" when you type "muller", back/forward navigation, English and German interface.
 
@@ -227,57 +243,48 @@ colours and your club's logo in the header.
 
 Download the latest `FMPlayerAnalyzer-…-Windows-x64-Setup.exe` from the
 [Releases page](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
-and run it. Nothing else is needed. The installer is not code-signed, so Windows
-may show a SmartScreen notice — choose *More info → Run anyway*.
+and run it. The installer is not code-signed yet, so Windows may show a
+SmartScreen notice: choose *More info → Run anyway*. A Linux AppImage is on the
+same page.
 
-**2 · Get the export views into FM27**
+**2 · Create a save**
 
-FM27 has no export of its own. Install the free
-[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin. The
-installer of the analyzer can put my ready-made FM27 views (squad, player
-database, shortlist) straight into your FM27 `views` folder; later via
-*Settings → Club → Install views for FM27*. In the game, load the view on the
-player list.
+On first start you create a save in the analyzer and pick the FM version
+(*Football Manager 2027* is preselected).
 
-**3 · Export your players**
+**3 · Bring in your players**
 
-In FM27, open your squad (and later the player database or your shortlist) with
-that view and press **F9**. The plugin writes a CSV file. Create the save in the
-analyzer for *Football Manager 2027* (the default for new saves). Column mapping
-and details: [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
+- **FM27, the quickest way:** pick your save file when importing
+  (`Documents\Sports Interactive\Football Manager 27\games\*.fm`). Best use a
+  freshly saved file, not one the game is still writing.
+- **FM27 with exports:** with the
+  [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin and
+  my views (the installer can put them into your FM27 `views` folder) you press
+  **F9** on a player list and import the CSV file.
+- **FM24:** export the list as HTML (*right-click → Print/Export → Web page
+  (.html)*) with a view that contains the **UID** column, for example the
+  [FM24 views by PlayingSquirrel](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file).
 
-> **Try the standard tactic in the game:** the analyzer already includes my
-> FM27 standard tactic "4-2-3-1 - Bavarian Blitz". The same tactic ships as a
-> game file (`.fmf`): the installer can copy it into your FM27 `tactics` folder,
-> later via *Settings → Club → Install standard tactic for FM27*.
->
-> **Still on FM24?** Export the squad as HTML (*right-click → Print/Export → Web
-> page (.html)*) with a view that contains the **UID** column, for example the
-> [FM24 views by PlayingSquirrel](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file).
+Roles and ratings are calculated automatically on import.
 
-**4 · Import**
+**4 · The welcome assistant**
 
-Open FM Player Analyzer, go to **Dashboard → Import new player data**, choose
-the file and click **Import**. Roles are assigned and all ratings calculated
-automatically.
+As soon as the first players are in, a short assistant asks for your club, your
+tactics and your colours. You can skip it and open it again any time under
+*Help → Welcome assistant*.
 
-**5 · Tell the app who you are**
+**5 · Explore**
 
-Pick **My Club** on the dashboard. Under **Settings → Club** you can add a
-second team, your favourite tactics and — if you play in a league with squad
-registration — the registration rules.
-
-**6 · Explore**
-
-Start with **Line-up** (Best XI), then look at **Transfers → Signing Advisor** and
-**Line-up → Tactic Comparison**. Import a big scouting export and open
-**Scouting → By Role** to see who you should really be buying.
+Start with **Line-up** (Best XI), then look at **Transfers → Signing Advisor**
+and **Line-up → Tactic Comparison**. With a big scouting pool, **Scouting** shows
+you who you should really be buying.
 
 > **Tips**
-> - Re-import whenever you like — once a month in game time is a good rhythm. The app updates known players and builds their rating history.
-> - When you import your complete squad, tick *"File is a complete squad export of my club"* and the app asks what happened to the players who are gone.
-> - For newgens, enable FM's *"Use UIDs"* option so players keep a stable ID across exports.
-> - The interface is English by default; German is available in the **Language** menu.
+> - In FM27, *Settings → Club → Follow save live* does the importing for you.
+> - With exports: re-import whenever you like, once a month in game time is a good rhythm. The app updates known players and builds their rating history.
+> - When you import your complete squad as an export, tick *"File is a complete squad export of my club"* and the app asks what happened to the players who are gone.
+> - The installer can copy the FM27 example tactics into your FM27 `tactics` folder; later this is under *Settings → Club*.
+> - Switch between English and German in the **Language** menu.
 
 ---
 
@@ -346,18 +353,21 @@ the recalculation under **DWRS Weights**.
 Yes. Open source under GPLv3, no ads, no paid tier.
 
 **Can it damage my save game?**
-No. The app never opens your save. It reads the HTML files you export from the
-game and keeps its own database in `%LOCALAPPDATA%\FM24PlayerAnalyzer`.
-Updating or uninstalling the app leaves that folder alone.
+No. Exports and the FM27 save file are only read, never changed. The app keeps
+its own database in `%LOCALAPPDATA%\FM24PlayerAnalyzer`. Updating or
+uninstalling the app leaves that folder alone.
 
 **Is this cheating?**
-It uses only what the game shows you. Attributes of players you have not fully
-scouted stay masked ranges, exactly as exported.
+Not with the default settings. The app uses only what the game shows you:
+attributes of players you have not fully scouted stay ranges. With the FM27
+save, *attribute masking as in the game* takes care of that. Hidden values
+such as potential are never read. If you turn masking off, you see every player
+with exact values. That is your call.
 
 **Which Football Manager versions are supported?**
-Football Manager 2024 and Football Manager 2027 (since version 2.0.0; import via
-the [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)). The
-import layout is defined per game version, so other versions can be added.
+Football Manager 2024 and Football Manager 2027 (since version 2.0.0, the save
+file since 2.1.0). The import layout is defined per game version, so other
+versions can be added.
 
 **Mac or Linux?**
 Windows 10 / 11 (64-bit), plus a Linux AppImage on the releases page. No macOS.

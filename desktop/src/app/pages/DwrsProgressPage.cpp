@@ -1,4 +1,5 @@
 #include "DwrsProgressPage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -167,7 +168,7 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
 
     auto *headRow = new QHBoxLayout;
     headRow->addWidget(
-        new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("DWRS-Entwicklung")), this));
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("DWRS-Entwicklung")), this));
     headRow->addStretch(1);
     m_explainToggle = new QToolButton(this);
     m_explainToggle->setText(tr("So wird gerechnet"));
@@ -238,6 +239,7 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
     m_roleCombo = new QComboBox(this);
     m_roleCombo->setMinimumWidth(240);
     m_roleCombo->setToolTip(tr("Auf welche Rolle sich Werte und Δ beziehen"));
+    filterRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_roleCombo, m_roleCombo->parentWidget()));
     filterRow->addWidget(m_roleCombo);
 
     filterRow->addSpacing(18);

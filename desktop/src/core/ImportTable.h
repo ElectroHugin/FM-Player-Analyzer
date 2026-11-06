@@ -30,6 +30,7 @@ enum class ImportErrorCode {
     NoImportableRows,      // every row lacked a UID
     NotSingleRow,          // single-player update; arg: row count
     TargetNotFound,        // single-player update; arg: target UID
+    SaveUnreadable,        // FM27 save game (.fm); arg: English detail
 };
 
 struct ImportError {
@@ -39,13 +40,14 @@ struct ImportError {
 };
 
 // Reads an export file into a table, choosing the reader by file extension
-// (".csv" -> CsvReader, anything else -> HTML). Fails with UnsupportedFormat if
+// (".csv" -> CsvReader, ".fm" -> FM27 save via Fm27SaveImport, anything else
+// -> HTML). Fails with UnsupportedFormat if
 // the FM version's profile does not list that format. progress(done, total)
 // is forwarded to the HTML parser.
 bool readImportTable(const QString &filePath, const QString &fmVersionId, ImportTable *out,
                      ImportError *error, const std::function<void(int, int)> &progress = {});
 
-// Export format of a file by extension: "csv" or "html".
+// Export format of a file by extension: "csv", "fm" (save game) or "html".
 QString importFormatForFile(const QString &filePath);
 
 } // namespace fm

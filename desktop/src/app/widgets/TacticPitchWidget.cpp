@@ -44,7 +44,37 @@ void drawFittedName(QPainter &painter, const QRectF &rect, const QString &fullNa
     painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, text);
 }
 
+TacticPitchWidget::ShiftSource &shiftSource()
+{
+    static TacticPitchWidget::ShiftSource source;
+    return source;
+}
+
 } // namespace
+
+static TacticPitchWidget::PortraitSource &portraitSource()
+{
+    static TacticPitchWidget::PortraitSource source;
+    return source;
+}
+
+void TacticPitchWidget::setPortraitSource(PortraitSource source)
+{
+    portraitSource() = std::move(source);
+}
+
+void TacticPitchWidget::setShiftSource(ShiftSource source)
+{
+    shiftSource() = std::move(source);
+}
+
+double TacticPitchWidget::shiftPixels(const QString &role, const QString &slot,
+                                      double fieldHeight) const
+{
+    if (role.isEmpty() || !shiftSource())
+        return 0.0;
+    return -fieldHeight * shiftSource()(role, slot) / 100.0;
+}
 
 TacticPitchWidget::TacticPitchWidget(ThemeManager &theme, QWidget *parent)
     : QWidget(parent)
@@ -204,11 +234,12 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             return role;
         };
         // squeezed: free middle place between two cards that closed up.
-        const auto drawSlot = [&](const QRectF &box, const QString &slot, const QString &label,
+        const auto drawSlot = [&](const QRectF &baseBox, const QString &slot, const QString &label,
                                   int row, bool squeezed = false) {
             const QString role = m_editorRoles.value(slot);
             if (role.isEmpty() && !m_showFreeSlots)
                 return;
+            const QRectF box = baseBox.translated(0, shiftPixels(role, slot, field.height()));
             m_boxRects.insert(slot, box);
             QPainterPath path;
             path.addRoundedRect(box, 6, 6);
@@ -296,7 +327,9 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         return;
     }
 
-    const auto drawCard = [&](const QRectF &box, const QString &slot, int row) {
+    const auto drawCard = [&](const QRectF &baseBox, const QString &slot, int row) {
+        const QRectF box =
+            baseBox.translated(0, shiftPixels(m_positions.value(slot), slot, field.height()));
         m_boxRects.insert(slot, box);
         const XiCell cell = m_team.value(slot);
         QPainterPath path;
@@ -314,18 +347,32 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         const QString apt = aptAbbreviations().value(cell.apt, cell.apt);
         const QString subtext = m_slotSubtexts.value(slot);
 
+        // Optional portrait (graphics folder): a small round badge on the
+        // card's top-left corner; the role abbreviation moves right of it.
+        QPixmap face;
+        const double faceD = qRound(box.height() * 0.5);
+        if (cell.isFilled() && portraitSource()) {
+            // Requested in steps of 8 px so the image cache stays small.
+            const int wanted = (int(faceD * devicePixelRatioF()) + 7) / 8 * 8;
+            face = portraitSource()(cell.playerUid, wanted);
+        }
+        const QRectF faceCircle(box.left() - faceD * 0.28, box.top() - faceD * 0.42, faceD,
+                                faceD);
+
         // Header: role abbreviation on the line colour.
         const double headerH = box.height() * 0.28;
         const QRectF header(box.left(), box.top(), box.width(), headerH);
+        const QRectF headerText =
+            face.isNull() ? header : header.adjusted(faceCircle.right() - box.left(), 0, 0, 0);
         painter.save();
         painter.setClipPath(path, Qt::IntersectClip);
         painter.fillRect(header, kLineColors[qBound(0, row, 6)]);
         painter.restore();
         painter.setPen(Qt::white);
         painter.setFont(headerFont);
-        painter.drawText(header, Qt::AlignCenter,
-                         painter.fontMetrics().elidedText(roleAbbr, Qt::ElideRight,
-                                                          static_cast<int>(header.width() - 4)));
+        painter.drawText(headerText, Qt::AlignCenter,
+                         painter.fontMetrics().elidedText(
+                             roleAbbr, Qt::ElideRight, static_cast<int>(headerText.width() - 4)));
 
         // Rating with a slim bar, then the name, then the extra line.
         const QRectF body = box.adjusted(4, headerH + 1, -4, -2);
@@ -362,6 +409,24 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.setPen(QPen(cardBorder, 1));
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(path);
+
+        if (!face.isNull()) {
+            QPainterPath clip;
+            clip.addEllipse(faceCircle);
+            painter.save();
+            painter.fillPath(clip, cardBody);
+            painter.setClipPath(clip, Qt::IntersectClip);
+            const QSizeF faceSize = QSizeF(face.size()) / face.devicePixelRatio();
+            const QSizeF size = faceSize * (faceD / qMax(faceSize.width(), faceSize.height()));
+            const QRectF target(faceCircle.center().x() - size.width() / 2,
+                                faceCircle.bottom() - size.height(), size.width(), size.height());
+            painter.setRenderHint(QPainter::SmoothPixmapTransform);
+            painter.drawPixmap(target, face, QRectF(face.rect()));
+            painter.restore();
+            painter.setPen(QPen(kLineColors[qBound(0, row, 6)], 1.6));
+            painter.setBrush(Qt::NoBrush);
+            painter.drawEllipse(faceCircle);
+        }
     };
 
     for (auto it = m_layout.constBegin(); it != m_layout.constEnd(); ++it) {
@@ -446,6 +511,14 @@ void TacticPitchWidget::contextMenuEvent(QContextMenuEvent *event)
         emit playerContextMenuRequested(uid, event->globalPos());
         event->accept();
         return;
+    }
+    if (!m_editor) {
+        const QString slot = slotAt(event->pos());
+        if (!slot.isEmpty()) {
+            emit emptySlotContextMenuRequested(slot, event->globalPos());
+            event->accept();
+            return;
+        }
     }
     QWidget::contextMenuEvent(event);
 }

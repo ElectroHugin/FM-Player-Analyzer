@@ -9,7 +9,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QSet>
+#include <QHeaderView>
+#include <QScrollBar>
+#include <QStyle>
 #include <QStringList>
+#include <QTableWidget>
 
 #include <algorithm>
 
@@ -163,6 +167,43 @@ inline QSet<QString> nationalSquadUids(AppContext &context)
             uids.insert(player.uid);
     }
     return uids;
+}
+
+// Sizes a table exactly to its rows and columns: no inner scroll bars and no
+// empty stretch on the right. Tables wider than the page still scroll with it.
+// fixedWidth: always exactly as wide as the content (for narrow tables that
+// sit side by side); otherwise at most that wide.
+// maxColumnWidth > 0 caps wide columns; with word wrap on, their text wraps.
+inline void fitTableToContents(QTableWidget *table, bool fixedWidth = false,
+                               int maxColumnWidth = 0)
+{
+    table->horizontalHeader()->setStretchLastSection(false);
+    table->resizeColumnsToContents();
+    if (maxColumnWidth > 0) {
+        for (int c = 0; c < table->columnCount(); ++c)
+            if (table->columnWidth(c) > maxColumnWidth)
+                table->setColumnWidth(c, maxColumnWidth);
+    }
+    table->resizeRowsToContents();
+    int height = qMax(table->horizontalHeader()->height(),
+                      table->horizontalHeader()->sizeHint().height())
+                 + 2 * table->frameWidth();
+    for (int r = 0; r < table->rowCount(); ++r)
+        height += table->rowHeight(r);
+    int width = 2 * table->frameWidth();
+    for (int c = 0; c < table->columnCount(); ++c)
+        if (!table->isColumnHidden(c))
+            width += table->columnWidth(c);
+    // Never wider than its content; narrower windows get a sideways scroll
+    // bar inside the table, so reserve its height as well.
+    if (fixedWidth)
+        table->setFixedWidth(width);
+    else
+        table->setMaximumWidth(width);
+    if (table->horizontalScrollBarPolicy() != Qt::ScrollBarAlwaysOff)
+        height += qMax(table->horizontalScrollBar()->sizeHint().height(),
+                       table->style()->pixelMetric(QStyle::PM_ScrollBarExtent));
+    table->setFixedHeight(height);
 }
 
 } // namespace fm

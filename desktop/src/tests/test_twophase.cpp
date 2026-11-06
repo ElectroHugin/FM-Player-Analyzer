@@ -302,6 +302,68 @@ private slots:
         QVERIFY(squad.coreSquadUids.contains(QStringLiteral("musiala")));
         QCOMPARE(squad.depthPool.size(), size_t(1));
     }
+    void primaryRoleWithBallKeepsDepthWithoutBall()
+    {
+        // Review 2026-11-02 (P2): a primary role with ball pins only the phase
+        // with ball. The depth options must apply the same rule as starting XI
+        // and B-team: the third player stays a depth option for TW (without
+        // ball) although IF (with ball) is his primary role.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AMR", "IF"}}), slotMap({{"AMR", "TW"}})));
+        std::vector<Player> players = {makePlayer(QStringLiteral("a"), QStringLiteral("AM (R)")),
+                                       makePlayer(QStringLiteral("b"), QStringLiteral("AM (R)")),
+                                       makePlayer(QStringLiteral("c"), QStringLiteral("AM (R)"))};
+        for (Player &p : players)
+            p.assignedRoles = {QStringLiteral("IF"), QStringLiteral("TW")};
+        RoleRatings ratings;
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("a"), 90}, {QStringLiteral("b"), 80},
+                                         {QStringLiteral("c"), 70}};
+        ratings[QStringLiteral("TW")] = {{QStringLiteral("a"), 90}, {QStringLiteral("b"), 80},
+                                         {QStringLiteral("c"), 70}};
+
+        SquadBuilder builder(defs, *m_config);
+        const auto depthFor = [&](const QString &role) {
+            std::vector<const Player *> pool;
+            for (const Player &p : players)
+                pool.push_back(&p);
+            const SquadResult squad =
+                builder.calculateSquadForTactic(pool, QStringLiteral("T"), ratings, false);
+            return squad.bestDepthOptions.value(role);
+        };
+
+        QCOMPARE(depthFor(QStringLiteral("TW")).size(), 1);
+        QCOMPARE(depthFor(QStringLiteral("TW")).first().playerUid, QStringLiteral("c"));
+
+        players[2].primaryRole = QStringLiteral("IF");
+        QCOMPARE(depthFor(QStringLiteral("TW")).size(), 1);
+        QCOMPARE(depthFor(QStringLiteral("TW")).first().playerUid, QStringLiteral("c"));
+        QCOMPARE(depthFor(QStringLiteral("IF")).first().playerUid, QStringLiteral("c"));
+
+        // Within its own phase the pin still holds: pinned to TW (without
+        // ball), he is no depth option for another role without ball, and a
+        // role with ball stays open to him.
+        Definitions defs2;
+        defs2.setRoot(root(slotMap({{"AMR", "IF"}}), slotMap({{"MR", "WM"}})));
+        std::vector<Player> wide = {makePlayer(QStringLiteral("a"), QStringLiteral("AM (R), M (R)")),
+                                    makePlayer(QStringLiteral("b"), QStringLiteral("AM (R), M (R)")),
+                                    makePlayer(QStringLiteral("c"), QStringLiteral("AM (R), M (R)"))};
+        for (Player &p : wide)
+            p.assignedRoles = {QStringLiteral("IF"), QStringLiteral("WM"), QStringLiteral("TW")};
+        wide[2].primaryRole = QStringLiteral("TW");
+        RoleRatings ratings2;
+        ratings2[QStringLiteral("IF")] = ratings[QStringLiteral("IF")];
+        ratings2[QStringLiteral("WM")] = ratings[QStringLiteral("TW")];
+        SquadBuilder builder2(defs2, *m_config);
+        std::vector<const Player *> pool2;
+        for (const Player &p : wide)
+            pool2.push_back(&p);
+        const SquadResult squad2 =
+            builder2.calculateSquadForTactic(pool2, QStringLiteral("T"), ratings2, false);
+        QVERIFY(squad2.bestDepthOptions.value(QStringLiteral("WM")).isEmpty());
+        QCOMPARE(squad2.bestDepthOptions.value(QStringLiteral("IF")).value(0).playerUid,
+                 QStringLiteral("c"));
+    }
+
     void manualBridgeCostsValue()
     {
         // Olise is the better inside forward, Musiala the better winger in the
@@ -439,6 +501,232 @@ private slots:
         QCOMPARE(currentAt(displaced, QStringLiteral("ML")), QStringLiteral("kai"));
         QCOMPARE(displaced.needs.front().slot, QStringLiteral("ML"));
         QCOMPARE(displaced.needs.front().options.size(), size_t(1));
+    }
+
+    // --- Squad depth: one extra player per missing starter (2.1.0) ---
+
+    void replacementTakesTheFullBridge()
+    {
+        // Gnabry is out: Olise has AM (R), so he takes both of Gnabry's places
+        // (a full bridge) and nobody else moves.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AMR", "IF"}, {"DR", "FB"}}),
+                          slotMap({{"AMR", "TW"}, {"DR", "PFB"}})));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("gnabry"), QStringLiteral("AM (R)")),
+            makePlayer(QStringLiteral("boey"), QStringLiteral("D (R)")),
+            makePlayer(QStringLiteral("olise"), QStringLiteral("AM (R)")),
+            makePlayer(QStringLiteral("keeper"), QStringLiteral("GK"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("olise"), 90}, {QStringLiteral("gnabry"), 80}};
+        ratings[QStringLiteral("TW")] = {{QStringLiteral("olise"), 55}, {QStringLiteral("gnabry"), 75}};
+        ratings[QStringLiteral("FB")] = {{QStringLiteral("boey"), 70}};
+        ratings[QStringLiteral("PFB")] = {{QStringLiteral("boey"), 72}};
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+
+        const QList<OutageCover> covers =
+            builder.replacementPlans(pool, QStringLiteral("T"), ratings, false);
+        QCOMPARE(covers.size(), 2); // the two starters, in pitch order with ball
+        const auto coverOf = [&](const QString &uid) {
+            for (const OutageCover &c : covers) {
+                if (c.outUid == uid)
+                    return c;
+            }
+            return OutageCover();
+        };
+        const OutageCover gnabry = coverOf(QStringLiteral("gnabry"));
+        QCOMPARE(gnabry.outSlots, qMakePair(QStringLiteral("AMR"), QStringLiteral("AMR")));
+        QCOMPARE(gnabry.current, 148.5);
+        QCOMPARE(gnabry.plans.size(), 1); // the keeper fits nowhere
+        const ReplacementPlan &plan = gnabry.plans.front();
+        QVERIFY(plan.complete);
+        QCOMPARE(plan.inUid, QStringLiteral("olise"));
+        QCOMPARE(plan.inSlots, gnabry.outSlots);
+        QVERIFY(plan.moves.isEmpty());
+        QCOMPARE(plan.inValue, 72.5);
+        QCOMPARE(plan.total, 143.5);
+
+        // Nobody else plays D (R): Boey's absence leaves the place empty.
+        const OutageCover boey = coverOf(QStringLiteral("boey"));
+        QCOMPARE(boey.plans.size(), 1);
+        QVERIFY(!boey.plans.front().complete);
+        QVERIFY(boey.plans.front().inUid.isEmpty());
+        QCOMPARE(boey.plans.front().total, 77.5);
+    }
+
+    void replacementMayMoveOtherStarters()
+    {
+        // Left and right wingers with ball, wide midfielders without. "left"
+        // is out; the only extra player plays the right side, so "both" (who
+        // plays either side) moves over to the left in both line-ups.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AML", "W"}, {"AMR", "IF"}}),
+                          slotMap({{"ML", "WM"}, {"MR", "TW"}})));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("left"), QStringLiteral("AM (L), M (L)")),
+            makePlayer(QStringLiteral("both"), QStringLiteral("AM (RL), M (RL)")),
+            makePlayer(QStringLiteral("right"), QStringLiteral("AM (R), M (R)"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("W")] = {{QStringLiteral("left"), 80}, {QStringLiteral("both"), 70}};
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("both"), 70}, {QStringLiteral("right"), 60}};
+        ratings[QStringLiteral("WM")] = {{QStringLiteral("left"), 80}, {QStringLiteral("both"), 70}};
+        ratings[QStringLiteral("TW")] = {{QStringLiteral("both"), 70}, {QStringLiteral("right"), 60}};
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+
+        const QList<OutageCover> covers =
+            builder.replacementPlans(pool, QStringLiteral("T"), ratings, false);
+        QCOMPARE(covers.size(), 2);
+        QCOMPARE(covers.front().outUid, QStringLiteral("left")); // AML comes first
+        const ReplacementPlan &plan = covers.front().plans.front();
+        QVERIFY(plan.complete);
+        QCOMPARE(plan.inUid, QStringLiteral("right"));
+        QCOMPARE(plan.inSlots, qMakePair(QStringLiteral("AMR"), QStringLiteral("MR")));
+        QCOMPARE(plan.moves.size(), 1);
+        QCOMPARE(plan.moves.front().uid, QStringLiteral("both"));
+        QCOMPARE(plan.moves.front().from, qMakePair(QStringLiteral("AMR"), QStringLiteral("MR")));
+        QCOMPARE(plan.moves.front().to, qMakePair(QStringLiteral("AML"), QStringLiteral("ML")));
+        QCOMPARE(plan.total, 130.0);
+    }
+
+    void replacementPrefersNobodyMoving()
+    {
+        // Two centre-backs who play both sides equally well. When the right
+        // one is out, his replacement takes his places; the left one does
+        // not swap sides for nothing.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"DCL", "FB"}, {"DCR", "FB"}}),
+                          slotMap({{"DCL", "PFB"}, {"DCR", "PFB"}})));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("l"), QStringLiteral("D (C)")),
+            makePlayer(QStringLiteral("r"), QStringLiteral("D (C)")),
+            makePlayer(QStringLiteral("x"), QStringLiteral("D (C)"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("FB")] = {{QStringLiteral("l"), 70}, {QStringLiteral("r"), 70},
+                                         {QStringLiteral("x"), 50}};
+        ratings[QStringLiteral("PFB")] = ratings[QStringLiteral("FB")];
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+        const QList<OutageCover> covers =
+            builder.replacementPlans(pool, QStringLiteral("T"), ratings, false);
+        QCOMPARE(covers.size(), 2);
+        for (const OutageCover &cover : covers) {
+            const ReplacementPlan &plan = cover.plans.front();
+            QCOMPARE(plan.inUid, QStringLiteral("x"));
+            QCOMPARE(plan.inSlots, cover.outSlots);
+            QVERIFY(plan.moves.isEmpty());
+        }
+    }
+
+    void replacementNeverDropsAnotherStarter()
+    {
+        // Exactly one extra player: "star" could only come in if "a" made
+        // room, which would leave "a" out - not allowed. Then nobody fits.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AML", "W"}, {"AMR", "W"}}),
+                          slotMap({{"ML", "WM"}, {"MR", "WM"}})));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("a"), QStringLiteral("AM (L), M (L)")),
+            makePlayer(QStringLiteral("b"), QStringLiteral("AM (R), M (R)")),
+            makePlayer(QStringLiteral("star"), QStringLiteral("AM (L), M (L)"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("W")] = {{QStringLiteral("a"), 70}, {QStringLiteral("b"), 70},
+                                        {QStringLiteral("star"), 60}};
+        ratings[QStringLiteral("WM")] = ratings[QStringLiteral("W")];
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+
+        const QList<OutageCover> covers =
+            builder.replacementPlans(pool, QStringLiteral("T"), ratings, false);
+        for (const OutageCover &cover : covers) {
+            if (cover.outUid == QStringLiteral("b")) {
+                QVERIFY(!cover.plans.front().complete);
+                QVERIFY(cover.plans.front().moves.isEmpty());
+            } else {
+                QCOMPARE(cover.plans.front().inUid, QStringLiteral("star"));
+            }
+        }
+    }
+
+    void replacementPlansFollowManualBridges()
+    {
+        // "both" is put on the right by hand. Whoever is out, the plans keep
+        // that manual bridge: "both" never moves, the extra player comes in.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AML", "W"}, {"AMR", "IF"}, {"AMC", "IF"}}),
+                          slotMap({{"ML", "WM"}, {"MR", "TW"}, {"MC", "WM"}})));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("left"), QStringLiteral("AM (LC), M (LC)")),
+            makePlayer(QStringLiteral("both"), QStringLiteral("AM (RLC), M (RLC)")),
+            makePlayer(QStringLiteral("mid"), QStringLiteral("AM (RLC), M (RLC)")),
+            makePlayer(QStringLiteral("extra"), QStringLiteral("AM (RLC), M (RLC)"))};
+        RoleRatings ratings;
+        for (const char *role : {"W", "IF", "WM", "TW"}) {
+            ratings[QLatin1String(role)] = {{QStringLiteral("left"), 80}, {QStringLiteral("both"), 70},
+                                            {QStringLiteral("mid"), 75}, {QStringLiteral("extra"), 50}};
+        }
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+        SquadBuilder::Bridges fixed;
+        fixed.insert(QStringLiteral("both"), qMakePair(QStringLiteral("AMR"), QStringLiteral("MR")));
+
+        const QList<OutageCover> covers =
+            builder.replacementPlans(pool, QStringLiteral("T"), ratings, false, fixed);
+        QCOMPARE(covers.size(), 3);
+        for (const OutageCover &cover : covers) {
+            QCOMPARE(cover.plans.front().inUid, QStringLiteral("extra"));
+            for (const PlaceMove &move : cover.plans.front().moves)
+                QVERIFY(move.uid != QStringLiteral("both"));
+        }
+    }
+
+    void replacementPlansForOneLineUp()
+    {
+        // FM24 tactic (one line-up): ip and oop are the same slot.
+        Definitions defs;
+        QJsonObject roles{{QStringLiteral("W"), QStringLiteral("W")},
+                          {QStringLiteral("IF"), QStringLiteral("IF")}};
+        defs.setRoot(QJsonObject{
+            {QStringLiteral("player_roles"), QJsonObject{{QStringLiteral("Attack"), roles}}},
+            {QStringLiteral("tactic_roles"),
+             QJsonObject{{QStringLiteral("T"), slotMap({{"AML", "W"}, {"AMR", "IF"}})}}},
+        });
+        QVERIFY(!defs.isTwoPhaseTactic(QStringLiteral("T")));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("left"), QStringLiteral("AM (L)")),
+            makePlayer(QStringLiteral("both"), QStringLiteral("AM (RL)")),
+            makePlayer(QStringLiteral("right"), QStringLiteral("AM (R)"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("W")] = {{QStringLiteral("left"), 80}, {QStringLiteral("both"), 70}};
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("both"), 70}, {QStringLiteral("right"), 60}};
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+
+        const QList<OutageCover> covers =
+            builder.replacementPlans(pool, QStringLiteral("T"), ratings, false);
+        QCOMPARE(covers.size(), 2);
+        const OutageCover &left = covers.front();
+        QCOMPARE(left.outUid, QStringLiteral("left"));
+        QCOMPARE(left.outSlots, qMakePair(QStringLiteral("AML"), QStringLiteral("AML")));
+        const ReplacementPlan &plan = left.plans.front();
+        QCOMPARE(plan.inUid, QStringLiteral("right"));
+        QCOMPARE(plan.inSlots, qMakePair(QStringLiteral("AMR"), QStringLiteral("AMR")));
+        QCOMPARE(plan.moves.size(), 1);
+        QCOMPARE(plan.moves.front().to, qMakePair(QStringLiteral("AML"), QStringLiteral("AML")));
+        QCOMPARE(plan.total, 130.0);
     }
 };
 

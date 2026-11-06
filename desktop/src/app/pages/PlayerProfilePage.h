@@ -9,12 +9,15 @@ class QGroupBox;
 class QHBoxLayout;
 class QLabel;
 class QLineEdit;
+class QMenu;
+class QToolButton;
 class QPushButton;
 class QScrollArea;
 class QCheckBox;
 class QWidget;
 
 namespace fm {
+class FlowLayout;
 
 struct Player;
 class LineChartWidget;
@@ -40,6 +43,7 @@ private:
     void updateScopeAvailability();
     void rebuildSearchModel();
     void onScopeChanged();
+    void fillSquadMenu(QMenu *menu);
     void selectPlayer(const QString &uid);
     void showPlayer();
     void runManualUpdate();
@@ -48,6 +52,7 @@ private:
 
     QButtonGroup *m_scopeGroup = nullptr;
     QLineEdit *m_searchEdit = nullptr;
+    QToolButton *m_squadButton = nullptr;
     QCompleter *m_searchCompleter = nullptr;
     PlayerSearchModel *m_searchModel = nullptr;
     QString m_currentUid;
@@ -56,6 +61,9 @@ private:
     QLabel *m_nameLabel = nullptr;
     QLabel *m_vitalsLabel = nullptr;
     QLabel *m_tagsLabel = nullptr;
+    // Optional pictures from the FM graphics folder; hidden without them.
+    QLabel *m_portraitLabel = nullptr;
+    QLabel *m_crestLabel = nullptr;
 
     QGroupBox *m_updateBox = nullptr;
     QLineEdit *m_updateFileEdit = nullptr;
@@ -63,7 +71,9 @@ private:
     QPushButton *m_updateButton = nullptr;
 
     QWidget *m_detailWidget = nullptr;
-    QHBoxLayout *m_topRolesLayout = nullptr;
+    FlowLayout *m_topRolesLayout = nullptr;
+    QWidget *m_tacticLegend = nullptr;
+    QLabel *m_tacticLegendLabel = nullptr;
     // All of the player's roles as tiles, best first, in a horizontal scroll
     // area; for FM27 filterable by phase (with / without ball).
     struct RoleTile {
@@ -73,7 +83,6 @@ private:
     };
     QList<RoleTile> m_roleTiles;
     QComboBox *m_roleFilterCombo = nullptr;
-    QScrollArea *m_topRolesScroll = nullptr;
     void fillRoleTiles();
     QGroupBox *m_talentBox = nullptr;
     QLabel *m_talentLabel = nullptr;

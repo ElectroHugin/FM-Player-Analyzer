@@ -10,11 +10,14 @@
 #include "core/Constants.h"
 #include "core/Utils.h"
 
+#include <QBuffer>
 #include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QStandardItemModel>
 #include <QDesktopServices>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QDir>
 #include <QDoubleSpinBox>
 #include <QFile>
@@ -27,7 +30,11 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QFileInfo>
+#include <QLocale>
 #include <QPixmap>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QSet>
 #include <QPushButton>
 #include <QScrollArea>
@@ -42,6 +49,19 @@
 namespace fm {
 
 namespace {
+
+// An image as PNG bytes for the save's profile (large pictures are scaled
+// down: the header shows them at 34 px, the start screen at 64 px).
+QByteArray pngBytes(QPixmap pixmap)
+{
+    if (pixmap.width() > 512 || pixmap.height() > 512)
+        pixmap = pixmap.scaled(512, 512, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QByteArray bytes;
+    QBuffer buffer(&bytes);
+    buffer.open(QIODevice::WriteOnly);
+    pixmap.save(&buffer, "PNG");
+    return bytes;
+}
 
 const QStringList &weightCategoryOrder()
 {
@@ -87,7 +107,8 @@ SettingsPage::SettingsPage(AppContext &context, ThemeManager &theme, QWidget *pa
     , m_theme(theme)
 {
     auto *layout = new QVBoxLayout(this);
-    auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(tr("Einstellungen")), this);
+    auto *heading = new QLabel(tr("Einstellungen"), this);
+    heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(heading);
 
     auto *tabs = new QTabWidget(this);
@@ -228,20 +249,71 @@ QWidget *SettingsPage::buildClubTab()
         installIntoFm27(QStringLiteral(":/views"), QStringLiteral("views"),
                         tr("FM27-Ansichten"));
     });
-    auto *tacticButton = new QPushButton(tr("Standardtaktik für FM27 installieren"));
+    auto *tacticButton = new QPushButton(tr("Beispieltaktiken für FM27 installieren"));
     auto *tacticHint = new QLabel(
-        tr("Kopiert die mitgelieferte Standardtaktik (4-2-3-1 - Bavarian Blitz) als "
-           "Spieldatei in den Ordner 'tactics' von Football Manager 27. Im Spiel lädst du "
-           "sie dann in der Taktik-Ansicht über das Laden einer Taktik. Im Analyzer ist sie "
-           "schon eingebaut; eigene Taktiken legst du im Taktik-Editor an."),
+        tr("Kopiert die beiden mitgelieferten Beispieltaktiken (Control Press · 4-2-3-1 und "
+           "Counter Surge · 3-4-2-1) als Spieldateien in den Ordner 'tactics' von Football "
+           "Manager 27. Im Spiel lädst du sie dann in der Taktik-Ansicht über das Laden einer "
+           "Taktik. Im Analyzer sind sie schon eingebaut; eigene Taktiken legst du im "
+           "Taktik-Editor an oder importierst sie."),
         versionGroup);
     tacticHint->setWordWrap(true);
     tacticHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(tr("FM27-Taktik:"), tacticButton);
+    versionForm->addRow(tr("FM27-Taktiken:"), tacticButton);
     versionForm->addRow(tacticHint);
     connect(tacticButton, &QPushButton::clicked, this, [this, installIntoFm27] {
         installIntoFm27(QStringLiteral(":/tactics"), QStringLiteral("tactics"),
-                        tr("FM27-Taktik"));
+                        tr("FM27-Taktiken"));
+    });
+    m_attributeMaskingCheck = new QCheckBox(tr("Attribut-Maskierung wie im Spiel"), versionGroup);
+    auto *maskingHint = new QLabel(
+        tr("Gilt, wenn du einen FM27-Spielstand (.fm) einliest. Eingeschaltet übernimmt der "
+           "Analyzer nur Spieler, die du kennst: deinen Kader, Spieler mit sehr hoher "
+           "Reputation und Spieler aus deinem Scouting. Teilweise bekannte Spieler bekommen "
+           "Spannen, die der Analyzer selbst bildet; sie können von den Spannen im Spiel "
+           "abweichen. Ausgeschaltet übernimmt er alle Spieler mit ihren echten Werten. "
+           "Verdeckte Werte wie das Potenzial liest er nie aus."),
+        versionGroup);
+    maskingHint->setWordWrap(true);
+    maskingHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(tr("FM27-Spielstände:"), m_attributeMaskingCheck);
+    versionForm->addRow(maskingHint);
+
+    m_liveSaveCheck = new QCheckBox(tr("Spielstand live verfolgen"), versionGroup);
+    m_liveSaveEdit = new QLineEdit(versionGroup);
+    m_liveSaveEdit->setMinimumWidth(260);
+    m_liveSaveEdit->setPlaceholderText(tr("FM27-Spielstand (.fm) wählen"));
+    auto *liveSaveBrowse = new QPushButton(tr("Durchsuchen…"), versionGroup);
+    auto *liveSaveRow = new QHBoxLayout;
+    liveSaveRow->setContentsMargins(0, 0, 0, 0);
+    liveSaveRow->addWidget(m_liveSaveCheck);
+    liveSaveRow->addWidget(m_liveSaveEdit, 1);
+    liveSaveRow->addWidget(liveSaveBrowse);
+    auto *liveSaveWidget = new QWidget(versionGroup);
+    liveSaveWidget->setLayout(liveSaveRow);
+    auto *liveSaveHint = new QLabel(
+        tr("Solange der Analyzer offen ist, liest er diesen Spielstand automatisch neu ein, "
+           "sobald das Spiel ihn gespeichert hat, auch nach einem Autosave. Er nimmt immer die "
+           "neueste Datei der Karriere, auch die Versionen „(v02)“, „(v03)“. Wenn du im "
+           "Spiel unter einem neuen Namen speicherst, wähle die neue Datei hier aus."),
+        versionGroup);
+    liveSaveHint->setWordWrap(true);
+    liveSaveHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(QString(), liveSaveWidget);
+    versionForm->addRow(liveSaveHint);
+    connect(liveSaveBrowse, &QPushButton::clicked, this, [this] {
+        QString start = m_liveSaveEdit->text().trimmed();
+        if (start.isEmpty())
+            start = QFileInfo(AppConfig::defaultGraphicsDir(m_context.fmVersionId()))
+                        .absolutePath()
+                    + QStringLiteral("/games");
+        const QString path = QFileDialog::getOpenFileName(
+            this, tr("FM27-Spielstand auswählen"), start,
+            tr("FM27-Spielstände (*.fm);;Alle Dateien (*)"));
+        if (path.isEmpty())
+            return;
+        m_liveSaveEdit->setText(QDir::toNativeSeparators(path));
+        m_liveSaveCheck->setChecked(true);
     });
     layout->addWidget(versionGroup);
 
@@ -283,6 +355,110 @@ QWidget *SettingsPage::buildClubTab()
     connect(chooseLogoButton, &QPushButton::clicked, this, &SettingsPage::chooseLogo);
     connect(m_logoRemoveButton, &QPushButton::clicked, this, &SettingsPage::removeLogo);
     layout->addWidget(clubGroup);
+
+    // Optional: portraits and crests from the game's graphics folder (face
+    // and logo packs). Off by default; without it nothing changes anywhere.
+    m_graphicsGroup = new QGroupBox(
+        tr("Spielerporträts und Vereinswappen aus dem Graphics-Ordner (optional)"), content);
+    m_graphicsGroup->setCheckable(true);
+    m_graphicsGroup->setChecked(false);
+    auto *graphicsOuter = new QVBoxLayout(m_graphicsGroup);
+    auto *graphicsInner = new QWidget(m_graphicsGroup);
+    graphicsOuter->addWidget(graphicsInner);
+    auto *graphicsForm = new QFormLayout(graphicsInner);
+    graphicsForm->setContentsMargins(0, 0, 0, 0);
+    auto *graphicsIntro = new QLabel(
+        tr("Nur sinnvoll, wenn du Grafikpakete (Spielergesichter, Vereinslogos) für "
+           "Football Manager installiert hast. Der Analyzer liest die Zuordnungen aus den "
+           "config.xml-Dateien der Pakete und zeigt Porträts über die Spieler-ID und Wappen "
+           "über die Vereins-ID. Am Graphics-Ordner wird nichts verändert."),
+        graphicsInner);
+    graphicsIntro->setWordWrap(true);
+    graphicsIntro->setObjectName(QStringLiteral("kpiCaption"));
+    graphicsForm->addRow(graphicsIntro);
+
+    m_graphicsDirEdit = new QLineEdit;
+    m_graphicsDirEdit->setMinimumWidth(260);
+    auto *graphicsBrowse = new QPushButton(tr("Durchsuchen…"));
+    auto *graphicsRescan = new QPushButton(tr("Neu einlesen"));
+    graphicsRescan->setToolTip(tr("Liest den Ordner erneut ein, z. B. nach dem Installieren "
+                                  "eines neuen Grafikpakets."));
+    auto *graphicsDirButtons = new QHBoxLayout;
+    graphicsDirButtons->setContentsMargins(0, 0, 0, 0);
+    graphicsDirButtons->addWidget(m_graphicsDirEdit, 1);
+    graphicsDirButtons->addWidget(graphicsBrowse);
+    graphicsDirButtons->addWidget(graphicsRescan);
+    auto *graphicsDirRow = new QWidget;
+    graphicsDirRow->setLayout(graphicsDirButtons);
+    graphicsForm->addRow(tr("Graphics-Ordner:"), graphicsDirRow);
+    m_graphicsStatus = new QLabel(graphicsInner);
+    m_graphicsStatus->setWordWrap(true);
+    m_graphicsStatus->setObjectName(QStringLiteral("kpiCaption"));
+    graphicsForm->addRow(QString(), m_graphicsStatus);
+
+    // The own club's FM id: exports carry no club ids, so it is set once
+    // here (typed, or read from the file name of the chosen crest).
+    m_clubFmIdEdit = new QLineEdit;
+    m_clubFmIdEdit->setMaximumWidth(140);
+    m_clubFmIdEdit->setValidator(new QRegularExpressionValidator(
+        QRegularExpression(QStringLiteral("\\d{0,10}")), m_clubFmIdEdit));
+    m_graphicsCrestPreview = new QLabel;
+    m_graphicsCrestPreview->setFixedSize(48, 48);
+    m_graphicsCrestPreview->setAlignment(Qt::AlignCenter);
+    auto *pickCrest = new QPushButton(tr("Wappen im Ordner wählen…"));
+    auto *crestRowLayout = new QHBoxLayout;
+    crestRowLayout->setContentsMargins(0, 0, 0, 0);
+    crestRowLayout->addWidget(m_clubFmIdEdit);
+    crestRowLayout->addWidget(m_graphicsCrestPreview);
+    crestRowLayout->addWidget(pickCrest);
+    crestRowLayout->addStretch(1);
+    auto *crestRow = new QWidget;
+    crestRow->setLayout(crestRowLayout);
+    graphicsForm->addRow(tr("Vereins-ID meines Vereins:"), crestRow);
+    auto *crestHint = new QLabel(
+        tr("Die Exporte enthalten keine Vereins-IDs. Trage die ID deines Vereins ein oder "
+           "wähle sein Wappen im Logo-Paket aus (die Zahl im Dateinamen, z. B. "
+           "1234_club.png, ist die ID). Ein oben selbst gewähltes Vereinslogo hat Vorrang."),
+        graphicsInner);
+    crestHint->setWordWrap(true);
+    crestHint->setObjectName(QStringLiteral("kpiCaption"));
+    graphicsForm->addRow(crestHint);
+    graphicsInner->setVisible(false);
+    connect(m_graphicsGroup, &QGroupBox::toggled, graphicsInner, &QWidget::setVisible);
+    layout->addWidget(m_graphicsGroup);
+
+    const auto currentGraphicsDir = [this] {
+        const QString text = m_graphicsDirEdit->text().trimmed();
+        return text.isEmpty() ? AppConfig::defaultGraphicsDir(m_context.fmVersionId()) : text;
+    };
+    connect(graphicsBrowse, &QPushButton::clicked, this, [this, currentGraphicsDir] {
+        const QString dir = QFileDialog::getExistingDirectory(
+            this, tr("Graphics-Ordner wählen"), currentGraphicsDir());
+        if (!dir.isEmpty())
+            m_graphicsDirEdit->setText(QDir::toNativeSeparators(dir));
+    });
+    connect(graphicsRescan, &QPushButton::clicked, this,
+            [this] { m_context.applyGraphicsSettings(true); });
+    connect(pickCrest, &QPushButton::clicked, this, [this, currentGraphicsDir] {
+        const QString file = QFileDialog::getOpenFileName(
+            this, tr("Wappen des eigenen Vereins wählen"), currentGraphicsDir(),
+            tr("Bilder (*.png *.jpg *.jpeg);;Alle Dateien (*)"));
+        if (file.isEmpty())
+            return;
+        const QRegularExpressionMatch match =
+            QRegularExpression(QStringLiteral("^(\\d{1,10})")).match(QFileInfo(file).baseName());
+        if (!match.hasMatch()) {
+            QMessageBox::information(
+                this, tr("Vereins-ID"),
+                tr("Im Dateinamen steht keine Vereins-ID. Bitte die ID von Hand eintragen "
+                   "oder das Bild oben als Vereinslogo wählen."));
+            return;
+        }
+        m_clubFmIdEdit->setText(match.captured(1));
+    });
+    connect(m_clubFmIdEdit, &QLineEdit::textChanged, this, &SettingsPage::updateGraphicsStatus);
+    connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this,
+            &SettingsPage::updateGraphicsStatus);
 
     auto *tacticGroup = new QGroupBox(tr("Lieblings-Taktiken"), content);
     auto *tacticForm = new QFormLayout(tacticGroup);
@@ -378,6 +554,48 @@ QWidget *SettingsPage::buildClubTab()
     return wrapScrollable(content);
 }
 
+void SettingsPage::updateGraphicsStatus()
+{
+    if (!m_graphicsStatus)
+        return;
+    const GraphicsLibrary &graphics = m_context.graphics();
+    const QLocale locale;
+    QString text;
+    switch (graphics.state()) {
+    case GraphicsLibrary::State::Off:
+        text = m_graphicsGroup->isChecked()
+                   ? tr("Wird beim Speichern eingelesen.")
+                   : QString();
+        break;
+    case GraphicsLibrary::State::Missing:
+        text = tr("Ordner nicht gefunden oder ohne Grafikpakete (config.xml): %1")
+                   .arg(QDir::toNativeSeparators(graphics.folder()));
+        break;
+    case GraphicsLibrary::State::Indexing:
+        text = tr("Grafikpakete werden eingelesen…");
+        break;
+    case GraphicsLibrary::State::Ready: {
+        const GraphicsIndex::Stats stats = graphics.stats();
+        text = tr("%1 Porträts und %2 Vereinswappen gefunden.")
+                   .arg(locale.toString(stats.portraits), locale.toString(stats.clubLogos));
+        if (stats.portraits == 0 && stats.clubLogos == 0)
+            text = tr("Keine Porträts oder Wappen gefunden. Liegen die Pakete mit ihrer "
+                      "config.xml in diesem Ordner?");
+        break;
+    }
+    }
+    m_graphicsStatus->setText(text);
+    m_graphicsStatus->setVisible(!text.isEmpty());
+
+    const quint32 id = GraphicsIndex::parseId(m_clubFmIdEdit->text());
+    const QPixmap crest = graphics.clubLogo(id, m_graphicsCrestPreview->width());
+    m_graphicsCrestPreview->setPixmap(crest);
+    m_graphicsCrestPreview->setToolTip(
+        crest.isNull() && id != 0 && graphics.isReady()
+            ? tr("Zu dieser Vereins-ID gibt es im Ordner kein Wappen.")
+            : QString());
+}
+
 void SettingsPage::chooseLogo()
 {
     const QString source = QFileDialog::getOpenFileName(
@@ -393,39 +611,32 @@ void SettingsPage::chooseLogo()
         return;
     }
 
-    // Copy into the data folder's assets dir under a database-specific name so
-    // each save keeps its own logo and the original file can move freely.
-    const QString assetsDir = m_context.paths().assetsDir();
-    QDir().mkpath(assetsDir);
-    const QString dest = QDir(assetsDir).filePath(
-        QStringLiteral("logo_%1.png").arg(m_context.currentDbName()));
-    QFile::remove(dest);
-    if (!pixmap.save(dest, "PNG")) {
+    // Stored inside the save's profile: duplicates and backups carry it
+    // along, and the original file can move freely.
+    QString error;
+    if (!m_context.setProfileImage(AppContext::ProfileImage::ClubLogo, pngBytes(pixmap), &error)) {
         QMessageBox::warning(this, tr("Vereinslogo"),
-                             tr("Das Logo konnte nicht gespeichert werden."));
+                             tr("Das Logo konnte nicht gespeichert werden.\n%1").arg(error));
         return;
     }
-
-    m_context.database().setSetting(QStringLiteral("club_logo_path"), dest);
     updateLogoPreview();
     m_context.notifySettingsChanged(); // refreshes the header
 }
 
 void SettingsPage::removeLogo()
 {
-    const QString path = m_context.database().setting(QStringLiteral("club_logo_path"));
-    if (!path.isEmpty())
-        QFile::remove(path);
-    m_context.database().removeSetting(QStringLiteral("club_logo_path"));
+    QString error;
+    if (!m_context.setProfileImage(AppContext::ProfileImage::ClubLogo, {}, &error))
+        QMessageBox::warning(this, tr("Vereinslogo"),
+                             tr("Das Logo konnte nicht entfernt werden.\n%1").arg(error));
     updateLogoPreview();
     m_context.notifySettingsChanged();
 }
 
 void SettingsPage::updateLogoPreview()
 {
-    const QString path = m_context.database().setting(QStringLiteral("club_logo_path"));
     QPixmap pixmap;
-    if (!path.isEmpty() && pixmap.load(path)) {
+    if (pixmap.loadFromData(m_context.profileImage(AppContext::ProfileImage::ClubLogo))) {
         m_logoPreview->setPixmap(
             pixmap.scaled(m_logoPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
         m_logoRemoveButton->setEnabled(true);
@@ -452,39 +663,31 @@ void SettingsPage::chooseFlag()
         return;
     }
 
-    // Copy into the data folder's assets dir under a database-specific name so
-    // each save keeps its own flag and the original file can move freely.
-    const QString assetsDir = m_context.paths().assetsDir();
-    QDir().mkpath(assetsDir);
-    const QString dest = QDir(assetsDir).filePath(
-        QStringLiteral("flag_%1.png").arg(m_context.currentDbName()));
-    QFile::remove(dest);
-    if (!pixmap.save(dest, "PNG")) {
+    QString error;
+    if (!m_context.setProfileImage(AppContext::ProfileImage::NationalFlag, pngBytes(pixmap),
+                                   &error)) {
         QMessageBox::warning(this, tr("National-Flagge"),
-                             tr("Die Flagge konnte nicht gespeichert werden."));
+                             tr("Die Flagge konnte nicht gespeichert werden.\n%1").arg(error));
         return;
     }
-
-    m_context.database().setSetting(QStringLiteral("national_flag_path"), dest);
     updateFlagPreview();
     m_context.notifySettingsChanged(); // refreshes the header
 }
 
 void SettingsPage::removeFlag()
 {
-    const QString path = m_context.database().setting(QStringLiteral("national_flag_path"));
-    if (!path.isEmpty())
-        QFile::remove(path);
-    m_context.database().removeSetting(QStringLiteral("national_flag_path"));
+    QString error;
+    if (!m_context.setProfileImage(AppContext::ProfileImage::NationalFlag, {}, &error))
+        QMessageBox::warning(this, tr("National-Flagge"),
+                             tr("Die Flagge konnte nicht entfernt werden.\n%1").arg(error));
     updateFlagPreview();
     m_context.notifySettingsChanged();
 }
 
 void SettingsPage::updateFlagPreview()
 {
-    const QString path = m_context.database().setting(QStringLiteral("national_flag_path"));
     QPixmap pixmap;
-    if (!path.isEmpty() && pixmap.load(path)) {
+    if (pixmap.loadFromData(m_context.profileImage(AppContext::ProfileImage::NationalFlag))) {
         m_flagPreview->setPixmap(
             pixmap.scaled(m_flagPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
         m_flagRemoveButton->setEnabled(true);
@@ -706,24 +909,27 @@ QWidget *SettingsPage::buildThemeTab()
     m_presetCombo = new QComboBox;
     m_presetCombo->setMinimumWidth(280);
     m_presetCombo->setMaxVisibleItems(20);
-    // Grouped by league: a disabled league caption above its clubs.
-    QString league;
-    for (const ClubTheme &preset : clubThemes()) {
-        if (preset.league != league) {
-            league = preset.league;
-            m_presetCombo->insertSeparator(m_presetCombo->count());
-            m_presetCombo->addItem(QStringLiteral("— %1 —").arg(league));
-            if (auto *model = qobject_cast<QStandardItemModel *>(m_presetCombo->model()))
-                model->item(m_presetCombo->count() - 1)->setEnabled(false);
-        }
-        m_presetCombo->addItem(preset.displayName, preset.id);
-    }
-    m_presetCombo->insertSeparator(m_presetCombo->count());
-    m_presetCombo->addItem(tr("Benutzerdefiniert"), QStringLiteral("custom"));
+    m_templates = std::make_unique<ColorTemplateStore>(m_context.paths().colorTemplatesFile());
+    m_templates->load();
+    fillPresetCombo();
     m_modeCombo = new QComboBox;
     m_modeCombo->addItem(tr("Nacht (dunkel)"), QStringLiteral("night"));
     m_modeCombo->addItem(tr("Tag (hell)"), QStringLiteral("day"));
-    topForm->addRow(tr("Vereins-/Farbvorlage:"), m_presetCombo);
+    auto *presetRow = new QHBoxLayout;
+    presetRow->setSpacing(8);
+    presetRow->addWidget(m_presetCombo, 1);
+    auto *saveTemplateButton = new QPushButton(tr("Als eigene Vorlage speichern …"));
+    saveTemplateButton->setToolTip(
+        tr("Speichert die Farben unten (Tag und Nacht) als eigene Vorlage. Eigene Vorlagen "
+           "stehen in allen Spielständen zur Wahl und bleiben bei Updates erhalten."));
+    m_deleteTemplateButton = new QPushButton(tr("Vorlage löschen"));
+    m_deleteTemplateButton->setEnabled(false);
+    presetRow->addWidget(saveTemplateButton);
+    presetRow->addWidget(m_deleteTemplateButton);
+    connect(saveTemplateButton, &QPushButton::clicked, this, &SettingsPage::saveColorTemplate);
+    connect(m_deleteTemplateButton, &QPushButton::clicked, this,
+            &SettingsPage::deleteColorTemplate);
+    topForm->addRow(tr("Vereins-/Farbvorlage:"), presetRow);
     topForm->addRow(tr("Aktiver Modus:"), m_modeCombo);
     auto *presetHint = new QLabel(
         tr("Eine Vorlage setzt eine ruhige Anthrazit-Basis und nur die Vereinsfarben als "
@@ -737,10 +943,34 @@ QWidget *SettingsPage::buildThemeTab()
 
     connect(m_presetCombo, &QComboBox::activated, this, [this] {
         const QString id = m_presetCombo->currentData().toString();
+        m_deleteTemplateButton->setEnabled(ColorTemplateStore::isTemplateId(id));
         if (id == QLatin1String("custom"))
             return;
         applyPresetToPending(id);
     });
+
+    // --- Club header ---
+    auto *headerGroup = new QGroupBox(tr("Vereinskopf"), content);
+    auto *headerForm = new QFormLayout(headerGroup);
+    m_headerStyleCombo = new QComboBox;
+    m_headerStyleCombo->addItem(tr("Vereinsfarben mit Wappen"), QStringLiteral("gradient"));
+    m_headerStyleCombo->addItem(tr("Einfarbig (Farbe „Kopfzeile“)"), QStringLiteral("solid"));
+    headerForm->addRow(tr("Darstellung:"), m_headerStyleCombo);
+    m_watermarkCheck = new QCheckBox(tr("Wappen zusätzlich als dezente Silhouette zeigen"));
+    headerForm->addRow(QString(), m_watermarkCheck);
+    auto *headerHint = new QLabel(
+        tr("Der Vereinskopf nutzt die Farbe „Primär“ als Fläche und „Interaktion“ als "
+           "schmalen Streifen. Sind die Farben zu hell oder zu grell, dunkelt der Analyzer "
+           "die Fläche so weit ab, dass Name und Stadion lesbar bleiben."),
+        headerGroup);
+    headerHint->setWordWrap(true);
+    headerHint->setObjectName(QStringLiteral("kpiCaption"));
+    headerForm->addRow(headerHint);
+    connect(m_headerStyleCombo, &QComboBox::currentIndexChanged, this, [this] {
+        m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
+                                     != QLatin1String("solid"));
+    });
+    layout->addWidget(headerGroup);
 
     // --- Per-mode color roles ---
     const QList<QPair<QString, QString>> colorKeys = {
@@ -788,9 +1018,160 @@ QWidget *SettingsPage::buildThemeTab()
     return wrapScrollable(content);
 }
 
+void SettingsPage::fillPresetCombo()
+{
+    QSignalBlocker blocker(m_presetCombo);
+    m_presetCombo->clear();
+
+    struct Entry {
+        QString league;
+        QString name;
+        QString id;
+    };
+    QList<Entry> entries;
+    for (const ClubTheme &preset : clubThemes())
+        entries.append({preset.league, preset.displayName, preset.id});
+    const QString customLeague = tr("Custom");
+    for (const ColorTemplate &own : m_templates->templates()) {
+        entries.append({own.league.isEmpty() ? customLeague : own.league,
+                        tr("%1 (eigene)").arg(own.name), own.id});
+    }
+    // Neutral first (empty league), leagues alphabetically, "Custom" last.
+    std::stable_sort(entries.begin(), entries.end(), [&](const Entry &a, const Entry &b) {
+        const auto rank = [&](const Entry &e) {
+            return e.league.isEmpty() ? 0 : (e.league == customLeague ? 2 : 1);
+        };
+        if (rank(a) != rank(b))
+            return rank(a) < rank(b);
+        const int league = QString::localeAwareCompare(a.league, b.league);
+        if (league != 0)
+            return league < 0;
+        return QString::localeAwareCompare(a.name, b.name) < 0;
+    });
+
+    // Grouped by league: a disabled league caption above its entries.
+    QString league;
+    for (const Entry &entry : std::as_const(entries)) {
+        if (entry.league != league) {
+            league = entry.league;
+            m_presetCombo->insertSeparator(m_presetCombo->count());
+            m_presetCombo->addItem(QStringLiteral("— %1 —").arg(league));
+            if (auto *model = qobject_cast<QStandardItemModel *>(m_presetCombo->model()))
+                model->item(m_presetCombo->count() - 1)->setEnabled(false);
+        }
+        m_presetCombo->addItem(entry.name, entry.id);
+    }
+    m_presetCombo->insertSeparator(m_presetCombo->count());
+    m_presetCombo->addItem(tr("Benutzerdefiniert (nicht gespeichert)"), QStringLiteral("custom"));
+}
+
+void SettingsPage::selectPresetInCombo(const QString &presetId)
+{
+    QSignalBlocker blocker(m_presetCombo);
+    const int index = m_presetCombo->findData(presetId);
+    m_presetCombo->setCurrentIndex(index >= 0 ? index
+                                              : m_presetCombo->findData(QStringLiteral("custom")));
+    if (m_deleteTemplateButton)
+        m_deleteTemplateButton->setEnabled(ColorTemplateStore::isTemplateId(
+            m_presetCombo->currentData().toString()));
+}
+
+void SettingsPage::saveColorTemplate()
+{
+    QDialog dialog(this);
+    dialog.setWindowTitle(tr("Eigene Farbvorlage speichern"));
+    auto *form = new QFormLayout(&dialog);
+    auto *nameEdit = new QLineEdit(&dialog);
+    if (const ColorTemplate *current = m_templates->find(m_pendingPreset))
+        nameEdit->setText(current->name);
+    auto *leagueCombo = new QComboBox(&dialog);
+    leagueCombo->setEditable(true);
+    leagueCombo->addItem(tr("Custom"), QString());
+    QStringList leagues;
+    for (const ClubTheme &preset : clubThemes()) {
+        if (!preset.league.isEmpty() && !leagues.contains(preset.league))
+            leagues << preset.league;
+    }
+    for (const QString &own : m_templates->leagues()) {
+        if (!leagues.contains(own))
+            leagues << own;
+    }
+    std::sort(leagues.begin(), leagues.end(), [](const QString &a, const QString &b) {
+        return QString::localeAwareCompare(a, b) < 0;
+    });
+    for (const QString &league : std::as_const(leagues))
+        leagueCombo->addItem(league, league);
+    if (const ColorTemplate *current = m_templates->find(m_pendingPreset)) {
+        const int index = leagueCombo->findData(current->league);
+        if (index >= 0)
+            leagueCombo->setCurrentIndex(index);
+    }
+    form->addRow(tr("Name:"), nameEdit);
+    form->addRow(tr("Liga:"), leagueCombo);
+    auto *hint = new QLabel(tr("Eine Liga sortiert die Vorlage zu den Vereinen dieser Liga. "
+                               "„Custom“ sammelt Vorlagen ohne Liga. Gleicher Name in "
+                               "derselben Liga überschreibt die Vorlage."),
+                            &dialog);
+    hint->setWordWrap(true);
+    hint->setObjectName(QStringLiteral("kpiCaption"));
+    form->addRow(hint);
+    auto *buttons =
+        new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, &dialog);
+    form->addRow(buttons);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    connect(nameEdit, &QLineEdit::textChanged, &dialog, [buttons](const QString &text) {
+        buttons->button(QDialogButtonBox::Save)->setEnabled(!text.trimmed().isEmpty());
+    });
+    buttons->button(QDialogButtonBox::Save)->setEnabled(!nameEdit->text().trimmed().isEmpty());
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    // Typed league text that matches no entry: use it as a new league.
+    QString league = leagueCombo->currentText().trimmed();
+    if (league == tr("Custom"))
+        league.clear();
+    const QString id = m_templates->save(nameEdit->text(), league, m_pendingColors);
+    if (id.isEmpty()) {
+        QMessageBox::critical(this, tr("Farbvorlage"),
+                              tr("Die Vorlage konnte nicht gespeichert werden.\n\n%1")
+                                  .arg(m_templates->lastError()));
+        return;
+    }
+    m_pendingPreset = id;
+    fillPresetCombo();
+    selectPresetInCombo(id);
+}
+
+void SettingsPage::deleteColorTemplate()
+{
+    const QString id = m_presetCombo->currentData().toString();
+    const ColorTemplate *entry = m_templates->find(id);
+    if (!entry)
+        return;
+    if (QMessageBox::question(this, tr("Farbvorlage löschen"),
+                              tr("Die eigene Vorlage „%1“ löschen? Spielstände, die sie "
+                                 "nutzen, behalten ihre Farben.")
+                                  .arg(entry->name))
+        != QMessageBox::Yes)
+        return;
+    if (!m_templates->remove(id)) {
+        QMessageBox::critical(this, tr("Farbvorlage"),
+                              tr("Die Vorlage konnte nicht gelöscht werden.\n\n%1")
+                                  .arg(m_templates->lastError()));
+        return;
+    }
+    // The colors stay; they are just no longer a named template.
+    m_pendingPreset = QStringLiteral("custom");
+    fillPresetCombo();
+    selectPresetInCombo(m_pendingPreset);
+}
+
 void SettingsPage::applyPresetToPending(const QString &presetId)
 {
-    const QHash<QString, QString> preset = presetThemeSettings(presetId);
+    QHash<QString, QString> preset = presetThemeSettings(presetId);
+    if (const ColorTemplate *own = m_templates->find(presetId))
+        preset = own->colors;
     for (auto it = m_colorButtons.begin(); it != m_colorButtons.end(); ++it) {
         const QString value = preset.value(it.key());
         if (value.isEmpty())
@@ -806,11 +1187,7 @@ void SettingsPage::applyPresetToPending(const QString &presetId)
 void SettingsPage::markCustomPreset()
 {
     m_pendingPreset = QStringLiteral("custom");
-    const int index = m_presetCombo->findData(QStringLiteral("custom"));
-    if (index >= 0) {
-        QSignalBlocker blocker(m_presetCombo);
-        m_presetCombo->setCurrentIndex(index);
-    }
+    selectPresetInCombo(m_pendingPreset);
 }
 
 QWidget *SettingsPage::buildDatabaseTab()
@@ -911,6 +1288,15 @@ void SettingsPage::refresh()
     m_importDirEdit->setText(QDir::toNativeSeparators(config.htmlExportDir()));
     m_importDirEdit->setPlaceholderText(
         QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir(m_context.fmVersionId())));
+    m_graphicsGroup->setChecked(config.graphicsEnabled());
+    m_attributeMaskingCheck->setChecked(config.attributeMasking());
+    m_liveSaveCheck->setChecked(config.liveSaveEnabled());
+    m_liveSaveEdit->setText(QDir::toNativeSeparators(config.liveSavePath()));
+    m_graphicsDirEdit->setText(QDir::toNativeSeparators(config.graphicsDir()));
+    m_graphicsDirEdit->setPlaceholderText(
+        QDir::toNativeSeparators(AppConfig::defaultGraphicsDir(m_context.fmVersionId())));
+    m_clubFmIdEdit->setText(m_context.database().setting(QStringLiteral("club_fm_id")));
+    updateGraphicsStatus();
 
     QSet<QString> clubSet;
     for (const Player &player : m_context.store().players()) {
@@ -1019,13 +1405,20 @@ void SettingsPage::refresh()
         themeSettings.value(QStringLiteral("current_mode")) == QLatin1String("day") ? 1 : 0);
     m_pendingPreset = themeSettings.value(QStringLiteral("theme_preset"),
                                           QStringLiteral("custom"));
+    m_templates->load(); // another save's settings page may have added one
+    fillPresetCombo();
+    selectPresetInCombo(m_pendingPreset);
     {
-        QSignalBlocker blocker(m_presetCombo);
-        const int presetIndex = m_presetCombo->findData(m_pendingPreset);
-        m_presetCombo->setCurrentIndex(
-            presetIndex >= 0 ? presetIndex
-                             : m_presetCombo->findData(QStringLiteral("custom")));
+        QSignalBlocker blocker(m_headerStyleCombo);
+        const int style = m_headerStyleCombo->findData(
+            themeSettings.value(QStringLiteral("header_style"), QStringLiteral("gradient")));
+        m_headerStyleCombo->setCurrentIndex(std::max(0, style));
     }
+    m_watermarkCheck->setChecked(
+        themeSettings.value(QStringLiteral("header_crest_watermark"), QStringLiteral("true"))
+        != QLatin1String("false"));
+    m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
+                                 != QLatin1String("solid"));
     m_pendingColors.clear();
     for (auto it = m_colorButtons.begin(); it != m_colorButtons.end(); ++it) {
         const QString value = themeSettings.value(it.key());
@@ -1053,13 +1446,13 @@ void SettingsPage::updateContrastWarning()
         if (text.isValid() && bg.isValid()) {
             const double ratio = contrastRatio(text, bg);
             if (ratio < 4.5) {
-                warnings << tr("⚠ %1: Kontrast Text/Hintergrund nur %2:1 (WCAG empfiehlt ≥ 4,5:1)")
+                warnings << tr("%1: Kontrast Text/Hintergrund nur %2:1 (WCAG empfiehlt mindestens 4,5:1)")
                                 .arg(mode == QLatin1String("night") ? tr("Nacht") : tr("Tag"))
                                 .arg(ratio, 0, 'f', 1);
             }
         }
     }
-    m_contrastLabel->setText(warnings.isEmpty() ? tr("✓ Kontrastwerte in Ordnung")
+    m_contrastLabel->setText(warnings.isEmpty() ? tr("Kontrast Text/Hintergrund in Ordnung")
                                                 : warnings.join(QLatin1Char('\n')));
 }
 
@@ -1067,21 +1460,38 @@ void SettingsPage::saveAll()
 {
     AppConfig &config = m_context.config();
 
-    // --- Club tab (per-database settings) ---
-    Database &db = m_context.database();
-    const auto saveSetting = [&db](const QString &key, const QString &value) {
-        if (value.isEmpty())
-            db.removeSetting(key);
-        else
-            db.setSetting(key, value);
-    };
     // The weight spins show the version the page was refreshed for; a version
     // switch below must not redirect them to the new one.
     const QString weightsVersion = m_context.fmVersionId();
     QString versionError;
     if (!m_context.setFmVersion(m_fmVersionCombo->currentData().toString(), &versionError))
         QMessageBox::warning(this, tr("Football-Manager-Version"), versionError);
+
+    // Everything below belongs to the open save's profile and is written as
+    // one transaction: either all of it reaches the save, or nothing does.
+    AppConfig::Transaction transaction(config);
+    Database &db = m_context.database();
+    bool clubSettingsOk = transaction.isActive();
+    const auto saveSetting = [&db, &clubSettingsOk](const QString &key, const QString &value) {
+        if (!clubSettingsOk)
+            return;
+        clubSettingsOk = value.isEmpty() ? db.removeSetting(key) : db.setSetting(key, value);
+    };
+
+    // --- Club tab (per-database settings) ---
     config.setHtmlExportDir(m_importDirEdit->text().trimmed());
+    config.setGraphicsEnabled(m_graphicsGroup->isChecked());
+    config.setAttributeMasking(m_attributeMaskingCheck->isChecked());
+    {
+        // A different save (or masking switched) is read in afresh.
+        const QString livePath = QDir::fromNativeSeparators(m_liveSaveEdit->text().trimmed());
+        if (livePath != config.liveSavePath() || !config.liveSaveEnabled())
+            config.setLiveSaveLastModified(0);
+        config.setLiveSavePath(livePath);
+        config.setLiveSaveEnabled(m_liveSaveCheck->isChecked() && !livePath.isEmpty());
+    }
+    config.setGraphicsDir(QDir::fromNativeSeparators(m_graphicsDirEdit->text().trimmed()));
+    saveSetting(QStringLiteral("club_fm_id"), m_clubFmIdEdit->text().trimmed());
     saveSetting(QStringLiteral("user_club"), m_userClubCombo->currentText());
     saveSetting(QStringLiteral("second_team_club"), m_secondClubCombo->currentText());
     saveSetting(QStringLiteral("club_country_code"),
@@ -1164,9 +1574,27 @@ void SettingsPage::saveAll()
                                                    : m_pendingPreset);
     for (auto it = m_pendingColors.constBegin(); it != m_pendingColors.constEnd(); ++it)
         themeSettings.insert(it.key(), it.value());
+    themeSettings.insert(QStringLiteral("header_style"),
+                         m_headerStyleCombo->currentData().toString());
+    themeSettings.insert(QStringLiteral("header_crest_watermark"),
+                         m_watermarkCheck->isChecked() ? QStringLiteral("true")
+                                                       : QStringLiteral("false"));
     config.saveThemeSettings(themeSettings);
 
+    QString error = clubSettingsOk ? QString() : db.errorString();
+    if (!clubSettingsOk || !transaction.commit(&error)) {
+        // Nothing was written; the page shows the stored state again.
+        QMessageBox::critical(
+            this, tr("Einstellungen"),
+            tr("Die Einstellungen konnten nicht gespeichert werden. Der Spielstand behält "
+               "seinen bisherigen Stand.\n\n%1")
+                .arg(error.isEmpty() ? config.lastError() : error));
+        refresh();
+        return;
+    }
+
     m_context.reloadEngines();
+    m_context.applyGraphicsSettings();
     m_theme.setMode(m_modeCombo->currentData().toString());
     m_theme.apply();
     m_context.notifySettingsChanged();

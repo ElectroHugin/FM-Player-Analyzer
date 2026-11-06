@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AppPaths.h"
+#include "GraphicsLibrary.h"
 #include "core/AppConfig.h"
 #include "core/Constants.h"
 #include "core/Database.h"
@@ -9,6 +10,7 @@
 #include "core/PlayerStatus.h"
 #include "core/PlayerStore.h"
 #include "core/Registration.h"
+#include "core/ScoutSearch.h"
 #include "core/SquadBuilder.h"
 #include "core/TacticExplorer.h"
 
@@ -63,9 +65,52 @@ public:
     bool openDatabase(const QString &dbName, QString *errorOut = nullptr);
 
     // Creates a new, empty save for the given FM version and opens it. Fails
-    // if a save with that name already exists.
+    // if a save with that name already exists. The new save's profile starts
+    // from the defaults, or as a copy of the profile of save copyProfileFrom
+    // (weights, colors, options, roles/tactics, logo; not club or players).
     bool createDatabase(const QString &dbName, const QString &fmVersionId,
                         QString *errorOut = nullptr);
+    bool createDatabase(const QString &dbName, const QString &fmVersionId,
+                        const QString &copyProfileFrom, QString *errorOut);
+
+    // --- Profile of the open save (see desktop/PROFILE.md) ---
+    // Weights, options and colors: config() (attached to the open save).
+    // Roles/tactics: definitions(); edits are stored with saveDefinitions().
+    // Club/national settings, favorites, bridges: database().setting().
+    // Logo and flag: profileImage()/setProfileImage() (PNG bytes; empty = none).
+    enum class ProfileImage { ClubLogo, NationalFlag };
+    QByteArray profileImage(ProfileImage image);
+    bool setProfileImage(ProfileImage image, const QByteArray &png, QString *errorOut = nullptr);
+    // --- Optional pictures from the FM graphics folder (off by default) ---
+    // graphics() is idle unless the open save enabled it (config().graphicsEnabled()).
+    GraphicsLibrary &graphics() { return *m_graphics; }
+    // Re-applies the save's graphics settings (after open/settings save).
+    void applyGraphicsSettings(bool forceRescan = false);
+    // FM club id for a club name: the own club's id (setting "club_fm_id")
+    // or one remembered in "club_fm_ids" (JSON {name: id}). 0 = unknown.
+    quint32 clubFmId(const QString &clubName);
+    bool setClubFmId(const QString &clubName, quint32 id);
+    // Crest for any club, scaled to size: for the own club the logo stored in
+    // the profile wins (a deliberate choice), then the graphics folder by club
+    // id. Null pixmap = none (pages then show nothing, as before).
+    QPixmap clubCrest(const QString &clubName, int size);
+
+    // The image the club header shows (club crest, or the flag in national
+    // mode). Club mode: the PNG stored in the profile, otherwise (graphics
+    // folder on) the own club's crest by club id. Empty = none.
+    QByteArray headerCrest();
+    // The own club's crest as PNG/image bytes: the profile logo, else the
+    // graphics folder, else the copy kept in the save (see
+    // refreshCachedCrest). Empty = none (initials are shown).
+    QByteArray ownClubCrestData();
+    // Keeps the save's copy of the graphics-folder crest current: renews it
+    // when the folder has a (different) crest for the own club, drops it when
+    // the own club changed. Runs after a save opens, after imports and when
+    // the graphics index is ready.
+    void refreshCachedCrest();
+    // Writes the edited definitions (definitions().setRoot()) into the open
+    // save's profile and reloads them with the engines.
+    bool saveDefinitions(QString *errorOut = nullptr);
 
     // Re-reads players + ratings from the database into memory.
     void reloadFromDatabase();
@@ -101,10 +146,10 @@ public:
     // favorites, …) so header and pages refresh without a full reload.
     void notifySettingsChanged() { emit dataChanged(); }
 
-    // Re-reads config.ini and definitions.json from disk (after the migration
-    // wizard replaced them) and refreshes the engines. Returns false if the
-    // definitions failed to reload; the previously loaded definitions are kept
-    // intact in that case (errorString via definitions()).
+    // Re-reads config.ini and the open save's profile (settings, roles and
+    // tactics) and refreshes the engines. Returns false if the definitions
+    // failed to reload; the previously loaded definitions are kept intact in
+    // that case (errorString via definitions()).
     bool reloadConfigAndDefinitions();
 
     // Player the profile page should show on next activation (sidebar search,
@@ -127,10 +172,34 @@ public:
         m_pendingComparisonUids.clear();
         return uids;
     }
+    // Role the comparison page should open with (transfer-target cards).
+    void setPendingComparisonRole(const QString &role) { m_pendingComparisonRole = role; }
+    QString takePendingComparisonRole()
+    {
+        const QString role = m_pendingComparisonRole;
+        m_pendingComparisonRole.clear();
+        return role;
+    }
     void addPendingComparisonUid(const QString &uid)
     {
         if (!m_pendingComparisonUids.contains(uid))
             m_pendingComparisonUids.append(uid);
+    }
+    // Scouting search handed over from the Best XI (bridge search by
+    // right-click); the scouting page takes it on its next refresh.
+    void setPendingScoutSearch(const ScoutSearchRequest &request)
+    {
+        m_pendingScoutSearch = request;
+        m_hasPendingScoutSearch = true;
+    }
+    bool takePendingScoutSearch(ScoutSearchRequest *request)
+    {
+        if (!m_hasPendingScoutSearch)
+            return false;
+        *request = m_pendingScoutSearch;
+        m_pendingScoutSearch = ScoutSearchRequest();
+        m_hasPendingScoutSearch = false;
+        return true;
     }
 
     // Background work (HTML import, DWRS recalcs) reads the engines and
@@ -214,16 +283,22 @@ public:
 signals:
     // Player data or ratings changed — pages must refresh.
     void dataChanged();
+    // The open save's profile was (re)loaded: colors, day/night mode, logo,
+    // weights. Emitted before the players of a newly opened save load.
+    void profileChanged();
     // A different database file was opened.
     void databaseChanged(const QString &dbName);
     // Switch to the given page (handled by MainWindow).
     void navigationRequested(const QString &pageId);
 
 private:
-    // Loads the version's definitions (seeding them on first use) and rebuilds
-    // the engines. No-op if they are already loaded. On failure the current
-    // definitions stay untouched.
-    bool activateFmVersion(const QString &versionId, QString *errorOut);
+    // Loads the roles/tactics of db's profile for this version (seeding them
+    // on first use, applying newer shipped data) and rebuilds the engines.
+    bool activateFmVersion(Database &db, const QString &versionId, QString *errorOut);
+    bool openDatabaseImpl(const QString &dbName, const QString &copyProfileFrom,
+                          QString *errorOut);
+    bool copyProfile(Database &target, const QString &sourceName, QString *errorOut);
+    void migrateProfileImages(Database &db);
 
     // Rebuilds m_latestRatings/m_ratings from dwrs_latest against the store.
     void rebuildRatingsCache();
@@ -236,11 +311,15 @@ private:
     std::unique_ptr<DwrsEngine> m_dwrsEngine;
     std::unique_ptr<SquadBuilder> m_squadBuilder;
     std::unique_ptr<TacticExplorer> m_tacticExplorer;
+    std::unique_ptr<GraphicsLibrary> m_graphics;
     RoleRatings m_ratings;
     LatestRatings m_latestRatings;
     QString m_pendingProfileUid;
     QString m_pendingEditUid;
     QStringList m_pendingComparisonUids;
+    QString m_pendingComparisonRole;
+    ScoutSearchRequest m_pendingScoutSearch;
+    bool m_hasPendingScoutSearch = false;
     bool m_nationalUiMode = false;
     QList<QFuture<void>> m_backgroundTasks;
 };
