@@ -300,7 +300,10 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         }
         if (current)
             current->refresh();
-        maybeShowWelcome();
+        // Not right here: dataChanged fires in the middle of an import's last
+        // step, and an assistant opened inside it would hold that step until
+        // it closes. Shortly afterwards, once the import is done.
+        m_welcomeTimer.start();
     });
     connect(&m_recalcWatcher, &QFutureWatcher<RatingsUpdater::Result>::finished, this, [this] {
         const RatingsUpdater::Result result = m_recalcWatcher.result();

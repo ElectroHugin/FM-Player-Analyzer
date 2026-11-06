@@ -10,6 +10,8 @@
 #include <QPointer>
 #include <QtConcurrentRun>
 
+#include <memory>
+
 namespace fm {
 
 namespace {
@@ -89,12 +91,16 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
             Qt::QueuedConnection);
     };
 
-    auto *watcher = new QFutureWatcher<ImportPipelineResult>(parent);
-    QObject::connect(watcher, &QFutureWatcher<ImportPipelineResult>::finished, parent,
-                     [watcher, dialog, &context, onDone = std::move(onDone)] {
-                         // takeResult(): move the (large) state out instead of
-                         // copying it.
-                         ImportPipelineResult result = watcher->future().takeResult();
+    // The worker leaves its (large) result here and the UI thread moves it
+    // out. Not QFuture::takeResult(): that resets the future, which then never
+    // reports "finished" again, so waitForBackgroundTasks() (e.g. when the
+    // welcome assistant or the settings are saved after an import) waited
+    // forever and the app froze.
+    auto holder = std::make_shared<ImportPipelineResult>();
+    auto *watcher = new QFutureWatcher<void>(parent);
+    QObject::connect(watcher, &QFutureWatcher<void>::finished, parent,
+                     [watcher, holder, dialog, &context, onDone = std::move(onDone)] {
+                         ImportPipelineResult result = std::move(*holder);
                          watcher->deleteLater();
                          dialog->finish();
                          if (result.import.success)
@@ -105,10 +111,10 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
                              onDone(result);
                      });
 
-    const auto future = QtConcurrent::run([request, definitions, engine, stage] {
-        return ImportPipeline::run(request, *definitions, *engine, stage);
+    const QFuture<void> future = QtConcurrent::run([request, definitions, engine, stage, holder] {
+        *holder = ImportPipeline::run(request, *definitions, *engine, stage);
     });
-    context.registerBackgroundTask(QFuture<void>(future));
+    context.registerBackgroundTask(future);
     watcher->setFuture(future);
 }
 
