@@ -260,6 +260,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         for (TacticPitchWidget *pitch : findChildren<TacticPitchWidget *>())
             pitch->update();
         updateHeader(); // the crest may come from the graphics folder
+        updateDbLabel(); // and the save switcher shows the same crest
     });
     connect(&m_context, &AppContext::navigationRequested, this, &MainWindow::navigateTo);
     connect(&m_context, &AppContext::databaseChanged, this, [this](const QString &) {

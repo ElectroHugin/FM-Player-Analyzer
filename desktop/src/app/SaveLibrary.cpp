@@ -1,4 +1,8 @@
 #include "SaveLibrary.h"
+#include <QJsonObject>
+#include <QJsonDocument>
+#include "core/GraphicsIndex.h"
+#include "GraphicsLibrary.h"
 
 #include "AppContext.h"
 #include "core/Constants.h"
@@ -37,7 +41,8 @@ QStringList sidecars(const QString &dbPath)
     return {dbPath, dbPath + QStringLiteral("-wal"), dbPath + QStringLiteral("-shm")};
 }
 
-void readInfo(SaveInfo &info)
+// clubFmIdOut: the own club's game id, for a crest from the graphics folder.
+void readInfo(SaveInfo &info, quint32 *clubFmIdOut)
 {
     const QString connName =
         QStringLiteral("saveinfo_%1").arg(QUuid::createUuid().toString(QUuid::Id128));
@@ -50,9 +55,11 @@ void readInfo(SaveInfo &info)
             if (settings.exec(QStringLiteral("SELECT key, value FROM settings WHERE key IN "
                                              "('fm_version','user_club','full_club_name',"
                                              "'club_logo_path','last_import_at',"
-                                             "'favorite_tactic_1')"))) {
+                                             "'favorite_tactic_1','club_fm_id','club_fm_ids')"))) {
                 QString userClub;
                 QString fullName;
+                QString ownId;
+                QString idMap;
                 while (settings.next()) {
                     const QString key = settings.value(0).toString();
                     const QString value = settings.value(1).toString();
@@ -68,8 +75,20 @@ void readInfo(SaveInfo &info)
                         info.lastImport = QDateTime::fromString(value, Qt::ISODate);
                     else if (key == QLatin1String("favorite_tactic_1"))
                         info.tactic = value;
+                    else if (key == QLatin1String("club_fm_id"))
+                        ownId = value;
+                    else if (key == QLatin1String("club_fm_ids"))
+                        idMap = value;
                 }
                 info.clubName = fullName.isEmpty() ? userClub : fullName;
+                quint32 id = GraphicsIndex::parseId(ownId);
+                if (id == 0 && !userClub.isEmpty())
+                    id = GraphicsIndex::parseId(QJsonDocument::fromJson(idMap.toUtf8())
+                                                    .object()
+                                                    .value(userClub)
+                                                    .toVariant()
+                                                    .toString());
+                *clubFmIdOut = id;
             }
             ProfileStore::readDocument(connName, ProfileStore::clubLogoDocument(), info.logoData);
             QSqlQuery count(db);
@@ -99,6 +118,10 @@ SaveInfo current(AppContext &context)
     const QString fullName = context.database().setting(QStringLiteral("full_club_name"));
     info.clubName = fullName.isEmpty() ? context.userClub() : fullName;
     info.logoData = context.profileImage(AppContext::ProfileImage::ClubLogo);
+    // Same crest as the club header: own logo first, else the graphics folder.
+    if (info.logoData.isEmpty())
+        info.logoData =
+            context.graphics().clubLogoFile(context.clubFmId(context.userClub()));
     info.playerCount = static_cast<int>(context.store().size());
     info.tactic = context.database().setting(QStringLiteral("favorite_tactic_1"));
     info.lastImport = QDateTime::fromString(
@@ -115,7 +138,10 @@ QList<SaveInfo> scan(AppContext &context)
         info.filePath = context.paths().databaseFile(name);
         info.modified = QFileInfo(info.filePath).lastModified();
         info.lastOpened = context.config().databaseLastOpened(name);
-        readInfo(info);
+        quint32 clubFmId = 0;
+        readInfo(info, &clubFmId);
+        if (info.logoData.isEmpty() && info.logoPath.isEmpty() && clubFmId != 0)
+            info.logoData = context.graphics().clubLogoFile(clubFmId);
         saves.append(info);
     }
     std::sort(saves.begin(), saves.end(), [](const SaveInfo &a, const SaveInfo &b) {
