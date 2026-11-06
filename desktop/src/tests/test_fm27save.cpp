@@ -280,6 +280,8 @@ private slots:
         ImportTable all;
         Fm27SaveImport::buildTable(save, {false}, &all);
         QCOMPARE(all.rows.size(), 7);
+        QCOMPARE(all.rows.at(0).at(column(all, QStringLiteral("Transfer Value"))), QStringLiteral("€2.3M"));
+        QCOMPARE(all.rows.at(2).at(column(all, QStringLiteral("Wage"))), QStringLiteral("€58K p/w"));
         for (const QStringList &row : all.rows) {
             for (int c = 13; c < row.size(); ++c)
                 QVERIFY(!row.at(c).contains(QLatin1Char('-')));

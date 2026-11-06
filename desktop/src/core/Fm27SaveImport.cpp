@@ -426,7 +426,9 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
         const double wageEuros = double(p.weeklyWage) * kEurosPerPound;
         if (ownSquad) {
             row << (p.weeklyWage >= 0 ? wageText(p.weeklyWage) : QString())
-                << (p.transferValue > 0 ? moneyRangeText(p.uniqueId, 0, valueEuros, 1.1, 1.35) : QString());
+                << (p.transferValue <= 0 ? QString()
+                    : options.attributeMasking ? moneyRangeText(p.uniqueId, 0, valueEuros, 1.1, 1.35)
+                                               : moneyText(valueEuros)); // real data: exact
         } else {
             const bool partly = knowledge < kFullKnowledge;
             row << (p.weeklyWage >= 0 ? moneyRangeText(p.uniqueId, 1, wageEuros, 1.1, partly ? 1.7 : 1.4,
