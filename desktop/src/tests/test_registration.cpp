@@ -441,6 +441,105 @@ private slots:
         QVERIFY(!Registration::isEligible(youngster, C::League, quota(L::SerieA)));
     }
 
+    void wageRules()
+    {
+        // LaLiga: no home-grown quota, so only size and wages decide.
+        Registration::Settings settings;
+        settings.league = Registration::LeagueRules::LaLiga;
+        settings.minGoalkeepers = 0;
+        settings.wageBudget = 100000; // per week
+        settings.minWage = 5000;
+        const Registration::Quota quota =
+            Registration::quotaFor(Registration::Competition::League, settings);
+        QCOMPARE(quota.wageBudget, 100000.0);
+        QCOMPARE(quota.minWage, 5000.0);
+
+        Squad squad;
+        const auto addPaid = [&squad](const QString &uid, const QString &wage) {
+            squad.add(uid, 25);
+            squad.players.back().wageRaw = wage;
+        };
+        addPaid(QStringLiteral("star"), QStringLiteral("€60K p/w"));
+        addPaid(QStringLiteral("pricey"), QStringLiteral("€50K p/w")); // no longer fits
+        addPaid(QStringLiteral("cheap"), QStringLiteral("€2,600,000 p/a")); // = €50K p/w
+        addPaid(QStringLiteral("youth"), QStringLiteral("€1,000 p/w")); // under the minimum
+        addPaid(QStringLiteral("unknown"), QString());                  // counts as 0
+        const auto listedUids = [](const Registration::Proposal &proposal) {
+            QStringList uids;
+            for (const auto &entry : proposal.listed)
+                uids << entry.player->uid;
+            return uids;
+        };
+
+        // Two cheaper players are worth more than the one expensive star.
+        const auto ranked = squad.ranked();
+        const auto proposal =
+            Registration::propose(ranked, Registration::Competition::League, quota);
+        QCOMPARE(listedUids(proposal), (QStringList{QStringLiteral("pricey"),
+                                                     QStringLiteral("cheap"),
+                                                     QStringLiteral("unknown")}));
+        QCOMPARE(proposal.totalWage, 100000.0);
+        QCOMPARE(proposal.leftOut.size(), size_t(2));
+        QVERIFY(proposal.leftOut[0].second == Registration::LeftOutReason::WageBudgetFull);
+        QVERIFY(proposal.leftOut[1].second == Registration::LeftOutReason::BelowMinWage);
+
+        // Promised playing time keeps the star; the rest of the budget goes to
+        // the best player who still fits.
+        squad.players[0].agreedPlayingTime = QStringLiteral("Star Player");
+        const auto rankedStar = squad.ranked();
+        const auto withStar =
+            Registration::propose(rankedStar, Registration::Competition::League, quota);
+        QCOMPARE(listedUids(withStar), (QStringList{QStringLiteral("star"),
+                                                     QStringLiteral("unknown")}));
+        QCOMPARE(withStar.totalWage, 60000.0);
+
+        // A cheaper player further down fills what is left.
+        addPaid(QStringLiteral("bargain"), QStringLiteral("€40K p/w"));
+        const auto ranked2 = squad.ranked();
+        const auto proposal2 =
+            Registration::propose(ranked2, Registration::Competition::League, quota);
+        QCOMPARE(listedUids(proposal2), (QStringList{QStringLiteral("star"),
+                                                      QStringLiteral("unknown"),
+                                                      QStringLiteral("bargain")}));
+        QCOMPARE(proposal2.totalWage, 100000.0);
+
+        // A starter outweighs two depth players: no swap down the tiers.
+        std::vector<Registration::RankedPlayer> tiers = squad.ranked();
+        squad.players[0].agreedPlayingTime.clear();
+        tiers[0].tier = Registration::Tier::StartingXi; // star
+        const auto keepStarter =
+            Registration::propose(tiers, Registration::Competition::League, quota);
+        QVERIFY(listedUids(keepStarter).contains(QStringLiteral("star")));
+
+        // The check flags a hand-picked list that breaks either rule.
+        std::vector<const Player *> picked;
+        for (const Player &p : squad.players)
+            picked.push_back(&p);
+        const auto check = Registration::checkList(picked, {}, quota);
+        QVERIFY(check.overWageBudget);
+        QCOMPARE(check.belowMinWage, 1);
+        QVERIFY(!check.valid());
+
+        // Leagues without a squad list ignore the wage rules.
+        settings.league = Registration::LeagueRules::Bundesliga;
+        const auto none = Registration::quotaFor(Registration::Competition::League, settings);
+        QCOMPARE(none.wageBudget, 0.0);
+        // So does the UEFA list.
+        settings.league = Registration::LeagueRules::LaLiga;
+        const auto uefa = Registration::quotaFor(Registration::Competition::Uefa, settings);
+        QCOMPARE(uefa.wageBudget, 0.0);
+        QCOMPARE(uefa.minWage, 0.0);
+    }
+
+    void wagePeriodKeysRoundTrip()
+    {
+        using W = Registration::WagePeriod;
+        for (const W period : {W::Week, W::Month, W::Year})
+            QCOMPARE(Registration::wagePeriodFromKey(Registration::wagePeriodKey(period)), period);
+        QCOMPARE(Registration::wagePeriodFromKey(QString()), W::Week);
+        QCOMPARE(Registration::weeksPer(W::Year), 52.0);
+    }
+
     void keysRoundTrip()
     {
         using L = Registration::LeagueRules;

@@ -61,6 +61,32 @@ private slots:
         QCOMPARE(fm::valueToFloat(input), expected);
     }
 
+    void wageToWeekly_data()
+    {
+        QTest::addColumn<QString>("input");
+        QTest::addColumn<double>("expected");
+
+        QTest::newRow("per week K") << QStringLiteral("€300K p/w") << 300'000.0;
+        QTest::newRow("thousands separator") << QStringLiteral("€5,000 p/w") << 5'000.0;
+        QTest::newRow("plain") << QStringLiteral("€500 p/w") << 500.0;
+        QTest::newRow("decimal K") << QStringLiteral("£12.5K p/w") << 12'500.0;
+        QTest::newRow("per year") << QStringLiteral("€5.2M p/a") << 100'000.0;
+        QTest::newRow("per month") << QStringLiteral("$13K p/m") << 3'000.0;
+        QTest::newRow("range takes lower") << QStringLiteral("€21K - €24.5K p/w") << 21'000.0;
+        QTest::newRow("no period") << QStringLiteral("€10K") << 10'000.0;
+        QTest::newRow("zero") << QStringLiteral("€0 p/w") << 0.0;
+        QTest::newRow("empty") << QString() << -1.0;
+        QTest::newRow("dash") << QStringLiteral("-") << -1.0;
+        QTest::newRow("garbage") << QStringLiteral("Unknown") << -1.0;
+    }
+
+    void wageToWeekly()
+    {
+        QFETCH(QString, input);
+        QFETCH(double, expected);
+        QCOMPARE(fm::wageToWeekly(input), expected);
+    }
+
     void isExplicitZeroValue_data()
     {
         QTest::addColumn<QString>("input");

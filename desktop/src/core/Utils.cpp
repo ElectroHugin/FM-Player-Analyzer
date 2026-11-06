@@ -82,6 +82,50 @@ bool isExplicitZeroValue(const QString &rawValue)
     return ok && value == 0.0;
 }
 
+double wageToWeekly(const QString &wageRaw)
+{
+    QString s = wageRaw.trimmed();
+    if (s.isEmpty() || s == QLatin1String("-"))
+        return -1.0;
+
+    // Period suffix: p/w, p/m, p/a (also p/y), with or without spaces.
+    double weeksPerUnit = 1.0;
+    static const QRegularExpression period(QStringLiteral("\\s*p\\s*/\\s*([wmay])\\w*\\s*$"),
+                                           QRegularExpression::CaseInsensitiveOption);
+    const QRegularExpressionMatch match = period.match(s);
+    if (match.hasMatch()) {
+        const QChar unit = match.captured(1).at(0).toLower();
+        if (unit == QLatin1Char('m'))
+            weeksPerUnit = 52.0 / 12.0;
+        else if (unit == QLatin1Char('a') || unit == QLatin1Char('y'))
+            weeksPerUnit = 52.0;
+        s.truncate(match.capturedStart());
+    }
+    const int rangeSep = s.indexOf(QLatin1String(" - "));
+    if (rangeSep >= 0)
+        s = s.left(rangeSep);
+    removeCurrencySymbols(s);
+    s = s.trimmed();
+    // Thousands separators ("5,000"); a lone decimal comma ("1,5K") becomes a dot.
+    static const QRegularExpression thousands(QStringLiteral(",(?=\\d{3}(\\D|$))"));
+    s.remove(thousands);
+    s.replace(QLatin1Char(','), QLatin1Char('.'));
+
+    double multiplier = 1.0;
+    if (s.endsWith(QLatin1Char('M'), Qt::CaseInsensitive)) {
+        multiplier = 1'000'000.0;
+        s.chop(1);
+    } else if (s.endsWith(QLatin1Char('K'), Qt::CaseInsensitive)) {
+        multiplier = 1'000.0;
+        s.chop(1);
+    }
+    bool ok = false;
+    const double value = s.trimmed().toDouble(&ok);
+    if (!ok || value < 0.0)
+        return -1.0;
+    return value * multiplier / weeksPerUnit;
+}
+
 bool isFreeAgent(const QString &club, const QString &transferValueRaw)
 {
     const QString c = club.trimmed();

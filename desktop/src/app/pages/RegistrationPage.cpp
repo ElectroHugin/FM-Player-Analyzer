@@ -10,6 +10,7 @@
 
 #include <QApplication>
 #include <QComboBox>
+#include <QDoubleSpinBox>
 #include <QFrame>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -30,7 +31,7 @@ namespace fm {
 namespace {
 
 enum Column { ColListed, ColAdvice, ColName, ColAge, ColPosition, ColCategory, ColNeed, ColDwrs,
-              ColNote, ColCount };
+              ColWage, ColNote, ColCount };
 
 // Settings value behind each competition combo entry.
 constexpr int kLeague = 0;
@@ -113,6 +114,49 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
            "nutzt sie, und spätere Änderungen (Transfers, neue Markierungen) werden sichtbar."));
     competitionRow->addWidget(m_saveButton);
     controlsLayout->addLayout(competitionRow);
+
+    // League wage rules (e.g. LaLiga): both optional, 0 = none.
+    m_wageRow = new QWidget(m_controls);
+    auto *wageLayout = new QHBoxLayout(m_wageRow);
+    wageLayout->setContentsMargins(0, 0, 0, 0);
+    const auto makeMoneySpin = [this](const QString &none, const QString &tip) {
+        auto *spin = new QDoubleSpinBox(m_wageRow);
+        spin->setRange(0.0, 1e10);
+        spin->setDecimals(0);
+        spin->setSingleStep(1000.0);
+        spin->setGroupSeparatorShown(true);
+        spin->setSpecialValueText(none);
+        spin->setKeyboardTracking(false); // recompute once the entry is done
+        spin->setMinimumWidth(150);
+        spin->setToolTip(tip);
+        return spin;
+    };
+    m_wageBudgetSpin = makeMoneySpin(
+        tr("kein Limit"),
+        tr("Höchstsumme der Gehälter aller gemeldeten Spieler, wie die Liga sie vorgibt "
+           "(z. B. LaLiga). Ändert sich der Betrag im Spiel, hier einfach anpassen. "
+           "Der Vorschlag meldet zuerst die Spieler mit zugesagter Spielzeit (Star, "
+           "wichtiger Spieler, Stammspieler, Stammtorhüter) und verteilt den Rest so, dass "
+           "Startelf, B-Team und Kadertiefe möglichst stark bleiben. 0 = kein Limit."));
+    m_minWageSpin = makeMoneySpin(
+        tr("keins"), tr("Spieler mit weniger Gehalt dürfen nicht gemeldet werden. 0 = keins."));
+    m_wagePeriodCombo = new QComboBox(m_wageRow);
+    m_wagePeriodCombo->addItem(tr("pro Woche"),
+                               Registration::wagePeriodKey(Registration::WagePeriod::Week));
+    m_wagePeriodCombo->addItem(tr("pro Monat"),
+                               Registration::wagePeriodKey(Registration::WagePeriod::Month));
+    m_wagePeriodCombo->addItem(tr("pro Jahr"),
+                               Registration::wagePeriodKey(Registration::WagePeriod::Year));
+    m_wagePeriodCombo->setToolTip(
+        tr("Zeitraum, auf den sich beide Beträge beziehen — so, wie das Spiel sie anzeigt."));
+    wageLayout->addWidget(new QLabel(tr("Gehaltsbudget:"), m_wageRow));
+    wageLayout->addWidget(m_wageBudgetSpin);
+    wageLayout->addSpacing(12);
+    wageLayout->addWidget(new QLabel(tr("Mindestgehalt:"), m_wageRow));
+    wageLayout->addWidget(m_minWageSpin);
+    wageLayout->addWidget(m_wagePeriodCombo);
+    wageLayout->addStretch(1);
+    controlsLayout->addWidget(m_wageRow);
     m_countsLabel = new QLabel(m_controls);
     m_countsLabel->setWordWrap(true);
     controlsLayout->addWidget(m_countsLabel);
@@ -177,7 +221,8 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
         table->setColumnCount(ColCount);
         table->setHorizontalHeaderLabels({tr("Gemeldet"), tr("Empfehlung"), tr("Name"),
                                           tr("Alter"), tr("Position"), tr("Ausbildung"),
-                                          tr("Bedarf"), tr("DWRS"), tr("Hinweis")});
+                                          tr("Bedarf"), tr("DWRS"), tr("Gehalt"),
+                                          tr("Hinweis")});
         table->verticalHeader()->setVisible(false);
         table->setEditTriggers(QAbstractItemView::NoEditTriggers);
         table->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -206,6 +251,15 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     connect(m_competitionCombo, &QComboBox::currentIndexChanged, this, [this] {
         if (!m_updating)
             refresh();
+    });
+    for (QDoubleSpinBox *spin : {m_wageBudgetSpin, m_minWageSpin})
+        connect(spin, &QDoubleSpinBox::valueChanged, this, [this] {
+            if (!m_updating)
+                saveWageFields();
+        });
+    connect(m_wagePeriodCombo, &QComboBox::currentIndexChanged, this, [this] {
+        if (!m_updating)
+            saveWageFields();
     });
     connect(m_adoptButton, &QPushButton::clicked, this, &RegistrationPage::adoptProposal);
     connect(m_saveButton, &QPushButton::clicked, this, &RegistrationPage::saveList);
@@ -316,6 +370,16 @@ void RegistrationPage::refresh()
     const Registration::Competition comp = competition();
     m_pool = pool();
     m_tactics = rankingTactics(&m_tacticFallback);
+    m_currency.clear();
+    for (const Player *p : m_pool) {
+        for (const QChar c : {QChar(0x20AC), QChar(0x00A3), QChar(u'$')})
+            if (p->wageRaw.contains(c))
+                m_currency = c;
+        if (!m_currency.isEmpty())
+            break;
+    }
+    loadWageFields();
+    m_wageRow->setVisible(comp == Registration::Competition::League);
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     const auto ranked = Registration::rankPool(m_context.squadBuilder(), m_context.definitions(),
@@ -377,6 +441,10 @@ void RegistrationPage::fillTables()
             return tr("Nicht-HG-Quote voll");
         case Registration::LeftOutReason::NonClubTrainedFull:
             return tr("nur noch Club-Grown-Plätze frei");
+        case Registration::LeftOutReason::BelowMinWage:
+            return tr("unter Mindestgehalt");
+        case Registration::LeftOutReason::WageBudgetFull:
+            return tr("über dem Gehaltsbudget");
         case Registration::LeftOutReason::ListFull:
             break;
         }
@@ -511,6 +579,8 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
             dwrsItem->setForeground(style.text);
         }
         table->setItem(row, ColDwrs, dwrsItem);
+        table->setItem(row, ColWage,
+                       new NumericItem(p.wageRaw, wageToWeekly(p.wageRaw)));
         QStringList notes;
         if (!entry.note.isEmpty())
             notes << entry.note;
@@ -521,6 +591,12 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
             notes.prepend(uefa ? tr("jetzt Liste B") : tr("jetzt U21"));
         if (Registration::u21Status(p) == Registration::U21Status::Uncertain)
             notes << tr("U21 unklar");
+        if (entry.advice == Advice::List && m_quota.wageBudget > 0.0
+            && Registration::hasPromisedPlayingTime(p))
+            notes << tr("Spielzeit zugesagt");
+        if (entry.advice != Advice::Exempt && Registration::belowMinWage(p, m_quota)
+            && entry.note.isEmpty())
+            notes << tr("unter Mindestgehalt");
         table->setItem(row, ColNote, new QTableWidgetItem(notes.join(QStringLiteral(" · "))));
         ++row;
     }
@@ -630,6 +706,12 @@ void RegistrationPage::updateSelection()
     parts << marked(
         tr("Torhüter %1 (min. %2)").arg(check.goalkeepers).arg(m_quota.minGoalkeepers),
         check.tooFewGoalkeepers);
+    if (m_quota.wageBudget > 0.0)
+        parts << marked(tr("Gehälter %1 / %2")
+                            .arg(moneyText(check.totalWage), moneyText(m_quota.wageBudget)),
+                        check.overWageBudget);
+    else if (!uefa)
+        parts << tr("Gehälter %1").arg(moneyText(check.totalWage));
     parts << (uefa ? tr("<b>Liste B</b> (ohne Platz): %1 Spieler")
                    : tr("<b>U21</b> (ohne Platz): %1 Spieler"))
                  .arg(exempt.size());
@@ -696,10 +778,24 @@ void RegistrationPage::updateSelection()
         warnings << tr("Zu viele Spieler ohne Club-Grown gemeldet: %1 (höchstens %2).")
                         .arg(check.nonHomeGrown + check.homeGrownOnly)
                         .arg(m_quota.maxNonClubTrained);
+    if (check.overWageBudget)
+        warnings << tr("Gehaltsbudget überschritten: %1 (höchstens %2).")
+                        .arg(moneyText(check.totalWage), moneyText(m_quota.wageBudget));
+    if (check.belowMinWage > 0)
+        warnings << tr("Gemeldet, aber unter dem Mindestgehalt von %1: %2 Spieler.")
+                        .arg(moneyText(m_quota.minWage))
+                        .arg(check.belowMinWage);
     const int freeSlots = m_quota.maxSize - check.size;
+    const bool budgetBound = std::any_of(
+        m_proposal.leftOut.begin(), m_proposal.leftOut.end(), [](const auto &left) {
+            return left.second == Registration::LeftOutReason::WageBudgetFull;
+        });
     if (freeSlots > 0 && asProposed) {
         QString why;
-        if (check.nonHomeGrown >= m_quota.maxNonHomeGrown
+        if (budgetBound)
+            why = tr("das Gehaltsbudget reicht für keinen weiteren Spieler (%1 frei).")
+                      .arg(moneyText(std::max(0.0, m_quota.wageBudget - check.totalWage)));
+        else if (check.nonHomeGrown >= m_quota.maxNonHomeGrown
             && check.nonHomeGrown + check.homeGrownOnly >= m_quota.maxNonClubTrained)
             why = tr("nur Club-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.");
         else if (check.nonHomeGrown >= m_quota.maxNonHomeGrown)
@@ -746,6 +842,70 @@ void RegistrationPage::updateSelection()
     m_saveButton->setEnabled(m_checkedUids != m_savedUids);
 }
 
+void RegistrationPage::loadWageFields()
+{
+    Database &db = m_context.database();
+    const QSignalBlocker b1(m_wageBudgetSpin), b2(m_minWageSpin), b3(m_wagePeriodCombo);
+    m_wagePeriodCombo->setCurrentIndex(std::max(
+        0, m_wagePeriodCombo->findData(Registration::wagePeriodKey(Registration::wagePeriodFromKey(
+               db.setting(QStringLiteral("registration_wage_period")))))));
+    m_wageBudgetSpin->setValue(db.setting(QStringLiteral("registration_wage_budget")).toDouble());
+    m_minWageSpin->setValue(db.setting(QStringLiteral("registration_min_wage")).toDouble());
+    const QString prefix = m_currency.isEmpty() ? QString() : m_currency + QLatin1Char(' ');
+    m_wageBudgetSpin->setPrefix(prefix);
+    m_minWageSpin->setPrefix(prefix);
+}
+
+void RegistrationPage::saveWageFields()
+{
+    Database &db = m_context.database();
+    const auto amount = [](const QDoubleSpinBox *spin) {
+        return spin->value() > 0.0 ? QString::number(spin->value(), 'f', 0) : QString();
+    };
+    db.setSetting(QStringLiteral("registration_wage_budget"), amount(m_wageBudgetSpin));
+    db.setSetting(QStringLiteral("registration_min_wage"), amount(m_minWageSpin));
+    db.setSetting(QStringLiteral("registration_wage_period"),
+                  m_wagePeriodCombo->currentData().toString());
+    refresh();
+}
+
+QString RegistrationPage::moneyText(double weekly) const
+{
+    const Registration::WagePeriod period =
+        Registration::wagePeriodFromKey(m_wagePeriodCombo->currentData().toString());
+    const double value = weekly * Registration::weeksPer(period);
+    const auto trimmed = [](double v, int decimals) {
+        QString t = QString::number(v, 'f', decimals);
+        if (t.contains(QLatin1Char('.'))) {
+            while (t.endsWith(QLatin1Char('0')))
+                t.chop(1);
+            if (t.endsWith(QLatin1Char('.')))
+                t.chop(1);
+        }
+        return t;
+    };
+    QString number;
+    if (value >= 1e6)
+        number = trimmed(value / 1e6, 2) + QStringLiteral("M");
+    else if (value >= 1e3)
+        number = trimmed(value / 1e3, 1) + QStringLiteral("K");
+    else
+        number = QString::number(qRound(value));
+    QString unit;
+    switch (period) {
+    case Registration::WagePeriod::Week:
+        unit = QStringLiteral(" p/w");
+        break;
+    case Registration::WagePeriod::Month:
+        unit = QStringLiteral(" p/m");
+        break;
+    case Registration::WagePeriod::Year:
+        unit = QStringLiteral(" p/a");
+        break;
+    }
+    return m_currency + number + unit;
+}
+
 void RegistrationPage::saveList()
 {
     const Registration::Competition comp = competition();
@@ -757,7 +917,8 @@ void RegistrationPage::saveList()
     for (const auto &entry : m_proposal.exempt)
         exempt.push_back(entry.player);
     const Registration::ListCheck check = Registration::checkList(listed, exempt, m_quota);
-    if ((check.tooMany || check.tooManyNonHomeGrown || check.tooManyNonClubTrained)
+    if ((check.tooMany || check.tooManyNonHomeGrown || check.tooManyNonClubTrained
+         || check.overWageBudget || check.belowMinWage > 0)
         && QMessageBox::question(this, tr("Registrierung"),
                                  tr("Die Auswahl verletzt die Registrierungsregeln (siehe "
                                     "Warnungen). Trotzdem speichern?"))

@@ -4222,6 +4222,82 @@ Details: %1</translation>
         <source>Hier stellst du die Meldeliste für Liga und Europapokal zusammen. Schalte dazu zuerst die Registrierungsregeln ein: Einstellungen → Verein → Registrierungsregeln.</source>
         <translation>Build your squad list for league and European competitions here. First switch on the registration rules: Settings → Club → Registration rules.</translation>
     </message>
+    <message>
+        <source>kein Limit</source>
+        <translation>no limit</translation>
+    </message>
+    <message>
+        <source>keins</source>
+        <translation>none</translation>
+    </message>
+    <message>
+        <source>Spieler mit weniger Gehalt dürfen nicht gemeldet werden. 0 = keins.</source>
+        <translation>Players earning less may not be registered. 0 = none.</translation>
+    </message>
+    <message>
+        <source>pro Woche</source>
+        <translation>per week</translation>
+    </message>
+    <message>
+        <source>pro Monat</source>
+        <translation>per month</translation>
+    </message>
+    <message>
+        <source>pro Jahr</source>
+        <translation>per year</translation>
+    </message>
+    <message>
+        <source>Zeitraum, auf den sich beide Beträge beziehen — so, wie das Spiel sie anzeigt.</source>
+        <translation>Period both amounts refer to, as the game shows them.</translation>
+    </message>
+    <message>
+        <source>Gehaltsbudget:</source>
+        <translation>Wage budget:</translation>
+    </message>
+    <message>
+        <source>Mindestgehalt:</source>
+        <translation>Minimum wage:</translation>
+    </message>
+    <message>
+        <source>Gehalt</source>
+        <translation>Wage</translation>
+    </message>
+    <message>
+        <source>unter Mindestgehalt</source>
+        <translation>below minimum wage</translation>
+    </message>
+    <message>
+        <source>über dem Gehaltsbudget</source>
+        <translation>over the wage budget</translation>
+    </message>
+    <message>
+        <source>Gehälter %1 / %2</source>
+        <translation>Wages %1 / %2</translation>
+    </message>
+    <message>
+        <source>Gehälter %1</source>
+        <translation>Wages %1</translation>
+    </message>
+    <message>
+        <source>Gehaltsbudget überschritten: %1 (höchstens %2).</source>
+        <translation>Wage budget exceeded: %1 (at most %2).</translation>
+    </message>
+    <message>
+        <source>Gemeldet, aber unter dem Mindestgehalt von %1: %2 Spieler.</source>
+        <translation>Registered although below the minimum wage of %1: %2 players.</translation>
+    </message>
+    <message>
+        <source>das Gehaltsbudget reicht für keinen weiteren Spieler (%1 frei).</source>
+        <translation>the wage budget does not cover another player (%1 left).</translation>
+    </message>
+    <message>
+        <source>Höchstsumme der Gehälter aller gemeldeten Spieler, wie die Liga sie vorgibt (z. B. LaLiga). Ändert sich der Betrag im Spiel, hier einfach anpassen. Der Vorschlag meldet zuerst die Spieler mit zugesagter Spielzeit (Star, wichtiger Spieler, Stammspieler, Stammtorhüter) und verteilt den Rest so, dass Startelf, B-Team und Kadertiefe möglichst stark bleiben. 0 = kein Limit.</source>
+        <translation>Maximum total wages of all registered players, as set by the league (e.g. LaLiga). If the amount changes in the game, just adjust it here. The proposal registers the players with promised playing time first (star, important player, regular starter, first-choice goalkeeper) and spends the rest so that the starting XI, B team and depth stay as strong as possible. 0 = no limit.</translation>
+    </message>
+    <message>
+        <source>Spielzeit zugesagt</source>
+        <translation>playing time promised</translation>
+    </message>
 </context>
 <context>
     <name>fm::RoleAnalysisPage</name>
