@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDate>
 #include <QList>
 #include <QString>
 #include <QStringList>
@@ -13,6 +14,11 @@ struct ImportTable {
     QStringList headers;
     QList<QStringList> rows;
     int malformedRows = 0; // rows whose cell count did not match the header
+    // In-game date of the data, when the file carries one (FM27 save).
+    QDate gameDate;
+    // UIDs of players the user's scouting knows (FM27 save): followed by the
+    // import history like the own squad (see ImportHistory).
+    QStringList knownUids;
 };
 
 // Why reading or importing an export failed. The core keeps an English

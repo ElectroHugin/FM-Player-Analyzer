@@ -16,6 +16,8 @@ add_library(fmcore STATIC
     Definitions.cpp
     Development.h
     Development.cpp
+    ImportHistory.h
+    ImportHistory.cpp
     DwrsEngine.h
     DwrsEngine.cpp
     Fm27Save.h

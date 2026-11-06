@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ImportHistory.h"
 #include "Player.h"
 
 #include <QHash>
@@ -115,6 +116,26 @@ public:
     // History timestamps written by recalculations (see RatingsOrigin).
     QSet<QString> dwrsRecalcTimestamps();
 
+    // --- Import log and player snapshots (see ImportHistory) ---
+    // Appends one import; returns its id (0 on error).
+    int addImport(const ImportHistory::ImportRecord &record);
+    // All imports, oldest first.
+    std::vector<ImportHistory::ImportRecord> imports();
+    // In-game date of the newest import that had one (invalid: none).
+    QDate lastGameDate();
+    // Each player's newest snapshot dated before `before` (all players).
+    QHash<int, ImportHistory::Snapshot> latestSnapshotsBefore(const QDate &before);
+    // Inserts or replaces snapshots by (player, period).
+    bool upsertSnapshots(const std::vector<ImportHistory::Snapshot> &snapshots);
+    // Removes the monthly snapshots of these players in the month of `date`.
+    bool deleteMonthSnapshots(const QList<int> &playerIds, const QDate &date);
+    // Monthly snapshots dated before `before` (condensing candidates).
+    std::vector<ImportHistory::Snapshot> monthlySnapshotsBefore(const QDate &before);
+    // Deletes snapshots by (player, period key).
+    bool deleteSnapshots(const std::vector<std::pair<int, QString>> &keys);
+    // A player's snapshots, oldest first.
+    std::vector<ImportHistory::Snapshot> snapshots(int playerId);
+
     // --- Settings (key/value; same keys as legacy) ---
     QString setting(const QString &key, const QString &defaultValue = QString());
     bool setSetting(const QString &key, const QString &value);
@@ -165,6 +186,8 @@ private:
     bool migrateV7ToV8();                 // long-term injuries table
     bool migrateV8ToV9();                 // dwrs_recalcs table
     bool migrateV9ToV10();                // communication/eccentricity columns
+    bool migrateV10ToV11();               // import log + player snapshots
+    static QStringList createImportHistorySql(); // shared by create + migrate paths
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     static QString createPlayerRegistrationSql(); // ditto
     static QString createLongTermInjuriesSql();   // ditto

@@ -1,4 +1,5 @@
 #include "SettingsPage.h"
+#include "core/ImportHistory.h"
 
 #include "../NewSaveWizard.h"
 
@@ -278,6 +279,21 @@ QWidget *SettingsPage::buildClubTab()
     maskingHint->setObjectName(QStringLiteral("kpiCaption"));
     versionForm->addRow(tr("FM27-Spielstände:"), m_attributeMaskingCheck);
     versionForm->addRow(maskingHint);
+
+    m_historyAllCheck = new QCheckBox(tr("Verlauf für alle Spieler speichern"), versionGroup);
+    auto *historyHint = new QLabel(
+        tr("Beim Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen "
+           "Stand der Attribute, der Durchschnittsnote, des Marktwerts und des Gehalts, aber "
+           "nur, wenn sich etwas geändert hat. Ohne Haken gilt das für deinen Kader, das "
+           "Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting. Mit "
+           "Haken für alle eingelesenen Spieler; die Datenbank wird dadurch deutlich größer. "
+           "Die aktuelle und die zwei Saisons davor bleiben monatlich, ältere Saisons werden "
+           "auf ihren Stand am Saisonende verdichtet."),
+        versionGroup);
+    historyHint->setWordWrap(true);
+    historyHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(tr("Verlauf:"), m_historyAllCheck);
+    versionForm->addRow(historyHint);
 
     m_liveSaveCheck = new QCheckBox(tr("Spielstand live verfolgen"), versionGroup);
     m_liveSaveEdit = new QLineEdit(versionGroup);
@@ -1290,6 +1306,9 @@ void SettingsPage::refresh()
         QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir(m_context.fmVersionId())));
     m_graphicsGroup->setChecked(config.graphicsEnabled());
     m_attributeMaskingCheck->setChecked(config.attributeMasking());
+    m_historyAllCheck->setChecked(
+        m_context.database().setting(QString::fromLatin1(ImportHistory::kAllPlayersSetting))
+        == QLatin1String("1"));
     m_liveSaveCheck->setChecked(config.liveSaveEnabled());
     m_liveSaveEdit->setText(QDir::toNativeSeparators(config.liveSavePath()));
     m_graphicsDirEdit->setText(QDir::toNativeSeparators(config.graphicsDir()));
@@ -1492,6 +1511,8 @@ void SettingsPage::saveAll()
     }
     config.setGraphicsDir(QDir::fromNativeSeparators(m_graphicsDirEdit->text().trimmed()));
     saveSetting(QStringLiteral("club_fm_id"), m_clubFmIdEdit->text().trimmed());
+    saveSetting(QString::fromLatin1(ImportHistory::kAllPlayersSetting),
+                m_historyAllCheck->isChecked() ? QStringLiteral("1") : QString());
     saveSetting(QStringLiteral("user_club"), m_userClubCombo->currentText());
     saveSetting(QStringLiteral("second_team_club"), m_secondClubCombo->currentText());
     saveSetting(QStringLiteral("club_country_code"),

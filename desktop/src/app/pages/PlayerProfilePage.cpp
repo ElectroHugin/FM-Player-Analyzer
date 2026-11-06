@@ -13,6 +13,7 @@
 #include "core/DwrsEngine.h"
 #include "core/Freshness.h"
 #include "core/HtmlImporter.h"
+#include "core/ImportHistory.h"
 #include "core/RoleAnalysis.h"
 #include "core/TalentEngine.h"
 #include "core/TrainingAdvice.h"
@@ -38,10 +39,12 @@
 #include <QScrollArea>
 #include <QSet>
 #include <QScrollBar>
+#include <QTableWidget>
 #include <QToolButton>
 #include <QVBoxLayout>
 
 #include <algorithm>
+#include <cmath>
 #include <array>
 
 namespace fm {
@@ -341,6 +344,28 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     // One player's own history: each point is a stored change of his ratings.
     m_chart->setAxisTitle(tr("Gespeicherte Veränderungen vor dem aktuellen Wert"));
     detailLayout->addWidget(m_chart);
+
+    auto *historyTitle = new QLabel(tr("Verlauf nach Ingame-Datum"), m_detailWidget);
+    historyTitle->setObjectName(QStringLiteral("sectionTitle"));
+    detailLayout->addWidget(historyTitle);
+    m_historyTable = new QTableWidget(0, 5, m_detailWidget);
+    m_historyTable->setHorizontalHeaderLabels(
+        {tr("Ingame-Datum"), tr("Ø-Note"), tr("Marktwert"), tr("Gehalt"),
+         tr("Veränderte Attribute")});
+    m_historyTable->verticalHeader()->setVisible(false);
+    m_historyTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_historyTable->setSelectionMode(QAbstractItemView::NoSelection);
+    m_historyTable->setWordWrap(true);
+    detailLayout->addWidget(m_historyTable);
+    m_historyEmpty = new QLabel(
+        tr("Noch kein Verlauf. Bei jedem Einlesen eines FM27-Spielstands speichert der Analyzer pro "
+           "Ingame-Monat einen Stand: für deinen Kader, das Zweitteam, die Shortlist, den "
+           "Nationalkader und Spieler aus deinem Scouting, auf Wunsch für alle Spieler "
+           "(Einstellungen → Datenbank)."),
+        m_detailWidget);
+    m_historyEmpty->setObjectName(QStringLiteral("kpiCaption"));
+    m_historyEmpty->setWordWrap(true);
+    detailLayout->addWidget(m_historyEmpty);
 
     layout->addWidget(m_detailWidget);
     m_noRolesLabel = new QLabel(
@@ -760,9 +785,7 @@ void PlayerProfilePage::showPlayer()
             series.points.append({double(s), track->adjusted.at(s)});
         chartSeries.append(series);
     }
-    QStringList snapshotLabels;
-    for (const Development::Session &session : timeline.sessions)
-        snapshotLabels << QLocale().toString(session.last, QLocale::ShortFormat);
+    const QStringList snapshotLabels = developmentSnapshotLabels(m_context, timeline);
     const QList<int> markers = Development::recalcMarkers(chartTracks, 0);
     if (chartSeries.isEmpty())
         m_chart->clearChart(tr("Noch keine historischen DWRS-Daten. Importiere über die Zeit "
@@ -770,6 +793,58 @@ void PlayerProfilePage::showPlayer()
     else
         m_chart->setSeries(std::move(chartSeries), snapshotLabels,
                            LineChartWidget::ValueMode::Percent, markers);
+    fillHistory(player);
+}
+
+void PlayerProfilePage::fillHistory(const Player *player)
+{
+    // Newest first; each row lists the attributes that moved since the
+    // previous (older) snapshot.
+    const std::vector<ImportHistory::Snapshot> snapshots =
+        m_context.database().snapshots(player->id);
+    m_historyTable->setRowCount(0);
+    m_historyTable->setVisible(!snapshots.empty());
+    m_historyEmpty->setVisible(snapshots.empty());
+    if (snapshots.empty())
+        return;
+    const auto mean = [](const ImportHistory::Snapshot &s, int i) {
+        return (s.attrLo[size_t(i)] + s.attrHi[size_t(i)]) / 2.0;
+    };
+    const int rows = static_cast<int>(snapshots.size());
+    m_historyTable->setRowCount(rows);
+    for (int i = 0; i < rows; ++i) {
+        const ImportHistory::Snapshot &s = snapshots[size_t(i)];
+        const int row = rows - 1 - i;
+        const QString when =
+            s.condensed ? tr("Saison %1 (Ende)").arg(ImportHistory::seasonLabel(
+                                                      ImportHistory::seasonOf(s.gameDate)))
+                        : QLocale().toString(s.gameDate, QLocale::ShortFormat);
+        QStringList moved;
+        if (i > 0) {
+            const ImportHistory::Snapshot &before = snapshots[size_t(i - 1)];
+            for (int a = 0; a < kAttrCount; ++a) {
+                if (!s.attrLo[size_t(a)] || !before.attrLo[size_t(a)])
+                    continue;
+                const double delta = mean(s, a) - mean(before, a);
+                if (std::abs(delta) >= 0.5)
+                    moved << QStringLiteral("%1 %2%3")
+                                 .arg(attrNames()[a], delta > 0 ? QStringLiteral("+")
+                                                                : QStringLiteral("−"))
+                                 .arg(QLocale().toString(std::abs(delta), 'g', 3));
+            }
+        }
+        const QStringList cells = {
+            when,
+            s.averageRating > 0 ? QLocale().toString(s.averageRating, 'f', 2) : QStringLiteral("–"),
+            s.transferValueText.isEmpty() ? QStringLiteral("–") : s.transferValueText,
+            s.wage.isEmpty() ? QStringLiteral("–") : s.wage,
+            i == 0 ? tr("erster Stand") : (moved.isEmpty() ? QStringLiteral("–")
+                                                            : moved.join(QStringLiteral(" · "))),
+        };
+        for (int c = 0; c < cells.size(); ++c)
+            m_historyTable->setItem(row, c, new QTableWidgetItem(cells.at(c)));
+    }
+    fitTableToContents(m_historyTable, false, 520);
 }
 
 void PlayerProfilePage::fillRoleTiles()

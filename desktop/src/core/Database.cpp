@@ -24,7 +24,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 10;
+constexpr int kSchemaVersion = 11;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -227,6 +227,8 @@ bool Database::initSchema()
             ok = migrateV8ToV9();
         if (ok && version < 10)
             ok = migrateV9ToV10();
+        if (ok && version < 11)
+            ok = migrateV10ToV11();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -308,7 +310,45 @@ bool Database::createInitialSchema()
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_player_roles_role ON player_roles(role)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_players_club ON players(club)"),
     };
-    for (const QString &sql : statements) {
+    for (const QString &sql : statements + createImportHistorySql()) {
+        if (!exec(sql))
+            return false;
+    }
+    return true;
+}
+
+QStringList Database::createImportHistorySql()
+{
+    // imports: one row per import (the in-game date is NULL when unknown).
+    // player_snapshots: per player and period ("yyyy-MM" or "S<season>"), the
+    // visible data at that time; attrs = kAttrCount lo bytes, then hi bytes.
+    return {
+        QStringLiteral("CREATE TABLE IF NOT EXISTS imports ("
+                       " id INTEGER PRIMARY KEY,"
+                       " imported_at TEXT NOT NULL,"
+                       " game_date TEXT,"
+                       " source TEXT NOT NULL DEFAULT '',"
+                       " format TEXT NOT NULL DEFAULT '',"
+                       " players INTEGER NOT NULL DEFAULT 0)"),
+        QStringLiteral("CREATE TABLE IF NOT EXISTS player_snapshots ("
+                       " player_id INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,"
+                       " period TEXT NOT NULL,"
+                       " game_date TEXT NOT NULL,"
+                       " condensed INTEGER NOT NULL DEFAULT 0,"
+                       " attrs BLOB NOT NULL,"
+                       " average_rating REAL,"
+                       " transfer_value REAL,"
+                       " transfer_value_text TEXT,"
+                       " wage TEXT,"
+                       " PRIMARY KEY (player_id, period)) WITHOUT ROWID"),
+        QStringLiteral("CREATE INDEX IF NOT EXISTS idx_player_snapshots_date"
+                       " ON player_snapshots(game_date)"),
+    };
+}
+
+bool Database::migrateV10ToV11()
+{
+    for (const QString &sql : createImportHistorySql()) {
         if (!exec(sql))
             return false;
     }
@@ -864,6 +904,16 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
         rollbackTransaction();
         return false;
     }
+    // Snapshots follow the same way (the good record's own rows win).
+    query.prepare(QStringLiteral(
+        "UPDATE OR IGNORE player_snapshots SET player_id = ? WHERE player_id = ?"));
+    query.bindValue(0, goodPlayerId);
+    query.bindValue(1, badPlayerId);
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
 
     // The good player's history just grew, so recompute its dwrs_latest rows
     // from the merged history. The bad id's dwrs_latest is removed with its
@@ -1167,6 +1217,217 @@ QSet<QString> Database::dwrsRecalcTimestamps()
         stamps.insert(query.value(0).toString());
     return stamps;
 }
+
+// --- Import log and player snapshots -------------------------------------------
+
+namespace {
+
+constexpr const char *kDateFormat = "yyyy-MM-dd";
+
+QByteArray packAttrs(const ImportHistory::Snapshot &s)
+{
+    QByteArray bytes(2 * kAttrCount, '\0');
+    for (int i = 0; i < kAttrCount; ++i) {
+        bytes[i] = char(s.attrLo[size_t(i)]);
+        bytes[kAttrCount + i] = char(s.attrHi[size_t(i)]);
+    }
+    return bytes;
+}
+
+// Snapshot from a row of kSnapshotColumns. A shorter blob (fewer attributes in an older version)
+// leaves the rest at 0 = missing.
+ImportHistory::Snapshot snapshotFromQuery(const QSqlQuery &q)
+{
+    ImportHistory::Snapshot s;
+    s.playerId = q.value(0).toInt();
+    s.gameDate = QDate::fromString(q.value(1).toString(), QLatin1String(kDateFormat));
+    s.condensed = q.value(2).toInt() != 0;
+    const QByteArray bytes = q.value(3).toByteArray();
+    const int count = int(bytes.size() / 2);
+    for (int i = 0; i < count && i < kAttrCount; ++i) {
+        s.attrLo[size_t(i)] = uint8_t(bytes.at(i));
+        s.attrHi[size_t(i)] = uint8_t(bytes.at(count + i));
+    }
+    s.averageRating = q.value(4).toDouble();
+    s.transferValue = q.value(5).toDouble();
+    s.wage = q.value(6).toString();
+    s.transferValueText = q.value(7).toString();
+    return s;
+}
+
+const QString kSnapshotColumns = QStringLiteral(
+    "player_id, game_date, condensed, attrs, average_rating, transfer_value, wage,"
+    " transfer_value_text");
+
+} // namespace
+
+int Database::addImport(const ImportHistory::ImportRecord &record)
+{
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("INSERT INTO imports (imported_at, game_date, source, format, players)"
+                             " VALUES (?, ?, ?, ?, ?)"));
+    q.bindValue(0, record.importedAt);
+    q.bindValue(1, record.gameDate.isValid()
+                       ? QVariant(record.gameDate.toString(QLatin1String(kDateFormat)))
+                       : QVariant(QMetaType::fromType<QString>()));
+    // Never NULL (a default QString binds as NULL).
+    q.bindValue(2, record.source.isEmpty() ? QStringLiteral("") : record.source);
+    q.bindValue(3, record.format.isEmpty() ? QStringLiteral("") : record.format);
+    q.bindValue(4, record.players);
+    if (!q.exec()) {
+        m_error = q.lastError().text();
+        return 0;
+    }
+    return q.lastInsertId().toInt();
+}
+
+std::vector<ImportHistory::ImportRecord> Database::imports()
+{
+    std::vector<ImportHistory::ImportRecord> out;
+    QSqlQuery q(m_db);
+    if (!q.exec(QStringLiteral("SELECT id, imported_at, game_date, source, format, players"
+                               " FROM imports ORDER BY id"))) {
+        m_error = q.lastError().text();
+        return out;
+    }
+    while (q.next()) {
+        ImportHistory::ImportRecord r;
+        r.id = q.value(0).toInt();
+        r.importedAt = q.value(1).toString();
+        r.gameDate = QDate::fromString(q.value(2).toString(), QLatin1String(kDateFormat));
+        r.source = q.value(3).toString();
+        r.format = q.value(4).toString();
+        r.players = q.value(5).toInt();
+        out.push_back(std::move(r));
+    }
+    return out;
+}
+
+QDate Database::lastGameDate()
+{
+    QSqlQuery q(m_db);
+    if (q.exec(QStringLiteral("SELECT game_date FROM imports WHERE game_date IS NOT NULL"
+                              " ORDER BY id DESC LIMIT 1"))
+        && q.next())
+        return QDate::fromString(q.value(0).toString(), QLatin1String(kDateFormat));
+    return {};
+}
+
+QHash<int, ImportHistory::Snapshot> Database::latestSnapshotsBefore(const QDate &before)
+{
+    QHash<int, ImportHistory::Snapshot> out;
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("SELECT %1 FROM (SELECT *, ROW_NUMBER() OVER ("
+                             "PARTITION BY player_id ORDER BY game_date DESC) AS n"
+                             " FROM player_snapshots WHERE game_date < ?) WHERE n = 1")
+                  .arg(kSnapshotColumns));
+    q.bindValue(0, before.toString(QLatin1String(kDateFormat)));
+    if (!q.exec()) {
+        m_error = q.lastError().text();
+        return out;
+    }
+    while (q.next()) {
+        ImportHistory::Snapshot s = snapshotFromQuery(q);
+        out.insert(s.playerId, std::move(s));
+    }
+    return out;
+}
+
+bool Database::upsertSnapshots(const std::vector<ImportHistory::Snapshot> &snapshots)
+{
+    if (snapshots.empty())
+        return true;
+    if (!beginTransaction())
+        return false;
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("INSERT OR REPLACE INTO player_snapshots (period, %1)"
+                             " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                  .arg(kSnapshotColumns));
+    for (const ImportHistory::Snapshot &s : snapshots) {
+        q.bindValue(0, ImportHistory::periodKey(s.gameDate, s.condensed));
+        q.bindValue(1, s.playerId);
+        q.bindValue(2, s.gameDate.toString(QLatin1String(kDateFormat)));
+        q.bindValue(3, s.condensed ? 1 : 0);
+        q.bindValue(4, packAttrs(s));
+        q.bindValue(5, s.averageRating > 0 ? QVariant(s.averageRating)
+                                           : QVariant(QMetaType::fromType<double>()));
+        q.bindValue(6, s.transferValue);
+        q.bindValue(7, s.wage);
+        q.bindValue(8, s.transferValueText);
+        if (!q.exec()) {
+            m_error = q.lastError().text();
+            rollbackTransaction();
+            return false;
+        }
+    }
+    return commitTransaction();
+}
+
+bool Database::deleteMonthSnapshots(const QList<int> &playerIds, const QDate &date)
+{
+    if (playerIds.isEmpty())
+        return true;
+    const QString period = ImportHistory::periodKey(date, false);
+    return forEachIdChunk(playerIds,
+                          QStringLiteral("DELETE FROM player_snapshots WHERE player_id IN (%1)"
+                                         " AND period = ?"),
+                          {period}, [](const QSqlQuery &) {});
+}
+
+std::vector<ImportHistory::Snapshot> Database::monthlySnapshotsBefore(const QDate &before)
+{
+    std::vector<ImportHistory::Snapshot> out;
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("SELECT %1 FROM player_snapshots WHERE condensed = 0"
+                             " AND game_date < ? ORDER BY player_id, game_date")
+                  .arg(kSnapshotColumns));
+    q.bindValue(0, before.toString(QLatin1String(kDateFormat)));
+    if (!q.exec()) {
+        m_error = q.lastError().text();
+        return out;
+    }
+    while (q.next())
+        out.push_back(snapshotFromQuery(q));
+    return out;
+}
+
+bool Database::deleteSnapshots(const std::vector<std::pair<int, QString>> &keys)
+{
+    if (keys.empty())
+        return true;
+    if (!beginTransaction())
+        return false;
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("DELETE FROM player_snapshots WHERE player_id = ? AND period = ?"));
+    for (const auto &[playerId, period] : keys) {
+        q.bindValue(0, playerId);
+        q.bindValue(1, period);
+        if (!q.exec()) {
+            m_error = q.lastError().text();
+            rollbackTransaction();
+            return false;
+        }
+    }
+    return commitTransaction();
+}
+
+std::vector<ImportHistory::Snapshot> Database::snapshots(int playerId)
+{
+    std::vector<ImportHistory::Snapshot> out;
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("SELECT %1 FROM player_snapshots WHERE player_id = ?"
+                             " ORDER BY game_date")
+                  .arg(kSnapshotColumns));
+    q.bindValue(0, playerId);
+    if (!q.exec()) {
+        m_error = q.lastError().text();
+        return out;
+    }
+    while (q.next())
+        out.push_back(snapshotFromQuery(q));
+    return out;
+}
+
 
 QString Database::setting(const QString &key, const QString &defaultValue)
 {

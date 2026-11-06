@@ -13,6 +13,7 @@ class QMenu;
 class QToolButton;
 class QPushButton;
 class QScrollArea;
+class QTableWidget;
 class QCheckBox;
 class QWidget;
 
@@ -97,6 +98,10 @@ private:
     QLabel *m_consLabel = nullptr;
     QLabel *m_keyAttrsLabel = nullptr;
     LineChartWidget *m_chart = nullptr;
+    // Snapshots of the player's visible data per in-game month (ImportHistory).
+    QTableWidget *m_historyTable = nullptr;
+    QLabel *m_historyEmpty = nullptr;
+    void fillHistory(const Player *player);
     QLabel *m_noRolesLabel = nullptr;
 
     bool m_updating = false;

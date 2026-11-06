@@ -365,6 +365,7 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
         out->headers << QString::fromLatin1(a.column);
     out->rows.clear();
     out->malformedRows = 0;
+    out->knownUids.clear();
     // Only the career's side of the game: a men's career leaves out every
     // women's club and the other way round.
     const bool women = womensCareer(save);
@@ -378,8 +379,9 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
         int ranged = 0;
         int knowledge = 100;
         bool ownSquad = !options.attributeMasking; // without masking: real data for all
+        const Knowledge how = knowledgeOf(p, save, ownClub);
+        const bool scouted = how == Knowledge::Scouted || how == Knowledge::PartlyScouted;
         if (options.attributeMasking) {
-            const Knowledge how = knowledgeOf(p, save, ownClub);
             ownSquad = how == Knowledge::OwnClub;
             switch (how) {
             case Knowledge::OwnClub:
@@ -452,7 +454,10 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
             }
         }
         out->rows.append(std::move(row));
+        if (scouted)
+            out->knownUids << QString::number(p.uniqueId);
     }
+    out->gameDate = save.gameDate;
 }
 
 bool buildTable(const QString &savePath, const Options &options, ImportTable *out, ImportError *error,

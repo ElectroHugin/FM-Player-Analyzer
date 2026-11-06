@@ -398,9 +398,7 @@ void DwrsProgressPage::reloadTimeline()
         ids << player->id;
     Database &db = m_context.database();
     m_timeline = Development::buildTimeline(db.dwrsHistory(ids), db.dwrsRecalcTimestamps());
-    m_snapshotLabels.clear();
-    for (const Development::Session &session : std::as_const(m_timeline.sessions))
-        m_snapshotLabels << QLocale().toString(session.last, QLocale::ShortFormat);
+    m_snapshotLabels = developmentSnapshotLabels(m_context, m_timeline);
 }
 
 void DwrsProgressPage::reloadLineup()

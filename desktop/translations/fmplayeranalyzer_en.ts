@@ -178,6 +178,10 @@ Details: %1</source>
 
 Details: %1</translation>
     </message>
+    <message>
+        <source>Ingame-Datum %1: Verlauf für %2 Spieler erfasst.</source>
+        <translation>In-game date %1: history recorded for %2 players.</translation>
+    </message>
 </context>
 <context>
     <name>Navigation</name>
@@ -3828,6 +3832,42 @@ Details: %1</translation>
         <source>Keine Spieler in dieser Auswahl</source>
         <translation>No players in this selection</translation>
     </message>
+    <message>
+        <source>Verlauf nach Ingame-Datum</source>
+        <translation>History by in-game date</translation>
+    </message>
+    <message>
+        <source>Ingame-Datum</source>
+        <translation>In-game date</translation>
+    </message>
+    <message>
+        <source>Ø-Note</source>
+        <translation>Avg. Rating</translation>
+    </message>
+    <message>
+        <source>Marktwert</source>
+        <translation>Market Value</translation>
+    </message>
+    <message>
+        <source>Gehalt</source>
+        <translation>Wage</translation>
+    </message>
+    <message>
+        <source>Veränderte Attribute</source>
+        <translation>Changed attributes</translation>
+    </message>
+    <message>
+        <source>Noch kein Verlauf. Bei jedem Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen Stand: für deinen Kader, das Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting, auf Wunsch für alle Spieler (Einstellungen → Datenbank).</source>
+        <translation>No history yet. Each time an FM27 save is read in, the analyzer keeps one state per in-game month: for your squad, the second team, the shortlist, the national squad and players from your scouting, or for all players if you choose (Settings → Database).</translation>
+    </message>
+    <message>
+        <source>Saison %1 (Ende)</source>
+        <translation>Season %1 (end)</translation>
+    </message>
+    <message>
+        <source>erster Stand</source>
+        <translation>first state</translation>
+    </message>
 </context>
 <context>
     <name>fm::RadarChartWidget</name>
@@ -5149,6 +5189,18 @@ Details: %1</translation>
     <message>
         <source>FM27-Spielstände (*.fm);;Alle Dateien (*)</source>
         <translation>FM27 saves (*.fm);;All files (*)</translation>
+    </message>
+    <message>
+        <source>Verlauf für alle Spieler speichern</source>
+        <translation>Keep history for all players</translation>
+    </message>
+    <message>
+        <source>Beim Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen Stand der Attribute, der Durchschnittsnote, des Marktwerts und des Gehalts, aber nur, wenn sich etwas geändert hat. Ohne Haken gilt das für deinen Kader, das Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting. Mit Haken für alle eingelesenen Spieler; die Datenbank wird dadurch deutlich größer. Die aktuelle und die zwei Saisons davor bleiben monatlich, ältere Saisons werden auf ihren Stand am Saisonende verdichtet.</source>
+        <translation>When an FM27 save is read in, the analyzer keeps one state per in-game month of the attributes, average rating, value and wage, but only when something changed. Unticked, this applies to your squad, the second team, the shortlist, the national squad and players from your scouting. Ticked, to every player read in; the database grows considerably. The current season and the two before it stay monthly; older seasons are condensed to their end-of-season state.</translation>
+    </message>
+    <message>
+        <source>Verlauf:</source>
+        <translation>History:</translation>
     </message>
 </context>
 <context>

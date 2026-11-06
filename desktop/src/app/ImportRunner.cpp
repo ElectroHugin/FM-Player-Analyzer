@@ -6,6 +6,7 @@
 #include "widgets/BusyProgressDialog.h"
 
 #include <QCoreApplication>
+#include <QLocale>
 #include <QFutureWatcher>
 #include <QPointer>
 #include <QtConcurrentRun>
@@ -140,6 +141,10 @@ QStringList importSummaryLines(const ImportPipelineResult &result)
         summary << ImportText::tr("DWRS: %1 Bewertungen berechnet, %2 geänderte Einträge gespeichert.")
                        .arg(result.recalc.computed)
                        .arg(result.recalc.inserted);
+    if (result.import.gameDate.isValid())
+        summary << ImportText::tr("Ingame-Datum %1: Verlauf für %2 Spieler erfasst.")
+                       .arg(QLocale().toString(result.import.gameDate, QLocale::ShortFormat))
+                       .arg(result.import.snapshots);
     return summary;
 }
 

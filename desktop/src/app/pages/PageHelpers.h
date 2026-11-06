@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../AppContext.h"
+#include "core/Development.h"
+#include "core/ImportHistory.h"
 #include "core/TrainingAdvice.h"
 #include "core/Utils.h"
 
@@ -8,6 +10,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLocale>
 #include <QSet>
 #include <QHeaderView>
 #include <QScrollBar>
@@ -18,6 +21,25 @@
 #include <algorithm>
 
 namespace fm {
+
+// Hover label per development snapshot: the in-game date of its import when
+// known ("15.01.27 · 06.11.26 18:40"), else the upload time alone.
+inline QStringList developmentSnapshotLabels(AppContext &context,
+                                             const Development::Timeline &timeline)
+{
+    const std::vector<ImportHistory::ImportRecord> imports = context.database().imports();
+    QStringList labels;
+    labels.reserve(timeline.size());
+    for (const Development::Session &session : timeline.sessions) {
+        const QString upload = QLocale().toString(session.last, QLocale::ShortFormat);
+        const QDate gameDate = ImportHistory::gameDateAt(imports, session.last);
+        labels << (gameDate.isValid()
+                       ? QStringLiteral("%1 · %2")
+                             .arg(QLocale().toString(gameDate, QLocale::ShortFormat), upload)
+                       : upload);
+    }
+    return labels;
+}
 
 // Tactic names with the (club or national) favorite tactics first — the
 // legacy ordering used by Best XI, Gap Analysis and the national pages.
