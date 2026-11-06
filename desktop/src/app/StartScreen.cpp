@@ -158,7 +158,7 @@ QWidget *StartScreen::buildHero()
         return button;
     };
     connect(addAction(QStringLiteral("plus"), tr("Neuer Spielstand"),
-                      tr("FM-Version, erster Import und Verein"), true),
+                      tr("FM-Version und erster Import"), true),
             &QPushButton::clicked, this, &StartScreen::newSave);
     connect(addAction(QStringLiteral("folder"), tr("Spielstand-Datei öffnen …"),
                       tr("Aus anderem Ordner oder Backup"), false),
@@ -357,7 +357,7 @@ QWidget *StartScreen::buildEmptyState(QWidget *parent)
 
     const QStringList steps = {tr("FM-Version wählen"),
                                tr("Export oder FM27-Spielstand (.fm) einlesen"),
-                               tr("Deinen Verein festlegen")};
+                               tr("Verein und wichtige Einstellungen im Willkommens-Assistenten festlegen")};
     for (int i = 0; i < steps.size(); ++i) {
         auto *row = new QHBoxLayout;
         row->setSpacing(12);

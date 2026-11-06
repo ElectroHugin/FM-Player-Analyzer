@@ -89,6 +89,10 @@ private:
     void updateDbLabel();
     void fillSaveMenu(QMenu *menu);
     void newSave();
+    // Welcome assistant: opens on its own once the save has its first players
+    // (WelcomeWizard::shouldOffer), waiting for open dialogs to close first.
+    void maybeShowWelcome();
+    void showWelcome();
     void switchSave();
     // Opens the import of the current mode's overview with filePath (asks
     // for a file when empty).
@@ -143,6 +147,9 @@ private:
 
     QStringList m_searchKeys; // folded "name club" per store row, for the palette
     bool m_searchModelDirty = true;
+    bool m_welcomeOpen = false;
+    QTimer m_welcomeTimer;
+    QStringList m_welcomeLater; // saves whose assistant was closed for this session
     bool m_sidebarCustomRoles = true;
 };
 
