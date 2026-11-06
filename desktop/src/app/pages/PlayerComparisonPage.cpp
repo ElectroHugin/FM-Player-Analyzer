@@ -263,11 +263,19 @@ void PlayerComparisonPage::rebuildRoleCombo()
     m_roleCombo->clear();
     for (const QString &role : roles)
         m_roleCombo->addItem(roleNames.value(role, role), role);
-    if (!previous.isEmpty()) {
-        const int index = m_roleCombo->findData(previous);
-        if (index >= 0)
-            m_roleCombo->setCurrentIndex(index);
+    int index = previous.isEmpty() ? -1 : m_roleCombo->findData(previous);
+    // A handed-over player whose first role is not in this tactic: take
+    // the first role of the list he has, not simply the first entry.
+    if (index < 0 && !m_pendingCheck.isEmpty()) {
+        if (const Player *player = m_context.store().findByUid(m_pendingCheck.first())) {
+            for (int i = 0; i < roles.size() && index < 0; ++i) {
+                if (player->assignedRoles.contains(roles.at(i)))
+                    index = i;
+            }
+        }
     }
+    if (index >= 0)
+        m_roleCombo->setCurrentIndex(index);
     m_updating = false;
     rebuildPlayerList();
 }
