@@ -42,6 +42,11 @@ QString ProfileStore::clubLogoDocument()
     return QStringLiteral("club_logo");
 }
 
+QString ProfileStore::graphicsCrestDocument()
+{
+    return QStringLiteral("graphics_crest");
+}
+
 QString ProfileStore::nationalFlagDocument()
 {
     return QStringLiteral("national_flag");

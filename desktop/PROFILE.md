@@ -15,6 +15,7 @@ einer fremden Datenbank nehmen das Profil deshalb automatisch mit.
 | Ordner für FM-Exporte | Profil, `profile_settings` (`Import/…`) | `config().htmlExportDir()` |
 | Eigene Rollen, Taktiken (pro FM-Version) | Profil, `profile_documents` `definitions_<version>` | `context.definitions()`, Speichern mit `context.saveDefinitions()` |
 | Vereinslogo, National-Flagge | Profil, `profile_documents` `club_logo` / `national_flag` (PNG) | `context.profileImage()` / `setProfileImage()` |
+| Kopie des Wappens aus dem Graphics-Ordner | Profil, `profile_documents` `graphics_crest` (Bilddatei wie im Ordner) + Setting `graphics_crest_id` (Vereins-ID) | `context.ownClubCrestData()`; erneuert von `refreshCachedCrest()` nach Öffnen, Import und Index-Laden. Eigenes Logo hat Vorrang; bei Vereinswechsel wird die Kopie verworfen bzw. ersetzt |
 | Verein, zweite Mannschaft, Land, Stadion, Favoriten-Taktiken, Nationalteam, Meldelisten-Regeln, Bridges, Seitenzustände (Filter, Budget …) | Spielstand, Tabelle `settings` (unverändert seit 1.x) | `context.database().setting()` |
 | Vereinskopf: Darstellung (`header_style` = `gradient`/`solid`), Wappen-Silhouette (`header_crest_watermark`) | Profil, `profile_settings` (`ThemeSettings/…`) | `ThemeManager::headerStyle()`, `crestWatermark()` |
 | Eigene Farbvorlagen | App-weit, `<Datenordner>/color_templates.json` | `ColorTemplateStore` (core) |

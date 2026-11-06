@@ -99,6 +99,15 @@ public:
     // mode). Club mode: the PNG stored in the profile, otherwise (graphics
     // folder on) the own club's crest by club id. Empty = none.
     QByteArray headerCrest();
+    // The own club's crest as PNG/image bytes: the profile logo, else the
+    // graphics folder, else the copy kept in the save (see
+    // refreshCachedCrest). Empty = none (initials are shown).
+    QByteArray ownClubCrestData();
+    // Keeps the save's copy of the graphics-folder crest current: renews it
+    // when the folder has a (different) crest for the own club, drops it when
+    // the own club changed. Runs after a save opens, after imports and when
+    // the graphics index is ready.
+    void refreshCachedCrest();
     // Writes the edited definitions (definitions().setRoot()) into the open
     // save's profile and reloads them with the engines.
     bool saveDefinitions(QString *errorOut = nullptr);

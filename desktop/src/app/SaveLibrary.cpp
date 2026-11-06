@@ -55,11 +55,12 @@ void readInfo(SaveInfo &info, quint32 *clubFmIdOut)
             if (settings.exec(QStringLiteral("SELECT key, value FROM settings WHERE key IN "
                                              "('fm_version','user_club','full_club_name',"
                                              "'club_logo_path','last_import_at',"
-                                             "'favorite_tactic_1','club_fm_id','club_fm_ids')"))) {
+                                             "'favorite_tactic_1','club_fm_id','club_fm_ids','graphics_crest_id')"))) {
                 QString userClub;
                 QString fullName;
                 QString ownId;
                 QString idMap;
+                QString crestId;
                 while (settings.next()) {
                     const QString key = settings.value(0).toString();
                     const QString value = settings.value(1).toString();
@@ -79,6 +80,8 @@ void readInfo(SaveInfo &info, quint32 *clubFmIdOut)
                         ownId = value;
                     else if (key == QLatin1String("club_fm_ids"))
                         idMap = value;
+                    else if (key == QLatin1String("graphics_crest_id"))
+                        crestId = value;
                 }
                 info.clubName = fullName.isEmpty() ? userClub : fullName;
                 quint32 id = GraphicsIndex::parseId(ownId);
@@ -89,6 +92,11 @@ void readInfo(SaveInfo &info, quint32 *clubFmIdOut)
                                                     .toVariant()
                                                     .toString());
                 *clubFmIdOut = id;
+                // The saved copy of the graphics-folder crest, when it is
+                // the own club's; no folder needed for it.
+                if (id != 0 && crestId.toUInt() == id)
+                    ProfileStore::readDocument(connName, ProfileStore::graphicsCrestDocument(),
+                                               info.cachedCrest);
             }
             ProfileStore::readDocument(connName, ProfileStore::clubLogoDocument(), info.logoData);
             QSqlQuery count(db);
@@ -117,11 +125,8 @@ SaveInfo current(AppContext &context)
     info.fmVersionId = context.fmVersionId();
     const QString fullName = context.database().setting(QStringLiteral("full_club_name"));
     info.clubName = fullName.isEmpty() ? context.userClub() : fullName;
-    info.logoData = context.profileImage(AppContext::ProfileImage::ClubLogo);
-    // Same crest as the club header: own logo first, else the graphics folder.
-    if (info.logoData.isEmpty())
-        info.logoData =
-            context.graphics().clubLogoFile(context.clubFmId(context.userClub()));
+    // Same crest as the club header: own logo, graphics folder, saved copy.
+    info.logoData = context.ownClubCrestData();
     info.playerCount = static_cast<int>(context.store().size());
     info.tactic = context.database().setting(QStringLiteral("favorite_tactic_1"));
     info.lastImport = QDateTime::fromString(
@@ -140,8 +145,12 @@ QList<SaveInfo> scan(AppContext &context)
         info.lastOpened = context.config().databaseLastOpened(name);
         quint32 clubFmId = 0;
         readInfo(info, &clubFmId);
-        if (info.logoData.isEmpty() && info.logoPath.isEmpty() && clubFmId != 0)
-            info.logoData = context.graphics().clubLogoFile(clubFmId);
+        if (info.logoData.isEmpty() && info.logoPath.isEmpty()) {
+            info.logoData = clubFmId != 0 ? context.graphics().clubLogoFile(clubFmId)
+                                          : QByteArray();
+            if (info.logoData.isEmpty())
+                info.logoData = info.cachedCrest;
+        }
         saves.append(info);
     }
     std::sort(saves.begin(), saves.end(), [](const SaveInfo &a, const SaveInfo &b) {

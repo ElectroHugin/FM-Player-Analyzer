@@ -45,6 +45,10 @@ public:
     static QString definitionsDocument(const QString &fmVersionId); // "definitions_fm27"
     static QString clubLogoDocument();     // "club_logo"
     static QString nationalFlagDocument(); // "national_flag"
+    // Copy of the own club's crest from the graphics folder, so the save
+    // shows it without the folder (start screen, folder off or moved).
+    // The club id it belongs to is the setting "graphics_crest_id".
+    static QString graphicsCrestDocument(); // "graphics_crest"
 
     // Marker keys in profile_settings (section "Profile").
     static QString formatKey();  // "Profile/format"

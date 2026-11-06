@@ -18,6 +18,11 @@ AppContext::AppContext(QObject *parent)
     : QObject(parent)
     , m_graphics(std::make_unique<GraphicsLibrary>())
 {
+    // Connected first, so the copy is current before pages redraw.
+    connect(m_graphics.get(), &GraphicsLibrary::stateChanged, this,
+            &AppContext::refreshCachedCrest);
+    connect(this, &AppContext::dataChanged, this, &AppContext::refreshCachedCrest);
+    connect(this, &AppContext::databaseChanged, this, &AppContext::refreshCachedCrest);
 }
 
 AppContext::~AppContext()
@@ -284,11 +289,50 @@ QByteArray AppContext::headerCrest()
 {
     if (nationalUiMode())
         return profileImage(ProfileImage::NationalFlag);
+    return ownClubCrestData();
+}
+
+QByteArray AppContext::ownClubCrestData()
+{
     const QByteArray own = profileImage(ProfileImage::ClubLogo);
     if (!own.isEmpty() || !m_database)
         return own;
+    const quint32 id = clubFmId(userClub());
     // Graphics folder (off by default: then this stays empty as before).
-    return m_graphics->clubLogoFile(clubFmId(userClub()));
+    const QByteArray live = m_graphics->clubLogoFile(id);
+    if (!live.isEmpty())
+        return live;
+    // The copy kept in the save, as long as it belongs to the own club.
+    if (id == 0 || m_database->setting(QStringLiteral("graphics_crest_id")).toUInt() != id)
+        return {};
+    QByteArray cached;
+    ProfileStore(*m_database).readDocument(ProfileStore::graphicsCrestDocument(), cached);
+    return cached;
+}
+
+void AppContext::refreshCachedCrest()
+{
+    if (!m_database)
+        return;
+    const quint32 id = clubFmId(userClub());
+    const quint32 cachedId = m_database->setting(QStringLiteral("graphics_crest_id")).toUInt();
+    ProfileStore store(*m_database);
+    const QByteArray live = m_graphics->clubLogoFile(id);
+    if (!live.isEmpty()) {
+        QByteArray cached;
+        store.readDocument(ProfileStore::graphicsCrestDocument(), cached);
+        if (cachedId != id || cached != live) { // new club or a new logo file
+            store.writeDocument(ProfileStore::graphicsCrestDocument(), live, false);
+            m_database->setSetting(QStringLiteral("graphics_crest_id"), QString::number(id));
+        }
+        return;
+    }
+    // No crest in the folder right now (folder off, missing or still
+    // loading): keep the copy, unless it belongs to a club we no longer are.
+    if (cachedId != 0 && cachedId != id && id != 0) {
+        store.removeDocument(ProfileStore::graphicsCrestDocument());
+        m_database->removeSetting(QStringLiteral("graphics_crest_id"));
+    }
 }
 
 bool AppContext::setProfileImage(ProfileImage image, const QByteArray &png, QString *errorOut)

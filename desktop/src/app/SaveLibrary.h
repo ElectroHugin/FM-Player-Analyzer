@@ -18,6 +18,7 @@ struct SaveInfo {
     QString clubName;    // full club name if set, else the managed club
     QByteArray logoData; // club logo from the save's profile (PNG), may be empty
     QString logoPath;    // club logo file of a save last used with 2.0.x, may be empty
+    QByteArray cachedCrest; // saved copy of the graphics-folder crest, may be empty
     int playerCount = -1; // -1 = could not be read
     QDateTime lastOpened; // invalid = never opened by this version
     QDateTime modified;   // file modification time
