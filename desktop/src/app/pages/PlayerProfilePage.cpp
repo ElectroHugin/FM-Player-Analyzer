@@ -5,6 +5,7 @@
 #include "../ImportRunner.h"
 #include "../RecalcHelper.h"
 #include "../widgets/Charts.h"
+#include "../widgets/FootStrengthWidget.h"
 #include "../widgets/PlayerSearchModel.h"
 #include "PageHelpers.h"
 #include "core/Constants.h"
@@ -165,6 +166,9 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     headerText->addWidget(m_nameLabel);
     headerText->addWidget(m_vitalsLabel);
     headerText->addWidget(m_tagsLabel);
+    m_footWidget = new FootStrengthWidget(content);
+    headerText->addSpacing(4);
+    headerText->addWidget(m_footWidget);
     headerText->addStretch(1);
     headerRow->addWidget(m_portraitLabel, 0, Qt::AlignTop);
     headerRow->addLayout(headerText, 1);
@@ -544,6 +548,7 @@ void PlayerProfilePage::showPlayer()
         m_nameLabel->setText(tr("<h3>Kein Spieler ausgewählt.</h3>"));
         m_vitalsLabel->clear();
         m_tagsLabel->clear();
+        m_footWidget->setFeet({}, {});
         m_portraitLabel->setVisible(false);
         m_crestLabel->setVisible(false);
         return;
@@ -611,6 +616,7 @@ void PlayerProfilePage::showPlayer()
         tags += pill(tr("Daten"), tr("aktuell"), QStringLiteral("#0da025"));
     }
     m_tagsLabel->setText(tags);
+    m_footWidget->setFeet(player->leftFoot, player->rightFoot);
     m_updateConfirm->setText(
         tr("Ja, diese Datei ist sicher ein Update für %1.").arg(player->name));
 

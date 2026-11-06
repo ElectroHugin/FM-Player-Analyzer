@@ -18,6 +18,7 @@ class QWidget;
 
 namespace fm {
 class FlowLayout;
+class FootStrengthWidget;
 
 struct Player;
 class LineChartWidget;
@@ -61,6 +62,7 @@ private:
     QLabel *m_nameLabel = nullptr;
     QLabel *m_vitalsLabel = nullptr;
     QLabel *m_tagsLabel = nullptr;
+    FootStrengthWidget *m_footWidget = nullptr;
     // Optional pictures from the FM graphics folder; hidden without them.
     QLabel *m_portraitLabel = nullptr;
     QLabel *m_crestLabel = nullptr;

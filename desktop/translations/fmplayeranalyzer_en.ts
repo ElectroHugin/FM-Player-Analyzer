@@ -1902,6 +1902,41 @@ You can change the folder later in the settings.</translation>
     </message>
 </context>
 <context>
+    <name>fm::FootStrengthWidget</name>
+    <message>
+        <source>Sehr schwach</source>
+        <translation>Very Weak</translation>
+    </message>
+    <message>
+        <source>Schwach</source>
+        <translation>Weak</translation>
+    </message>
+    <message>
+        <source>Ordentlich</source>
+        <translation>Reasonable</translation>
+    </message>
+    <message>
+        <source>Ziemlich stark</source>
+        <translation>Fairly Strong</translation>
+    </message>
+    <message>
+        <source>Stark</source>
+        <translation>Strong</translation>
+    </message>
+    <message>
+        <source>Sehr stark</source>
+        <translation>Very Strong</translation>
+    </message>
+    <message>
+        <source>Linker Fuß</source>
+        <translation>Left Foot</translation>
+    </message>
+    <message>
+        <source>Rechter Fuß</source>
+        <translation>Right Foot</translation>
+    </message>
+</context>
+<context>
     <name>fm::LineChartWidget</name>
     <message>
         <source>Uploads vor dem aktuellen Stand</source>

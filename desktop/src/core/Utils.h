@@ -91,4 +91,15 @@ CellStyle attributeCellStyle(int value);
 // unknown/empty -> invalid style.
 CellStyle personalityCellStyle(const QString &category);
 
+// Foot strength as the game shows it, on its six-step scale:
+// 1 Very Weak, 2 Weak, 3 Reasonable, 4 Fairly Strong, 5 Strong, 6 Very Strong.
+// Reads the exported text (English or German, any case) or a raw 1-20 value
+// (mapped like the game). Returns 0 for empty or unknown text.
+int footStrengthLevel(const QString &text);
+constexpr int kFootStrengthLevels = 6;
+
+// A representative 1-20 value for a foot level, so foot bars use the same
+// colors as attributes. 0 for an invalid level.
+int footStrengthAttributeValue(int level);
+
 } // namespace fm

@@ -9,6 +9,31 @@ class TestUtils : public QObject
     Q_OBJECT
 
 private slots:
+    void footStrengthLevels()
+    {
+        QCOMPARE(footStrengthLevel(QStringLiteral("Very Weak")), 1);
+        QCOMPARE(footStrengthLevel(QStringLiteral("Weak")), 2);
+        QCOMPARE(footStrengthLevel(QStringLiteral("Reasonable")), 3);
+        QCOMPARE(footStrengthLevel(QStringLiteral("Fairly Strong")), 4);
+        QCOMPARE(footStrengthLevel(QStringLiteral(" strong ")), 5);
+        QCOMPARE(footStrengthLevel(QStringLiteral("Very Strong")), 6);
+        QCOMPARE(footStrengthLevel(QStringLiteral("Sehr stark")), 6);
+        QCOMPARE(footStrengthLevel(QStringLiteral("Schwach")), 2);
+        QCOMPARE(footStrengthLevel(QStringLiteral("20")), 6);
+        QCOMPARE(footStrengthLevel(QStringLiteral("12")), 4);
+        QCOMPARE(footStrengthLevel(QStringLiteral("1")), 1);
+        QCOMPARE(footStrengthLevel(QString()), 0);
+        QCOMPARE(footStrengthLevel(QStringLiteral("-")), 0);
+        QCOMPARE(footStrengthLevel(QStringLiteral("0")), 0);
+        QCOMPARE(footStrengthAttributeValue(0), 0);
+        QCOMPARE(footStrengthAttributeValue(6), 19);
+        // Bars use the attribute colors: very weak red, very strong green.
+        QCOMPARE(attributeCellStyle(footStrengthAttributeValue(1)).background,
+                 attributeCellStyle(1).background);
+        QCOMPARE(attributeCellStyle(footStrengthAttributeValue(6)).background,
+                 attributeCellStyle(20).background);
+    }
+
     void valueToFloat_data()
     {
         QTest::addColumn<QString>("input");
