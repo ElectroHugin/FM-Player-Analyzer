@@ -3711,6 +3711,18 @@ Details: %1</translation>
         <source>Welche Rollen als Kacheln gezeigt werden.</source>
         <translation>Which roles are shown as tiles.</translation>
     </message>
+    <message>
+        <source>mit Ball</source>
+        <translation type="unfinished">in possession</translation>
+    </message>
+    <message>
+        <source>ohne Ball</source>
+        <translation type="unfinished">out of possession</translation>
+    </message>
+    <message>
+        <source>Rahmen = Rolle in „%1“:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fm::RadarChartWidget</name>

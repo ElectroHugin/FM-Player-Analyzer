@@ -68,6 +68,8 @@ private:
 
     QWidget *m_detailWidget = nullptr;
     FlowLayout *m_topRolesLayout = nullptr;
+    QWidget *m_tacticLegend = nullptr;
+    QLabel *m_tacticLegendLabel = nullptr;
     // All of the player's roles as tiles, best first, in a horizontal scroll
     // area; for FM27 filterable by phase (with / without ball).
     struct RoleTile {

@@ -33,6 +33,7 @@
 #include "widgets/FlowLayout.h"
 
 #include <QScrollArea>
+#include <QSet>
 #include <QScrollBar>
 #include <QVBoxLayout>
 
@@ -218,6 +219,28 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     auto *topRolesTitle = new QLabel(tr("Rollen (beste zuerst)"), m_detailWidget);
     topRolesTitle->setObjectName(QStringLiteral("sectionTitle"));
     topRolesHeader->addWidget(topRolesTitle);
+    topRolesHeader->addSpacing(16);
+    // Legend for the outlined tiles: roles of the favorite tactic.
+    m_tacticLegend = new QWidget(m_detailWidget);
+    auto *legend = new QHBoxLayout(m_tacticLegend);
+    legend->setContentsMargins(0, 0, 0, 0);
+    legend->setSpacing(8);
+    const auto addSwatch = [&](const QString &name, const QString &text) {
+        auto *swatch = new QFrame(m_tacticLegend);
+        swatch->setObjectName(name);
+        swatch->setFixedSize(12, 12);
+        legend->addWidget(swatch);
+        auto *label = new QLabel(text, m_tacticLegend);
+        label->setObjectName(QStringLiteral("kpiCaption"));
+        legend->addWidget(label);
+        legend->addSpacing(8);
+    };
+    m_tacticLegendLabel = new QLabel(m_tacticLegend);
+    m_tacticLegendLabel->setObjectName(QStringLiteral("kpiCaption"));
+    legend->addWidget(m_tacticLegendLabel);
+    addSwatch(QStringLiteral("ipSwatch"), tr("mit Ball"));
+    addSwatch(QStringLiteral("oopSwatch"), tr("ohne Ball"));
+    topRolesHeader->addWidget(m_tacticLegend);
     topRolesHeader->addStretch(1);
     m_roleFilterCombo = new QComboBox(m_detailWidget);
     m_roleFilterCombo->addItem(tr("Alle Rollen"), QStringLiteral("all"));
@@ -671,6 +694,16 @@ void PlayerProfilePage::fillRoleTiles()
     const QString filter = m_context.definitions().hasRolePhases()
                                ? m_roleFilterCombo->currentData().toString()
                                : QStringLiteral("all");
+    // Roles of the favorite tactic get an outline per phase.
+    const QString tactic =
+        m_context.database().setting(QStringLiteral("favorite_tactic_1"));
+    const Definitions &definitions = m_context.definitions();
+    QSet<QString> tacticRoles;
+    if (!tactic.isEmpty() && definitions.tacticNames().contains(tactic)) {
+        for (const QString &role : definitions.tacticRoleList(tactic))
+            tacticRoles.insert(role);
+    }
+    bool anyMarked = false;
     bool first = true;
     for (const RoleTile &entry : std::as_const(m_roleTiles)) {
         if (filter != QLatin1String("all")
@@ -679,6 +712,12 @@ void PlayerProfilePage::fillRoleTiles()
         auto *tile = new QFrame(m_topRolesLayout->parentWidget());
         tile->setObjectName(QStringLiteral("kpiTile"));
         tile->setFixedWidth(168);
+        if (tacticRoles.contains(entry.role)) {
+            const bool oop = definitions.hasRolePhases()
+                             && definitions.rolePhase(entry.role) == QLatin1String("oop");
+            tile->setProperty("tacticPhase", oop ? QStringLiteral("oop") : QStringLiteral("ip"));
+            anyMarked = true;
+        }
         auto *tileLayout = new QVBoxLayout(tile);
         tileLayout->setContentsMargins(12, 8, 12, 8);
         tileLayout->setSpacing(2);
@@ -702,6 +741,17 @@ void PlayerProfilePage::fillRoleTiles()
         first = false;
     }
     m_topRolesLayout->invalidate();
+    m_tacticLegend->setVisible(anyMarked);
+    m_tacticLegendLabel->setText(tr("Rahmen = Rolle in „%1“:").arg(tactic));
+    // Without phases (FM24) a single color says "in the tactic".
+    m_tacticLegend->findChild<QFrame *>(QStringLiteral("oopSwatch"))
+        ->setVisible(definitions.hasRolePhases());
+    for (QLabel *label : m_tacticLegend->findChildren<QLabel *>()) {
+        if (label->text() == tr("ohne Ball"))
+            label->setVisible(definitions.hasRolePhases());
+        else if (label->text() == tr("mit Ball"))
+            label->setVisible(definitions.hasRolePhases());
+    }
 }
 
 void PlayerProfilePage::runManualUpdate()

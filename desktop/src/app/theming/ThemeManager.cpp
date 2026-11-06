@@ -253,6 +253,13 @@ QFrame#headerBar QToolButton#navButton:disabled {
 QFrame#kpiTile, QFrame#suggestionCard {
     background-color: %SURFACE%; border: 1px solid %BORDER%; border-radius: 10px; }
 QLabel#kpiValue { font-size: 19pt; font-weight: 650; color: %FG%; }
+/* Profile: roles of the favorite tactic, with ball / without ball. Fixed
+   hues, independent of the club colors, so the meaning never changes. */
+QFrame#kpiTile[tacticPhase="ip"] { border: 2px solid %IPMARK%; }
+QFrame#kpiTile[tacticPhase="oop"] { border: 2px solid %OOPMARK%; }
+QFrame#ipSwatch, QFrame#oopSwatch { border-radius: 3px; }
+QFrame#ipSwatch { background-color: %IPMARK%; }
+QFrame#oopSwatch { background-color: %OOPMARK%; }
 
 /* ===== Buttons ===== */
 QPushButton {
@@ -496,6 +503,13 @@ QProgressDialog { background-color: %BG%; }
     qss.replace(QLatin1String("%PRIMARYHOVER%"), primaryHover);
     // Edge of a filled club-color button: visible against the page (3:1) even
     // for a pale or neon club color.
+    // Phase marks (>= 3:1 against the cards they outline).
+    qss.replace(QLatin1String("%IPMARK%"),
+                withContrast(QColor(night ? QStringLiteral("#5b9dff") : QStringLiteral("#1d63d8")),
+                             m_surface, 3.0).name());
+    qss.replace(QLatin1String("%OOPMARK%"),
+                withContrast(QColor(night ? QStringLiteral("#f0a03c") : QStringLiteral("#b8650a")),
+                             m_surface, 3.0).name());
     qss.replace(QLatin1String("%PRIMARYEDGE%"), withContrast(m_primary, m_background, 3.0).name());
     qss.replace(QLatin1String("%PRIMARYTEXTMUTED%"), rgba(contrastText(m_primary), 0.78));
     qss.replace(QLatin1String("%INTERACTIVE%"), interactive);
