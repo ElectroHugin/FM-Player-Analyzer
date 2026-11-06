@@ -15,6 +15,8 @@ add_executable(fmplayeranalyzer
     MainWindow.cpp
     NewSaveWizard.h
     NewSaveWizard.cpp
+    WelcomeWizard.h
+    WelcomeWizard.cpp
     SaveLibrary.h
     SaveLibrary.cpp
     StartScreen.h

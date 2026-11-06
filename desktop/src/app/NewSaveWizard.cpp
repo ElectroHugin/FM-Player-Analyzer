@@ -28,7 +28,9 @@ namespace fm {
 
 namespace {
 
-enum Step { NameStep = 0, ImportStep = 1, ClubStep = 2 };
+// The club and the other first settings follow in the welcome assistant
+// (WelcomeWizard), which opens once the save holds players.
+enum Step { NameStep = 0, ImportStep = 1 };
 
 // A collapsible explanation: a small arrow button that shows/hides the text.
 QWidget *foldableHint(const QString &title, const QString &text, QWidget *parent)
@@ -73,7 +75,7 @@ NewSaveWizard::NewSaveWizard(AppContext &context, QWidget *parent)
     // Step indicator.
     auto *steps = new QHBoxLayout;
     steps->setSpacing(10);
-    const QStringList stepNames = {tr("Spielstand"), tr("Erster Import"), tr("Verein")};
+    const QStringList stepNames = {tr("Spielstand"), tr("Erster Import")};
     for (int i = 0; i < stepNames.size(); ++i) {
         if (i > 0) {
             auto *line = new QFrame(this);
@@ -97,7 +99,6 @@ NewSaveWizard::NewSaveWizard(AppContext &context, QWidget *parent)
     m_pages = new QStackedWidget(this);
     m_pages->addWidget(buildNamePage());
     m_pages->addWidget(buildImportPage());
-    m_pages->addWidget(buildClubPage());
     layout->addWidget(m_pages, 1);
 
     auto *footer = new QHBoxLayout;
@@ -263,40 +264,6 @@ QWidget *NewSaveWizard::buildImportPage()
     return page;
 }
 
-QWidget *NewSaveWizard::buildClubPage()
-{
-    auto *page = new QWidget(this);
-    auto *layout = new QVBoxLayout(page);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(8);
-
-    auto *label = new QLabel(tr("Welchen Verein managst du?"), page);
-    label->setObjectName(QStringLiteral("fieldLabel"));
-    layout->addWidget(label);
-    m_clubCombo = new QComboBox(page);
-    m_clubCombo->setEditable(true);
-    m_clubCombo->setInsertPolicy(QComboBox::NoInsert);
-    m_clubCombo->completer()->setFilterMode(Qt::MatchContains);
-    m_clubCombo->completer()->setCompletionMode(QCompleter::PopupCompletion);
-    layout->addWidget(m_clubCombo);
-    m_clubHint = new QLabel(
-        tr("Damit kennt der Analyzer deinen Kader: Übersicht, Best XI, Kaufberatung und "
-           "Trainingsplan rechnen mit diesem Verein. Logo, Zweitteam und Nationalteam "
-           "stellst du später in den Einstellungen ein."),
-        page);
-    m_clubHint->setObjectName(QStringLiteral("kpiCaption"));
-    m_clubHint->setWordWrap(true);
-    layout->addWidget(m_clubHint);
-    layout->addSpacing(10);
-    m_importSummary = new QLabel(page);
-    m_importSummary->setObjectName(QStringLiteral("successNote"));
-    m_importSummary->setWordWrap(true);
-    m_importSummary->hide();
-    layout->addWidget(m_importSummary);
-    layout->addStretch(1);
-    return page;
-}
-
 void NewSaveWizard::goTo(int step)
 {
     m_pages->setCurrentIndex(step);
@@ -316,15 +283,9 @@ void NewSaveWizard::goTo(int step)
         break;
     case ImportStep:
         m_cancelButton->setText(tr("Später einrichten"));
-        m_skipButton->show();
-        m_nextButton->setText(m_importFile.isEmpty() ? tr("Weiter") : tr("Importieren"));
+        m_skipButton->hide(); // "Fertig" without a file does the same
+        m_nextButton->setText(m_importFile.isEmpty() ? tr("Fertig") : tr("Importieren"));
         m_dropZone->setStartDir(m_context.htmlExportDir());
-        break;
-    case ClubStep:
-        m_skipButton->show();
-        m_nextButton->setText(tr("Fertig"));
-        fillClubs();
-        m_clubCombo->setFocus();
         break;
     }
 }
@@ -342,9 +303,6 @@ void NewSaveWizard::next()
         else
             startImport();
         break;
-    case ClubStep:
-        finish();
-        break;
     }
 }
 
@@ -352,10 +310,7 @@ void NewSaveWizard::skip()
 {
     if (m_importRunning)
         return;
-    if (m_pages->currentIndex() == ImportStep && m_context.store().size() > 0)
-        goTo(ClubStep);
-    else
-        accept(); // no players yet: nothing to pick a club from
+    accept();
 }
 
 bool NewSaveWizard::createSave()
@@ -402,42 +357,9 @@ void NewSaveWizard::startImport()
                               m_importResult->show();
                               return;
                           }
-                          m_importFile.clear();
-                          m_dropZone->setFile({});
-                          goTo(ClubStep);
-                          m_importSummary->setText(
-                              importSummaryLines(result).join(QLatin1Char('\n')));
-                          m_importSummary->show();
+                          // Done: the welcome assistant picks up with the club.
+                          accept();
                       });
-}
-
-void NewSaveWizard::fillClubs()
-{
-    // Most represented clubs first: a squad export makes the user's club the top entry.
-    QHash<QString, int> counts;
-    for (const Player &player : m_context.store().players()) {
-        if (!player.club.isEmpty())
-            ++counts[player.club];
-    }
-    QStringList clubs = counts.keys();
-    std::sort(clubs.begin(), clubs.end(), [&counts](const QString &a, const QString &b) {
-        const int ca = counts.value(a);
-        const int cb = counts.value(b);
-        return ca != cb ? ca > cb : a.localeAwareCompare(b) < 0;
-    });
-    m_clubCombo->clear();
-    m_clubCombo->addItems(clubs);
-    m_clubCombo->setCurrentIndex(clubs.isEmpty() ? -1 : 0);
-}
-
-void NewSaveWizard::finish()
-{
-    const QString club = m_clubCombo->currentText().trimmed();
-    if (!club.isEmpty()) {
-        m_context.database().setSetting(QStringLiteral("user_club"), club);
-        m_context.notifySettingsChanged();
-    }
-    accept();
 }
 
 } // namespace fm

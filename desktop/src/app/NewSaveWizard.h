@@ -15,9 +15,9 @@ namespace fm {
 class AppContext;
 class DropZone;
 
-// "Neuer Spielstand" in three steps: name + FM version (creates and opens the
-// save), first import (optional), managed club (optional, from the imported
-// players). Once step 1 is done the new save stays open even if the rest is
+// "Neuer Spielstand" in two steps: name + FM version (creates and opens the
+// save) and a first import (optional). The club and the other first settings
+// follow in the WelcomeWizard once the save holds players. Once step 1 is done the new save stays open even if the rest is
 // skipped; accepted() then means "a new save is open".
 class NewSaveWizard : public QDialog
 {
@@ -31,15 +31,12 @@ public:
 private:
     QWidget *buildNamePage();
     QWidget *buildImportPage();
-    QWidget *buildClubPage();
 
     void goTo(int step);
     void next();
     void skip();
     bool createSave();
     void startImport();
-    void fillClubs();
-    void finish();
 
     AppContext &m_context;
     QString m_createdName;
@@ -55,9 +52,6 @@ private:
     DropZone *m_dropZone;
     QCheckBox *m_autoAssignCheck;
     QLabel *m_importResult;
-    QComboBox *m_clubCombo;
-    QLabel *m_clubHint;
-    QLabel *m_importSummary;
     QPushButton *m_cancelButton;
     QPushButton *m_skipButton;
     QPushButton *m_nextButton;

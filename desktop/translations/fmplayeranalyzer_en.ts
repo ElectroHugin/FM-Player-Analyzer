@@ -2063,6 +2063,10 @@ You can change the folder later in the settings.</translation>
         <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
         <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
+    <message>
+        <source>Willkommens-Assistent …</source>
+        <translation>Welcome assistant …</translation>
+    </message>
 </context>
 <context>
     <name>fm::MigrationWizard</name>
@@ -2814,10 +2818,6 @@ The original file is not modified.</translation>
         <translation>First import</translation>
     </message>
     <message>
-        <source>Verein</source>
-        <translation>Club</translation>
-    </message>
-    <message>
         <source>Abbrechen</source>
         <translation>Cancel</translation>
     </message>
@@ -2864,14 +2864,6 @@ The original file is not modified.</translation>
     <message>
         <source>Neuen Spielern automatisch passende Rollen zuweisen</source>
         <translation>Automatically assign suitable roles to new players</translation>
-    </message>
-    <message>
-        <source>Welchen Verein managst du?</source>
-        <translation>Which club do you manage?</translation>
-    </message>
-    <message>
-        <source>Damit kennt der Analyzer deinen Kader: Übersicht, Best XI, Kaufberatung und Trainingsplan rechnen mit diesem Verein. Logo, Zweitteam und Nationalteam stellst du später in den Einstellungen ein.</source>
-        <translation>This tells the Analyzer which squad is yours: overview, Best XI, signing advice and training plan work with this club. Set the logo, second team and national team later in the settings.</translation>
     </message>
     <message>
         <source>Später einrichten</source>
@@ -3702,10 +3694,6 @@ Details: %1</translation>
     <message>
         <source>Nur ohne Ball (OOP)</source>
         <translation>Out of possession only (OOP)</translation>
-    </message>
-    <message>
-        <source>Welche Rollen als Kacheln gezeigt werden. Seitlich scrollen für alle Rollen.</source>
-        <translation type="vanished">Which roles are shown as tiles. Scroll sideways for all roles.</translation>
     </message>
     <message>
         <source>Welche Rollen als Kacheln gezeigt werden.</source>
@@ -5624,12 +5612,6 @@ Details: %1</translation>
         <translation>More actions</translation>
     </message>
     <message>
-        <source>Noch keine Spielstände.
-Lege links mit „Neuer Spielstand“ deinen ersten an.</source>
-        <translation type="vanished">No saves yet.
-Create your first one with “New save” on the left.</translation>
-    </message>
-    <message>
         <source>Spielstand öffnen</source>
         <translation>Open save</translation>
     </message>
@@ -5752,14 +5734,6 @@ A backup is created automatically in the “backups” folder first. You can bri
         <translation>New save</translation>
     </message>
     <message>
-        <source>FM-Version, erster Import und Verein</source>
-        <translation>FM version, first import and club</translation>
-    </message>
-    <message>
-        <source>Datei aus anderem Ordner oder Backup</source>
-        <translation type="vanished">File from another folder or a backup</translation>
-    </message>
-    <message>
         <source>FM24-Daten übernehmen …</source>
         <translation>Take over FM24 data …</translation>
     </message>
@@ -5824,8 +5798,12 @@ A backup is created automatically in the “backups” folder first. You can bri
         <translation>Read in an export or an FM27 save game (.fm)</translation>
     </message>
     <message>
-        <source>Deinen Verein festlegen</source>
-        <translation>Set your club</translation>
+        <source>FM-Version und erster Import</source>
+        <translation>FM version and first import</translation>
+    </message>
+    <message>
+        <source>Verein und wichtige Einstellungen im Willkommens-Assistenten festlegen</source>
+        <translation>Set your club and key settings in the welcome assistant</translation>
     </message>
 </context>
 <context>
@@ -6085,6 +6063,252 @@ A backup is created automatically in the “backups” folder first. You can bri
     <message>
         <source>%1 Spieler-Datensätze gespeichert.</source>
         <translation>%1 player records saved.</translation>
+    </message>
+</context>
+<context>
+    <name>fm::WelcomeWizard</name>
+    <message>
+        <source>Willkommen</source>
+        <translation>Welcome</translation>
+    </message>
+    <message>
+        <source>Richte deinen Spielstand ein</source>
+        <translation>Set up your save</translation>
+    </message>
+    <message numerus="yes">
+        <source>Die ersten Spieler sind da (%n Spieler). Mit ein paar Angaben weiß der Analyzer, welcher Kader deiner ist und wie du spielst. Alles lässt sich später unter Einstellungen ändern, und diesen Assistenten findest du jederzeit unter Hilfe → Willkommens-Assistent.</source>
+        <translation>
+            <numerusform>The first players are in (%n player). With a few details the Analyzer knows which squad is yours and how you play. Everything can be changed later under Settings, and you can find this assistant at any time under Help → Welcome assistant.</numerusform>
+            <numerusform>The first players are in (%n players). With a few details the Analyzer knows which squad is yours and how you play. Everything can be changed later under Settings, and you can find this assistant at any time under Help → Welcome assistant.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Verein</source>
+        <translation>Club</translation>
+    </message>
+    <message>
+        <source>Taktik und Kader</source>
+        <translation>Tactics and squad</translation>
+    </message>
+    <message>
+        <source>Farben</source>
+        <translation>Colours</translation>
+    </message>
+    <message>
+        <source>Nicht mehr anzeigen</source>
+        <translation>Don&apos;t show again</translation>
+    </message>
+    <message>
+        <source>Schließt den Assistenten für diesen Spielstand. Du kannst ihn über Hilfe → Willkommens-Assistent wieder öffnen.</source>
+        <translation>Closes the assistant for this save. You can open it again from Help → Welcome assistant.</translation>
+    </message>
+    <message>
+        <source>Zurück</source>
+        <translation>Back</translation>
+    </message>
+    <message>
+        <source>Weiter</source>
+        <translation>Next</translation>
+    </message>
+    <message>
+        <source>Welchen Verein managst du?</source>
+        <translation>Which club do you manage?</translation>
+    </message>
+    <message>
+        <source>Übersicht, Best XI, Kaufberatung und Trainingsplan rechnen mit diesem Verein. Oben steht der Verein mit den meisten importierten Spielern.</source>
+        <translation>Overview, Best XI, signing advice and training plan work with this club. The club with the most imported players is listed first.</translation>
+    </message>
+    <message>
+        <source>voller Vereinsname (für den Header)</source>
+        <translation>full club name (for the header)</translation>
+    </message>
+    <message>
+        <source>Name des Stadions</source>
+        <translation>stadium name</translation>
+    </message>
+    <message>
+        <source>Zweitteam:</source>
+        <translation>Second Team:</translation>
+    </message>
+    <message>
+        <source>Voller Vereinsname (Anzeige):</source>
+        <translation>Full club name (display):</translation>
+    </message>
+    <message>
+        <source>Stadion:</source>
+        <translation>Stadium:</translation>
+    </message>
+    <message>
+        <source>Vereins-Land (3-Buchstaben-Code):</source>
+        <translation>Club country (3-letter code):</translation>
+    </message>
+    <message>
+        <source>Logo wählen (PNG)…</source>
+        <translation>Choose logo (PNG)…</translation>
+    </message>
+    <message>
+        <source>Entfernen</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
+        <source>Vereinslogo:</source>
+        <translation>Club logo:</translation>
+    </message>
+    <message>
+        <source>Wofür brauche ich das?</source>
+        <translation>What is this for?</translation>
+    </message>
+    <message>
+        <source>Das Zweitteam (zum Beispiel die zweite Mannschaft oder U23) zählt zum eigenen Kader, etwa für Leihen und die Jugendelf. Vereinsname, Stadion und Logo erscheinen im Kopf des Fensters. Das Vereins-Land steuert den Inland-Filter beim Scouting und die Ausbildungsregeln der Kaderregistrierung. Der Code ist der dreistellige Nationen-Code aus dem Spiel.</source>
+        <translation>The second team (for example the reserves or U23) counts as part of your own squad, for loans and the youth XI among others. Club name, stadium and logo appear in the window header. The club country drives the domestic filter in scouting and the trained-at-club rules of squad registration. The code is the three-letter nation code from the game.</translation>
+    </message>
+    <message>
+        <source>Lieblings-Taktiken</source>
+        <translation>Favourite Tactics</translation>
+    </message>
+    <message>
+        <source>Primäre Taktik:</source>
+        <translation>Primary Tactic:</translation>
+    </message>
+    <message>
+        <source>Sekundäre Taktik:</source>
+        <translation>Secondary Tactic:</translation>
+    </message>
+    <message>
+        <source>Werden auf Übersicht, Aufstellung, Kader und Transfers vorausgewählt. Die primäre bestimmt die Rollen auf der Seite Entwicklung. Eigene Taktiken legst du unter Taktiken an.</source>
+        <translation>Preselected on Overview, Line-up, Squad and Transfers. The primary one sets the roles on the Development page. You create your own tactics under Tactics.</translation>
+    </message>
+    <message>
+        <source>Mit Ball und ohne Ball</source>
+        <translation>In and out of possession</translation>
+    </message>
+    <message>
+        <source>Anteil mit Ball:</source>
+        <translation>In-possession share:</translation>
+    </message>
+    <message>
+        <source>Was bedeutet der Anteil?</source>
+        <translation>What does the share mean?</translation>
+    </message>
+    <message>
+        <source>Jede Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Wert eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner Rolle ohne Ball. Bei 50 % zählen beide gleich, bei mehr zählt der Ballbesitz stärker.</source>
+        <translation>Every tactic has an in-possession and an out-of-possession line-up. A player&apos;s value is this share of their in-possession role plus the rest of their out-of-possession role. At 50 % both count the same; above that, possession counts more.</translation>
+    </message>
+    <message>
+        <source>Kaderregistrierung</source>
+        <translation>Squad registration</translation>
+    </message>
+    <message>
+        <source>Standard (keine Beschränkung)</source>
+        <translation>Default (no restriction)</translation>
+    </message>
+    <message>
+        <source>Champions League / Europa League / Conference League</source>
+        <translation>Champions League / Europa League / Conference League</translation>
+    </message>
+    <message>
+        <source>Liga:</source>
+        <translation>League:</translation>
+    </message>
+    <message>
+        <source>Europapokal:</source>
+        <translation>European competition:</translation>
+    </message>
+    <message>
+        <source>Was bewirkt das?</source>
+        <translation>What does this do?</translation>
+    </message>
+    <message>
+        <source>Sobald ein Wettbewerb eine Meldeliste verlangt, markiert der Analyzer im Land und im Verein ausgebildete Spieler und bietet den Registrierungs-Assistenten an. &apos;Standard&apos; kennt keine Beschränkung, dann sind alle Spieler spielberechtigt.</source>
+        <translation>As soon as a competition requires a squad list, the Analyzer marks players trained in the nation and at the club and offers the registration assistant. &apos;Default&apos; has no restriction: every player is eligible.</translation>
+    </message>
+    <message>
+        <source>Nacht (dunkel)</source>
+        <translation>Night (dark)</translation>
+    </message>
+    <message>
+        <source>Tag (hell)</source>
+        <translation>Day (light)</translation>
+    </message>
+    <message>
+        <source>Vereins-/Farbvorlage:</source>
+        <translation>Club / colour preset:</translation>
+    </message>
+    <message>
+        <source>Modus:</source>
+        <translation>Mode:</translation>
+    </message>
+    <message>
+        <source>Die Vorlage färbt Kopfzeile, Knöpfe und Auswahl in den Vereinsfarben. Die Grundfarben bleiben neutral. Feinere Anpassungen findest du unter Einstellungen → Design.</source>
+        <translation>The preset colours the header, buttons and selection in the club colours. The base colours stay neutral. Finer adjustments are under Settings → Design.</translation>
+    </message>
+    <message>
+        <source>Was es sonst noch gibt</source>
+        <translation>What else there is</translation>
+    </message>
+    <message>
+        <source>Weitere Einstellungen</source>
+        <translation>More settings</translation>
+    </message>
+    <message>
+        <source>Unter Einstellungen → Verein: Nationalteam (schaltet das National-Management frei), Spielerporträts und Wappen aus dem Graphics-Ordner des Spiels und, für FM27, einen Spielstand live verfolgen. Unter DWRS-Gewichte und Schwellenwerte passt du an, wie Rollen bewertet und Kader aufgebaut werden.</source>
+        <translation>Under Settings → Club: national team (unlocks national management), player portraits and crests from the game&apos;s graphics folder and, for FM27, following a save live. Under DWRS weights and Thresholds you adjust how roles are rated and squads are built.</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Custom</translation>
+    </message>
+    <message>
+        <source>%1 (eigene)</source>
+        <translation>%1 (own)</translation>
+    </message>
+    <message>
+        <source>Bisherige Farben behalten</source>
+        <translation>Keep current colours</translation>
+    </message>
+    <message>
+        <source>Fertig</source>
+        <translation>Done</translation>
+    </message>
+    <message>
+        <source>Die Angaben konnten nicht gespeichert werden. Der Spielstand behält seinen bisherigen Stand.
+
+%1</source>
+        <translation>The details could not be saved. The save keeps its previous state.
+
+%1</translation>
+    </message>
+    <message>
+        <source>Vereinslogo wählen</source>
+        <translation>Choose club logo</translation>
+    </message>
+    <message>
+        <source>Bilder (*.png *.jpg *.jpeg *.bmp);;Alle Dateien (*)</source>
+        <translation>Images (*.png *.jpg *.jpeg *.bmp);;All files (*)</translation>
+    </message>
+    <message>
+        <source>Vereinslogo</source>
+        <translation>Club logo</translation>
+    </message>
+    <message>
+        <source>Die Datei konnte nicht als Bild geladen werden.</source>
+        <translation>The file could not be loaded as an image.</translation>
+    </message>
+    <message>
+        <source>Das Logo konnte nicht gespeichert werden.
+%1</source>
+        <translation>The logo could not be saved.
+%1</translation>
+    </message>
+    <message>
+        <source>Das Logo konnte nicht entfernt werden.
+%1</source>
+        <translation>The logo could not be removed.
+%1</translation>
+    </message>
+    <message>
+        <source>(kein Logo)</source>
+        <translation>(no logo)</translation>
     </message>
 </context>
 </TS>

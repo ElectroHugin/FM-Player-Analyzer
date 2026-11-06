@@ -9,6 +9,8 @@
 #include "AboutDialog.h"
 #include "AppContext.h"
 #include "NewSaveWizard.h"
+#include "ScreenshotTour.h"
+#include "WelcomeWizard.h"
 #include "SaveLibrary.h"
 #include "StartScreen.h"
 #include "widgets/DropZone.h"
@@ -256,6 +258,11 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     updateDbLabel();
     updateHeader();
 
+    m_welcomeTimer.setSingleShot(true);
+    m_welcomeTimer.setInterval(600);
+    connect(&m_welcomeTimer, &QTimer::timeout, this, &MainWindow::maybeShowWelcome);
+    QTimer::singleShot(0, this, &MainWindow::maybeShowWelcome);
+
     connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this, [this] {
         for (TacticPitchWidget *pitch : findChildren<TacticPitchWidget *>())
             pitch->update();
@@ -278,6 +285,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         // exist here, so the history starts over.
         resetHistory();
         offerRecalcIfOutdated();
+        maybeShowWelcome();
     });
     connect(&m_context, &AppContext::dataChanged, this, [this] {
         m_searchModelDirty = true;
@@ -292,6 +300,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         }
         if (current)
             current->refresh();
+        maybeShowWelcome();
     });
     connect(&m_recalcWatcher, &QFutureWatcher<RatingsUpdater::Result>::finished, this, [this] {
         const RatingsUpdater::Result result = m_recalcWatcher.result();
@@ -526,6 +535,7 @@ void MainWindow::buildMenuBar()
     }
 
     auto *helpMenu = menuBar()->addMenu(tr("&Hilfe"));
+    helpMenu->addAction(tr("Willkommens-Assistent …"), this, &MainWindow::showWelcome);
     auto *about = helpMenu->addAction(tr("Über %1 …").arg(appName()));
     about->setMenuRole(QAction::AboutRole);
     connect(about, &QAction::triggered, this, &MainWindow::showAbout);
@@ -1059,6 +1069,35 @@ void MainWindow::newSave()
 {
     NewSaveWizard wizard(m_context, this);
     wizard.exec();
+}
+
+void MainWindow::maybeShowWelcome()
+{
+    if (m_welcomeOpen || ScreenshotTour::requested() || !WelcomeWizard::shouldOffer(m_context)
+        || m_welcomeLater.contains(m_context.currentDbName()))
+        return;
+    // An import result, the new-save assistant or a busy dialog comes first:
+    // try again once nothing modal is open any more.
+    if (QApplication::activeModalWidget() || !isVisible()) {
+        if (!m_welcomeTimer.isActive())
+            m_welcomeTimer.start();
+        return;
+    }
+    showWelcome();
+}
+
+void MainWindow::showWelcome()
+{
+    if (m_welcomeOpen || !m_context.hasDatabase())
+        return;
+    m_welcomeOpen = true;
+    m_welcomeTimer.stop();
+    const QString dbName = m_context.currentDbName();
+    WelcomeWizard wizard(m_context, m_theme, this);
+    // Closed with the window button: ask again the next time this save opens.
+    if (wizard.exec() != QDialog::Accepted && !m_welcomeLater.contains(dbName))
+        m_welcomeLater.append(dbName);
+    m_welcomeOpen = false;
 }
 
 void MainWindow::switchSave()
