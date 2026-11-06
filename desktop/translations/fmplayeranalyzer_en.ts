@@ -4227,10 +4227,6 @@ Details: %1</translation>
         <translation>no limit</translation>
     </message>
     <message>
-        <source>Höchstsumme der Gehälter aller gemeldeten Spieler, wie die Liga sie vorgibt (z. B. LaLiga). Ändert sich der Betrag im Spiel, hier einfach anpassen. 0 = kein Limit.</source>
-        <translation>Maximum total wages of all registered players, as set by the league (e.g. LaLiga). If the amount changes in the game, just adjust it here. 0 = no limit.</translation>
-    </message>
-    <message>
         <source>keins</source>
         <translation>none</translation>
     </message>
@@ -4293,6 +4289,14 @@ Details: %1</translation>
     <message>
         <source>das Gehaltsbudget reicht für keinen weiteren Spieler (%1 frei).</source>
         <translation>the wage budget does not cover another player (%1 left).</translation>
+    </message>
+    <message>
+        <source>Höchstsumme der Gehälter aller gemeldeten Spieler, wie die Liga sie vorgibt (z. B. LaLiga). Ändert sich der Betrag im Spiel, hier einfach anpassen. Der Vorschlag meldet zuerst die Spieler mit zugesagter Spielzeit (Star, wichtiger Spieler, Stammspieler, Stammtorhüter) und verteilt den Rest so, dass Startelf, B-Team und Kadertiefe möglichst stark bleiben. 0 = kein Limit.</source>
+        <translation>Maximum total wages of all registered players, as set by the league (e.g. LaLiga). If the amount changes in the game, just adjust it here. The proposal registers the players with promised playing time first (star, important player, regular starter, first-choice goalkeeper) and spends the rest so that the starting XI, B team and depth stay as strong as possible. 0 = no limit.</translation>
+    </message>
+    <message>
+        <source>Spielzeit zugesagt</source>
+        <translation>playing time promised</translation>
     </message>
 </context>
 <context>

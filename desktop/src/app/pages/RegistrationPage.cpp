@@ -135,7 +135,9 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
         tr("kein Limit"),
         tr("Höchstsumme der Gehälter aller gemeldeten Spieler, wie die Liga sie vorgibt "
            "(z. B. LaLiga). Ändert sich der Betrag im Spiel, hier einfach anpassen. "
-           "0 = kein Limit."));
+           "Der Vorschlag meldet zuerst die Spieler mit zugesagter Spielzeit (Star, "
+           "wichtiger Spieler, Stammspieler, Stammtorhüter) und verteilt den Rest so, dass "
+           "Startelf, B-Team und Kadertiefe möglichst stark bleiben. 0 = kein Limit."));
     m_minWageSpin = makeMoneySpin(
         tr("keins"), tr("Spieler mit weniger Gehalt dürfen nicht gemeldet werden. 0 = keins."));
     m_wagePeriodCombo = new QComboBox(m_wageRow);
@@ -589,6 +591,9 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
             notes.prepend(uefa ? tr("jetzt Liste B") : tr("jetzt U21"));
         if (Registration::u21Status(p) == Registration::U21Status::Uncertain)
             notes << tr("U21 unklar");
+        if (entry.advice == Advice::List && m_quota.wageBudget > 0.0
+            && Registration::hasPromisedPlayingTime(p))
+            notes << tr("Spielzeit zugesagt");
         if (entry.advice != Advice::Exempt && Registration::belowMinWage(p, m_quota)
             && entry.note.isEmpty())
             notes << tr("unter Mindestgehalt");

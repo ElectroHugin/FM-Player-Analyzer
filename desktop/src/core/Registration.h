@@ -189,13 +189,24 @@ struct Proposal {
     double totalWage = 0.0; // weekly wages of the listed players
 };
 
+// Promised much playing time in the contract (Star Player, Important Player,
+// Regular Starter, First-Choice Goalkeeper): with a wage budget these players
+// are registered first and never traded for cheaper ones.
+bool hasPromisedPlayingTime(const Player &player);
+
+// What a place on the list is worth to the wage-budget optimization: the
+// tier (starting XI far above B-team, depth, reserve), then the best DWRS.
+double registrationValue(const RankedPlayer &entry);
+
 // Fills the list in rank order: the needed goalkeepers first, then everyone who
 // still fits a quota. Walking the whole ranking means free home-grown /
 // club-trained places always go to the best remaining such player (youth
 // included) instead of staying empty. Greedy is optimal here because the
-// quotas are nested limits. A wage budget is not nested: there the walk keeps
-// the better player whenever his wage still fits and skips the ones that no
-// longer do, so a cheaper player further down can still take a place.
+// quotas are nested limits. A wage budget is not nested: there the players
+// with promised playing time go first, the walk fills the rest (starters
+// first, as ranked), and swaps (one non-starter out, up to two in) then trade
+// expensive places for cheaper players whenever that raises the summed
+// registrationValue(). The starting XI never gets weaker than the walk's.
 Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competition,
                  const Quota &quota);
 
