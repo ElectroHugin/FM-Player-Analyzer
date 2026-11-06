@@ -1,5 +1,7 @@
 #include "HtmlImporter.h"
 
+#include "ImportHistory.h"
+
 #include "Attributes.h"
 #include "Constants.h"
 #include "Database.h"
@@ -9,6 +11,7 @@
 #include "Utils.h"
 
 #include <QDateTime>
+#include <QFileInfo>
 #include <QHash>
 #include <QSet>
 
@@ -385,7 +388,8 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
                                        const std::vector<Player> &existingPlayers,
                                        const std::function<void(int, int)> &progress,
                                        const QString &fmVersionId,
-                                       std::vector<Player> *updatedPlayers)
+                                       std::vector<Player> *updatedPlayers,
+                                       const QString &source, const QString &format)
 {
     ImportResult result;
     const QHash<QString, QString> &mapping = attributeMapping(fmVersionId);
@@ -640,6 +644,9 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
     std::vector<Player> batch;
     batch.reserve(kUpsertBatchSize);
     std::vector<Player> written; // final rows (with ids), only if updatedPlayers
+    // Snapshots of the followed players for the import history.
+    const ImportHistory::Scope historyScope = ImportHistory::scopeFor(db, table.knownUids);
+    std::vector<ImportHistory::Snapshot> snapshots;
     // Roles filled in from a merged-away duplicate — the only way an import
     // changes assigned roles; everything else keeps player_roles untouched.
     std::vector<std::pair<int, QStringList>> mergedRoles;
@@ -655,6 +662,11 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
             return false;
         }
         result.playersImported += static_cast<int>(batch.size());
+        if (table.gameDate.isValid()) {
+            for (const Player &player : batch)
+                if (historyScope.contains(player))
+                    snapshots.push_back(ImportHistory::snapshotOf(player, table.gameDate));
+        }
         if (updatedPlayers)
             std::move(batch.begin(), batch.end(), std::back_inserter(written));
         batch.clear();
@@ -713,6 +725,19 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
         return result;
     }
 
+    // The import log and the snapshots belong to the same transaction.
+    ImportHistory::ImportRecord record;
+    record.importedAt =
+        QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+    record.gameDate = table.gameDate;
+    record.source = source;
+    record.format = format;
+    record.players = result.playersImported;
+    if (!ImportHistory::record(db, record, snapshots)) {
+        result.error = db.errorString();
+        return result;
+    }
+
     // The bumped counter is part of the same transaction, so a failed import
     // never advances the freshness clock.
     if (!db.setSetting(QStringLiteral("update_counter"), QString::number(newCounter))
@@ -724,6 +749,8 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
     }
     result.updateCounter = newCounter;
     result.fullUpload = fullUpload;
+    result.gameDate = table.gameDate;
+    result.snapshots = static_cast<int>(snapshots.size());
     result.success = true;
 
     if (updatedPlayers) {
@@ -761,13 +788,17 @@ ImportResult HtmlImporter::importFile(const QString &filePath, Database &db,
                                       std::function<void(int, int)> progress,
                                       const QString &fmVersionId,
                                       const std::function<void(int, int)> &parseProgress,
-                                      std::vector<Player> *updatedPlayers)
+                                      std::vector<Player> *updatedPlayers,
+                                      const QDate &gameDate)
 {
     ImportTable table;
     ImportError readError;
     if (!readImportTable(filePath, fmVersionId, &table, &readError, parseProgress))
         return failedImport(readError);
-    return importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers);
+    if (!table.gameDate.isValid())
+        table.gameDate = gameDate;
+    return importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers,
+                       QFileInfo(filePath).fileName(), importFormatForFile(filePath));
 }
 
 QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,

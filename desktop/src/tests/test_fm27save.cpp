@@ -211,9 +211,13 @@ private slots:
         save.players[1].worldReputation = 8000;
         save.players[7].fieldingClubUid = 500; // reserve side fielded by the user's club
         save.knowledgeByPindex = {{3, 95}, {4, 62}, {5, 40}};
+        save.gameDate = QDate(2026, 9, 14);
 
         ImportTable table;
         Fm27SaveImport::buildTable(save, {true}, &table);
+        // The save's date and the scouted players go to the import history.
+        QCOMPARE(table.gameDate, QDate(2026, 9, 14));
+        QCOMPARE(table.knownUids, (QStringList{QStringLiteral("12"), QStringLiteral("13")}));
         QStringList names;
         for (const QStringList &row : table.rows)
             names << row.at(column(table, QStringLiteral("Player")));

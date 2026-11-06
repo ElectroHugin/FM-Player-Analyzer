@@ -305,4 +305,46 @@ CellStyle personalityCellStyle(const QString &category)
     return style;
 }
 
+int footStrengthLevel(const QString &text)
+{
+    const QString t = text.trimmed().toLower();
+    if (t.isEmpty())
+        return 0;
+    bool isNumber = false;
+    const int raw = t.toInt(&isNumber);
+    if (isNumber) {
+        // Same steps as the game (and Fm27SaveImport::footText).
+        if (raw < 1 || raw > 20)
+            return 0;
+        if (raw >= 18)
+            return 6;
+        if (raw >= 15)
+            return 5;
+        if (raw >= 12)
+            return 4;
+        if (raw >= 9)
+            return 3;
+        if (raw >= 5)
+            return 2;
+        return 1;
+    }
+    static const QHash<QString, int> levels = {
+        {QStringLiteral("very weak"), 1},      {QStringLiteral("weak"), 2},
+        {QStringLiteral("reasonable"), 3},     {QStringLiteral("fairly strong"), 4},
+        {QStringLiteral("strong"), 5},         {QStringLiteral("very strong"), 6},
+        // German game language
+        {QStringLiteral("sehr schwach"), 1},   {QStringLiteral("schwach"), 2},
+        {QStringLiteral("ordentlich"), 3},     {QStringLiteral("ausreichend"), 3},
+        {QStringLiteral("ziemlich stark"), 4}, {QStringLiteral("recht stark"), 4},
+        {QStringLiteral("stark"), 5},          {QStringLiteral("sehr stark"), 6},
+    };
+    return levels.value(t, 0);
+}
+
+int footStrengthAttributeValue(int level)
+{
+    static constexpr int values[] = {0, 3, 9, 12, 13, 16, 19};
+    return level >= 1 && level <= kFootStrengthLevels ? values[level] : 0;
+}
+
 } // namespace fm

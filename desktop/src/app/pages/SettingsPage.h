@@ -9,6 +9,7 @@
 #include <QHash>
 
 class QCheckBox;
+class QDateEdit;
 class QComboBox;
 class QDoubleSpinBox;
 class QGroupBox;
@@ -100,6 +101,8 @@ private:
     // Database tab.
     QCheckBox *m_autoOpenCheck = nullptr;
     QCheckBox *m_attributeMaskingCheck = nullptr; // per save: FM27 save-game import
+    QCheckBox *m_historyAllCheck = nullptr; // per save: snapshots of every player
+    QDateEdit *m_seasonStartEdit = nullptr; // per save: first day of a season (day + month)
     QCheckBox *m_liveSaveCheck = nullptr;          // per save: follow an FM27 save
     QLineEdit *m_liveSaveEdit = nullptr;
     QComboBox *m_dbCombo = nullptr;

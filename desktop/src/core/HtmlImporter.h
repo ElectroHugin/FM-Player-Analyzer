@@ -51,6 +51,10 @@ struct ImportResult {
     // import failed before stamping). Every imported player's lastSeenUpdate is
     // set to this; drives data-freshness (see Freshness).
     int updateCounter = 0;
+    // In-game date of the import (from the save, or given for an export);
+    // invalid = unknown. snapshots: player snapshots kept by the history.
+    QDate gameDate;
+    int snapshots = 0;
     // The import counted as a full export and advanced the counter; a partial
     // export only refreshed its own players (Freshness::isFullUpload).
     bool fullUpload = false;
@@ -90,13 +94,15 @@ public:
 
     // Reads the file (HTML or CSV by extension, see readImportTable) and
     // imports it like importHtml; the decoded file is released right after
-    // parsing, before the DB work.
+    // parsing, before the DB work. gameDate: the in-game date of an export
+    // (a save game brings its own, which wins).
     static ImportResult importFile(const QString &filePath, Database &db,
                                    const std::vector<Player> &existingPlayers,
                                    std::function<void(int, int)> progress = {},
                                    const QString &fmVersionId = QString(),
                                    const std::function<void(int, int)> &parseProgress = {},
-                                   std::vector<Player> *updatedPlayers = nullptr);
+                                   std::vector<Player> *updatedPlayers = nullptr,
+                                   const QDate &gameDate = {});
 
     // Manual, user-confirmed update of ONE player from an HTML export that
     // contains exactly one row. Writes the file's data onto targetUid
@@ -123,7 +129,9 @@ private:
                                     const std::vector<Player> &existingPlayers,
                                     const std::function<void(int, int)> &progress,
                                     const QString &fmVersionId,
-                                    std::vector<Player> *updatedPlayers);
+                                    std::vector<Player> *updatedPlayers,
+                                    const QString &source = QString(),
+                                    const QString &format = QString());
 };
 
 } // namespace fm

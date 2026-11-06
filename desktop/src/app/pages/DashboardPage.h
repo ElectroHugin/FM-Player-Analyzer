@@ -10,6 +10,7 @@ class QCheckBox;
 class QComboBox;
 class QGridLayout;
 class QGroupBox;
+class QFrame;
 class QLabel;
 class QLineEdit;
 class QProgressDialog;
@@ -81,6 +82,11 @@ private:
     QLabel *m_kpiTotalValue = nullptr;
     QLabel *m_kpiAvgValue = nullptr;
     QLabel *m_kpiAvgAge = nullptr;
+    // In-game date and season of the newest save game read in (hidden
+    // until a save brought one).
+    QFrame *m_kpiGameDateTile = nullptr;
+    QLabel *m_kpiGameDate = nullptr;
+    QLabel *m_kpiGameDateCaption = nullptr;
     QWidget *m_kpiRow = nullptr;
 
     // Squad section

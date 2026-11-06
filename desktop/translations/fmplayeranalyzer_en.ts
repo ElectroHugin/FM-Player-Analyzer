@@ -178,6 +178,10 @@ Details: %1</source>
 
 Details: %1</translation>
     </message>
+    <message>
+        <source>Ingame-Datum %1: Verlauf für %2 Spieler erfasst.</source>
+        <translation>In-game date %1: history recorded for %2 players.</translation>
+    </message>
 </context>
 <context>
     <name>Navigation</name>
@@ -1436,6 +1440,14 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
             <numerusform>Compare with all %n</numerusform>
         </translation>
     </message>
+    <message>
+        <source>Ingame-Datum · Saison %1</source>
+        <translation>In-game date · season %1</translation>
+    </message>
+    <message>
+        <source>Stand des zuletzt eingelesenen FM27-Spielstands</source>
+        <translation>State of the most recently read FM27 save</translation>
+    </message>
 </context>
 <context>
     <name>fm::DropZone</name>
@@ -1899,6 +1911,41 @@ You can change the folder later in the settings.</translation>
     <message>
         <source>Beenden</source>
         <translation>Quit</translation>
+    </message>
+</context>
+<context>
+    <name>fm::FootStrengthWidget</name>
+    <message>
+        <source>Sehr schwach</source>
+        <translation>Very Weak</translation>
+    </message>
+    <message>
+        <source>Schwach</source>
+        <translation>Weak</translation>
+    </message>
+    <message>
+        <source>Ordentlich</source>
+        <translation>Reasonable</translation>
+    </message>
+    <message>
+        <source>Ziemlich stark</source>
+        <translation>Fairly Strong</translation>
+    </message>
+    <message>
+        <source>Stark</source>
+        <translation>Strong</translation>
+    </message>
+    <message>
+        <source>Sehr stark</source>
+        <translation>Very Strong</translation>
+    </message>
+    <message>
+        <source>Linker Fuß</source>
+        <translation>Left Foot</translation>
+    </message>
+    <message>
+        <source>Rechter Fuß</source>
+        <translation>Right Foot</translation>
     </message>
 </context>
 <context>
@@ -3518,30 +3565,6 @@ Details: %1</translation>
         <translation>Player Profile</translation>
     </message>
     <message>
-        <source>🏠 Mein Verein</source>
-        <translation>🏠 My Club</translation>
-    </message>
-    <message>
-        <source>🔄 Zweitteam</source>
-        <translation>🔄 Second Team</translation>
-    </message>
-    <message>
-        <source>🔍 Gescoutete</source>
-        <translation>🔍 Scouted</translation>
-    </message>
-    <message>
-        <source>🌟 Nationalkader</source>
-        <translation>🌟 National Squad</translation>
-    </message>
-    <message>
-        <source>🌍 Alle Spieler</source>
-        <translation>🌍 All Players</translation>
-    </message>
-    <message>
-        <source>🔎 Spieler suchen (Name eintippen)…</source>
-        <translation>🔎 Search players (type a name)…</translation>
-    </message>
-    <message>
         <source>Lade einen FM-Export hoch, der NUR diesen Spieler enthält. Die Daten werden direkt auf dieses Profil geschrieben — auch wenn die UID in der Datei abweicht (z. B. fehlendes &apos;r-&apos;-Präfix). Zugewiesene Rollen, Primärrolle und Transfer-/Leih-Einstellungen bleiben erhalten.</source>
         <translation>Upload an FM export that contains ONLY this player. The data is written directly onto this profile — even if the UID in the file differs (e.g. a missing &apos;r-&apos; prefix). Assigned roles, primary role and transfer/loan settings are preserved.</translation>
     </message>
@@ -3582,60 +3605,12 @@ Details: %1</translation>
         <translation>Stored changes before the current value</translation>
     </message>
     <message>
-        <source>&lt;h3&gt;Kein Spieler ausgewählt.&lt;/h3&gt;</source>
-        <translation>&lt;h3&gt;No player selected.&lt;/h3&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Alter:&lt;/b&gt; %1</source>
-        <translation>&lt;b&gt;Age:&lt;/b&gt; %1</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Verein:&lt;/b&gt; %1</source>
-        <translation>&lt;b&gt;Club:&lt;/b&gt; %1</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Position:&lt;/b&gt; %1</source>
-        <translation>&lt;b&gt;Position:&lt;/b&gt; %1</translation>
-    </message>
-    <message>
-        <source>Spielzeit</source>
-        <translation>Playing Time</translation>
-    </message>
-    <message>
-        <source>Primärrolle</source>
-        <translation>Primary Role</translation>
-    </message>
-    <message>
-        <source>Fuß</source>
-        <translation>Foot</translation>
-    </message>
-    <message>
-        <source>Persönlichkeit</source>
-        <translation>Personality</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Status</translation>
-    </message>
-    <message>
         <source>Retired (verpasste Komplett-Exporte: %1)</source>
         <translation>Retired (missed full exports: %1)</translation>
     </message>
     <message>
-        <source>veraltet (verpasste Komplett-Exporte: %1)</source>
-        <translation>stale (missed full exports: %1)</translation>
-    </message>
-    <message>
         <source>verpasste Komplett-Exporte: %1</source>
         <translation>missed full exports: %1</translation>
-    </message>
-    <message>
-        <source>Daten</source>
-        <translation>Data</translation>
-    </message>
-    <message>
-        <source>🔁 Diesen Spieler aus einer Exportdatei (HTML oder CSV) aktualisieren</source>
-        <translation>🔁 Update this player from an export file (HTML or CSV)</translation>
     </message>
     <message>
         <source>FM-Export (HTML oder CSV) auswählen</source>
@@ -3648,10 +3623,6 @@ Details: %1</translation>
     <message>
         <source>Dieser Spieler hat noch keine bewerteten Rollen. Weise ihm unter Rollen &amp; Taktiken → Rollen zuweisen Rollen zu.</source>
         <translation>This player has no rated roles yet. Assign roles to him under Roles &amp; Tactics → Assign Roles.</translation>
-    </message>
-    <message>
-        <source>aktuell</source>
-        <translation>current</translation>
     </message>
     <message>
         <source>Ja, diese Datei ist sicher ein Update für %1.</source>
@@ -3792,6 +3763,102 @@ Details: %1</translation>
     <message>
         <source>Keine Spieler in dieser Auswahl</source>
         <translation>No players in this selection</translation>
+    </message>
+    <message>
+        <source>Verlauf nach Ingame-Datum</source>
+        <translation>History by in-game date</translation>
+    </message>
+    <message>
+        <source>Ingame-Datum</source>
+        <translation>In-game date</translation>
+    </message>
+    <message>
+        <source>Ø-Note</source>
+        <translation>Avg. Rating</translation>
+    </message>
+    <message>
+        <source>Marktwert</source>
+        <translation>Market Value</translation>
+    </message>
+    <message>
+        <source>Gehalt</source>
+        <translation>Wage</translation>
+    </message>
+    <message>
+        <source>Veränderte Attribute</source>
+        <translation>Changed attributes</translation>
+    </message>
+    <message>
+        <source>Saison %1 (Ende)</source>
+        <translation>Season %1 (end)</translation>
+    </message>
+    <message>
+        <source>erster Stand</source>
+        <translation>first state</translation>
+    </message>
+    <message>
+        <source>Mein Verein</source>
+        <translation>My club</translation>
+    </message>
+    <message>
+        <source>Zweitteam</source>
+        <translation>Second team</translation>
+    </message>
+    <message>
+        <source>Gescoutete</source>
+        <translation>Scouted</translation>
+    </message>
+    <message>
+        <source>Nationalkader</source>
+        <translation>National squad</translation>
+    </message>
+    <message>
+        <source>Alle Spieler</source>
+        <translation>All players</translation>
+    </message>
+    <message>
+        <source>Spieler suchen</source>
+        <translation>Search players</translation>
+    </message>
+    <message>
+        <source>Diesen Spieler aus einer Exportdatei aktualisieren (HTML oder CSV)</source>
+        <translation>Update this player from an export file (HTML or CSV)</translation>
+    </message>
+    <message>
+        <source>Noch kein Verlauf. Bei jedem Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen Stand: für deinen Kader, das Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting, auf Wunsch für alle Spieler (Einstellungen → Verein).</source>
+        <translation>No history yet. Each time an FM27 save is read in, the analyzer keeps one state per in-game month: for your squad, the second team, the shortlist, the national squad and players from your scouting, or for all players if you choose (Settings → Club).</translation>
+    </message>
+    <message>
+        <source>Kein Spieler ausgewählt</source>
+        <translation>No player selected</translation>
+    </message>
+    <message>
+        <source>%1 Jahre</source>
+        <translation>%1 years</translation>
+    </message>
+    <message>
+        <source>Primärrolle %1</source>
+        <translation>Primary role %1</translation>
+    </message>
+    <message>
+        <source>Daten veraltet (verpasste Komplett-Exporte: %1)</source>
+        <translation>Data outdated (missed full exports: %1)</translation>
+    </message>
+    <message>
+        <source>Daten aktuell</source>
+        <translation>Data current</translation>
+    </message>
+    <message>
+        <source>%1 seit %2</source>
+        <translation>%1 since %2</translation>
+    </message>
+    <message>
+        <source>vorher %1</source>
+        <translation>previously %1</translation>
+    </message>
+    <message>
+        <source>Ingame-Stand %1</source>
+        <translation>In-game state %1</translation>
     </message>
 </context>
 <context>
@@ -5114,6 +5181,26 @@ Details: %1</translation>
     <message>
         <source>FM27-Spielstände (*.fm);;Alle Dateien (*)</source>
         <translation>FM27 saves (*.fm);;All files (*)</translation>
+    </message>
+    <message>
+        <source>Verlauf für alle Spieler speichern</source>
+        <translation>Keep history for all players</translation>
+    </message>
+    <message>
+        <source>Beim Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen Stand der Attribute, der Durchschnittsnote, des Marktwerts und des Gehalts, aber nur, wenn sich etwas geändert hat. Ohne Haken gilt das für deinen Kader, das Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting. Mit Haken für alle eingelesenen Spieler; die Datenbank wird dadurch deutlich größer. Die aktuelle und die zwei Saisons davor bleiben monatlich, ältere Saisons werden auf ihren Stand am Saisonende verdichtet.</source>
+        <translation>When an FM27 save is read in, the analyzer keeps one state per in-game month of the attributes, average rating, value and wage, but only when something changed. Unticked, this applies to your squad, the second team, the shortlist, the national squad and players from your scouting. Ticked, to every player read in; the database grows considerably. The current season and the two before it stay monthly; older seasons are condensed to their end-of-season state.</translation>
+    </message>
+    <message>
+        <source>Verlauf:</source>
+        <translation>History:</translation>
+    </message>
+    <message>
+        <source>Ab diesem Tag zählt der Verlauf eine neue Saison, zum Beispiel für die Anzeige der Saison in der Übersicht und beim Verdichten alter Saisons. Der 1. Juli passt für die meisten europäischen Ligen; für Ligen, die im Kalenderjahr spielen, nimm den 1. Januar.</source>
+        <translation>From this day on the history counts a new season, for example for the season shown on the overview and when condensing old seasons. 1 July fits most European leagues; for leagues that play in the calendar year, use 1 January.</translation>
+    </message>
+    <message>
+        <source>Saisonbeginn:</source>
+        <translation>Season start:</translation>
     </message>
 </context>
 <context>

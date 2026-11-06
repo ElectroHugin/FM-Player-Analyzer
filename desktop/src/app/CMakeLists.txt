@@ -92,6 +92,8 @@ add_executable(fmplayeranalyzer
     widgets/ColumnChooser.cpp
     widgets/FlowLayout.h
     widgets/FlowLayout.cpp
+    widgets/FootStrengthWidget.h
+    widgets/FootStrengthWidget.cpp
     widgets/RolePhaseSwitch.h
     widgets/RolePhaseSwitch.cpp
     widgets/ClubHeaderBar.h

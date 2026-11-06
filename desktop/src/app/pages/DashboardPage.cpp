@@ -1,4 +1,5 @@
 #include "DashboardPage.h"
+#include "core/ImportHistory.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -329,7 +330,8 @@ QWidget *DashboardPage::buildKpiRow(QWidget *parent)
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(12);
 
-    const auto makeTile = [&](const QString &caption, QLabel **valueOut) {
+    const auto makeTile = [&](const QString &caption, QLabel **valueOut,
+                              QLabel **captionOut = nullptr, QFrame **tileOut = nullptr) {
         auto *tile = new QFrame(row);
         tile->setObjectName(QStringLiteral("kpiTile"));
         auto *tileLayout = new QVBoxLayout(tile);
@@ -342,12 +344,18 @@ QWidget *DashboardPage::buildKpiRow(QWidget *parent)
         tileLayout->addWidget(captionLabel);
         layout->addWidget(tile, 1);
         *valueOut = value;
+        if (captionOut)
+            *captionOut = captionLabel;
+        if (tileOut)
+            *tileOut = tile;
     };
 
     makeTile(tr("Spieler im Kern-Kader"), &m_kpiPlayers);
     makeTile(tr("Gesamtwert Kader"), &m_kpiTotalValue);
     makeTile(tr("Ø Spielerwert"), &m_kpiAvgValue);
     makeTile(tr("Ø Alter"), &m_kpiAvgAge);
+    makeTile(QString(), &m_kpiGameDate, &m_kpiGameDateCaption, &m_kpiGameDateTile);
+    m_kpiGameDateTile->setVisible(false);
     return row;
 }
 
@@ -614,6 +622,21 @@ void DashboardPage::updateKpis(const std::vector<const Player *> &coreSquad)
     m_kpiTotalValue->setText(formatMillions(totalValue));
     m_kpiAvgValue->setText(formatMillions(avgValue));
     m_kpiAvgAge->setText(QLocale().toString(avgAge, 'f', 1));
+    {
+        // Where the data stands in the game: the newest save game read in.
+        const QDate gameDate = m_context.database().lastGameDate();
+        m_kpiGameDateTile->setVisible(gameDate.isValid());
+        if (gameDate.isValid()) {
+            const ImportHistory::SeasonStart start =
+                ImportHistory::seasonStartOf(m_context.database());
+            m_kpiGameDate->setText(QLocale().toString(gameDate, QLocale::ShortFormat));
+            m_kpiGameDateCaption->setText(
+                tr("Ingame-Datum · Saison %1")
+                    .arg(ImportHistory::seasonLabel(ImportHistory::seasonOf(gameDate, start),
+                                                    start)));
+            m_kpiGameDateTile->setToolTip(tr("Stand des zuletzt eingelesenen FM27-Spielstands"));
+        }
+    }
 }
 
 void DashboardPage::updateClubTable(const std::vector<const Player *> &clubPlayers)

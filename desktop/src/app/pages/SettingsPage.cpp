@@ -1,4 +1,5 @@
 #include "SettingsPage.h"
+#include "core/ImportHistory.h"
 
 #include "../NewSaveWizard.h"
 
@@ -12,6 +13,7 @@
 
 #include <QBuffer>
 #include <QCheckBox>
+#include <QDateEdit>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QStandardItemModel>
@@ -278,6 +280,37 @@ QWidget *SettingsPage::buildClubTab()
     maskingHint->setObjectName(QStringLiteral("kpiCaption"));
     versionForm->addRow(tr("FM27-Spielstände:"), m_attributeMaskingCheck);
     versionForm->addRow(maskingHint);
+
+    m_historyAllCheck = new QCheckBox(tr("Verlauf für alle Spieler speichern"), versionGroup);
+    auto *historyHint = new QLabel(
+        tr("Beim Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen "
+           "Stand der Attribute, der Durchschnittsnote, des Marktwerts und des Gehalts, aber "
+           "nur, wenn sich etwas geändert hat. Ohne Haken gilt das für deinen Kader, das "
+           "Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting. Mit "
+           "Haken für alle eingelesenen Spieler; die Datenbank wird dadurch deutlich größer. "
+           "Die aktuelle und die zwei Saisons davor bleiben monatlich, ältere Saisons werden "
+           "auf ihren Stand am Saisonende verdichtet."),
+        versionGroup);
+    historyHint->setWordWrap(true);
+    historyHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(tr("Verlauf:"), m_historyAllCheck);
+    versionForm->addRow(historyHint);
+
+    m_seasonStartEdit = new QDateEdit(versionGroup);
+    m_seasonStartEdit->setDisplayFormat(QStringLiteral("d. MMMM"));
+    m_seasonStartEdit->setDateRange(QDate(2001, 1, 1), QDate(2001, 12, 31));
+    m_seasonStartEdit->setCalendarPopup(false);
+    m_seasonStartEdit->setMaximumWidth(200);
+    auto *seasonHint = new QLabel(
+        tr("Ab diesem Tag zählt der Verlauf eine neue Saison, zum Beispiel für die Anzeige "
+           "der Saison in der Übersicht und beim Verdichten alter Saisons. Der 1. Juli passt "
+           "für die meisten europäischen Ligen; für Ligen, die im Kalenderjahr spielen, "
+           "nimm den 1. Januar."),
+        versionGroup);
+    seasonHint->setWordWrap(true);
+    seasonHint->setObjectName(QStringLiteral("kpiCaption"));
+    versionForm->addRow(tr("Saisonbeginn:"), m_seasonStartEdit);
+    versionForm->addRow(seasonHint);
 
     m_liveSaveCheck = new QCheckBox(tr("Spielstand live verfolgen"), versionGroup);
     m_liveSaveEdit = new QLineEdit(versionGroup);
@@ -1290,6 +1323,13 @@ void SettingsPage::refresh()
         QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir(m_context.fmVersionId())));
     m_graphicsGroup->setChecked(config.graphicsEnabled());
     m_attributeMaskingCheck->setChecked(config.attributeMasking());
+    {
+        const ImportHistory::SeasonStart start = ImportHistory::seasonStartOf(m_context.database());
+        m_seasonStartEdit->setDate(QDate(2001, start.month, start.day));
+    }
+    m_historyAllCheck->setChecked(
+        m_context.database().setting(QString::fromLatin1(ImportHistory::kAllPlayersSetting))
+        == QLatin1String("1"));
     m_liveSaveCheck->setChecked(config.liveSaveEnabled());
     m_liveSaveEdit->setText(QDir::toNativeSeparators(config.liveSavePath()));
     m_graphicsDirEdit->setText(QDir::toNativeSeparators(config.graphicsDir()));
@@ -1492,6 +1532,16 @@ void SettingsPage::saveAll()
     }
     config.setGraphicsDir(QDir::fromNativeSeparators(m_graphicsDirEdit->text().trimmed()));
     saveSetting(QStringLiteral("club_fm_id"), m_clubFmIdEdit->text().trimmed());
+    {
+        const QDate d = m_seasonStartEdit->date();
+        const ImportHistory::SeasonStart start{d.month(), d.day()};
+        // The default is no row, so a save keeps following the default.
+        saveSetting(QString::fromLatin1(ImportHistory::kSeasonStartSetting),
+                    start == ImportHistory::SeasonStart{} ? QString()
+                                                          : ImportHistory::seasonStartText(start));
+    }
+    saveSetting(QString::fromLatin1(ImportHistory::kAllPlayersSetting),
+                m_historyAllCheck->isChecked() ? QStringLiteral("1") : QString());
     saveSetting(QStringLiteral("user_club"), m_userClubCombo->currentText());
     saveSetting(QStringLiteral("second_team_club"), m_secondClubCombo->currentText());
     saveSetting(QStringLiteral("club_country_code"),

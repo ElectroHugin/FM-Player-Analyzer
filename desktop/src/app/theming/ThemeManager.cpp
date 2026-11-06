@@ -254,6 +254,11 @@ QFrame#kpiTile, QFrame#suggestionCard {
     background-color: %SURFACE%; border: 1px solid %BORDER%; border-radius: 10px; }
 QFrame#suggestionCard:hover { border-color: %ACCENTUI%; }
 QLabel#kpiValue { font-size: 19pt; font-weight: 650; color: %FG%; }
+/* Player profile header: one quiet surface, name and figures by size. */
+QFrame#profileHeader {
+    background-color: %SURFACE%; border: 1px solid %BORDER%; border-radius: 12px; }
+QLabel#profileName { font-size: 17pt; font-weight: 600; }
+QLabel#profileFact { font-size: 13pt; font-weight: 500; }
 /* Profile: roles of the favorite tactic, with ball / without ball. Fixed
    hues, independent of the club colors, so the meaning never changes. */
 QFrame#kpiTile[tacticPhase="ip"] { border: 2px solid %IPMARK%; }
@@ -280,11 +285,11 @@ QToolButton::menu-indicator { image: url(%CHEVRON%); width: 12px; height: 12px;
     subcontrol-position: right center; subcontrol-origin: padding; right: 6px; }
 
 /* ===== Inputs ===== */
-QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QTextEdit, QPlainTextEdit {
+QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QDateEdit, QTextEdit, QPlainTextEdit {
     background-color: %SURFACE%; color: %FG%; border: 1px solid %BORDER%;
     border-radius: 8px; padding: 6px 10px; min-height: 18px;
     selection-background-color: %INTERACTIVE%; selection-color: %INTERACTIVETEXT%; }
-QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus,
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus, QDateEdit:focus,
 QTextEdit:focus, QPlainTextEdit:focus { border: 2px solid %ACCENTUI%; padding: 5px 9px; }
 QLineEdit:disabled, QComboBox:disabled { color: %MUTED%; }
 QComboBox::drop-down { border: none; width: 28px; }
@@ -294,11 +299,11 @@ QComboBox QAbstractItemView {
     border-radius: 8px; padding: 4px;
     selection-background-color: %INTERACTIVESUBTLE%; selection-color: %FG%; }
 QComboBox QAbstractItemView::item { padding: 6px 10px; border-radius: 6px; min-height: 22px; }
-QSpinBox::up-button, QDoubleSpinBox::up-button,
-QSpinBox::down-button, QDoubleSpinBox::down-button {
+QSpinBox::up-button, QDoubleSpinBox::up-button, QDateEdit::up-button,
+QSpinBox::down-button, QDoubleSpinBox::down-button, QDateEdit::down-button {
     background: transparent; border: none; width: 20px; }
-QSpinBox::up-arrow, QDoubleSpinBox::up-arrow { image: url(%CHEVRON%); width: 10px; height: 10px; }
-QSpinBox::down-arrow, QDoubleSpinBox::down-arrow { image: url(%CHEVRON%); width: 10px; height: 10px; }
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow, QDateEdit::up-arrow { image: url(%CHEVRON%); width: 10px; height: 10px; }
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow, QDateEdit::down-arrow { image: url(%CHEVRON%); width: 10px; height: 10px; }
 
 /* ===== Check boxes / radios ===== */
 QCheckBox, QRadioButton { spacing: 8px; padding: 3px 0; }

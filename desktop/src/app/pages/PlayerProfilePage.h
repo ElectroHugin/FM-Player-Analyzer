@@ -13,11 +13,13 @@ class QMenu;
 class QToolButton;
 class QPushButton;
 class QScrollArea;
+class QTableWidget;
 class QCheckBox;
 class QWidget;
 
 namespace fm {
 class FlowLayout;
+class FootStrengthWidget;
 
 struct Player;
 class LineChartWidget;
@@ -61,9 +63,16 @@ private:
     QLabel *m_nameLabel = nullptr;
     QLabel *m_vitalsLabel = nullptr;
     QLabel *m_tagsLabel = nullptr;
+    FootStrengthWidget *m_footWidget = nullptr;
     // Optional pictures from the FM graphics folder; hidden without them.
     QLabel *m_portraitLabel = nullptr;
     QLabel *m_crestLabel = nullptr;
+    // Value, wage, rating with their change since the previous month.
+    QWidget *m_factsWidget = nullptr;
+    QList<QLabel *> m_factValues;
+    QList<QLabel *> m_factChanges;
+    QLabel *m_factsNote = nullptr;
+    void fillFacts(const Player *player);
 
     QGroupBox *m_updateBox = nullptr;
     QLineEdit *m_updateFileEdit = nullptr;
@@ -95,6 +104,10 @@ private:
     QLabel *m_consLabel = nullptr;
     QLabel *m_keyAttrsLabel = nullptr;
     LineChartWidget *m_chart = nullptr;
+    // Snapshots of the player's visible data per in-game month (ImportHistory).
+    QTableWidget *m_historyTable = nullptr;
+    QLabel *m_historyEmpty = nullptr;
+    void fillHistory(const Player *player);
     QLabel *m_noRolesLabel = nullptr;
 
     bool m_updating = false;
