@@ -3713,15 +3713,15 @@ Details: %1</translation>
     </message>
     <message>
         <source>mit Ball</source>
-        <translation type="unfinished">in possession</translation>
+        <translation>in possession</translation>
     </message>
     <message>
         <source>ohne Ball</source>
-        <translation type="unfinished">out of possession</translation>
+        <translation>out of possession</translation>
     </message>
     <message>
         <source>Rahmen = Rolle in „%1“:</source>
-        <translation type="unfinished"></translation>
+        <translation>Outline = role in “%1”:</translation>
     </message>
 </context>
 <context>
