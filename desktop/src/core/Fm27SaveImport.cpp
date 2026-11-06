@@ -124,18 +124,19 @@ QString wageText(qint64 poundsPerWeek)
     return moneyText(double(poundsPerWeek) * kEurosPerPound) + QStringLiteral(" p/w");
 }
 
-// The game shows a club's valuation as a range; the analyzer draws its own
-// around the true value (stable per player), the value never in the middle by
-// rule.
-QString valueRangeText(quint32 uniqueId, qint64 pounds)
+// The game shows money it does not know exactly as a range ("€21K - €24.5K");
+// the analyzer draws its own around the true value (stable per player and
+// salt), hi/lo between the two ratios, the value never in the middle by rule.
+QString moneyRangeText(quint32 uniqueId, int salt, double euros, double minRatio, double maxRatio,
+                       const QString &suffix = QString())
 {
-    const double value = double(pounds) * kEurosPerPound;
-    const double width = 0.10 + 0.25 * unit(uniqueId, 900, 11); // 10-35 % of the value
-    const double below = width * (0.15 + 0.7 * unit(uniqueId, 901, 12));
-    const double lo = value * (1.0 - below);
-    const double hi = value * (1.0 - below + width);
+    const double ratio = minRatio + (maxRatio - minRatio) * unit(uniqueId, 900 + salt, 11);
+    const double place = 0.15 + 0.7 * unit(uniqueId, 950 + salt, 12); // where the value sits
+    // lo * ratio^place = value  ->  lo = value / ratio^place, hi = lo * ratio
+    const double lo = euros / std::pow(ratio, place);
+    const double hi = lo * ratio;
     const QString loText = moneyText(lo), hiText = moneyText(hi);
-    return loText == hiText ? loText : loText + QStringLiteral(" - ") + hiText;
+    return (loText == hiText ? loText : loText + QStringLiteral(" - ") + hiText) + suffix;
 }
 
 // The contract's agreed playing time in the game's words ("" when unknown).
@@ -376,12 +377,10 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
             continue;
         int ranged = 0;
         int knowledge = 100;
-        // Contract and valuation: what the game shows of the user's own
-        // players (all players without masking).
-        bool contractKnown = !options.attributeMasking;
+        bool ownSquad = !options.attributeMasking; // without masking: real data for all
         if (options.attributeMasking) {
             const Knowledge how = knowledgeOf(p, save, ownClub);
-            contractKnown = how == Knowledge::OwnClub;
+            ownSquad = how == Knowledge::OwnClub;
             switch (how) {
             case Knowledge::OwnClub:
             case Knowledge::Famous:
@@ -419,13 +418,25 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
             << p.clubShortName << nationCode(p.nationId) << positionText(p.positions)
             << (p.heightCm > 0 ? QStringLiteral("%1 cm").arg(p.heightCm) : QString())
             << footText(p.leftFoot) << footText(p.rightFoot);
-        if (contractKnown) {
+        // Contract and valuation, as the game shows them: the own squad's wage
+        // exactly and its valuation as a narrow range; for everyone else known
+        // (and without masking) wage and valuation as ranges, wider the less
+        // the scouting knows.
+        const double valueEuros = double(p.transferValue) * kEurosPerPound;
+        const double wageEuros = double(p.weeklyWage) * kEurosPerPound;
+        if (ownSquad) {
             row << (p.weeklyWage >= 0 ? wageText(p.weeklyWage) : QString())
-                << (p.transferValue > 0 ? valueRangeText(p.uniqueId, p.transferValue) : QString())
-                << playingTimeText(p.squadStatus, p.positions[PosGK] >= 15);
+                << (p.transferValue > 0 ? moneyRangeText(p.uniqueId, 0, valueEuros, 1.1, 1.35) : QString());
         } else {
-            row << QString() << QString() << QString();
+            const bool partly = knowledge < kFullKnowledge;
+            row << (p.weeklyWage >= 0 ? moneyRangeText(p.uniqueId, 1, wageEuros, 1.1, partly ? 1.7 : 1.4,
+                                                        QStringLiteral(" p/w"))
+                                      : QString())
+                << (p.transferValue > 0
+                        ? moneyRangeText(p.uniqueId, 2, valueEuros, partly ? 1.5 : 1.2, partly ? 3.0 : 1.7)
+                        : QString());
         }
+        row << playingTimeText(p.squadStatus, p.positions[PosGK] >= 15);
         // Season statistics are public: the average rating of everyone imported.
         row << (p.averageRating > 0 ? QString::number(p.averageRating, 'f', 2) : QString());
         for (const VisibleAttr &a : kVisible) {
