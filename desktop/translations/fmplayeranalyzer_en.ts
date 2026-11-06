@@ -433,6 +433,41 @@ Details: %1</translation>
     </message>
 </context>
 <context>
+    <name>RoleAnalysis</name>
+    <message>
+        <source>Gute Persönlichkeit: %1</source>
+        <translation>Good personality: %1</translation>
+    </message>
+    <message>
+        <source>Herausragend: %1 (%2), Schlüssel für %3</source>
+        <translation>Elite %1 (%2), key for %3</translation>
+    </message>
+    <message>
+        <source>Stark: %1 (%2), Schlüssel für %3</source>
+        <translation>Strong %1 (%2), key for %3</translation>
+    </message>
+    <message>
+        <source>Herausragend: %1 (%2)</source>
+        <translation>Elite %1 (%2)</translation>
+    </message>
+    <message>
+        <source>Stark: %1 (%2)</source>
+        <translation>Strong %1 (%2)</translation>
+    </message>
+    <message>
+        <source>Schwierige Persönlichkeit: %1</source>
+        <translation>Poor personality: %1</translation>
+    </message>
+    <message>
+        <source>Schwach: %1 (%2), Schlüssel für %3</source>
+        <translation>Low %1 (%2), key for %3</translation>
+    </message>
+    <message>
+        <source>Schwach: %1 (%2)</source>
+        <translation>Low %1 (%2)</translation>
+    </message>
+</context>
+<context>
     <name>SaveLibrary</name>
     <message>
         <source>Bitte einen Namen eingeben.</source>

@@ -3,6 +3,8 @@
 #include "Constants.h"
 #include "Definitions.h"
 
+#include <QCoreApplication>
+
 #include <algorithm>
 #include <cmath>
 
@@ -30,14 +32,6 @@ int tierRank(const QString &tier)
     if (tier == QLatin1String("preferable"))
         return 2;
     return 9;
-}
-
-QString article(const QString &word)
-{
-    if (word.isEmpty())
-        return QStringLiteral("a");
-    const QChar first = word.at(0).toLower();
-    return QStringLiteral("aeiou").contains(first) ? QStringLiteral("an") : QStringLiteral("a");
 }
 
 } // namespace
@@ -121,23 +115,32 @@ RoleReport analyzePlayerForRole(const Definitions &definitions, const Player &pl
 QString formatProLine(const ProCon &pro, const QString &roleName)
 {
     if (pro.tier == QLatin1String("personality"))
-        return QStringLiteral("Good personality: %1").arg(pro.attr);
-    const QString qualifier = pro.elite ? QStringLiteral("Elite") : QStringLiteral("Strong");
-    const QString base =
-        QStringLiteral("%1 %2 (%3)").arg(qualifier, pro.attr).arg(qRound(pro.value));
-    if (pro.tier == QLatin1String("key"))
-        return QStringLiteral("%1 for %2 %3").arg(base, article(roleName), roleName);
-    return base;
+        return QCoreApplication::translate("RoleAnalysis", "Gute Persönlichkeit: %1").arg(pro.attr);
+    const int value = qRound(pro.value);
+    if (pro.tier == QLatin1String("key")) {
+        return pro.elite
+                   ? QCoreApplication::translate("RoleAnalysis",
+                                                 "Herausragend: %1 (%2), Schlüssel für %3")
+                         .arg(pro.attr).arg(value).arg(roleName)
+                   : QCoreApplication::translate("RoleAnalysis", "Stark: %1 (%2), Schlüssel für %3")
+                         .arg(pro.attr).arg(value).arg(roleName);
+    }
+    return pro.elite ? QCoreApplication::translate("RoleAnalysis", "Herausragend: %1 (%2)")
+                           .arg(pro.attr).arg(value)
+                     : QCoreApplication::translate("RoleAnalysis", "Stark: %1 (%2)")
+                           .arg(pro.attr).arg(value);
 }
 
 QString formatConLine(const ProCon &con, const QString &roleName)
 {
     if (con.tier == QLatin1String("personality"))
-        return QStringLiteral("Poor personality: %1").arg(con.attr);
-    const QString base = QStringLiteral("Low %1 (%2)").arg(con.attr).arg(qRound(con.value));
+        return QCoreApplication::translate("RoleAnalysis", "Schwierige Persönlichkeit: %1")
+            .arg(con.attr);
+    const int value = qRound(con.value);
     if (con.tier == QLatin1String("key"))
-        return QStringLiteral("%1 for %2 %3").arg(base, article(roleName), roleName);
-    return base;
+        return QCoreApplication::translate("RoleAnalysis", "Schwach: %1 (%2), Schlüssel für %3")
+            .arg(con.attr).arg(value).arg(roleName);
+    return QCoreApplication::translate("RoleAnalysis", "Schwach: %1 (%2)").arg(con.attr).arg(value);
 }
 
 std::vector<TopRole> topRolesForPlayer(

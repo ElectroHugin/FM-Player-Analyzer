@@ -17,9 +17,11 @@ für die dein Kader gebaut ist.
 ![Plattform](https://img.shields.io/badge/Plattform-Windows%2010%20%2F%2011-0078d4)
 ![Football Manager 2024 | 2027](https://img.shields.io/badge/Football%20Manager-2024%20%7C%202027-6f42c1)
 
-**Du spielst FM27?** Das Spiel hat keinen eigenen Export mehr. Mit meinem
-kostenlosen Begleit-Plugin **[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)**
-wird jede Spielerliste zu einer CSV-Datei, die der Analyzer liest.
+**Du spielst FM27?** Wähle einfach deine Spielstanddatei: Der Analyzer liest sie
+direkt (nur lesend) und holt sich nach jedem Speichern im Spiel die neuen Daten.
+Alternativ macht das kostenlose Plugin
+**[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)** jede
+Spielerliste zu einer CSV-Datei.
 
 [🇬🇧 English](README.md) · **🇩🇪 Deutsch**
 
@@ -49,7 +51,7 @@ und Rolle** und baut alles Weitere darauf auf.
 | Du fragst | Die App antwortet |
 |---|---|
 | *„Wer ist mein bester Spieler für genau diese Rolle?"* | Ein Rollen-Score von 0–100 (**DWRS**) für jeden Spieler in jeder Rolle: farbcodiert, sortierbar, über Positionen hinweg vergleichbar. |
-| *„Was ist meine stärkste Elf?"* | Die mathematisch optimale Best XI samt B-Team auf dem Taktik-Spielfeld, dazu Jugend und Zweitteam, je Wettbewerb. |
+| *„Was ist meine stärkste Elf?"* | Die mathematisch optimale Best XI auf dem Taktik-Spielfeld, für FM27 mit Ball und ohne Ball, dazu B-Team, Jugend, Zweitteam und die Kadertiefe für jeden Ausfall. |
 | *„Wo muss ich wirklich kaufen?"* | Eine Kaufberatung, die die besten Spieler deines Budgets testweise in den Kader holt und misst, wie sehr jeder die optimale Startelf verbessert — damit du den fehlenden Ball-Playing Defender kaufst statt noch eines DMs. |
 | *„Welche Taktik passt zu diesem Kader?"* | Jede mitgelieferte Taktik, sortiert danach, wie gut deine Spieler sie ausfüllen. Ideal, wenn du einen neuen Verein übernimmst. |
 | *„Wen soll ich holen?"* | Deine ganze Scouting-Datenbank, gerankt für die Rolle, die du brauchst, mit Filtern für Alter, Marktwert, Nationalität und Persönlichkeit. |
@@ -57,20 +59,19 @@ und Rolle** und baut alles Weitere darauf auf.
 | *„Was soll er trainieren?"* | Die Trainingsmethoden, die seinen Rollen-Score am meisten heben, in der richtigen Reihenfolge. |
 | *„Wen melde ich?"* | Ein Meldelisten-Assistent für Liga-Quoten (FM27: elf Ligen) und die Champions / Europa / Conference League. |
 
-> 🧮 **Das Herzstück: eine beweisbar optimale Best XI.** Startelf und B-Team
-> werden gemeinsam als Zuordnungsproblem mit der
-> [Ungarischen Methode](https://de.wikipedia.org/wiki/Ungarische_Methode) gelöst.
-> Keine andere Aufstellung deiner Spieler hat eine stärkere Startelf — und
-> unter allen gleich starken bekommst du das stärkste B-Team.
+> 🧮 **Das Herzstück: eine beweisbar optimale Best XI.** Die App rät nicht,
+> sie rechnet exakt: Keine andere Aufstellung deiner Spieler hat eine stärkere
+> Startelf, und unter allen gleich starken bekommst du das stärkste B-Team.
+> [So funktioniert's ↓](#-deine-beweisbar-optimale-best-xi--das-herzstück-der-app)
 > [So funktioniert's ↓](#-deine-beweisbar-optimale-best-xi--das-herzstück-der-app)
 
 **Und sie respektiert deine Zeit und deinen Spielstand:**
 
 - 🆓 **Kostenlos und Open Source.** Keine Werbung, kein Konto, kein Abo.
 - 🔌 **Komplett offline.** Die App verbindet sich nie mit dem Internet. Deine Daten bleiben auf deinem PC.
-- 🛡️ **Dein Spielstand wird nie angefasst.** Die App liest nur die HTML-Dateien, die du selbst aus dem FM exportierst.
+- 🛡️ **Dein Spielstand bleibt unberührt.** Die App liest Exporte oder deine FM27-Spielstanddatei, schreibt aber nie hinein.
 - ⚡ **Schnell.** Eine native Windows-App für riesige Datenbanken: Ein Scouting-Export mit 11.000 Spielern ist in wenigen Sekunden importiert und bewertet, und auch mit über 80.000 Spielern bleibt alles flüssig.
-- 🎯 **Kein Cheaten.** Die App sieht genau das, was du im Spiel siehst. Ungescoutete Attributbereiche wie `12–15` bleiben Bereiche.
+- 🎯 **Kein Cheaten.** Die App zeigt, was du im Spiel siehst. Nicht voll gescoutete Attribute bleiben Bereiche wie `12–15`, auch beim Lesen des FM27-Spielstands.
 
 ---
 
@@ -85,75 +86,88 @@ Doppelklick auf einen Spieler öffnet sein Profil, Rechtsklick alles Weitere.
 
 <img src="docs/screenshots/de/best-xi.png" alt="Best-XI-Seite: die Startelf mit Ball und ohne Ball nebeneinander, jeder Spieler mit Bewertung, Rolle und seinem Platz in der anderen Aufstellung" width="100%">
 
-**Beweisbar optimal — keine Faustregel.** Die meisten Tools gehen die
-Formation Position für Position durch und geben jeder ihren besten Spieler.
-Das geht schief, sobald ein Spieler für zwei Positionen die beste Wahl ist: Die
-Position, die zuerst dran ist, bekommt ihn, die andere den Rest. Klügere
-Faustregeln helfen, aber sie raten trotzdem. Diese App rät nicht: Sie behandelt
-Startelf und B-Team als ein **Zuordnungsproblem** und löst es **exakt** mit der
+**Beweisbar optimal, keine Faustregel.** Die meisten Tools gehen die Formation
+Position für Position durch und geben jeder ihren besten Spieler. Das geht
+schief, sobald ein Spieler für zwei Positionen die beste Wahl ist. Diese App
+rechnet die ganze Aufstellung auf einmal aus und garantiert:
+
+1. **Es gibt keine stärkere Startelf** aus deinen Spielern.
+2. **Das beste B-Team, das diese Startelf zulässt.** Ein vielseitiger
+   Innenverteidiger, der auch auf der Sechs spielen kann, beginnt dort, wo sein
+   Fehlen im B-Team am wenigsten kostet.
+3. **Deine Regeln gelten immer:** nur Spieler, die die Position wirklich
+   spielen können, auf Wunsch gewichtet mit Spielzeit und natürlichen
+   Positionen. Wen du festlegst, der spielt dort.
+
+**FM27: zwei Aufstellungen, dieselben elf.** In FM27 hat jede Taktik eine
+Aufstellung mit Ball und eine ohne Ball. Der Analyzer sucht die elf Spieler, die
+in beiden zusammen am stärksten sind. Wie stark der Ballbesitz zählt, stellst du
+selbst ein. Fällt ein Spieler aus, zeigt die **Kadertiefe**, wer übernimmt und
+wie die übrigen dafür ihre Plätze tauschen. Fehlt dir ein passender Ersatz, startet
+ein Rechtsklick auf den Platz die **Bridge-Suche** im Scouting: Sie findet
+Spieler, die beide Rollen dieses Platzes können.
+
+Jugend-XI und Zweitteam-XI entstehen auf dieselbe Weise. Wechsle oben den
+Wettbewerb, und alles wird aus den Spielern neu gebaut, die dafür gemeldet sind.
+
+<details>
+<summary><b>Wie das mathematisch funktioniert</b></summary>
+
+<br>
+
+Startelf und B-Team sind ein **Zuordnungsproblem**: Spieler auf der einen
+Seite, Positionen auf der anderen, und der Gewinn für „Spieler X auf Position
+Y“ ist seine Bewertung für die Rolle dieser Position (DWRS). Jeder Spieler
+bekommt höchstens eine Position, jede Position höchstens einen Spieler. Für
+FM24 löst der Analyzer das exakt mit der
 [Ungarischen Methode](https://de.wikipedia.org/wiki/Ungarische_Methode)
-(Kuhn–Munkres), der klassischen Mathematik für die Verteilung von Arbeitern
-auf Aufgaben.
+(Kuhn–Munkres). Für die zwei Aufstellungen in FM27 wird daraus ein
+kostenminimaler Fluss: Jeder Spieler bekommt einen Platz mit Ball und einen ohne
+Ball, und sein Wert ist der gewichtete Mittelwert beider Rollen.
 
-**Wie eine Aufstellung dazu passt.** Die Ungarische Methode ordnet zwei Gruppen
-einander eins zu eins zu, sodass der Gesamtgewinn so groß wie möglich wird.
-Hier sind die beiden Gruppen deine **Spieler** (die Quellen) und die
-**Positionen** von Startelf und B-Team (die Ziele), und der Gewinn, einen
-Spieler auf eine Position zu stellen, ist seine **Bewertung für die Rolle
-dieser Position** (DWRS, gewichtet wie von dir eingestellt). Jeder Spieler
-bekommt höchstens eine Position und jede Position höchstens einen Spieler —
-genau die eineindeutige Zuordnung, die das Verfahren löst.
-
-Was du bekommst, ist garantiert, in dieser Reihenfolge:
-
-1. **Es gibt keine stärkere Startelf.** Von allen möglichen Aufstellungen
-   deiner Spieler besetzt keine mehr Positionen oder erreicht eine höhere
-   Gesamtbewertung.
-2. **Das beste B-Team, das diese Startelf zulässt.** Unter allen gleich starken
-   Startelfs gewinnt die, die das stärkste B-Team übrig lässt — ein
-   vielseitiger Innenverteidiger, der auch auf der Sechs spielen kann, beginnt
-   dort, wo sein Fehlen im B-Team am wenigsten kostet.
-3. **Deine Regeln gelten immer.** Berücksichtigt wird nur, wer auf einer
-   Position wirklich spielen kann, bewertet mit seinem DWRS für die Rolle
-   dieser Position, auf Wunsch gewichtet mit vereinbarter Spielzeit und
-   natürlichen Positionen. Wen du auf eine Hauptrolle festlegst, der spielt nur
-   dort.
-4. **Feinschliff.** Zwei Spieler mit derselben Rolle auf gespiegelten
-   Positionen, etwa zwei Innenverteidiger, tauschen die Seite, wenn sie damit
-   auf ihrer bevorzugten Seite stehen.
+Zum Feinschliff tauschen zwei Spieler mit derselben Rolle auf gespiegelten
+Positionen, etwa zwei Innenverteidiger, die Seite, wenn sie damit auf ihrer
+bevorzugten Seite stehen.
 
 *Ein echter Fall:* Eine schrittweise Auswahl stellte einen Verteidiger in die
-Innenverteidigung, obwohl er als Sechser stärker war — das B-Team musste
-dadurch einen 17-Jährigen mit 49 % im Mittelfeld aufbieten. Das exakte
-Verfahren fand die Aufstellung, in der **beide** Teams stärker sind.
-
-„Optimal" heißt optimal für die Bewertungen: Der DWRS entscheidet, wie gut ein
-Spieler in einer Rolle ist, und keine Aufstellung aus diesen Bewertungen
-schlägt diese. Jugend-XI und Zweitteam-XI entstehen auf dieselbe exakte Weise,
-dazu die besten Tiefen-Optionen je Rolle. Wechsle oben den Wettbewerb, und
-alles wird aus den Spielern neu gebaut, die dafür wirklich gemeldet sind.
+Innenverteidigung, obwohl er als Sechser stärker war. Das B-Team musste dadurch
+einen 17-Jährigen mit 49 % im Mittelfeld aufbieten. Das exakte Verfahren fand
+die Aufstellung, in der **beide** Teams stärker sind.
 
 <sub>Quellen: H. W. Kuhn, *The Hungarian method for the assignment problem*,
 Naval Research Logistics Quarterly 2 (1955), 83–97 · J. Munkres, *Algorithms
 for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
 32–38.</sub>
 
+</details>
+
+### Dein FM27-Spielstand, direkt und live
+
+Kein Export, kein Scrollen durch Listen: Wähle die `.fm`-Datei deiner Karriere,
+und der Analyzer liest deinen Kader und alle Spieler, die dein Scouting kennt.
+Schalte unter *Einstellungen → Verein* **Spielstand live verfolgen** ein, dann
+liest er nach jedem Speichern im Spiel die neueste Datei von selbst ein. Die
+**Attribut-Maskierung wie im Spiel** (Standard an) sorgt dafür, dass du nur
+siehst, was dein Scouting weiß. Details stehen in
+[docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
+
 ### Nach Rolle scouten, nicht nach Ruf
 
 Wähle eine Rolle und sieh deinen Kader und deine komplette Scouting-Liste dafür
-gerankt, hier 8.542 gescoutete Spieler als Advanced Forward. Filtere mit einem
-Klick nach Persönlichkeit und lies Stärken und Schwächen jedes Spielers *für
-genau diese Rolle*.
+gerankt. Filtere nach Alter, Marktwert und Persönlichkeit und lies Stärken und
+Schwächen jedes Spielers *für genau diese Rolle*. In FM27 schaltest du die
+Rollenlisten zwischen **Mit Ball** und **Ohne Ball** um, und welche Spalten die
+Scouting-Tabelle zeigt, bestimmst du selbst.
 
-<img src="docs/screenshots/de/role-analysis.png" alt="Rollen-Analyse mit gescouteten Spielern, sortiert nach ihrer Bewertung als Advanced Forward" width="100%">
+<img src="docs/screenshots/de/role-analysis.png" alt="Rollenabdeckung: Spieler sortiert nach ihrer Bewertung als Advanced Centre-Back (IP), mit Stärken und Schwächen für diese Rolle" width="100%">
 
 ### Alles über einen Spieler auf einer Seite
 
-Die fünf besten Rollen, Talent-Projektion, eine persönliche Trainingsempfehlung,
-Stärken und Schwächen, Schlüsselattribute und der Bewertungsverlauf. Per
-Rechtsklick auf jeden Spieler irgendwo in der App öffnest du sein Profil,
-vergleichst ihn, bearbeitest ihn oder setzt ihn auf Transfer-, Leih- oder
-Shortlist.
+Alle Rollen nach Bewertung (die Rollen deiner Taktik farbig umrandet),
+Talent-Projektion, Trainingsempfehlung für deine eigenen Spieler, Stärken und
+Schwächen und der Bewertungsverlauf. Per Rechtsklick auf jeden Spieler irgendwo
+in der App öffnest du sein Profil, vergleichst ihn, bearbeitest ihn oder setzt
+ihn auf Transfer-, Leih- oder Shortlist.
 
 <img src="docs/screenshots/de/profile.png" alt="Spielerprofil mit Top-Rollen, Trainingsempfehlung und Stärken" width="100%">
 
@@ -172,12 +186,9 @@ die Abdeckung (kannst du alle elf Positionen besetzen?), dann die Stärke je
 Mannschaftsteil. Ein Klick auf eine Taktik zeigt, wie viele passende Spieler du
 für jeden Slot hast. Die mitgelieferten Taktiken sind aus der
 [FM-Arena FM24 Hall of Fame](https://fm-arena.com/table/fm24-hall-of-fame/)
-nachgebaut, eigene kannst du ergänzen. Für FM27 liegen zwei Beispieltaktiken bei
-(„Control Press · 4-2-3-1“ und „Counter Surge · 3-4-2-1“), auch als Spieldateien
-zum Import in FM27. Unter *Rollen & Taktiken → Taktiken* bearbeitest, benennst
-um, duplizierst, löschst, exportierst und importierst du Taktiken je Spielstand
-(Austauschdatei `.fmpatactic`); Updates überschreiben deine Änderungen nicht und
-holen gelöschte Beispiele nicht zurück.
+nachgebaut. Für FM27 liegen zwei Beispieltaktiken bei („Control Press · 4-2-3-1“
+und „Counter Surge · 3-4-2-1“), auch als Spieldateien für FM27. Deine eigenen
+Taktiken baust du im Taktik-Editor und teilst sie als Datei mit anderen.
 
 <img src="docs/screenshots/de/tactic-explorer.png" alt="Taktik-Explorer mit Taktiken, sortiert nach Abdeckung und Median-Bewertung je Mannschaftsteil" width="100%">
 
@@ -216,8 +227,9 @@ Fortschritt.
 
 ### Mach es zu deinem
 
-Dunkel- und Hellmodus, 37 Vereins-Farbschemata nach Liga sortiert, eigene
-Farben und das Logo deines Vereins in der Kopfzeile.
+Dunkel- und Hellmodus, Farbvorlagen nach Liga sortiert, eigene Farben und dein
+Vereinslogo in der Kopfzeile. Hast du für FM einen Graphics-Ordner mit Wappen und
+Porträts, kann der Analyzer ihn mitnutzen (optional, standardmäßig aus).
 
 <img src="docs/screenshots/de/dashboard-light.png" alt="Das Dashboard im Hellmodus" width="100%">
 
@@ -227,8 +239,10 @@ Farben und das Logo deines Vereins in der Kopfzeile.
 - **Squad Matrix** — jeder Spieler gegen jede Rolle einer Taktik in einer farbcodierten Tabelle. Unter *Scouting* bietet sie Talent-, Persönlichkeits- und Attribut-Schwellen-Filter (z. B. Decisions ≥ 15 für einen AM(C)), Free-Agent-Suche und ein Δ zu deinem besten Spieler auf der gewählten Rolle; unter *Kader* zeigt sie erste Mannschaft, Zweitteam oder Jugend. CSV-Export in beiden.
 - **Langzeitverletzte** — markiere einen Spieler, der monatelang ausfällt, und Best XI plant ohne ihn: Der Kader wird wieder optimal aufgestellt, und eine Tabelle zeigt Slot für Slot, wer übernimmt.
 - **Gap-Analyse** — eingeklappt im Tab Kaufberatung: markiert Positionen, die gegenüber dem Team abfallen, und Spieler, die von ihrer besten Position weggezogen sind oder auf der falschen Seite spielen.
+- **Transferziele** — die Übersicht schlägt für jede Rolle deiner Taktik den besten Spieler im Rahmen deiner Filter vor. Ein Klick auf die Karte setzt ihn auf die Shortlist, öffnet sein Profil oder vergleicht ihn mit deinen Spielern auf dieser Rolle.
 - **Transfers und Leihen** — schlägt vielversprechende Talente zum Verleihen und überzählige Spieler zum Verkauf vor.
-- **Eigene Rollen und Taktiken** — eingebaute Editoren; Neues ist sofort überall verfügbar.
+- **Eigene Taktiken** — eingebauter Editor, Neues ist sofort überall verfügbar. Für FM24 kannst du auch eigene Rollen anlegen; für FM27 sind alle Rollen des Spiels schon dabei.
+- **Ein Profil pro Spielstand** — Verein, Taktiken, Farben und Einstellungen gehören zum Spielstand. Wechselst du die Karriere, wechselt alles mit.
 - **Kluger Import** — Newgens behalten über Exporte hinweg ihre Identität, Abgänge werden erkannt, und neue Spieler bekommen ihre Rollen automatisch.
 - **Kleinigkeiten, die zählen** — globale Spielersuche, die „Müller" auch bei „muller" findet, Vor-/Zurück-Navigation, Oberfläche auf Englisch und Deutsch.
 
@@ -240,61 +254,49 @@ Farben und das Logo deines Vereins in der Kopfzeile.
 
 Lade die neueste `FMPlayerAnalyzer-…-Windows-x64-Setup.exe` von der
 [Releases-Seite](https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest)
-und führe sie aus. Mehr brauchst du nicht. Der Installer ist nicht signiert,
-deshalb zeigt Windows eventuell einen SmartScreen-Hinweis: *Weitere
-Informationen → Trotzdem ausführen*.
+und führe sie aus. Der Installer ist noch nicht signiert, deshalb zeigt Windows
+eventuell einen SmartScreen-Hinweis: *Weitere Informationen → Trotzdem
+ausführen*. Für Linux gibt es ein AppImage auf derselben Seite.
 
-**2 · Export-Ansichten in den FM27 holen**
+**2 · Spielstand anlegen**
 
-FM27 hat keinen eigenen Export mehr. Installiere das kostenlose Plugin
-[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter). Der
-Installer des Analyzers kann meine fertigen FM27-Ansichten (Kader,
-Spielerdatenbank, Shortlist) gleich in deinen FM27-Ordner `views` legen; später
-geht das über *Einstellungen → Verein → Ansichten für FM27 installieren*. Im
-Spiel lädst du die Ansicht in der Spielerliste.
+Beim ersten Start legst du einen Spielstand im Analyzer an und wählst die
+FM-Version (*Football Manager 2027* ist voreingestellt).
 
-**3 · Spieler exportieren**
+**3 · Spieler einlesen**
 
-Öffne in FM27 deinen Kader (und später die Spielerdatenbank oder deine
-Shortlist) mit dieser Ansicht und drücke **F9**. Das Plugin schreibt eine
-CSV-Datei. Den Spielstand legst du im Analyzer mit der Version *Football
-Manager 2027* an (Standard für neue Spielstände). Spaltenzuordnung und Details:
-[docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
+- **FM27, am schnellsten:** Wähle beim Import deine Spielstanddatei
+  (`Dokumente\Sports Interactive\Football Manager 27\games\*.fm`). Am besten
+  eine gerade gespeicherte Datei, nicht während das Spiel speichert.
+- **FM27 mit Export:** Mit dem Plugin
+  [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) und meinen
+  Ansichten (der Installer legt sie auf Wunsch in deinen FM27-Ordner `views`)
+  drückst du in einer Spielerliste **F9** und importierst die CSV-Datei.
+- **FM24:** Exportiere die Liste als HTML (*Rechtsklick → Drucken/Exportieren →
+  Webseite (.html)*) mit einer Ansicht, die die Spalte **UID** enthält, zum
+  Beispiel die
+  [FM24-Ansichten von PlayingSquirrel](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file).
 
-> **Beispieltaktiken im Spiel ausprobieren:** Der Analyzer enthält die
-> FM27-Beispieltaktiken „Control Press · 4-2-3-1“ und „Counter Surge · 3-4-2-1“
-> schon. Beide liegen als Spieldateien (`.fmf`) bei: Der Installer kann sie in
-> deinen FM27-Ordner `tactics` kopieren, später geht das über *Einstellungen →
-> Verein → Beispieltaktiken für FM27 installieren*.
->
-> **Noch mit FM24 unterwegs?** Exportiere den Kader als HTML (*Rechtsklick →
-> Drucken/Exportieren → Webseite (.html)*) mit einer Ansicht, die die Spalte
-> **UID** enthält, zum Beispiel die
-> [FM24-Ansichten von PlayingSquirrel](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file).
+Rollen und Bewertungen berechnet die App beim Import automatisch.
 
-**4 · Importieren**
+**4 · Der Willkommens-Assistent**
 
-Öffne den FM Player Analyzer, geh auf **Dashboard → Neue Spielerdaten
-importieren**, wähle die Datei und klicke auf **Importieren**. Rollen werden
-zugewiesen und alle Bewertungen automatisch berechnet.
+Sobald die ersten Spieler da sind, fragt ein kurzer Assistent nach deinem
+Verein, deinen Taktiken und deinen Farben. Du kannst ihn überspringen und
+jederzeit unter *Hilfe → Willkommens-Assistent* wieder öffnen.
 
-**5 · Der App sagen, wer du bist**
+**5 · Loslegen**
 
-Wähle auf dem Dashboard **Mein Verein**. Unter **Einstellungen → Verein**
-kannst du ein Zweitteam, deine Lieblings-Taktiken und, falls deine Liga eine
-Meldeliste verlangt, die Registrierungsregeln eintragen.
-
-**6 · Loslegen**
-
-Fang mit **Aufstellung** (Best XI) an, schau dann in **Transfers → Kaufberatung**
-und **Aufstellung → Taktik-Vergleich**. Importiere einen großen Scouting-Export und
-öffne **Scouting → Nach Rolle**, um zu sehen, wen du wirklich kaufen solltest.
+Fang mit **Aufstellung** (Best XI) an, schau dann in **Transfers →
+Kaufberatung** und **Aufstellung → Taktik-Vergleich**. Mit einem großen
+Scouting-Bestand zeigt dir **Scouting**, wen du wirklich kaufen solltest.
 
 > **Tipps**
-> - Importiere neu, so oft du willst; einmal pro Spielmonat ist ein guter Rhythmus. Die App aktualisiert bekannte Spieler und baut ihren Bewertungsverlauf auf.
-> - Wenn du deinen kompletten Kader importierst, hake *„Datei ist ein kompletter Kader-Export meines Vereins"* an. Die App fragt dann, was aus den fehlenden Spielern geworden ist.
-> - Aktiviere für Newgens im FM die Option *„UIDs verwenden"*, damit Spieler über Exporte hinweg eine feste ID behalten.
-> - Die Oberfläche ist standardmäßig englisch; Deutsch gibt es im Menü **Language**.
+> - In FM27 nimmt dir *Einstellungen → Verein → Spielstand live verfolgen* das Importieren ab.
+> - Bei Exporten: Importiere neu, so oft du willst, einmal pro Spielmonat ist ein guter Rhythmus. Die App aktualisiert bekannte Spieler und baut ihren Bewertungsverlauf auf.
+> - Wenn du deinen kompletten Kader als Export importierst, hake *„Datei ist ein kompletter Kader-Export meines Vereins"* an. Die App fragt dann, was aus den fehlenden Spielern geworden ist.
+> - Die Beispieltaktiken für FM27 kann der Installer in deinen FM27-Ordner `tactics` kopieren, später geht das unter *Einstellungen → Verein*.
+> - Deutsch oder Englisch stellst du im Menü **Sprache** um.
 
 ---
 
@@ -365,19 +367,21 @@ deine Spielidee an und starte dort unter **DWRS-Gewichte** die Neuberechnung.
 Ja. Open Source unter GPLv3, keine Werbung, keine Bezahlversion.
 
 **Kann die App meinen Spielstand beschädigen?**
-Nein. Die App öffnet deinen Spielstand nie. Sie liest die HTML-Dateien, die du
-aus dem Spiel exportierst, und führt ihre eigene Datenbank unter
-`%LOCALAPPDATA%\FM24PlayerAnalyzer`. Updates und Deinstallation lassen diesen
-Ordner unangetastet.
+Nein. Exporte und die FM27-Spielstanddatei werden nur gelesen, nie verändert.
+Die App führt ihre eigene Datenbank unter `%LOCALAPPDATA%\FM24PlayerAnalyzer`.
+Updates und Deinstallation lassen diesen Ordner unangetastet.
 
 **Ist das Cheaten?**
-Die App nutzt nur, was dir das Spiel zeigt. Attribute von nicht vollständig
-gescouteten Spielern bleiben verdeckte Bereiche, genau wie exportiert.
+Nicht mit den Standardeinstellungen. Die App nutzt nur, was dir das Spiel zeigt:
+Attribute von nicht voll gescouteten Spielern bleiben Bereiche. Beim FM27-
+Spielstand übernimmt die *Attribut-Maskierung wie im Spiel* genau das. Versteckte
+Werte wie das Potenzial liest die App nie. Schaltest du die Maskierung aus,
+siehst du alle Spieler mit genauen Werten. Das ist deine Entscheidung.
 
 **Welche Football-Manager-Versionen werden unterstützt?**
-Football Manager 2024 und Football Manager 2027 (seit Version 2.0.0; Import über
-den [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)). Das
-Import-Format ist pro Spielversion definiert, weitere Versionen lassen sich also ergänzen.
+Football Manager 2024 und Football Manager 2027 (seit Version 2.0.0, die
+Spielstanddatei seit 2.1.0). Das Import-Format ist pro Spielversion definiert,
+weitere Versionen lassen sich also ergänzen.
 
 **Mac oder Linux?**
 Windows 10 / 11 (64-bit), dazu ein Linux-AppImage auf der Release-Seite. Kein macOS.

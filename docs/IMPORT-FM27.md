@@ -30,7 +30,7 @@ die Datei nur, er schreibt nie hinein. Am besten eine gerade gespeicherte Datei 
 nicht während das Spiel speichert.
 
 Was übernommen wird, regelt die Einstellung **Attribut-Maskierung wie im Spiel**
-(Einstellungen → Datenbank, je Spielstand, Standard an):
+(Einstellungen → Verein, Kasten „Football-Manager-Version“, je Spielstand, Standard an):
 
 | Spieler | Maskierung an | Maskierung aus |
 | --- | --- | --- |
