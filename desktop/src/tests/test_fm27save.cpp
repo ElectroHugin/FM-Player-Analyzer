@@ -87,6 +87,9 @@ private slots:
             QFile file(dir.filePath(name));
             QVERIFY(file.open(QIODevice::WriteOnly));
             file.write("x");
+            // Flush first: a write still buffered at close would stamp the
+            // file with the current time again and undo the order below.
+            QVERIFY(file.flush());
             QVERIFY(file.setFileTime(time, QFileDevice::FileModificationTime));
         };
         const QDateTime base = QDateTime::currentDateTime().addDays(-1);
