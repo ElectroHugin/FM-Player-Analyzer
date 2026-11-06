@@ -206,7 +206,7 @@ private slots:
         save.players[0].transferValue = 2000000;
         save.players[0].squadStatus = 3;
         save.players[0].averageRating = 7.1375;
-        save.players[2].weeklyWage = 50000; // a scouted player's contract stays unknown
+        save.players[2].weeklyWage = 50000; // a scouted player's wage shows as a range
         save.players[2].squadStatus = 1;
         save.players[1].worldReputation = 8000;
         save.players[7].fieldingClubUid = 500; // reserve side fielded by the user's club
@@ -237,8 +237,17 @@ private slots:
             QVERIFY(valueToFloat(parts[0]) <= 2.33e6 && valueToFloat(parts[1]) >= 2.32e6);
         }
         QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Rating"))), QStringLiteral("7.14"));
-        QVERIFY(table.rows.at(2).at(column(table, QStringLiteral("Wage"))).isEmpty());
-        QVERIFY(table.rows.at(2).at(column(table, QStringLiteral("Playing Time"))).isEmpty());
+        {
+            // A scouted player's wage shows as a range around the true €58.2K.
+            QString wage = table.rows.at(2).at(column(table, QStringLiteral("Wage")));
+            QVERIFY(wage.endsWith(QStringLiteral(" p/w")));
+            wage.chop(4);
+            const QStringList parts = wage.split(QStringLiteral(" - "));
+            QCOMPARE(parts.size(), 2);
+            QVERIFY(valueToFloat(parts[0]) <= 58.3e3 && valueToFloat(parts[1]) >= 58.1e3);
+        }
+        QCOMPARE(table.rows.at(2).at(column(table, QStringLiteral("Playing Time"))),
+                 QStringLiteral("Star Player"));
 
         const QRegularExpression range(QStringLiteral("^(\\d+)-(\\d+)$"));
         const auto countRanges = [&](const QStringList &row) {
