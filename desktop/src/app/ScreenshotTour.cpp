@@ -71,7 +71,29 @@ void start(AppContext &context, ThemeManager &theme, QWidget *window)
         {page(QStringLiteral("scouting_matrix")), QStringLiteral("day-scouting.png")},
         {page(QStringLiteral("settings")), QStringLiteral("day-settings.png")},
     };
-    auto steps = std::make_shared<QList<Step>>(uiSet ? uiSteps : QList<Step>{
+    // FMPA_SCREENSHOT_SET=history: profile header, history and the in-game
+    // date on the dashboard and in the settings, on a tall window.
+    const bool historySet = qEnvironmentVariable("FMPA_SCREENSHOT_SET") == QLatin1String("history");
+    const QString profileUid = qEnvironmentVariable("FMPA_PROFILE_UID", own.value(0));
+    const QString otherUid = qEnvironmentVariable("FMPA_PROFILE_UID2");
+    const auto tall = [window](int height) { return [window, height] { window->resize(1600, height); }; };
+    const auto profile = [&context](const QString &uid) {
+        return [&context, uid] { PlayerActions::openProfile(context, uid); };
+    };
+    auto historySteps = QList<Step>{
+        {mode(QStringLiteral("night")), {}},
+        {tall(1100), {}},
+        {page(QStringLiteral("dashboard")), QStringLiteral("dashboard.png")},
+        {tall(2300), {}},
+        {profile(profileUid), QStringLiteral("profile.png")},
+        {profile(otherUid), QStringLiteral("profile-other.png")},
+        {page(QStringLiteral("settings")), QStringLiteral("settings.png")},
+        {mode(QStringLiteral("day")), {}},
+        {profile(profileUid), QStringLiteral("profile-day.png")},
+    };
+    if (historySet)
+        uiSteps = historySteps;
+    auto steps = std::make_shared<QList<Step>>(uiSet || historySet ? uiSteps : QList<Step>{
         {[&theme] { theme.setMode(QStringLiteral("night")); }, {}},
         {page(QStringLiteral("dashboard")), QStringLiteral("dashboard.png")},
         {page(QStringLiteral("best_xi")), QStringLiteral("best-xi.png")},
@@ -95,16 +117,19 @@ void start(AppContext &context, ThemeManager &theme, QWidget *window)
          },
          QStringLiteral("dashboard-light.png")},
     });
-    // Settings: open the design tab.
+    // Settings: open the design tab (or FMPA_SETTINGS_TAB, German tab name).
+    const QByteArray settingsTab = qEnvironmentVariableIsSet("FMPA_SETTINGS_TAB")
+                                       ? qgetenv("FMPA_SETTINGS_TAB")
+                                       : QByteArray("Design");
     for (Step &step : *steps) {
         if (step.file.endsWith(QLatin1String("settings.png"))) {
             const auto open = step.prepare;
-            step.prepare = [open, window] {
+            step.prepare = [open, window, settingsTab] {
                 open();
                 for (QTabWidget *tabs : window->findChildren<QTabWidget *>()) {
                     for (int i = 0; i < tabs->count(); ++i) {
                         if (tabs->tabText(i) == QCoreApplication::translate("fm::SettingsPage",
-                                                                            "Design"))
+                                                                            settingsTab.constData()))
                             tabs->setCurrentIndex(i);
                     }
                 }

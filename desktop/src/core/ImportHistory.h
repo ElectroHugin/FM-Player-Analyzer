@@ -43,8 +43,21 @@ namespace ImportHistory {
 inline constexpr const char *kAllPlayersSetting = "history_all_players";
 // Seasons before the current one that keep monthly snapshots.
 inline constexpr int kMonthlySeasonsBack = 2;
-// First month of a season.
-inline constexpr int kSeasonStartMonth = 7;
+// Per-database setting: first day of a season as "MM-dd" (default 07-01).
+inline constexpr const char *kSeasonStartSetting = "season_start";
+
+// First day of a season (leagues differ: most of Europe starts in July,
+// Scandinavia, the Americas and others in winter or spring).
+struct SeasonStart {
+    int month = 7;
+    int day = 1;
+    bool isCalendarYear() const { return month == 1 && day == 1; }
+    bool operator==(const SeasonStart &) const = default;
+};
+SeasonStart seasonStartOf(Database &db);
+// "MM-dd" for the setting; parse falls back to 1 July.
+QString seasonStartText(const SeasonStart &start);
+SeasonStart parseSeasonStart(const QString &text);
 
 struct ImportRecord {
     int id = 0;
@@ -59,6 +72,7 @@ struct Snapshot {
     int playerId = 0;
     QDate gameDate;
     bool condensed = false; // one snapshot for a whole (old) season
+    QString period;         // storage key, see periodKey (set by record())
     std::array<uint8_t, kAttrCount> attrLo{};
     std::array<uint8_t, kAttrCount> attrHi{};
     double averageRating = 0.0;
@@ -70,12 +84,17 @@ struct Snapshot {
     bool sameData(const Snapshot &other) const;
 };
 
-// Season of a date: the year it starts in (2026-08-01 and 2027-05-31 -> 2026).
-int seasonOf(const QDate &date);
+// Season of a date: the year it starts in (with the default start
+// 2026-08-01 and 2027-05-31 -> 2026).
+int seasonOf(const QDate &date, const SeasonStart &start = {});
+// First day of a season.
+QDate seasonBegin(int season, const SeasonStart &start = {});
 // "yyyy-MM" for a monthly snapshot, "S<season>" for a condensed one.
-QString periodKey(const QDate &date, bool condensed);
-// Display label of a season ("2026/27").
-QString seasonLabel(int season);
+QString periodKey(const QDate &date, bool condensed, const SeasonStart &start = {});
+// Season of a condensed period key ("S2026" -> 2026; 0 otherwise).
+int seasonOfPeriod(const QString &period);
+// Display label of a season: "2026/27", or "2027" for calendar-year seasons.
+QString seasonLabel(int season, const SeasonStart &start = {});
 
 // In-game date at a wall-clock moment: that of the newest import at or
 // before it (imports oldest first, as Database::imports() returns them).

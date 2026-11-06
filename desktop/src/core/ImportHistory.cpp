@@ -20,20 +20,57 @@ bool Snapshot::sameData(const Snapshot &other) const
            && std::abs(transferValue - other.transferValue) < 0.5 && wage == other.wage;
 }
 
-int seasonOf(const QDate &date)
+SeasonStart seasonStartOf(Database &db)
 {
-    return date.month() >= kSeasonStartMonth ? date.year() : date.year() - 1;
+    return parseSeasonStart(db.setting(QString::fromLatin1(kSeasonStartSetting)));
 }
 
-QString periodKey(const QDate &date, bool condensed)
+QString seasonStartText(const SeasonStart &start)
+{
+    return QStringLiteral("%1-%2")
+        .arg(start.month, 2, 10, QLatin1Char('0'))
+        .arg(start.day, 2, 10, QLatin1Char('0'));
+}
+
+SeasonStart parseSeasonStart(const QString &text)
+{
+    const QStringList parts = text.split(QLatin1Char('-'));
+    if (parts.size() == 2) {
+        const int month = parts[0].toInt();
+        const int day = parts[1].toInt();
+        // 2001 is no leap year: a season cannot start on 29 February.
+        if (QDate(2001, month, day).isValid())
+            return {month, day};
+    }
+    return {};
+}
+
+int seasonOf(const QDate &date, const SeasonStart &start)
+{
+    return date >= QDate(date.year(), start.month, start.day) ? date.year() : date.year() - 1;
+}
+
+QDate seasonBegin(int season, const SeasonStart &start)
+{
+    return QDate(season, start.month, start.day);
+}
+
+QString periodKey(const QDate &date, bool condensed, const SeasonStart &start)
 {
     if (condensed)
-        return QStringLiteral("S%1").arg(seasonOf(date));
+        return QStringLiteral("S%1").arg(seasonOf(date, start));
     return date.toString(QStringLiteral("yyyy-MM"));
 }
 
-QString seasonLabel(int season)
+int seasonOfPeriod(const QString &period)
 {
+    return period.startsWith(QLatin1Char('S')) ? period.mid(1).toInt() : 0;
+}
+
+QString seasonLabel(int season, const SeasonStart &start)
+{
+    if (start.isCalendarYear())
+        return QString::number(season);
     return QStringLiteral("%1/%2").arg(season).arg((season + 1) % 100, 2, 10, QLatin1Char('0'));
 }
 
@@ -91,9 +128,9 @@ namespace {
 
 // Seasons before `keepFrom` collapse to each player's last snapshot of the
 // season (a condensed row already there counts like any other).
-bool condense(Database &db, int keepFrom)
+bool condense(Database &db, int keepFrom, const SeasonStart &start)
 {
-    const QDate cut(keepFrom, kSeasonStartMonth, 1);
+    const QDate cut = seasonBegin(keepFrom, start);
     const std::vector<Snapshot> monthly = db.monthlySnapshotsBefore(cut);
     if (monthly.empty())
         return true;
@@ -101,7 +138,7 @@ bool condense(Database &db, int keepFrom)
     // Last snapshot per (player, season) among the monthly rows.
     std::map<std::pair<int, int>, const Snapshot *> last;
     for (const Snapshot &s : monthly) {
-        const auto key = std::make_pair(s.playerId, seasonOf(s.gameDate));
+        const auto key = std::make_pair(s.playerId, seasonOf(s.gameDate, start));
         auto it = last.find(key);
         if (it == last.end() || it->second->gameDate < s.gameDate)
             last[key] = &s;
@@ -110,7 +147,7 @@ bool condense(Database &db, int keepFrom)
     std::vector<std::pair<int, QString>> removed;
     removed.reserve(monthly.size());
     for (const Snapshot &s : monthly)
-        removed.push_back({s.playerId, periodKey(s.gameDate, false)});
+        removed.push_back({s.playerId, s.period});
     std::vector<Snapshot> kept;
     QHash<int, std::vector<Snapshot>> condensedByPlayer;
     for (const auto &[key, snapshot] : last) {
@@ -121,11 +158,12 @@ bool condense(Database &db, int keepFrom)
                     own.push_back(s);
         bool newerExists = false;
         for (const Snapshot &s : own)
-            newerExists |= seasonOf(s.gameDate) == key.second && s.gameDate >= snapshot->gameDate;
+            newerExists |= seasonOfPeriod(s.period) == key.second && s.gameDate >= snapshot->gameDate;
         if (newerExists)
             continue;
         Snapshot c = *snapshot;
         c.condensed = true;
+        c.period = QStringLiteral("S%1").arg(key.second);
         kept.push_back(c);
     }
     return db.deleteSnapshots(removed) && db.upsertSnapshots(kept);
@@ -161,11 +199,13 @@ bool record(Database &db, const ImportRecord &import, const std::vector<Snapshot
         Snapshot copy = s;
         copy.gameDate = import.gameDate;
         copy.condensed = false;
+        copy.period = periodKey(import.gameDate, false);
         changed.push_back(std::move(copy));
     }
     if (!db.deleteMonthSnapshots(unchanged, import.gameDate) || !db.upsertSnapshots(changed))
         return fail();
-    if (!condense(db, seasonOf(import.gameDate) - kMonthlySeasonsBack))
+    const SeasonStart start = seasonStartOf(db);
+    if (!condense(db, seasonOf(import.gameDate, start) - kMonthlySeasonsBack, start))
         return fail();
     return db.commitTransaction();
 }

@@ -60,6 +60,46 @@ private slots:
         QCOMPARE(ImportHistory::seasonLabel(2099), QStringLiteral("2099/00"));
         QCOMPARE(ImportHistory::periodKey(QDate(2027, 1, 15), false), QStringLiteral("2027-01"));
         QCOMPARE(ImportHistory::periodKey(QDate(2027, 1, 15), true), QStringLiteral("S2026"));
+
+        // Other rhythms: a calendar-year league and one starting in February.
+        const ImportHistory::SeasonStart calendar{1, 1};
+        QCOMPARE(ImportHistory::seasonOf(QDate(2027, 1, 1), calendar), 2027);
+        QCOMPARE(ImportHistory::seasonLabel(2027, calendar), QStringLiteral("2027"));
+        const ImportHistory::SeasonStart february{2, 15};
+        QCOMPARE(ImportHistory::seasonOf(QDate(2027, 2, 14), february), 2026);
+        QCOMPARE(ImportHistory::seasonOf(QDate(2027, 2, 15), february), 2027);
+        QCOMPARE(ImportHistory::seasonStartText(february), QStringLiteral("02-15"));
+        QVERIFY(ImportHistory::parseSeasonStart(QStringLiteral("02-15")) == february);
+        QVERIFY(ImportHistory::parseSeasonStart(QStringLiteral("02-30")) == ImportHistory::SeasonStart{});
+        QVERIFY(ImportHistory::parseSeasonStart(QString()) == ImportHistory::SeasonStart{});
+    }
+
+    void condensesByConfiguredSeasonStart()
+    {
+        // Calendar-year seasons: 2024 leaves the window in 2027.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("ih_calendar"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+        QVERIFY(db.setSetting(QString::fromLatin1(ImportHistory::kSeasonStartSetting),
+                              QStringLiteral("01-01")));
+        const std::vector<Player> players = twoPlayers(db);
+        const int a = players[0].id;
+        int pace = 10;
+        int minute = 0;
+        const auto importOn = [&](const QDate &date) {
+            const QString when = QStringLiteral("2026-11-06 13:%1:00").arg(minute++, 2, 10, QLatin1Char('0'));
+            return ImportHistory::record(db, importAt(when, date), {snap(a, pace++)});
+        };
+        QVERIFY(importOn(QDate(2024, 3, 1)));
+        QVERIFY(importOn(QDate(2024, 11, 1)));
+        QVERIFY(importOn(QDate(2026, 12, 1)));
+        QCOMPARE(db.snapshots(a).size(), size_t(3));
+        QVERIFY(importOn(QDate(2027, 1, 10)));
+        const auto rows = db.snapshots(a);
+        QCOMPARE(rows.size(), size_t(3));
+        QVERIFY(rows[0].condensed);
+        QCOMPARE(rows[0].period, QStringLiteral("S2024"));
+        QCOMPARE(rows[0].gameDate, QDate(2024, 11, 1));
     }
 
     void logsImportsAndFindsGameDate()

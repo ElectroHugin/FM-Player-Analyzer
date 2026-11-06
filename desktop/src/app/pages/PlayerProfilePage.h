@@ -67,6 +67,12 @@ private:
     // Optional pictures from the FM graphics folder; hidden without them.
     QLabel *m_portraitLabel = nullptr;
     QLabel *m_crestLabel = nullptr;
+    // Value, wage, rating with their change since the previous month.
+    QWidget *m_factsWidget = nullptr;
+    QList<QLabel *> m_factValues;
+    QList<QLabel *> m_factChanges;
+    QLabel *m_factsNote = nullptr;
+    void fillFacts(const Player *player);
 
     QGroupBox *m_updateBox = nullptr;
     QLineEdit *m_updateFileEdit = nullptr;

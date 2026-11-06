@@ -207,8 +207,12 @@ registered, save, and Best XI works with that list.
 
 Every import is a snapshot. The development page ranks your squad by what each
 player gained over the last 5, 10 or 20 uploads, with a trend line per player.
-It counts uploads, not calendar days, because the export carries no in-game
-date. Click a player to see his roles, Ctrl-click several to compare them.
+It counts uploads, not calendar days; when you read in an FM27 save, every data
+point carries its in-game date. Since 2.2.0 the analyzer also keeps a monthly
+in-game history for your squad, the shortlist and scouted players: attributes,
+average rating, value and wage, stored only when something changed. The player
+profile shows it as a table; older seasons are condensed to their end-of-season
+state (season start configurable). Click a player to see his roles, Ctrl-click several to compare them.
 Recalculations after changed weights are factored out, so only real progress
 counts.
 

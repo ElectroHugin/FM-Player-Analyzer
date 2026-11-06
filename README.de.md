@@ -218,7 +218,12 @@ dieser Liste.
 Jeder Import ist eine Momentaufnahme. Die Entwicklungsseite sortiert deinen
 Kader danach, wie viel jeder Spieler in den letzten 5, 10 oder 20 Uploads
 zugelegt hat, mit einer Verlaufslinie pro Spieler. Gezählt wird in Uploads
-statt in Kalendertagen, denn der Export enthält kein Spieldatum. Klick auf
+statt in Kalendertagen; liest du einen FM27-Spielstand ein, steht an jedem
+Datenstand das Ingame-Datum. Seit 2.2.0 legt der Analyzer dabei pro Ingame-Monat
+einen Verlauf für deinen Kader, die Shortlist und gescoutete Spieler an:
+Attribute, Ø-Note, Marktwert und Gehalt, nur wenn sich etwas geändert hat. Im
+Spielerprofil siehst du ihn als Tabelle; ältere Saisons werden auf ihren Stand
+am Saisonende verdichtet (Saisonbeginn einstellbar). Klick auf
 einen Spieler zeigt seine Rollen, Strg-Klick vergleicht mehrere. Neuberechnungen
 nach geänderten Gewichten werden herausgerechnet, es zählt nur echter
 Fortschritt.

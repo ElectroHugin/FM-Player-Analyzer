@@ -25,6 +25,7 @@
 #include <QCompleter>
 #include <QFileDialog>
 #include <QFrame>
+#include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -52,7 +53,8 @@ namespace fm {
 namespace {
 
 constexpr int kPortraitSize = 96;
-constexpr int kCrestSize = 56;
+constexpr int kCrestSize = 24;
+constexpr int kCrestStandInSize = 72; // crest in the portrait slot
 
 enum Scope { MyClub = 0, SecondTeam = 1, Scouted = 2, All = 3, NationalSquad = 4 };
 
@@ -105,11 +107,11 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
         m_scopeGroup->addButton(radio, id);
         selectRow->addWidget(radio);
     };
-    addScope(tr("🏠 Mein Verein"), MyClub);
-    addScope(tr("🔄 Zweitteam"), SecondTeam);
-    addScope(tr("🔍 Gescoutete"), Scouted);
-    addScope(tr("🌟 Nationalkader"), NationalSquad);
-    addScope(tr("🌍 Alle Spieler"), All, true);
+    addScope(tr("Mein Verein"), MyClub);
+    addScope(tr("Zweitteam"), SecondTeam);
+    addScope(tr("Gescoutete"), Scouted);
+    addScope(tr("Nationalkader"), NationalSquad);
+    addScope(tr("Alle Spieler"), All, true);
     selectRow->addSpacing(12);
 
     // Type-to-search instead of a giant dropdown: fast even with 80k players
@@ -118,7 +120,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_searchEdit = new QLineEdit(content);
     m_searchEdit->setMinimumWidth(340);
     m_searchEdit->setClearButtonEnabled(true);
-    m_searchEdit->setPlaceholderText(tr("🔎 Spieler suchen (Name eintippen)…"));
+    m_searchEdit->setPlaceholderText(tr("Spieler suchen"));
     m_searchModel = new PlayerSearchModel(this);
     m_searchCompleter = new FoldingCompleter(m_searchModel, this);
     m_searchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
@@ -142,48 +144,87 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     selectRow->insertWidget(selectRow->indexOf(m_searchEdit), m_squadButton);
     layout->addLayout(selectRow);
 
-    auto *divider = new QFrame(content);
-    divider->setFrameShape(QFrame::HLine);
-    layout->addWidget(divider);
-
     // --- Header block ---
-    m_nameLabel = new QLabel(content);
-    m_vitalsLabel = new QLabel(content);
-    m_tagsLabel = new QLabel(content);
+    // One surface: picture, identity and status on the left, the three
+    // figures that change during a career (value, wage, rating) on the right,
+    // each with its change since the previous in-game month when known.
+    auto *header = new QFrame(content);
+    header->setObjectName(QStringLiteral("profileHeader"));
+    auto *headerRow = new QHBoxLayout(header);
+    headerRow->setContentsMargins(20, 20, 20, 20);
+    headerRow->setSpacing(20);
+    m_nameLabel = new QLabel(header);
+    m_nameLabel->setObjectName(QStringLiteral("profileName"));
+    m_nameLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    m_vitalsLabel = new QLabel(header);
+    m_vitalsLabel->setTextFormat(Qt::RichText);
+    m_tagsLabel = new QLabel(header);
     m_tagsLabel->setTextFormat(Qt::RichText);
     m_tagsLabel->setWordWrap(true);
-    // Portrait left, club crest right (both only with graphics enabled and
-    // found; otherwise the header looks as before).
-    m_portraitLabel = new QLabel(content);
+    m_tagsLabel->setObjectName(QStringLiteral("kpiCaption"));
+    // Portrait (graphics folder); without one the club crest takes its place.
+    m_portraitLabel = new QLabel(header);
     m_portraitLabel->setFixedSize(kPortraitSize, kPortraitSize);
     m_portraitLabel->setAlignment(Qt::AlignCenter);
     m_portraitLabel->setVisible(false);
-    m_crestLabel = new QLabel(content);
+    // Small crest in front of the club name.
+    m_crestLabel = new QLabel(header);
     m_crestLabel->setFixedSize(kCrestSize, kCrestSize);
     m_crestLabel->setAlignment(Qt::AlignCenter);
     m_crestLabel->setVisible(false);
-    auto *headerRow = new QHBoxLayout;
-    headerRow->setSpacing(14);
+    auto *metaRow = new QHBoxLayout;
+    metaRow->setContentsMargins(0, 0, 0, 0);
+    metaRow->setSpacing(8);
+    metaRow->addWidget(m_crestLabel, 0, Qt::AlignVCenter);
+    metaRow->addWidget(m_vitalsLabel, 0, Qt::AlignVCenter);
+    metaRow->addStretch(1);
     auto *headerText = new QVBoxLayout;
+    headerText->setContentsMargins(0, 0, 0, 0);
     headerText->setSpacing(4);
     headerText->addWidget(m_nameLabel);
-    headerText->addWidget(m_vitalsLabel);
+    headerText->addLayout(metaRow);
     headerText->addWidget(m_tagsLabel);
-    m_footWidget = new FootStrengthWidget(content);
-    headerText->addSpacing(4);
-    headerText->addWidget(m_footWidget);
+    m_footWidget = new FootStrengthWidget(header);
+    headerText->addSpacing(8);
+    headerText->addWidget(m_footWidget, 0, Qt::AlignLeft);
     headerText->addStretch(1);
+
+    m_factsWidget = new QWidget(header);
+    auto *facts = new QGridLayout(m_factsWidget);
+    facts->setContentsMargins(0, 0, 0, 0);
+    facts->setHorizontalSpacing(32);
+    facts->setVerticalSpacing(2);
+    const QStringList factCaptions = {tr("Marktwert"), tr("Gehalt"), tr("Ø-Note")};
+    for (int i = 0; i < factCaptions.size(); ++i) {
+        auto *caption = new QLabel(factCaptions.at(i), m_factsWidget);
+        caption->setObjectName(QStringLiteral("kpiCaption"));
+        auto *value = new QLabel(m_factsWidget);
+        value->setObjectName(QStringLiteral("profileFact"));
+        auto *change = new QLabel(m_factsWidget);
+        change->setObjectName(QStringLiteral("kpiCaption"));
+        facts->addWidget(caption, 0, i, Qt::AlignRight);
+        facts->addWidget(value, 1, i, Qt::AlignRight);
+        facts->addWidget(change, 2, i, Qt::AlignRight);
+        m_factValues << value;
+        m_factChanges << change;
+    }
+    m_factsNote = new QLabel(m_factsWidget);
+    m_factsNote->setObjectName(QStringLiteral("kpiCaption"));
+    facts->addWidget(m_factsNote, 3, 0, 1, factCaptions.size(), Qt::AlignRight);
+    facts->setRowMinimumHeight(3, 24);
+    facts->setRowStretch(4, 1);
+
     headerRow->addWidget(m_portraitLabel, 0, Qt::AlignTop);
     headerRow->addLayout(headerText, 1);
-    headerRow->addWidget(m_crestLabel, 0, Qt::AlignTop);
-    layout->addLayout(headerRow);
+    headerRow->addWidget(m_factsWidget, 0, Qt::AlignTop);
+    layout->addWidget(header);
     connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this, [this] {
         if (isVisible())
             showPlayer();
     });
 
     // --- Manual single-player update ---
-    m_updateBox = new QGroupBox(tr("🔁 Diesen Spieler aus einer Exportdatei (HTML oder CSV) aktualisieren"),
+    m_updateBox = new QGroupBox(tr("Diesen Spieler aus einer Exportdatei aktualisieren (HTML oder CSV)"),
                                 content);
     m_updateBox->setCheckable(true);
     m_updateBox->setChecked(false);
@@ -361,7 +402,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
         tr("Noch kein Verlauf. Bei jedem Einlesen eines FM27-Spielstands speichert der Analyzer pro "
            "Ingame-Monat einen Stand: für deinen Kader, das Zweitteam, die Shortlist, den "
            "Nationalkader und Spieler aus deinem Scouting, auf Wunsch für alle Spieler "
-           "(Einstellungen → Datenbank)."),
+           "(Einstellungen → Verein)."),
         m_detailWidget);
     m_historyEmpty->setObjectName(QStringLiteral("kpiCaption"));
     m_historyEmpty->setWordWrap(true);
@@ -570,7 +611,8 @@ void PlayerProfilePage::showPlayer()
     m_detailWidget->setVisible(hasPlayer);
     m_noRolesLabel->setVisible(false);
     if (!hasPlayer) {
-        m_nameLabel->setText(tr("<h3>Kein Spieler ausgewählt.</h3>"));
+        m_nameLabel->setText(tr("Kein Spieler ausgewählt"));
+        m_factsWidget->setVisible(false);
         m_vitalsLabel->clear();
         m_tagsLabel->clear();
         m_footWidget->setFeet({}, {});
@@ -580,43 +622,50 @@ void PlayerProfilePage::showPlayer()
     }
 
     // --- Header ---
-    m_nameLabel->setText(QStringLiteral("<h3>%1</h3>").arg(player->name.toHtmlEscaped()));
+    m_factsWidget->setVisible(true);
+    m_nameLabel->setTextFormat(Qt::PlainText);
+    m_nameLabel->setText(player->name);
     QStringList vitals;
-    if (player->age > 0)
-        vitals << tr("<b>Alter:</b> %1").arg(player->age);
     if (!player->club.isEmpty())
-        vitals << tr("<b>Verein:</b> %1").arg(player->club.toHtmlEscaped());
+        vitals << player->club.toHtmlEscaped();
+    if (player->age > 0)
+        vitals << tr("%1 Jahre").arg(player->age);
     if (!player->positionRaw.isEmpty())
-        vitals << tr("<b>Position:</b> %1").arg(player->positionRaw.toHtmlEscaped());
-    m_vitalsLabel->setText(vitals.join(QStringLiteral(" &nbsp;|&nbsp; ")));
+        vitals << player->positionRaw.toHtmlEscaped();
+    m_vitalsLabel->setText(vitals.join(QStringLiteral(" &nbsp;·&nbsp; ")));
 
+    // Portrait in the picture slot; without one the crest stands in there,
+    // with one the crest sits small in front of the club name.
     const QPixmap portrait = m_context.graphics().portrait(player->uid, kPortraitSize);
-    m_portraitLabel->setPixmap(portrait);
-    m_portraitLabel->setVisible(!portrait.isNull());
-    const QPixmap crest = m_context.graphics().isReady()
-                              ? m_context.clubCrest(player->club, kCrestSize)
-                              : QPixmap();
-    m_crestLabel->setPixmap(crest);
+    const bool graphics = m_context.graphics().isReady();
+    const QPixmap crest = graphics && portrait.isNull()
+                              ? m_context.clubCrest(player->club, kCrestStandInSize)
+                              : graphics ? m_context.clubCrest(player->club, kCrestSize)
+                                         : QPixmap();
+    m_portraitLabel->setPixmap(portrait.isNull() ? crest : portrait);
+    m_portraitLabel->setToolTip(portrait.isNull() ? player->club : QString());
+    m_portraitLabel->setVisible(!portrait.isNull() || !crest.isNull());
+    m_crestLabel->setPixmap(portrait.isNull() ? QPixmap() : crest);
     m_crestLabel->setToolTip(player->club);
-    m_crestLabel->setVisible(!crest.isNull());
+    m_crestLabel->setVisible(!portrait.isNull() && !crest.isNull());
 
+    // Status line: quiet text; a colored dot only where the color means
+    // something (personality category, data freshness).
+    const auto dot = [](const QString &color) {
+        return QStringLiteral("<span style='color:%1;'>●</span>&nbsp;").arg(color);
+    };
     const auto roleNames = m_context.definitions().roleDisplayMap();
-    QString tags;
+    QStringList status;
     if (!player->agreedPlayingTime.isEmpty())
-        tags += pill(tr("Spielzeit"), player->agreedPlayingTime, QStringLiteral("#0069b3"));
+        status << player->agreedPlayingTime.toHtmlEscaped();
     if (!player->primaryRole.isEmpty())
-        tags += pill(tr("Primärrolle"),
-                     roleNames.value(player->primaryRole, player->primaryRole),
-                     QStringLiteral("#0da025"));
-    if (!player->preferredFoot.isEmpty())
-        tags += pill(tr("Fuß"), player->preferredFoot, QStringLiteral("#6c5ce7"));
+        status << tr("Primärrolle %1")
+                      .arg(roleNames.value(player->primaryRole, player->primaryRole).toHtmlEscaped());
     if (!player->personality.isEmpty()) {
         const CellStyle style = personalityCellStyle(
             m_context.definitions().personalityCategory(player->personality));
-        tags += style.isValid()
-                    ? pill(tr("Persönlichkeit"), player->personality,
-                           style.background.name(), style.text.name())
-                    : pill(tr("Persönlichkeit"), player->personality, QStringLiteral("#555"));
+        status << (style.isValid() ? dot(style.background.name()) : QString())
+                      + player->personality.toHtmlEscaped();
     }
 
     // --- Data freshness (see Freshness) ---
@@ -628,19 +677,19 @@ void PlayerProfilePage::showPlayer()
     const int missed = Freshness::uploadsSinceSeen(*player, counter);
     if (Freshness::isRetired(*player, counter, retirementAge, staleAfter,
                              m_context.userClub())) {
-        tags += pill(tr("Status"),
-                     tr("Retired (verpasste Komplett-Exporte: %1)").arg(missed),
-                     QStringLiteral("#c0392b"));
+        status << dot(QStringLiteral("#c0392b"))
+                      + tr("Retired (verpasste Komplett-Exporte: %1)").arg(missed);
     } else if (Freshness::isStale(*player, counter, staleAfter)) {
-        tags += pill(tr("Daten"), tr("veraltet (verpasste Komplett-Exporte: %1)").arg(missed),
-                     QStringLiteral("#e67e22"));
+        status << dot(QStringLiteral("#d9822b"))
+                      + tr("Daten veraltet (verpasste Komplett-Exporte: %1)").arg(missed);
     } else if (missed > 0) {
-        tags += pill(tr("Daten"), tr("verpasste Komplett-Exporte: %1").arg(missed),
-                     QStringLiteral("#7f8c8d"));
+        status << dot(QStringLiteral("#8a8f98"))
+                      + tr("verpasste Komplett-Exporte: %1").arg(missed);
     } else if (counter > 0) {
-        tags += pill(tr("Daten"), tr("aktuell"), QStringLiteral("#0da025"));
+        status << dot(QStringLiteral("#2e9e5b")) + tr("Daten aktuell");
     }
-    m_tagsLabel->setText(tags);
+    m_tagsLabel->setText(status.join(QStringLiteral(" &nbsp;·&nbsp; ")));
+    fillFacts(player);
     m_footWidget->setFeet(player->leftFoot, player->rightFoot);
     m_updateConfirm->setText(
         tr("Ja, diese Datei ist sicher ein Update für %1.").arg(player->name));
@@ -796,6 +845,57 @@ void PlayerProfilePage::showPlayer()
     fillHistory(player);
 }
 
+void PlayerProfilePage::fillFacts(const Player *player)
+{
+    // Current figures; the change compares the two newest in-game snapshots
+    // (only changes are stored, so the previous one differs by definition).
+    const std::vector<ImportHistory::Snapshot> snapshots =
+        m_context.database().snapshots(player->id);
+    const ImportHistory::Snapshot *last = snapshots.empty() ? nullptr : &snapshots.back();
+    const ImportHistory::Snapshot *before =
+        snapshots.size() >= 2 ? &snapshots[snapshots.size() - 2] : nullptr;
+    const QString dash = QStringLiteral("–");
+    m_factValues[0]->setText(player->transferValueRaw.isEmpty() ? dash : player->transferValueRaw);
+    m_factValues[1]->setText(player->wageRaw.isEmpty() ? dash : player->wageRaw);
+    m_factValues[2]->setText(player->averageRating > 0
+                                 ? QLocale().toString(player->averageRating, 'f', 2)
+                                 : dash);
+    for (QLabel *change : std::as_const(m_factChanges))
+        change->clear();
+    const auto since = [&](const ImportHistory::Snapshot &s) {
+        return s.condensed ? ImportHistory::seasonLabel(ImportHistory::seasonOfPeriod(s.period),
+                                                        ImportHistory::seasonStartOf(
+                                                            m_context.database()))
+                           : QLocale().toString(s.gameDate, QLocale::ShortFormat);
+    };
+    // Same style as the game's figures ("€1.8M", "€450K").
+    const auto moneyText = [](double euros) {
+        return euros >= 1e6 ? QStringLiteral("€%1M").arg(euros / 1e6, 0, 'f', 1)
+                            : QStringLiteral("€%1K").arg(std::lround(euros / 1e3));
+    };
+    const auto signedText = [](double delta, const QString &number) {
+        return (delta > 0 ? QStringLiteral("+") : QStringLiteral("−")) + number;
+    };
+    if (last && before) {
+        const double valueDelta = last->transferValue - before->transferValue;
+        if (std::abs(valueDelta) >= 1000 && last->transferValue < kUnbuyableValue
+            && before->transferValue < kUnbuyableValue)
+            m_factChanges[0]->setText(
+                tr("%1 seit %2")
+                    .arg(signedText(valueDelta, moneyText(std::abs(valueDelta))),
+                         since(*before)));
+        if (last->wage != before->wage && !before->wage.isEmpty())
+            m_factChanges[1]->setText(tr("vorher %1").arg(before->wage));
+        const double ratingDelta = last->averageRating - before->averageRating;
+        if (last->averageRating > 0 && before->averageRating > 0 && std::abs(ratingDelta) >= 0.005)
+            m_factChanges[2]->setText(
+                tr("%1 seit %2")
+                    .arg(signedText(ratingDelta, QLocale().toString(std::abs(ratingDelta), 'f', 2)),
+                         since(*before)));
+    }
+    m_factsNote->setText(last ? tr("Ingame-Stand %1").arg(since(*last)) : QString());
+}
+
 void PlayerProfilePage::fillHistory(const Player *player)
 {
     // Newest first; each row lists the attributes that moved since the
@@ -810,14 +910,17 @@ void PlayerProfilePage::fillHistory(const Player *player)
     const auto mean = [](const ImportHistory::Snapshot &s, int i) {
         return (s.attrLo[size_t(i)] + s.attrHi[size_t(i)]) / 2.0;
     };
+    const ImportHistory::SeasonStart seasonStart =
+        ImportHistory::seasonStartOf(m_context.database());
     const int rows = static_cast<int>(snapshots.size());
     m_historyTable->setRowCount(rows);
     for (int i = 0; i < rows; ++i) {
         const ImportHistory::Snapshot &s = snapshots[size_t(i)];
         const int row = rows - 1 - i;
         const QString when =
-            s.condensed ? tr("Saison %1 (Ende)").arg(ImportHistory::seasonLabel(
-                                                      ImportHistory::seasonOf(s.gameDate)))
+            s.condensed ? tr("Saison %1 (Ende)")
+                              .arg(ImportHistory::seasonLabel(ImportHistory::seasonOfPeriod(s.period),
+                                                              seasonStart))
                         : QLocale().toString(s.gameDate, QLocale::ShortFormat);
         QStringList moved;
         if (i > 0) {

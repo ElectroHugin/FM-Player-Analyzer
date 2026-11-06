@@ -1252,12 +1252,13 @@ ImportHistory::Snapshot snapshotFromQuery(const QSqlQuery &q)
     s.transferValue = q.value(5).toDouble();
     s.wage = q.value(6).toString();
     s.transferValueText = q.value(7).toString();
+    s.period = q.value(8).toString();
     return s;
 }
 
 const QString kSnapshotColumns = QStringLiteral(
     "player_id, game_date, condensed, attrs, average_rating, transfer_value, wage,"
-    " transfer_value_text");
+    " transfer_value_text, period");
 
 } // namespace
 
@@ -1340,20 +1341,21 @@ bool Database::upsertSnapshots(const std::vector<ImportHistory::Snapshot> &snaps
     if (!beginTransaction())
         return false;
     QSqlQuery q(m_db);
-    q.prepare(QStringLiteral("INSERT OR REPLACE INTO player_snapshots (period, %1)"
+    q.prepare(QStringLiteral("INSERT OR REPLACE INTO player_snapshots (%1)"
                              " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
                   .arg(kSnapshotColumns));
     for (const ImportHistory::Snapshot &s : snapshots) {
-        q.bindValue(0, ImportHistory::periodKey(s.gameDate, s.condensed));
-        q.bindValue(1, s.playerId);
-        q.bindValue(2, s.gameDate.toString(QLatin1String(kDateFormat)));
-        q.bindValue(3, s.condensed ? 1 : 0);
-        q.bindValue(4, packAttrs(s));
-        q.bindValue(5, s.averageRating > 0 ? QVariant(s.averageRating)
+        q.bindValue(0, s.playerId);
+        q.bindValue(1, s.gameDate.toString(QLatin1String(kDateFormat)));
+        q.bindValue(2, s.condensed ? 1 : 0);
+        q.bindValue(3, packAttrs(s));
+        q.bindValue(4, s.averageRating > 0 ? QVariant(s.averageRating)
                                            : QVariant(QMetaType::fromType<double>()));
-        q.bindValue(6, s.transferValue);
-        q.bindValue(7, s.wage);
-        q.bindValue(8, s.transferValueText);
+        q.bindValue(5, s.transferValue);
+        q.bindValue(6, s.wage);
+        q.bindValue(7, s.transferValueText);
+        q.bindValue(8, s.period.isEmpty() ? ImportHistory::periodKey(s.gameDate, s.condensed)
+                                          : s.period);
         if (!q.exec()) {
             m_error = q.lastError().text();
             rollbackTransaction();
