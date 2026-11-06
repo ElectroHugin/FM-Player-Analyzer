@@ -24,6 +24,12 @@ double valueToFloat(const QString &valueStr);
 // real free transfer apart from missing data must use this.
 bool isExplicitZeroValue(const QString &rawValue);
 
+// Weekly wage from FM's text: "€300K p/w" -> 300000, "€5,000 p/w" -> 5000,
+// "€1.2M p/a" -> 1200000 / 52, "€40K p/m" -> 40000 * 12 / 52. Ranges take the
+// lower bound like valueToFloat; no period means per week (FM's default).
+// Empty or unparseable -> -1 (unknown, which is not the same as no wage).
+double wageToWeekly(const QString &wageRaw);
+
 // A player counts as a free agent when he has no club set (empty or a lone
 // dash placeholder) OR his transfer value is an explicit zero — independent of
 // how the club column is labelled (so it also catches exports that don't use

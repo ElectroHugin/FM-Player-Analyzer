@@ -2,6 +2,7 @@
 
 #include "Constants.h"
 #include "Definitions.h"
+#include "Utils.h"
 
 #include <QSet>
 
@@ -229,7 +230,60 @@ Quota quotaFor(Competition competition, const Settings &settings)
         break;
     }
     quota.minGoalkeepers = settings.minGoalkeepers;
+    if (restrictsSquad(settings.league)) {
+        quota.wageBudget = std::max(0.0, settings.wageBudget);
+        quota.minWage = std::max(0.0, settings.minWage);
+    }
     return quota;
+}
+
+double weeklyWage(const Player &player)
+{
+    return std::max(0.0, wageToWeekly(player.wageRaw));
+}
+
+bool belowMinWage(const Player &player, const Quota &quota)
+{
+    if (quota.minWage <= 0.0)
+        return false;
+    const double wage = wageToWeekly(player.wageRaw);
+    // FM prints rounded wages ("€12K"): allow half a percent below the line.
+    return wage >= 0.0 && wage < quota.minWage * 0.995;
+}
+
+QString wagePeriodKey(WagePeriod period)
+{
+    switch (period) {
+    case WagePeriod::Month:
+        return QStringLiteral("month");
+    case WagePeriod::Year:
+        return QStringLiteral("year");
+    case WagePeriod::Week:
+        break;
+    }
+    return QStringLiteral("week");
+}
+
+WagePeriod wagePeriodFromKey(const QString &key)
+{
+    if (key == QLatin1String("month"))
+        return WagePeriod::Month;
+    if (key == QLatin1String("year"))
+        return WagePeriod::Year;
+    return WagePeriod::Week;
+}
+
+double weeksPer(WagePeriod period)
+{
+    switch (period) {
+    case WagePeriod::Month:
+        return 52.0 / 12.0;
+    case WagePeriod::Year:
+        return 52.0;
+    case WagePeriod::Week:
+        break;
+    }
+    return 1.0;
 }
 
 bool isExempt(const Player &player, Competition competition)
@@ -308,7 +362,10 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
 
     const auto listedCount = [&result] { return static_cast<int>(result.listed.size()); };
     // Why `cat` does not fit right now, or nullopt when it does.
-    const auto blocker = [&](Category cat) -> std::optional<LeftOutReason> {
+    const auto blocker = [&](const Player &player,
+                             Category cat) -> std::optional<LeftOutReason> {
+        if (belowMinWage(player, quota))
+            return LeftOutReason::BelowMinWage;
         if (listedCount() >= quota.maxSize)
             return LeftOutReason::ListFull;
         if (cat == Category::NonHomeGrown && result.nonHomeGrown >= quota.maxNonHomeGrown)
@@ -316,6 +373,10 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
         if (cat != Category::ClubTrained
             && result.nonHomeGrown + result.homeGrownOnly >= quota.maxNonClubTrained)
             return LeftOutReason::NonClubTrainedFull;
+        // Cent-level slack against rounding in the summed wages.
+        if (quota.wageBudget > 0.0
+            && result.totalWage + weeklyWage(player) > quota.wageBudget + 0.01)
+            return LeftOutReason::WageBudgetFull;
         return std::nullopt;
     };
     QSet<const Player *> taken;
@@ -335,6 +396,7 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
         }
         if (entry.player->isGoalkeeper())
             ++result.goalkeepers;
+        result.totalWage += weeklyWage(*entry.player);
     };
 
     // 1) The best keepers up to the minimum, before outfielders fill the quotas.
@@ -342,7 +404,7 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
         if (result.goalkeepers >= quota.minGoalkeepers)
             break;
         const Category cat = category(*entry->player);
-        if (entry->player->isGoalkeeper() && !blocker(cat))
+        if (entry->player->isGoalkeeper() && !blocker(*entry->player, cat))
             take(*entry, cat);
     }
     // 2) Everyone else in rank order, as long as a quota has room.
@@ -350,7 +412,7 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
         if (taken.contains(entry->player))
             continue;
         const Category cat = category(*entry->player);
-        if (const auto reason = blocker(cat))
+        if (const auto reason = blocker(*entry->player, cat))
             result.leftOut.push_back({*entry, *reason});
         else
             take(*entry, cat);
@@ -409,6 +471,9 @@ ListCheck checkList(const std::vector<const Player *> &listed,
         }
         if (p->isGoalkeeper())
             ++check.goalkeepers;
+        check.totalWage += weeklyWage(*p);
+        if (belowMinWage(*p, quota))
+            ++check.belowMinWage;
     }
     if (quota.exemptKeepersCount) {
         for (const Player *p : exempt)
@@ -420,6 +485,8 @@ ListCheck checkList(const std::vector<const Player *> &listed,
     check.tooManyNonClubTrained =
         check.nonHomeGrown + check.homeGrownOnly > quota.maxNonClubTrained;
     check.tooFewGoalkeepers = check.goalkeepers < quota.minGoalkeepers;
+    check.overWageBudget =
+        quota.wageBudget > 0.0 && check.totalWage > quota.wageBudget + 0.01;
     return check;
 }
 

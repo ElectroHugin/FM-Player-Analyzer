@@ -557,6 +557,13 @@ Registration::Settings AppContext::registrationSettings()
     settings.minGoalkeepers =
         m_database->setting(QStringLiteral("registration_min_goalkeepers"), QStringLiteral("2"))
             .toInt();
+    // Wage rules are entered on the registration page in the unit chosen there.
+    const double weeks = Registration::weeksPer(Registration::wagePeriodFromKey(
+        m_database->setting(QStringLiteral("registration_wage_period"))));
+    settings.wageBudget =
+        m_database->setting(QStringLiteral("registration_wage_budget")).toDouble() / weeks;
+    settings.minWage =
+        m_database->setting(QStringLiteral("registration_min_wage")).toDouble() / weeks;
     return settings;
 }
 

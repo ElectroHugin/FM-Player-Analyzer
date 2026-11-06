@@ -11,6 +11,7 @@
 #include <vector>
 
 class QComboBox;
+class QDoubleSpinBox;
 class QFrame;
 class QGroupBox;
 class QLabel;
@@ -82,11 +83,21 @@ private:
     void updateChanges();
     // Marks the advice cells whose tick disagrees with the advice.
     void markAdviceMismatches();
+    // League wage rules: fills the fields from the settings / stores them.
+    void loadWageFields();
+    void saveWageFields();
+    // A weekly amount in the unit of the wage fields, e.g. "€1.2M p/a".
+    QString moneyText(double weekly) const;
 
     // Fixed head above the scrolling part.
     QWidget *m_controls = nullptr; // competition row + counters
     QComboBox *m_competitionCombo = nullptr;
     QLabel *m_countsLabel = nullptr;
+    QWidget *m_wageRow = nullptr; // league wage budget + minimum wage
+    QDoubleSpinBox *m_wageBudgetSpin = nullptr;
+    QDoubleSpinBox *m_minWageSpin = nullptr;
+    QComboBox *m_wagePeriodCombo = nullptr;
+    QString m_currency; // symbol of the exported wages (€, £, $)
 
     QScrollArea *m_scroll = nullptr;
     QWidget *m_content = nullptr;

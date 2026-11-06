@@ -60,11 +60,17 @@ QList<LeagueRules> leagueRulesFor(const QString &fmVersionId);
 // Whether the UEFA club competitions (CL/EL/ECL, identical rules) are modelled.
 bool uefaRulesFor(const QString &fmVersionId);
 
-// Per-database choice (settings registration_league / _uefa / _min_goalkeepers).
+// Per-database choice (settings registration_league / _uefa / _min_goalkeepers,
+// registration_wage_budget / _min_wage / _wage_period).
 struct Settings {
     LeagueRules league = LeagueRules::None;
     bool uefa = false;
     int minGoalkeepers = 2; // not a rule anywhere — a sane-squad floor
+    // League wage rules (e.g. LaLiga), per week in the save's currency; 0 = none.
+    // The budget caps the summed wages of the listed players, the minimum wage
+    // is what a player must earn to be registered at all.
+    double wageBudget = 0.0;
+    double minWage = 0.0;
 
     // Some competition needs a squad list (markings + assistant are in use).
     bool active() const { return restrictsSquad(league) || uefa; }
@@ -121,7 +127,21 @@ struct Quota {
     // whose youth exemption depends on nationality or is not documented
     // register everyone.
     bool u21Exempt = true;
+    // Wage rules (league only), weekly; 0 = none. Players without a known wage
+    // count as 0 and are never held back by the minimum.
+    double wageBudget = 0.0;
+    double minWage = 0.0;
 };
+
+// Weekly wage of a player for the wage rules; unknown counts as 0.
+double weeklyWage(const Player &player);
+// Below the minimum wage (known wage only; FM rounds, so a hair below is fine).
+bool belowMinWage(const Player &player, const Quota &quota);
+// Settings units for the wage fields (registration_wage_period).
+enum class WagePeriod { Week, Month, Year };
+QString wagePeriodKey(WagePeriod period);
+WagePeriod wagePeriodFromKey(const QString &key); // unknown -> Week
+double weeksPer(WagePeriod period);
 Quota quotaFor(Competition competition, const Settings &settings);
 
 // Eligible without a slot: U21 where the league exempts them, or list B
@@ -152,6 +172,8 @@ enum class LeftOutReason {
     ListFull,           // all slots taken
     NonHomeGrownFull,   // the non-home-grown quota is used up
     NonClubTrainedFull, // only club-trained places are left (UEFA)
+    BelowMinWage,       // earns less than the league's minimum wage
+    WageBudgetFull,     // his wage no longer fits the wage budget
 };
 
 struct Proposal {
@@ -164,13 +186,16 @@ struct Proposal {
     int clubTrained = 0;
     int goalkeepers = 0;   // counted towards the minimum (see Quota)
     int emptySlots = 0;    // places no eligible player could fill
+    double totalWage = 0.0; // weekly wages of the listed players
 };
 
 // Fills the list in rank order: the needed goalkeepers first, then everyone who
 // still fits a quota. Walking the whole ranking means free home-grown /
 // club-trained places always go to the best remaining such player (youth
 // included) instead of staying empty. Greedy is optimal here because the
-// quotas are nested limits.
+// quotas are nested limits. A wage budget is not nested: there the walk keeps
+// the better player whenever his wage still fits and skips the ones that no
+// longer do, so a cheaper player further down can still take a place.
 Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competition,
                  const Quota &quota);
 
@@ -194,15 +219,19 @@ struct ListCheck {
     int homeGrownOnly = 0; // home-grown but not club-trained
     int clubTrained = 0;
     int goalkeepers = 0;   // counted towards the minimum (see Quota)
+    double totalWage = 0.0; // weekly wages of the listed players
+    int belowMinWage = 0;   // listed although under the minimum wage
 
     bool tooMany = false;              // more players than places
     bool tooManyNonHomeGrown = false;
     bool tooManyNonClubTrained = false;
     bool tooFewGoalkeepers = false;
+    bool overWageBudget = false;
 
     bool valid() const
     {
-        return !tooMany && !tooManyNonHomeGrown && !tooManyNonClubTrained && !tooFewGoalkeepers;
+        return !tooMany && !tooManyNonHomeGrown && !tooManyNonClubTrained && !tooFewGoalkeepers
+               && !overWageBudget && belowMinWage == 0;
     }
 };
 // listed: the players taking a slot; exempt: those eligible without one (their
