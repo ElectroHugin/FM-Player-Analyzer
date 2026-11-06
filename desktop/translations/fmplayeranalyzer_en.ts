@@ -5614,7 +5614,7 @@ Details: %1</translation>
     <message>
         <source>Noch keine Spielstände.
 Lege links mit „Neuer Spielstand“ deinen ersten an.</source>
-        <translation>No saves yet.
+        <translation type="vanished">No saves yet.
 Create your first one with “New save” on the left.</translation>
     </message>
     <message>
@@ -5745,7 +5745,7 @@ A backup is created automatically in the “backups” folder first. You can bri
     </message>
     <message>
         <source>Datei aus anderem Ordner oder Backup</source>
-        <translation>File from another folder or a backup</translation>
+        <translation type="vanished">File from another folder or a backup</translation>
     </message>
     <message>
         <source>FM24-Daten übernehmen …</source>
@@ -5790,6 +5790,30 @@ A backup is created automatically in the “backups” folder first. You can bri
     <message>
         <source>noch kein Import</source>
         <translation>no import yet</translation>
+    </message>
+    <message>
+        <source>Aus anderem Ordner oder Backup</source>
+        <translation>From another folder or a backup</translation>
+    </message>
+    <message>
+        <source>Noch keine Spielstände</source>
+        <translation>No saves yet</translation>
+    </message>
+    <message>
+        <source>Ein Spielstand gehört zu einer Karriere im Spiel. Er sammelt deine Importe, Rollen, Taktiken und Einstellungen.</source>
+        <translation>A save belongs to one career in the game. It keeps your imports, roles, tactics and settings.</translation>
+    </message>
+    <message>
+        <source>FM-Version wählen</source>
+        <translation>Choose the FM version</translation>
+    </message>
+    <message>
+        <source>Export oder FM27-Spielstand (.fm) einlesen</source>
+        <translation>Read in an export or an FM27 save game (.fm)</translation>
+    </message>
+    <message>
+        <source>Deinen Verein festlegen</source>
+        <translation>Set your club</translation>
     </message>
 </context>
 <context>

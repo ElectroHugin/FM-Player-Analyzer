@@ -91,6 +91,7 @@ StartScreen::StartScreen(AppContext &context, ThemeManager &theme, Mode mode, QW
     layout->addWidget(buildList(), 1);
 
     reload();
+    updateThemedIcons(); // the empty state's icon exists only now
     m_list->setFocus();
 }
 
@@ -100,13 +101,13 @@ QWidget *StartScreen::buildHero()
     hero->setObjectName(QStringLiteral("startHero"));
     hero->setFixedWidth(350);
     auto *layout = new QVBoxLayout(hero);
-    layout->setContentsMargins(30, 36, 30, 22);
+    layout->setContentsMargins(32, 40, 32, 24);
     layout->setSpacing(8);
 
     auto *logo = new QLabel(hero);
-    logo->setPixmap(QApplication::windowIcon().pixmap(72, 72));
+    logo->setPixmap(QApplication::windowIcon().pixmap(64, 64));
     layout->addWidget(logo);
-    layout->addSpacing(6);
+    layout->addSpacing(8);
     auto *title = new QLabel(appName(), hero);
     title->setObjectName(QStringLiteral("startTitle"));
     title->setWordWrap(true);
@@ -121,7 +122,7 @@ QWidget *StartScreen::buildHero()
                                hero);
     version->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(version);
-    layout->addSpacing(18);
+    layout->addSpacing(24);
 
     // Big two-line action: icon, title and a short description underneath.
     const auto addAction = [&](const QString &iconName, const QString &text,
@@ -133,7 +134,7 @@ QWidget *StartScreen::buildHero()
         button->setAutoDefault(false);
         button->setAccessibleName(text);
         auto *row = new QHBoxLayout(button);
-        row->setContentsMargins(16, 11, 14, 11);
+        row->setContentsMargins(16, 12, 16, 12);
         row->setSpacing(12);
         auto *icon = new QLabel(button);
         icon->setObjectName(QStringLiteral("heroIcon"));
@@ -141,18 +142,18 @@ QWidget *StartScreen::buildHero()
         icon->setFixedSize(18, 18);
         row->addWidget(icon, 0, Qt::AlignTop);
         auto *texts = new QVBoxLayout;
-        texts->setSpacing(1);
+        texts->setSpacing(2);
         auto *titleLabel = new QLabel(text, button);
         titleLabel->setObjectName(QStringLiteral("heroActionTitle"));
         auto *descLabel = new QLabel(description, button);
         descLabel->setObjectName(QStringLiteral("heroActionText"));
-        descLabel->setWordWrap(true);
+        descLabel->setWordWrap(false);
         texts->addWidget(titleLabel);
         texts->addWidget(descLabel);
         row->addLayout(texts, 1);
         for (QLabel *label : {icon, titleLabel, descLabel})
             label->setAttribute(Qt::WA_TransparentForMouseEvents);
-        button->setMinimumHeight(64);
+        button->setMinimumHeight(56);
         layout->addWidget(button);
         return button;
     };
@@ -160,7 +161,7 @@ QWidget *StartScreen::buildHero()
                       tr("FM-Version, erster Import und Verein"), true),
             &QPushButton::clicked, this, &StartScreen::newSave);
     connect(addAction(QStringLiteral("folder"), tr("Spielstand-Datei öffnen …"),
-                      tr("Datei aus anderem Ordner oder Backup"), false),
+                      tr("Aus anderem Ordner oder Backup"), false),
             &QPushButton::clicked, this, &StartScreen::openExternalFile);
     connect(addAction(QStringLiteral("migrate"), tr("FM24-Daten übernehmen …"),
                       tr("Alte Streamlit-Version (Migration)"), false),
@@ -169,7 +170,7 @@ QWidget *StartScreen::buildHero()
     layout->addStretch(1);
 
     auto *foot = new QHBoxLayout;
-    foot->setSpacing(2);
+    foot->setSpacing(4);
     const auto footButton = [&](const QString &iconName) {
         auto *button = new QToolButton(hero);
         button->setObjectName(QStringLiteral("flatButton"));
@@ -194,7 +195,7 @@ QWidget *StartScreen::buildHero()
             code == current || (code == QLatin1String("en") && current.isEmpty());
         action->setChecked(active);
         if (active)
-            language->setText(label + QStringLiteral(" ▾"));
+            language->setText(label);
         group->addAction(action);
         connect(action, &QAction::triggered, this, [this, code] { changeLanguage(code); });
     }
@@ -233,6 +234,9 @@ void StartScreen::updateThemedIcons()
     const qreal dpr = devicePixelRatioF();
     for (QToolButton *button : findChildren<QToolButton *>(QStringLiteral("flatButton")))
         button->setIcon(LineIcons::icon(button->property("iconName").toString(), muted, 15, dpr));
+    for (QLabel *icon : findChildren<QLabel *>(QStringLiteral("emptyIcon")))
+        icon->setPixmap(LineIcons::icon(icon->property("iconName").toString(), muted, 32, dpr)
+                            .pixmap(32, 32));
     for (QLabel *icon : findChildren<QLabel *>(QStringLiteral("heroIcon"))) {
         const bool primary = icon->parentWidget()->objectName() == QLatin1String("heroPrimary");
         const QColor color = primary ? QColorConstants::White : m_theme.text();
@@ -245,11 +249,12 @@ QWidget *StartScreen::buildList()
 {
     auto *panel = new QWidget(this);
     auto *layout = new QVBoxLayout(panel);
-    layout->setContentsMargins(28, 30, 28, 18);
-    layout->setSpacing(14);
+    layout->setContentsMargins(32, 40, 32, 24);
+    layout->setSpacing(16);
 
     auto *head = new QHBoxLayout;
     auto *heading = new QLabel(tr("Zuletzt verwendet"), panel);
+    m_listHeading = heading;
     heading->setObjectName(QStringLiteral("sectionTitle"));
     head->addWidget(heading);
     head->addStretch(1);
@@ -267,13 +272,9 @@ QWidget *StartScreen::buildList()
     m_list->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_list->setContextMenuPolicy(Qt::CustomContextMenu);
-    m_list->setSpacing(3);
+    m_list->setSpacing(4);
     m_listStack->addWidget(m_list);
-    m_emptyLabel = new QLabel(panel);
-    m_emptyLabel->setObjectName(QStringLiteral("emptyState"));
-    m_emptyLabel->setAlignment(Qt::AlignCenter);
-    m_emptyLabel->setWordWrap(true);
-    m_listStack->addWidget(m_emptyLabel);
+    m_listStack->addWidget(buildEmptyState(panel));
     layout->addWidget(m_listStack, 1);
 
     connect(m_list, &QListWidget::itemDoubleClicked, this,
@@ -321,13 +322,78 @@ QWidget *StartScreen::buildList()
     return panel;
 }
 
+QWidget *StartScreen::buildEmptyState(QWidget *parent)
+{
+    // First start: what a save is and the three steps of the wizard, so the
+    // panel explains the way in instead of standing empty.
+    auto *outer = new QWidget(parent);
+    auto *outerLayout = new QVBoxLayout(outer);
+    outerLayout->setContentsMargins(0, 0, 0, 0);
+    outerLayout->addStretch(2);
+
+    auto *box = new QFrame(outer);
+    box->setObjectName(QStringLiteral("emptyState"));
+    box->setMaximumWidth(480);
+    auto *layout = new QVBoxLayout(box);
+    layout->setContentsMargins(32, 32, 32, 32);
+    layout->setSpacing(8);
+
+    auto *icon = new QLabel(box);
+    icon->setObjectName(QStringLiteral("emptyIcon"));
+    icon->setProperty("iconName", QStringLiteral("pitch"));
+    icon->setFixedSize(32, 32);
+    layout->addWidget(icon);
+    layout->addSpacing(8);
+    auto *title = new QLabel(tr("Noch keine Spielstände"), box);
+    title->setObjectName(QStringLiteral("emptyTitle"));
+    layout->addWidget(title);
+    auto *text = new QLabel(tr("Ein Spielstand gehört zu einer Karriere im Spiel. Er sammelt "
+                               "deine Importe, Rollen, Taktiken und Einstellungen."),
+                            box);
+    text->setObjectName(QStringLiteral("emptyText"));
+    text->setWordWrap(true);
+    layout->addWidget(text);
+    layout->addSpacing(16);
+
+    const QStringList steps = {tr("FM-Version wählen"),
+                               tr("Export oder FM27-Spielstand (.fm) einlesen"),
+                               tr("Deinen Verein festlegen")};
+    for (int i = 0; i < steps.size(); ++i) {
+        auto *row = new QHBoxLayout;
+        row->setSpacing(12);
+        auto *number = new QLabel(QString::number(i + 1), box);
+        number->setObjectName(QStringLiteral("emptyStepNumber"));
+        number->setFixedSize(24, 24);
+        number->setAlignment(Qt::AlignCenter);
+        row->addWidget(number);
+        auto *stepText = new QLabel(steps.at(i), box);
+        stepText->setObjectName(QStringLiteral("emptyStepText"));
+        row->addWidget(stepText, 1);
+        layout->addLayout(row);
+    }
+    layout->addSpacing(16);
+    auto *start = new QPushButton(tr("Neuer Spielstand"), box);
+    start->setAutoDefault(false);
+    start->setCursor(Qt::PointingHandCursor);
+    connect(start, &QPushButton::clicked, this, &StartScreen::newSave);
+    layout->addWidget(start, 0, Qt::AlignLeft);
+
+    auto *center = new QHBoxLayout;
+    center->addStretch(1);
+    center->addWidget(box, 4);
+    center->addStretch(1);
+    outerLayout->addLayout(center);
+    outerLayout->addStretch(3);
+    return outer;
+}
+
 QWidget *StartScreen::buildSaveCard(const SaveInfo &save)
 {
     auto *card = new QFrame;
     card->setObjectName(QStringLiteral("saveCard"));
     auto *layout = new QHBoxLayout(card);
-    layout->setContentsMargins(12, 10, 8, 10);
-    layout->setSpacing(14);
+    layout->setContentsMargins(12, 12, 8, 12);
+    layout->setSpacing(12);
 
     auto *crest = new QLabel(card);
     crest->setFixedSize(kCrestSize, kCrestSize);
@@ -413,9 +479,12 @@ void StartScreen::reload()
         item->setSizeHint(card->sizeHint());
         m_list->setItemWidget(item, card);
     }
-    m_emptyLabel->setText(
-        tr("Noch keine Spielstände.\nLege links mit „Neuer Spielstand“ deinen ersten an."));
-    m_listStack->setCurrentIndex(m_saves.isEmpty() ? 1 : 0);
+    const bool empty = m_saves.isEmpty();
+    m_listStack->setCurrentIndex(empty ? 1 : 0);
+    // Nothing to search or open yet: only the way to the first save stays.
+    m_listHeading->setVisible(!empty);
+    m_search->setVisible(!empty);
+    m_openButton->setVisible(!empty);
 
     int row = 0;
     for (int i = 0; i < m_list->count(); ++i) {

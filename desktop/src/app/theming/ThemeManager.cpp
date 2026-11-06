@@ -398,41 +398,47 @@ QListWidget#paletteList::item { padding: 7px 10px; border-radius: 7px; }
 QListWidget#paletteList::item:disabled { color: %MUTED%; padding: 10px 10px 2px 10px; }
 
 /* ===== Start screen / new save wizard ===== */
-QFrame#startHero {
-    background-color: qlineargradient(x1:0, y1:0, x2:0.55, y2:1,
-        stop:0 %HEROTOP%, stop:0.6 %SIDEBAR%, stop:1 %SIDEBAR%);
-    border-right: 1px solid %BORDER%; }
-QLabel#startTitle { font-size: 17pt; font-weight: 600; }
-QPushButton#heroPrimary, QPushButton#heroAction { padding: 0; border-radius: 10px; min-height: 62px; }
-QPushButton#heroAction { background-color: %HOVER%; }
+QFrame#startHero { background-color: %SIDEBAR%; border-right: 1px solid %BORDER%; }
+QLabel#startTitle { font-size: 16pt; font-weight: 500; }
+QPushButton#heroPrimary, QPushButton#heroAction { padding: 0; border-radius: 10px; min-height: 56px; }
+QPushButton#heroAction { background-color: transparent; border: 1px solid %BORDER%; }
+QPushButton#heroAction:hover { background-color: %HOVER%; }
 QPushButton#heroPrimary { background-color: %PRIMARY%; border-color: %PRIMARY%; }
 QPushButton#heroPrimary:hover { background-color: %PRIMARYHOVER%; border-color: %PRIMARYHOVER%; }
-QLabel#heroActionTitle { font-size: 10.5pt; font-weight: 600; }
+QLabel#heroActionTitle { font-size: 10.5pt; font-weight: 500; }
 QLabel#heroActionText { font-size: 9pt; font-weight: 400; color: %MUTED%; }
 QPushButton#heroPrimary QLabel#heroActionTitle { color: %PRIMARYTEXT%; }
 QPushButton#heroPrimary QLabel#heroActionText { color: %PRIMARYTEXTMUTED%; }
 QPushButton:default:disabled { background: transparent; color: %MUTED%; border-color: %BORDER%; }
 QToolButton#flatButton {
-    background: transparent; border: 1px solid transparent; color: %MUTED%; padding: 5px 8px; }
-QToolButton#flatButton:hover { color: %FG%; border-color: %BORDER%; }
+    background: transparent; border: 1px solid transparent; border-radius: 6px;
+    color: %MUTED%; padding: 4px 8px; }
+QToolButton#flatButton:hover { color: %FG%; background-color: %HOVER%; }
 QToolButton#flatButton::menu-indicator { image: none; width: 0; }
 QListWidget#saveList { background: transparent; border: none; }
 QListWidget#saveList::item {
     border: 1px solid %BORDER%; border-radius: 10px; background-color: %SURFACE%;
     padding: 0; margin: 0; }
-QListWidget#saveList::item:hover:!selected { border-color: %ACCENTUI%; }
+QListWidget#saveList::item:hover:!selected { background-color: %HOVER%; }
 QListWidget#saveList::item:selected {
     background-color: %INTERACTIVESUBTLE%; border: 1px solid %ACCENTUI%; }
 QFrame#saveCard { background: transparent; }
-QLabel#saveName { font-size: 11pt; font-weight: 600; }
+QLabel#saveName { font-size: 11pt; font-weight: 500; }
 QLabel#chip, QLabel#chipAccent {
-    border-radius: 8px; padding: 1px 7px; font-size: 8.5pt; font-weight: 600; }
+    border-radius: 4px; padding: 0 6px; font-size: 8.5pt; font-weight: 500; }
 QLabel#chip { background-color: %HOVER%; color: %MUTED%; }
 QLabel#chipAccent { background-color: %INTERACTIVESUBTLE%; color: %FG%; }
 QToolButton#cardMenuButton {
-    background: transparent; border: none; font-size: 14pt; color: %MUTED%; padding: 0 8px; }
+    background: transparent; border: none; border-radius: 6px; font-size: 14pt;
+    color: %MUTED%; padding: 0 8px; }
 QToolButton#cardMenuButton:hover { color: %FG%; background-color: %HOVER%; }
-QLabel#emptyState { color: %MUTED%; font-size: 11pt; }
+QFrame#emptyState { background-color: %SURFACE%; border: 1px solid %BORDER%; border-radius: 12px; }
+QLabel#emptyTitle { font-size: 12pt; font-weight: 500; }
+QLabel#emptyText { color: %MUTED%; }
+QLabel#emptyStepNumber {
+    color: %MUTED%; border: 1px solid %BORDER%; border-radius: 12px;
+    font-size: 9pt; font-weight: 500; }
+QLabel#emptyStepText { color: %FG%; }
 QFrame#startFooter { border-top: 1px solid %BORDER%; }
 QLabel#stepLabel { color: %MUTED%; font-weight: 600; }
 QLabel#stepLabel[state="current"], QLabel#stepLabel[state="done"] { color: %FG%; }
@@ -491,9 +497,6 @@ QProgressDialog { background-color: %BG%; }
     // Edge of a filled club-color button: visible against the page (3:1) even
     // for a pale or neon club color.
     qss.replace(QLatin1String("%PRIMARYEDGE%"), withContrast(m_primary, m_background, 3.0).name());
-    // Start screen: a soft wash of the club's color (purple for the neutral look).
-    qss.replace(QLatin1String("%HEROTOP%"),
-                mixColors(m_primary, m_sidebar, night ? 0.72 : 0.80).name());
     qss.replace(QLatin1String("%PRIMARYTEXTMUTED%"), rgba(contrastText(m_primary), 0.78));
     qss.replace(QLatin1String("%INTERACTIVE%"), interactive);
     qss.replace(QLatin1String("%ACCENTTEXT%"), m_accentText.name());

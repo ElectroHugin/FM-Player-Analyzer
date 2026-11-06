@@ -217,6 +217,13 @@ QWidget *NewSaveWizard::buildNamePage()
     profileHint->setObjectName(QStringLiteral("kpiCaption"));
     profileHint->setWordWrap(true);
     layout->addWidget(profileHint);
+    // Only a choice once another save exists to copy from; the very first
+    // save always starts with the defaults.
+    const bool canCopy = m_profileSourceCombo->count() > 1;
+    for (QWidget *widget : {static_cast<QWidget *>(profileLabel),
+                            static_cast<QWidget *>(m_profileSourceCombo),
+                            static_cast<QWidget *>(profileHint)})
+        widget->setVisible(canCopy);
     layout->addStretch(1);
     return page;
 }
