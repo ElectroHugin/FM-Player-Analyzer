@@ -1,4 +1,5 @@
 #include "PlayerComparisonPage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
 #include "../widgets/CellStyleDelegate.h"
@@ -113,6 +114,7 @@ PlayerComparisonPage::PlayerComparisonPage(AppContext &context, ThemeManager &th
     filterRow->addWidget(new QLabel(tr("Rolle:"), content));
     m_roleCombo = new QComboBox(content);
     m_roleCombo->setMinimumWidth(260);
+    filterRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_roleCombo, m_roleCombo->parentWidget()));
     filterRow->addWidget(m_roleCombo);
     filterRow->addWidget(new QLabel(tr("Pool:"), content));
     m_poolCombo = new QComboBox(content);
@@ -191,6 +193,7 @@ void PlayerComparisonPage::refresh()
     // One-shot handoff from the player context menu ("Zum Vergleich"): make
     // sure the player is reachable — pool "Alle Spieler", and a role he has.
     const QStringList pending = m_context.takePendingComparisonUids();
+    m_pendingRole = m_context.takePendingComparisonRole();
     if (!pending.isEmpty()) {
         m_pendingCheck += pending;
         m_poolCombo->setCurrentIndex(m_poolCombo->findData(QStringLiteral("all")));
@@ -221,6 +224,13 @@ void PlayerComparisonPage::refresh()
         if (index >= 0)
             m_tacticCombo->setCurrentIndex(index);
     }
+    // A handed-over role must be in the list: otherwise show every role.
+    if (!m_pendingRole.isEmpty()) {
+        const QString tactic = m_tacticCombo->currentData().toString();
+        if (!tactic.isEmpty()
+            && !m_context.definitions().tacticRoleList(tactic).contains(m_pendingRole))
+            m_tacticCombo->setCurrentIndex(0);
+    }
     m_updating = false;
     rebuildRoleCombo();
 }
@@ -229,8 +239,12 @@ void PlayerComparisonPage::rebuildRoleCombo()
 {
     m_updating = true;
     QString previous = m_roleCombo->currentData().toString();
-    // Pending handoff: prefer a role the handed-over player actually has.
-    if (!m_pendingCheck.isEmpty()) {
+    // Pending handoff: the handed-over role, otherwise a role the
+    // handed-over player actually has.
+    if (!m_pendingRole.isEmpty()) {
+        previous = m_pendingRole;
+        m_pendingRole.clear();
+    } else if (!m_pendingCheck.isEmpty()) {
         if (const Player *player = m_context.store().findByUid(m_pendingCheck.first())) {
             if (!player->assignedRoles.contains(previous)
                 && !player->assignedRoles.isEmpty())

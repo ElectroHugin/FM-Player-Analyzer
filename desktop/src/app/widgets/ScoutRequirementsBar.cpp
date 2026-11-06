@@ -1,5 +1,6 @@
 #include "ScoutRequirementsBar.h"
 
+#include "RolePhaseSwitch.h"
 #include "core/Definitions.h"
 
 #include <QComboBox>
@@ -46,6 +47,7 @@ ScoutRequirementsBar::ScoutRequirementsBar(const Definitions &definitions, QWidg
     addRow->addWidget(new QLabel(tr("Rolle:"), this));
     m_roleCombo = new QComboBox(this);
     m_roleCombo->setMinimumWidth(220);
+    addRow->addWidget(new RolePhaseSwitch(m_definitions, m_roleCombo, this));
     addRow->addWidget(m_roleCombo);
     m_addButton = new QPushButton(tr("+ Hinzufügen"), this);
     m_addButton->setToolTip(

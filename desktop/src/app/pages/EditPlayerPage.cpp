@@ -1,4 +1,5 @@
 #include "EditPlayerPage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
 #include "core/Constants.h"
@@ -147,7 +148,12 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     tacticalLayout->addWidget(m_naturalPositionsList);
     auto *tacticalForm = new QFormLayout;
     m_primaryRoleCombo = new QComboBox(m_tacticalColumn);
-    tacticalForm->addRow(tr("Primärrolle:"), m_primaryRoleCombo);
+    auto *primaryRoleRow = new QHBoxLayout;
+    primaryRoleRow->setContentsMargins(0, 0, 0, 0);
+    primaryRoleRow->addWidget(
+        new RolePhaseSwitch(m_context.definitions(), m_primaryRoleCombo, m_tacticalColumn));
+    primaryRoleRow->addWidget(m_primaryRoleCombo, 1);
+    tacticalForm->addRow(tr("Primärrolle:"), primaryRoleRow);
     m_preferredSideCombo = new QComboBox(m_tacticalColumn);
     m_preferredSideCombo->addItem(tr("Keine"), QString());
     m_preferredSideCombo->addItem(tr("Links"), QStringLiteral("Left"));

@@ -1,4 +1,5 @@
 #include "PlayerProfilePage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
 #include "../ImportRunner.h"
@@ -27,6 +28,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QLocale>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
@@ -35,9 +37,11 @@
 #include <QScrollArea>
 #include <QSet>
 #include <QScrollBar>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include <algorithm>
+#include <array>
 
 namespace fm {
 
@@ -120,6 +124,18 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_searchCompleter->setMaxVisibleItems(12);
     m_searchEdit->setCompleter(m_searchCompleter);
     selectRow->addWidget(m_searchEdit, 1);
+    // Small squads (own club, second team, national squad): pick from a
+    // menu grouped by position instead of typing a name.
+    m_squadButton = new QToolButton(content);
+    m_squadButton->setText(tr("Kader"));
+    m_squadButton->setToolTip(tr("Spieler aus der Liste wählen, nach Mannschaftsteil sortiert"));
+    m_squadButton->setPopupMode(QToolButton::InstantPopup);
+    m_squadButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    m_squadButton->setCursor(Qt::PointingHandCursor);
+    auto *squadMenu = new QMenu(m_squadButton);
+    m_squadButton->setMenu(squadMenu);
+    connect(squadMenu, &QMenu::aboutToShow, this, [this, squadMenu] { fillSquadMenu(squadMenu); });
+    selectRow->insertWidget(selectRow->indexOf(m_searchEdit), m_squadButton);
     layout->addLayout(selectRow);
 
     auto *divider = new QFrame(content);
@@ -271,6 +287,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     trainingRoleRow->addWidget(new QLabel(tr("Rolle:"), m_trainingBox));
     m_trainingRoleCombo = new QComboBox(m_trainingBox);
     m_trainingRoleCombo->setMinimumWidth(220);
+    trainingRoleRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_trainingRoleCombo, m_trainingRoleCombo->parentWidget()));
     trainingRoleRow->addWidget(m_trainingRoleCombo);
     trainingRoleRow->addStretch(1);
     trainingLayout->addLayout(trainingRoleRow);
@@ -375,6 +392,9 @@ void PlayerProfilePage::refresh()
 
 void PlayerProfilePage::updateScopeAvailability()
 {
+    const int checkedScope = m_scopeGroup->checkedId();
+    m_squadButton->setVisible(checkedScope == MyClub || checkedScope == SecondTeam
+                              || checkedScope == NationalSquad);
     const QString secondClub = m_context.secondTeamClub();
     m_scopeGroup->button(SecondTeam)->setVisible(!secondClub.isEmpty());
 
@@ -401,6 +421,68 @@ void PlayerProfilePage::onScopeChanged()
     m_searchEdit->clear();
     m_currentUid.clear();
     showPlayer();
+}
+
+void PlayerProfilePage::fillSquadMenu(QMenu *menu)
+{
+    menu->clear();
+    const QString userClub = m_context.userClub();
+    const QString secondClub = m_context.secondTeamClub();
+    const int scope = m_scopeGroup->checkedId();
+
+    // Grouped by the first position FM lists (FM lists them from the back
+    // to the front, so a full-back who also plays wing-back sits in defence).
+    enum Group { Keepers, Defence, Midfield, Attack, GroupCount };
+    const QStringList groupNames = {tr("Torhüter"), tr("Abwehr"), tr("Mittelfeld"),
+                                    tr("Angriff")};
+    const auto groupOf = [](const Player &player) {
+        if (player.isGoalkeeper())
+            return Keepers;
+        QString first = player.positionRaw.section(QLatin1Char(','), 0, 0).trimmed();
+        first = first.section(QLatin1Char(' '), 0, 0).section(QLatin1Char('/'), 0, 0);
+        if (first == QLatin1String("D") || first == QLatin1String("WB"))
+            return Defence;
+        if (first == QLatin1String("DM") || first == QLatin1String("M"))
+            return Midfield;
+        if (first == QLatin1String("AM") || first == QLatin1String("ST"))
+            return Attack;
+        return Midfield;
+    };
+
+    std::array<std::vector<const Player *>, GroupCount> groups;
+    for (const Player &player : m_context.store().players()) {
+        const bool include = (scope == MyClub && !userClub.isEmpty() && player.club == userClub)
+                             || (scope == SecondTeam && !secondClub.isEmpty()
+                                 && player.club == secondClub)
+                             || (scope == NationalSquad && player.inNationalSquad);
+        if (include)
+            groups[groupOf(player)].push_back(&player);
+    }
+    bool any = false;
+    for (int g = 0; g < GroupCount; ++g) {
+        auto &pool = groups[g];
+        if (pool.empty())
+            continue;
+        any = true;
+        std::sort(pool.begin(), pool.end(), [](const Player *a, const Player *b) {
+            return getLastName(a->name).localeAwareCompare(getLastName(b->name)) < 0;
+        });
+        QMenu *sub = menu->addMenu(QStringLiteral("%1 (%2)").arg(groupNames.at(g)).arg(pool.size()));
+        for (const Player *player : pool) {
+            QAction *action = sub->addAction(
+                QStringLiteral("%1   ·   %2").arg(player->name, player->positionRaw));
+            action->setCheckable(true);
+            action->setChecked(player->uid == m_currentUid);
+            const QString uid = player->uid;
+            const QString label = QStringLiteral("%1 (%2)").arg(player->name, player->club);
+            connect(action, &QAction::triggered, this, [this, uid, label] {
+                m_searchEdit->setText(label);
+                selectPlayer(uid);
+            });
+        }
+    }
+    if (!any)
+        menu->addAction(tr("Keine Spieler in dieser Auswahl"))->setEnabled(false);
 }
 
 void PlayerProfilePage::rebuildSearchModel()

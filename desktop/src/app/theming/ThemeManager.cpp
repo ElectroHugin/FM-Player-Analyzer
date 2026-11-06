@@ -252,6 +252,7 @@ QFrame#headerBar QToolButton#navButton:disabled {
 /* ===== Cards ===== */
 QFrame#kpiTile, QFrame#suggestionCard {
     background-color: %SURFACE%; border: 1px solid %BORDER%; border-radius: 10px; }
+QFrame#suggestionCard:hover { border-color: %ACCENTUI%; }
 QLabel#kpiValue { font-size: 19pt; font-weight: 650; color: %FG%; }
 /* Profile: roles of the favorite tactic, with ball / without ball. Fixed
    hues, independent of the club colors, so the meaning never changes. */
@@ -395,6 +396,17 @@ QFrame#segmented QPushButton#segmentButton {
 QFrame#segmented QPushButton#segmentButton:hover { color: %FG%; }
 QFrame#segmented QPushButton#segmentButton:checked {
     background-color: %SURFACE%; color: %FG%; border: 1px solid %BORDER%; }
+QWidget#phaseSwitch { background-color: %HOVER%; border-radius: 7px; }
+QWidget#phaseSwitch QToolButton {
+    background: transparent; border: 1px solid transparent; border-radius: 6px;
+    padding: 3px 10px; color: %MUTED%; font-weight: 500; }
+QWidget#phaseSwitch QToolButton:hover { color: %FG%; }
+QWidget#phaseSwitch QToolButton#phaseSwitchLeft:checked {
+    background-color: %SURFACE%; color: %FG%; border: 1px solid %BORDER%;
+    border-bottom: 2px solid %IPMARK%; }
+QWidget#phaseSwitch QToolButton#phaseSwitchRight:checked {
+    background-color: %SURFACE%; color: %FG%; border: 1px solid %BORDER%;
+    border-bottom: 2px solid %OOPMARK%; }
 QFrame#sidebar QToolButton#sidebarIconButton {
     background: transparent; border: 1px solid transparent; border-radius: 7px; padding: 5px; }
 QFrame#sidebar QToolButton#sidebarIconButton:hover { background-color: %HOVER%; border-color: %BORDER%; }

@@ -41,6 +41,7 @@ private:
     QListWidget *m_playerList = nullptr;
     QLabel *m_hint = nullptr;
     QStringList m_pendingCheck; // uids handed over by "Zum Vergleich hinzufügen"
+    QString m_pendingRole;      // role handed over together with them
 
     QLabel *m_gameplayTitle = nullptr;
     QLabel *m_metaTitle = nullptr;

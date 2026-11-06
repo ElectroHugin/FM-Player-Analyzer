@@ -1382,6 +1382,25 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
         <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
         <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
+    <message>
+        <source>Klicken für Aktionen: Profil, Shortlist, Vergleich</source>
+        <translation>Click for actions: profile, shortlist, comparison</translation>
+    </message>
+    <message>
+        <source>%1 (%2 %)</source>
+        <translation>%1 (%2%)</translation>
+    </message>
+    <message>
+        <source>Vergleichen mit %1</source>
+        <translation>Compare with %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Vergleichen mit allen %n</source>
+        <translation>
+            <numerusform>Compare with both</numerusform>
+            <numerusform>Compare with all %n</numerusform>
+        </translation>
+    </message>
 </context>
 <context>
     <name>fm::DropZone</name>
@@ -3711,6 +3730,34 @@ Details: %1</translation>
         <source>Rahmen = Rolle in „%1“:</source>
         <translation>Outline = role in “%1”:</translation>
     </message>
+    <message>
+        <source>Kader</source>
+        <translation>Squad</translation>
+    </message>
+    <message>
+        <source>Spieler aus der Liste wählen, nach Mannschaftsteil sortiert</source>
+        <translation>Pick a player from the list, sorted by team part</translation>
+    </message>
+    <message>
+        <source>Torhüter</source>
+        <translation>Goalkeepers</translation>
+    </message>
+    <message>
+        <source>Abwehr</source>
+        <translation>Defence</translation>
+    </message>
+    <message>
+        <source>Mittelfeld</source>
+        <translation>Midfield</translation>
+    </message>
+    <message>
+        <source>Angriff</source>
+        <translation>Attack</translation>
+    </message>
+    <message>
+        <source>Keine Spieler in dieser Auswahl</source>
+        <translation>No players in this selection</translation>
+    </message>
 </context>
 <context>
     <name>fm::RadarChartWidget</name>
@@ -4179,6 +4226,25 @@ Details: %1</translation>
     <message>
         <source>Keine nennenswerten Schwächen für diese Rolle.</source>
         <translation>No notable weaknesses for this role.</translation>
+    </message>
+</context>
+<context>
+    <name>fm::RolePhaseSwitch</name>
+    <message>
+        <source>Mit Ball</source>
+        <translation>In possession</translation>
+    </message>
+    <message>
+        <source>Rollen mit Ball (IP) zeigen</source>
+        <translation>Show roles in possession (IP)</translation>
+    </message>
+    <message>
+        <source>Ohne Ball</source>
+        <translation>Out of possession</translation>
+    </message>
+    <message>
+        <source>Rollen ohne Ball (OOP) zeigen</source>
+        <translation>Show roles out of possession (OOP)</translation>
     </message>
 </context>
 <context>

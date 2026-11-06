@@ -11,6 +11,9 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QMouseEvent>
 #include <QCoreApplication>
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -36,6 +39,39 @@
 namespace fm {
 
 namespace {
+
+// Opens a menu on left or right click anywhere on a card (the labels inside
+// pass their clicks on to the card).
+class CardClickFilter : public QObject
+{
+public:
+    CardClickFilter(std::function<void(const QPoint &)> open, QObject *parent)
+        : QObject(parent), m_open(std::move(open)) {}
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override
+    {
+        if (event->type() == QEvent::MouseButtonRelease) {
+            auto *mouse = static_cast<QMouseEvent *>(event);
+            if (mouse->button() == Qt::LeftButton) {
+                m_open(mouse->globalPosition().toPoint());
+                return true;
+            }
+        } else if (event->type() == QEvent::ContextMenu) {
+            m_open(static_cast<QContextMenuEvent *>(event)->globalPos());
+            return true;
+        }
+        return QObject::eventFilter(watched, event);
+    }
+
+private:
+    std::function<void(const QPoint &)> m_open;
+};
+
+void installClickMenu(QWidget *card, std::function<void(const QPoint &)> open)
+{
+    card->installEventFilter(new CardClickFilter(std::move(open), card));
+}
 
 QString formatMillions(double value)
 {
@@ -654,6 +690,9 @@ void DashboardPage::rebuildSuggestions()
         const Player *player;
         double rating;
         double myBest;
+        // Own players rated for the role, best first (the card compares
+        // the target with them).
+        std::vector<std::pair<const Player *, double>> mine;
     };
     std::vector<Suggestion> suggestions;
 
@@ -668,11 +707,18 @@ void DashboardPage::rebuildSuggestions()
 
         // Best rating for the role inside my own club.
         double myBest = 0.0;
+        std::vector<std::pair<const Player *, double>> mine;
         for (auto it = rated.constBegin(); it != rated.constEnd(); ++it) {
             const Player *player = store.findByUid(it.key());
-            if (player && player->club == userClub)
+            if (player && player->club == userClub) {
                 myBest = std::max(myBest, it.value());
+                mine.emplace_back(player, it.value());
+            }
         }
+        std::sort(mine.begin(), mine.end(),
+                  [](const auto &a, const auto &b) { return a.second > b.second; });
+        if (mine.size() > 3)
+            mine.resize(3);
 
         const Player *bestUpgrade = nullptr;
         double bestUpgradeRating = 0.0;
@@ -695,7 +741,7 @@ void DashboardPage::rebuildSuggestions()
             bestUpgradeRating = rating;
         }
         if (bestUpgrade)
-            suggestions.push_back({role, bestUpgrade, bestUpgradeRating, myBest});
+            suggestions.push_back({role, bestUpgrade, bestUpgradeRating, myBest, mine});
     }
 
     if (suggestions.empty()) {
@@ -755,6 +801,45 @@ void DashboardPage::rebuildSuggestions()
         footer->setObjectName(QStringLiteral("kpiCaption"));
         footer->setWordWrap(true);
         cardLayout->addWidget(footer);
+
+        // Left or right click: the player menu, with comparisons against the
+        // own players this target would replace.
+        card->setCursor(Qt::PointingHandCursor);
+        card->setToolTip(tr("Klicken für Aktionen: Profil, Shortlist, Vergleich"));
+        const QString targetUid = player->uid;
+        const QString targetRole = suggestion.role;
+        std::vector<std::pair<QString, QString>> ownEntries; // uid, label
+        for (const auto &[own, ownRating] : suggestion.mine)
+            ownEntries.emplace_back(own->uid,
+                                    tr("%1 (%2 %)").arg(own->name).arg(qRound(ownRating)));
+        const auto showMenu = [this, targetUid, targetRole, ownEntries](const QPoint &pos) {
+            // The window, not the card, owns the menu: a shortlist toggle
+            // rebuilds the cards while the menu is still open.
+            PlayerActions::showContextMenu(
+                m_context, window(), targetUid, pos,
+                [this, targetUid, targetRole, ownEntries](QMenu &menu) {
+                    const auto compare = [this, targetUid, targetRole](const QStringList &own) {
+                        m_context.addPendingComparisonUid(targetUid);
+                        for (const QString &uid : own)
+                            m_context.addPendingComparisonUid(uid);
+                        m_context.setPendingComparisonRole(targetRole);
+                        m_context.requestNavigation(QStringLiteral("player_comparison"));
+                    };
+                    for (const auto &[uid, label] : ownEntries) {
+                        menu.addAction(tr("Vergleichen mit %1").arg(label),
+                                       [compare, uid] { compare({uid}); });
+                    }
+                    if (ownEntries.size() > 1) {
+                        QStringList all;
+                        for (const auto &entry : ownEntries)
+                            all << entry.first;
+                        menu.addAction(tr("Vergleichen mit allen %n", nullptr,
+                                          static_cast<int>(all.size())),
+                                       [compare, all] { compare(all); });
+                    }
+                });
+        };
+        installClickMenu(card, showMenu);
 
         m_cardsLayout->addWidget(card, index / columns, index % columns);
         ++index;

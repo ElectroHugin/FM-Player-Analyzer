@@ -1,4 +1,5 @@
 #include "DwrsProgressPage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -238,6 +239,7 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
     m_roleCombo = new QComboBox(this);
     m_roleCombo->setMinimumWidth(240);
     m_roleCombo->setToolTip(tr("Auf welche Rolle sich Werte und Δ beziehen"));
+    filterRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_roleCombo, m_roleCombo->parentWidget()));
     filterRow->addWidget(m_roleCombo);
 
     filterRow->addSpacing(18);

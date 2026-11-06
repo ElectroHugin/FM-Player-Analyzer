@@ -172,6 +172,14 @@ public:
         m_pendingComparisonUids.clear();
         return uids;
     }
+    // Role the comparison page should open with (transfer-target cards).
+    void setPendingComparisonRole(const QString &role) { m_pendingComparisonRole = role; }
+    QString takePendingComparisonRole()
+    {
+        const QString role = m_pendingComparisonRole;
+        m_pendingComparisonRole.clear();
+        return role;
+    }
     void addPendingComparisonUid(const QString &uid)
     {
         if (!m_pendingComparisonUids.contains(uid))
@@ -309,6 +317,7 @@ private:
     QString m_pendingProfileUid;
     QString m_pendingEditUid;
     QStringList m_pendingComparisonUids;
+    QString m_pendingComparisonRole;
     ScoutSearchRequest m_pendingScoutSearch;
     bool m_hasPendingScoutSearch = false;
     bool m_nationalUiMode = false;

@@ -27,6 +27,8 @@
 #include <QStackedWidget>
 #include <QStandardItemModel>
 #include <QStyle>
+#include <QTimer>
+#include <QScreen>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -37,6 +39,32 @@ namespace fm {
 namespace {
 
 enum Step { ClubStep = 0, PlayStep = 1, LookStep = 2, StepCount = 3 };
+
+// An opened explanation must not be squeezed or cut off: the dialog grows in
+// height (up to the screen) so the whole text fits without dragging the window.
+void growWindowToFit(QWidget *window)
+{
+    if (!window || !window->layout())
+        return;
+    QLayout *layout = window->layout();
+    layout->activate();
+    int needed = layout->hasHeightForWidth() ? layout->totalHeightForWidth(window->width())
+                                             : layout->totalSizeHint().height();
+    needed = std::max(needed, layout->totalMinimumSize().height());
+    if (needed <= window->height())
+        return;
+    QRect available = window->screen() ? window->screen()->availableGeometry() : QRect();
+    if (available.isValid())
+        needed = std::min(needed, available.height() - 48);
+    if (needed <= window->height())
+        return;
+    window->resize(window->width(), needed);
+    if (available.isValid()) {
+        QRect frame = window->frameGeometry();
+        if (frame.bottom() > available.bottom())
+            window->move(frame.left(), std::max(available.top(), available.bottom() - frame.height()));
+    }
+}
 
 // A collapsible explanation: a small arrow button that shows/hides the text.
 QWidget *foldableHint(const QString &title, const QString &text, QWidget *parent)
@@ -58,9 +86,11 @@ QWidget *foldableHint(const QString &title, const QString &text, QWidget *parent
     body->hide();
     layout->addWidget(toggle, 0, Qt::AlignLeft);
     layout->addWidget(body);
-    QObject::connect(toggle, &QToolButton::toggled, body, [toggle, body](bool on) {
+    QObject::connect(toggle, &QToolButton::toggled, body, [toggle, body, box](bool on) {
         toggle->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
         body->setVisible(on);
+        if (on)
+            QTimer::singleShot(0, box, [box] { growWindowToFit(box->window()); });
     });
     return box;
 }
@@ -551,6 +581,8 @@ void WelcomeWizard::goTo(int step)
     }
     m_backButton->setVisible(step > ClubStep);
     m_nextButton->setText(step == StepCount - 1 ? tr("Fertig") : tr("Weiter"));
+    if (isVisible())
+        QTimer::singleShot(0, this, [this] { growWindowToFit(this); });
 }
 
 void WelcomeWizard::next()

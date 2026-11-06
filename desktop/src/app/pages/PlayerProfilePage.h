@@ -9,6 +9,8 @@ class QGroupBox;
 class QHBoxLayout;
 class QLabel;
 class QLineEdit;
+class QMenu;
+class QToolButton;
 class QPushButton;
 class QScrollArea;
 class QCheckBox;
@@ -41,6 +43,7 @@ private:
     void updateScopeAvailability();
     void rebuildSearchModel();
     void onScopeChanged();
+    void fillSquadMenu(QMenu *menu);
     void selectPlayer(const QString &uid);
     void showPlayer();
     void runManualUpdate();
@@ -49,6 +52,7 @@ private:
 
     QButtonGroup *m_scopeGroup = nullptr;
     QLineEdit *m_searchEdit = nullptr;
+    QToolButton *m_squadButton = nullptr;
     QCompleter *m_searchCompleter = nullptr;
     PlayerSearchModel *m_searchModel = nullptr;
     QString m_currentUid;

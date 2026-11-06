@@ -1,4 +1,5 @@
 #include "RoleAnalysisPage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -49,6 +50,7 @@ RoleAnalysisPage::RoleAnalysisPage(AppContext &context, QWidget *parent)
     controlRow->addWidget(new QLabel(tr("Rolle:"), content));
     m_roleCombo = new QComboBox(content);
     m_roleCombo->setMinimumWidth(320);
+    controlRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_roleCombo, m_roleCombo->parentWidget()));
     controlRow->addWidget(m_roleCombo);
     controlRow->addStretch(1);
     layout->addLayout(controlRow);

@@ -1,4 +1,5 @@
 #include "SquadMatrixPage.h"
+#include "widgets/RolePhaseSwitch.h"
 
 #include "PageHelpers.h"
 
@@ -224,6 +225,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     m_scoutedFilterCombo->setToolTip(
         tr("Nach einer Rolle sortieren und filtern. Dann zeigt eine Spalte „Δ“, wie weit der "
            "Spieler über oder unter dem besten Spieler deiner ersten Mannschaft liegt."));
+    filterRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_scoutedFilterCombo, m_scoutedFilterCombo->parentWidget()));
     filterRow->addWidget(m_scoutedFilterCombo);
     filterRow->addWidget(new QLabel(tr("Nation:"), tab));
     m_scoutedNatCombo = new QComboBox(tab);
