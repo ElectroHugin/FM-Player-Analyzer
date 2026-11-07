@@ -830,37 +830,74 @@ private slots:
         {
             Database db(QStringLiteral("stashseed"));
             QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
-            std::vector<Player> batch(2);
-            batch[0].uid = QStringLiteral("r-1");
+            std::vector<Player> batch(4);
+            batch[0].uid = QStringLiteral("r-12345");
             batch[0].name = QStringLiteral("Newgen Loan");
             batch[1].uid = QStringLiteral("12345");
             batch[1].name = QStringLiteral("Newgen Loan");
+            // Two different players sharing a name: no relation by uid.
+            batch[2].uid = QStringLiteral("777");
+            batch[2].name = QStringLiteral("Same Name");
+            batch[3].uid = QStringLiteral("888");
+            batch[3].name = QStringLiteral("Same Name");
             QVERIFY(db.upsertPlayers(batch));
-            int badId = 0;
-            for (const Player &p : db.loadPlayers())
-                if (p.uid == QLatin1String("r-1"))
+            int badId = 0, otherId = 0;
+            for (const Player &p : db.loadPlayers()) {
+                if (p.uid == QLatin1String("r-12345"))
                     badId = p.id;
+                if (p.uid == QLatin1String("777"))
+                    otherId = p.id;
+            }
             PlayerRegistration r;
             r.minWageExempt = true;
-            QVERIFY(db.setRegistrations({{badId, r}}));
-            // 2.2.2's merge: it deletes the duplicate without knowing the
+            QVERIFY(db.setRegistrations({{badId, r}, {otherId, r}}));
+            // 2.2.2's merge/delete: it removes the row without knowing the
             // extra table.
             QSqlQuery q(db.handle());
             QVERIFY(q.exec(QStringLiteral("DELETE FROM players WHERE id = %1").arg(badId)));
+            QVERIFY(q.exec(QStringLiteral("DELETE FROM players WHERE id = %1").arg(otherId)));
             db.close();
         }
         Database db(QStringLiteral("stashopen"));
         QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
         const auto players = db.loadPlayers();
-        QCOMPARE(static_cast<int>(players.size()), 1);
-        QVERIFY(players[0].registration.minWageExempt);
+        QCOMPARE(static_cast<int>(players.size()), 2);
+        int survivorId = 0;
+        for (const Player &p : players) {
+            if (p.uid == QLatin1String("12345")) {
+                QVERIFY(p.registration.minWageExempt); // newgen twin
+                survivorId = p.id;
+            } else {
+                QVERIFY(!p.registration.minWageExempt); // same name only
+            }
+        }
         // The app's own deletions park nothing.
-        QVERIFY(db.deletePlayers({players[0].id}));
+        QVERIFY(db.deletePlayers({survivorId}));
         QSqlQuery q(db.handle());
         QVERIFY(q.exec(QStringLiteral("SELECT COUNT(*) FROM player_registration_stash")));
         QVERIFY(q.next());
         QCOMPARE(q.value(0).toInt(), 0);
         db.close();
+    }
+
+    void mergeKeepsNewestMonthSeen()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("seenmerge"));
+        QVERIFY2(db.open(dir.filePath(QStringLiteral("seen.db"))), qPrintable(db.errorString()));
+        std::vector<Player> batch(2);
+        batch[0].uid = QStringLiteral("r-5");
+        batch[0].name = QStringLiteral("N");
+        batch[1].uid = QStringLiteral("5");
+        batch[1].name = QStringLiteral("N");
+        QVERIFY(db.upsertPlayers(batch));
+        int bad = 0, good = 0;
+        for (const Player &p : db.loadPlayers())
+            (p.uid == QLatin1String("r-5") ? bad : good) = p.id;
+        QVERIFY(db.markMonthSeen({bad}, QDate(2026, 8, 30)));
+        QVERIFY(db.markMonthSeen({good}, QDate(2026, 8, 5)));
+        QVERIFY(db.mergePlayerInto(bad, good));
+        QCOMPARE(db.monthSnapshotDates(QDate(2026, 8, 1)).value(good), QDate(2026, 8, 30));
     }
 
     void refusesNewerSchema()

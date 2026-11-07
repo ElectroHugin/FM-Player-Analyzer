@@ -590,14 +590,17 @@ bool Database::reconcileRegistrationStash()
     if (!beginTransaction())
         return false;
     for (const Parked &p : parked) {
-        // The surviving duplicate: the same uid (re-imported) or the one
-        // player of that name, as long as he has no 2.2.3 fields himself.
+        // The surviving duplicate by the known uid relation only: the same
+        // uid (re-imported) or its newgen twin (12345 <-> r-12345). A name
+        // alone is not enough: two players may share one.
+        const QString bare = p.uid.startsWith(QLatin1String("r-")) ? p.uid.mid(2) : p.uid;
         QSqlQuery find(m_db);
         find.prepare(QStringLiteral(
-            "SELECT id FROM players WHERE (uid = ? OR name = ?) AND id NOT IN "
+            "SELECT id FROM players WHERE uid IN (?, ?, ?) AND id NOT IN "
             "(SELECT player_id FROM player_registration_extra)"));
         find.bindValue(0, p.uid);
-        find.bindValue(1, p.name);
+        find.bindValue(1, bare);
+        find.bindValue(2, QStringLiteral("r-") + bare);
         QList<int> matches;
         if (find.exec())
             while (find.next())
@@ -1131,9 +1134,35 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
         rollbackTransaction();
         return false;
     }
-    // Snapshots follow the same way (the good record's own rows win).
+    // Snapshots follow the same way; per month the newer in-game state wins.
+    query.prepare(QStringLiteral(
+        "DELETE FROM player_snapshots WHERE player_id = ? AND EXISTS ("
+        " SELECT 1 FROM player_snapshots b WHERE b.player_id = ?"
+        " AND b.period = player_snapshots.period"
+        " AND b.game_date > player_snapshots.game_date)"));
+    query.bindValue(0, goodPlayerId);
+    query.bindValue(1, badPlayerId);
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
     query.prepare(QStringLiteral(
         "UPDATE OR IGNORE player_snapshots SET player_id = ? WHERE player_id = ?"));
+    query.bindValue(0, goodPlayerId);
+    query.bindValue(1, badPlayerId);
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+    // The newest in-game date seen per month moves over too (the newer wins),
+    // so an older export cannot slip into the merged player's history.
+    query.prepare(QStringLiteral(
+        "INSERT INTO snapshot_seen (player_id, period, game_date) "
+        "SELECT ?, period, game_date FROM snapshot_seen WHERE player_id = ? "
+        "ON CONFLICT(player_id, period) DO UPDATE SET "
+        "game_date = MAX(game_date, excluded.game_date)"));
     query.bindValue(0, goodPlayerId);
     query.bindValue(1, badPlayerId);
     if (!query.exec()) {
