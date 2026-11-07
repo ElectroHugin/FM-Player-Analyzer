@@ -22,6 +22,11 @@ struct PlayerRegistration {
     U21 u21 = U21::Auto;
     bool leagueListed = false; // on the saved league squad list
     bool uefaListed = false;   // on the saved UEFA list A
+    bool nonEu = false;        // counts as non-EU where a league caps them (LaLiga, Switzerland)
+    // Cannot be registered at all (e.g. signed after the deadline): the
+    // assistant never proposes him for that list.
+    bool leagueBlocked = false;
+    bool uefaBlocked = false;
 
     bool isDefault() const { return *this == PlayerRegistration{}; }
     bool operator==(const PlayerRegistration &) const = default;

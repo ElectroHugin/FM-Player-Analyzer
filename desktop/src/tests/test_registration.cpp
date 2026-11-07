@@ -538,6 +538,74 @@ private slots:
         QCOMPARE(uefa.minWage, 0.0);
     }
 
+    void nonEuLimit()
+    {
+        // LaLiga: at most three non-EU players on the list.
+        Registration::Settings settings;
+        settings.league = Registration::LeagueRules::LaLiga;
+        settings.minGoalkeepers = 0;
+        const Registration::Quota quota =
+            Registration::quotaFor(Registration::Competition::League, settings);
+        QCOMPARE(quota.maxNonEu, 3);
+        QCOMPARE(Registration::nonEuLimit(Registration::LeagueRules::SwissSuperLeague), 10);
+        QCOMPARE(Registration::nonEuLimit(Registration::LeagueRules::PremierLeague), 0);
+
+        Squad squad;
+        for (int i = 0; i < 5; ++i) {
+            squad.add(QStringLiteral("n%1").arg(i), 25);
+            squad.players.back().registration.nonEu = true;
+        }
+        squad.add(QStringLiteral("eu"), 25);
+        const auto ranked = squad.ranked();
+        const auto proposal =
+            Registration::propose(ranked, Registration::Competition::League, quota);
+        QCOMPARE(proposal.nonEu, 3);
+        QCOMPARE(static_cast<int>(proposal.listed.size()), 4);
+        QCOMPARE(static_cast<int>(proposal.leftOut.size()), 2);
+        for (const auto &left : proposal.leftOut)
+            QVERIFY(left.second == Registration::LeftOutReason::NonEuFull);
+
+        std::vector<const Player *> all;
+        for (const Player &p : squad.players)
+            all.push_back(&p);
+        const auto check = Registration::checkList(all, {}, quota);
+        QCOMPARE(check.nonEu, 5);
+        QVERIFY(check.tooManyNonEu);
+        QVERIFY(!check.valid());
+
+        // Elsewhere the mark is ignored.
+        settings.league = Registration::LeagueRules::PremierLeague;
+        const auto premier = Registration::quotaFor(Registration::Competition::League, settings);
+        QCOMPARE(Registration::checkList(all, {}, premier).nonEu, 0);
+        QCOMPARE(Registration::propose(ranked, Registration::Competition::League, premier).nonEu,
+                 0);
+    }
+
+    void blockedPlayersAreNeverProposed()
+    {
+        Registration::Settings settings;
+        settings.league = Registration::LeagueRules::SerieA;
+        settings.minGoalkeepers = 0;
+        const Registration::Quota quota =
+            Registration::quotaFor(Registration::Competition::League, settings);
+        Squad squad;
+        squad.add(QStringLiteral("best"), 25);
+        squad.add(QStringLiteral("other"), 25);
+        squad.players[0].registration.leagueBlocked = true;
+        const auto ranked = squad.ranked();
+        const auto league =
+            Registration::propose(ranked, Registration::Competition::League, quota);
+        QCOMPARE(static_cast<int>(league.listed.size()), 1);
+        QCOMPARE(league.listed[0].player->uid, QStringLiteral("other"));
+        QCOMPARE(static_cast<int>(league.leftOut.size()), 1);
+        QVERIFY(league.leftOut[0].second == Registration::LeftOutReason::Blocked);
+        // The UEFA list is separate.
+        const auto uefa = Registration::propose(
+            ranked, Registration::Competition::Uefa,
+            Registration::quotaFor(Registration::Competition::Uefa, settings));
+        QCOMPARE(static_cast<int>(uefa.listed.size()), 2);
+    }
+
     void wagePeriodKeysRoundTrip()
     {
         using W = Registration::WagePeriod;

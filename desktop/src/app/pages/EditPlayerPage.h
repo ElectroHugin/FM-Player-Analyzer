@@ -48,6 +48,7 @@ private:
     QWidget *m_registrationBox = nullptr;
     QCheckBox *m_homeGrownCheck = nullptr;
     QCheckBox *m_clubTrainedCheck = nullptr;
+    QCheckBox *m_nonEuCheck = nullptr;
     QComboBox *m_u21Combo = nullptr;
     QPushButton *m_saveButton = nullptr;
 
