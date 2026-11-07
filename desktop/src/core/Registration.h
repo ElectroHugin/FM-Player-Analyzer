@@ -123,8 +123,13 @@ QString expiredU21SettingKey();
 // 18 is unclear (he may turn 19 by then) and 17 fine. Unknown date: 17 fine,
 // 18 and 19 unclear.
 U21Status u18StatusByAge(int age, const QDate &gameDate);
+// EU/EEA nationality by the game's three-letter codes (first or second
+// nationality). Not proof on its own (passports, agreements), but without it
+// the automatic EU youth exemption is never certain.
+bool hasEuNationality(const Player &player);
 // The same honouring the manual override (PlayerRegistration::youth), which
-// settles the whole exemption (nationality included).
+// settles the whole exemption (nationality included). Automatic: marked non-EU
+// means no; without a recognised EU nationality it is at most unclear.
 U21Status u18EuStatus(const Player &player, const QDate &gameDate);
 
 // A manual youth decision ends once the player is 20 or older after an import.

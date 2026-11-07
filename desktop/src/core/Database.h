@@ -129,6 +129,8 @@ public:
     bool upsertSnapshots(const std::vector<ImportHistory::Snapshot> &snapshots);
     // Removes the monthly snapshots of these players in the month of `date`.
     bool deleteMonthSnapshots(const QList<int> &playerIds, const QDate &date);
+    // In-game date of each player's monthly snapshot for date's month.
+    QHash<int, QDate> monthSnapshotDates(const QDate &date);
     // Monthly snapshots dated before `before` (condensing candidates).
     std::vector<ImportHistory::Snapshot> monthlySnapshotsBefore(const QDate &before);
     // Deletes snapshots by (player, period key).

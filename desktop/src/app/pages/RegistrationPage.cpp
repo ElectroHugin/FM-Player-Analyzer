@@ -883,9 +883,10 @@ void RegistrationPage::updateSelection()
             uncertain << p->name;
     if (!uncertain.isEmpty()) {
         if (!uefa && m_quota.youth == Registration::YouthRule::U18Eu)
-            warnings << tr("U18 EU unklar (Stichtag 1. Januar: je nach Geburtstag und "
-                           "Ingame-Datum, oder Alter unbekannt), zählt vorsichtshalber als nicht "
-                           "befreit: %1. Per Rechtsklick → Registrierung festlegen.")
+            warnings << tr("U18 EU unklar (Stichtag 1. Januar je nach Geburtstag und "
+                           "Ingame-Datum, keine EU-Nationalität erkannt oder Alter unbekannt), "
+                           "zählt vorsichtshalber als nicht befreit: %1. Per Rechtsklick → "
+                           "Registrierung festlegen.")
                             .arg(uncertain.join(QStringLiteral(", ")));
         else
             warnings << tr("U21 unklar (Alter 21 oder unbekannt), zählt vorsichtshalber als "

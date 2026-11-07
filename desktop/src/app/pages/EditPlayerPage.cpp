@@ -133,8 +133,8 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     m_youthCombo = new QComboBox(m_registrationBox);
     m_youthCombo->setToolTip(
         tr("LaLiga: EU-Spieler, die am 1. Januar der Saison höchstens 18 sind, brauchen "
-           "keinen Platz in der Meldeliste. Automatisch nach Alter, Ingame-Datum und "
-           "Nicht-EU-Markierung; Ja/Nein entscheidet von Hand."));
+           "keinen Platz in der Meldeliste. Automatisch nach Alter, Ingame-Datum, Nationalität "
+           "und Nicht-EU-Markierung; Ja/Nein entscheidet von Hand."));
     u21Form->addRow(tr("U18 EU:"), m_youthCombo);
     m_youthForm = u21Form;
     registrationLayout->addLayout(u21Form);

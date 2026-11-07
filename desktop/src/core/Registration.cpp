@@ -210,6 +210,23 @@ U21Status u18StatusByAge(int age, const QDate &gameDate)
     return U21Status::No;
 }
 
+bool hasEuNationality(const Player &player)
+{
+    // EU member states plus the EEA (Iceland, Liechtenstein, Norway).
+    static const QSet<QString> eu = {
+        QStringLiteral("AUT"), QStringLiteral("BEL"), QStringLiteral("BUL"), QStringLiteral("CRO"),
+        QStringLiteral("CYP"), QStringLiteral("CZE"), QStringLiteral("DEN"), QStringLiteral("EST"),
+        QStringLiteral("FIN"), QStringLiteral("FRA"), QStringLiteral("GER"), QStringLiteral("GRE"),
+        QStringLiteral("HUN"), QStringLiteral("IRL"), QStringLiteral("ITA"), QStringLiteral("LVA"),
+        QStringLiteral("LTU"), QStringLiteral("LUX"), QStringLiteral("MLT"), QStringLiteral("NED"),
+        QStringLiteral("POL"), QStringLiteral("POR"), QStringLiteral("ROU"), QStringLiteral("SVK"),
+        QStringLiteral("SVN"), QStringLiteral("ESP"), QStringLiteral("SWE"), QStringLiteral("ISL"),
+        QStringLiteral("LIE"), QStringLiteral("NOR"),
+    };
+    return eu.contains(player.nationality.trimmed().toUpper())
+           || eu.contains(player.secondNationality.trimmed().toUpper());
+}
+
 U21Status u18EuStatus(const Player &player, const QDate &gameDate)
 {
     switch (player.registration.youth) {
@@ -222,7 +239,10 @@ U21Status u18EuStatus(const Player &player, const QDate &gameDate)
     }
     if (player.registration.nonEu)
         return U21Status::No;
-    return u18StatusByAge(player.age, gameDate);
+    const U21Status byAge = u18StatusByAge(player.age, gameDate);
+    if (byAge == U21Status::Yes && !hasEuNationality(player))
+        return U21Status::Uncertain;
+    return byAge;
 }
 
 bool expireYouthOverride(PlayerRegistration &registration, int oldAge, int newAge)

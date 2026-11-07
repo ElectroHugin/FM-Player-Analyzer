@@ -1496,6 +1496,23 @@ bool Database::deleteMonthSnapshots(const QList<int> &playerIds, const QDate &da
                           {period}, [](const QSqlQuery &) {});
 }
 
+QHash<int, QDate> Database::monthSnapshotDates(const QDate &date)
+{
+    QHash<int, QDate> out;
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("SELECT player_id, game_date FROM player_snapshots"
+                             " WHERE condensed = 0 AND period = ?"));
+    q.bindValue(0, ImportHistory::periodKey(date, false));
+    if (!q.exec()) {
+        m_error = q.lastError().text();
+        return out;
+    }
+    while (q.next())
+        out.insert(q.value(0).toInt(),
+                   QDate::fromString(q.value(1).toString(), QLatin1String(kDateFormat)));
+    return out;
+}
+
 std::vector<ImportHistory::Snapshot> Database::monthlySnapshotsBefore(const QDate &before)
 {
     std::vector<ImportHistory::Snapshot> out;

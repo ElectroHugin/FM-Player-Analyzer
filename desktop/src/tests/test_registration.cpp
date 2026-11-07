@@ -464,14 +464,24 @@ private slots:
         const Registration::Quota quota = Registration::quotaFor(C::League, settings);
         QVERIFY(quota.youth == Registration::YouthRule::U18Eu);
         Player eu = playerAged(18);
+        eu.nationality = QStringLiteral("ESP");
         QVERIFY(Registration::isEligible(eu, C::League, quota));
+        // Without a recognised EU nationality the exemption stays unclear.
+        Player brazilian = playerAged(17);
+        brazilian.nationality = QStringLiteral("BRA");
+        QCOMPARE(Registration::u18EuStatus(brazilian, spring), S::Uncertain);
+        QVERIFY(!Registration::isEligible(brazilian, C::League, quota));
+        brazilian.secondNationality = QStringLiteral("POR");
+        QVERIFY(Registration::isEligible(brazilian, C::League, quota));
         Player nonEu = playerAged(18);
+        nonEu.nationality = QStringLiteral("ESP");
         nonEu.registration.nonEu = true;
         QVERIFY(!Registration::isEligible(nonEu, C::League, quota));
         Player twenty = playerAged(20); // U21 elsewhere, not in LaLiga
         QVERIFY(!Registration::isEligible(twenty, C::League, quota));
         // The manual decision settles it, nationality included.
         Player unclear = playerAged(19);
+        unclear.nationality = QStringLiteral("ESP");
         QVERIFY(!Registration::isEligible(unclear, C::League, quota));
         unclear.registration.youth = PlayerRegistration::U21::Yes;
         QVERIFY(Registration::isEligible(unclear, C::League, quota));

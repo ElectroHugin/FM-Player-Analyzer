@@ -188,9 +188,15 @@ bool record(Database &db, const ImportRecord &import, const std::vector<Snapshot
     // unchanged player also loses an earlier snapshot of this same month.
     const QDate monthStart(import.gameDate.year(), import.gameDate.month(), 1);
     const QHash<int, Snapshot> previous = db.latestSnapshotsBefore(monthStart);
+    // A newer in-game date already stored for this month wins: an older
+    // export imported later neither replaces nor removes it.
+    const QHash<int, QDate> thisMonth = db.monthSnapshotDates(import.gameDate);
     std::vector<Snapshot> changed;
     QList<int> unchanged;
     for (const Snapshot &s : snapshots) {
+        const auto stored = thisMonth.constFind(s.playerId);
+        if (stored != thisMonth.constEnd() && stored->isValid() && *stored > import.gameDate)
+            continue;
         const auto it = previous.constFind(s.playerId);
         if (it != previous.constEnd() && it->sameData(s)) {
             unchanged << s.playerId;
