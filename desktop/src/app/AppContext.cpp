@@ -1,7 +1,5 @@
 #include "AppContext.h"
 
-#include "core/ImportHistory.h"
-
 #include "core/ProfileStore.h"
 #include "core/RatingsUpdater.h"
 
@@ -561,14 +559,8 @@ Registration::Settings AppContext::registrationSettings()
         m_database->setting(QStringLiteral("registration_wage_budget")).toDouble() / weeks;
     settings.minWage =
         m_database->setting(QStringLiteral("registration_min_wage")).toDouble() / weeks;
-    // Youth cut-offs depend on the in-game date: take the newest one known.
-    const std::vector<ImportHistory::ImportRecord> imports = m_database->imports();
-    for (auto it = imports.rbegin(); it != imports.rend(); ++it) {
-        if (it->gameDate.isValid()) {
-            settings.gameDate = it->gameDate;
-            break;
-        }
-    }
+    // Youth cut-offs depend on the in-game date: the newest one known.
+    settings.gameDate = m_database->lastGameDate();
     return settings;
 }
 

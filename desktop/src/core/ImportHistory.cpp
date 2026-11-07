@@ -151,8 +151,10 @@ bool condense(Database &db, int keepFrom, const SeasonStart &start)
     std::vector<Snapshot> kept;
     QHash<int, std::vector<Snapshot>> condensedByPlayer;
     for (const auto &[key, snapshot] : last) {
+        // Loaded once per player, also when he has no condensed rows yet.
+        const bool loaded = condensedByPlayer.contains(key.first);
         auto &own = condensedByPlayer[key.first];
-        if (own.empty())
+        if (!loaded)
             for (const Snapshot &s : db.snapshots(key.first))
                 if (s.condensed)
                     own.push_back(s);

@@ -794,27 +794,27 @@ Details: %1</translation>
 <context>
     <name>fm::AppContext</name>
     <message>
-        <location filename="../src/app/AppContext.cpp" line="65"/>
+        <location filename="../src/app/AppContext.cpp" line="63"/>
         <source>Datenordner %1 konnte nicht angelegt werden.</source>
         <translation>Data folder %1 could not be created.</translation>
     </message>
     <message>
-        <location filename="../src/app/AppContext.cpp" line="192"/>
+        <location filename="../src/app/AppContext.cpp" line="190"/>
         <source>Ein Spielstand mit dem Namen „%1“ existiert bereits.</source>
         <translation>A save named “%1” already exists.</translation>
     </message>
     <message>
-        <location filename="../src/app/AppContext.cpp" line="429"/>
+        <location filename="../src/app/AppContext.cpp" line="422"/>
         <source>Die Football-Manager-Version ist an den Spielstand gebunden, sobald er Spieler enthält. Für eine andere Version bitte einen neuen Spielstand anlegen.</source>
         <translation>The Football Manager version is tied to the save once it contains players. Please create a new save for a different version.</translation>
     </message>
     <message>
-        <location filename="../src/app/AppContext.cpp" line="379"/>
+        <location filename="../src/app/AppContext.cpp" line="372"/>
         <source>Rollen und Taktiken für %1 konnten nicht geladen werden (%2).</source>
         <translation>Roles and tactics for %1 could not be loaded (%2).</translation>
     </message>
     <message>
-        <location filename="../src/app/AppContext.cpp" line="407"/>
+        <location filename="../src/app/AppContext.cpp" line="400"/>
         <source>Kein Spielstand geöffnet.</source>
         <translation>No save is open.</translation>
     </message>
@@ -2379,8 +2379,8 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="135"/>
-        <source>LaLiga: EU-Spieler, die am 1. Januar der Saison höchstens 18 sind, brauchen keinen Platz in der Meldeliste. Automatisch nach Alter, Ingame-Datum und Nicht-EU-Markierung; Ja/Nein entscheidet von Hand.</source>
-        <translation>LaLiga: EU players aged 18 or younger on 1 January of the season need no slot on the squad list. Automatic from age, in-game date and the non-EU mark; Yes/No decides by hand.</translation>
+        <source>LaLiga: EU-Spieler, die am 1. Januar der Saison höchstens 18 sind, brauchen keinen Platz in der Meldeliste. Automatisch nach Alter, Ingame-Datum, Nationalität und Nicht-EU-Markierung; Ja/Nein entscheidet von Hand.</source>
+        <translation>LaLiga: EU players aged 18 or younger on 1 January of the season need no slot on the squad list. Automatic from age, in-game date, nationality and the non-EU mark; Yes/No decides by hand.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="138"/>
@@ -3806,7 +3806,7 @@ The original file is not modified.</translation>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="107"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="282"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="283"/>
         <source>Weiter</source>
         <translation>Next</translation>
     </message>
@@ -3841,33 +3841,38 @@ The original file is not modified.</translation>
         <translation>A save’s roles, ratings and history refer to the roles of its FM version. For another Football Manager you therefore create a separate save. Your existing saves stay unchanged.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="240"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="215"/>
+        <source>Übernimmt Gewichte, Farben, Analyse-Optionen, Rollen und Taktiken. Verein, Logo, Spieler, Favoriten und den live verfolgten FM27-Spielstand bringt der neue Spielstand selbst mit.</source>
+        <translation>Copies weights, colors, analysis options, roles and tactics. Club, logo, players, favorites and the live-tracked FM27 save come from the new save itself.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="241"/>
         <source>Ziehe einen Spieler-Export aus dem Football Manager hierher, zum Beispiel deinen Kader oder eine Scouting-Liste. Weitere Exporte kannst du jederzeit später importieren.</source>
         <translation>Drop a player export from Football Manager here, for example your squad or a scouting list. You can import more exports at any time later.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="252"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="287"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="253"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="288"/>
         <source>Importieren</source>
         <translation>Import</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="256"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="257"/>
         <source>Neuen Spielern automatisch passende Rollen zuweisen</source>
         <translation>Automatically assign suitable roles to new players</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="285"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="286"/>
         <source>Später einrichten</source>
         <translation>Set up later</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="287"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="288"/>
         <source>Fertig</source>
         <translation>Done</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="353"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="354"/>
         <source>Die Datei konnte nicht importiert werden: %1</source>
         <translation>The file could not be imported: %1</translation>
     </message>
@@ -3890,11 +3895,6 @@ The original file is not modified.</translation>
         <location filename="../src/app/NewSaveWizard.cpp" line="212"/>
         <source>Übernehmen von „%1“</source>
         <translation>Copy from “%1”</translation>
-    </message>
-    <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="215"/>
-        <source>Übernimmt Gewichte, Farben, Analyse-Optionen, Rollen, Taktiken und das Logo. Verein, Spieler und Favoriten bringt der neue Spielstand selbst mit.</source>
-        <translation>Copies weights, colors, analysis options, roles, tactics and the logo. Club, players and favorites come from the new save itself.</translation>
     </message>
 </context>
 <context>
@@ -5010,10 +5010,10 @@ Details: %1</translation>
 <context>
     <name>fm::RegistrationPage</name>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="996"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1014"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1019"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1027"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="997"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1015"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1020"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1028"/>
         <source>Registrierung</source>
         <translation>Registration</translation>
     </message>
@@ -5160,7 +5160,7 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="539"/>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="606"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1090"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1091"/>
         <source>Liste B</source>
         <translation>List B</translation>
     </message>
@@ -5310,47 +5310,42 @@ Details: %1</translation>
         <translation>%1 places stay empty: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="886"/>
-        <source>U18 EU unklar (Stichtag 1. Januar: je nach Geburtstag und Ingame-Datum, oder Alter unbekannt), zählt vorsichtshalber als nicht befreit: %1. Per Rechtsklick → Registrierung festlegen.</source>
-        <translation>U18 EU unclear (cut-off 1 January: depends on birthday and in-game date, or age unknown), counts as needing a slot to be safe: %1. Set it via right-click → Registration.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="891"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="892"/>
         <source>U21 unklar (Alter 21 oder unbekannt), zählt vorsichtshalber als nicht U21: %1. Per Rechtsklick → Registrierung festlegen.</source>
         <translation>U21 unclear (age 21 or unknown), counted as not U21 to be safe: %1. Set it via right-click → Registration.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1106"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1107"/>
         <source>&lt;b&gt;Braucht jetzt einen Platz&lt;/b&gt; (kein %1 mehr): %2</source>
         <translation>&lt;b&gt;Needs a slot now&lt;/b&gt; (no longer %1): %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1109"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1110"/>
         <source>Ohne Häkchen nicht spielberechtigt: anmelden und dafür jemand anderen streichen, oder bewusst draußen lassen.</source>
         <translation>Not eligible without a tick: register and drop someone else instead, or leave out on purpose.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1113"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1114"/>
         <source>&lt;b&gt;Jetzt ohne Platz spielberechtigt&lt;/b&gt; (%1): %2 — dadurch werden Plätze frei.</source>
         <translation>&lt;b&gt;Now eligible without a slot&lt;/b&gt; (%1): %2 — this frees up slots.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1119"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1120"/>
         <source>Die Empfehlung rechnet das schon ein. Wo Häkchen und Empfehlung auseinanderliegen, ist die Empfehlung in der Tabelle orange markiert.</source>
         <translation>The recommendation already accounts for this. Where tick and recommendation differ, the recommendation is marked orange in the table.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1121"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1122"/>
         <source>🔔 &lt;b&gt;Seit dem letzten Speichern geändert&lt;/b&gt;</source>
         <translation>🔔 &lt;b&gt;Changed since the last save&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1144"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1145"/>
         <source>Gemeldet, aber nicht empfohlen</source>
         <translation>Registered, but not recommended</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1145"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1146"/>
         <source>Empfohlen, aber nicht gemeldet</source>
         <translation>Recommended, but not registered</translation>
     </message>
@@ -5460,22 +5455,27 @@ Details: %1</translation>
         <translation>Only %1 goalkeepers registered (wanted: %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="902"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="886"/>
+        <source>U18 EU unklar (Stichtag 1. Januar je nach Geburtstag und Ingame-Datum, keine EU-Nationalität erkannt oder Alter unbekannt), zählt vorsichtshalber als nicht befreit: %1. Per Rechtsklick → Registrierung festlegen.</source>
+        <translation>U18 EU unclear (cut-off 1 January depending on birthday and in-game date, no EU nationality recognised, or age unknown), counts as needing a slot to be safe: %1. Set it via right-click → Registration.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="903"/>
         <source>Steht noch auf der gespeicherten Liste, braucht aber keinen Platz mehr oder ist nicht mehr im Kader — wird beim Speichern entfernt: %1</source>
         <translation>Still on the saved list but no longer needs a slot or has left the squad — removed on saving: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="997"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="998"/>
         <source>Die Auswahl verletzt die Registrierungsregeln (siehe Warnungen). Trotzdem speichern?</source>
         <translation>The selection breaks the registration rules (see warnings). Save anyway?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1015"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1016"/>
         <source>Die gespeicherte Meldeliste ist bereits aktuell.</source>
         <translation>The saved squad list is already up to date.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1028"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1029"/>
         <source>Meldeliste gespeichert (%1 Spieler).</source>
         <translation>Squad list saved (%1 players).</translation>
     </message>

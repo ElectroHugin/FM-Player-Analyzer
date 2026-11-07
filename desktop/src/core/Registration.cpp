@@ -7,6 +7,7 @@
 #include <QSet>
 
 #include <algorithm>
+#include <limits>
 #include <optional>
 
 namespace fm {
@@ -517,51 +518,84 @@ void improveWithinBudget(std::vector<const RankedPlayer *> &listed,
                          const std::vector<const RankedPlayer *> &candidates,
                          const Quota &quota, int exemptKeepers)
 {
-    const auto keepersOf = [](const std::vector<const RankedPlayer *> &list) {
-        int keepers = 0;
-        for (const RankedPlayer *e : list)
-            keepers += e->player->isGoalkeeper() ? 1 : 0;
-        return keepers;
+    // Everything the search needs per player, worked out once: the inner
+    // loops below only add numbers (wage texts were re-parsed per pair).
+    struct Item {
+        int nonHomeGrown = 0, nonClubTrained = 0, keeper = 0, nonEu = 0;
+        double wage = 0.0, value = 0.0;
+        bool movable = true; // may leave the list (no starter, no promise)
     };
+    QHash<const RankedPlayer *, Item> items;
+    const auto itemOf = [&](const RankedPlayer *e) -> const Item & {
+        auto it = items.find(e);
+        if (it != items.end())
+            return *it;
+        Item item;
+        const Category cat = category(*e->player);
+        item.nonHomeGrown = cat == Category::NonHomeGrown ? 1 : 0;
+        item.nonClubTrained = cat != Category::ClubTrained ? 1 : 0;
+        item.keeper = e->player->isGoalkeeper() ? 1 : 0;
+        item.nonEu = countsAsNonEu(*e->player, quota) ? 1 : 0;
+        item.wage = weeklyWage(*e->player);
+        item.value = registrationValue(*e);
+        // Starters stay: two cheaper players never make up for a weaker XI.
+        item.movable = !hasPromisedPlayingTime(*e->player) && e->tier != Tier::StartingXi;
+        return *items.insert(e, item);
+    };
+    // Fill the table up front: later lookups never insert, so references
+    // into it stay valid.
+    items.reserve(static_cast<qsizetype>(listed.size() + candidates.size()));
+    for (const RankedPlayer *e : listed)
+        itemOf(e);
+    for (const RankedPlayer *e : candidates)
+        itemOf(e);
+
+    int listedKeepers = 0;
+    for (const RankedPlayer *e : listed)
+        listedKeepers += itemOf(e).keeper;
     const int keeperFloor =
-        std::min(quota.minGoalkeepers, keepersOf(listed) + exemptKeepers) - exemptKeepers;
+        std::min(quota.minGoalkeepers, listedKeepers + exemptKeepers) - exemptKeepers;
 
     struct Totals {
         int size = 0, nonHomeGrown = 0, nonClubTrained = 0, keepers = 0, nonEu = 0;
         double wage = 0.0, value = 0.0;
     };
-    const auto add = [&quota](Totals &t, const RankedPlayer *e, int sign) {
+    const auto add = [](Totals &t, const Item &item, int sign) {
         t.size += sign;
-        if (countsAsNonEu(*e->player, quota))
-            t.nonEu += sign;
-        const Category cat = category(*e->player);
-        if (cat == Category::NonHomeGrown)
-            t.nonHomeGrown += sign;
-        if (cat != Category::ClubTrained)
-            t.nonClubTrained += sign;
-        if (e->player->isGoalkeeper())
-            t.keepers += sign;
-        t.wage += sign * weeklyWage(*e->player);
-        t.value += sign * registrationValue(*e);
+        t.nonEu += sign * item.nonEu;
+        t.nonHomeGrown += sign * item.nonHomeGrown;
+        t.nonClubTrained += sign * item.nonClubTrained;
+        t.keepers += sign * item.keeper;
+        t.wage += sign * item.wage;
+        t.value += sign * item.value;
     };
-    const auto fits = [&quota, keeperFloor](const Totals &t) {
+    const double wageLimit = quota.wageBudget + 0.01;
+    const auto fits = [&quota, keeperFloor, wageLimit](const Totals &t) {
         return t.size <= quota.maxSize && t.nonHomeGrown <= quota.maxNonHomeGrown
                && t.nonClubTrained <= quota.maxNonClubTrained
                && (quota.maxNonEu <= 0 || t.nonEu <= quota.maxNonEu)
-               && t.wage <= quota.wageBudget + 0.01 && t.keepers >= keeperFloor;
+               && t.wage <= wageLimit && t.keepers >= keeperFloor;
     };
 
     for (int round = 0; round < 200; ++round) {
         Totals base;
-        for (const RankedPlayer *e : listed)
-            add(base, e, +1);
         QSet<const Player *> inList;
-        for (const RankedPlayer *e : listed)
+        for (const RankedPlayer *e : listed) {
+            add(base, itemOf(e), +1);
             inList.insert(e->player);
+        }
         std::vector<const RankedPlayer *> rest;
-        for (const RankedPlayer *e : candidates)
-            if (!inList.contains(e->player) && !belowMinWage(*e->player, quota))
-                rest.push_back(e);
+        std::vector<const Item *> restItems;
+        double maxRestValue = 0.0, minRestWage = std::numeric_limits<double>::max();
+        for (const RankedPlayer *e : candidates) {
+            if (inList.contains(e->player) || belowMinWage(*e->player, quota))
+                continue;
+            const Item &item = itemOf(e);
+            rest.push_back(e);
+            restItems.push_back(&item);
+            maxRestValue = std::max(maxRestValue, item.value);
+            minRestWage = std::min(minRestWage, item.wage);
+        }
         if (rest.empty())
             return;
 
@@ -570,27 +604,35 @@ void improveWithinBudget(std::vector<const RankedPlayer *> &listed,
         const int listedCount = static_cast<int>(listed.size());
         const int restCount = static_cast<int>(rest.size());
         for (int out = -1; out < listedCount; ++out) {
-            // Starters stay: two cheaper players never make up for a weaker XI.
-            if (out >= 0
-                && (hasPromisedPlayingTime(*listed[static_cast<size_t>(out)]->player)
-                    || listed[static_cast<size_t>(out)]->tier == Tier::StartingXi))
-                continue;
             Totals afterOut = base;
-            if (out >= 0)
-                add(afterOut, listed[static_cast<size_t>(out)], -1);
+            if (out >= 0) {
+                const Item &leaving = itemOf(listed[static_cast<size_t>(out)]);
+                if (!leaving.movable)
+                    continue;
+                add(afterOut, leaving, -1);
+            }
             for (int in1 = 0; in1 < restCount; ++in1) {
                 Totals one = afterOut;
-                add(one, rest[static_cast<size_t>(in1)], +1);
-                if (one.wage > quota.wageBudget + 0.01)
+                add(one, *restItems[static_cast<size_t>(in1)], +1);
+                if (one.wage > wageLimit)
                     continue; // too expensive alone; a second player only costs more
                 if (fits(one) && one.value - base.value > bestGain) {
                     bestGain = one.value - base.value;
                     bestOut = out, bestIn1 = in1, bestIn2 = -1;
                 }
+                // A second player: only while there is a place and money for
+                // the cheapest one, and the best one could still beat the gain.
+                if (one.size + 1 > quota.maxSize || one.wage + minRestWage > wageLimit
+                    || one.value + maxRestValue - base.value <= bestGain)
+                    continue;
                 for (int in2 = in1 + 1; in2 < restCount; ++in2) {
+                    const Item &second = *restItems[static_cast<size_t>(in2)];
+                    if (one.wage + second.wage > wageLimit
+                        || one.value + second.value - base.value <= bestGain)
+                        continue;
                     Totals two = one;
-                    add(two, rest[static_cast<size_t>(in2)], +1);
-                    if (fits(two) && two.value - base.value > bestGain) {
+                    add(two, second, +1);
+                    if (fits(two)) {
                         bestGain = two.value - base.value;
                         bestOut = out, bestIn1 = in1, bestIn2 = in2;
                     }
