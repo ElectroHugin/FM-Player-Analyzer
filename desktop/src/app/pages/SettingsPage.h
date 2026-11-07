@@ -12,19 +12,20 @@ class QCheckBox;
 class QDateEdit;
 class QComboBox;
 class QDoubleSpinBox;
-class QGroupBox;
 class QLabel;
 class QLineEdit;
+class QListWidget;
 class QPushButton;
 class QSpinBox;
+class QStackedWidget;
 
 namespace fm {
 
 class ThemeManager;
 
-// Central settings page (M6 scope: weights, thresholds, theme, database
-// management, data dir display). Asset upload, prune and WCAG live-preview
-// polish follow in M11.
+// Central settings page. A section list on the left (grouped: save, data,
+// calculation, program) switches between short pages of cards; one footer
+// saves everything. Explanations are folded away behind a small toggle.
 class SettingsPage : public PageBase
 {
     Q_OBJECT
@@ -34,15 +35,32 @@ public:
 
     void refresh() override;
 
+    // Opens a section by its German title (screenshot tour); false if unknown.
+    bool openSettingsSection(const QString &germanTitle);
+
 signals:
     void recalcRequested(); // weights changed or asked for -> MainWindow runs the recalc
 
 private:
-    QWidget *buildClubTab();
-    QWidget *buildWeightsTab();
-    QWidget *buildThresholdsTab();
-    QWidget *buildThemeTab();
-    QWidget *buildDatabaseTab();
+    QWidget *buildClubPage();
+    QWidget *buildNationalPage();
+    QWidget *buildRegistrationPage();
+    QWidget *buildImportPage();
+    QWidget *buildHistoryPage();
+    QWidget *buildGraphicsPage();
+    QWidget *buildWeightsPage();
+    QWidget *buildSquadPage();
+    QWidget *buildTrainingPage();
+    QWidget *buildThemePage();
+    QWidget *buildDatabasePage();
+    void addSection(const QString &groupTitle, const QString &title, const char *germanTitle,
+                    QWidget *page);
+
+    QListWidget *m_nav = nullptr;
+    QStackedWidget *m_stack = nullptr;
+    QHash<QString, int> m_sectionRows; // German title -> nav row
+    QString m_currentNavGroup;
+    QLabel *m_footerScope = nullptr;
     void saveAll();
     void updateContrastWarning();
 
@@ -122,7 +140,8 @@ private:
     void removeLogo();
     void updateLogoPreview();
     // Optional portraits/crests from the FM graphics folder.
-    QGroupBox *m_graphicsGroup = nullptr;
+    QCheckBox *m_graphicsCheck = nullptr;
+    QWidget *m_graphicsBody = nullptr;
     QLineEdit *m_graphicsDirEdit = nullptr;
     QLineEdit *m_clubFmIdEdit = nullptr;
     QLabel *m_graphicsStatus = nullptr;
@@ -130,7 +149,8 @@ private:
     void updateGraphicsStatus();
     QComboBox *m_favTactic1Combo = nullptr;
     QComboBox *m_favTactic2Combo = nullptr;
-    QGroupBox *m_registrationGroup = nullptr;
+    QWidget *m_registrationCard = nullptr;
+    QLabel *m_registrationUnavailable = nullptr;
     QComboBox *m_registrationLeagueCombo = nullptr;
     QCheckBox *m_registrationUefaCheck = nullptr;
     QSpinBox *m_registrationMinGkSpin = nullptr;

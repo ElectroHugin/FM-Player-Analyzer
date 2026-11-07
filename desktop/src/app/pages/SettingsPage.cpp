@@ -1,8 +1,6 @@
 #include "SettingsPage.h"
 #include "core/ImportHistory.h"
 
-#include "../NewSaveWizard.h"
-
 #include "../AppContext.h"
 #include "../MigrationWizard.h"
 #include "../NewSaveWizard.h"
@@ -42,7 +40,11 @@
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QSpinBox>
-#include <QTabWidget>
+#include <QCoreApplication>
+#include <QGridLayout>
+#include <QListWidget>
+#include <QStackedWidget>
+#include <QToolButton>
 #include <QUrl>
 #include <QVBoxLayout>
 
@@ -93,13 +95,176 @@ QString colorButtonStyle(const QColor &color)
         .arg(color.name(), textColor);
 }
 
-QWidget *wrapScrollable(QWidget *content)
+// Fixed control widths, so the fields of a card form one clean column.
+constexpr int kFieldWidth = 320;   // combos, names
+constexpr int kPathWidth = 280;    // folder and file paths (plus buttons)
+constexpr int kShortWidth = 96;    // three-letter codes, ids
+constexpr int kNumberWidth = 112;  // spin boxes
+constexpr int kLabelWidth = 200;   // label column of a card
+constexpr int kSwatchWidth = 136;  // color swatches
+
+template <typename W>
+W *sized(W *widget, int width)
 {
+    widget->setFixedWidth(width);
+    return widget;
+}
+
+// A card: quiet raised surface with a hairline, title, optional one-line
+// subtitle, then the body (usually a form).
+QFrame *makeCard(const QString &title, const QString &subtitle, QVBoxLayout **body)
+{
+    auto *card = new QFrame;
+    card->setObjectName(QStringLiteral("settingsCard"));
+    auto *layout = new QVBoxLayout(card);
+    layout->setContentsMargins(20, 16, 20, 20);
+    layout->setSpacing(12);
+    if (!title.isEmpty()) {
+        auto *head = new QVBoxLayout;
+        head->setSpacing(2);
+        auto *titleLabel = new QLabel(title, card);
+        titleLabel->setObjectName(QStringLiteral("cardTitle"));
+        head->addWidget(titleLabel);
+        if (!subtitle.isEmpty()) {
+            auto *sub = new QLabel(subtitle, card);
+            sub->setObjectName(QStringLiteral("kpiCaption"));
+            sub->setWordWrap(true);
+            head->addWidget(sub);
+        }
+        layout->addLayout(head);
+    }
+    *body = layout;
+    return card;
+}
+
+// Two-column form inside a card: fixed label column, controls at their size.
+QFormLayout *makeForm(QVBoxLayout *body, int labelWidth = kLabelWidth)
+{
+    auto *form = new QFormLayout;
+    form->setContentsMargins(0, 0, 0, 0);
+    form->setHorizontalSpacing(24);
+    form->setVerticalSpacing(12);
+    form->setLabelAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    form->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
+    form->setRowWrapPolicy(QFormLayout::DontWrapRows);
+    form->setProperty("labelWidth", labelWidth);
+    body->addLayout(form);
+    return form;
+}
+
+QLabel *rowLabel(const QString &text, QFormLayout *form)
+{
+    auto *label = new QLabel(text);
+    label->setFixedWidth(form->property("labelWidth").toInt());
+    label->setWordWrap(true);
+    return label;
+}
+
+void addRow(QFormLayout *form, const QString &label, QWidget *field)
+{
+    form->addRow(rowLabel(label, form), field);
+}
+
+void addRow(QFormLayout *form, const QString &label, QLayout *field)
+{
+    auto *holder = new QWidget;
+    field->setContentsMargins(0, 0, 0, 0);
+    holder->setLayout(field);
+    form->addRow(rowLabel(label, form), holder);
+}
+
+QHBoxLayout *hbox(std::initializer_list<QWidget *> widgets, bool stretch = true)
+{
+    auto *row = new QHBoxLayout;
+    row->setContentsMargins(0, 0, 0, 0);
+    row->setSpacing(8);
+    for (QWidget *w : widgets)
+        row->addWidget(w);
+    if (stretch)
+        row->addStretch(1);
+    return row;
+}
+
+// A folded explanation: a quiet "Explanation" toggle, the text below it
+// only when opened.
+QWidget *foldableHint(const QString &text)
+{
+    auto *box = new QWidget;
+    auto *layout = new QVBoxLayout(box);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(4);
+    auto *toggle = new QToolButton(box);
+    toggle->setObjectName(QStringLiteral("foldButton"));
+    toggle->setText(QCoreApplication::translate("fm::SettingsPage", "Erklärung"));
+    toggle->setCheckable(true);
+    toggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toggle->setArrowType(Qt::RightArrow);
+    toggle->setCursor(Qt::PointingHandCursor);
+    auto *body = new QLabel(text, box);
+    body->setObjectName(QStringLiteral("kpiCaption"));
+    body->setWordWrap(true);
+    body->setMaximumWidth(620);
+    body->hide();
+    layout->addWidget(toggle, 0, Qt::AlignLeft);
+    layout->addWidget(body);
+    QObject::connect(toggle, &QToolButton::toggled, body, [toggle, body](bool on) {
+        toggle->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
+        body->setVisible(on);
+    });
+    return box;
+}
+
+// Explanation below the controls of a form (in the field column).
+void addHint(QFormLayout *form, const QString &text)
+{
+    form->addRow(QString(), foldableHint(text));
+}
+
+QLabel *caption(const QString &text)
+{
+    auto *label = new QLabel(text);
+    label->setObjectName(QStringLiteral("kpiCaption"));
+    label->setWordWrap(true);
+    return label;
+}
+
+// A page: title, one-line description, then cards; content width capped so
+// forms do not drift apart on wide windows.
+QWidget *makePage(const QString &title, const QString &subtitle, QVBoxLayout **cards)
+{
+    auto *content = new QWidget;
+    content->setObjectName(QStringLiteral("settingsContent"));
+    auto *outer = new QHBoxLayout(content);
+    outer->setContentsMargins(32, 24, 32, 32);
+    auto *column = new QWidget(content);
+    column->setMaximumWidth(860);
+    auto *layout = new QVBoxLayout(column);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(16);
+    auto *titleLabel = new QLabel(title, column);
+    titleLabel->setObjectName(QStringLiteral("settingsPageTitle"));
+    layout->addWidget(titleLabel);
+    if (!subtitle.isEmpty()) {
+        auto *sub = new QLabel(subtitle, column);
+        sub->setObjectName(QStringLiteral("kpiCaption"));
+        sub->setWordWrap(true);
+        layout->addWidget(sub);
+    }
+    layout->addSpacing(4);
+    outer->addWidget(column, 1);
+    outer->addStretch(0);
+    *cards = layout;
+
     auto *scroll = new QScrollArea;
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
     scroll->setWidget(content);
     return scroll;
+}
+
+void finishPage(QVBoxLayout *cards)
+{
+    cards->addStretch(1);
 }
 
 } // namespace
@@ -109,38 +274,259 @@ SettingsPage::SettingsPage(AppContext &context, ThemeManager &theme, QWidget *pa
     , m_theme(theme)
 {
     auto *layout = new QVBoxLayout(this);
-    auto *heading = new QLabel(tr("Einstellungen"), this);
-    heading->setObjectName(QStringLiteral("pageTitle"));
-    layout->addWidget(heading);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
-    auto *tabs = new QTabWidget(this);
-    tabs->addTab(buildClubTab(), tr("Verein"));
-    tabs->addTab(buildWeightsTab(), tr("DWRS-Gewichte"));
-    tabs->addTab(buildThresholdsTab(), tr("Schwellenwerte"));
-    tabs->addTab(buildThemeTab(), tr("Design"));
-    tabs->addTab(buildDatabaseTab(), tr("Datenbank"));
-    layout->addWidget(tabs, 1);
+    auto *body = new QHBoxLayout;
+    body->setContentsMargins(0, 0, 0, 0);
+    body->setSpacing(0);
 
-    auto *saveRow = new QHBoxLayout;
-    saveRow->addStretch(1);
-    auto *saveButton = new QPushButton(tr("Alle Einstellungen speichern"), this);
+    auto *navPanel = new QFrame(this);
+    navPanel->setObjectName(QStringLiteral("settingsNavPanel"));
+    navPanel->setFixedWidth(232);
+    auto *navLayout = new QVBoxLayout(navPanel);
+    navLayout->setContentsMargins(12, 20, 12, 12);
+    navLayout->setSpacing(8);
+    auto *heading = new QLabel(tr("Einstellungen"), navPanel);
+    heading->setObjectName(QStringLiteral("settingsNavTitle"));
+    navLayout->addWidget(heading);
+    m_nav = new QListWidget(navPanel);
+    m_nav->setObjectName(QStringLiteral("settingsNav"));
+    m_nav->setFrameShape(QFrame::NoFrame);
+    m_nav->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    navLayout->addWidget(m_nav, 1);
+    body->addWidget(navPanel);
+
+    m_stack = new QStackedWidget(this);
+    body->addWidget(m_stack, 1);
+    layout->addLayout(body, 1);
+
+    addSection(tr("Spielstand"), tr("Verein"), "Verein", buildClubPage());
+    addSection(tr("Spielstand"), tr("Nationalteam"), "Nationalteam", buildNationalPage());
+    addSection(tr("Spielstand"), tr("Meldeliste"), "Meldeliste", buildRegistrationPage());
+    addSection(tr("Daten"), tr("Import"), "Import", buildImportPage());
+    addSection(tr("Daten"), tr("Verlauf und Datenfrische"), "Verlauf und Datenfrische",
+               buildHistoryPage());
+    addSection(tr("Daten"), tr("Porträts und Wappen"), "Porträts und Wappen", buildGraphicsPage());
+    addSection(tr("Berechnung"), tr("DWRS-Gewichte"), "DWRS-Gewichte", buildWeightsPage());
+    addSection(tr("Berechnung"), tr("Kader und Analyse"), "Kader und Analyse", buildSquadPage());
+    addSection(tr("Berechnung"), tr("Training"), "Training", buildTrainingPage());
+    addSection(tr("Programm"), tr("Design"), "Design", buildThemePage());
+    addSection(tr("Programm"), tr("Spielstände"), "Spielstände", buildDatabasePage());
+
+    connect(m_nav, &QListWidget::currentRowChanged, this, [this](int row) {
+        const QVariant page = m_nav->item(row) ? m_nav->item(row)->data(Qt::UserRole) : QVariant();
+        if (page.isValid())
+            m_stack->setCurrentIndex(page.toInt());
+    });
+    m_nav->setCurrentRow(m_sectionRows.value(QStringLiteral("Verein")));
+
+    // Footer: what the save button affects, discard and save.
+    auto *footer = new QFrame(this);
+    footer->setObjectName(QStringLiteral("settingsFooter"));
+    auto *footerLayout = new QHBoxLayout(footer);
+    footerLayout->setContentsMargins(24, 12, 24, 12);
+    footerLayout->setSpacing(8);
+    m_footerScope = new QLabel(footer);
+    m_footerScope->setObjectName(QStringLiteral("kpiCaption"));
+    footerLayout->addWidget(m_footerScope, 1);
+    auto *discardButton = new QPushButton(tr("Verwerfen"), footer);
+    discardButton->setToolTip(tr("Setzt alle nicht gespeicherten Änderungen auf dieser Seite "
+                                 "zurück."));
+    auto *saveButton = new QPushButton(tr("Speichern"), footer);
     saveButton->setDefault(true);
-    saveRow->addWidget(saveButton);
-    layout->addLayout(saveRow);
+    saveButton->setMinimumWidth(132);
+    footerLayout->addWidget(discardButton);
+    footerLayout->addWidget(saveButton);
+    layout->addWidget(footer);
     connect(saveButton, &QPushButton::clicked, this, &SettingsPage::saveAll);
+    connect(discardButton, &QPushButton::clicked, this, &SettingsPage::refresh);
 
     refresh();
 }
 
-QWidget *SettingsPage::buildClubTab()
+void SettingsPage::addSection(const QString &groupTitle, const QString &title,
+                              const char *germanTitle, QWidget *page)
 {
-    auto *content = new QWidget;
-    auto *layout = new QVBoxLayout(content);
+    if (groupTitle != m_currentNavGroup) {
+        m_currentNavGroup = groupTitle;
+        auto *caption = new QListWidgetItem(groupTitle, m_nav);
+        caption->setFlags(Qt::NoItemFlags);
+        caption->setData(Qt::UserRole + 1, true);
+    }
+    const int pageIndex = m_stack->addWidget(page);
+    auto *item = new QListWidgetItem(title, m_nav);
+    item->setData(Qt::UserRole, pageIndex);
+    m_sectionRows.insert(QString::fromUtf8(germanTitle), m_nav->row(item));
+}
 
-    auto *versionGroup = new QGroupBox(tr("Football-Manager-Version"), content);
-    auto *versionForm = new QFormLayout(versionGroup);
-    m_fmVersionCombo = new QComboBox;
-    m_fmVersionCombo->setMinimumWidth(260);
+bool SettingsPage::openSettingsSection(const QString &germanTitle)
+{
+    if (!m_sectionRows.contains(germanTitle))
+        return false;
+    m_nav->setCurrentRow(m_sectionRows.value(germanTitle));
+    return true;
+}
+
+QWidget *SettingsPage::buildClubPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Verein"),
+                             tr("Dein Verein in diesem Spielstand: Name und Logo für den Kopf "
+                                "des Fensters, das Zweitteam und die Lieblings-Taktiken."),
+                             &cards);
+
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Verein"), QString(), &body));
+    QFormLayout *form = makeForm(body);
+    m_userClubCombo = sized(new QComboBox, kFieldWidth);
+    m_secondClubCombo = sized(new QComboBox, kFieldWidth);
+    m_fullClubNameEdit = sized(new QLineEdit, kFieldWidth);
+    m_fullClubNameEdit->setPlaceholderText(tr("Wie er im Kopf erscheinen soll"));
+    m_stadiumEdit = sized(new QLineEdit, kFieldWidth);
+    m_clubCountryEdit = sized(new QLineEdit, kShortWidth);
+    m_clubCountryEdit->setMaxLength(3);
+    m_clubCountryEdit->setPlaceholderText(QStringLiteral("GER"));
+    addRow(form, tr("Mein Verein"), m_userClubCombo);
+    addRow(form, tr("Zweitteam"), m_secondClubCombo);
+    addRow(form, tr("Voller Vereinsname"), m_fullClubNameEdit);
+    addRow(form, tr("Stadion"), m_stadiumEdit);
+    addRow(form, tr("Vereins-Land"), m_clubCountryEdit);
+    addHint(form, tr("Mein Verein und Zweitteam stammen aus den importierten Spielern. Das "
+                     "Zweitteam (zum Beispiel die zweite Mannschaft oder U23) zählt zum eigenen "
+                     "Kader, etwa für Leihen und die Jugendelf. Vereinsname und Stadion "
+                     "erscheinen im Kopf des Fensters. Das Vereins-Land ist der dreistellige "
+                     "Nationen-Code aus dem Spiel; es steuert den Inland-Filter beim Scouting."));
+
+    // Logo (PNG) shown in the header — applied immediately, per save.
+    cards->addWidget(makeCard(tr("Vereinslogo"),
+                              tr("Erscheint im Kopf des Fensters und auf dem Startbildschirm. "
+                                 "Wird sofort übernommen."),
+                              &body));
+    m_logoPreview = new QLabel;
+    m_logoPreview->setObjectName(QStringLiteral("imageWell"));
+    m_logoPreview->setFixedSize(96, 64);
+    m_logoPreview->setAlignment(Qt::AlignCenter);
+    auto *chooseLogoButton = new QPushButton(tr("Bild wählen …"));
+    m_logoRemoveButton = new QPushButton(tr("Entfernen"));
+    body->addLayout(hbox({m_logoPreview, chooseLogoButton, m_logoRemoveButton}));
+    connect(chooseLogoButton, &QPushButton::clicked, this, &SettingsPage::chooseLogo);
+    connect(m_logoRemoveButton, &QPushButton::clicked, this, &SettingsPage::removeLogo);
+
+    cards->addWidget(makeCard(tr("Lieblings-Taktiken"), QString(), &body));
+    form = makeForm(body);
+    m_favTactic1Combo = sized(new QComboBox, kFieldWidth);
+    m_favTactic2Combo = sized(new QComboBox, kFieldWidth);
+    addRow(form, tr("Primäre Taktik"), m_favTactic1Combo);
+    addRow(form, tr("Sekundäre Taktik"), m_favTactic2Combo);
+    addHint(form, tr("Die Lieblings-Taktiken werden auf Übersicht, Aufstellung, Kader und "
+                     "Transfers vorausgewählt. Die primäre bestimmt die Rollen auf der Seite "
+                     "Entwicklung."));
+
+    finishPage(cards);
+    return page;
+}
+
+QWidget *SettingsPage::buildNationalPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Nationalteam"),
+                             tr("Mit einem Team-Namen wird das National-Management aktiv."),
+                             &cards);
+
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Nationalteam"), QString(), &body));
+    QFormLayout *form = makeForm(body);
+    m_natNameEdit = sized(new QLineEdit, kFieldWidth);
+    m_natNameEdit->setPlaceholderText(tr("z. B. Nationalteam U21"));
+    m_natCodeEdit = sized(new QLineEdit, kShortWidth);
+    m_natCodeEdit->setMaxLength(3);
+    m_natCodeEdit->setPlaceholderText(QStringLiteral("GER"));
+    m_natAgeSpin = sized(new QSpinBox, kNumberWidth);
+    m_natAgeSpin->setRange(15, 99);
+    m_natAgeSpin->setValue(99);
+    m_natAgeSpin->setToolTip(tr("99 = keine Altersgrenze (A-Nationalteam); z. B. 21 für U21."));
+    m_natFav1Combo = sized(new QComboBox, kFieldWidth);
+    m_natFav2Combo = sized(new QComboBox, kFieldWidth);
+    addRow(form, tr("Team-Name"), m_natNameEdit);
+    addRow(form, tr("Länder-Code"), m_natCodeEdit);
+    addRow(form, tr("Altersgrenze"), hbox({m_natAgeSpin, caption(tr("99 = keine"))}));
+    addRow(form, tr("Primäre Taktik"), m_natFav1Combo);
+    addRow(form, tr("Sekundäre Taktik"), m_natFav2Combo);
+
+    // National flag (PNG) shown in the header while in national mode, mirroring
+    // the club logo. Applied immediately, per save.
+    cards->addWidget(makeCard(tr("Flagge"),
+                              tr("Erscheint im Kopf des Fensters, solange du das Nationalteam "
+                                 "betreust. Wird sofort übernommen."),
+                              &body));
+    m_flagPreview = new QLabel;
+    m_flagPreview->setObjectName(QStringLiteral("imageWell"));
+    m_flagPreview->setFixedSize(96, 64);
+    m_flagPreview->setAlignment(Qt::AlignCenter);
+    auto *chooseFlagButton = new QPushButton(tr("Bild wählen …"));
+    m_flagRemoveButton = new QPushButton(tr("Entfernen"));
+    body->addLayout(hbox({m_flagPreview, chooseFlagButton, m_flagRemoveButton}));
+    connect(chooseFlagButton, &QPushButton::clicked, this, &SettingsPage::chooseFlag);
+    connect(m_flagRemoveButton, &QPushButton::clicked, this, &SettingsPage::removeFlag);
+
+    finishPage(cards);
+    return page;
+}
+
+QWidget *SettingsPage::buildRegistrationPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Meldeliste"),
+                             tr("Regeln, nach denen der Registrierungs-Assistent die "
+                                "Meldeliste prüft. Gehaltsbudget und Mindestgehalt stellst du "
+                                "direkt auf der Seite Meldeliste ein."),
+                             &cards);
+
+    m_registrationUnavailable =
+        caption(tr("Für diese Football-Manager-Version sind keine Melderegeln hinterlegt."));
+    cards->addWidget(m_registrationUnavailable);
+
+    QVBoxLayout *body = nullptr;
+    auto *card = makeCard(tr("Registrierungsregeln"), QString(), &body);
+    m_registrationCard = card;
+    QFormLayout *form = makeForm(body);
+    m_registrationLeagueCombo = sized(new QComboBox, kFieldWidth);
+    m_registrationUefaCheck =
+        new QCheckBox(tr("Champions League / Europa League / Conference League"));
+    m_registrationMinGkSpin = sized(new QSpinBox, kNumberWidth);
+    m_registrationMinGkSpin->setRange(0, 5);
+    m_registrationMinGkSpin->setToolTip(
+        tr("Kein Regelwerk schreibt das vor, aber ohne zwei Torhüter zu melden ist riskant."));
+    addRow(form, tr("Liga"), m_registrationLeagueCombo);
+    addRow(form, tr("Europapokal"), m_registrationUefaCheck);
+    addRow(form, tr("Mindestens Torhüter"), m_registrationMinGkSpin);
+    addHint(form,
+            tr("Aktiviert die Home-Grown-/Club-Grown-/U21-Markierungen (Spieler bearbeiten, "
+               "Rechtsklick → Registrierung) und den Registrierungs-Assistenten, sobald ein "
+               "Wettbewerb eine Meldeliste verlangt. 'Standard' und Ligen mit 99 Plätzen "
+               "(Bundesliga, Ligue 1, Österreich) kennen keine Beschränkung: dort sind alle "
+               "Spieler spielberechtigt. Geprüft werden Kadergröße sowie im Land und im Verein "
+               "ausgebildete Spieler; Grenzen für Ausländer oder Nicht-EU-Spieler prüft der "
+               "Analyzer nicht. 'Standard' gilt für alle Ligen, deren Regeln noch nicht "
+               "hinterlegt sind. Wie du weitere Ligen anfragst, steht in der README."));
+    cards->addWidget(card);
+
+    finishPage(cards);
+    return page;
+}
+
+QWidget *SettingsPage::buildImportPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Import"),
+                             tr("Woher die Spielerdaten kommen und wie sie gelesen werden."),
+                             &cards);
+
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Football-Manager-Version"), QString(), &body));
+    QFormLayout *form = makeForm(body);
+    m_fmVersionCombo = sized(new QComboBox, kFieldWidth);
     for (const FmDataVersion &version : fmDataVersions()) {
         m_fmVersionCombo->addItem(version.supported
                                       ? version.displayName
@@ -151,37 +537,23 @@ QWidget *SettingsPage::buildClubTab()
             m_fmVersionCombo->setItemData(m_fmVersionCombo->count() - 1, false,
                                           Qt::UserRole - 1); // disable row
     }
-    versionForm->addRow(tr("Version dieses Spielstands:"), m_fmVersionCombo);
-    auto *versionHint = new QLabel(
-        tr("Bestimmt, wie die Spielerattribute aus dem Export gelesen werden, welche "
-           "Rollen und Taktiken gelten und wie die Attribute gewichtet werden. Die "
-           "Version wird beim Anlegen eines Spielstands gewählt und steht fest, sobald "
-           "er Spieler enthält. Unterstützt werden Football Manager 2024 und 2027."),
-        versionGroup);
-    versionHint->setWordWrap(true);
-    versionHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(versionHint);
+    addRow(form, tr("Version dieses Spielstands"), m_fmVersionCombo);
+    addHint(form, tr("Bestimmt, wie die Spielerattribute aus dem Export gelesen werden, welche "
+                     "Rollen und Taktiken gelten und wie die Attribute gewichtet werden. Die "
+                     "Version wird beim Anlegen eines Spielstands gewählt und steht fest, sobald "
+                     "er Spieler enthält. Unterstützt werden Football Manager 2024 und 2027."));
 
-    m_importDirEdit = new QLineEdit;
-    m_importDirEdit->setMinimumWidth(260);
-    auto *importDirBrowse = new QPushButton(tr("Durchsuchen…"));
-    auto *importDirOpen = new QPushButton(tr("Im Explorer öffnen"));
-    auto *importDirButtons = new QHBoxLayout;
-    importDirButtons->addWidget(m_importDirEdit, 1);
-    importDirButtons->addWidget(importDirBrowse);
-    importDirButtons->addWidget(importDirOpen);
-    auto *importDirRow = new QWidget;
-    importDirRow->setLayout(importDirButtons);
-    versionForm->addRow(tr("Standardordner für HTML-Import:"), importDirRow);
-    auto *importDirHint = new QLabel(
-        tr("Startordner der Dateiauswahl beim Hochladen von HTML-Exporten. Leer = "
-           "automatisch: der Spielordner der Football-Manager-Version unter "
-           "'Sports Interactive' im Dokumentenordner des aktuellen Nutzers (falls "
-           "vorhanden)."),
-        versionGroup);
-    importDirHint->setWordWrap(true);
-    importDirHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(importDirHint);
+    cards->addWidget(makeCard(tr("HTML-Export"), QString(), &body));
+    form = makeForm(body);
+    m_importDirEdit = sized(new QLineEdit, kPathWidth);
+    auto *importDirBrowse = new QPushButton(tr("Durchsuchen …"));
+    auto *importDirOpen = new QPushButton(tr("Öffnen"));
+    importDirOpen->setToolTip(tr("Ordner im Dateimanager öffnen"));
+    addRow(form, tr("Standardordner"), hbox({m_importDirEdit, importDirBrowse, importDirOpen}));
+    addHint(form, tr("Startordner der Dateiauswahl beim Hochladen von HTML-Exporten. Leer = "
+                     "automatisch: der Spielordner der Football-Manager-Version unter "
+                     "'Sports Interactive' im Dokumentenordner des aktuellen Nutzers (falls "
+                     "vorhanden)."));
 
     // The effective folder right now: the (possibly unsaved) edit content when
     // it points to an existing folder, otherwise the automatic default.
@@ -200,6 +572,7 @@ QWidget *SettingsPage::buildClubTab()
     connect(importDirOpen, &QPushButton::clicked, this, [currentImportDir] {
         QDesktopServices::openUrl(QUrl::fromLocalFile(currentImportDir()));
     });
+
     // FM27 has no export of its own: the shipped view filters (.fmf) give the
     // game's list screens the columns the analyzer reads. The standard tactic
     // ships as a game file too, so it can be tried in FM27 itself.
@@ -236,104 +609,54 @@ QWidget *SettingsPage::buildClubTab()
                                      .arg(QDir::toNativeSeparators(target),
                                           copied.join(QLatin1Char('\n'))));
     };
-    auto *viewsButton = new QPushButton(tr("Ansichten für FM27 installieren"));
-    auto *viewsHint = new QLabel(
-        tr("Kopiert die mitgelieferten Ansichten (Kader, Spielerdatenbank, Shortlist) in "
-           "den Ordner 'views' von Football Manager 27. Im Spiel lädst du sie dann über "
-           "das Ansichten-Menü der Liste. Vorhandene Dateien mit demselben Namen werden "
-           "ersetzt, andere Ansichten bleiben unberührt."),
-        versionGroup);
-    viewsHint->setWordWrap(true);
-    viewsHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(tr("FM27-Ansichten:"), viewsButton);
-    versionForm->addRow(viewsHint);
+
+    cards->addWidget(makeCard(tr("Football Manager 27"),
+                              tr("FM27 hat keinen eigenen Export. Der Analyzer liest Listen über "
+                                 "mitgelieferte Ansichten oder direkt den Spielstand."),
+                              &body));
+    form = makeForm(body);
+    auto *viewsButton = new QPushButton(tr("Ansichten installieren"));
+    auto *tacticButton = new QPushButton(tr("Beispieltaktiken installieren"));
+    addRow(form, tr("Spieldateien"), hbox({viewsButton, tacticButton}));
+    addHint(form,
+            tr("Ansichten: kopiert die mitgelieferten Ansichten (Kader, Spielerdatenbank, "
+               "Shortlist) in den Ordner 'views' von Football Manager 27. Im Spiel lädst du sie "
+               "dann über das Ansichten-Menü der Liste. Vorhandene Dateien mit demselben Namen "
+               "werden ersetzt, andere Ansichten bleiben unberührt.\n\nBeispieltaktiken: kopiert "
+               "die beiden mitgelieferten Beispieltaktiken (Control Press · 4-2-3-1 und Counter "
+               "Surge · 3-4-2-1) als Spieldateien in den Ordner 'tactics' von Football Manager "
+               "27. Im Spiel lädst du sie dann in der Taktik-Ansicht über das Laden einer "
+               "Taktik. Im Analyzer sind sie schon eingebaut; eigene Taktiken legst du im "
+               "Taktik-Editor an oder importierst sie."));
     connect(viewsButton, &QPushButton::clicked, this, [this, installIntoFm27] {
         installIntoFm27(QStringLiteral(":/views"), QStringLiteral("views"),
                         tr("FM27-Ansichten"));
     });
-    auto *tacticButton = new QPushButton(tr("Beispieltaktiken für FM27 installieren"));
-    auto *tacticHint = new QLabel(
-        tr("Kopiert die beiden mitgelieferten Beispieltaktiken (Control Press · 4-2-3-1 und "
-           "Counter Surge · 3-4-2-1) als Spieldateien in den Ordner 'tactics' von Football "
-           "Manager 27. Im Spiel lädst du sie dann in der Taktik-Ansicht über das Laden einer "
-           "Taktik. Im Analyzer sind sie schon eingebaut; eigene Taktiken legst du im "
-           "Taktik-Editor an oder importierst sie."),
-        versionGroup);
-    tacticHint->setWordWrap(true);
-    tacticHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(tr("FM27-Taktiken:"), tacticButton);
-    versionForm->addRow(tacticHint);
     connect(tacticButton, &QPushButton::clicked, this, [this, installIntoFm27] {
         installIntoFm27(QStringLiteral(":/tactics"), QStringLiteral("tactics"),
                         tr("FM27-Taktiken"));
     });
-    m_attributeMaskingCheck = new QCheckBox(tr("Attribut-Maskierung wie im Spiel"), versionGroup);
-    auto *maskingHint = new QLabel(
-        tr("Gilt, wenn du einen FM27-Spielstand (.fm) einliest. Eingeschaltet übernimmt der "
-           "Analyzer nur Spieler, die du kennst: deinen Kader, Spieler mit sehr hoher "
-           "Reputation und Spieler aus deinem Scouting. Teilweise bekannte Spieler bekommen "
-           "Spannen, die der Analyzer selbst bildet; sie können von den Spannen im Spiel "
-           "abweichen. Ausgeschaltet übernimmt er alle Spieler mit ihren echten Werten. "
-           "Verdeckte Werte wie das Potenzial liest er nie aus."),
-        versionGroup);
-    maskingHint->setWordWrap(true);
-    maskingHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(tr("FM27-Spielstände:"), m_attributeMaskingCheck);
-    versionForm->addRow(maskingHint);
 
-    m_historyAllCheck = new QCheckBox(tr("Verlauf für alle Spieler speichern"), versionGroup);
-    auto *historyHint = new QLabel(
-        tr("Beim Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen "
-           "Stand der Attribute, der Durchschnittsnote, des Marktwerts und des Gehalts, aber "
-           "nur, wenn sich etwas geändert hat. Ohne Haken gilt das für deinen Kader, das "
-           "Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting. Mit "
-           "Haken für alle eingelesenen Spieler; die Datenbank wird dadurch deutlich größer. "
-           "Die aktuelle und die zwei Saisons davor bleiben monatlich, ältere Saisons werden "
-           "auf ihren Stand am Saisonende verdichtet."),
-        versionGroup);
-    historyHint->setWordWrap(true);
-    historyHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(tr("Verlauf:"), m_historyAllCheck);
-    versionForm->addRow(historyHint);
+    m_attributeMaskingCheck = new QCheckBox(tr("Attribut-Maskierung wie im Spiel"));
+    addRow(form, tr("Spielstand einlesen"), m_attributeMaskingCheck);
+    addHint(form, tr("Gilt, wenn du einen FM27-Spielstand (.fm) einliest. Eingeschaltet übernimmt "
+                     "der Analyzer nur Spieler, die du kennst: deinen Kader, Spieler mit sehr "
+                     "hoher Reputation und Spieler aus deinem Scouting. Teilweise bekannte Spieler "
+                     "bekommen Spannen, die der Analyzer selbst bildet; sie können von den "
+                     "Spannen im Spiel abweichen. Ausgeschaltet übernimmt er alle Spieler mit "
+                     "ihren echten Werten. Verdeckte Werte wie das Potenzial liest er nie aus."));
 
-    m_seasonStartEdit = new QDateEdit(versionGroup);
-    m_seasonStartEdit->setDisplayFormat(QStringLiteral("d. MMMM"));
-    m_seasonStartEdit->setDateRange(QDate(2001, 1, 1), QDate(2001, 12, 31));
-    m_seasonStartEdit->setCalendarPopup(false);
-    m_seasonStartEdit->setMaximumWidth(200);
-    auto *seasonHint = new QLabel(
-        tr("Ab diesem Tag zählt der Verlauf eine neue Saison, zum Beispiel für die Anzeige "
-           "der Saison in der Übersicht und beim Verdichten alter Saisons. Der 1. Juli passt "
-           "für die meisten europäischen Ligen; für Ligen, die im Kalenderjahr spielen, "
-           "nimm den 1. Januar."),
-        versionGroup);
-    seasonHint->setWordWrap(true);
-    seasonHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(tr("Saisonbeginn:"), m_seasonStartEdit);
-    versionForm->addRow(seasonHint);
-
-    m_liveSaveCheck = new QCheckBox(tr("Spielstand live verfolgen"), versionGroup);
-    m_liveSaveEdit = new QLineEdit(versionGroup);
-    m_liveSaveEdit->setMinimumWidth(260);
+    m_liveSaveCheck = new QCheckBox(tr("Spielstand live verfolgen"));
+    addRow(form, tr("Live verfolgen"), m_liveSaveCheck);
+    m_liveSaveEdit = sized(new QLineEdit, kPathWidth);
     m_liveSaveEdit->setPlaceholderText(tr("FM27-Spielstand (.fm) wählen"));
-    auto *liveSaveBrowse = new QPushButton(tr("Durchsuchen…"), versionGroup);
-    auto *liveSaveRow = new QHBoxLayout;
-    liveSaveRow->setContentsMargins(0, 0, 0, 0);
-    liveSaveRow->addWidget(m_liveSaveCheck);
-    liveSaveRow->addWidget(m_liveSaveEdit, 1);
-    liveSaveRow->addWidget(liveSaveBrowse);
-    auto *liveSaveWidget = new QWidget(versionGroup);
-    liveSaveWidget->setLayout(liveSaveRow);
-    auto *liveSaveHint = new QLabel(
-        tr("Solange der Analyzer offen ist, liest er diesen Spielstand automatisch neu ein, "
-           "sobald das Spiel ihn gespeichert hat, auch nach einem Autosave. Er nimmt immer die "
-           "neueste Datei der Karriere, auch die Versionen „(v02)“, „(v03)“. Wenn du im "
-           "Spiel unter einem neuen Namen speicherst, wähle die neue Datei hier aus."),
-        versionGroup);
-    liveSaveHint->setWordWrap(true);
-    liveSaveHint->setObjectName(QStringLiteral("kpiCaption"));
-    versionForm->addRow(QString(), liveSaveWidget);
-    versionForm->addRow(liveSaveHint);
+    auto *liveSaveBrowse = new QPushButton(tr("Durchsuchen …"));
+    addRow(form, tr("Spielstand-Datei"), hbox({m_liveSaveEdit, liveSaveBrowse}));
+    addHint(form, tr("Solange der Analyzer offen ist, liest er diesen Spielstand automatisch neu "
+                     "ein, sobald das Spiel ihn gespeichert hat, auch nach einem Autosave. Er "
+                     "nimmt immer die neueste Datei der Karriere, auch die Versionen „(v02)“, "
+                     "„(v03)“. Wenn du im Spiel unter einem neuen Namen speicherst, wähle die "
+                     "neue Datei hier aus."));
     connect(liveSaveBrowse, &QPushButton::clicked, this, [this] {
         QString start = m_liveSaveEdit->text().trimmed();
         if (start.isEmpty())
@@ -348,117 +671,114 @@ QWidget *SettingsPage::buildClubTab()
         m_liveSaveEdit->setText(QDir::toNativeSeparators(path));
         m_liveSaveCheck->setChecked(true);
     });
-    layout->addWidget(versionGroup);
 
-    auto *clubGroup = new QGroupBox(tr("Vereins-Zuordnung"), content);
-    auto *clubForm = new QFormLayout(clubGroup);
-    m_userClubCombo = new QComboBox;
-    m_userClubCombo->setMinimumWidth(260);
-    m_secondClubCombo = new QComboBox;
-    m_secondClubCombo->setMinimumWidth(260);
-    m_clubCountryEdit = new QLineEdit;
-    m_clubCountryEdit->setMaxLength(3);
-    m_clubCountryEdit->setMaximumWidth(80);
-    m_clubCountryEdit->setPlaceholderText(QStringLiteral("GER"));
-    m_fullClubNameEdit = new QLineEdit;
-    m_fullClubNameEdit->setMinimumWidth(260);
-    m_fullClubNameEdit->setPlaceholderText(tr("voller Vereinsname (für den Header)"));
-    m_stadiumEdit = new QLineEdit;
-    m_stadiumEdit->setMinimumWidth(260);
-    m_stadiumEdit->setPlaceholderText(tr("Name des Stadions"));
-    clubForm->addRow(tr("Mein Verein:"), m_userClubCombo);
-    clubForm->addRow(tr("Zweitteam:"), m_secondClubCombo);
-    clubForm->addRow(tr("Voller Vereinsname (Anzeige):"), m_fullClubNameEdit);
-    clubForm->addRow(tr("Stadion:"), m_stadiumEdit);
-    clubForm->addRow(tr("Vereins-Land (3-Buchstaben-Code):"), m_clubCountryEdit);
+    finishPage(cards);
+    return page;
+}
 
-    // Logo (PNG) shown in the header — applied immediately, per database.
-    m_logoPreview = new QLabel;
-    m_logoPreview->setFixedSize(120, 48);
-    m_logoPreview->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    auto *logoButtons = new QHBoxLayout;
-    auto *chooseLogoButton = new QPushButton(tr("Logo wählen (PNG)…"));
-    m_logoRemoveButton = new QPushButton(tr("Entfernen"));
-    logoButtons->addWidget(m_logoPreview, 1);
-    logoButtons->addWidget(chooseLogoButton);
-    logoButtons->addWidget(m_logoRemoveButton);
-    auto *logoRow = new QWidget;
-    logoRow->setLayout(logoButtons);
-    clubForm->addRow(tr("Vereinslogo:"), logoRow);
-    connect(chooseLogoButton, &QPushButton::clicked, this, &SettingsPage::chooseLogo);
-    connect(m_logoRemoveButton, &QPushButton::clicked, this, &SettingsPage::removeLogo);
-    layout->addWidget(clubGroup);
+QWidget *SettingsPage::buildHistoryPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Verlauf und Datenfrische"),
+                             tr("Was der Analyzer über die Zeit speichert und wann Spieler als "
+                                "veraltet gelten."),
+                             &cards);
+
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Spielerverlauf"), QString(), &body));
+    QFormLayout *form = makeForm(body);
+    m_historyAllCheck = new QCheckBox(tr("Verlauf für alle Spieler speichern"));
+    addRow(form, tr("Umfang"), m_historyAllCheck);
+    addHint(form, tr("Beim Einlesen eines FM27-Spielstands speichert der Analyzer pro "
+                     "Ingame-Monat einen Stand der Attribute, der Durchschnittsnote, des "
+                     "Marktwerts und des Gehalts, aber nur, wenn sich etwas geändert hat. Ohne "
+                     "Haken gilt das für deinen Kader, das Zweitteam, die Shortlist, den "
+                     "Nationalkader und Spieler aus deinem Scouting. Mit Haken für alle "
+                     "eingelesenen Spieler; die Datenbank wird dadurch deutlich größer. Die "
+                     "aktuelle und die zwei Saisons davor bleiben monatlich, ältere Saisons "
+                     "werden auf ihren Stand am Saisonende verdichtet."));
+    m_seasonStartEdit = sized(new QDateEdit, 160);
+    m_seasonStartEdit->setDisplayFormat(QStringLiteral("d. MMMM"));
+    m_seasonStartEdit->setDateRange(QDate(2001, 1, 1), QDate(2001, 12, 31));
+    m_seasonStartEdit->setCalendarPopup(false);
+    addRow(form, tr("Saisonbeginn"), m_seasonStartEdit);
+    addHint(form, tr("Ab diesem Tag zählt der Verlauf eine neue Saison, zum Beispiel für die "
+                     "Anzeige der Saison in der Übersicht und beim Verdichten alter Saisons. Der "
+                     "1. Juli passt für die meisten europäischen Ligen; für Ligen, die im "
+                     "Kalenderjahr spielen, nimm den 1. Januar."));
+
+    cards->addWidget(makeCard(tr("Datenfrische"), QString(), &body));
+    form = makeForm(body);
+    m_staleUploadsSpin = sized(new QSpinBox, kNumberWidth);
+    m_staleUploadsSpin->setRange(1, 50);
+    m_retirementAgeSpin = sized(new QSpinBox, kNumberWidth);
+    m_retirementAgeSpin->setRange(25, 60);
+    addRow(form, tr("Veraltet nach verpassten Komplett-Exporten (Y)"), m_staleUploadsSpin);
+    addRow(form, tr("Retired ab Alter (X)"), m_retirementAgeSpin);
+    addHint(form, tr("Ein Import mit mindestens einem Viertel so vielen Spielern wie der letzte "
+                     "Komplett-Export zählt selbst als Komplett-Export. Kleinere Exporte (Kader, "
+                     "Shortlist, Scouting) aktualisieren nur ihre Spieler. Wer in den letzten Y "
+                     "Komplett-Exporten fehlte, gilt als veraltet und wird in Matrizen, "
+                     "Vorschlägen und Pools ausgeblendet – außer Spielern deines Vereins und der "
+                     "Shortlist. Ist er zusätzlich mindestens X Jahre alt, heißt er Retired."));
+
+    finishPage(cards);
+    return page;
+}
+
+QWidget *SettingsPage::buildGraphicsPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Porträts und Wappen"),
+                             tr("Optional: Spielergesichter und Vereinslogos aus installierten "
+                                "Grafikpaketen. Ohne diese Einstellung ändert sich nichts."),
+                             &cards);
 
     // Optional: portraits and crests from the game's graphics folder (face
     // and logo packs). Off by default; without it nothing changes anywhere.
-    m_graphicsGroup = new QGroupBox(
-        tr("Spielerporträts und Vereinswappen aus dem Graphics-Ordner (optional)"), content);
-    m_graphicsGroup->setCheckable(true);
-    m_graphicsGroup->setChecked(false);
-    auto *graphicsOuter = new QVBoxLayout(m_graphicsGroup);
-    auto *graphicsInner = new QWidget(m_graphicsGroup);
-    graphicsOuter->addWidget(graphicsInner);
-    auto *graphicsForm = new QFormLayout(graphicsInner);
-    graphicsForm->setContentsMargins(0, 0, 0, 0);
-    auto *graphicsIntro = new QLabel(
-        tr("Nur sinnvoll, wenn du Grafikpakete (Spielergesichter, Vereinslogos) für "
-           "Football Manager installiert hast. Der Analyzer liest die Zuordnungen aus den "
-           "config.xml-Dateien der Pakete und zeigt Porträts über die Spieler-ID und Wappen "
-           "über die Vereins-ID. Am Graphics-Ordner wird nichts verändert."),
-        graphicsInner);
-    graphicsIntro->setWordWrap(true);
-    graphicsIntro->setObjectName(QStringLiteral("kpiCaption"));
-    graphicsForm->addRow(graphicsIntro);
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Graphics-Ordner"), QString(), &body));
+    m_graphicsCheck = new QCheckBox(tr("Porträts und Wappen aus dem Graphics-Ordner verwenden"));
+    body->addWidget(m_graphicsCheck);
+    m_graphicsBody = new QWidget;
+    auto *graphicsLayout = new QVBoxLayout(m_graphicsBody);
+    graphicsLayout->setContentsMargins(0, 4, 0, 0);
+    graphicsLayout->setSpacing(12);
+    body->addWidget(m_graphicsBody);
+    QFormLayout *form = makeForm(graphicsLayout);
+    addHint(form, tr("Nur sinnvoll, wenn du Grafikpakete (Spielergesichter, Vereinslogos) für "
+                     "Football Manager installiert hast. Der Analyzer liest die Zuordnungen aus "
+                     "den config.xml-Dateien der Pakete und zeigt Porträts über die Spieler-ID "
+                     "und Wappen über die Vereins-ID. Am Graphics-Ordner wird nichts verändert."));
 
-    m_graphicsDirEdit = new QLineEdit;
-    m_graphicsDirEdit->setMinimumWidth(260);
-    auto *graphicsBrowse = new QPushButton(tr("Durchsuchen…"));
+    m_graphicsDirEdit = sized(new QLineEdit, kPathWidth);
+    auto *graphicsBrowse = new QPushButton(tr("Durchsuchen …"));
     auto *graphicsRescan = new QPushButton(tr("Neu einlesen"));
     graphicsRescan->setToolTip(tr("Liest den Ordner erneut ein, z. B. nach dem Installieren "
                                   "eines neuen Grafikpakets."));
-    auto *graphicsDirButtons = new QHBoxLayout;
-    graphicsDirButtons->setContentsMargins(0, 0, 0, 0);
-    graphicsDirButtons->addWidget(m_graphicsDirEdit, 1);
-    graphicsDirButtons->addWidget(graphicsBrowse);
-    graphicsDirButtons->addWidget(graphicsRescan);
-    auto *graphicsDirRow = new QWidget;
-    graphicsDirRow->setLayout(graphicsDirButtons);
-    graphicsForm->addRow(tr("Graphics-Ordner:"), graphicsDirRow);
-    m_graphicsStatus = new QLabel(graphicsInner);
-    m_graphicsStatus->setWordWrap(true);
-    m_graphicsStatus->setObjectName(QStringLiteral("kpiCaption"));
-    graphicsForm->addRow(QString(), m_graphicsStatus);
+    addRow(form, tr("Ordner"), hbox({m_graphicsDirEdit, graphicsBrowse, graphicsRescan}));
+    m_graphicsStatus = caption(QString());
+    form->addRow(QString(), m_graphicsStatus);
 
     // The own club's FM id: exports carry no club ids, so it is set once
     // here (typed, or read from the file name of the chosen crest).
-    m_clubFmIdEdit = new QLineEdit;
-    m_clubFmIdEdit->setMaximumWidth(140);
+    m_clubFmIdEdit = sized(new QLineEdit, kNumberWidth + 28);
     m_clubFmIdEdit->setValidator(new QRegularExpressionValidator(
         QRegularExpression(QStringLiteral("\\d{0,10}")), m_clubFmIdEdit));
     m_graphicsCrestPreview = new QLabel;
-    m_graphicsCrestPreview->setFixedSize(48, 48);
+    m_graphicsCrestPreview->setObjectName(QStringLiteral("imageWell"));
+    m_graphicsCrestPreview->setFixedSize(40, 40);
     m_graphicsCrestPreview->setAlignment(Qt::AlignCenter);
-    auto *pickCrest = new QPushButton(tr("Wappen im Ordner wählen…"));
-    auto *crestRowLayout = new QHBoxLayout;
-    crestRowLayout->setContentsMargins(0, 0, 0, 0);
-    crestRowLayout->addWidget(m_clubFmIdEdit);
-    crestRowLayout->addWidget(m_graphicsCrestPreview);
-    crestRowLayout->addWidget(pickCrest);
-    crestRowLayout->addStretch(1);
-    auto *crestRow = new QWidget;
-    crestRow->setLayout(crestRowLayout);
-    graphicsForm->addRow(tr("Vereins-ID meines Vereins:"), crestRow);
-    auto *crestHint = new QLabel(
-        tr("Die Exporte enthalten keine Vereins-IDs. Trage die ID deines Vereins ein oder "
-           "wähle sein Wappen im Logo-Paket aus (die Zahl im Dateinamen, z. B. "
-           "1234_club.png, ist die ID). Ein oben selbst gewähltes Vereinslogo hat Vorrang."),
-        graphicsInner);
-    crestHint->setWordWrap(true);
-    crestHint->setObjectName(QStringLiteral("kpiCaption"));
-    graphicsForm->addRow(crestHint);
-    graphicsInner->setVisible(false);
-    connect(m_graphicsGroup, &QGroupBox::toggled, graphicsInner, &QWidget::setVisible);
-    layout->addWidget(m_graphicsGroup);
+    auto *pickCrest = new QPushButton(tr("Wappen wählen …"));
+    addRow(form, tr("Vereins-ID meines Vereins"),
+           hbox({m_clubFmIdEdit, m_graphicsCrestPreview, pickCrest}));
+    addHint(form, tr("Die Exporte enthalten keine Vereins-IDs. Trage die ID deines Vereins ein "
+                     "oder wähle sein Wappen im Logo-Paket aus (die Zahl im Dateinamen, z. B. "
+                     "1234_club.png, ist die ID). Ein selbst gewähltes Vereinslogo (Seite "
+                     "Verein) hat Vorrang."));
+    m_graphicsBody->setVisible(false);
+    connect(m_graphicsCheck, &QCheckBox::toggled, m_graphicsBody, &QWidget::setVisible);
+    connect(m_graphicsCheck, &QCheckBox::toggled, this, &SettingsPage::updateGraphicsStatus);
 
     const auto currentGraphicsDir = [this] {
         const QString text = m_graphicsDirEdit->text().trimmed();
@@ -484,7 +804,7 @@ QWidget *SettingsPage::buildClubTab()
             QMessageBox::information(
                 this, tr("Vereins-ID"),
                 tr("Im Dateinamen steht keine Vereins-ID. Bitte die ID von Hand eintragen "
-                   "oder das Bild oben als Vereinslogo wählen."));
+                   "oder das Bild auf der Seite Verein als Vereinslogo wählen."));
             return;
         }
         m_clubFmIdEdit->setText(match.captured(1));
@@ -493,99 +813,342 @@ QWidget *SettingsPage::buildClubTab()
     connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this,
             &SettingsPage::updateGraphicsStatus);
 
-    auto *tacticGroup = new QGroupBox(tr("Lieblings-Taktiken"), content);
-    auto *tacticForm = new QFormLayout(tacticGroup);
-    m_favTactic1Combo = new QComboBox;
-    m_favTactic1Combo->setMinimumWidth(260);
-    m_favTactic2Combo = new QComboBox;
-    m_favTactic2Combo->setMinimumWidth(260);
-    tacticForm->addRow(tr("Primäre Taktik:"), m_favTactic1Combo);
-    tacticForm->addRow(tr("Sekundäre Taktik:"), m_favTactic2Combo);
-    layout->addWidget(tacticGroup);
-
-    m_registrationGroup = new QGroupBox(tr("Registrierungsregeln"), content);
-    auto *registrationForm = new QFormLayout(m_registrationGroup);
-    m_registrationLeagueCombo = new QComboBox;
-    m_registrationLeagueCombo->setMinimumWidth(260);
-    m_registrationUefaCheck =
-        new QCheckBox(tr("Champions League / Europa League / Conference League"));
-    m_registrationMinGkSpin = new QSpinBox;
-    m_registrationMinGkSpin->setRange(0, 5);
-    m_registrationMinGkSpin->setToolTip(
-        tr("Kein Regelwerk schreibt das vor, aber ohne zwei Torhüter zu melden ist riskant."));
-    registrationForm->addRow(tr("Liga:"), m_registrationLeagueCombo);
-    registrationForm->addRow(tr("Europapokal:"), m_registrationUefaCheck);
-    registrationForm->addRow(tr("Mindestens Torhüter in der Meldeliste:"),
-                             m_registrationMinGkSpin);
-    auto *registrationHint = new QLabel(
-        tr("Aktiviert die Home-Grown-/Club-Grown-/U21-Markierungen (Spieler bearbeiten, "
-           "Rechtsklick → Registrierung) und den Registrierungs-Assistenten, sobald ein "
-           "Wettbewerb eine Meldeliste verlangt. 'Standard' und Ligen mit 99 Plätzen "
-           "(Bundesliga, Ligue 1, Österreich) kennen keine Beschränkung: dort sind alle "
-           "Spieler spielberechtigt. Geprüft werden Kadergröße sowie im Land und im Verein "
-           "ausgebildete Spieler; Grenzen für Ausländer oder Nicht-EU-Spieler prüft der "
-           "Analyzer nicht. 'Standard' gilt für alle Ligen, deren Regeln noch nicht "
-           "hinterlegt sind. Wie du weitere Ligen anfragst, steht in der README."),
-        m_registrationGroup);
-    registrationHint->setWordWrap(true);
-    registrationHint->setObjectName(QStringLiteral("kpiCaption"));
-    registrationForm->addRow(registrationHint);
-    layout->addWidget(m_registrationGroup);
-
-    auto *natGroup = new QGroupBox(tr("Nationalteam"), content);
-    auto *natForm = new QFormLayout(natGroup);
-    m_natNameEdit = new QLineEdit;
-    m_natNameEdit->setMinimumWidth(260);
-    m_natNameEdit->setPlaceholderText(tr("z. B. Deutschland U21"));
-    m_natCodeEdit = new QLineEdit;
-    m_natCodeEdit->setMaxLength(3);
-    m_natCodeEdit->setMaximumWidth(80);
-    m_natCodeEdit->setPlaceholderText(QStringLiteral("GER"));
-    m_natAgeSpin = new QSpinBox;
-    m_natAgeSpin->setRange(15, 99);
-    m_natAgeSpin->setValue(99);
-    m_natAgeSpin->setToolTip(tr("99 = keine Altersgrenze (A-Nationalteam); z. B. 21 für U21."));
-    m_natFav1Combo = new QComboBox;
-    m_natFav1Combo->setMinimumWidth(260);
-    m_natFav2Combo = new QComboBox;
-    m_natFav2Combo->setMinimumWidth(260);
-    natForm->addRow(tr("Team-Name:"), m_natNameEdit);
-    natForm->addRow(tr("Länder-Code (3 Buchstaben):"), m_natCodeEdit);
-    natForm->addRow(tr("Altersgrenze (99 = keine):"), m_natAgeSpin);
-    natForm->addRow(tr("Primäre National-Taktik:"), m_natFav1Combo);
-    natForm->addRow(tr("Sekundäre National-Taktik:"), m_natFav2Combo);
-
-    // National flag (PNG) shown in the header while in national mode, mirroring
-    // the club logo. Applied immediately, per database.
-    m_flagPreview = new QLabel;
-    m_flagPreview->setFixedSize(120, 48);
-    m_flagPreview->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    auto *flagButtons = new QHBoxLayout;
-    auto *chooseFlagButton = new QPushButton(tr("Flagge wählen (PNG)…"));
-    m_flagRemoveButton = new QPushButton(tr("Entfernen"));
-    flagButtons->addWidget(m_flagPreview, 1);
-    flagButtons->addWidget(chooseFlagButton);
-    flagButtons->addWidget(m_flagRemoveButton);
-    auto *flagRow = new QWidget;
-    flagRow->setLayout(flagButtons);
-    natForm->addRow(tr("National-Flagge:"), flagRow);
-    connect(chooseFlagButton, &QPushButton::clicked, this, &SettingsPage::chooseFlag);
-    connect(m_flagRemoveButton, &QPushButton::clicked, this, &SettingsPage::removeFlag);
-    layout->addWidget(natGroup);
-
-    auto *hint = new QLabel(
-        tr("Diese Einstellungen gelten pro Datenbank (Spielstand). Das Vereins-Land "
-           "steuert den Inland-Filter beim Scouting; die Lieblings-Taktiken werden "
-           "auf Übersicht, Aufstellung, Kader und Transfers vorausgewählt, die erste "
-           "bestimmt die Rollen auf der Seite Entwicklung. Die Nationalteam-Angaben "
-           "aktivieren das National-Management."),
-        content);
-    hint->setWordWrap(true);
-    layout->addWidget(hint);
-    layout->addStretch(1);
-
-    return wrapScrollable(content);
+    finishPage(cards);
+    return page;
 }
+
+QWidget *SettingsPage::buildWeightsPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("DWRS-Gewichte"),
+                             tr("Wie stark die Attribut-Kategorien in die DWRS-Bewertung "
+                                "eingehen. Geänderte Gewichte berechnen beim Speichern alle "
+                                "Bewertungen neu."),
+                             &cards);
+
+    const auto makeSpin = [](double max = 20.0) {
+        auto *spin = sized(new QDoubleSpinBox, kNumberWidth);
+        spin->setRange(0.0, max);
+        spin->setDecimals(2);
+        spin->setSingleStep(0.1);
+        return spin;
+    };
+
+    m_weightsVersionLabel = caption(QString());
+    cards->addWidget(m_weightsVersionLabel);
+
+    // Field players and goalkeepers side by side: same kind, same size.
+    auto *pair = new QHBoxLayout;
+    pair->setSpacing(16);
+    QVBoxLayout *body = nullptr;
+    auto *fieldCard = makeCard(tr("Feldspieler"), QString(), &body);
+    QFormLayout *form = makeForm(body, 150);
+    for (const QString &category : weightCategoryOrder()) {
+        auto *spin = makeSpin();
+        m_weightSpins.insert(category, spin);
+        addRow(form, category, spin);
+    }
+    body->addStretch(1);
+    pair->addWidget(fieldCard, 1);
+    auto *gkCard = makeCard(tr("Torhüter"), QString(), &body);
+    form = makeForm(body, 150);
+    for (const QString &category : gkWeightCategoryOrder()) {
+        auto *spin = makeSpin();
+        m_gkWeightSpins.insert(category, spin);
+        addRow(form, category, spin);
+    }
+    pair->addWidget(gkCard, 1);
+    cards->addLayout(pair);
+
+    cards->addWidget(makeCard(tr("Rollen-Multiplikatoren"), QString(), &body));
+    form = makeForm(body);
+    m_keyMultSpin = makeSpin();
+    m_prefMultSpin = makeSpin();
+    addRow(form, tr("Schlüssel-Attribute"), m_keyMultSpin);
+    addRow(form, tr("Bevorzugte Attribute"), m_prefMultSpin);
+
+    cards->addWidget(makeCard(tr("Spielzeit-Gewichte"),
+                              tr("Gewicht je zugesagter Spielzeit (Agreed Playing Time)."),
+                              &body));
+    auto *aptGrid = new QGridLayout;
+    aptGrid->setContentsMargins(0, 0, 0, 0);
+    aptGrid->setHorizontalSpacing(24);
+    aptGrid->setVerticalSpacing(12);
+    QStringList allApt = fieldPlayerAptOptions() + gkAptOptions();
+    allApt.removeDuplicates();
+    allApt.removeAll(QStringLiteral("None"));
+    const int rows = (int(allApt.size()) + 1) / 2;
+    for (int i = 0; i < allApt.size(); ++i) {
+        auto *spin = makeSpin(5.0);
+        m_aptSpins.insert(allApt.at(i), spin);
+        auto *label = new QLabel(allApt.at(i));
+        const int column = (i / rows) * 2;
+        aptGrid->addWidget(label, i % rows, column);
+        aptGrid->addWidget(spin, i % rows, column + 1);
+    }
+    aptGrid->setColumnMinimumWidth(0, 180);
+    aptGrid->setColumnMinimumWidth(2, 180);
+    aptGrid->setColumnMinimumWidth(1, kNumberWidth + 24); // gap before the second pair
+    aptGrid->setColumnStretch(4, 1);
+    body->addLayout(aptGrid);
+
+    cards->addWidget(makeCard(tr("Neuberechnung"), QString(), &body));
+    auto *recalcButton = new QPushButton(tr("Alle Bewertungen neu berechnen"));
+    body->addLayout(hbox({recalcButton}));
+    body->addWidget(foldableHint(
+        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit den "
+           "gespeicherten Gewichten neu. Nicht gespeicherte Änderungen auf dieser Seite "
+           "werden dabei nicht berücksichtigt.")));
+    connect(recalcButton, &QPushButton::clicked, this, &SettingsPage::recalcRequested);
+
+    finishPage(cards);
+    return page;
+}
+
+QWidget *SettingsPage::buildSquadPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Kader und Analyse"),
+                             tr("Schwellenwerte für Aufstellung, Jugend, Leihen und die "
+                                "Gap-Analyse."),
+                             &cards);
+
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Aufstellung"), QString(), &body));
+    QFormLayout *form = makeForm(body);
+    m_naturalPosSpin = sized(new QDoubleSpinBox, kNumberWidth);
+    m_naturalPosSpin->setRange(1.0, 2.0);
+    m_naturalPosSpin->setDecimals(2);
+    m_naturalPosSpin->setSingleStep(0.01);
+    m_ipShareSpin = sized(new QSpinBox, kNumberWidth);
+    m_ipShareSpin->setRange(0, 100);
+    m_ipShareSpin->setSuffix(QStringLiteral(" %"));
+    m_maxDepthRolesSpin = sized(new QSpinBox, kNumberWidth);
+    m_maxDepthRolesSpin->setRange(1, 10);
+    addRow(form, tr("Bonus natürliche Position"), m_naturalPosSpin);
+    addRow(form, tr("Anteil mit Ball (ab FM27)"), m_ipShareSpin);
+    addHint(form, tr("Ab FM27 hat jede Taktik eine Aufstellung mit Ball und eine ohne Ball. Der "
+                     "Wert eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest "
+                     "seiner Rolle ohne Ball. Standard 50 %."));
+    addRow(form, tr("Max. Rollen pro Depth-Spieler"), m_maxDepthRolesSpin);
+
+    cards->addWidget(makeCard(tr("Jugend und Leihen"), QString(), &body));
+    form = makeForm(body);
+    m_outfielderAgeSpin = sized(new QSpinBox, kNumberWidth);
+    m_outfielderAgeSpin->setRange(15, 30);
+    m_goalkeeperAgeSpin = sized(new QSpinBox, kNumberWidth);
+    m_goalkeeperAgeSpin->setRange(15, 35);
+    m_minLoanTalentSpin = sized(new QSpinBox, kNumberWidth);
+    m_minLoanTalentSpin->setRange(0, 200);
+    m_minLoanAgeSpin = sized(new QSpinBox, kNumberWidth);
+    m_minLoanAgeSpin->setRange(14, 25);
+    m_youthLoanOverAgeSpin = sized(new QSpinBox, kNumberWidth);
+    m_youthLoanOverAgeSpin->setRange(14, 25);
+    addRow(form, tr("Jugend: Feldspieler bis Alter"), m_outfielderAgeSpin);
+    addRow(form, tr("Jugend: Torhüter bis Alter"), m_goalkeeperAgeSpin);
+    addRow(form, tr("Min. Talent-Score für Leihe"), m_minLoanTalentSpin);
+    addRow(form, tr("Mindestalter für Leihe"), m_minLoanAgeSpin);
+    addRow(form, tr("Jugendelf-Leihe erst über Alter"), m_youthLoanOverAgeSpin);
+
+    cards->addWidget(makeCard(tr("Gap-Analyse"), QString(), &body));
+    form = makeForm(body);
+    const auto makeGapSpin = [] {
+        auto *spin = sized(new QDoubleSpinBox, kNumberWidth);
+        spin->setRange(0.0, 50.0);
+        spin->setDecimals(1);
+        return spin;
+    };
+    m_displacementSpin = makeGapSpin();
+    m_dropoffSpin = makeGapSpin();
+    m_wrongSideSpin = makeGapSpin();
+    addRow(form, tr("Displacement-Schwelle"), m_displacementSpin);
+    addRow(form, tr("Dropoff-Schwelle"), m_dropoffSpin);
+    addRow(form, tr("Falsche-Seite-Malus"), m_wrongSideSpin);
+
+    finishPage(cards);
+    return page;
+}
+
+QWidget *SettingsPage::buildTrainingPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Training"),
+                             tr("Bis zu welchem Alter sich Attributgruppen noch trainieren "
+                                "lassen. Steuert die Trainingsempfehlung."),
+                             &cards);
+
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Trainings-Altersfenster"), QString(), &body));
+    auto *grid = new QGridLayout;
+    grid->setContentsMargins(0, 0, 0, 0);
+    grid->setHorizontalSpacing(24);
+    grid->setVerticalSpacing(12);
+    auto *peakHead = caption(tr("Voll trainierbar bis"));
+    auto *lockedHead = caption(tr("Gesperrt ab"));
+    grid->addWidget(peakHead, 0, 1);
+    grid->addWidget(lockedHead, 0, 2);
+    const auto makeAgeSpin = [] {
+        auto *spin = sized(new QSpinBox, kNumberWidth);
+        spin->setRange(15, 40);
+        return spin;
+    };
+    int row = 1;
+    const auto addWindow = [&](const QString &group, const QString &detail, QSpinBox *&peak,
+                               QSpinBox *&locked) {
+        auto *labels = new QVBoxLayout;
+        labels->setSpacing(0);
+        auto *name = new QLabel(group);
+        labels->addWidget(name);
+        if (!detail.isEmpty())
+            labels->addWidget(caption(detail));
+        auto *holder = new QWidget;
+        labels->setContentsMargins(0, 0, 0, 0);
+        holder->setLayout(labels);
+        holder->setMinimumWidth(kLabelWidth);
+        peak = makeAgeSpin();
+        locked = makeAgeSpin();
+        grid->addWidget(holder, row, 0);
+        grid->addWidget(peak, row, 1);
+        grid->addWidget(locked, row, 2);
+        ++row;
+    };
+    addWindow(tr("Explosiv"), tr("Tempo, Antritt, Beweglichkeit"), m_explosivePeakSpin,
+              m_explosiveLockedSpin);
+    addWindow(tr("Kraft"), tr("Kraft, Ausdauer, Sprungkraft, Balance"), m_strengthPeakSpin,
+              m_strengthLockedSpin);
+    addWindow(tr("Technik"), QString(), m_technicalPeakSpin, m_technicalLockedSpin);
+    grid->setColumnStretch(3, 1);
+    body->addLayout(grid);
+    body->addWidget(foldableHint(
+        tr("Bis 'voll trainierbar bis' gilt eine Gruppe als voll trainierbar, danach nimmt die "
+           "Wirkung linear ab bis 'gesperrt ab'. Mentale Attribute gelten immer als "
+           "trainierbar, Charakter-Attribute (Entschlossenheit, Arbeitsrate) nie (nur über "
+           "Mentoring).")));
+
+    finishPage(cards);
+    return page;
+}
+
+QWidget *SettingsPage::buildThemePage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Design"),
+                             tr("Farben und Vereinskopf dieses Spielstands."), &cards);
+
+    // --- Preset + mode ---
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Farbschema"), QString(), &body));
+    QFormLayout *form = makeForm(body);
+    m_presetCombo = sized(new QComboBox, kFieldWidth);
+    m_presetCombo->setMaxVisibleItems(20);
+    m_templates = std::make_unique<ColorTemplateStore>(m_context.paths().colorTemplatesFile());
+    m_templates->load();
+    fillPresetCombo();
+    m_modeCombo = sized(new QComboBox, kFieldWidth);
+    m_modeCombo->addItem(tr("Nacht (dunkel)"), QStringLiteral("night"));
+    m_modeCombo->addItem(tr("Tag (hell)"), QStringLiteral("day"));
+    addRow(form, tr("Modus"), m_modeCombo);
+    addRow(form, tr("Vorlage"), m_presetCombo);
+    auto *saveTemplateButton = new QPushButton(tr("Als eigene Vorlage speichern …"));
+    saveTemplateButton->setToolTip(
+        tr("Speichert die Farben unten (Tag und Nacht) als eigene Vorlage. Eigene Vorlagen "
+           "stehen in allen Spielständen zur Wahl und bleiben bei Updates erhalten."));
+    m_deleteTemplateButton = new QPushButton(tr("Vorlage löschen"));
+    m_deleteTemplateButton->setEnabled(false);
+    form->addRow(QString(), [&] {
+        auto *w = new QWidget;
+        w->setLayout(hbox({saveTemplateButton, m_deleteTemplateButton}));
+        return w;
+    }());
+    connect(saveTemplateButton, &QPushButton::clicked, this, &SettingsPage::saveColorTemplate);
+    connect(m_deleteTemplateButton, &QPushButton::clicked, this,
+            &SettingsPage::deleteColorTemplate);
+    addHint(form, tr("Eine Vorlage setzt eine ruhige Anthrazit-Basis und nur die Vereinsfarben "
+                     "als Akzent (Kopfzeile, Buttons, Interaktion). Farben unten lassen sich "
+                     "danach frei anpassen — das schaltet auf 'Benutzerdefiniert'."));
+
+    connect(m_presetCombo, &QComboBox::activated, this, [this] {
+        const QString id = m_presetCombo->currentData().toString();
+        m_deleteTemplateButton->setEnabled(ColorTemplateStore::isTemplateId(id));
+        if (id == QLatin1String("custom"))
+            return;
+        applyPresetToPending(id);
+    });
+
+    // --- Club header ---
+    cards->addWidget(makeCard(tr("Vereinskopf"), QString(), &body));
+    form = makeForm(body);
+    m_headerStyleCombo = sized(new QComboBox, kFieldWidth);
+    m_headerStyleCombo->addItem(tr("Vereinsfarben mit Wappen"), QStringLiteral("gradient"));
+    m_headerStyleCombo->addItem(tr("Einfarbig (Farbe „Kopfzeile“)"), QStringLiteral("solid"));
+    addRow(form, tr("Darstellung"), m_headerStyleCombo);
+    m_watermarkCheck = new QCheckBox(tr("Wappen zusätzlich als dezente Silhouette zeigen"));
+    form->addRow(QString(), m_watermarkCheck);
+    addHint(form, tr("Der Vereinskopf nutzt die Farbe „Primär“ als Fläche und „Interaktion“ als "
+                     "schmalen Streifen. Sind die Farben zu hell oder zu grell, dunkelt der "
+                     "Analyzer die Fläche so weit ab, dass Name und Stadion lesbar bleiben."));
+    connect(m_headerStyleCombo, &QComboBox::currentIndexChanged, this, [this] {
+        m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
+                                     != QLatin1String("solid"));
+    });
+
+    // --- Color roles: one row per role, night and day side by side ---
+    cards->addWidget(makeCard(tr("Farben"),
+                              tr("Ein Klick auf eine Farbe öffnet die Farbauswahl."), &body));
+    const QList<QPair<QString, QString>> colorKeys = {
+        {QStringLiteral("background_color"), tr("Hintergrund")},
+        {QStringLiteral("surface_color"), tr("Panel / Karten")},
+        {QStringLiteral("sidebar_color"), tr("Sidebar")},
+        {QStringLiteral("header_color"), tr("Kopfzeile")},
+        {QStringLiteral("primary_color"), tr("Primär / Buttons")},
+        {QStringLiteral("interactive_color"), tr("Interaktion (Tabs, Slider)")},
+        {QStringLiteral("text_color"), tr("Text")},
+    };
+    auto *grid = new QGridLayout;
+    grid->setContentsMargins(0, 0, 0, 0);
+    grid->setHorizontalSpacing(16);
+    grid->setVerticalSpacing(8);
+    grid->addWidget(caption(tr("Nacht")), 0, 1);
+    grid->addWidget(caption(tr("Tag")), 0, 2);
+    int row = 1;
+    for (const auto &[key, label] : colorKeys) {
+        auto *name = new QLabel(label);
+        name->setMinimumWidth(kLabelWidth);
+        grid->addWidget(name, row, 0);
+        int column = 1;
+        for (const QString &mode : {QStringLiteral("night"), QStringLiteral("day")}) {
+            const QString fullKey = mode + QLatin1Char('_') + key;
+            auto *button = new QPushButton;
+            button->setObjectName(QStringLiteral("colorSwatch"));
+            button->setFixedSize(kSwatchWidth, 32);
+            button->setCursor(Qt::PointingHandCursor);
+            m_colorButtons.insert(fullKey, button);
+            connect(button, &QPushButton::clicked, this, [this, fullKey, button] {
+                const QColor initial(m_pendingColors.value(fullKey));
+                const QColor picked =
+                    QColorDialog::getColor(initial, this, tr("Farbe wählen"));
+                if (!picked.isValid())
+                    return;
+                m_pendingColors.insert(fullKey, picked.name());
+                button->setText(picked.name());
+                button->setStyleSheet(colorButtonStyle(picked));
+                markCustomPreset();
+                updateContrastWarning();
+            });
+            grid->addWidget(button, row, column++);
+        }
+        ++row;
+    }
+    grid->setColumnStretch(3, 1);
+    body->addLayout(grid);
+
+    m_contrastLabel = caption(QString());
+    body->addWidget(m_contrastLabel);
+
+    finishPage(cards);
+    return page;
+}
+
 
 void SettingsPage::updateGraphicsStatus()
 {
@@ -596,7 +1159,7 @@ void SettingsPage::updateGraphicsStatus()
     QString text;
     switch (graphics.state()) {
     case GraphicsLibrary::State::Off:
-        text = m_graphicsGroup->isChecked()
+        text = m_graphicsCheck->isChecked()
                    ? tr("Wird beim Speichern eingelesen.")
                    : QString();
         break;
@@ -731,326 +1294,6 @@ void SettingsPage::updateFlagPreview()
         m_flagRemoveButton->setEnabled(false);
     }
 }
-
-QWidget *SettingsPage::buildWeightsTab()
-{
-    auto *content = new QWidget;
-    auto *layout = new QVBoxLayout(content);
-
-    const auto makeSpin = [this](double max = 20.0) {
-        auto *spin = new QDoubleSpinBox;
-        spin->setRange(0.0, max);
-        spin->setDecimals(2);
-        spin->setSingleStep(0.1);
-        return spin;
-    };
-
-    m_weightsVersionLabel = new QLabel(content);
-    m_weightsVersionLabel->setObjectName(QStringLiteral("kpiCaption"));
-    layout->addWidget(m_weightsVersionLabel);
-
-    auto *fieldGroup = new QGroupBox(tr("Feldspieler-Kategorien"), content);
-    auto *fieldForm = new QFormLayout(fieldGroup);
-    for (const QString &category : weightCategoryOrder()) {
-        auto *spin = makeSpin();
-        m_weightSpins.insert(category, spin);
-        fieldForm->addRow(category + QStringLiteral(":"), spin);
-    }
-    layout->addWidget(fieldGroup);
-
-    auto *gkGroup = new QGroupBox(tr("Torwart-Kategorien"), content);
-    auto *gkForm = new QFormLayout(gkGroup);
-    for (const QString &category : gkWeightCategoryOrder()) {
-        auto *spin = makeSpin();
-        m_gkWeightSpins.insert(category, spin);
-        gkForm->addRow(category + QStringLiteral(":"), spin);
-    }
-    layout->addWidget(gkGroup);
-
-    auto *multGroup = new QGroupBox(tr("Rollen-Multiplikatoren"), content);
-    auto *multForm = new QFormLayout(multGroup);
-    m_keyMultSpin = makeSpin();
-    m_prefMultSpin = makeSpin();
-    multForm->addRow(tr("Schlüssel-Attribute:"), m_keyMultSpin);
-    multForm->addRow(tr("Bevorzugte Attribute:"), m_prefMultSpin);
-    layout->addWidget(multGroup);
-
-    auto *aptGroup = new QGroupBox(tr("Spielzeit-Gewichte (Agreed Playing Time)"), content);
-    auto *aptForm = new QFormLayout(aptGroup);
-    QStringList allApt = fieldPlayerAptOptions() + gkAptOptions();
-    allApt.removeDuplicates();
-    for (const QString &apt : allApt) {
-        if (apt == QLatin1String("None"))
-            continue;
-        auto *spin = makeSpin(5.0);
-        m_aptSpins.insert(apt, spin);
-        aptForm->addRow(apt + QStringLiteral(":"), spin);
-    }
-    layout->addWidget(aptGroup);
-
-    auto *recalcGroup = new QGroupBox(tr("Neuberechnung"), content);
-    auto *recalcLayout = new QVBoxLayout(recalcGroup);
-    auto *recalcButton = new QPushButton(tr("Alle DWRS-Bewertungen neu berechnen"), recalcGroup);
-    auto *recalcHint = new QLabel(
-        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit den "
-           "gespeicherten Gewichten neu. Nicht gespeicherte Änderungen auf dieser Seite "
-           "werden dabei nicht berücksichtigt."),
-        recalcGroup);
-    recalcHint->setWordWrap(true);
-    recalcHint->setObjectName(QStringLiteral("kpiCaption"));
-    recalcLayout->addWidget(recalcButton, 0, Qt::AlignLeft);
-    recalcLayout->addWidget(recalcHint);
-    layout->addWidget(recalcGroup);
-    connect(recalcButton, &QPushButton::clicked, this, &SettingsPage::recalcRequested);
-    layout->addStretch(1);
-
-    return wrapScrollable(content);
-}
-
-QWidget *SettingsPage::buildThresholdsTab()
-{
-    auto *content = new QWidget;
-    auto *layout = new QVBoxLayout(content);
-
-    auto *ageGroup = new QGroupBox(tr("Jugend-Altersgrenzen"), content);
-    auto *ageForm = new QFormLayout(ageGroup);
-    m_outfielderAgeSpin = new QSpinBox;
-    m_outfielderAgeSpin->setRange(15, 30);
-    m_goalkeeperAgeSpin = new QSpinBox;
-    m_goalkeeperAgeSpin->setRange(15, 35);
-    ageForm->addRow(tr("Feldspieler bis Alter:"), m_outfielderAgeSpin);
-    ageForm->addRow(tr("Torhüter bis Alter:"), m_goalkeeperAgeSpin);
-    layout->addWidget(ageGroup);
-
-    auto *squadGroup = new QGroupBox(tr("Kader-Management"), content);
-    auto *squadForm = new QFormLayout(squadGroup);
-    m_naturalPosSpin = new QDoubleSpinBox;
-    m_naturalPosSpin->setRange(1.0, 2.0);
-    m_naturalPosSpin->setDecimals(2);
-    m_naturalPosSpin->setSingleStep(0.01);
-    m_maxDepthRolesSpin = new QSpinBox;
-    m_maxDepthRolesSpin->setRange(1, 10);
-    m_minLoanTalentSpin = new QSpinBox;
-    m_minLoanTalentSpin->setRange(0, 200);
-    m_minLoanAgeSpin = new QSpinBox;
-    m_minLoanAgeSpin->setRange(14, 25);
-    m_youthLoanOverAgeSpin = new QSpinBox;
-    m_youthLoanOverAgeSpin->setRange(14, 25);
-    m_ipShareSpin = new QSpinBox;
-    m_ipShareSpin->setRange(0, 100);
-    m_ipShareSpin->setSuffix(QStringLiteral(" %"));
-    m_ipShareSpin->setToolTip(
-        tr("Ab FM27 hat jede Taktik eine Aufstellung mit Ball und eine ohne Ball. Der Wert "
-           "eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner "
-           "Rolle ohne Ball. Standard 50 %."));
-    squadForm->addRow(tr("Bonus natürliche Position:"), m_naturalPosSpin);
-    squadForm->addRow(tr("Anteil mit Ball (ab FM27):"), m_ipShareSpin);
-    squadForm->addRow(tr("Max. Rollen pro Depth-Spieler:"), m_maxDepthRolesSpin);
-    squadForm->addRow(tr("Min. Talent-Score für Leihe:"), m_minLoanTalentSpin);
-    squadForm->addRow(tr("Mindestalter für Leihe:"), m_minLoanAgeSpin);
-    squadForm->addRow(tr("Jugendelf-Leihe erst über Alter:"), m_youthLoanOverAgeSpin);
-    layout->addWidget(squadGroup);
-
-    auto *gapGroup = new QGroupBox(tr("Gap-Analyse"), content);
-    auto *gapForm = new QFormLayout(gapGroup);
-    const auto makeGapSpin = [] {
-        auto *spin = new QDoubleSpinBox;
-        spin->setRange(0.0, 50.0);
-        spin->setDecimals(1);
-        return spin;
-    };
-    m_displacementSpin = makeGapSpin();
-    m_dropoffSpin = makeGapSpin();
-    m_wrongSideSpin = makeGapSpin();
-    gapForm->addRow(tr("Displacement-Schwelle:"), m_displacementSpin);
-    gapForm->addRow(tr("Dropoff-Schwelle:"), m_dropoffSpin);
-    gapForm->addRow(tr("Falsche-Seite-Malus:"), m_wrongSideSpin);
-    layout->addWidget(gapGroup);
-
-    auto *freshnessGroup = new QGroupBox(tr("Datenfrische / Retired"), content);
-    auto *freshnessForm = new QFormLayout(freshnessGroup);
-    m_retirementAgeSpin = new QSpinBox;
-    m_retirementAgeSpin->setRange(25, 60);
-    m_staleUploadsSpin = new QSpinBox;
-    m_staleUploadsSpin->setRange(1, 50);
-    freshnessForm->addRow(tr("Retired ab Alter (X):"), m_retirementAgeSpin);
-    freshnessForm->addRow(tr("Veraltet nach verpassten Komplett-Exporten (Y):"),
-                          m_staleUploadsSpin);
-    auto *freshnessHint = new QLabel(
-        tr("Ein Import mit mindestens einem Viertel so vielen Spielern wie der letzte "
-           "Komplett-Export zählt selbst als Komplett-Export. Kleinere Exporte (Kader, "
-           "Shortlist, Scouting) aktualisieren nur ihre Spieler. Wer in den letzten Y "
-           "Komplett-Exporten fehlte, gilt als veraltet und wird in Matrizen, Vorschlägen und "
-           "Pools ausgeblendet – außer Spielern deines Vereins und der Shortlist. Ist er "
-           "zusätzlich mindestens X Jahre alt, heißt er Retired."),
-        freshnessGroup);
-    freshnessHint->setWordWrap(true);
-    freshnessHint->setObjectName(QStringLiteral("kpiCaption"));
-    freshnessForm->addRow(freshnessHint);
-    layout->addWidget(freshnessGroup);
-
-    auto *trainingGroup = new QGroupBox(tr("Trainings-Altersfenster"), content);
-    auto *trainingForm = new QFormLayout(trainingGroup);
-    const auto makeAgeSpin = [] {
-        auto *spin = new QSpinBox;
-        spin->setRange(15, 40);
-        return spin;
-    };
-    const auto makeWindowRow = [&](QSpinBox *&peak, QSpinBox *&locked) {
-        peak = makeAgeSpin();
-        locked = makeAgeSpin();
-        auto *row = new QHBoxLayout;
-        row->addWidget(new QLabel(tr("stark bis"), trainingGroup));
-        row->addWidget(peak);
-        row->addSpacing(12);
-        row->addWidget(new QLabel(tr("gesperrt ab"), trainingGroup));
-        row->addWidget(locked);
-        row->addStretch(1);
-        auto *w = new QWidget(trainingGroup);
-        w->setLayout(row);
-        return w;
-    };
-    trainingForm->addRow(tr("Explosiv (Tempo, Antritt, Beweglichkeit):"),
-                         makeWindowRow(m_explosivePeakSpin, m_explosiveLockedSpin));
-    trainingForm->addRow(tr("Kraft (Kraft, Ausdauer, Sprungkraft, Balance):"),
-                         makeWindowRow(m_strengthPeakSpin, m_strengthLockedSpin));
-    trainingForm->addRow(tr("Technik:"),
-                         makeWindowRow(m_technicalPeakSpin, m_technicalLockedSpin));
-    auto *trainingHint = new QLabel(
-        tr("Steuert die Trainingsempfehlung: bis 'stark bis' voll trainierbar, danach "
-           "linear abnehmend bis 'gesperrt ab'. Mentale Attribute gelten immer als "
-           "trainierbar, Charakter-Attribute (Entschlossenheit, Arbeitsrate) nie "
-           "(nur über Mentoring)."),
-        trainingGroup);
-    trainingHint->setWordWrap(true);
-    trainingHint->setObjectName(QStringLiteral("kpiCaption"));
-    trainingForm->addRow(trainingHint);
-    layout->addWidget(trainingGroup);
-    layout->addStretch(1);
-
-    return wrapScrollable(content);
-}
-
-QWidget *SettingsPage::buildThemeTab()
-{
-    auto *content = new QWidget;
-    auto *layout = new QVBoxLayout(content);
-
-    // --- Preset + mode ---
-    auto *topGroup = new QGroupBox(tr("Farbschema"), content);
-    auto *topForm = new QFormLayout(topGroup);
-    m_presetCombo = new QComboBox;
-    m_presetCombo->setMinimumWidth(280);
-    m_presetCombo->setMaxVisibleItems(20);
-    m_templates = std::make_unique<ColorTemplateStore>(m_context.paths().colorTemplatesFile());
-    m_templates->load();
-    fillPresetCombo();
-    m_modeCombo = new QComboBox;
-    m_modeCombo->addItem(tr("Nacht (dunkel)"), QStringLiteral("night"));
-    m_modeCombo->addItem(tr("Tag (hell)"), QStringLiteral("day"));
-    auto *presetRow = new QHBoxLayout;
-    presetRow->setSpacing(8);
-    presetRow->addWidget(m_presetCombo, 1);
-    auto *saveTemplateButton = new QPushButton(tr("Als eigene Vorlage speichern …"));
-    saveTemplateButton->setToolTip(
-        tr("Speichert die Farben unten (Tag und Nacht) als eigene Vorlage. Eigene Vorlagen "
-           "stehen in allen Spielständen zur Wahl und bleiben bei Updates erhalten."));
-    m_deleteTemplateButton = new QPushButton(tr("Vorlage löschen"));
-    m_deleteTemplateButton->setEnabled(false);
-    presetRow->addWidget(saveTemplateButton);
-    presetRow->addWidget(m_deleteTemplateButton);
-    connect(saveTemplateButton, &QPushButton::clicked, this, &SettingsPage::saveColorTemplate);
-    connect(m_deleteTemplateButton, &QPushButton::clicked, this,
-            &SettingsPage::deleteColorTemplate);
-    topForm->addRow(tr("Vereins-/Farbvorlage:"), presetRow);
-    topForm->addRow(tr("Aktiver Modus:"), m_modeCombo);
-    auto *presetHint = new QLabel(
-        tr("Eine Vorlage setzt eine ruhige Anthrazit-Basis und nur die Vereinsfarben als "
-           "Akzent (Kopfzeile, Buttons, Interaktion). Farben unten lassen sich danach frei "
-           "anpassen — das schaltet auf 'Benutzerdefiniert'."),
-        topGroup);
-    presetHint->setWordWrap(true);
-    presetHint->setObjectName(QStringLiteral("kpiCaption"));
-    topForm->addRow(presetHint);
-    layout->addWidget(topGroup);
-
-    connect(m_presetCombo, &QComboBox::activated, this, [this] {
-        const QString id = m_presetCombo->currentData().toString();
-        m_deleteTemplateButton->setEnabled(ColorTemplateStore::isTemplateId(id));
-        if (id == QLatin1String("custom"))
-            return;
-        applyPresetToPending(id);
-    });
-
-    // --- Club header ---
-    auto *headerGroup = new QGroupBox(tr("Vereinskopf"), content);
-    auto *headerForm = new QFormLayout(headerGroup);
-    m_headerStyleCombo = new QComboBox;
-    m_headerStyleCombo->addItem(tr("Vereinsfarben mit Wappen"), QStringLiteral("gradient"));
-    m_headerStyleCombo->addItem(tr("Einfarbig (Farbe „Kopfzeile“)"), QStringLiteral("solid"));
-    headerForm->addRow(tr("Darstellung:"), m_headerStyleCombo);
-    m_watermarkCheck = new QCheckBox(tr("Wappen zusätzlich als dezente Silhouette zeigen"));
-    headerForm->addRow(QString(), m_watermarkCheck);
-    auto *headerHint = new QLabel(
-        tr("Der Vereinskopf nutzt die Farbe „Primär“ als Fläche und „Interaktion“ als "
-           "schmalen Streifen. Sind die Farben zu hell oder zu grell, dunkelt der Analyzer "
-           "die Fläche so weit ab, dass Name und Stadion lesbar bleiben."),
-        headerGroup);
-    headerHint->setWordWrap(true);
-    headerHint->setObjectName(QStringLiteral("kpiCaption"));
-    headerForm->addRow(headerHint);
-    connect(m_headerStyleCombo, &QComboBox::currentIndexChanged, this, [this] {
-        m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
-                                     != QLatin1String("solid"));
-    });
-    layout->addWidget(headerGroup);
-
-    // --- Per-mode color roles ---
-    const QList<QPair<QString, QString>> colorKeys = {
-        {QStringLiteral("background_color"), tr("Hintergrund")},
-        {QStringLiteral("surface_color"), tr("Panel / Karten")},
-        {QStringLiteral("sidebar_color"), tr("Sidebar")},
-        {QStringLiteral("header_color"), tr("Kopfzeile")},
-        {QStringLiteral("primary_color"), tr("Primär / Buttons")},
-        {QStringLiteral("interactive_color"), tr("Interaktion (Tabs, Slider)")},
-        {QStringLiteral("text_color"), tr("Text")},
-    };
-
-    for (const QString &mode : {QStringLiteral("night"), QStringLiteral("day")}) {
-        auto *group = new QGroupBox(mode == QLatin1String("night") ? tr("Nacht-Farben")
-                                                                   : tr("Tag-Farben"),
-                                    content);
-        auto *form = new QFormLayout(group);
-        for (const auto &[key, label] : colorKeys) {
-            const QString fullKey = mode + QLatin1Char('_') + key;
-            auto *button = new QPushButton;
-            button->setFixedWidth(150);
-            m_colorButtons.insert(fullKey, button);
-            connect(button, &QPushButton::clicked, this, [this, fullKey, button] {
-                const QColor initial(m_pendingColors.value(fullKey));
-                const QColor picked =
-                    QColorDialog::getColor(initial, this, tr("Farbe wählen"));
-                if (!picked.isValid())
-                    return;
-                m_pendingColors.insert(fullKey, picked.name());
-                button->setText(picked.name());
-                button->setStyleSheet(colorButtonStyle(picked));
-                markCustomPreset();
-                updateContrastWarning();
-            });
-            form->addRow(label + QStringLiteral(":"), button);
-        }
-        layout->addWidget(group);
-    }
-
-    m_contrastLabel = new QLabel(content);
-    m_contrastLabel->setWordWrap(true);
-    layout->addWidget(m_contrastLabel);
-    layout->addStretch(1);
-
-    return wrapScrollable(content);
-}
-
 void SettingsPage::fillPresetCombo()
 {
     QSignalBlocker blocker(m_presetCombo);
@@ -1223,18 +1466,19 @@ void SettingsPage::markCustomPreset()
     selectPresetInCombo(m_pendingPreset);
 }
 
-QWidget *SettingsPage::buildDatabaseTab()
+QWidget *SettingsPage::buildDatabasePage()
 {
-    auto *content = new QWidget;
-    auto *layout = new QVBoxLayout(content);
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Spielstände"),
+                             tr("Spielstand wechseln, neu anlegen oder übernehmen. Diese "
+                                "Aktionen wirken sofort."),
+                             &cards);
 
-    auto *selectGroup = new QGroupBox(tr("Aktive Datenbank"), content);
-    auto *selectLayout = new QHBoxLayout(selectGroup);
-    m_dbCombo = new QComboBox;
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Aktiver Spielstand"), QString(), &body));
+    m_dbCombo = sized(new QComboBox, kFieldWidth);
     auto *switchButton = new QPushButton(tr("Wechseln"));
-    selectLayout->addWidget(m_dbCombo, 1);
-    selectLayout->addWidget(switchButton);
-    layout->addWidget(selectGroup);
+    body->addLayout(hbox({m_dbCombo, switchButton}));
 
     connect(switchButton, &QPushButton::clicked, this, [this] {
         const QString name = m_dbCombo->currentText();
@@ -1245,13 +1489,9 @@ QWidget *SettingsPage::buildDatabaseTab()
             QMessageBox::critical(this, tr("Datenbank"), error);
     });
 
-    auto *actionsRow = new QHBoxLayout;
-    auto *createButton = new QPushButton(tr("Neuer Spielstand …"), content);
-    auto *migrateButton = new QPushButton(tr("Legacy-Datenbank importieren…"), content);
-    actionsRow->addWidget(createButton);
-    actionsRow->addWidget(migrateButton);
-    actionsRow->addStretch(1);
-    layout->addLayout(actionsRow);
+    auto *createButton = new QPushButton(tr("Neuer Spielstand …"));
+    auto *migrateButton = new QPushButton(tr("Legacy-Datenbank importieren …"));
+    body->addLayout(hbox({createButton, migrateButton}));
 
     connect(createButton, &QPushButton::clicked, this, [this] {
         NewSaveWizard wizard(m_context, this);
@@ -1274,35 +1514,30 @@ QWidget *SettingsPage::buildDatabaseTab()
         }
     });
 
-    auto *startGroup = new QGroupBox(tr("Programmstart"), content);
-    auto *startLayout = new QVBoxLayout(startGroup);
+    cards->addWidget(makeCard(tr("Programmstart"), QString(), &body));
     auto *autoOpen =
-        new QCheckBox(tr("Beim Start immer den zuletzt verwendeten Spielstand öffnen"), startGroup);
+        new QCheckBox(tr("Beim Start immer den zuletzt verwendeten Spielstand öffnen"));
     autoOpen->setChecked(m_context.config().autoOpenLastDatabase());
     connect(autoOpen, &QCheckBox::toggled, this,
             [this](bool on) { m_context.config().setAutoOpenLastDatabase(on); });
-    startLayout->addWidget(autoOpen);
-    auto *autoOpenHint = new QLabel(
+    body->addWidget(autoOpen);
+    body->addWidget(foldableHint(
         tr("Ohne Haken erscheint beim Start der Startbildschirm mit deinen Spielständen. "
            "Mit Haken lässt er sich durch Gedrückthalten der Umschalttaste beim Start "
-           "trotzdem aufrufen."),
-        startGroup);
-    autoOpenHint->setObjectName(QStringLiteral("kpiCaption"));
-    autoOpenHint->setWordWrap(true);
-    startLayout->addWidget(autoOpenHint);
-    layout->addWidget(startGroup);
+           "trotzdem aufrufen.")));
     m_autoOpenCheck = autoOpen;
 
-    auto *pathInfo = new QLabel(content);
+    cards->addWidget(makeCard(tr("Datenordner"), QString(), &body));
+    auto *pathInfo = new QLabel(QDir::toNativeSeparators(m_context.paths().dataDir()));
+    pathInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
     pathInfo->setWordWrap(true);
-    pathInfo->setText(tr("Datenordner: %1\n(Änderbar über bootstrap.ini; "
-                         "Verschiebe-Assistent folgt in einem späteren Meilenstein.)")
-                          .arg(QDir::toNativeSeparators(m_context.paths().dataDir())));
-    layout->addWidget(pathInfo);
-    layout->addStretch(1);
+    body->addWidget(pathInfo);
+    body->addWidget(caption(tr("Änderbar über bootstrap.ini.")));
 
-    return wrapScrollable(content);
+    finishPage(cards);
+    return page;
 }
+
 
 void SettingsPage::refresh()
 {
@@ -1321,7 +1556,8 @@ void SettingsPage::refresh()
     m_importDirEdit->setText(QDir::toNativeSeparators(config.htmlExportDir()));
     m_importDirEdit->setPlaceholderText(
         QDir::toNativeSeparators(AppConfig::defaultHtmlExportDir(m_context.fmVersionId())));
-    m_graphicsGroup->setChecked(config.graphicsEnabled());
+    m_graphicsCheck->setChecked(config.graphicsEnabled());
+    m_graphicsBody->setVisible(config.graphicsEnabled());
     m_attributeMaskingCheck->setChecked(config.attributeMasking());
     {
         const ImportHistory::SeasonStart start = ImportHistory::seasonStartOf(m_context.database());
@@ -1381,7 +1617,8 @@ void SettingsPage::refresh()
     const auto leagues = Registration::leagueRulesFor(fmVersion);
     const bool uefaAvailable = Registration::uefaRulesFor(fmVersion);
     const Registration::Settings registration = m_context.registrationSettings();
-    m_registrationGroup->setVisible(!leagues.isEmpty() || uefaAvailable);
+    m_registrationCard->setVisible(!leagues.isEmpty() || uefaAvailable);
+    m_registrationUnavailable->setVisible(leagues.isEmpty() && !uefaAvailable);
     m_registrationLeagueCombo->clear();
     m_registrationLeagueCombo->addItem(tr("Standard (keine Beschränkung)"),
                                        Registration::leagueRulesKey(Registration::LeagueRules::None));
@@ -1475,6 +1712,7 @@ void SettingsPage::refresh()
     m_dbCombo->clear();
     m_dbCombo->addItems(m_context.availableDatabases());
     m_dbCombo->setCurrentText(m_context.currentDbName());
+    m_footerScope->setText(tr("Gilt für den Spielstand „%1“").arg(m_context.currentDbName()));
 }
 
 void SettingsPage::updateContrastWarning()
@@ -1520,7 +1758,7 @@ void SettingsPage::saveAll()
 
     // --- Club tab (per-database settings) ---
     config.setHtmlExportDir(m_importDirEdit->text().trimmed());
-    config.setGraphicsEnabled(m_graphicsGroup->isChecked());
+    config.setGraphicsEnabled(m_graphicsCheck->isChecked());
     config.setAttributeMasking(m_attributeMaskingCheck->isChecked());
     {
         // A different save (or masking switched) is read in afresh.

@@ -4,6 +4,7 @@
 
 - Squad List: wage budget and minimum wage now only appear for LaLiga. Other leagues have no such rule.
 - Release notes are now in English.
+- Settings redesigned: a section list on the left, short pages with clear cards, explanations folded away. All options are still there.
 
 ## 2.2.1 – 2026-11-06
 
