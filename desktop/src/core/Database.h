@@ -188,10 +188,11 @@ private:
     bool migrateV9ToV10();                // communication/eccentricity columns
     bool migrateV10ToV11();               // import log + player snapshots
     bool migrateV11ToV12();               // non-EU + not-registrable flags
-    bool migrateV12ToV13();               // youth override + minimum-wage exemption
+    bool migrateToV14();                  // player_registration_extra (2.2.3 fields)
     static QStringList createImportHistorySql(); // shared by create + migrate paths
     static QString createDwrsLatestSql(); // shared by create + migrate paths
-    static QString createPlayerRegistrationSql(); // ditto
+    static QString createPlayerRegistrationSql();
+    static QString createPlayerRegistrationExtraSql(); // ditto
     static QString createLongTermInjuriesSql();   // ditto
     static QString createDwrsRecalcsSql();        // ditto
     std::vector<Player> loadPlayersImpl(const QList<int> *ids); // nullptr = all

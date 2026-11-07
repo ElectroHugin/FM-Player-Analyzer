@@ -212,8 +212,9 @@ QWidget *NewSaveWizard::buildNamePage()
         m_profileSourceCombo->addItem(tr("Übernehmen von „%1“").arg(save), save);
     layout->addWidget(m_profileSourceCombo);
     auto *profileHint = new QLabel(
-        tr("Übernimmt Gewichte, Farben, Analyse-Optionen, Rollen, Taktiken und das Logo. "
-           "Verein, Spieler und Favoriten bringt der neue Spielstand selbst mit."),
+        tr("Übernimmt Gewichte, Farben, Analyse-Optionen, Rollen und Taktiken. Verein, "
+           "Logo, Spieler, Favoriten und den live verfolgten FM27-Spielstand bringt der neue "
+           "Spielstand selbst mit."),
         page);
     profileHint->setObjectName(QStringLiteral("kpiCaption"));
     profileHint->setWordWrap(true);

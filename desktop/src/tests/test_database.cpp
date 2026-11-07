@@ -753,6 +753,92 @@ private slots:
         db.close();
     }
 
+    void registrationExtraSurvivesOldAppWrites()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("extra.db"));
+        Database db(QStringLiteral("extra"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        std::vector<Player> batch(1);
+        batch[0].uid = QStringLiteral("loan");
+        batch[0].name = QStringLiteral("Loan");
+        QVERIFY(db.upsertPlayers(batch));
+        const int id = db.loadPlayers()[0].id;
+        PlayerRegistration r;
+        r.youth = PlayerRegistration::U21::Yes;
+        r.minWageExempt = true;
+        QVERIFY(db.setRegistrations({{id, r}}));
+        PlayerRegistration back = db.loadPlayers()[0].registration;
+        QVERIFY(back.youth == PlayerRegistration::U21::Yes && back.minWageExempt);
+        // 2.2.2's own write of the whole player_registration row (home-grown
+        // ticked) leaves the 2.2.3 fields alone.
+        QSqlQuery q(db.handle());
+        QVERIFY2(q.exec(QStringLiteral(
+                     "INSERT OR REPLACE INTO player_registration (player_id, home_grown, "
+                     "club_trained, u21, league_listed, uefa_listed, non_eu, league_blocked, "
+                     "uefa_blocked) VALUES (%1, 1, 0, -1, 0, 0, 0, 0, 0)")
+                     .arg(id)),
+                 qPrintable(q.lastError().text()));
+        back = db.loadPlayers()[0].registration;
+        QVERIFY(back.homeGrown);
+        QVERIFY(back.youth == PlayerRegistration::U21::Yes && back.minWageExempt);
+        // Back to defaults: no rows left.
+        QVERIFY(db.setRegistrations({{id, PlayerRegistration{}}}));
+        QVERIFY(q.exec(QStringLiteral("SELECT COUNT(*) FROM player_registration_extra")));
+        QVERIFY(q.next());
+        QCOMPARE(q.value(0).toInt(), 0);
+        db.close();
+    }
+
+    void migratesV13TestbuildColumnsToExtraTable()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v13.db"));
+        {
+            Database db(QStringLiteral("v13seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(1);
+            batch[0].uid = QStringLiteral("young");
+            batch[0].name = QStringLiteral("Young");
+            QVERIFY(db.upsertPlayers(batch));
+            const int id = db.loadPlayers()[0].id;
+            QSqlQuery q(db.handle());
+            // The 2.2.3 testbuild kept the fields as columns.
+            QVERIFY(q.exec(QStringLiteral("DROP TABLE player_registration_extra")));
+            QVERIFY(q.exec(QStringLiteral(
+                "ALTER TABLE player_registration ADD COLUMN youth INTEGER NOT NULL DEFAULT -1")));
+            QVERIFY(q.exec(QStringLiteral("ALTER TABLE player_registration ADD COLUMN "
+                                          "min_wage_exempt INTEGER NOT NULL DEFAULT 0")));
+            QVERIFY(q.exec(QStringLiteral("INSERT INTO player_registration (player_id, youth, "
+                                          "min_wage_exempt) VALUES (%1, 1, 1)")
+                               .arg(id)));
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 13")));
+            db.close();
+        }
+        Database db(QStringLiteral("v13migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        const PlayerRegistration r = db.loadPlayers()[0].registration;
+        QVERIFY(r.youth == PlayerRegistration::U21::Yes);
+        QVERIFY(r.minWageExempt);
+        db.close();
+    }
+
+    void refusesNewerSchema()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("future.db"));
+        {
+            Database db(QStringLiteral("futureseed"));
+            QVERIFY(db.open(dbFile));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 999")));
+            db.close();
+        }
+        Database db(QStringLiteral("future"));
+        QVERIFY(!db.open(dbFile));
+        QVERIFY(db.errorString().contains(QStringLiteral("newer version")));
+    }
+
     void migratesV5ToV6RebasesFreshnessOnFullUploads()
     {
         // Before v6 every import advanced the counter. Of uploads 1..12 only 5

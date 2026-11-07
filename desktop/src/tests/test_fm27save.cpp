@@ -114,6 +114,15 @@ private slots:
         truncated.chop(1);
         QVERIFY(!parseFogOfWar(truncated, &knowledge));
         QVERIFY(!parseFogOfWar(QByteArray("nonsense"), &knowledge));
+        // A damaged entry drops the whole block: no half-filled table.
+        knowledge.clear();
+        QByteArray damaged = fogSection({{17867, 97}, {68506, 120}});
+        QVERIFY(!parseFogOfWar(damaged, &knowledge));
+        QVERIFY(knowledge.isEmpty());
+        // ... and a failed read does not leave an earlier table behind.
+        QVERIFY(parseFogOfWar(fogSection({{17867, 97}}), &knowledge));
+        QVERIFY(!parseFogOfWar(damaged, &knowledge));
+        QVERIFY(knowledge.isEmpty());
     }
 
     void positionText_data()

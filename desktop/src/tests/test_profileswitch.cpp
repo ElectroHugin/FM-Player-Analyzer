@@ -204,13 +204,36 @@ private slots:
         QCOMPARE(context.config().profileSeed(), QStringLiteral("copy:neu"));
         QCOMPARE(context.config().weight(kFm24, kTop), 3.0);
         QVERIFY(hasTactic(context, QStringLiteral("Nur in Neu")));
-        QCOMPARE(context.profileImage(AppContext::ProfileImage::ClubLogo), m_logo);
-        QCOMPARE(context.userClub(), QString()); // club settings are not copied
+        // Club identity is not copied: no club settings, no logo.
+        QVERIFY(context.profileImage(AppContext::ProfileImage::ClubLogo).isEmpty());
+        QCOMPARE(context.userClub(), QString());
 
         // A copy is a copy: changing it leaves the source alone.
         QVERIFY(context.config().setWeight(kFm24, kTop, 5.0));
         QVERIFY(context.openDatabase(QStringLiteral("neu"), &error));
         QCOMPARE(context.config().weight(kFm24, kTop), 3.0);
+    }
+
+    void newSaveDoesNotCopyLiveSource()
+    {
+        AppContext context;
+        startApp(context);
+        QString error;
+        QVERIFY(context.openDatabase(QStringLiteral("neu"), &error));
+        QVERIFY(context.config().setLiveSavePath(QStringLiteral("C:/games/Career-A.fm")));
+        QVERIFY(context.config().setLiveSaveEnabled(true));
+        QVERIFY(context.config().setLiveSaveLastModified(1234));
+        QVERIFY2(context.createDatabase(QStringLiteral("karriere-b"), kFm24, QStringLiteral("neu"),
+                                        &error),
+                 qPrintable(error));
+        QVERIFY(!context.config().liveSaveEnabled());
+        QVERIFY(context.config().liveSavePath().isEmpty());
+        QCOMPARE(context.config().liveSaveLastModified(), qint64(0));
+        // The source keeps its live source.
+        QVERIFY(context.openDatabase(QStringLiteral("neu"), &error));
+        QVERIFY(context.config().liveSaveEnabled());
+        QCOMPARE(context.config().liveSavePath(), QStringLiteral("C:/games/Career-A.fm"));
+        QVERIFY(context.config().setLiveSaveEnabled(false));
     }
 
     void copyFromSaveLastUsedWith204()

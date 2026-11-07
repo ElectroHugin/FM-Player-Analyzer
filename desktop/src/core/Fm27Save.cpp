@@ -846,21 +846,25 @@ inline uint8_t scale(uint8_t raw)
 
 bool parseFogOfWar(const QByteArray &section, QHash<quint32, int> *out)
 {
+    // A damaged block is dropped as a whole: nothing reaches *out unless every
+    // entry is valid (a half-filled table would look like real scouting).
+    out->clear();
     if (section.size() < 21 || !section.startsWith(QByteArray("\x03\x01" "tad.", 6)))
         return false;
     const quint32 count = u32(section.constData() + 17);
     if (21 + qint64(count) * 5 != section.size())
         return false;
-    out->clear();
-    out->reserve(qsizetype(count));
+    QHash<quint32, int> parsed;
+    parsed.reserve(qsizetype(count));
     for (quint32 i = 0; i < count; ++i) {
         const char *entry = section.constData() + 21 + qint64(i) * 5;
         const int knowledge = uint8_t(entry[0]);
         const quint32 reference = u32(entry + 1);
         if (reference == 0 || knowledge > 100)
             return false;
-        out->insert(reference - 1, knowledge);
+        parsed.insert(reference - 1, knowledge);
     }
+    *out = std::move(parsed);
     return true;
 }
 
