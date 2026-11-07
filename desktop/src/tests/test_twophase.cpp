@@ -408,6 +408,47 @@ private slots:
         QCOMPARE(oopOptions.size(), 1);
         QCOMPARE(oopOptions[0].total, 147.5);
     }
+    void xiLimitCapsAGroupInBothLineUps()
+    {
+        // Three right-sided players for two places; the two best are limited
+        // (at most one may start): the best of them and the third start.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AMR", "IF"}, {"AMC", "W"}}),
+                          slotMap({{"MR", "WM"}, {"ML", "WM"}})));
+        const std::vector<Player> players = {
+            makePlayer(QStringLiteral("a"), QStringLiteral("AM (RC), M (RL)")),
+            makePlayer(QStringLiteral("b"), QStringLiteral("AM (RC), M (RL)")),
+            makePlayer(QStringLiteral("c"), QStringLiteral("AM (RC), M (RL)"))};
+        RoleRatings ratings;
+        for (const char *role : {"IF", "W", "WM"})
+            ratings[QLatin1String(role)] = {{QStringLiteral("a"), 90},
+                                            {QStringLiteral("b"), 85},
+                                            {QStringLiteral("c"), 60}};
+        SquadBuilder builder(defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+        XiLimit limit;
+        limit.uids = {QStringLiteral("a"), QStringLiteral("b")};
+        limit.max = 1;
+        const auto squad = builder.calculateTwoPhaseSquad(pool, QStringLiteral("T"), ratings, 0.5,
+                                                          false, {}, limit);
+        QSet<QString> ip, oop;
+        for (const XiCell &cell : squad.startingIp)
+            ip.insert(cell.playerUid);
+        for (const XiCell &cell : squad.startingOop)
+            oop.insert(cell.playerUid);
+        QCOMPARE(ip, (QSet<QString>{QStringLiteral("a"), QStringLiteral("c")}));
+        QCOMPARE(oop, ip);
+        // Without the cap the two best start.
+        const auto free = builder.calculateTwoPhaseSquad(pool, QStringLiteral("T"), ratings, 0.5,
+                                                         false);
+        QSet<QString> freeIp;
+        for (const XiCell &cell : free.startingIp)
+            freeIp.insert(cell.playerUid);
+        QCOMPARE(freeIp, (QSet<QString>{QStringLiteral("a"), QStringLiteral("b")}));
+    }
+
     void rolesOfBothLineUpsAreLabelledAlike()
     {
         // Every role of an FM27 tactic counts (not only the line-up without

@@ -9,6 +9,7 @@
 #include "Utils.h"
 
 #include <algorithm>
+#include <memory>
 #include <cmath>
 #include <cstdint>
 #include <limits>
@@ -105,7 +106,8 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
                                                    const QHash<QString, QString> &positions,
                                                    const QStringList &slotOrder,
                                                    const RoleRatings &ratings,
-                                                   bool applyAptWeight) const
+                                                   bool applyAptWeight,
+                                                   const XiLimit &xiLimit) const
 {
     SquadResult result;
 
@@ -209,19 +211,56 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
     xiFill = slotCount * q * xiScore + xiScore; // > any XI total + B-team part
 
     // Minimisation: cost = -value. Unlisted pairs (ineligible player) and the
-    // spare columns cost 0, which is how a slot stays empty.
+    // spare columns cost 0, which is how a slot stays empty. `penalty` is
+    // added to a limited player's XI value (see XiLimit); 0 = no limit.
     const int columnCount = static_cast<int>(columnPlayers.size()) + rowCount;
-    std::vector<std::vector<std::int64_t>> cost(
-        static_cast<size_t>(rowCount), std::vector<std::int64_t>(static_cast<size_t>(columnCount), 0));
-    for (int k = 0; k < slotCount; ++k) {
-        for (const Candidate &c : slotCandidates[static_cast<size_t>(k)]) {
-            const std::int64_t score = std::llround(c.score * scale);
-            const size_t column = static_cast<size_t>(columnOf.value(c.player));
-            cost[static_cast<size_t>(k)][column] = -(xiFill + score * xiScore);
-            cost[static_cast<size_t>(slotCount + k)][column] = -(bFill + score);
+    std::vector<std::vector<std::int64_t>> cost;
+    const auto buildCost = [&](std::int64_t penalty) {
+        cost.assign(static_cast<size_t>(rowCount),
+                    std::vector<std::int64_t>(static_cast<size_t>(columnCount), 0));
+        for (int k = 0; k < slotCount; ++k) {
+            for (const Candidate &c : slotCandidates[static_cast<size_t>(k)]) {
+                const std::int64_t score = std::llround(c.score * scale);
+                const size_t column = static_cast<size_t>(columnOf.value(c.player));
+                const bool limited = penalty > 0 && xiLimit.uids.contains(c.player->uid);
+                // A penalty beyond the fill reward leaves the slot empty.
+                const std::int64_t xiValue = xiFill + score * xiScore - (limited ? penalty : 0);
+                cost[static_cast<size_t>(k)][column] = xiValue > 0 ? -xiValue : 0;
+                cost[static_cast<size_t>(slotCount + k)][column] = -(bFill + score);
+            }
         }
+    };
+    const auto limitedInXi = [&](const std::vector<int> &a) {
+        int count = 0;
+        for (int row = 0; row < slotCount; ++row) {
+            const int column = a[static_cast<size_t>(row)];
+            if (column >= 0 && column < static_cast<int>(columnPlayers.size())
+                && cost[static_cast<size_t>(row)][static_cast<size_t>(column)] != 0
+                && xiLimit.uids.contains(columnPlayers[static_cast<size_t>(column)]->uid))
+                ++count;
+        }
+        return count;
+    };
+    buildCost(0);
+    std::vector<int> assignment = Assignment::solveMinCost(cost);
+    if (xiLimit.active() && limitedInXi(assignment) > xiLimit.max) {
+        // Smallest penalty that keeps the cap (Lagrangian relaxation).
+        std::int64_t lo = 0, hi = xiFill + (q + 1) * xiScore + 1;
+        std::vector<int> best;
+        while (lo + 1 < hi) {
+            const std::int64_t mid = lo + (hi - lo) / 2;
+            buildCost(mid);
+            std::vector<int> trial = Assignment::solveMinCost(cost);
+            if (limitedInXi(trial) <= xiLimit.max) {
+                hi = mid;
+                best = std::move(trial);
+            } else {
+                lo = mid;
+            }
+        }
+        buildCost(hi);
+        assignment = best.empty() ? Assignment::solveMinCost(cost) : std::move(best);
     }
-    const std::vector<int> assignment = Assignment::solveMinCost(cost);
 
     QHash<QString, XiCell> xi;
     QHash<QString, XiCell> bTeam;
@@ -394,15 +433,17 @@ SquadResult SquadBuilder::calculateSquadForTactic(const std::vector<const Player
                                                   const QString &tactic,
                                                   const RoleRatings &ratings,
                                                   bool applyAptWeight,
-                                                  const Bridges &fixedBridges) const
+                                                  const Bridges &fixedBridges,
+                                                  const XiLimit &xiLimit) const
 {
     if (!m_definitions.isTwoPhaseTactic(tactic)) {
         return calculateSquadAndSurplus(pool, m_definitions.tacticRoles().value(tactic),
                                         m_definitions.tacticSlotOrder(tactic), ratings,
-                                        applyAptWeight);
+                                        applyAptWeight, xiLimit);
     }
-    const TwoPhaseSquadResult twoPhase = calculateTwoPhaseSquad(
-        pool, tactic, ratings, m_config.ipSharePercent() / 100.0, applyAptWeight, fixedBridges);
+    const TwoPhaseSquadResult twoPhase =
+        calculateTwoPhaseSquad(pool, tactic, ratings, m_config.ipSharePercent() / 100.0,
+                               applyAptWeight, fixedBridges, xiLimit);
 
     SquadResult result;
     result.twoPhase = true;
@@ -549,7 +590,8 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
                                                          const RoleRatings &ratings,
                                                          double ipShare,
                                                          bool applyAptWeight,
-                                                         const QHash<QString, QPair<QString, QString>> &fixedBridges) const
+                                                         const QHash<QString, QPair<QString, QString>> &fixedBridges,
+                                                         const XiLimit &xiLimit) const
 {
     TwoPhaseSquadResult result;
     const auto tacticIt = m_definitions.twoPhaseTactics().constFind(tactic);
@@ -618,7 +660,7 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
     using Bridges = QHash<QString, QPair<QString, QString>>;
     const auto pickTeam = [&](const std::vector<const Player *> &available,
                               QHash<QString, XiCell> &ipTeam, QHash<QString, XiCell> &oopTeam,
-                              const Bridges &fixed) {
+                              const Bridges &fixed, const XiLimit &limit) {
         QSet<QString> fixedIp, fixedOop;
         for (auto it = fixed.cbegin(); it != fixed.cend(); ++it) {
             if (!it->first.isEmpty())
@@ -644,7 +686,6 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
         const int inBase = ipBase + nIp;
         const int outBase = inBase + nPlayers;
         const int oopBase = outBase + nPlayers;
-        MinCostFlow flow(oopBase + nOop);
 
         constexpr double kScale = 1e4;
         // > the largest possible total of scaled scores (11 x 2 x 100 x weights).
@@ -673,38 +714,88 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
         const std::int64_t halfReward =
             std::llround(maxScore * kScale) * std::max(nIp, nOop) + 1;
 
-        for (int k = 0; k < nIp; ++k)
-            flow.addEdge(0, ipBase + k, 1, 0);
-        for (int j = 0; j < nOop; ++j)
-            flow.addEdge(oopBase + j, 1, 1, 0);
-        std::vector<std::vector<int>> ipEdge(static_cast<size_t>(nPlayers), std::vector<int>(static_cast<size_t>(nIp), -1));
-        std::vector<std::vector<int>> oopEdge(static_cast<size_t>(nPlayers), std::vector<int>(static_cast<size_t>(nOop), -1));
-        for (int p = 0; p < nPlayers; ++p) {
-            bool anyIp = false;
-            bool anyOop = false;
+        // Builds and solves the flow; `penalty` is charged per placed player of
+        // the limited group (XiLimit), 0 = no limit.
+        struct Solved {
+            std::unique_ptr<MinCostFlow> flow;
+            std::vector<std::vector<int>> ipEdge, oopEdge;
+        };
+        const auto solveWith = [&](std::int64_t penalty) {
+            Solved solved;
+            solved.flow = std::make_unique<MinCostFlow>(oopBase + nOop);
+            MinCostFlow &flow = *solved.flow;
+            std::vector<std::vector<int>> &ipEdge = solved.ipEdge;
+            std::vector<std::vector<int>> &oopEdge = solved.oopEdge;
             for (int k = 0; k < nIp; ++k)
-                anyIp |= ipOpt[static_cast<size_t>(p)][static_cast<size_t>(k)].has_value();
+                flow.addEdge(0, ipBase + k, 1, 0);
             for (int j = 0; j < nOop; ++j)
-                anyOop |= oopOpt[static_cast<size_t>(p)][static_cast<size_t>(j)].has_value();
-            if (!anyIp || !anyOop)
-                continue; // must fit both line-ups
-            flow.addEdge(inBase + p, outBase + p, 1, 0);
-            for (int k = 0; k < nIp; ++k) {
-                if (const auto &o = ipOpt[static_cast<size_t>(p)][static_cast<size_t>(k)]) {
-                    ipEdge[static_cast<size_t>(p)][static_cast<size_t>(k)] = flow.addEdge(
-                        ipBase + k, inBase + p, 1,
-                        -(halfReward + std::llround(ipShare * o->score * kScale)));
+                flow.addEdge(oopBase + j, 1, 1, 0);
+            ipEdge.assign(static_cast<size_t>(nPlayers), std::vector<int>(static_cast<size_t>(nIp), -1));
+            oopEdge.assign(static_cast<size_t>(nPlayers), std::vector<int>(static_cast<size_t>(nOop), -1));
+            for (int p = 0; p < nPlayers; ++p) {
+                bool anyIp = false;
+                bool anyOop = false;
+                for (int k = 0; k < nIp; ++k)
+                    anyIp |= ipOpt[static_cast<size_t>(p)][static_cast<size_t>(k)].has_value();
+                for (int j = 0; j < nOop; ++j)
+                    anyOop |= oopOpt[static_cast<size_t>(p)][static_cast<size_t>(j)].has_value();
+                if (!anyIp || !anyOop)
+                    continue; // must fit both line-ups
+                const bool limited =
+                    penalty > 0 && limit.uids.contains(available[static_cast<size_t>(p)]->uid);
+                flow.addEdge(inBase + p, outBase + p, 1, limited ? penalty : 0);
+                for (int k = 0; k < nIp; ++k) {
+                    if (const auto &o = ipOpt[static_cast<size_t>(p)][static_cast<size_t>(k)]) {
+                        ipEdge[static_cast<size_t>(p)][static_cast<size_t>(k)] = flow.addEdge(
+                            ipBase + k, inBase + p, 1,
+                            -(halfReward + std::llround(ipShare * o->score * kScale)));
+                    }
+                }
+                for (int j = 0; j < nOop; ++j) {
+                    if (const auto &o = oopOpt[static_cast<size_t>(p)][static_cast<size_t>(j)]) {
+                        oopEdge[static_cast<size_t>(p)][static_cast<size_t>(j)] = flow.addEdge(
+                            outBase + p, oopBase + j, 1,
+                            -(halfReward + std::llround((1.0 - ipShare) * o->score * kScale)));
+                    }
                 }
             }
-            for (int j = 0; j < nOop; ++j) {
-                if (const auto &o = oopOpt[static_cast<size_t>(p)][static_cast<size_t>(j)]) {
-                    oopEdge[static_cast<size_t>(p)][static_cast<size_t>(j)] = flow.addEdge(
-                        outBase + p, oopBase + j, 1,
-                        -(halfReward + std::llround((1.0 - ipShare) * o->score * kScale)));
+
+            flow.solve(0, 1, std::min(nIp, nOop));
+            return solved;
+        };
+        const auto limitedPlaced = [&](const Solved &solved) {
+            int count = 0;
+            for (int p = 0; p < nPlayers; ++p) {
+                if (!limit.uids.contains(available[static_cast<size_t>(p)]->uid))
+                    continue;
+                for (const int e : solved.ipEdge[static_cast<size_t>(p)])
+                    if (e >= 0 && solved.flow->flowOn(e) > 0)
+                        ++count;
+            }
+            return count;
+        };
+        Solved solved = solveWith(0);
+        if (limit.active() && limitedPlaced(solved) > limit.max) {
+            // Smallest penalty that keeps the cap (Lagrangian relaxation); at
+            // the upper end placing a limited player is never worth it.
+            std::int64_t lo = 0;
+            std::int64_t hi = 2 * halfReward + 2 * (std::llround(maxScore * kScale) + 1);
+            Solved best;
+            while (lo + 1 < hi) {
+                const std::int64_t mid = lo + (hi - lo) / 2;
+                Solved trial = solveWith(mid);
+                if (limitedPlaced(trial) <= limit.max) {
+                    hi = mid;
+                    best = std::move(trial);
+                } else {
+                    lo = mid;
                 }
             }
+            solved = best.flow ? std::move(best) : solveWith(hi);
         }
-        flow.solve(0, 1, std::min(nIp, nOop));
+        const MinCostFlow &flow = *solved.flow;
+        const std::vector<std::vector<int>> &ipEdge = solved.ipEdge;
+        const std::vector<std::vector<int>> &oopEdge = solved.oopEdge;
 
         QSet<QString> taken;
         for (int p = 0; p < nPlayers; ++p) {
@@ -757,8 +848,8 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
     };
 
     const std::vector<const Player *> afterXi =
-        pickTeam(pool, result.startingIp, result.startingOop, fixedBridges);
-    result.depthPool = pickTeam(afterXi, result.bTeamIp, result.bTeamOop, {});
+        pickTeam(pool, result.startingIp, result.startingOop, fixedBridges, xiLimit);
+    result.depthPool = pickTeam(afterXi, result.bTeamIp, result.bTeamOop, {}, {});
     return result;
 }
 

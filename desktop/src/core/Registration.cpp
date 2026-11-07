@@ -102,10 +102,15 @@ int nonEuLimit(LeagueRules rules)
     case LeagueRules::LaLiga:
         return 3;
     case LeagueRules::SwissSuperLeague:
-        return 10; // the limit of 5 in the starting XI is not modelled
+        return 10; // plus at most 5 in the starting XI (nonEuStartingLimit)
     default:
         return 0; // Ligue 1 has one too, but no squad list (99 places)
     }
+}
+
+int nonEuStartingLimit(LeagueRules rules)
+{
+    return rules == LeagueRules::SwissSuperLeague ? 5 : 0;
 }
 
 // Only versions whose registry entry models the rules. fmDataVersion() falls

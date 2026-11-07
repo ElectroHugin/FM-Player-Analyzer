@@ -186,6 +186,54 @@ private slots:
         QVERIFY(!result.bTeam.value(QStringLiteral("DMCL")).isFilled());
     }
 
+    void xiLimitCapsAGroup()
+    {
+        // Two slots, the two best players are both in the limited group (at
+        // most one may start): the better of them starts with the best other
+        // player; the second limited player still makes the B-team.
+        std::vector<Player> players(3);
+        RoleRatings ratings;
+        const QString role = QStringLiteral("BPD-D");
+        const QStringList uids = {QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")};
+        const double values[] = {95, 90, 70};
+        for (int i = 0; i < 3; ++i) {
+            players[static_cast<size_t>(i)].uid = uids[i];
+            players[static_cast<size_t>(i)].name = uids[i];
+            players[static_cast<size_t>(i)].positionRaw = QStringLiteral("D (C)");
+            players[static_cast<size_t>(i)].assignedRoles = {role};
+            ratings[role].insert(uids[i], values[i]);
+        }
+        std::vector<const Player *> pool;
+        for (const Player &p : players)
+            pool.push_back(&p);
+        const QHash<QString, QString> positions{{QStringLiteral("DCL"), role},
+                                                {QStringLiteral("DCR"), role}};
+        const QStringList order{QStringLiteral("DCL"), QStringLiteral("DCR")};
+        XiLimit limit;
+        limit.uids = {QStringLiteral("a"), QStringLiteral("b")};
+        limit.max = 1;
+        const SquadResult capped =
+            m_builder->calculateSquadAndSurplus(pool, positions, order, ratings, true, limit);
+        QSet<QString> xi;
+        for (const XiCell &cell : capped.startingXi)
+            xi.insert(cell.playerUid);
+        QCOMPARE(xi, (QSet<QString>{QStringLiteral("a"), QStringLiteral("c")}));
+        bool bInB = false;
+        for (const XiCell &cell : capped.bTeam)
+            bInB |= cell.playerUid == QStringLiteral("b");
+        QVERIFY(bInB);
+        // A cap of 0 rather leaves a slot empty than breaks it.
+        limit.max = 0;
+        const SquadResult none =
+            m_builder->calculateSquadAndSurplus(pool, positions, order, ratings, true, limit);
+        int filled = 0;
+        for (const XiCell &cell : none.startingXi) {
+            QVERIFY(!limit.uids.contains(cell.playerUid));
+            filled += cell.isFilled() ? 1 : 0;
+        }
+        QCOMPARE(filled, 1);
+    }
+
 private:
     QTemporaryDir m_dir;
     std::unique_ptr<Definitions> m_definitions;

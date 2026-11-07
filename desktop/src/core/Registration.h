@@ -65,6 +65,10 @@ bool hasWageRules(LeagueRules rules);
 // (agreements, second passports), so it is marked by hand.
 int nonEuLimit(LeagueRules rules);
 
+// Most non-EU players in the league's starting XI; 0 = no such limit. Only
+// the Swiss Super League has one (5). Best XI honours it for league matches.
+int nonEuStartingLimit(LeagueRules rules);
+
 // League rule sets available for an FM version (rules are per game release).
 QList<LeagueRules> leagueRulesFor(const QString &fmVersionId);
 // Whether the UEFA club competitions (CL/EL/ECL, identical rules) are modelled.

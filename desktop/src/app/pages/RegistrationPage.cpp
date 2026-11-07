@@ -341,6 +341,21 @@ void RegistrationPage::refresh()
     m_updating = false;
 
     const bool ready = settings.active() && !userClub.isEmpty();
+    // A league chosen whose registration needs no list (99 places): say why
+    // there is nothing to build, and name a limit the game still checks.
+    QString noListNote;
+    if (settings.league != Registration::LeagueRules::None
+        && !Registration::restrictsSquad(settings.league)) {
+        const QString league = Registration::leagueDisplayName(settings.league);
+        noListNote = tr("%1 hat keine Meldeliste: Bis zu 99 Spieler sind spielberechtigt, ein "
+                        "Vorschlag wäre zwecklos.")
+                         .arg(league);
+        if (settings.league == Registration::LeagueRules::Ligue1)
+            noListNote += QLatin1Char(' ')
+                          + tr("Die einzige Grenze sind höchstens 4 Nicht-EU-Spieler im Kader. "
+                               "Sie entscheidet sich bei Transfers, nicht bei der Meldung, "
+                               "deshalb behalte sie dort im Blick.");
+    }
     for (QWidget *w : {m_controls, static_cast<QWidget *>(m_keeperBox),
                        static_cast<QWidget *>(m_outfieldBox),
                        static_cast<QWidget *>(m_summaryLabel), static_cast<QWidget *>(m_costLabel),
@@ -358,6 +373,8 @@ void RegistrationPage::refresh()
                 tr("Für %1 sind noch keine Registrierungsregeln hinterlegt. Die Meldeliste "
                    "steht für diese Version noch nicht zur Verfügung.")
                     .arg(fmDataVersion(versionId).displayName));
+        } else if (!noListNote.isEmpty()) {
+            m_hint->setText(noListNote);
         } else {
             m_hint->setText(
                 tr("Hier stellst du die Meldeliste für Liga und Europapokal zusammen. "
@@ -395,7 +412,8 @@ void RegistrationPage::refresh()
            "→ Registrierung — der Vorschlag rechnet sofort neu.")
             .arg(m_pool.size())
             .arg(m_tactics.isEmpty() ? tr("keine Taktik vorhanden")
-                                     : m_tactics.join(QStringLiteral(", "))));
+                                     : m_tactics.join(QStringLiteral(", ")))
+        + (noListNote.isEmpty() ? QString() : QStringLiteral("<br>") + noListNote));
 
     m_proposedUids.clear();
     m_checkableUids.clear();

@@ -580,6 +580,18 @@ void BestXiPage::rebuild()
     registrationPool.insert(registrationPool.end(), secondAll.begin(), secondAll.end());
     const bool restricted =
         listedCompetition && Registration::hasSavedList(registrationPool, competition);
+    // League starting-XI cap on non-EU players (Swiss Super League: 5).
+    XiLimit xiLimit;
+    if (competitionMode == kLeague) {
+        const int cap =
+            Registration::nonEuStartingLimit(m_context.registrationSettings().league);
+        if (cap > 0) {
+            xiLimit.max = cap;
+            for (const Player *player : registrationPool)
+                if (player->registration.nonEu)
+                    xiLimit.uids.insert(player->uid);
+        }
+    }
 
     // The first team of one pool; *full receives the unrestricted squad,
     // *note (optional) who the competition leaves out and *pool (optional) the
@@ -587,7 +599,8 @@ void BestXiPage::rebuild()
     const auto firstTeamOf = [&](const std::vector<const Player *> &club,
                                  const std::vector<const Player *> &second, SquadResult *full,
                                  QString *note, std::vector<const Player *> *pool) {
-        *full = m_context.squadBuilder().calculateSquadForTactic(club, tactic, ratings);
+        *full = m_context.squadBuilder().calculateSquadForTactic(club, tactic, ratings, true, {},
+                                                                 xiLimit);
         if (!restricted) {
             if (pool)
                 *pool = club;
@@ -629,7 +642,7 @@ void BestXiPage::rebuild()
             }
         }
         SquadResult first = m_context.squadBuilder().calculateSquadForTactic(
-            eligiblePlayers, tactic, ratings);
+            eligiblePlayers, tactic, ratings, true, {}, xiLimit);
         if (pool)
             *pool = std::move(eligiblePlayers);
         return first;
@@ -643,6 +656,13 @@ void BestXiPage::rebuild()
     std::vector<const Player *> firstPool;
     const SquadResult first =
         firstTeamOf(clubPlayers, secondPlayers, &full, &note, &firstPool);
+    if (xiLimit.max > 0) {
+        const QString capNote =
+            tr("In der Startelf stehen höchstens %1 Nicht-EU-Spieler (markiert: %2).")
+                .arg(xiLimit.max)
+                .arg(xiLimit.uids.size());
+        note = note.isEmpty() ? capNote : note + QLatin1Char(' ') + capNote;
+    }
     m_registrationNote->setText(note);
     m_registrationNote->setVisible(!note.isEmpty());
 
@@ -697,7 +717,7 @@ void BestXiPage::rebuild()
             }
         }
         const TwoPhaseSquadResult squad = m_context.squadBuilder().calculateTwoPhaseSquad(
-            firstPool, tactic, ratings, share / 100.0, true, bridges);
+            firstPool, tactic, ratings, share / 100.0, true, bridges, xiLimit);
         m_bridge.tactic = tactic;
         m_bridge.pool = firstPool;
         m_bridge.share = share / 100.0;
@@ -707,7 +727,7 @@ void BestXiPage::rebuild()
         m_bridge.optimum = bridges.isEmpty()
             ? m_bridge.current
             : SquadBuilder::startingValue(m_context.squadBuilder().calculateTwoPhaseSquad(
-                  firstPool, tactic, ratings, share / 100.0));
+                  firstPool, tactic, ratings, share / 100.0, true, {}, xiLimit));
         if (!bridges.isEmpty()) {
             const double loss = m_bridge.optimum - m_bridge.current;
             m_bridgeNote->setText(
