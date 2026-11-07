@@ -65,3 +65,24 @@
 - Squad registration rules for 11 FM27 leagues.
 - FM27 views included.
 - New look, new logo.
+
+## 1.6.2 – 2026-10-21
+
+- New About dialog (Help → About) with version, licence and support info.
+- "Copy system info" button for bug reports.
+- Version shown at the bottom of the sidebar.
+
+## 1.6.1 – 2026-10-21
+
+- Player tables: long text columns (club, position, personality) are shortened so role columns stay visible. Full text in the tooltip.
+
+## 1.6.0 – 2026-10-18
+
+- Import CSV files, not just HTML.
+- Clear message when columns are missing in an import.
+- Linux version (AppImage).
+- Best XI: DL/DR now need position D (L)/D (R), like in the game. Pure wing-backs only play WBL/WBR.
+
+## 1.5.0 – 2026-10-11
+
+- New sidebar: pages grouped, with tabs on top. Fewer entries, easier to find.
