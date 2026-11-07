@@ -524,6 +524,13 @@ private slots:
         settings.league = Registration::LeagueRules::Bundesliga;
         const auto none = Registration::quotaFor(Registration::Competition::League, settings);
         QCOMPARE(none.wageBudget, 0.0);
+        // Other leagues with a squad list have no wage rules either.
+        settings.league = Registration::LeagueRules::PremierLeague;
+        const auto premier = Registration::quotaFor(Registration::Competition::League, settings);
+        QCOMPARE(premier.wageBudget, 0.0);
+        QCOMPARE(premier.minWage, 0.0);
+        QVERIFY(Registration::hasWageRules(Registration::LeagueRules::LaLiga));
+        QVERIFY(!Registration::hasWageRules(Registration::LeagueRules::SerieA));
         // So does the UEFA list.
         settings.league = Registration::LeagueRules::LaLiga;
         const auto uefa = Registration::quotaFor(Registration::Competition::Uefa, settings);

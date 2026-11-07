@@ -4,10 +4,10 @@
 
 > **Was der Analyzer davon umsetzt:** Kadergröße, Mindestzahl im Land ausgebildeter
 > Spieler und Mindestzahl im Verein ausgebildeter Spieler (als Höchstzahl der übrigen
-> Plätze) sowie die U21-Befreiung, wo sie belegt ist (Premier League, Ukraine). Seit
-> 2.2.1 lassen sich auf der Meldeliste zusätzlich ein Gehaltsbudget (Summe der
+> Plätze) sowie die U21-Befreiung, wo sie belegt ist (Premier League, Ukraine). Für
+> LaLiga lassen sich auf der Meldeliste zusätzlich (seit 2.2.1, ab 2.2.2 nur dort) ein Gehaltsbudget (Summe der
 > gemeldeten Spieler) und ein Mindestgehalt eintragen, beide optional, weil sich die
-> Beträge im Spiel ändern (z. B. LaLiga). Ligen mit 99 Plätzen (Bundesliga, Ligue 1,
+> Beträge im Spiel ändern. Ligen mit 99 Plätzen (Bundesliga, Ligue 1,
 > Österreich) haben keine Meldeliste. Nicht
 > umgesetzt: Ausländer- und Nicht-EU-Grenzen, Startelf-Grenzen,
 > Torhüter-Regeln der Süper Lig und Jugend-Ausnahmen, die von der Nationalität abhängen.

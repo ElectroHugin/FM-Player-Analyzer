@@ -379,7 +379,8 @@ void RegistrationPage::refresh()
             break;
     }
     loadWageFields();
-    m_wageRow->setVisible(comp == Registration::Competition::League);
+    m_wageRow->setVisible(comp == Registration::Competition::League
+                          && Registration::hasWageRules(settings.league));
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     const auto ranked = Registration::rankPool(m_context.squadBuilder(), m_context.definitions(),

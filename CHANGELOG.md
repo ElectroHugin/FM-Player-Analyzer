@@ -1,8 +1,13 @@
 # Changelog
 
+## 2.2.2 – 2026-11-07
+
+- Squad List: wage budget and minimum wage now only appear for LaLiga. Other leagues have no such rule.
+- Release notes are now in English.
+
 ## 2.2.1 – 2026-11-06
 
-- Squad List: set a wage budget and a minimum wage for the league (per week, month or year).
+- Squad List (LaLiga): set a wage budget and a minimum wage (per week, month or year).
 - The suggested list never picks players below the minimum wage and stays within the budget.
 - With a budget, players with promised playing time come first. Your starting XI is never weakened.
 - Counters, warnings and the wage column show where your selected list stands.

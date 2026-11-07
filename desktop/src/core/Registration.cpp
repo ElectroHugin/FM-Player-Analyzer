@@ -91,6 +91,11 @@ bool restrictsSquad(LeagueRules rules)
     }
 }
 
+bool hasWageRules(LeagueRules rules)
+{
+    return rules == LeagueRules::LaLiga;
+}
+
 // Only versions whose registry entry models the rules. fmDataVersion() falls
 // back to the default version for unknown ids, so the id must match exactly.
 static bool modelsRegistrationRules(const QString &fmVersionId)
@@ -230,7 +235,7 @@ Quota quotaFor(Competition competition, const Settings &settings)
         break;
     }
     quota.minGoalkeepers = settings.minGoalkeepers;
-    if (restrictsSquad(settings.league)) {
+    if (hasWageRules(settings.league)) {
         quota.wageBudget = std::max(0.0, settings.wageBudget);
         quota.minWage = std::max(0.0, settings.minWage);
     }

@@ -55,6 +55,10 @@ QString cupDisplayName(LeagueRules rules);
 // there is no squad list to build: every player is eligible.
 bool restrictsSquad(LeagueRules rules);
 
+// Whether the league caps wages on the squad list (wage budget, minimum wage).
+// Only LaLiga does.
+bool hasWageRules(LeagueRules rules);
+
 // League rule sets available for an FM version (rules are per game release).
 QList<LeagueRules> leagueRulesFor(const QString &fmVersionId);
 // Whether the UEFA club competitions (CL/EL/ECL, identical rules) are modelled.
