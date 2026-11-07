@@ -108,6 +108,32 @@ int nonEuLimit(LeagueRules rules)
     }
 }
 
+YouthRule youthRule(LeagueRules rules)
+{
+    switch (rules) {
+    case LeagueRules::PremierLeague:
+    case LeagueRules::UkrainianPremierLeague:
+        return YouthRule::U21;
+    case LeagueRules::LaLiga:
+        return YouthRule::U18Eu;
+    default:
+        return YouthRule::None;
+    }
+}
+
+QString youthLabel(YouthRule rule)
+{
+    switch (rule) {
+    case YouthRule::U21:
+        return QStringLiteral("U21");
+    case YouthRule::U18Eu:
+        return QStringLiteral("U18 EU");
+    case YouthRule::None:
+        break;
+    }
+    return {};
+}
+
 int nonEuStartingLimit(LeagueRules rules)
 {
     return rules == LeagueRules::SwissSuperLeague ? 5 : 0;
@@ -167,6 +193,46 @@ bool expireU21Override(PlayerRegistration &registration, int oldAge, int newAge)
     return true;
 }
 
+U21Status u18StatusByAge(int age, const QDate &gameDate)
+{
+    if (age <= 0)
+        return U21Status::Uncertain;
+    // The cut-off is 1 January within the season (seasons start mid-year):
+    // from January on the player's age then is his age now or one less.
+    const bool pastCutoff = gameDate.isValid() && gameDate.month() < 7;
+    const bool beforeCutoff = gameDate.isValid() && !pastCutoff;
+    if (age <= 17)
+        return U21Status::Yes;
+    if (age == 18)
+        return pastCutoff ? U21Status::Yes : U21Status::Uncertain;
+    if (age == 19)
+        return beforeCutoff ? U21Status::No : U21Status::Uncertain;
+    return U21Status::No;
+}
+
+U21Status u18EuStatus(const Player &player, const QDate &gameDate)
+{
+    switch (player.registration.youth) {
+    case PlayerRegistration::U21::Yes:
+        return U21Status::Yes;
+    case PlayerRegistration::U21::No:
+        return U21Status::No;
+    case PlayerRegistration::U21::Auto:
+        break;
+    }
+    if (player.registration.nonEu)
+        return U21Status::No;
+    return u18StatusByAge(player.age, gameDate);
+}
+
+bool expireYouthOverride(PlayerRegistration &registration, int oldAge, int newAge)
+{
+    if (registration.youth == PlayerRegistration::U21::Auto || newAge <= oldAge || newAge < 20)
+        return false;
+    registration.youth = PlayerRegistration::U21::Auto;
+    return true;
+}
+
 QString expiredU21SettingKey()
 {
     return QStringLiteral("registration_u21_expired");
@@ -212,36 +278,37 @@ Quota quotaFor(Competition competition, const Settings &settings)
     // Size and the trained-in-country (home-grown) / club-trained minimums
     // become nested maximums: e.g. 25 places with at least 8 home-grown, 4 of
     // them club-trained = at most 17 non-home-grown and 21 non-club-trained.
-    const auto set = [&quota](int size, int minHomeGrown, int minClubTrained, bool u21Exempt) {
+    const auto set = [&quota, &settings](int size, int minHomeGrown, int minClubTrained) {
         quota.maxSize = size;
         quota.maxNonHomeGrown = size - minHomeGrown;
         quota.maxNonClubTrained = size - minClubTrained;
-        quota.u21Exempt = u21Exempt;
+        quota.youth = youthRule(settings.league);
     };
+    quota.gameDate = settings.gameDate;
     switch (settings.league) {
     case LeagueRules::PremierLeague:
-        set(25, 8, 0, true); // U21 need no slot
+        set(25, 8, 0); // U21 need no slot
         break;
     case LeagueRules::LaLiga:
-        set(25, 0, 0, false); // U19-EU exemption not modelled
+        set(25, 0, 0); // EU players aged 18 or younger need no slot
         break;
     case LeagueRules::SerieA:
-        set(25, 8, 4, false);
+        set(25, 8, 4);
         break;
     case LeagueRules::LigaPortugal:
-        set(68, 10, 0, false); // clubs with a B team; without one not documented
+        set(68, 10, 0); // clubs with a B team; without one not documented
         break;
     case LeagueRules::SwissSuperLeague:
-        set(25, 8, 0, false);
+        set(25, 8, 0);
         break;
     case LeagueRules::RussianPremierLiga:
-        set(55, 8, 4, false); // foreigner limit and domestic U18 exemption not modelled
+        set(55, 8, 4); // foreigner limit and domestic U18 exemption not modelled
         break;
     case LeagueRules::UkrainianPremierLeague:
-        set(25, 8, 4, true); // U21 need no slot
+        set(25, 8, 4); // U21 need no slot
         break;
     case LeagueRules::SuperLig:
-        set(28, 0, 0, false); // foreigner limits and domestic U21 exemption not modelled
+        set(28, 0, 0); // foreigner limits and domestic U21 exemption not modelled
         break;
     case LeagueRules::Bundesliga:
     case LeagueRules::Ligue1:
@@ -278,7 +345,7 @@ double weeklyWage(const Player &player)
 
 bool belowMinWage(const Player &player, const Quota &quota)
 {
-    if (quota.minWage <= 0.0)
+    if (quota.minWage <= 0.0 || player.registration.minWageExempt)
         return false;
     const double wage = wageToWeekly(player.wageRaw);
     // FM prints rounded wages ("€12K"): allow half a percent below the line.
@@ -325,11 +392,24 @@ bool isExempt(const Player &player, Competition competition)
     return competition == Competition::Uefa ? isListBEligible(player) : isU21(player);
 }
 
+U21Status youthStatus(const Player &player, const Quota &quota)
+{
+    switch (quota.youth) {
+    case YouthRule::U21:
+        return u21Status(player);
+    case YouthRule::U18Eu:
+        return u18EuStatus(player, quota.gameDate);
+    case YouthRule::None:
+        break;
+    }
+    return U21Status::No;
+}
+
 bool isExempt(const Player &player, Competition competition, const Quota &quota)
 {
     if (competition == Competition::Uefa)
         return isListBEligible(player);
-    return quota.u21Exempt && isU21(player);
+    return youthStatus(player, quota) == U21Status::Yes;
 }
 
 Category category(const Player &player)

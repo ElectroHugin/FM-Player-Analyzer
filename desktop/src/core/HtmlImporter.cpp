@@ -701,11 +701,17 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
             applyColumn(player, fullName, cells.at(column).trimmed());
         if (player.name.isEmpty())
             player.name = cells.at(nameCol).trimmed();
-        if (player.id > 0
-            && Registration::expireU21Override(player.registration, ageBefore, player.age)) {
-            expiredU21.push_back({player.id, player.registration});
-            expiredU21Uids << player.uid;
-            result.expiredU21Names << player.name;
+        if (player.id > 0) {
+            const bool u21Expired =
+                Registration::expireU21Override(player.registration, ageBefore, player.age);
+            const bool youthExpired =
+                Registration::expireYouthOverride(player.registration, ageBefore, player.age);
+            if (u21Expired || youthExpired)
+                expiredU21.push_back({player.id, player.registration});
+            if (u21Expired) {
+                expiredU21Uids << player.uid;
+                result.expiredU21Names << player.name;
+            }
         }
 
         result.affectedUids << ref.uid;
@@ -872,11 +878,16 @@ QString HtmlImporter::forceUpdateSinglePlayer(const ImportTable &table, Database
         db.setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt();
     // A birthday shown by the refresh ends a manual U21 decision, as on import.
     std::vector<std::pair<int, PlayerRegistration>> expiredU21;
-    if (Registration::expireU21Override(player.registration, existing->age, player.age))
+    const bool u21Expired =
+        Registration::expireU21Override(player.registration, existing->age, player.age);
+    const bool youthExpired =
+        Registration::expireYouthOverride(player.registration, existing->age, player.age);
+    if (u21Expired || youthExpired)
         expiredU21.push_back({player.id, player.registration});
 
     std::vector<Player> batch{std::move(player)};
-    if (!db.upsertPlayers(batch) || !storeExpiredU21(db, expiredU21, {targetUid}))
+    if (!db.upsertPlayers(batch) || !storeExpiredU21(db, expiredU21,
+                                                    u21Expired ? QStringList{targetUid} : QStringList{}))
         return fail(ImportErrorCode::Other, QString(), db.errorString());
     return fileName;
 }

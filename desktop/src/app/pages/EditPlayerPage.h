@@ -4,6 +4,7 @@
 
 class QCheckBox;
 class QComboBox;
+class QFormLayout;
 class QGroupBox;
 class QLabel;
 class QLineEdit;
@@ -50,6 +51,9 @@ private:
     QCheckBox *m_clubTrainedCheck = nullptr;
     QCheckBox *m_nonEuCheck = nullptr;
     QComboBox *m_u21Combo = nullptr;
+    QComboBox *m_youthCombo = nullptr;      // league youth rule other than U21 (LaLiga)
+    QFormLayout *m_youthForm = nullptr;
+    QCheckBox *m_minWageExemptCheck = nullptr;
     QPushButton *m_saveButton = nullptr;
 
     QString m_currentUid;

@@ -24,7 +24,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 12;
+constexpr int kSchemaVersion = 13;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -40,7 +40,7 @@ QStringList splitRolesFromDb(const QString &value)
 }
 
 // Reads home_grown, club_trained, u21, league_listed, uefa_listed, non_eu,
-// league_blocked, uefa_blocked starting at column `first`.
+// league_blocked, uefa_blocked, youth, min_wage_exempt starting at column `first`.
 PlayerRegistration registrationFromRow(const QSqlQuery &q, int first)
 {
     PlayerRegistration r;
@@ -55,6 +55,11 @@ PlayerRegistration registrationFromRow(const QSqlQuery &q, int first)
     r.nonEu = q.value(first + 5).toInt() != 0;
     r.leagueBlocked = q.value(first + 6).toInt() != 0;
     r.uefaBlocked = q.value(first + 7).toInt() != 0;
+    const int youth = q.value(first + 8).toInt();
+    r.youth = youth == 1   ? PlayerRegistration::U21::Yes
+              : youth == 0 ? PlayerRegistration::U21::No
+                           : PlayerRegistration::U21::Auto;
+    r.minWageExempt = q.value(first + 9).toInt() != 0;
     return r;
 }
 
@@ -234,6 +239,8 @@ bool Database::initSchema()
             ok = migrateV10ToV11();
         if (ok && version < 12)
             ok = migrateV11ToV12();
+        if (ok && version < 13)
+            ok = migrateV12ToV13();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -453,7 +460,37 @@ QString Database::createPlayerRegistrationSql()
                           " uefa_listed INTEGER NOT NULL DEFAULT 0,"
                           " non_eu INTEGER NOT NULL DEFAULT 0,"
                           " league_blocked INTEGER NOT NULL DEFAULT 0,"
-                          " uefa_blocked INTEGER NOT NULL DEFAULT 0)");
+                          " uefa_blocked INTEGER NOT NULL DEFAULT 0,"
+                          " youth INTEGER NOT NULL DEFAULT -1,"
+                          " min_wage_exempt INTEGER NOT NULL DEFAULT 0)");
+}
+
+bool Database::migrateV12ToV13()
+{
+    // League youth-exemption override (e.g. LaLiga U18 EU) and "minimum wage
+    // does not apply" (e.g. loans). A database that went through v5 after this
+    // change already has the columns.
+    QSet<QString> existing;
+    QSqlQuery info(m_db);
+    if (!info.exec(QStringLiteral("PRAGMA table_info(player_registration)"))) {
+        m_error = info.lastError().text();
+        return false;
+    }
+    while (info.next())
+        existing.insert(info.value(1).toString());
+    info.finish();
+    const std::pair<const char *, int> columns[] = {{"youth", -1}, {"min_wage_exempt", 0}};
+    for (const auto &[column, defaultValue] : columns) {
+        const QString name = QString::fromLatin1(column);
+        if (existing.contains(name))
+            continue;
+        if (!exec(QStringLiteral("ALTER TABLE player_registration ADD COLUMN %1 INTEGER NOT NULL "
+                                 "DEFAULT %2")
+                      .arg(name)
+                      .arg(defaultValue)))
+            return false;
+    }
+    return true;
 }
 
 bool Database::migrateV4ToV5()
@@ -654,10 +691,10 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             });
     QHash<int, PlayerRegistration> registrationById;
     forRows(QStringLiteral("SELECT player_id, home_grown, club_trained, u21, league_listed, "
-                           "uefa_listed, non_eu, league_blocked, uefa_blocked "
+                           "uefa_listed, non_eu, league_blocked, uefa_blocked, youth, min_wage_exempt "
                            "FROM player_registration"),
             QStringLiteral("SELECT player_id, home_grown, club_trained, u21, league_listed, "
-                           "uefa_listed, non_eu, league_blocked, uefa_blocked "
+                           "uefa_listed, non_eu, league_blocked, uefa_blocked, youth, min_wage_exempt "
                            "FROM player_registration WHERE player_id IN (%1)"),
             [&](const QSqlQuery &q) {
                 registrationById.insert(q.value(0).toInt(), registrationFromRow(q, 1));
@@ -979,9 +1016,9 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     query.prepare(QStringLiteral(
         "INSERT OR IGNORE INTO player_registration "
         "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed, non_eu, "
-        "league_blocked, uefa_blocked) "
+        "league_blocked, uefa_blocked, youth, min_wage_exempt) "
         "SELECT ?, home_grown, club_trained, u21, league_listed, uefa_listed, non_eu, "
-        "league_blocked, uefa_blocked "
+        "league_blocked, uefa_blocked, youth, min_wage_exempt "
         "FROM player_registration WHERE player_id = ?"));
     query.bindValue(0, goodPlayerId);
     query.bindValue(1, badPlayerId);
@@ -1633,8 +1670,8 @@ bool Database::setRegistrations(const std::vector<std::pair<int, PlayerRegistrat
     upsert.prepare(QStringLiteral(
         "INSERT OR REPLACE INTO player_registration "
         "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed, non_eu, "
-        "league_blocked, uefa_blocked) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+        "league_blocked, uefa_blocked, youth, min_wage_exempt) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
     for (const auto &[playerId, r] : byId) {
         QSqlQuery &query = r.isDefault() ? remove : upsert;
         query.bindValue(0, playerId);
@@ -1647,6 +1684,8 @@ bool Database::setRegistrations(const std::vector<std::pair<int, PlayerRegistrat
             query.bindValue(6, r.nonEu ? 1 : 0);
             query.bindValue(7, r.leagueBlocked ? 1 : 0);
             query.bindValue(8, r.uefaBlocked ? 1 : 0);
+            query.bindValue(9, static_cast<int>(r.youth));
+            query.bindValue(10, r.minWageExempt ? 1 : 0);
         }
         if (!query.exec()) {
             m_error = query.lastError().text();

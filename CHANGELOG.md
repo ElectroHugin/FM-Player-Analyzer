@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.3 – unreleased
+
+- Squad Registration (LaLiga): mark a player with "Minimum wage does not apply (e.g. loan)". He can then be registered although his wage is below the minimum.
+- Squad Registration (LaLiga): EU players aged 18 or younger on 1 January need no slot ("U18 EU"), instead of the U21 rule that LaLiga does not have. The in-game date decides unclear ages, or you set them by hand.
+
 ## 2.2.2 – 2026-11-07
 
 - Squad Registration: wage budget and minimum wage now only appear for LaLiga. Other leagues have no such rule.

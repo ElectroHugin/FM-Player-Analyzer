@@ -27,6 +27,12 @@ struct PlayerRegistration {
     // assistant never proposes him for that list.
     bool leagueBlocked = false;
     bool uefaBlocked = false;
+    // Manual override of the league's own youth exemption where it differs
+    // from U21 (LaLiga: EU players aged 18 or younger on 1 January).
+    U21 youth = U21::Auto;
+    // The league's minimum wage does not apply (e.g. a loan where the club
+    // pays only part of the wage, which the export does not show).
+    bool minWageExempt = false;
 
     bool isDefault() const { return *this == PlayerRegistration{}; }
     bool operator==(const PlayerRegistration &) const = default;

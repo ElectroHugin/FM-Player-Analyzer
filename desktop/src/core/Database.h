@@ -188,6 +188,7 @@ private:
     bool migrateV9ToV10();                // communication/eccentricity columns
     bool migrateV10ToV11();               // import log + player snapshots
     bool migrateV11ToV12();               // non-EU + not-registrable flags
+    bool migrateV12ToV13();               // youth override + minimum-wage exemption
     static QStringList createImportHistorySql(); // shared by create + migrate paths
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     static QString createPlayerRegistrationSql(); // ditto

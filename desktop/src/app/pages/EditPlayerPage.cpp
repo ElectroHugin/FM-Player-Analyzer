@@ -117,12 +117,26 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     registrationLayout->addWidget(m_homeGrownCheck);
     registrationLayout->addWidget(m_clubTrainedCheck);
     registrationLayout->addWidget(m_nonEuCheck);
+    m_minWageExemptCheck =
+        new QCheckBox(tr("Mindestgehalt gilt nicht (z. B. Leihe)"), m_registrationBox);
+    m_minWageExemptCheck->setToolTip(
+        tr("Im Spiel registrierbar, obwohl das Gehalt unter dem Mindestgehalt liegt, z. B. "
+           "bei einer Leihe mit Gehaltsanteil. Fürs Gehaltsbudget zählt weiter das Gehalt "
+           "aus dem Export."));
+    registrationLayout->addWidget(m_minWageExemptCheck);
     auto *u21Form = new QFormLayout;
     m_u21Combo = new QComboBox(m_registrationBox);
     m_u21Combo->setToolTip(
         tr("U21-Spieler brauchen keinen Platz in der Meldeliste. Automatisch: bis 20 ja, "
            "ab 22 nein, mit 21 unklar (zählt vorsichtshalber als nicht U21)."));
     u21Form->addRow(tr("U21:"), m_u21Combo);
+    m_youthCombo = new QComboBox(m_registrationBox);
+    m_youthCombo->setToolTip(
+        tr("LaLiga: EU-Spieler, die am 1. Januar der Saison höchstens 18 sind, brauchen "
+           "keinen Platz in der Meldeliste. Automatisch nach Alter, Ingame-Datum und "
+           "Nicht-EU-Markierung; Ja/Nein entscheidet von Hand."));
+    u21Form->addRow(tr("U18 EU:"), m_youthCombo);
+    m_youthForm = u21Form;
     registrationLayout->addLayout(u21Form);
     adminColumn->addWidget(m_registrationBox);
     // Club-trained implies home-grown; unticking home-grown drops club-trained.
@@ -307,6 +321,30 @@ void EditPlayerPage::showEditor()
     m_u21Combo->addItem(tr("Nein"), static_cast<int>(PlayerRegistration::U21::No));
     m_u21Combo->setCurrentIndex(
         std::max(0, m_u21Combo->findData(static_cast<int>(player->registration.u21))));
+    // U21 matters where the league exempts U21 players and for UEFA list B.
+    const Registration::YouthRule youthRule =
+        Registration::youthRule(registrationSettings.league);
+    m_youthForm->setRowVisible(m_u21Combo, youthRule != Registration::YouthRule::U18Eu
+                                               || registrationSettings.uefa);
+    m_youthForm->setRowVisible(m_youthCombo, youthRule == Registration::YouthRule::U18Eu);
+    PlayerRegistration autoYouth = player->registration;
+    autoYouth.youth = PlayerRegistration::U21::Auto;
+    Player autoPlayer = *player;
+    autoPlayer.registration = autoYouth;
+    const Registration::U21Status autoU18 =
+        Registration::u18EuStatus(autoPlayer, registrationSettings.gameDate);
+    m_youthCombo->clear();
+    m_youthCombo->addItem(autoU18 == Registration::U21Status::Yes ? tr("Automatisch (ja)")
+                          : autoU18 == Registration::U21Status::No
+                              ? tr("Automatisch (nein)")
+                              : tr("Automatisch (unklar)"),
+                          static_cast<int>(PlayerRegistration::U21::Auto));
+    m_youthCombo->addItem(tr("Ja"), static_cast<int>(PlayerRegistration::U21::Yes));
+    m_youthCombo->addItem(tr("Nein"), static_cast<int>(PlayerRegistration::U21::No));
+    m_youthCombo->setCurrentIndex(
+        std::max(0, m_youthCombo->findData(static_cast<int>(player->registration.youth))));
+    m_minWageExemptCheck->setVisible(Registration::hasWageRules(registrationSettings.league));
+    m_minWageExemptCheck->setChecked(player->registration.minWageExempt);
 
     // Tactical profile only for own club players (legacy).
     m_tacticalColumn->setVisible(isClubPlayer);
@@ -376,6 +414,11 @@ void EditPlayerPage::save()
             updated.registration.nonEu = m_nonEuCheck->isChecked();
         updated.registration.u21 =
             static_cast<PlayerRegistration::U21>(m_u21Combo->currentData().toInt());
+        if (m_youthForm->isRowVisible(m_youthCombo))
+            updated.registration.youth =
+                static_cast<PlayerRegistration::U21>(m_youthCombo->currentData().toInt());
+        if (!m_minWageExemptCheck->isHidden())
+            updated.registration.minWageExempt = m_minWageExemptCheck->isChecked();
         Registration::normalize(updated.registration);
     }
 

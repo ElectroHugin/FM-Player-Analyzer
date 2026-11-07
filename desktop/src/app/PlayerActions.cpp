@@ -100,32 +100,52 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
         store(r);
     });
 
-    sub->addSeparator();
-    // Show what "automatic" currently resolves to for this player.
-    const Registration::U21Status autoStatus = Registration::u21StatusByAge(player.age);
-    const QString autoText = autoStatus == Registration::U21Status::Yes
-                                 ? ActionText::tr("ja")
-                             : autoStatus == Registration::U21Status::No
-                                 ? ActionText::tr("nein")
-                                 : ActionText::tr("unklar");
-    auto *u21Group = new QActionGroup(sub);
-    const auto addU21 = [&](const QString &text, U21 value) {
-        auto *action = sub->addAction(text);
-        action->setCheckable(true);
-        action->setChecked(current.u21 == value);
-        u21Group->addAction(action);
-        QObject::connect(action, &QAction::triggered, parent, [current, store, value] {
-            PlayerRegistration r = current;
-            r.u21 = value;
-            store(r);
-        });
+    const Registration::Settings settings = context.registrationSettings();
+    const Registration::YouthRule youthRule = Registration::youthRule(settings.league);
+    const auto statusText = [](Registration::U21Status status) {
+        return status == Registration::U21Status::Yes  ? ActionText::tr("ja")
+               : status == Registration::U21Status::No ? ActionText::tr("nein")
+                                                       : ActionText::tr("unklar");
     };
-    addU21(ActionText::tr("U21 automatisch nach Alter (%1)").arg(autoText), U21::Auto);
-    addU21(ActionText::tr("U21: ja"), U21::Yes);
-    addU21(ActionText::tr("U21: nein"), U21::No);
+    // One group of three choices (automatic / yes / no) for an override field.
+    const auto addOverride = [&](const QStringList &texts, U21 PlayerRegistration::*field) {
+        sub->addSeparator();
+        auto *group = new QActionGroup(sub);
+        const U21 values[] = {U21::Auto, U21::Yes, U21::No};
+        for (int i = 0; i < 3; ++i) {
+            auto *action = sub->addAction(texts.at(i));
+            action->setCheckable(true);
+            action->setChecked(current.*field == values[i]);
+            group->addAction(action);
+            const U21 value = values[i];
+            QObject::connect(action, &QAction::triggered, parent, [current, store, field, value] {
+                PlayerRegistration r = current;
+                r.*field = value;
+                store(r);
+            });
+        }
+    };
+
+    // LaLiga's own youth rule: EU players aged 18 or younger on 1 January.
+    if (youthRule == Registration::YouthRule::U18Eu) {
+        Player autoPlayer = player;
+        autoPlayer.registration.youth = U21::Auto;
+        const QString autoText =
+            statusText(Registration::u18EuStatus(autoPlayer, settings.gameDate));
+        addOverride({ActionText::tr("U18 EU automatisch nach Alter (%1)").arg(autoText),
+                     ActionText::tr("U18 EU: ja (braucht keinen Platz)"),
+                     ActionText::tr("U18 EU: nein")},
+                    &PlayerRegistration::youth);
+    }
+    // U21: where the league exempts U21 players, and for UEFA list B.
+    if (youthRule != Registration::YouthRule::U18Eu || settings.uefa) {
+        const QString autoText = statusText(Registration::u21StatusByAge(player.age));
+        addOverride({ActionText::tr("U21 automatisch nach Alter (%1)").arg(autoText),
+                     ActionText::tr("U21: ja"), ActionText::tr("U21: nein")},
+                    &PlayerRegistration::u21);
+    }
 
     // Only where the chosen league limits non-EU players.
-    const Registration::Settings settings = context.registrationSettings();
     const int nonEuLimit = Registration::restrictsSquad(settings.league)
                                ? Registration::nonEuLimit(settings.league)
                                : 0;
@@ -147,6 +167,20 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
 
     // Exceptions the assistant cannot know, e.g. signed after the deadline.
     sub->addSeparator();
+    if (Registration::hasWageRules(settings.league)) {
+        auto *wageExempt = sub->addAction(ActionText::tr("Mindestgehalt gilt nicht (z. B. Leihe)"));
+        wageExempt->setCheckable(true);
+        wageExempt->setChecked(current.minWageExempt);
+        wageExempt->setToolTip(ActionText::tr(
+            "Im Spiel registrierbar, obwohl das Gehalt unter dem Mindestgehalt liegt, z. B. bei "
+            "einer Leihe mit Gehaltsanteil. Fürs Gehaltsbudget zählt weiter das Gehalt aus dem "
+            "Export."));
+        QObject::connect(wageExempt, &QAction::triggered, parent, [current, store](bool on) {
+            PlayerRegistration r = current;
+            r.minWageExempt = on;
+            store(r);
+        });
+    }
     const auto addBlocked = [&](const QString &text, bool PlayerRegistration::*flag) {
         auto *action = sub->addAction(text);
         action->setCheckable(true);
