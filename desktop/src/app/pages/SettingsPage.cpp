@@ -543,14 +543,14 @@ QWidget *SettingsPage::buildImportPage()
                      "Version wird beim Anlegen eines Spielstands gewählt und steht fest, sobald "
                      "er Spieler enthält. Unterstützt werden Football Manager 2024 und 2027."));
 
-    cards->addWidget(makeCard(tr("HTML-Export"), QString(), &body));
+    cards->addWidget(makeCard(tr("HTML-/CSV-Export"), QString(), &body));
     form = makeForm(body);
     m_importDirEdit = sized(new QLineEdit, kPathWidth);
     auto *importDirBrowse = new QPushButton(tr("Durchsuchen …"));
     auto *importDirOpen = new QPushButton(tr("Öffnen"));
     importDirOpen->setToolTip(tr("Ordner im Dateimanager öffnen"));
     addRow(form, tr("Standardordner"), hbox({m_importDirEdit, importDirBrowse, importDirOpen}));
-    addHint(form, tr("Startordner der Dateiauswahl beim Hochladen von HTML-Exporten. Leer = "
+    addHint(form, tr("Startordner der Dateiauswahl beim Hochladen von HTML- und CSV-Exporten. Leer = "
                      "automatisch: der Spielordner der Football-Manager-Version unter "
                      "'Sports Interactive' im Dokumentenordner des aktuellen Nutzers (falls "
                      "vorhanden)."));
@@ -565,7 +565,7 @@ QWidget *SettingsPage::buildImportPage()
     };
     connect(importDirBrowse, &QPushButton::clicked, this, [this, currentImportDir] {
         const QString dir = QFileDialog::getExistingDirectory(
-            this, tr("Standardordner für HTML-Import wählen"), currentImportDir());
+            this, tr("Standardordner für HTML-/CSV-Import wählen"), currentImportDir());
         if (!dir.isEmpty())
             m_importDirEdit->setText(QDir::toNativeSeparators(dir));
     });

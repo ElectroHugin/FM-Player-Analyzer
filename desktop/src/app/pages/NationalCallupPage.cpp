@@ -235,7 +235,7 @@ void NationalCallupPage::refresh()
     if (!configured) {
         m_hint->setText(
             tr("⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter "
-               "Einstellungen → Verein (Name, Länder-Code, Altersgrenze)."));
+               "Einstellungen → Nationalteam (Name, Länder-Code, Altersgrenze)."));
         m_computeButton->setEnabled(false);
         showResults(false);
         return;

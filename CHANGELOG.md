@@ -2,9 +2,10 @@
 
 ## 2.2.2 – 2026-11-07
 
-- Squad List: wage budget and minimum wage now only appear for LaLiga. Other leagues have no such rule.
+- Squad Registration: wage budget and minimum wage now only appear for LaLiga. Other leagues have no such rule.
 - Release notes are now in English.
 - Settings redesigned: a section list on the left, short pages with clear cards, explanations folded away. All options are still there.
+- In English the Squad List page is now called Squad Registration.
 
 ## 2.2.1 – 2026-11-06
 

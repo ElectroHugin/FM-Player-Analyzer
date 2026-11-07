@@ -362,7 +362,7 @@ void RegistrationPage::refresh()
             m_hint->setText(
                 tr("Hier stellst du die Meldeliste für Liga und Europapokal zusammen. "
                    "Schalte dazu zuerst die Registrierungsregeln ein: Einstellungen → "
-                   "Verein → Registrierungsregeln."));
+                   "Meldeliste."));
         }
         return;
     }

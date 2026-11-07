@@ -90,7 +90,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     m_competitionCombo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     m_competitionCombo->setToolTip(
         tr("Beschränkt die erste Mannschaft auf die Spieler, die im Wettbewerb spielberechtigt "
-           "sind: die gespeicherte Meldeliste (Transfers → Meldeliste) plus alle, die ohne "
+           "sind: die gespeicherte Meldeliste (Kader → Meldeliste) plus alle, die ohne "
            "Platz spielen dürfen. Im Pokal dürfen alle spielen."));
     tacticRow->addWidget(m_competitionCombo);
     tacticRow->addStretch(1);
@@ -638,7 +638,7 @@ void BestXiPage::rebuild()
     QString note;
     if (listedCompetition && !restricted)
         note = tr("Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
-                  "rechnet mit allen Spielern. Speichere sie unter Transfers → Meldeliste.");
+                  "rechnet mit allen Spielern. Speichere sie unter Kader → Meldeliste.");
     SquadResult full;
     std::vector<const Player *> firstPool;
     const SquadResult first =
