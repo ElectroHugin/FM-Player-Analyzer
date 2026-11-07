@@ -472,22 +472,22 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="134"/>
         <source>Nicht-EU-Spieler</source>
-        <translation type="unfinished"></translation>
+        <translation>Non-EU player</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="137"/>
         <source>Zählt laut Spiel als Nicht-EU-Spieler. %1 erlaubt höchstens %2 auf der Meldeliste.</source>
-        <translation type="unfinished"></translation>
+        <translation>The game counts him as a non-EU player. %1 allows at most %2 in the squad registration.</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="161"/>
         <source>Nicht registrierbar: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot be registered: %1</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="165"/>
         <source>Nicht registrierbar: Europapokal</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot be registered: European competitions</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="195"/>
@@ -2315,12 +2315,12 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="113"/>
         <source>Nicht-EU-Spieler</source>
-        <translation type="unfinished"></translation>
+        <translation>Non-EU player</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="115"/>
         <source>Zählt laut Spiel als Nicht-EU-Spieler. Nur sichtbar, wenn die gewählte Liga Nicht-EU-Spieler auf der Meldeliste begrenzt.</source>
-        <translation type="unfinished"></translation>
+        <translation>The game counts him as a non-EU player. Only shown when the chosen league limits non-EU players in the squad registration.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="123"/>
@@ -5080,12 +5080,12 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="451"/>
         <source>Nicht-EU-Plätze voll</source>
-        <translation type="unfinished"></translation>
+        <translation>non-EU places full</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="453"/>
         <source>als nicht registrierbar markiert</source>
-        <translation type="unfinished"></translation>
+        <translation>marked as cannot be registered</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="499"/>
@@ -5119,7 +5119,7 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="527"/>
         <source>Nicht-EU</source>
-        <translation type="unfinished"></translation>
+        <translation>Non-EU</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="567"/>
@@ -5129,12 +5129,12 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="569"/>
         <source>gesperrt</source>
-        <translation type="unfinished"></translation>
+        <translation>blocked</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="571"/>
         <source>Als nicht registrierbar markiert. Aufheben per Rechtsklick → Registrierung.</source>
-        <translation type="unfinished"></translation>
+        <translation>Marked as cannot be registered. Undo via right-click → Registration.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="605"/>
@@ -5184,7 +5184,7 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="727"/>
         <source>Nicht-EU %1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Non-EU %1 / %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="735"/>
@@ -5234,7 +5234,7 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="805"/>
         <source>Zu viele Nicht-EU-Spieler gemeldet: %1 (höchstens %2).</source>
-        <translation type="unfinished"></translation>
+        <translation>Too many non-EU players registered: %1 (at most %2).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="824"/>
@@ -5249,7 +5249,7 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="828"/>
         <source>nur EU-Spieler dürften sie belegen, und es gibt keine weiteren.</source>
-        <translation type="unfinished"></translation>
+        <translation>only EU players could take them, and there are no more.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="830"/>

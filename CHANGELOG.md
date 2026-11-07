@@ -3,13 +3,15 @@
 ## 2.2.2 – 2026-11-07
 
 - Squad Registration: wage budget and minimum wage now only appear for LaLiga. Other leagues have no such rule.
+- Squad Registration: mark players as non-EU. Only shown where the league limits them (LaLiga 3, Swiss Super League 10). The suggested list respects the limit.
+- Squad Registration: mark a player as "cannot be registered", separately for league and European competitions. He is never suggested.
 - Release notes are now in English.
 - Settings redesigned: a section list on the left, short pages with clear cards, explanations folded away. All options are still there.
 - In English the Squad List page is now called Squad Registration.
 
 ## 2.2.1 – 2026-11-06
 
-- Squad List (LaLiga): set a wage budget and a minimum wage (per week, month or year).
+- Squad Registration (LaLiga): set a wage budget and a minimum wage (per week, month or year).
 - The suggested list never picks players below the minimum wage and stays within the budget.
 - With a budget, players with promised playing time come first. Your starting XI is never weakened.
 - Counters, warnings and the wage column show where your selected list stands.
