@@ -823,6 +823,46 @@ private slots:
         db.close();
     }
 
+    void oldAppMergeHandsExtraToSurvivor()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("stash.db"));
+        {
+            Database db(QStringLiteral("stashseed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(2);
+            batch[0].uid = QStringLiteral("r-1");
+            batch[0].name = QStringLiteral("Newgen Loan");
+            batch[1].uid = QStringLiteral("12345");
+            batch[1].name = QStringLiteral("Newgen Loan");
+            QVERIFY(db.upsertPlayers(batch));
+            int badId = 0;
+            for (const Player &p : db.loadPlayers())
+                if (p.uid == QLatin1String("r-1"))
+                    badId = p.id;
+            PlayerRegistration r;
+            r.minWageExempt = true;
+            QVERIFY(db.setRegistrations({{badId, r}}));
+            // 2.2.2's merge: it deletes the duplicate without knowing the
+            // extra table.
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("DELETE FROM players WHERE id = %1").arg(badId)));
+            db.close();
+        }
+        Database db(QStringLiteral("stashopen"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        const auto players = db.loadPlayers();
+        QCOMPARE(static_cast<int>(players.size()), 1);
+        QVERIFY(players[0].registration.minWageExempt);
+        // The app's own deletions park nothing.
+        QVERIFY(db.deletePlayers({players[0].id}));
+        QSqlQuery q(db.handle());
+        QVERIFY(q.exec(QStringLiteral("SELECT COUNT(*) FROM player_registration_stash")));
+        QVERIFY(q.next());
+        QCOMPARE(q.value(0).toInt(), 0);
+        db.close();
+    }
+
     void refusesNewerSchema()
     {
         QTemporaryDir dir;

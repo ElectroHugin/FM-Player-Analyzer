@@ -131,6 +131,8 @@ namespace {
 bool condense(Database &db, int keepFrom, const SeasonStart &start)
 {
     const QDate cut = seasonBegin(keepFrom, start);
+    if (!db.pruneMonthSeenBefore(cut))
+        return false;
     const std::vector<Snapshot> monthly = db.monthlySnapshotsBefore(cut);
     if (monthly.empty())
         return true;
@@ -210,7 +212,14 @@ bool record(Database &db, const ImportRecord &import, const std::vector<Snapshot
         copy.period = periodKey(import.gameDate, false);
         changed.push_back(std::move(copy));
     }
-    if (!db.deleteMonthSnapshots(unchanged, import.gameDate) || !db.upsertSnapshots(changed))
+    QList<int> seen;
+    for (const Snapshot &s : snapshots) {
+        const auto stored = thisMonth.constFind(s.playerId);
+        if (stored == thisMonth.constEnd() || !stored->isValid() || *stored <= import.gameDate)
+            seen << s.playerId;
+    }
+    if (!db.deleteMonthSnapshots(unchanged, import.gameDate) || !db.upsertSnapshots(changed)
+        || !db.markMonthSeen(seen, import.gameDate))
         return fail();
     const SeasonStart start = seasonStartOf(db);
     if (!condense(db, seasonOf(import.gameDate, start) - kMonthlySeasonsBack, start))

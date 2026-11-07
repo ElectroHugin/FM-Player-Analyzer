@@ -24,7 +24,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 14;
+constexpr int kSchemaVersion = 15;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -119,7 +119,8 @@ bool Database::open(const QString &filePath)
         m_error = m_db.lastError().text();
         return false;
     }
-    return initSchema();
+    // Parked 2.2.3 fields of duplicates an older version merged away.
+    return initSchema() && reconcileRegistrationStash();
 }
 
 void Database::close()
@@ -265,6 +266,8 @@ bool Database::initSchema()
             ok = migrateV11ToV12();
         if (ok && version < 14)
             ok = migrateToV14();
+        if (ok && version < 15)
+            ok = migrateToV15();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -347,7 +350,7 @@ bool Database::createInitialSchema()
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_player_roles_role ON player_roles(role)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_players_club ON players(club)"),
     };
-    for (const QString &sql : statements + createImportHistorySql()) {
+    for (const QString &sql : statements + createImportHistorySql() + createV15Sql()) {
         if (!exec(sql))
             return false;
     }
@@ -521,6 +524,117 @@ bool Database::migrateToV14()
                                "(player_id, youth, min_wage_exempt) "
                                "SELECT player_id, youth, min_wage_exempt FROM player_registration "
                                "WHERE youth != -1 OR min_wage_exempt != 0"));
+}
+
+QStringList Database::createV15Sql()
+{
+    return {
+        // A player deleted by any app version (2.2.2 merges duplicates by
+        // deleting one) parks his 2.2.3 registration fields here first; 2.2.3
+        // clears what its own deletions park and hands the rest to the
+        // surviving duplicate on the next open (reconcileRegistrationStash).
+        QStringLiteral("CREATE TABLE IF NOT EXISTS player_registration_stash ("
+                       " player_id INTEGER PRIMARY KEY,"
+                       " uid TEXT NOT NULL,"
+                       " name TEXT NOT NULL,"
+                       " youth INTEGER NOT NULL,"
+                       " min_wage_exempt INTEGER NOT NULL)"),
+        QStringLiteral("CREATE TRIGGER IF NOT EXISTS stash_registration_extra"
+                       " BEFORE DELETE ON players"
+                       " WHEN EXISTS (SELECT 1 FROM player_registration_extra"
+                       " WHERE player_id = OLD.id)"
+                       " BEGIN"
+                       " INSERT OR REPLACE INTO player_registration_stash"
+                       " (player_id, uid, name, youth, min_wage_exempt)"
+                       " SELECT OLD.id, OLD.uid, OLD.name, youth, min_wage_exempt"
+                       " FROM player_registration_extra WHERE player_id = OLD.id;"
+                       " END"),
+        // Newest in-game date imported per player and month, also when his
+        // data did not change (no snapshot row): an older export imported
+        // later must not become that month's state.
+        QStringLiteral("CREATE TABLE IF NOT EXISTS snapshot_seen ("
+                       " player_id INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,"
+                       " period TEXT NOT NULL,"
+                       " game_date TEXT NOT NULL,"
+                       " PRIMARY KEY (player_id, period)) WITHOUT ROWID"),
+    };
+}
+
+bool Database::migrateToV15()
+{
+    for (const QString &sql : createV15Sql()) {
+        if (!exec(sql))
+            return false;
+    }
+    return true;
+}
+
+bool Database::reconcileRegistrationStash()
+{
+    QSqlQuery q(m_db);
+    if (!q.exec(QStringLiteral("SELECT player_id, uid, name, youth, min_wage_exempt "
+                               "FROM player_registration_stash")))
+        return true; // nothing parked (or an older schema): nothing to do
+    struct Parked {
+        int id;
+        QString uid, name;
+        int youth, minWageExempt;
+    };
+    std::vector<Parked> parked;
+    while (q.next())
+        parked.push_back({q.value(0).toInt(), q.value(1).toString(), q.value(2).toString(),
+                          q.value(3).toInt(), q.value(4).toInt()});
+    q.finish();
+    if (parked.empty())
+        return true;
+    if (!beginTransaction())
+        return false;
+    for (const Parked &p : parked) {
+        // The surviving duplicate: the same uid (re-imported) or the one
+        // player of that name, as long as he has no 2.2.3 fields himself.
+        QSqlQuery find(m_db);
+        find.prepare(QStringLiteral(
+            "SELECT id FROM players WHERE (uid = ? OR name = ?) AND id NOT IN "
+            "(SELECT player_id FROM player_registration_extra)"));
+        find.bindValue(0, p.uid);
+        find.bindValue(1, p.name);
+        QList<int> matches;
+        if (find.exec())
+            while (find.next())
+                matches << find.value(0).toInt();
+        if (matches.size() == 1) {
+            QSqlQuery put(m_db);
+            put.prepare(QStringLiteral("INSERT OR IGNORE INTO player_registration_extra "
+                                       "(player_id, youth, min_wage_exempt) VALUES (?, ?, ?)"));
+            put.bindValue(0, matches.first());
+            put.bindValue(1, p.youth);
+            put.bindValue(2, p.minWageExempt);
+            if (!put.exec()) {
+                m_error = put.lastError().text();
+                rollbackTransaction();
+                return false;
+            }
+        }
+    }
+    if (!exec(QStringLiteral("DELETE FROM player_registration_stash"))) {
+        rollbackTransaction();
+        return false;
+    }
+    return commitTransaction();
+}
+
+bool Database::clearStash(const QList<int> &playerIds)
+{
+    QSqlQuery query(m_db);
+    query.prepare(QStringLiteral("DELETE FROM player_registration_stash WHERE player_id = ?"));
+    for (const int id : playerIds) {
+        query.bindValue(0, id);
+        if (!query.exec()) {
+            m_error = query.lastError().text();
+            return false;
+        }
+    }
+    return true;
 }
 
 bool Database::migrateV4ToV5()
@@ -978,6 +1092,11 @@ bool Database::deletePlayers(const QList<int> &playerIds)
             return false;
         }
     }
+    // Deleted on purpose here: nothing to hand over (see createV15Sql).
+    if (!clearStash(playerIds)) {
+        rollbackTransaction();
+        return false;
+    }
     return commitTransaction();
 }
 
@@ -1106,6 +1225,10 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     query.bindValue(0, badPlayerId);
     if (!query.exec()) {
         m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+    if (!clearStash({badPlayerId})) {
         rollbackTransaction();
         return false;
     }
@@ -1498,11 +1621,19 @@ bool Database::deleteMonthSnapshots(const QList<int> &playerIds, const QDate &da
 
 QHash<int, QDate> Database::monthSnapshotDates(const QDate &date)
 {
+    // Newest of the month's snapshot row and the newest import that saw the
+    // player (snapshot_seen; also when nothing changed).
     QHash<int, QDate> out;
     QSqlQuery q(m_db);
-    q.prepare(QStringLiteral("SELECT player_id, game_date FROM player_snapshots"
-                             " WHERE condensed = 0 AND period = ?"));
-    q.bindValue(0, ImportHistory::periodKey(date, false));
+    q.prepare(QStringLiteral("SELECT player_id, MAX(game_date) FROM ("
+                             " SELECT player_id, game_date FROM player_snapshots"
+                             "  WHERE condensed = 0 AND period = ?"
+                             " UNION ALL"
+                             " SELECT player_id, game_date FROM snapshot_seen WHERE period = ?)"
+                             " GROUP BY player_id"));
+    const QString period = ImportHistory::periodKey(date, false);
+    q.bindValue(0, period);
+    q.bindValue(1, period);
     if (!q.exec()) {
         m_error = q.lastError().text();
         return out;
@@ -1511,6 +1642,38 @@ QHash<int, QDate> Database::monthSnapshotDates(const QDate &date)
         out.insert(q.value(0).toInt(),
                    QDate::fromString(q.value(1).toString(), QLatin1String(kDateFormat)));
     return out;
+}
+
+bool Database::markMonthSeen(const QList<int> &playerIds, const QDate &date)
+{
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("INSERT INTO snapshot_seen (player_id, period, game_date)"
+                             " VALUES (?, ?, ?) ON CONFLICT(player_id, period)"
+                             " DO UPDATE SET game_date = MAX(game_date, excluded.game_date)"));
+    const QString period = ImportHistory::periodKey(date, false);
+    const QString day = date.toString(QLatin1String(kDateFormat));
+    for (const int id : playerIds) {
+        q.bindValue(0, id);
+        q.bindValue(1, period);
+        q.bindValue(2, day);
+        if (!q.exec()) {
+            m_error = q.lastError().text();
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Database::pruneMonthSeenBefore(const QDate &before)
+{
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("DELETE FROM snapshot_seen WHERE period < ?"));
+    q.bindValue(0, ImportHistory::periodKey(before, false));
+    if (!q.exec()) {
+        m_error = q.lastError().text();
+        return false;
+    }
+    return true;
 }
 
 std::vector<ImportHistory::Snapshot> Database::monthlySnapshotsBefore(const QDate &before)

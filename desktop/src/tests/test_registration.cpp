@@ -494,6 +494,22 @@ private slots:
         QVERIFY(r.youth == PlayerRegistration::U21::Auto);
     }
 
+    void mergeKeepsBothParts()
+    {
+        // Same rule as the database: each part moves over on its own.
+        PlayerRegistration good;
+        good.homeGrown = true;
+        PlayerRegistration bad;
+        bad.minWageExempt = true;
+        bad.nonEu = true;
+        Registration::mergeInto(good, bad);
+        QVERIFY(good.homeGrown && !good.nonEu); // classic flags: good had some
+        QVERIFY(good.minWageExempt);            // 2.2.3 fields: good had none
+        PlayerRegistration empty;
+        Registration::mergeInto(empty, bad);
+        QVERIFY(empty == bad);
+    }
+
     void minWageExemption()
     {
         Registration::Settings settings;

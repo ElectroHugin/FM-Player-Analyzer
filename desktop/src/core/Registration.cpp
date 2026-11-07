@@ -279,6 +279,24 @@ bool isListBEligible(const Player &player)
     return isU21(player) && isClubTrained(player);
 }
 
+void mergeInto(PlayerRegistration &good, const PlayerRegistration &bad)
+{
+    PlayerRegistration goodBase = good;
+    goodBase.youth = PlayerRegistration::U21::Auto;
+    goodBase.minWageExempt = false;
+    if (goodBase.isDefault()) {
+        const PlayerRegistration::U21 youth = good.youth;
+        const bool minWageExempt = good.minWageExempt;
+        good = bad;
+        good.youth = youth;
+        good.minWageExempt = minWageExempt;
+    }
+    if (good.youth == PlayerRegistration::U21::Auto && !good.minWageExempt) {
+        good.youth = bad.youth;
+        good.minWageExempt = bad.minWageExempt;
+    }
+}
+
 void normalize(PlayerRegistration &registration)
 {
     if (registration.clubTrained)

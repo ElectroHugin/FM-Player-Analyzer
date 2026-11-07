@@ -148,6 +148,12 @@ bool isClubTrained(const Player &player);
 // club-trained is the closest hand-maintained stand-in for the latter.
 bool isListBEligible(const Player &player);
 
+// Fill-empty merge of a duplicate's registration into the surviving player,
+// the rule Database::mergePlayerInto applies to its two tables: the classic
+// flags move over when the survivor has none, the fields added in 2.2.3
+// (youth override, minimum-wage exemption) likewise on their own.
+void mergeInto(PlayerRegistration &good, const PlayerRegistration &bad);
+
 // Keeps the flags consistent: club-trained implies home-grown.
 void normalize(PlayerRegistration &registration);
 

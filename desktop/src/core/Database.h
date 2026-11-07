@@ -131,6 +131,10 @@ public:
     bool deleteMonthSnapshots(const QList<int> &playerIds, const QDate &date);
     // In-game date of each player's monthly snapshot for date's month.
     QHash<int, QDate> monthSnapshotDates(const QDate &date);
+    // Remembers that an import of this in-game date contained these players.
+    bool markMonthSeen(const QList<int> &playerIds, const QDate &date);
+    // Forgets those marks for months before this date (condensed seasons).
+    bool pruneMonthSeenBefore(const QDate &before);
     // Monthly snapshots dated before `before` (condensing candidates).
     std::vector<ImportHistory::Snapshot> monthlySnapshotsBefore(const QDate &before);
     // Deletes snapshots by (player, period key).
@@ -191,6 +195,11 @@ private:
     bool migrateV10ToV11();               // import log + player snapshots
     bool migrateV11ToV12();               // non-EU + not-registrable flags
     bool migrateToV14();                  // player_registration_extra (2.2.3 fields)
+    bool migrateToV15();                  // registration stash + snapshot_seen
+    static QStringList createV15Sql();
+    // Hands parked 2.2.3 registration fields to the surviving duplicate.
+    bool reconcileRegistrationStash();
+    bool clearStash(const QList<int> &playerIds);
     static QStringList createImportHistorySql(); // shared by create + migrate paths
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     static QString createPlayerRegistrationSql();

@@ -526,9 +526,10 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
             good.preferredSide = bad.preferredSide;
         if (good.agreedPlayingTime.isEmpty())
             good.agreedPlayingTime = bad.agreedPlayingTime;
-        // Mirrors Database::mergePlayerInto, which moved the rows already.
-        if (good.registration.isDefault())
-            good.registration = bad.registration;
+        // Mirrors Database::mergePlayerInto, which moved the rows already:
+        // the classic flags and the 2.2.3 fields each move over only when the
+        // good player has none of them (two tables, two separate rules).
+        Registration::mergeInto(good.registration, bad.registration);
         if (good.trainingRole.isEmpty())
             good.trainingRole = bad.trainingRole;
         good.inNationalSquad = good.inNationalSquad || bad.inNationalSquad;
