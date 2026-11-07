@@ -432,10 +432,10 @@ QWidget *WelcomeWizard::buildLookPage()
     layout->addWidget(sectionTitle(tr("Was es sonst noch gibt"), page));
     layout->addWidget(foldableHint(
         tr("Weitere Einstellungen"),
-        tr("Unter Einstellungen → Verein: Nationalteam (schaltet das National-Management frei), "
-           "Spielerporträts und Wappen aus dem Graphics-Ordner des Spiels und, für FM27, "
-           "einen Spielstand live verfolgen. Unter DWRS-Gewichte und Schwellenwerte "
-           "passt du an, wie Rollen bewertet und Kader aufgebaut werden."),
+        tr("In den Einstellungen findest du außerdem das Nationalteam (schaltet das "
+           "National-Management frei), Porträts und Wappen aus dem Graphics-Ordner des Spiels "
+           "und, unter Import, für FM27 das Live-Verfolgen eines Spielstands. Unter DWRS-Gewichte "
+           "sowie Kader und Analyse passt du an, wie Rollen bewertet und Kader aufgebaut werden."),
         page));
     layout->addStretch(1);
     return page;

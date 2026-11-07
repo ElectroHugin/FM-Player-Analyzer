@@ -125,7 +125,7 @@ void NationalSquadSelectionPage::rebuildLists()
     if (name.isEmpty() || code.isEmpty() || ageLimit <= 0) {
         m_hint->setText(
             tr("⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter "
-               "Einstellungen → Verein (Name, Länder-Code, Altersgrenze)."));
+               "Einstellungen → Nationalteam (Name, Länder-Code, Altersgrenze)."));
         m_availableList->clear();
         m_squadList->clear();
         m_saveButton->setEnabled(false);

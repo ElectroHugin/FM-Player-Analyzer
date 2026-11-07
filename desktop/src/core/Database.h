@@ -187,6 +187,7 @@ private:
     bool migrateV8ToV9();                 // dwrs_recalcs table
     bool migrateV9ToV10();                // communication/eccentricity columns
     bool migrateV10ToV11();               // import log + player snapshots
+    bool migrateV11ToV12();               // non-EU + not-registrable flags
     static QStringList createImportHistorySql(); // shared by create + migrate paths
     static QString createDwrsLatestSql(); // shared by create + migrate paths
     static QString createPlayerRegistrationSql(); // ditto

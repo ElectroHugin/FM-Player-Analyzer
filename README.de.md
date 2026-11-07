@@ -208,7 +208,7 @@ eine Meldeliste vor, die regelkonform *und* voll ist: 25 Plätze,
 Nicht-Home-Grown-Grenze, Club-Grown-Plätze, Mindestzahl Torhüter, U21 und
 Liste B. Freie Home-Grown-Plätze füllt er mit deinen besten jungen Spielern,
 statt sie leer zu lassen, und er zeigt, was die Regeln deine Startelf kosten.
-Verlangt die Liga ein Gehaltsbudget oder ein Mindestgehalt (etwa LaLiga), trägst
+Bei LaLiga, die ein Gehaltsbudget und ein Mindestgehalt vorgibt, trägst
 du beides direkt auf der Meldeliste ein, und der Vorschlag hält sich daran.
 Hake an, wen du wirklich gemeldet hast, speichere, und Best XI rechnet mit
 dieser Liste.

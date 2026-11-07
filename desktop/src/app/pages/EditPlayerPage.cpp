@@ -110,8 +110,13 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     m_clubTrainedCheck->setToolTip(
         tr("Zwischen 15 und 21 mindestens drei Spielzeiten beim eigenen Verein. "
            "Zählt automatisch auch als Home-Grown."));
+    m_nonEuCheck = new QCheckBox(tr("Nicht-EU-Spieler"), m_registrationBox);
+    m_nonEuCheck->setToolTip(
+        tr("Zählt laut Spiel als Nicht-EU-Spieler. Nur sichtbar, wenn die gewählte Liga "
+           "Nicht-EU-Spieler auf der Meldeliste begrenzt."));
     registrationLayout->addWidget(m_homeGrownCheck);
     registrationLayout->addWidget(m_clubTrainedCheck);
+    registrationLayout->addWidget(m_nonEuCheck);
     auto *u21Form = new QFormLayout;
     m_u21Combo = new QComboBox(m_registrationBox);
     m_u21Combo->setToolTip(
@@ -287,6 +292,10 @@ void EditPlayerPage::showEditor()
     m_registrationBox->setVisible(m_context.registrationSettings().active());
     m_homeGrownCheck->setChecked(Registration::isHomeGrown(*player));
     m_clubTrainedCheck->setChecked(player->registration.clubTrained);
+    const Registration::Settings registrationSettings = m_context.registrationSettings();
+    m_nonEuCheck->setVisible(Registration::restrictsSquad(registrationSettings.league)
+                             && Registration::nonEuLimit(registrationSettings.league) > 0);
+    m_nonEuCheck->setChecked(player->registration.nonEu);
     const Registration::U21Status autoU21 = Registration::u21StatusByAge(player->age);
     m_u21Combo->clear();
     m_u21Combo->addItem(autoU21 == Registration::U21Status::Yes ? tr("Automatisch (ja)")
@@ -363,6 +372,8 @@ void EditPlayerPage::save()
     if (!m_registrationBox->isHidden()) {
         updated.registration.homeGrown = m_homeGrownCheck->isChecked();
         updated.registration.clubTrained = m_clubTrainedCheck->isChecked();
+        if (!m_nonEuCheck->isHidden())
+            updated.registration.nonEu = m_nonEuCheck->isChecked();
         updated.registration.u21 =
             static_cast<PlayerRegistration::U21>(m_u21Combo->currentData().toInt());
         Registration::normalize(updated.registration);

@@ -198,8 +198,8 @@ Home-grown quotas are where good squads lose points. The assistant proposes a
 squad list that is legal *and* full: 25 places, non-home-grown limit,
 club-trained places, minimum goalkeepers, U21 and list B. It fills free
 home-grown places with your best young players instead of leaving them empty,
-and shows what the rules cost your starting eleven. If the league sets a wage
-budget or a minimum wage (LaLiga, for example), enter both right on the squad
+and shows what the rules cost your starting eleven. With LaLiga, which sets a
+wage budget and a minimum wage, you enter both right on the squad
 list and the proposal sticks to them. Tick who you really
 registered, save, and Best XI works with that list.
 

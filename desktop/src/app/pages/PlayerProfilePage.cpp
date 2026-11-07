@@ -402,7 +402,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
         tr("Noch kein Verlauf. Bei jedem Einlesen eines FM27-Spielstands speichert der Analyzer pro "
            "Ingame-Monat einen Stand: für deinen Kader, das Zweitteam, die Shortlist, den "
            "Nationalkader und Spieler aus deinem Scouting, auf Wunsch für alle Spieler "
-           "(Einstellungen → Verein)."),
+           "(Einstellungen → Verlauf und Datenfrische)."),
         m_detailWidget);
     m_historyEmpty->setObjectName(QStringLiteral("kpiCaption"));
     m_historyEmpty->setWordWrap(true);

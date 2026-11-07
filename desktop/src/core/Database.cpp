@@ -24,7 +24,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 11;
+constexpr int kSchemaVersion = 12;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -39,8 +39,8 @@ QStringList splitRolesFromDb(const QString &value)
     return value.split(QLatin1Char('\x1f'), Qt::SkipEmptyParts);
 }
 
-// Reads home_grown, club_trained, u21, league_listed, uefa_listed starting at
-// column `first`.
+// Reads home_grown, club_trained, u21, league_listed, uefa_listed, non_eu,
+// league_blocked, uefa_blocked starting at column `first`.
 PlayerRegistration registrationFromRow(const QSqlQuery &q, int first)
 {
     PlayerRegistration r;
@@ -52,6 +52,9 @@ PlayerRegistration registrationFromRow(const QSqlQuery &q, int first)
                        : PlayerRegistration::U21::Auto;
     r.leagueListed = q.value(first + 3).toInt() != 0;
     r.uefaListed = q.value(first + 4).toInt() != 0;
+    r.nonEu = q.value(first + 5).toInt() != 0;
+    r.leagueBlocked = q.value(first + 6).toInt() != 0;
+    r.uefaBlocked = q.value(first + 7).toInt() != 0;
     return r;
 }
 
@@ -229,6 +232,8 @@ bool Database::initSchema()
             ok = migrateV9ToV10();
         if (ok && version < 11)
             ok = migrateV10ToV11();
+        if (ok && version < 12)
+            ok = migrateV11ToV12();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -355,6 +360,30 @@ bool Database::migrateV10ToV11()
     return true;
 }
 
+bool Database::migrateV11ToV12()
+{
+    // Non-EU flag and "cannot be registered" per list. A database that went
+    // through v5 after this change already has the columns.
+    QSet<QString> existing;
+    QSqlQuery info(m_db);
+    if (!info.exec(QStringLiteral("PRAGMA table_info(player_registration)"))) {
+        m_error = info.lastError().text();
+        return false;
+    }
+    while (info.next())
+        existing.insert(info.value(1).toString());
+    for (const char *column : {"non_eu", "league_blocked", "uefa_blocked"}) {
+        const QString name = QString::fromLatin1(column);
+        if (existing.contains(name))
+            continue;
+        if (!exec(QStringLiteral("ALTER TABLE player_registration ADD COLUMN %1 INTEGER NOT NULL "
+                                 "DEFAULT 0")
+                      .arg(name)))
+            return false;
+    }
+    return true;
+}
+
 QString Database::createDwrsLatestSql()
 {
     // Materialized "latest rating per (player, role)": maintained on every
@@ -421,7 +450,10 @@ QString Database::createPlayerRegistrationSql()
                           " club_trained INTEGER NOT NULL DEFAULT 0,"
                           " u21 INTEGER NOT NULL DEFAULT -1,"
                           " league_listed INTEGER NOT NULL DEFAULT 0,"
-                          " uefa_listed INTEGER NOT NULL DEFAULT 0)");
+                          " uefa_listed INTEGER NOT NULL DEFAULT 0,"
+                          " non_eu INTEGER NOT NULL DEFAULT 0,"
+                          " league_blocked INTEGER NOT NULL DEFAULT 0,"
+                          " uefa_blocked INTEGER NOT NULL DEFAULT 0)");
 }
 
 bool Database::migrateV4ToV5()
@@ -622,9 +654,11 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             });
     QHash<int, PlayerRegistration> registrationById;
     forRows(QStringLiteral("SELECT player_id, home_grown, club_trained, u21, league_listed, "
-                           "uefa_listed FROM player_registration"),
+                           "uefa_listed, non_eu, league_blocked, uefa_blocked "
+                           "FROM player_registration"),
             QStringLiteral("SELECT player_id, home_grown, club_trained, u21, league_listed, "
-                           "uefa_listed FROM player_registration WHERE player_id IN (%1)"),
+                           "uefa_listed, non_eu, league_blocked, uefa_blocked "
+                           "FROM player_registration WHERE player_id IN (%1)"),
             [&](const QSqlQuery &q) {
                 registrationById.insert(q.value(0).toInt(), registrationFromRow(q, 1));
             });
@@ -944,8 +978,10 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     // importer's fill-empty merge does the same in memory).
     query.prepare(QStringLiteral(
         "INSERT OR IGNORE INTO player_registration "
-        "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed) "
-        "SELECT ?, home_grown, club_trained, u21, league_listed, uefa_listed "
+        "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed, non_eu, "
+        "league_blocked, uefa_blocked) "
+        "SELECT ?, home_grown, club_trained, u21, league_listed, uefa_listed, non_eu, "
+        "league_blocked, uefa_blocked "
         "FROM player_registration WHERE player_id = ?"));
     query.bindValue(0, goodPlayerId);
     query.bindValue(1, badPlayerId);
@@ -1596,8 +1632,9 @@ bool Database::setRegistrations(const std::vector<std::pair<int, PlayerRegistrat
     QSqlQuery upsert(m_db);
     upsert.prepare(QStringLiteral(
         "INSERT OR REPLACE INTO player_registration "
-        "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed) "
-        "VALUES (?, ?, ?, ?, ?, ?)"));
+        "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed, non_eu, "
+        "league_blocked, uefa_blocked) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"));
     for (const auto &[playerId, r] : byId) {
         QSqlQuery &query = r.isDefault() ? remove : upsert;
         query.bindValue(0, playerId);
@@ -1607,6 +1644,9 @@ bool Database::setRegistrations(const std::vector<std::pair<int, PlayerRegistrat
             query.bindValue(3, static_cast<int>(r.u21));
             query.bindValue(4, r.leagueListed ? 1 : 0);
             query.bindValue(5, r.uefaListed ? 1 : 0);
+            query.bindValue(6, r.nonEu ? 1 : 0);
+            query.bindValue(7, r.leagueBlocked ? 1 : 0);
+            query.bindValue(8, r.uefaBlocked ? 1 : 0);
         }
         if (!query.exec()) {
             m_error = query.lastError().text();

@@ -80,6 +80,7 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
     };
 
     QMenu *sub = menu.addMenu(ActionText::tr("Registrierung"));
+    sub->setToolTipsVisible(true);
     auto *homeGrown = sub->addAction(ActionText::tr("Home-Grown (im Verband ausgebildet)"));
     homeGrown->setCheckable(true);
     homeGrown->setChecked(Registration::isHomeGrown(player));
@@ -122,6 +123,47 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
     addU21(ActionText::tr("U21 automatisch nach Alter (%1)").arg(autoText), U21::Auto);
     addU21(ActionText::tr("U21: ja"), U21::Yes);
     addU21(ActionText::tr("U21: nein"), U21::No);
+
+    // Only where the chosen league limits non-EU players.
+    const Registration::Settings settings = context.registrationSettings();
+    const int nonEuLimit = Registration::restrictsSquad(settings.league)
+                               ? Registration::nonEuLimit(settings.league)
+                               : 0;
+    if (nonEuLimit > 0) {
+        sub->addSeparator();
+        auto *nonEu = sub->addAction(ActionText::tr("Nicht-EU-Spieler"));
+        nonEu->setCheckable(true);
+        nonEu->setChecked(current.nonEu);
+        nonEu->setToolTip(ActionText::tr("Zählt laut Spiel als Nicht-EU-Spieler. %1 erlaubt "
+                                         "höchstens %2 auf der Meldeliste.")
+                              .arg(Registration::leagueDisplayName(settings.league))
+                              .arg(nonEuLimit));
+        QObject::connect(nonEu, &QAction::triggered, parent, [current, store](bool on) {
+            PlayerRegistration r = current;
+            r.nonEu = on;
+            store(r);
+        });
+    }
+
+    // Exceptions the assistant cannot know, e.g. signed after the deadline.
+    sub->addSeparator();
+    const auto addBlocked = [&](const QString &text, bool PlayerRegistration::*flag) {
+        auto *action = sub->addAction(text);
+        action->setCheckable(true);
+        action->setChecked(current.*flag);
+        QObject::connect(action, &QAction::triggered, parent, [current, store, flag](bool on) {
+            PlayerRegistration r = current;
+            r.*flag = on;
+            store(r);
+        });
+    };
+    if (Registration::restrictsSquad(settings.league))
+        addBlocked(ActionText::tr("Nicht registrierbar: %1")
+                       .arg(Registration::leagueDisplayName(settings.league)),
+                   &PlayerRegistration::leagueBlocked);
+    if (settings.uefa)
+        addBlocked(ActionText::tr("Nicht registrierbar: Europapokal"),
+                   &PlayerRegistration::uefaBlocked);
 }
 
 } // namespace

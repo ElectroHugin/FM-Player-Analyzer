@@ -546,7 +546,7 @@ void SigningAdvisorTab::fillGapTables(const SquadResult &squad)
     const double wrongSide = config.gapAnalysisSetting(QStringLiteral("wrong_side_penalty"));
     m_gapCaption->setText(
         tr("Schwellen — Versteckt: %1 · Offensichtlich: %2 · Falsche-Seite-Malus: %3 "
-           "(anpassbar unter Einstellungen → Schwellenwerte)")
+           "(anpassbar unter Einstellungen → Kader und Analyse)")
             .arg(displacement, 0, 'f', 1)
             .arg(dropoff, 0, 'f', 1)
             .arg(wrongSide, 0, 'f', 1));

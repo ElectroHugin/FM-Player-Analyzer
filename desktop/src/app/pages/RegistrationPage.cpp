@@ -341,6 +341,21 @@ void RegistrationPage::refresh()
     m_updating = false;
 
     const bool ready = settings.active() && !userClub.isEmpty();
+    // A league chosen whose registration needs no list (99 places): say why
+    // there is nothing to build, and name a limit the game still checks.
+    QString noListNote;
+    if (settings.league != Registration::LeagueRules::None
+        && !Registration::restrictsSquad(settings.league)) {
+        const QString league = Registration::leagueDisplayName(settings.league);
+        noListNote = tr("%1 hat keine Meldeliste: Bis zu 99 Spieler sind spielberechtigt, ein "
+                        "Vorschlag wäre zwecklos.")
+                         .arg(league);
+        if (settings.league == Registration::LeagueRules::Ligue1)
+            noListNote += QLatin1Char(' ')
+                          + tr("Die einzige Grenze sind höchstens 4 Nicht-EU-Spieler im Kader. "
+                               "Sie entscheidet sich bei Transfers, nicht bei der Meldung, "
+                               "deshalb behalte sie dort im Blick.");
+    }
     for (QWidget *w : {m_controls, static_cast<QWidget *>(m_keeperBox),
                        static_cast<QWidget *>(m_outfieldBox),
                        static_cast<QWidget *>(m_summaryLabel), static_cast<QWidget *>(m_costLabel),
@@ -358,11 +373,13 @@ void RegistrationPage::refresh()
                 tr("Für %1 sind noch keine Registrierungsregeln hinterlegt. Die Meldeliste "
                    "steht für diese Version noch nicht zur Verfügung.")
                     .arg(fmDataVersion(versionId).displayName));
+        } else if (!noListNote.isEmpty()) {
+            m_hint->setText(noListNote);
         } else {
             m_hint->setText(
                 tr("Hier stellst du die Meldeliste für Liga und Europapokal zusammen. "
                    "Schalte dazu zuerst die Registrierungsregeln ein: Einstellungen → "
-                   "Verein → Registrierungsregeln."));
+                   "Meldeliste."));
         }
         return;
     }
@@ -379,7 +396,8 @@ void RegistrationPage::refresh()
             break;
     }
     loadWageFields();
-    m_wageRow->setVisible(comp == Registration::Competition::League);
+    m_wageRow->setVisible(comp == Registration::Competition::League
+                          && Registration::hasWageRules(settings.league));
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     const auto ranked = Registration::rankPool(m_context.squadBuilder(), m_context.definitions(),
@@ -394,7 +412,8 @@ void RegistrationPage::refresh()
            "→ Registrierung — der Vorschlag rechnet sofort neu.")
             .arg(m_pool.size())
             .arg(m_tactics.isEmpty() ? tr("keine Taktik vorhanden")
-                                     : m_tactics.join(QStringLiteral(", "))));
+                                     : m_tactics.join(QStringLiteral(", ")))
+        + (noListNote.isEmpty() ? QString() : QStringLiteral("<br>") + noListNote));
 
     m_proposedUids.clear();
     m_checkableUids.clear();
@@ -403,7 +422,8 @@ void RegistrationPage::refresh()
         m_checkableUids.insert(entry.player->uid);
     }
     for (const auto &[entry, reason] : m_proposal.leftOut)
-        m_checkableUids.insert(entry.player->uid);
+        if (reason != Registration::LeftOutReason::Blocked)
+            m_checkableUids.insert(entry.player->uid);
     // The saved list may still name players who have left the pool since.
     m_savedUids.clear();
     for (const Player &player : m_context.store().players())
@@ -445,6 +465,10 @@ void RegistrationPage::fillTables()
             return tr("unter Mindestgehalt");
         case Registration::LeftOutReason::WageBudgetFull:
             return tr("über dem Gehaltsbudget");
+        case Registration::LeftOutReason::NonEuFull:
+            return tr("Nicht-EU-Plätze voll");
+        case Registration::LeftOutReason::Blocked:
+            return tr("als nicht registrierbar markiert");
         case Registration::LeftOutReason::ListFull:
             break;
         }
@@ -504,16 +528,22 @@ void RegistrationPage::fillTables()
 void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &rows)
 {
     const bool uefa = competition() == Registration::Competition::Uefa;
-    const auto categoryText = [](const Player &p) {
+    const auto categoryText = [this](const Player &p) {
+        QString text;
         switch (Registration::category(p)) {
         case Registration::Category::ClubTrained:
-            return tr("Club-Grown");
+            text = tr("Club-Grown");
+            break;
         case Registration::Category::HomeGrown:
-            return tr("Home-Grown");
+            text = tr("Home-Grown");
+            break;
         case Registration::Category::NonHomeGrown:
+            text = tr("Nicht-HG");
             break;
         }
-        return tr("Nicht-HG");
+        if (Registration::countsAsNonEu(p, m_quota))
+            text += QStringLiteral(" · ") + tr("Nicht-EU");
+        return text;
     };
     const auto tierText = [](Registration::Tier tier) {
         switch (tier) {
@@ -553,6 +583,11 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
             listedItem->setText(uefa ? tr("Liste B") : tr("U21"));
             listedItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             listedItem->setToolTip(tr("Ohne Platz auf der Meldeliste spielberechtigt."));
+        } else if (!m_checkableUids.contains(p.uid)) {
+            listedItem->setText(tr("gesperrt"));
+            listedItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            listedItem->setToolTip(tr("Als nicht registrierbar markiert. Aufheben per "
+                                      "Rechtsklick → Registrierung."));
         } else {
             listedItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable
                                  | Qt::ItemIsUserCheckable);
@@ -706,6 +741,9 @@ void RegistrationPage::updateSelection()
     parts << marked(
         tr("Torhüter %1 (min. %2)").arg(check.goalkeepers).arg(m_quota.minGoalkeepers),
         check.tooFewGoalkeepers);
+    if (m_quota.maxNonEu > 0)
+        parts << marked(tr("Nicht-EU %1 / %2").arg(check.nonEu).arg(m_quota.maxNonEu),
+                        check.tooManyNonEu);
     if (m_quota.wageBudget > 0.0)
         parts << marked(tr("Gehälter %1 / %2")
                             .arg(moneyText(check.totalWage), moneyText(m_quota.wageBudget)),
@@ -781,6 +819,10 @@ void RegistrationPage::updateSelection()
     if (check.overWageBudget)
         warnings << tr("Gehaltsbudget überschritten: %1 (höchstens %2).")
                         .arg(moneyText(check.totalWage), moneyText(m_quota.wageBudget));
+    if (check.tooManyNonEu)
+        warnings << tr("Zu viele Nicht-EU-Spieler gemeldet: %1 (höchstens %2).")
+                        .arg(check.nonEu)
+                        .arg(m_quota.maxNonEu);
     if (check.belowMinWage > 0)
         warnings << tr("Gemeldet, aber unter dem Mindestgehalt von %1: %2 Spieler.")
                         .arg(moneyText(m_quota.minWage))
@@ -800,6 +842,8 @@ void RegistrationPage::updateSelection()
             why = tr("nur Club-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.");
         else if (check.nonHomeGrown >= m_quota.maxNonHomeGrown)
             why = tr("nur Home-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.");
+        else if (m_quota.maxNonEu > 0 && check.nonEu >= m_quota.maxNonEu)
+            why = tr("nur EU-Spieler dürften sie belegen, und es gibt keine weiteren.");
         else
             why = tr("es gibt keine weiteren Spieler im Pool.");
         warnings << tr("%1 Plätze bleiben frei: %2").arg(freeSlots).arg(why);

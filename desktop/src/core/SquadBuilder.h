@@ -19,6 +19,14 @@ class Definitions;
 using RoleRatings = QHash<QString, QHash<QString, double>>;
 
 // One slot of a computed XI.
+// A cap on how many players of a group may start (e.g. at most 5 non-EU
+// players in the Swiss Super League's starting XI). Inactive by default.
+struct XiLimit {
+    QSet<QString> uids; // the limited group
+    int max = -1;       // at most this many of them in the starting XI
+    bool active() const { return max >= 0 && !uids.isEmpty(); }
+};
+
 struct XiCell {
     QString playerUid; // empty = slot unfilled
     QString name = QStringLiteral("-");
@@ -136,7 +144,8 @@ public:
                                          const QHash<QString, QString> &positions,
                                          const QStringList &slotOrder,
                                          const RoleRatings &ratings,
-                                         bool applyAptWeight = true) const;
+                                         bool applyAptWeight = true,
+                                         const XiLimit &xiLimit = {}) const;
 
     // Two-phase tactic (FM26+, see algorithmus-zwei-aufstellungen.md): picks
     // the 11 players and, for each, one in-possession and one out-of-possession
@@ -149,11 +158,15 @@ public:
     // fixedBridges: manual bridges uid -> (ip slot, oop slot) for the
     // starting XI; an empty slot leaves that phase free. A fixed player may
     // only take his slot, nobody else may take it; the rest is optimised.
+    // xiLimit caps a group in the starting XI (Lagrangian penalty on the
+    // group, the smallest one that keeps the cap; exact whenever the cap is
+    // reached exactly or not binding). The B-team is not limited.
     using Bridges = QHash<QString, QPair<QString, QString>>;
     TwoPhaseSquadResult calculateTwoPhaseSquad(const std::vector<const Player *> &pool,
                                                const QString &tactic, const RoleRatings &ratings,
                                                double ipShare, bool applyAptWeight = true,
-                                               const Bridges &fixedBridges = {}) const;
+                                               const Bridges &fixedBridges = {},
+                                               const XiLimit &xiLimit = {}) const;
 
     // Sum of the starting XI's values over both line-ups.
     static double startingValue(const TwoPhaseSquadResult &squad);
@@ -173,7 +186,8 @@ public:
     SquadResult calculateSquadForTactic(const std::vector<const Player *> &pool,
                                         const QString &tactic, const RoleRatings &ratings,
                                         bool applyAptWeight = true,
-                                        const Bridges &fixedBridges = {}) const;
+                                        const Bridges &fixedBridges = {},
+                                        const XiLimit &xiLimit = {}) const;
 
     // Squad depth per starting-XI player: if he is missing, which ONE extra
     // player of the pool restores the XI best, and who of the other starters

@@ -528,7 +528,7 @@ void DwrsProgressPage::rebuildRows()
     const int outfielderCap = m_context.config().ageThreshold(QStringLiteral("outfielder"));
     const int goalkeeperCap = m_context.config().ageThreshold(QStringLiteral("goalkeeper"));
     m_groupGroup->button(YouthOnly)
-        ->setToolTip(tr("Bis %1 Jahre, Torhüter bis %2 (Einstellungen → Altersgrenzen)")
+        ->setToolTip(tr("Bis %1 Jahre, Torhüter bis %2 (Einstellungen → Kader und Analyse)")
                          .arg(outfielderCap)
                          .arg(goalkeeperCap));
 

@@ -2,11 +2,11 @@
 
 #include "AppContext.h"
 #include "PlayerActions.h"
+#include "pages/SettingsPage.h"
 #include "theming/ThemeManager.h"
 
 #include <QCoreApplication>
 #include <QDir>
-#include <QTabWidget>
 #include <QTimer>
 #include <QWidget>
 
@@ -117,7 +117,7 @@ void start(AppContext &context, ThemeManager &theme, QWidget *window)
          },
          QStringLiteral("dashboard-light.png")},
     });
-    // Settings: open the design tab (or FMPA_SETTINGS_TAB, German tab name).
+    // Settings: open the design section (or FMPA_SETTINGS_TAB, German section title).
     const QByteArray settingsTab = qEnvironmentVariableIsSet("FMPA_SETTINGS_TAB")
                                        ? qgetenv("FMPA_SETTINGS_TAB")
                                        : QByteArray("Design");
@@ -126,13 +126,8 @@ void start(AppContext &context, ThemeManager &theme, QWidget *window)
             const auto open = step.prepare;
             step.prepare = [open, window, settingsTab] {
                 open();
-                for (QTabWidget *tabs : window->findChildren<QTabWidget *>()) {
-                    for (int i = 0; i < tabs->count(); ++i) {
-                        if (tabs->tabText(i) == QCoreApplication::translate("fm::SettingsPage",
-                                                                            settingsTab.constData()))
-                            tabs->setCurrentIndex(i);
-                    }
-                }
+                for (SettingsPage *settings : window->findChildren<SettingsPage *>())
+                    settings->openSettingsSection(QString::fromUtf8(settingsTab));
             };
         }
     }

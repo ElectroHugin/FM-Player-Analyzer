@@ -107,6 +107,8 @@ private slots:
         registration.homeGrown = true;
         registration.u21 = PlayerRegistration::U21::No;
         registration.uefaListed = true;
+        registration.nonEu = true;
+        registration.uefaBlocked = true;
         QVERIFY(db.setRegistrations({{players[8].id, registration}}));
         QVERIFY(db.setLongTermInjured(players[9].id, true));
 
@@ -710,6 +712,44 @@ private slots:
         r.leagueListed = true;
         QVERIFY2(db.setRegistrations({{reloaded[0].id, r}}), qPrintable(db.errorString()));
         QVERIFY(db.loadPlayers()[0].registration.leagueListed);
+        db.close();
+    }
+
+    void migratesV11ToV12AddsNonEuAndBlocked()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v11.db"));
+        {
+            Database db(QStringLiteral("v11seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(1);
+            batch[0].uid = QStringLiteral("old");
+            batch[0].name = QStringLiteral("Legacy");
+            QVERIFY(db.upsertPlayers(batch));
+            PlayerRegistration r;
+            r.homeGrown = true;
+            QVERIFY(db.setRegistrations({{db.loadPlayers()[0].id, r}}));
+            QSqlQuery q(db.handle());
+            for (const char *col : {"non_eu", "league_blocked", "uefa_blocked"})
+                QVERIFY2(q.exec(QStringLiteral("ALTER TABLE player_registration DROP COLUMN %1")
+                                    .arg(QLatin1String(col))),
+                         qPrintable(q.lastError().text()));
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 11")));
+            db.close();
+        }
+
+        Database db(QStringLiteral("v11migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        const auto reloaded = db.loadPlayers();
+        QCOMPARE(static_cast<int>(reloaded.size()), 1);
+        QVERIFY(reloaded[0].registration.homeGrown);
+        QVERIFY(!reloaded[0].registration.nonEu);
+        PlayerRegistration r = reloaded[0].registration;
+        r.nonEu = true;
+        r.leagueBlocked = true;
+        QVERIFY2(db.setRegistrations({{reloaded[0].id, r}}), qPrintable(db.errorString()));
+        const PlayerRegistration back = db.loadPlayers()[0].registration;
+        QVERIFY(back.nonEu && back.leagueBlocked && !back.uefaBlocked && back.homeGrown);
         db.close();
     }
 

@@ -482,6 +482,22 @@ QPushButton#choiceCard:checked { border: 2px solid %ACCENTUI%; background-color:
 QLabel#choiceTitle { font-size: 14pt; font-weight: 700; }
 QToolButton#foldButton { background: transparent; border: none; color: %MUTED%; padding: 2px 0; }
 QToolButton#foldButton:hover { color: %FG%; }
+/* ===== Settings: section list, cards, footer ===== */
+QFrame#settingsNavPanel { background-color: %BG%; border-right: 1px solid %BORDER%; }
+QLabel#settingsNavTitle { font-size: 13pt; font-weight: 600; padding: 0 8px 4px 8px; }
+QListWidget#settingsNav { background: transparent; border: none; outline: none; }
+QListWidget#settingsNav::item {
+    padding: 7px 10px; margin: 1px 0; border-radius: 8px; color: %FG%; border: none; }
+QListWidget#settingsNav::item:hover:!selected { background-color: %HOVER%; }
+QListWidget#settingsNav::item:selected {
+    background-color: %INTERACTIVESUBTLE%; color: %FG%; font-weight: 600; }
+QListWidget#settingsNav::item:disabled {
+    color: %MUTED%; font-size: 9pt; font-weight: 600; padding: 16px 10px 4px 10px;
+    background: transparent; }
+QLabel#settingsPageTitle { font-size: 16pt; font-weight: 500; }
+QFrame#settingsCard { background-color: %SURFACE%; border: 1px solid %BORDER%; border-radius: 12px; }
+QFrame#settingsFooter { background-color: %SIDEBAR%; border-top: 1px solid %BORDER%; }
+QLabel#imageWell { background-color: %HOVER%; border: 1px solid %BORDER%; border-radius: 8px; color: %MUTED%; }
 QFrame#dropZone { border: 2px dashed %ACCENTUI%; border-radius: 12px; background-color: %HOVER%; }
 QFrame#dropZone[hovered="true"] { background-color: %INTERACTIVESUBTLE%; }
 QLabel#dropZoneIcon { font-size: 22pt; color: %ACCENTTEXT%; }

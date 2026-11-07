@@ -296,7 +296,7 @@ QWidget *StartScreen::buildList()
     m_autoOpenCheck->setChecked(m_context.config().autoOpenLastDatabase());
     m_autoOpenCheck->setToolTip(
         tr("Der Startbildschirm wird dann übersprungen. Mit gedrückter Umschalttaste beim "
-           "Start erscheint er trotzdem. Abschaltbar in Einstellungen → Datenbank."));
+           "Start erscheint er trotzdem. Abschaltbar in Einstellungen → Spielstände."));
     connect(m_autoOpenCheck, &QCheckBox::toggled, this,
             [this](bool on) { m_context.config().setAutoOpenLastDatabase(on); });
     auto *autoOpenText = new QVBoxLayout;

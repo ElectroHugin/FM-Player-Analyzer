@@ -186,7 +186,8 @@ jobs:
         run: |
           $version = "${{ steps.version.outputs.version }}"
           $asset = "desktop/installer/output/FMPlayerAnalyzer-$version-Windows-x64-Setup.exe"
-          $notes = @()
+          # The text comes from CHANGELOG.md (job release-notes below).
+          $notes = @("--notes", "FM Player Analyzer $version")
           if ("${{ vars.SIGNPATH_ORGANIZATION_ID }}" -ne "") {
             # SignPath Foundation terms: name the policy on the download page.
             $notes = @("--notes", "Signed Windows installer. Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/). [Code signing policy](https://github.com/$env:GITHUB_REPOSITORY/blob/main/CODE_SIGNING.md)")
@@ -195,7 +196,20 @@ jobs:
             --repo $env:GITHUB_REPOSITORY `
             --target $env:GITHUB_SHA `
             --title "FM Player Analyzer $version (Windows 64-bit)" `
-            --generate-notes @notes
+            @notes
+
+  # Release text from CHANGELOG.md, for the new release and all older ones.
+  # Runs on every push to main, so a corrected changelog fixes old releases too.
+  release-notes:
+    needs: [release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy CHANGELOG.md into the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/sync_release_notes.py CHANGELOG.md
 
   # Build + tests on Linux and the AppImage (same job as in ci.yml).
   # Deliberately independent of the release job: a Linux failure must not hold

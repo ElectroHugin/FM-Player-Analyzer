@@ -4,12 +4,14 @@
 
 > **Was der Analyzer davon umsetzt:** Kadergröße, Mindestzahl im Land ausgebildeter
 > Spieler und Mindestzahl im Verein ausgebildeter Spieler (als Höchstzahl der übrigen
-> Plätze) sowie die U21-Befreiung, wo sie belegt ist (Premier League, Ukraine). Seit
-> 2.2.1 lassen sich auf der Meldeliste zusätzlich ein Gehaltsbudget (Summe der
+> Plätze) sowie die U21-Befreiung, wo sie belegt ist (Premier League, Ukraine). Für
+> LaLiga lassen sich auf der Meldeliste zusätzlich (seit 2.2.1, ab 2.2.2 nur dort) ein Gehaltsbudget (Summe der
 > gemeldeten Spieler) und ein Mindestgehalt eintragen, beide optional, weil sich die
-> Beträge im Spiel ändern (z. B. LaLiga). Ligen mit 99 Plätzen (Bundesliga, Ligue 1,
+> Beträge im Spiel ändern. Seit 2.2.2 gilt die Nicht-EU-Grenze der Meldeliste (LaLiga 3,
+> Schweiz 10); wer als Nicht-EU zählt, markiert man von Hand. Die Best XI hält in der Schweiz
+> außerdem höchstens 5 Nicht-EU-Spieler in der Startelf ein. Ligen mit 99 Plätzen (Bundesliga, Ligue 1,
 > Österreich) haben keine Meldeliste. Nicht
-> umgesetzt: Ausländer- und Nicht-EU-Grenzen, Startelf-Grenzen,
+> umgesetzt: Ausländergrenzen, Nicht-EU-Grenze der Ligue 1 (keine Meldeliste, nur ein Hinweis), übrige Startelf-Grenzen,
 > Torhüter-Regeln der Süper Lig und Jugend-Ausnahmen, die von der Nationalität abhängen.
 > Weitere Ligen bitte per GitHub-Issue mit Screenshot der *Squad Selection Rules*.
 
