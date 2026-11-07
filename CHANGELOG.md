@@ -5,7 +5,7 @@
 - Squad Registration: wage budget and minimum wage now only appear for LaLiga. Other leagues have no such rule.
 - Squad Registration: mark players as non-EU. Only shown where the league limits them (LaLiga 3, Swiss Super League 10). The suggested list respects the limit.
 - Squad Registration: mark a player as "cannot be registered", separately for league and European competitions. He is never suggested.
-- Best XI (Swiss Super League): at most 5 non-EU players in the starting XI.
+- Best XI (Swiss Super League): at most 5 non-EU players in the starting XI, with a warning if there are more.
 - Squad Registration: for leagues without a squad list (Bundesliga, Ligue 1, Austria) the page explains why there is nothing to suggest. Ligue 1 also mentions its non-EU limit.
 - Release notes are now in English.
 - Settings redesigned: a section list on the left, short pages with clear cards, explanations folded away. All options are still there.

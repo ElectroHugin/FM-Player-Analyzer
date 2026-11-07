@@ -977,14 +977,14 @@ Details: %1</translation>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="187"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="258"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="975"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="991"/>
         <source>Startelf</source>
         <translation>Starting XI</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="188"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="259"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="976"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="992"/>
         <source>B-Team</source>
         <translation>B-Team</translation>
     </message>
@@ -1112,7 +1112,7 @@ Details: %1</translation>
         <translation>Suitability</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/BestXiPage.cpp" line="734"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="750"/>
         <source>Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer als der Vorschlag des Analyzers.</source>
         <translation>
             <numerusform>Adjusted by hand (%n player). The XI is %1 DWRS points weaker than the analyzer&apos;s suggestion.</numerusform>
@@ -1120,7 +1120,7 @@ Details: %1</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="929"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="945"/>
         <source>Langzeitverletzt (%1)</source>
         <translation>Long-term injured (%1)</translation>
     </message>
@@ -1249,69 +1249,74 @@ Details: %1</translation>
         <translation>At most %1 non-EU players in the starting XI (marked: %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="756"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="676"/>
+        <source>%1 Nicht-EU-Spieler in der Startelf, erlaubt sind höchstens %2.</source>
+        <translation>%1 non-EU players in the starting XI, at most %2 are allowed.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="772"/>
         <source>ohne: %1</source>
         <translation>OOP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="757"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="773"/>
         <source>mit: %1</source>
         <translation>IP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="800"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="816"/>
         <source>Zweitteam-XI (aus Überschuss des Hauptvereins)</source>
         <translation>Second Team XI (from main club surplus)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="801"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="817"/>
         <source>Zweitteam-XI (%1)</source>
         <translation>Second Team XI (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="914"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="930"/>
         <source>Trotz Verletzung eingeplant: %1.</source>
         <translation>Planned in despite injury: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="915"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="931"/>
         <source>Nicht eingeplant: %1.</source>
         <translation>Not planned in: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="918"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="934"/>
         <source>Startelf und B-Team bleiben gleich stark.</source>
         <translation>Starting XI and B-team stay just as strong.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="921"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="937"/>
         <source>Der Kader gleicht das so aus — Startelf %1, B-Team %2 DWRS-Punkte (Summe über alle Positionen):</source>
         <translation>This is how the squad makes up for it — starting XI %1, B-team %2 DWRS points (sum over all positions):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="984"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1000"/>
         <source>— unbesetzt —</source>
         <translation>— unfilled —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1008"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1024"/>
         <source>%1 (verletzt)</source>
         <translation>%1 (injured)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1097"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1099"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1113"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1115"/>
         <source>ja</source>
         <translation>yes</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1097"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1099"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1113"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1115"/>
         <source>nein</source>
         <translation>no</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1113"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1129"/>
         <source>Keine weiteren Spieler als Tiefen-Optionen für diese Taktik geeignet.</source>
         <translation>No further players suitable as depth options for this tactic.</translation>
     </message>
@@ -1331,47 +1336,47 @@ Details: %1</translation>
         <translation>Out of possession</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="776"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="792"/>
         <source>Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle ohne Ball am höchsten ist; jeder Spieler braucht die Position in beiden Aufstellungen. Unter dem Namen steht sein Platz in der anderen Aufstellung. Den Anteil stellst du in den Einstellungen ein. Per Rechtsklick auf einen Spieler der Startelf verschiebst du ihn selbst; der Analyzer zeigt, was jeder Platz kostet.</source>
         <translation>This tactic has one line-up in possession and one out of possession. The analyzer picks the players so that the sum of %1 % in-possession role and %2 % out-of-possession role is highest; every player needs the position in both line-ups. Under the name is his place in the other line-up. You set the share in the settings. Right-click a player of the starting XI to move him yourself; the analyzer shows what each place costs.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="848"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="864"/>
         <source>↔ Platz mit Ball ändern (jetzt %1)</source>
         <translation>↔ Change in-possession place (now %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="849"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="865"/>
         <source>↔ Platz ohne Ball ändern (jetzt %1)</source>
         <translation>↔ Change out-of-possession place (now %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="854"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="870"/>
         <source>Kein anderer Platz möglich (Position fehlt)</source>
         <translation>No other place possible (position missing)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="856"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="872"/>
         <source>Platz · Tausch mit · DWRS-Punkte der Elf</source>
         <translation>Place · swap with · DWRS points of the XI</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="863"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="879"/>
         <source>%1 (frei) · %2</source>
         <translation>%1 (free) · %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="864"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="880"/>
         <source>%1 · %2 · %3</source>
         <translation>%1 · %2 · %3</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="875"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="891"/>
         <source>↺ %1 wieder dem Analyzer überlassen</source>
         <translation>↺ Leave %1 to the analyzer again</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="884"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="900"/>
         <source>↺ Vorschlag des Analyzers wiederherstellen (%1)</source>
         <translation>↺ Restore the analyzer&apos;s suggestion (%1)</translation>
     </message>

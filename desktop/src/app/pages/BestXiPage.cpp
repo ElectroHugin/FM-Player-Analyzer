@@ -663,8 +663,23 @@ void BestXiPage::rebuild()
                 .arg(xiLimit.uids.size());
         note = note.isEmpty() ? capNote : note + QLatin1Char(' ') + capNote;
     }
-    m_registrationNote->setText(note);
-    m_registrationNote->setVisible(!note.isEmpty());
+    // Warns when the starting XI on the pitch breaks the cap anyway (the
+    // optimisation keeps it, so this guards against anything forced).
+    const auto showNote = [this, &note, &xiLimit](const QHash<QString, XiCell> &xi) {
+        int capped = 0;
+        for (const XiCell &cell : xi)
+            if (cell.isFilled() && xiLimit.uids.contains(cell.playerUid))
+                ++capped;
+        QString text = note;
+        if (xiLimit.max > 0 && capped > xiLimit.max)
+            text += QStringLiteral("<br><span style=\"color:#e5484d;\">⚠️ %1</span>")
+                        .arg(tr("%1 Nicht-EU-Spieler in der Startelf, erlaubt sind höchstens %2.")
+                                 .arg(capped)
+                                 .arg(xiLimit.max));
+        m_registrationNote->setText(text);
+        m_registrationNote->setVisible(!text.isEmpty());
+    };
+    showNote(first.startingXi);
 
     // The injury comparison is always "all fit" against "without the injured",
     // whichever of the two is on the pitches.
@@ -723,6 +738,7 @@ void BestXiPage::rebuild()
         m_bridge.share = share / 100.0;
         m_bridge.bridges = bridges;
         m_bridge.slotsOfUid = squad.slotsOfUid;
+        showNote(squad.startingOop); // the line-up actually shown
         m_bridge.current = SquadBuilder::startingValue(squad);
         m_bridge.optimum = bridges.isEmpty()
             ? m_bridge.current
