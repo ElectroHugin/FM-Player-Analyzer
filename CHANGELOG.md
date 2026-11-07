@@ -91,3 +91,32 @@
 ## 1.5.0 – 2026-10-11
 
 - New sidebar: pages grouped, with tabs on top. Fewer entries, easier to find.
+
+## 1.4.x – 2026-09-29 to 2026-10-11
+
+- Squad registration assistant: builds a full, rule-compliant squad list for the Premier League and UEFA (List A and B), Bundesliga selectable.
+- Tick who you actually registered. Best XI then uses that list per competition.
+- U21 status ends at 22. Changes since your last save are shown.
+- Best XI and B team are now provably optimal (Hungarian method).
+- Long-term injured players can be taken out of the Best XI. The squad rebalances.
+- Transfer advice: gap analysis shows where buying really pays off.
+- Squad matrix: tabs for Scouting and My squad, attribute thresholds, difference to your best own player.
+- DWRS development: based on imports instead of dates, ranking with history, role taken from your favourite tactic's Best XI.
+- Goalkeeper DWRS fixed and re-weighted from real match statistics.
+- Only full exports age players. Outdated players are hidden.
+- Name columns sort by surname, like in the game.
+- Charts readable in night mode.
+- Tables no longer cut off the longest text in a column.
+- Save profiles per FM version (preparation for FM27).
+
+## 1.3.x – 2026-08-03 to 2026-09-29
+
+- English translation for the free agent and nationality filters.
+- National team mode: upload national flags.
+- Nomination assistant for your national squad.
+- Training advice per player and a training plan page, based on training methods.
+- Data freshness tracking. Retired players are detected and left out of all suggestions.
+- Back, forward and home navigation on every page.
+- Much faster import and DWRS recalculation. The app freezes less.
+- Search in tables ignores umlauts. CSV export works with German Excel. £ and $ market values supported.
+- Home-grown, club-grown and U21 status can be edited, with a setting for the rule set.
