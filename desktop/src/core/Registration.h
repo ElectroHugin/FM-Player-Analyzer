@@ -23,8 +23,9 @@ namespace Registration {
 // modelled (yet): no restriction. Leagues with 99 places and no quota the
 // analyzer can check (Bundesliga, Ligue 1, Austrian Bundesliga) are selectable
 // by name but behave like None. FM27 rules come from the game's "Squad
-// Selection Rules" screens (docs/REGISTRIERUNG-FM27.md); nationality and
-// non-EU limits are not modelled (no reliable data in the export).
+// Selection Rules" screens (docs/REGISTRIERUNG-FM27.md). Nationality quotas
+// are not modelled; the non-EU limit of the squad list is (LaLiga,
+// Switzerland), with the non-EU status maintained by hand.
 enum class LeagueRules {
     None,
     Bundesliga,
@@ -58,6 +59,11 @@ bool restrictsSquad(LeagueRules rules);
 // Whether the league caps wages on the squad list (wage budget, minimum wage).
 // Only LaLiga does.
 bool hasWageRules(LeagueRules rules);
+
+// Most non-EU players the league's squad list may hold; 0 = no such limit.
+// LaLiga 3, Swiss Super League 10. The status is the game's own judgement
+// (agreements, second passports), so it is marked by hand.
+int nonEuLimit(LeagueRules rules);
 
 // League rule sets available for an FM version (rules are per game release).
 QList<LeagueRules> leagueRulesFor(const QString &fmVersionId);
@@ -135,7 +141,15 @@ struct Quota {
     // count as 0 and are never held back by the minimum.
     double wageBudget = 0.0;
     double minWage = 0.0;
+    // Non-EU players on the list (league only); 0 = no limit.
+    int maxNonEu = 0;
 };
+
+// Counts as non-EU (hand-maintained) and the quota limits them.
+bool countsAsNonEu(const Player &player, const Quota &quota);
+
+// Marked as "cannot be registered" for the competition: never proposed.
+bool isBlocked(const Player &player, Competition competition);
 
 // Weekly wage of a player for the wage rules; unknown counts as 0.
 double weeklyWage(const Player &player);
@@ -178,6 +192,8 @@ enum class LeftOutReason {
     NonClubTrainedFull, // only club-trained places are left (UEFA)
     BelowMinWage,       // earns less than the league's minimum wage
     WageBudgetFull,     // his wage no longer fits the wage budget
+    NonEuFull,          // the non-EU limit is used up
+    Blocked,            // marked as not registrable
 };
 
 struct Proposal {
@@ -189,6 +205,7 @@ struct Proposal {
     int homeGrownOnly = 0; // home-grown but not club-trained
     int clubTrained = 0;
     int goalkeepers = 0;   // counted towards the minimum (see Quota)
+    int nonEu = 0;         // listed non-EU players (where the quota limits them)
     int emptySlots = 0;    // places no eligible player could fill
     double totalWage = 0.0; // weekly wages of the listed players
 };
@@ -236,17 +253,19 @@ struct ListCheck {
     int goalkeepers = 0;   // counted towards the minimum (see Quota)
     double totalWage = 0.0; // weekly wages of the listed players
     int belowMinWage = 0;   // listed although under the minimum wage
+    int nonEu = 0;          // listed non-EU players (where the quota limits them)
 
     bool tooMany = false;              // more players than places
     bool tooManyNonHomeGrown = false;
     bool tooManyNonClubTrained = false;
     bool tooFewGoalkeepers = false;
     bool overWageBudget = false;
+    bool tooManyNonEu = false;
 
     bool valid() const
     {
         return !tooMany && !tooManyNonHomeGrown && !tooManyNonClubTrained && !tooFewGoalkeepers
-               && !overWageBudget && belowMinWage == 0;
+               && !overWageBudget && belowMinWage == 0 && !tooManyNonEu;
     }
 };
 // listed: the players taking a slot; exempt: those eligible without one (their

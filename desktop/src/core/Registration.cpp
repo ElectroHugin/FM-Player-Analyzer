@@ -96,6 +96,18 @@ bool hasWageRules(LeagueRules rules)
     return rules == LeagueRules::LaLiga;
 }
 
+int nonEuLimit(LeagueRules rules)
+{
+    switch (rules) {
+    case LeagueRules::LaLiga:
+        return 3;
+    case LeagueRules::SwissSuperLeague:
+        return 10; // the limit of 5 in the starting XI is not modelled
+    default:
+        return 0; // Ligue 1 has one too, but no squad list (99 places)
+    }
+}
+
 // Only versions whose registry entry models the rules. fmDataVersion() falls
 // back to the default version for unknown ids, so the id must match exactly.
 static bool modelsRegistrationRules(const QString &fmVersionId)
@@ -206,7 +218,7 @@ Quota quotaFor(Competition competition, const Settings &settings)
         set(25, 8, 0, true); // U21 need no slot
         break;
     case LeagueRules::LaLiga:
-        set(25, 0, 0, false); // non-EU limit and U19-EU exemption not modelled
+        set(25, 0, 0, false); // U19-EU exemption not modelled
         break;
     case LeagueRules::SerieA:
         set(25, 8, 4, false);
@@ -215,7 +227,7 @@ Quota quotaFor(Competition competition, const Settings &settings)
         set(68, 10, 0, false); // clubs with a B team; without one not documented
         break;
     case LeagueRules::SwissSuperLeague:
-        set(25, 8, 0, false); // non-EU limit not modelled
+        set(25, 8, 0, false);
         break;
     case LeagueRules::RussianPremierLiga:
         set(55, 8, 4, false); // foreigner limit and domestic U18 exemption not modelled
@@ -239,7 +251,19 @@ Quota quotaFor(Competition competition, const Settings &settings)
         quota.wageBudget = std::max(0.0, settings.wageBudget);
         quota.minWage = std::max(0.0, settings.minWage);
     }
+    quota.maxNonEu = nonEuLimit(settings.league);
     return quota;
+}
+
+bool countsAsNonEu(const Player &player, const Quota &quota)
+{
+    return quota.maxNonEu > 0 && player.registration.nonEu;
+}
+
+bool isBlocked(const Player &player, Competition competition)
+{
+    return competition == Competition::Uefa ? player.registration.uefaBlocked
+                                            : player.registration.leagueBlocked;
 }
 
 double weeklyWage(const Player &player)
@@ -398,11 +422,13 @@ void improveWithinBudget(std::vector<const RankedPlayer *> &listed,
         std::min(quota.minGoalkeepers, keepersOf(listed) + exemptKeepers) - exemptKeepers;
 
     struct Totals {
-        int size = 0, nonHomeGrown = 0, nonClubTrained = 0, keepers = 0;
+        int size = 0, nonHomeGrown = 0, nonClubTrained = 0, keepers = 0, nonEu = 0;
         double wage = 0.0, value = 0.0;
     };
-    const auto add = [](Totals &t, const RankedPlayer *e, int sign) {
+    const auto add = [&quota](Totals &t, const RankedPlayer *e, int sign) {
         t.size += sign;
+        if (countsAsNonEu(*e->player, quota))
+            t.nonEu += sign;
         const Category cat = category(*e->player);
         if (cat == Category::NonHomeGrown)
             t.nonHomeGrown += sign;
@@ -416,6 +442,7 @@ void improveWithinBudget(std::vector<const RankedPlayer *> &listed,
     const auto fits = [&quota, keeperFloor](const Totals &t) {
         return t.size <= quota.maxSize && t.nonHomeGrown <= quota.maxNonHomeGrown
                && t.nonClubTrained <= quota.maxNonClubTrained
+               && (quota.maxNonEu <= 0 || t.nonEu <= quota.maxNonEu)
                && t.wage <= quota.wageBudget + 0.01 && t.keepers >= keeperFloor;
     };
 
@@ -484,11 +511,16 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
     result.quota = quota;
 
     std::vector<const RankedPlayer *> candidates;
+    std::vector<RankedPlayer> blocked; // marked as not registrable
     for (const RankedPlayer &entry : ranked) {
+        // Exempt players need no slot, so a "not registrable" mark does not
+        // keep them out.
         if (isExempt(*entry.player, competition, quota)) {
             result.exempt.push_back(entry);
             if (quota.exemptKeepersCount && entry.player->isGoalkeeper())
                 ++result.goalkeepers;
+        } else if (isBlocked(*entry.player, competition)) {
+            blocked.push_back(entry);
         } else {
             candidates.push_back(&entry);
         }
@@ -507,6 +539,8 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
         if (cat != Category::ClubTrained
             && result.nonHomeGrown + result.homeGrownOnly >= quota.maxNonClubTrained)
             return LeftOutReason::NonClubTrainedFull;
+        if (countsAsNonEu(player, quota) && result.nonEu >= quota.maxNonEu)
+            return LeftOutReason::NonEuFull;
         // Cent-level slack against rounding in the summed wages.
         if (quota.wageBudget > 0.0
             && result.totalWage + weeklyWage(player) > quota.wageBudget + 0.01)
@@ -530,6 +564,8 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
         }
         if (entry.player->isGoalkeeper())
             ++result.goalkeepers;
+        if (countsAsNonEu(*entry.player, quota))
+            ++result.nonEu;
         result.totalWage += weeklyWage(*entry.player);
     };
 
@@ -585,7 +621,7 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
         // Rebuild the counters from the improved list.
         result.listed.clear();
         result.leftOut.clear();
-        result.nonHomeGrown = result.homeGrownOnly = result.clubTrained = 0;
+        result.nonHomeGrown = result.homeGrownOnly = result.clubTrained = result.nonEu = 0;
         result.goalkeepers = exemptKeepers;
         result.totalWage = 0.0;
         taken.clear();
@@ -598,6 +634,9 @@ Proposal propose(const std::vector<RankedPlayer> &ranked, Competition competitio
             result.leftOut.push_back({*entry, reason.value_or(LeftOutReason::WageBudgetFull)});
         }
     }
+    // Not registrable: named last, whatever else would apply.
+    for (const RankedPlayer &entry : blocked)
+        result.leftOut.push_back({entry, LeftOutReason::Blocked});
     // Keep the listed players in rank order (keepers were taken first).
     QHash<const Player *, int> rankIndex;
     for (int i = 0; i < static_cast<int>(ranked.size()); ++i)
@@ -655,6 +694,8 @@ ListCheck checkList(const std::vector<const Player *> &listed,
         check.totalWage += weeklyWage(*p);
         if (belowMinWage(*p, quota))
             ++check.belowMinWage;
+        if (countsAsNonEu(*p, quota))
+            ++check.nonEu;
     }
     if (quota.exemptKeepersCount) {
         for (const Player *p : exempt)
@@ -668,6 +709,7 @@ ListCheck checkList(const std::vector<const Player *> &listed,
     check.tooFewGoalkeepers = check.goalkeepers < quota.minGoalkeepers;
     check.overWageBudget =
         quota.wageBudget > 0.0 && check.totalWage > quota.wageBudget + 0.01;
+    check.tooManyNonEu = quota.maxNonEu > 0 && check.nonEu > quota.maxNonEu;
     return check;
 }
 
