@@ -31,6 +31,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTimer>
 #include <QRadioButton>
 #include <QScrollArea>
 #include <QSlider>
@@ -159,17 +160,32 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     m_talentAgeLabel->setText(tr("%1 Jahre").arg(m_talentAgeSlider->value()));
     m_talentMentalityLabel->setText(QString::number(m_talentMentalitySlider->value()));
 
-    const auto scoutedRebuild = [this] {
+    // The sort/role choice changes the columns (focus role, delta to the first
+    // team); every other filter here only changes which rows are shown.
+    connect(m_scoutedFilterCombo, &QComboBox::currentIndexChanged, this, [this] {
         if (!m_updating)
             rebuildScoutedOnly();
+    });
+    const auto scoutedRowsRebuild = [this] {
+        if (!m_updating)
+            rebuildScoutedOnly(/*columnsChanged*/ false);
     };
-    connect(m_scoutedFilterCombo, &QComboBox::currentIndexChanged, this, scoutedRebuild);
-    connect(m_freeAgentsCheck, &QCheckBox::toggled, this, scoutedRebuild);
-    connect(m_scoutedNatCombo, &QComboBox::currentIndexChanged, this, scoutedRebuild);
-    connect(m_dwrsMinSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
-    connect(m_dwrsMaxSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
-    connect(m_minAgeSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
-    connect(m_maxAgeSpin, &QSpinBox::valueChanged, this, scoutedRebuild);
+    connect(m_freeAgentsCheck, &QCheckBox::toggled, this, scoutedRowsRebuild);
+    connect(m_scoutedNatCombo, &QComboBox::currentIndexChanged, this, scoutedRowsRebuild);
+    // Slider drags and held spin box arrows fire per step: rebuild once they
+    // pause (labels update immediately).
+    m_scoutedRowsTimer = new QTimer(this);
+    m_scoutedRowsTimer->setSingleShot(true);
+    m_scoutedRowsTimer->setInterval(120);
+    connect(m_scoutedRowsTimer, &QTimer::timeout, this, scoutedRowsRebuild);
+    const auto scoutedRowsSoon = [this] {
+        if (!m_updating)
+            m_scoutedRowsTimer->start();
+    };
+    connect(m_dwrsMinSpin, &QSpinBox::valueChanged, this, scoutedRowsSoon);
+    connect(m_dwrsMaxSpin, &QSpinBox::valueChanged, this, scoutedRowsSoon);
+    connect(m_minAgeSpin, &QSpinBox::valueChanged, this, scoutedRowsSoon);
+    connect(m_maxAgeSpin, &QSpinBox::valueChanged, this, scoutedRowsSoon);
     const auto updateMaxValueLabel = [this] {
         // Right end of the slider means "no cap" so that "Not for Sale"
         // players (kUnbuyableValue) stay visible.
@@ -178,9 +194,9 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
                                      : millions(m_maxValueSlider->value() * 500'000.0));
     };
     connect(m_maxValueSlider, &QSlider::valueChanged, this,
-            [updateMaxValueLabel, scoutedRebuild] {
+            [updateMaxValueLabel, scoutedRowsSoon] {
                 updateMaxValueLabel();
-                scoutedRebuild();
+                scoutedRowsSoon();
             });
     updateMaxValueLabel();
 
@@ -671,8 +687,10 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
 
     QList<PlayerColumn> focusColumns;
     if (!clubTable && !m_requirements->criteria().isEmpty()) {
-        const QHash<QString, double> values = m_requirementValues;
-        const auto valueOf = [values](const Player &p) { return values.value(p.uid, -1.0); };
+        // Read live: a rows-only rebuild refills m_requirementValues for the
+        // new rows without rebuilding the columns (the page owns both).
+        const QHash<QString, double> *values = &m_requirementValues;
+        const auto valueOf = [values](const Player &p) { return values->value(p.uid, -1.0); };
         focusColumns.append(
             {tr("⌀ Anforderungen"),
              [valueOf](const Player &p) -> QVariant {
@@ -771,6 +789,8 @@ void SquadMatrixPage::releaseStoreRows()
     }
     m_scoutedPool.clear(); // also caches raw Player*
     m_firstTeam.clear();
+    if (m_scoutedRowsTimer)
+        m_scoutedRowsTimer->stop();
 }
 
 void SquadMatrixPage::refresh()
@@ -1006,8 +1026,7 @@ void SquadMatrixPage::rebuildAll()
     else
         clubTitle = tr("Spieler von %1 (%2)").arg(clubName).arg(clubRows.size());
     m_clubSection.box->setTitle(clubTitle);
-    m_clubSection.model->setColumns(buildColumns(true));
-    m_clubSection.model->setRows(std::move(clubRows));
+    m_clubSection.model->setColumnsAndRows(buildColumns(true), std::move(clubRows));
     fitColumnsCompact(m_clubSection.table);
 
     // --- Scouted filter combo (keep selection across rebuilds). ---
@@ -1035,8 +1054,10 @@ void SquadMatrixPage::rebuildAll()
     rebuildScoutedOnly();
 }
 
-void SquadMatrixPage::rebuildScoutedOnly()
+void SquadMatrixPage::rebuildScoutedOnly(bool columnsChanged)
 {
+    if (m_scoutedRowsTimer)
+        m_scoutedRowsTimer->stop(); // this rebuild covers a pending one
     const RoleRatings &ratings = m_context.ratings();
     const QString filterKey = m_scoutedFilterCombo->currentData().toString();
     const int minDwrs = m_dwrsMinSpin->value();
@@ -1082,16 +1103,18 @@ void SquadMatrixPage::rebuildScoutedOnly()
                                                     : QSet<QString>(),
                                      criteria, ratings, minDwrs, maxDwrs);
     };
+    // Cheap checks first; the requirements (position parsing, several
+    // role lookups) only for players that pass everything else.
     const auto passesIdentity = [&](const Player *p) -> bool {
         if (freeAgentsOnly && !isFreeAgent(p->club, p->transferValueRaw))
             return false;
-        if (!passesRequirements(p))
+        if (!passesNationality(p))
             return false;
         for (const auto &[attrIndex, minimum] : thresholds) {
             if (p->attrMean(attrIndex) < minimum)
                 return false;
         }
-        return passesNationality(p);
+        return passesRequirements(p);
     };
 
     std::vector<const Player *> rows;
@@ -1107,11 +1130,11 @@ void SquadMatrixPage::rebuildScoutedOnly()
         const QHash<QString, double> roleRatings =
             roleFilter ? ratings.value(filterKey) : QHash<QString, double>();
         for (const Player *player : m_scoutedPool) {
-            if (!passesIdentity(player))
-                continue;
             // Unknown age (0) is never excluded by the age bounds.
             if ((player->age > 0 && player->age < minAge) || player->age > maxAge
                 || (!noValueCap && player->transferValue > maxValue))
+                continue;
+            if (!passesIdentity(player))
                 continue;
             if (roleFilter) {
                 const auto it = roleRatings.constFind(player->uid);
@@ -1136,8 +1159,18 @@ void SquadMatrixPage::rebuildScoutedOnly()
     m_scoutedSection.box->setTitle(freeAgentsOnly
                                        ? tr("Free Agents (%1)").arg(rows.size())
                                        : tr("Gescoutete Spieler (%1)").arg(rows.size()));
-    m_scoutedSection.model->setColumns(buildColumns(false));
-    m_scoutedSection.model->setRows(std::move(rows));
+    if (!columnsChanged) {
+        // Same columns: swap the rows (the proxy re-sorts by its current sort
+        // column) and keep the widths. Only re-sort if the sort was changed
+        // by hand, so the result matches a full rebuild.
+        m_scoutedSection.model->setRows(std::move(rows));
+        const QHeaderView *header = m_scoutedSection.table->horizontalHeader();
+        if (header->sortIndicatorSection() != m_scoutedSortColumn
+            || header->sortIndicatorOrder() != m_scoutedSortOrder)
+            m_scoutedSection.table->sortByColumn(m_scoutedSortColumn, m_scoutedSortOrder);
+        return;
+    }
+    m_scoutedSection.model->setColumnsAndRows(buildColumns(false), std::move(rows));
 
     // Sort by the chosen role/talent column, otherwise by name.
     int sortColumn = 1; // Name (column 0 is the shortlist star)
@@ -1159,6 +1192,8 @@ void SquadMatrixPage::rebuildScoutedOnly()
             }
         }
     }
+    m_scoutedSortColumn = sortColumn;
+    m_scoutedSortOrder = order;
     m_scoutedSection.table->sortByColumn(sortColumn, order);
     fitColumnsCompact(m_scoutedSection.table);
 }
@@ -1283,7 +1318,7 @@ void SquadMatrixPage::toggleShortlist(const Player *player)
         QMessageBox::critical(this, tr("Shortlist"), m_context.database().errorString());
         return;
     }
-    rebuildScoutedOnly();
+    rebuildScoutedOnly(/*columnsChanged*/ false); // the star reads the player live
 }
 
 void SquadMatrixPage::exportCsv(const TableSection &section)

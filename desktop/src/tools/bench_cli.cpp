@@ -60,6 +60,20 @@ int benchLoad(const QString &dbPath)
     std::printf("Gesamt (inkl. Open %lld ms): %lld ms\n", openMs,
                 openMs + playersMs + ratingsMs + mappingMs);
 
+    // Same two caches in one pass (what the app uses since 2.2.3), plus an
+    // entry-for-entry comparison with the two-step build above.
+    fm::LatestRatings onePassLatest;
+    fm::RoleRatings onePassRatings;
+    timer.restart();
+    const bool onePassOk = fm::RatingsUpdater::loadRatingCaches(db, store, onePassLatest,
+                                                                onePassRatings);
+    const qint64 onePassMs = timer.restart();
+    std::printf("Ratings + Mapping in einem Durchlauf: %lld ms (vorher %lld ms) - %s\n",
+                onePassMs, ratingsMs + mappingMs,
+                !onePassOk ? "FEHLER"
+                : (onePassLatest == latest && onePassRatings == roleRatings) ? "identisch"
+                                                                               : "ABWEICHUNG");
+
     // Targeted refresh after a small save (AppContext::refreshPlayers): re-read
     // 20 players and patch store + rating cache in place.
     fm::RoleRatings patched = roleRatings;

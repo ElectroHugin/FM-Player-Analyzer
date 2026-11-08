@@ -174,7 +174,10 @@ bool AppContext::openDatabaseImpl(const QString &dbName, const QString &copyProf
     emit profileChanged();
     applyGraphicsSettings();
 
-    reloadFromDatabase();
+    // One signal for the switch: databaseChanged() also stands for the new
+    // player store, so pages refresh once instead of on dataChanged() and
+    // again on databaseChanged().
+    loadFromDatabase();
     emit databaseChanged(dbName);
     return true;
 }
@@ -440,9 +443,15 @@ bool AppContext::setFmVersion(const QString &versionId, QString *errorOut)
 
 void AppContext::reloadFromDatabase()
 {
-    m_store.reset(m_database->loadPlayers());
-    rebuildRatingsCache();
+    loadFromDatabase();
     emit dataChanged();
+}
+
+void AppContext::loadFromDatabase()
+{
+    m_store.reset(m_database->loadPlayers());
+    ++m_storeGeneration;
+    rebuildRatingsCache();
 }
 
 void AppContext::refreshPlayers(const QList<int> &playerIds)
@@ -503,6 +512,7 @@ bool AppContext::setNationalSquad(const QList<int> &playerIds)
 void AppContext::adoptState(PlayerStore store, LatestRatings latestRatings, RoleRatings ratings)
 {
     m_store = std::move(store);
+    ++m_storeGeneration;
     m_latestRatings = std::move(latestRatings);
     m_ratings = std::move(ratings);
     emit dataChanged();
@@ -518,8 +528,9 @@ void AppContext::reloadRatings()
 
 void AppContext::rebuildRatingsCache()
 {
-    m_latestRatings = m_database->latestDwrsRatings();
-    m_ratings = RatingsUpdater::roleRatingsForAssigned(m_store, m_latestRatings);
+    if (!RatingsUpdater::loadRatingCaches(*m_database, m_store, m_latestRatings, m_ratings))
+        qWarning("Reading the latest DWRS ratings failed: %s",
+                 qUtf8Printable(m_database->errorString()));
 }
 
 PlayerStatus::FreshnessContext AppContext::freshnessContext()

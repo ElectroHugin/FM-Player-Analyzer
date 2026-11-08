@@ -143,8 +143,14 @@ private slots:
             AppContext context;
             startApp(context);
             QString error;
+            // A switch is announced once: databaseChanged() stands for the new
+            // player store too, so pages refresh once (no dataChanged() first).
+            QSignalSpy dataSpy(&context, &AppContext::dataChanged);
+            QSignalSpy databaseSpy(&context, &AppContext::databaseChanged);
             for (int round = 0; round < 2; ++round) {
                 QVERIFY2(context.openDatabase(QStringLiteral("alt"), &error), qPrintable(error));
+                QCOMPARE(databaseSpy.count(), 2 * round + 1);
+                QCOMPARE(dataSpy.count(), 0);
                 QCOMPARE(context.config().weight(kFm24, kTop), 11.0);
                 QCOMPARE(context.config().themeSettings().value(QStringLiteral("current_mode")),
                          QStringLiteral("day"));

@@ -65,6 +65,8 @@ private:
     // selectFirst: also navigate to the first entry (a user mode switch);
     // false when the history restores a page itself.
     void rebuildMenu(bool selectFirst = true);
+    // Every page drops its Player* (the store was or may have been replaced).
+    void releaseAllStoreRows();
     // Rebuilds the sidebar (e.g. a page appeared) and keeps the current page selected.
     // Highlights the sidebar group of pageId without triggering navigation.
     void selectMenuEntry(const QString &pageId);
@@ -144,6 +146,8 @@ private:
     QList<HistoryEntry> m_history;
     int m_historyIndex = -1;
     bool m_restoringHistory = false; // navigateTo() must not record a new step
+    int m_navigationCount = 0;       // navigateTo() calls, to skip a duplicate refresh
+    quint64 m_seenStoreGeneration = 0; // store the pages were last released for
 
     QStringList m_searchKeys; // folded "name club" per store row, for the palette
     bool m_searchModelDirty = true;

@@ -73,6 +73,15 @@ void PlayerTableModel::setRows(std::vector<const Player *> rows)
     endResetModel();
 }
 
+void PlayerTableModel::setColumnsAndRows(QList<PlayerColumn> columns,
+                                         std::vector<const Player *> rows)
+{
+    beginResetModel();
+    m_columns = std::move(columns);
+    m_rows = std::move(rows);
+    endResetModel();
+}
+
 const Player *PlayerTableModel::playerAt(int row) const
 {
     if (row < 0 || row >= static_cast<int>(m_rows.size()))

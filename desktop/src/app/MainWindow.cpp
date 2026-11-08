@@ -257,6 +257,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
 
     updateDbLabel();
     updateHeader();
+    m_seenStoreGeneration = m_context.storeGeneration(); // no page holds rows yet
 
     m_welcomeTimer.setSingleShot(true);
     m_welcomeTimer.setInterval(600);
@@ -271,16 +272,25 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     });
     connect(&m_context, &AppContext::navigationRequested, this, &MainWindow::navigateTo);
     connect(&m_context, &AppContext::databaseChanged, this, [this](const QString &) {
+        // The player store was replaced with the new save's (no dataChanged()
+        // precedes this): every page drops its Player* right away. Hidden pages
+        // rebuild when opened (navigateTo refreshes them); the visible page is
+        // refreshed exactly once, after the save-specific updates below.
+        releaseAllStoreRows();
         updateDbLabel();
         updateHeader();
         m_searchModelDirty = true;
         m_noticeBar->hide(); // hints belong to the previous save
         // Another FM version may offer other pages ("Neue Rolle" only where
-        // roles can be added).
+        // roles can be added). Rebuilding the menu navigates to its first
+        // page, which refreshes that page already.
+        const int navigationsBefore = m_navigationCount;
         if (fmDataVersion(m_context.fmVersionId()).customRoles != m_sidebarCustomRoles)
             rebuildMenu();
-        for (PageBase *page : std::as_const(m_pages))
-            page->refresh();
+        if (m_navigationCount == navigationsBefore) {
+            if (auto *visible = qobject_cast<PageBase *>(m_stack->currentWidget()))
+                visible->refresh();
+        }
         // Another database: earlier steps (e.g. a player's profile) may not
         // exist here, so the history starts over.
         resetHistory();
@@ -291,12 +301,19 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         m_searchModelDirty = true;
         updateDbLabel();
         updateHeader();
-        // The store was just replaced; drop stale Player* held by hidden pages
-        // before anything can access them (they rebuild on next activation).
+        // Drop stale Player* before anything can access them. Hidden pages
+        // rebuild on next activation, the visible one right here. The visible
+        // page releases too only when the store was really replaced; after an
+        // in-place update its pointers stay valid and it keeps its state
+        // (e.g. a registration proposal) through the refresh.
         auto *current = qobject_cast<PageBase *>(m_stack->currentWidget());
-        for (PageBase *page : std::as_const(m_pages)) {
-            if (page != current)
-                page->releaseStoreRows();
+        if (m_context.storeGeneration() != m_seenStoreGeneration) {
+            releaseAllStoreRows();
+        } else {
+            for (PageBase *page : std::as_const(m_pages)) {
+                if (page != current)
+                    page->releaseStoreRows();
+            }
         }
         if (current)
             current->refresh();
@@ -624,6 +641,17 @@ PageBase *MainWindow::createPage(const QString &pageId)
     return new PlaceholderPage(m_context, label, this);
 }
 
+void MainWindow::releaseAllStoreRows()
+{
+    // The visible page too: its pointers dangle once the store is replaced,
+    // and its refresh() may touch them before setting new rows (the Squad
+    // Matrix reset its columns first and the view re-sorted the old rows:
+    // crash when switching away from a large save on that page).
+    for (PageBase *page : std::as_const(m_pages))
+        page->releaseStoreRows();
+    m_seenStoreGeneration = m_context.storeGeneration();
+}
+
 void MainWindow::navigateTo(const QString &pageId)
 {
     // Remember what the page being left shows (e.g. the profile's player) so
@@ -638,6 +666,7 @@ void MainWindow::navigateTo(const QString &pageId)
         m_pages.insert(hostId, page);
         m_stack->addWidget(page);
     }
+    ++m_navigationCount;
     page->showSection(pageId);
     m_stack->setCurrentWidget(page);
     m_currentPageId = pageId;

@@ -13,6 +13,9 @@
 - Best XI: the table for a missing starter now shows who comes on, who takes over the vacated places, other moves and the change for the whole XI. Equal plans prefer fewer moves. The non-EU starting limit is kept.
 - Overview: the positional strength shows each starter's rating and how much the XI loses if he is out, instead of an average over starters, B-team and reserves. Hover a card for who would replace him.
 - Best XI: the list of extra depth is now called "Reserve options per role".
+- Switching saves is faster, especially for big databases: only the page you are looking at is rebuilt, and ratings load in one go.
+- Scouting: changing age, value, DWRS range, nationality or free agents updates the list much faster. Sliders wait until you let go.
+- Fixed a crash when switching saves while the Squad Matrix was open (big databases).
 
 ## 2.2.2 – 2026-11-07
 

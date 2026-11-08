@@ -1449,6 +1449,27 @@ LatestRatings Database::latestDwrsRatings()
     return result;
 }
 
+bool Database::forEachLatestDwrsRating(
+    const std::function<void(int, const QString &, double, double)> &visit)
+{
+    QSqlQuery query(m_db);
+    query.setForwardOnly(true);
+    if (!query.exec(QStringLiteral("SELECT player_id, role, absolute, normalized FROM dwrs_latest "
+                                   "ORDER BY player_id, role"))) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    while (query.next()) {
+        visit(query.value(0).toInt(), query.value(1).toString(), query.value(2).toDouble(),
+              query.value(3).toDouble());
+    }
+    if (query.lastError().isValid()) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    return true;
+}
+
 std::vector<DwrsEntry> Database::dwrsHistory(const QList<int> &playerIds, const QString &role)
 {
     std::vector<DwrsEntry> result;

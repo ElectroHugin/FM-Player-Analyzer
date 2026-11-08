@@ -54,6 +54,8 @@ public:
 
     void setColumns(QList<PlayerColumn> columns);
     void setRows(std::vector<const Player *> rows);
+    // Both at once with a single model reset (one re-sort, one view rebuild).
+    void setColumnsAndRows(QList<PlayerColumn> columns, std::vector<const Player *> rows);
 
     const Player *playerAt(int row) const;
     QString headerText(int column) const;
