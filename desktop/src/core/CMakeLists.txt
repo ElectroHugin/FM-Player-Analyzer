@@ -116,11 +116,9 @@ else()
     set(ZSTD_BUILD_TESTS OFF CACHE BOOL "" FORCE)
     set(ZSTD_LEGACY_SUPPORT OFF CACHE BOOL "" FORCE)
     set(ZSTD_MULTITHREAD_SUPPORT OFF CACHE BOOL "" FORCE)
-    # Use the upstream source archive to avoid the release-asset download.
     FetchContent_Declare(zstd
-        URL https://codeload.github.com/facebook/zstd/tar.gz/refs/tags/v1.5.6
-        URL_HASH SHA256=30f35f71c1203369dc979ecde0400ffea93c27391bfd2ac5a9715d2173d92ff7
-        DOWNLOAD_NAME zstd-1.5.6.tar.gz
+        URL https://github.com/facebook/zstd/releases/download/v1.5.6/zstd-1.5.6.tar.gz
+        URL_HASH SHA256=8c29e06cf42aacc1eafc4077ae2ec6c6fcb96a626157e0593d5e82a34fd403c1
         SOURCE_SUBDIR build/cmake
         DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
     FetchContent_MakeAvailable(zstd)
