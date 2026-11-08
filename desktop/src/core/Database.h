@@ -107,6 +107,14 @@ public:
     bool appendDwrsRatings(const std::vector<DwrsEntry> &entries,
                            RatingsOrigin origin = RatingsOrigin::Import);
     LatestRatings latestDwrsRatings();
+    // Streams every dwrs_latest row in (player_id, role) order — the table's
+    // primary-key order, so SQLite scans without a separate sort. Used to
+    // build both rating caches in one pass (RatingsUpdater::loadRatingCaches).
+    // Returns false with errorString() set when the query fails, so a failed
+    // read cannot pass for an empty ratings table.
+    bool forEachLatestDwrsRating(
+        const std::function<void(int playerId, const QString &role, double absolute,
+                                 double normalized)> &visit);
     // Latest ratings of just these players (queried in id chunks).
     LatestRatings latestDwrsRatings(const QList<int> &playerIds);
     // Full history for a set of players (optionally one role), ordered by

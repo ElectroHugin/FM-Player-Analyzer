@@ -515,8 +515,9 @@ void AppContext::reloadRatings()
 
 void AppContext::rebuildRatingsCache()
 {
-    m_latestRatings = m_database->latestDwrsRatings();
-    m_ratings = RatingsUpdater::roleRatingsForAssigned(m_store, m_latestRatings);
+    if (!RatingsUpdater::loadRatingCaches(*m_database, m_store, m_latestRatings, m_ratings))
+        qWarning("Reading the latest DWRS ratings failed: %s",
+                 qUtf8Printable(m_database->errorString()));
 }
 
 PlayerStatus::FreshnessContext AppContext::freshnessContext()

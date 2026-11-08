@@ -1,4 +1,5 @@
 #include "core/AppConfig.h"
+#include "core/Database.h"
 #include "core/Definitions.h"
 #include "core/Player.h"
 #include "core/PlayerStore.h"
@@ -6,6 +7,8 @@
 #include "core/RoleAssignment.h"
 #include "core/SquadBuilder.h"
 
+#include <QSqlDatabase>
+#include <QSqlQuery>
 #include <QTemporaryDir>
 #include <QtTest>
 
@@ -167,6 +170,47 @@ private slots:
         change(1, [&](Player &p) { p.club = QStringLiteral("Somewhere"); }); // unrelated field
         QCOMPARE(store.rowByUid(QStringLiteral("r-a")), 0);
         QCOMPARE(store.rowByUid(QStringLiteral("a")), -1);
+    }
+
+    void onePassLoadMatchesTwoStepBuild()
+    {
+        // loadRatingCaches (app start, save switch, after imports) must give
+        // exactly the caches of latestDwrsRatings() + roleRatingsForAssigned(),
+        // including a removed role whose latest row is kept and a rating row of
+        // a role that was never assigned.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("roleratings_onepass"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+        std::vector<Player> players = {makePlayer(0, QStringLiteral("a"), {kCm, kBwm}),
+                                       makePlayer(0, QStringLiteral("b"), {kCm}),
+                                       makePlayer(0, QStringLiteral("c"), {})};
+        QVERIFY(db.upsertPlayers(players));
+        const QString ts = QStringLiteral("2026-01-01 00:00:00");
+        QVERIFY(db.appendDwrsRatings({{players[0].id, kCm, 10.0, 70.0, ts},
+                                      {players[0].id, kBwm, 12.0, 80.0, ts},
+                                      {players[1].id, kCm, 9.0, 60.0, ts},
+                                      {players[1].id, kBwm, 9.0, 55.0, ts}, // removed role
+                                      {players[2].id, kCm, 8.0, 50.0, ts}}));
+        PlayerStore store;
+        store.reset(db.loadPlayers());
+
+        LatestRatings latest;
+        RoleRatings ratings;
+        QVERIFY(RatingsUpdater::loadRatingCaches(db, store, latest, ratings));
+        const LatestRatings expectedLatest = db.latestDwrsRatings();
+        QCOMPARE(latest.size(), 5);
+        QCOMPARE(latest, expectedLatest);
+        QCOMPARE(ratings, RatingsUpdater::roleRatingsForAssigned(store, expectedLatest));
+        QVERIFY(!ratings.value(kBwm).contains(QStringLiteral("b")));
+        QVERIFY(!ratings.value(kCm).contains(QStringLiteral("c")));
+
+        // A failed read is reported, not mistaken for an empty table.
+        QSqlQuery drop(QSqlDatabase::database(QStringLiteral("roleratings_onepass")));
+        QVERIFY(drop.exec(QStringLiteral("DROP TABLE dwrs_latest")));
+        QVERIFY(!RatingsUpdater::loadRatingCaches(db, store, latest, ratings));
+        QVERIFY(!db.errorString().isEmpty());
+        QVERIFY(latest.isEmpty());
+        QVERIFY(ratings.isEmpty());
     }
 
     void missingRoleAdditionsAreAdditive()

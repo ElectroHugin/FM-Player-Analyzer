@@ -73,8 +73,8 @@ ImportPipelineResult run(const Request &request, const Definitions &definitions,
     // latest ratings and mapping them took ~1.1 s on the UI thread).
     report(Stage::Finalize, 0, 0);
     result.store.reset(std::move(players));
-    result.latestRatings = db.latestDwrsRatings();
-    result.ratings = RatingsUpdater::roleRatingsForAssigned(result.store, result.latestRatings);
+    if (!RatingsUpdater::loadRatingCaches(db, result.store, result.latestRatings, result.ratings))
+        qWarning("Reading the latest DWRS ratings failed: %s", qUtf8Printable(db.errorString()));
     return result;
 }
 
