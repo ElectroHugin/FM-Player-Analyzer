@@ -447,6 +447,7 @@ void AppContext::reloadFromDatabase()
 void AppContext::loadFromDatabase()
 {
     m_store.reset(m_database->loadPlayers());
+    ++m_storeGeneration;
     rebuildRatingsCache();
 }
 
@@ -508,6 +509,7 @@ bool AppContext::setNationalSquad(const QList<int> &playerIds)
 void AppContext::adoptState(PlayerStore store, LatestRatings latestRatings, RoleRatings ratings)
 {
     m_store = std::move(store);
+    ++m_storeGeneration;
     m_latestRatings = std::move(latestRatings);
     m_ratings = std::move(ratings);
     emit dataChanged();

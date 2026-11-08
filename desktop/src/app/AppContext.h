@@ -47,6 +47,10 @@ public:
     Definitions &definitions() { return *m_definitions; }
     Database &database() { return *m_database; }
     PlayerStore &store() { return m_store; }
+    // Bumped whenever the store is replaced as a whole (reload, import result,
+    // save switch): Player* taken before then dangle. In-place row updates
+    // (refreshPlayers) keep it, their pointers stay valid.
+    quint64 storeGeneration() const { return m_storeGeneration; }
     DwrsEngine &dwrsEngine() { return *m_dwrsEngine; }
     SquadBuilder &squadBuilder() { return *m_squadBuilder; }
     TacticExplorer &tacticExplorer() { return *m_tacticExplorer; }
@@ -317,6 +321,7 @@ private:
     std::unique_ptr<TacticExplorer> m_tacticExplorer;
     std::unique_ptr<GraphicsLibrary> m_graphics;
     RoleRatings m_ratings;
+    quint64 m_storeGeneration = 0;
     LatestRatings m_latestRatings;
     QString m_pendingProfileUid;
     QString m_pendingEditUid;
