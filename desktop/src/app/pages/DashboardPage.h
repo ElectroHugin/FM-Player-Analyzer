@@ -2,6 +2,8 @@
 
 #include "PageBase.h"
 
+#include "core/SquadBuilder.h"
+
 #include "../ImportRunner.h"
 
 #include <QSet>
@@ -58,6 +60,10 @@ private:
     void updateClubTable(const std::vector<const Player *> &clubPlayers);
     void rebuildSuggestions();
     void clearSuggestionCards();
+    // Positional strength (2.2.3): the starters of the selected tactic with
+    // their role DWRS and what their absence costs the XI.
+    void updateStarterView(const std::vector<const Player *> &clubPlayers, const QString &tactic);
+    void showStarterView(); // markers of the chosen tactical view
 
     QString selectedTactic() const;
     double maxValueFilter() const;
@@ -91,7 +97,28 @@ private:
 
     // Squad section
     QWidget *m_squadSection = nullptr;
-    StrengthGridWidget *m_strengthGrid = nullptr;
+    StrengthGridWidget *m_strengthGrid = nullptr;    // single view / with ball
+    StrengthGridWidget *m_strengthGridOop = nullptr; // "Both": without ball
+    QLabel *m_gridTitle = nullptr;
+    QLabel *m_gridTitleOop = nullptr;
+    QLabel *m_gridLegend = nullptr;
+    QWidget *m_phaseSwitch = nullptr;
+    int m_phaseView = 0; // 0 combined, 1 with ball, 2 without, 3 both
+    // Last computed starters (no pointers into the store).
+    struct StarterView {
+        bool valid = false;
+        bool twoPhase = false;
+        QString tactic;
+        QHash<QString, XiCell> xi;    // FM24: slot -> starter
+        QHash<QString, XiCell> ip;    // two-phase: slot -> starter
+        QHash<QString, XiCell> oop;
+        QHash<QString, QPair<QString, QString>> slotsOfUid;
+        QHash<QString, double> valueOfUid;
+        QHash<QString, QString> impact;  // uid -> "XI −4.0" / "no full XI"
+        QHash<QString, QString> tooltip; // uid -> who comes on, who moves
+        int ipShare = 50;
+        QString key; // inputs it was computed from (see updateStarterView)
+    } m_starters;
     QLabel *m_clubTableTitle = nullptr;
     QTableWidget *m_clubTable = nullptr;
 

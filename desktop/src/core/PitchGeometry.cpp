@@ -1,5 +1,10 @@
 #include "PitchGeometry.h"
 
+#include <QSet>
+
+#include <algorithm>
+#include <cmath>
+
 namespace fm {
 
 namespace {
@@ -173,6 +178,88 @@ const QHash<QString, QStringList> &tacticalSlotToGamePositions()
 const QHash<QString, int> &stratumOrder()
 {
     return stratumOrder(QString());
+}
+
+double drawingRowY(int row)
+{
+    static const double kRowY[] = {0.0, 0.085, 0.255, 0.42, 0.585, 0.75, 0.915};
+    return kRowY[std::clamp(row, 1, 6)];
+}
+
+QHash<QString, QPointF> slotAnchors(const QString &versionId,
+                                    const QHash<QString, QStringList> &layout,
+                                    bool withGoalkeeper)
+{
+    const PitchGeometry &geometry = pitchGeometry(versionId);
+    QHash<QString, QPointF> anchors;
+    for (auto it = layout.constBegin(); it != layout.constEnd(); ++it) {
+        const int row = geometry.drawingRow(it.key());
+        if (row < 0)
+            continue;
+        QSet<int> occupied;
+        for (const QString &slot : it.value()) {
+            if (const PitchSlot *pitchSlot = geometry.slot(slot))
+                occupied.insert(pitchSlot->displayColumn);
+        }
+        const bool closeUp = occupied.contains(1) && occupied.contains(3) && !occupied.contains(2);
+        for (const QString &slot : it.value()) {
+            if (slot == geometry.goalkeeper.key)
+                continue;
+            const PitchSlot *pitchSlot = geometry.slot(slot);
+            if (!pitchSlot || pitchSlot->displayColumn < 0 || pitchSlot->displayColumn > 4)
+                continue;
+            const int column = pitchSlot->displayColumn;
+            const double x = closeUp && (column == 1 || column == 3) ? (column == 1 ? 0.37 : 0.63)
+                                                                      : 0.1 + 0.2 * column;
+            anchors.insert(slot, QPointF(x, drawingRowY(row)));
+        }
+    }
+    if (withGoalkeeper)
+        anchors.insert(geometry.goalkeeper.key, QPointF(0.5, drawingRowY(6)));
+    return anchors;
+}
+
+QList<QPointF> spreadMarkers(const QList<QPointF> &anchors, const QSizeF &size)
+{
+    QList<QPointF> placed = anchors;
+    const double w = size.width();
+    const double h = size.height();
+    const double gap = 0.004;
+    const auto clampX = [&](double x) { return std::clamp(x, w / 2, 1.0 - w / 2); };
+    const auto clampY = [&](double y) { return std::clamp(y, h / 2, 1.0 - h / 2); };
+    for (QPointF &p : placed)
+        p = QPointF(clampX(p.x()), clampY(p.y()));
+    // Pairwise relaxation: each overlapping pair moves apart along the axis
+    // that needs the smaller shift, half each, until nothing overlaps.
+    for (int round = 0; round < 60; ++round) {
+        bool moved = false;
+        for (qsizetype i = 0; i < placed.size(); ++i) {
+            for (qsizetype j = i + 1; j < placed.size(); ++j) {
+                QPointF &a = placed[i];
+                QPointF &b = placed[j];
+                const double dx = b.x() - a.x();
+                const double dy = b.y() - a.y();
+                const double overlapX = w + gap - std::abs(dx);
+                const double overlapY = h + gap - std::abs(dy);
+                if (overlapX <= 1e-9 || overlapY <= 1e-9)
+                    continue;
+                moved = true;
+                // Ties (same spot) go sideways, the earlier marker to the left.
+                if (overlapX <= overlapY * (w / h) || (std::abs(dx) < 1e-9 && std::abs(dy) < 1e-9)) {
+                    const double sign = dx >= 0 ? 1.0 : -1.0;
+                    a.setX(clampX(a.x() - sign * overlapX / 2));
+                    b.setX(clampX(b.x() + sign * overlapX / 2));
+                } else {
+                    const double sign = dy >= 0 ? 1.0 : -1.0;
+                    a.setY(clampY(a.y() - sign * overlapY / 2));
+                    b.setY(clampY(b.y() + sign * overlapY / 2));
+                }
+            }
+        }
+        if (!moved)
+            break;
+    }
+    return placed;
 }
 
 } // namespace fm

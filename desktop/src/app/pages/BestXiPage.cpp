@@ -198,6 +198,38 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         }
         m_xiButton->setChecked(true);
         switchRow->addWidget(segmented);
+        switchRow->addSpacing(16);
+        // The view of a two-phase tactic, apart from the team choice.
+        auto *phases = new QFrame(tab);
+        m_phaseSwitch = phases;
+        phases->setObjectName(QStringLiteral("segmented"));
+        auto *phaseLayout = new QHBoxLayout(phases);
+        phaseLayout->setContentsMargins(3, 3, 3, 3);
+        phaseLayout->setSpacing(3);
+        auto *phaseGroup = new QButtonGroup(tab);
+        const QList<QPair<int, QString>> views = {
+            {Combined, tr("Kombiniert")},
+            {InPossession, tr("Mit Ball")},
+            {OutOfPossession, tr("Ohne Ball")},
+            {BothPhases, tr("Beide")}};
+        for (const auto &[view, text] : views) {
+            auto *button = new QPushButton(text, phases);
+            button->setCheckable(true);
+            button->setObjectName(QStringLiteral("segmentButton"));
+            button->setCursor(Qt::PointingHandCursor);
+            button->setChecked(view == m_phaseView);
+            phaseGroup->addButton(button, view);
+            phaseLayout->addWidget(button);
+        }
+        phases->setToolTip(
+            tr("Kombiniert: ein Spielfeld, jeder Spieler mittig zwischen seinem Platz mit und "
+               "ohne Ball, beide Rollen auf der Karte (mit Ball zuerst). Beide: die zwei "
+               "Aufstellungen nebeneinander."));
+        connect(phaseGroup, &QButtonGroup::idClicked, this, [this](int view) {
+            m_phaseView = view;
+            applyPhaseView();
+        });
+        switchRow->addWidget(phases);
         switchRow->addStretch(1);
         tabLayout->addLayout(switchRow);
 
@@ -226,35 +258,41 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
 
         m_teamStack = new QStackedWidget(tab);
         const auto makePage = [this](TacticPitchWidget *&ipPitch, TacticPitchWidget *&oopPitch,
-                                     QLabel *&ipTitle, QLabel *&oopTitle) {
+                                     QLabel *&ipTitle, QLabel *&oopTitle, TeamPage &team) {
             auto *page = new QWidget;
             auto *row = new QHBoxLayout(page);
             row->setContentsMargins(0, 0, 0, 0);
-            auto *ipColumn = new QVBoxLayout;
-            ipTitle = new QLabel(tr("Mit Ball"), page);
-            ipTitle->setObjectName(QStringLiteral("sectionTitle"));
-            ipTitle->setAlignment(Qt::AlignHCenter);
-            ipPitch = new TacticPitchWidget(m_theme, page);
-            ipColumn->addWidget(ipTitle);
-            ipColumn->addWidget(ipPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
-            auto *oopColumn = new QVBoxLayout;
-            oopTitle = new QLabel(tr("Ohne Ball"), page);
-            oopTitle->setObjectName(QStringLiteral("sectionTitle"));
-            oopTitle->setAlignment(Qt::AlignHCenter);
-            oopPitch = new TacticPitchWidget(m_theme, page);
-            oopColumn->addWidget(oopTitle);
-            oopColumn->addWidget(oopPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
-            row->addLayout(ipColumn, 1);
-            row->addLayout(oopColumn, 1);
+            const auto column = [&](QLabel *&title, TacticPitchWidget *&pitch,
+                                    const QString &text) {
+                auto *widget = new QWidget(page);
+                auto *layout = new QVBoxLayout(widget);
+                layout->setContentsMargins(0, 0, 0, 0);
+                title = new QLabel(text, widget);
+                title->setObjectName(QStringLiteral("sectionTitle"));
+                title->setAlignment(Qt::AlignHCenter);
+                pitch = new TacticPitchWidget(m_theme, widget);
+                layout->addWidget(title);
+                layout->addWidget(pitch, 0, Qt::AlignTop | Qt::AlignHCenter);
+                row->addWidget(widget, 1);
+                return widget;
+            };
+            team.ipColumn = column(ipTitle, ipPitch, tr("Mit Ball"));
+            team.oopColumn = column(oopTitle, oopPitch, tr("Ohne Ball"));
+            QLabel *combinedTitle = nullptr;
+            team.combinedColumn = column(combinedTitle, team.combined, tr("Kombiniert"));
+            team.combinedColumn->setVisible(false);
             return page;
         };
-        m_teamStack->addWidget(makePage(m_xiIpPitch, m_xiPitch, m_xiIpTitle, m_xiTitle));
-        m_teamStack->addWidget(makePage(m_bTeamIpPitch, m_bTeamPitch, m_bIpTitle, m_bTitle));
+        m_teamStack->addWidget(
+            makePage(m_xiIpPitch, m_xiPitch, m_xiIpTitle, m_xiTitle, m_teamPages[0]));
+        m_teamStack->addWidget(
+            makePage(m_bTeamIpPitch, m_bTeamPitch, m_bIpTitle, m_bTitle, m_teamPages[1]));
         // FM24 (one line-up): starting XI and B-team side by side, as in 1.6.2.
         {
             QLabel *xiTitle = nullptr;
             QLabel *bTitle = nullptr;
-            m_teamStack->addWidget(makePage(m_singleXiPitch, m_singleBPitch, xiTitle, bTitle));
+            m_teamStack->addWidget(
+                makePage(m_singleXiPitch, m_singleBPitch, xiTitle, bTitle, m_teamPages[2]));
             xiTitle->setText(tr("Startelf"));
             bTitle->setText(tr("B-Team"));
         }
@@ -271,12 +309,17 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_outageNote->setObjectName(QStringLiteral("kpiCaption"));
         outageLayout->addWidget(m_outageNote);
         m_outageTable = new QTableWidget(m_outageBox);
-        m_outageTable->setColumnCount(7);
-        m_outageTable->setHorizontalHeaderLabels({tr("Ausfall"), tr("Plätze"), tr("Ersatz"),
-                                                  tr("Ersatz spielt"), tr("DWRS"),
-                                                  tr("Elf-Wert"), tr("Umstellungen")});
+        m_outageTable->setColumnCount(8);
+        m_outageTable->setHorizontalHeaderLabels({tr("Fällt aus"), tr("Plätze"), tr("Kommt"),
+                                                  tr("Spielt dort"), tr("DWRS"),
+                                                  tr("Elf-Änderung"), tr("Wer übernimmt"),
+                                                  tr("Weitere Umstellungen")});
+        m_outageTable->horizontalHeaderItem(6)->setToolTip(
+            tr("Wer die frei gewordenen Plätze besetzt: der neue Spieler oder ein Mitspieler, "
+               "der dafür umrückt."));
         m_outageTable->horizontalHeaderItem(5)->setToolTip(
-            tr("Wie sich der Wert der Startelf (Summe der DWRS) mit dieser Lösung ändert."));
+            tr("Wie sich der Wert der ganzen Startelf (Summe der DWRS) gegenüber der gezeigten "
+               "Startelf ändert."));
         m_outageTable->verticalHeader()->setVisible(false);
         m_outageTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         m_outageTable->setAlternatingRowColors(true);
@@ -288,7 +331,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_outageBox->setVisible(false);
         tabLayout->addWidget(m_outageBox);
 
-        m_depthBox = new QGroupBox(tr("Weitere Kader-Tiefe"), tab);
+        m_depthBox = new QGroupBox(tr("Reserveoptionen je Rolle"), tab);
         auto *depthLayout = new QVBoxLayout(m_depthBox);
         m_depthEmpty = new QLabel(m_depthBox);
         m_depthEmpty->setWordWrap(true);
@@ -403,6 +446,43 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         });
     }
 
+    // Combined pitches: actions that need a phase go through that phase's
+    // pitch (bridge menu with both phases, scouting from the place with ball).
+    for (int t = 0; t < 2; ++t) {
+        TacticPitchWidget *combined = m_teamPages[t].combined;
+        const bool startingXi = t == 0;
+        connect(combined, &TacticPitchWidget::playerDoubleClicked, this,
+                [this](const QString &uid) { PlayerActions::openProfile(m_context, uid); });
+        connect(combined, &TacticPitchWidget::playerContextMenuRequested, this,
+                [this, startingXi](const QString &uid, const QPoint &globalPos) {
+                    if (startingXi && !m_bridge.tactic.isEmpty()
+                        && m_bridge.slotsOfUid.contains(uid)) {
+                        showBridgeMenu(uid, globalPos, 3);
+                        return;
+                    }
+                    TacticPitchWidget *ipPitch = startingXi ? m_xiIpPitch : m_bTeamIpPitch;
+                    QString slot;
+                    const PitchTeam team = m_pitchTeams.value(ipPitch);
+                    for (auto it = team.cells.cbegin(); it != team.cells.cend(); ++it) {
+                        if (it->playerUid == uid)
+                            slot = it.key();
+                    }
+                    PlayerActions::showContextMenu(
+                        m_context, this, uid, globalPos, [this, ipPitch, slot](QMenu &menu) {
+                            if (!slot.isEmpty())
+                                addScoutActions(menu, ipPitch, slot);
+                        });
+                });
+        connect(combined, &TacticPitchWidget::emptySlotContextMenuRequested, this,
+                [this, startingXi](const QString &key, const QPoint &globalPos) {
+                    const bool ip = key.startsWith(QLatin1String("ip:"));
+                    const QString slot = key.section(QLatin1Char(':'), 1);
+                    TacticPitchWidget *pitch = startingXi ? (ip ? m_xiIpPitch : m_xiPitch)
+                                                          : (ip ? m_bTeamIpPitch : m_bTeamPitch);
+                    showEmptySlotMenu(pitch, slot, globalPos);
+                });
+    }
+
     // Player boxes on the pitches are interactive (M13).
     for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
                                      m_singleXiPitch, m_singleBPitch, m_secondXiPitch,
@@ -415,7 +495,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
                     const bool startingXi = pitch == m_xiPitch || pitch == m_xiIpPitch;
                     if (startingXi && !m_bridge.tactic.isEmpty()
                         && m_bridge.slotsOfUid.contains(uid)) {
-                        showBridgeMenu(uid, globalPos, pitch == m_xiIpPitch);
+                        showBridgeMenu(uid, globalPos, pitch == m_xiIpPitch ? 1 : 2);
                         return;
                     }
                     QString slot;
@@ -522,6 +602,8 @@ void BestXiPage::rebuild()
         m_singleBPitch->clearData();
         m_xiIpPitch->clearData();
         m_bTeamIpPitch->clearData();
+        m_teamPages[0].combined->clearData();
+        m_teamPages[1].combined->clearData();
         m_secondXiPitch->clearData();
         m_youthXiPitch->clearData();
         m_injuryBox->setVisible(false);
@@ -704,13 +786,16 @@ void BestXiPage::rebuild()
 
     for (TacticPitchWidget *pitch : {m_xiPitch, m_bTeamPitch, m_xiIpPitch, m_bTeamIpPitch,
                                      m_singleXiPitch, m_singleBPitch, m_secondXiPitch,
-                                     m_youthXiPitch})
+                                     m_youthXiPitch, m_teamPages[0].combined,
+                                     m_teamPages[1].combined})
         pitch->setFmVersionId(m_context.fmVersionId());
     const bool twoPhase = m_context.definitions().isTwoPhaseTactic(tactic);
     // Two line-ups (FM27): one team at a time, switched above the pitches.
     // One line-up (FM24): starting XI and B-team next to each other.
     m_teamSwitch->setVisible(twoPhase);
+    m_phaseSwitch->setVisible(twoPhase);
     m_teamStack->setCurrentIndex(twoPhase ? (m_xiButton->isChecked() ? 0 : 1) : 2);
+    applyPhaseView();
     m_phaseNote->setVisible(twoPhase);
     m_bridge = BridgeState();
     m_bridgeBar->setVisible(false);
@@ -782,6 +867,36 @@ void BestXiPage::rebuild()
         m_xiIpPitch->setSlotSubtexts(partnerTexts(squad.startingIp, true));
         m_bTeamIpPitch->setTeam(squad.bTeamIp, lineUps.ip, layoutOf(lineUps.ip), roleNames);
         m_bTeamIpPitch->setSlotSubtexts(partnerTexts(squad.bTeamIp, true));
+        // Combined view: one card per player of the team, paired by uid.
+        const auto combinedCards = [&](const QHash<QString, XiCell> &ipTeam,
+                                       const QHash<QString, XiCell> &oopTeam) {
+            QList<TacticPitchWidget::CombinedCard> cards;
+            for (const QString &ipSlot : lineUps.ipOrder) {
+                const XiCell ipCell = ipTeam.value(ipSlot);
+                if (!ipCell.isFilled())
+                    continue;
+                const QString oopSlot = squad.slotsOfUid.value(ipCell.playerUid).second;
+                const XiCell oopCell = oopTeam.value(oopSlot);
+                if (oopCell.playerUid != ipCell.playerUid)
+                    continue;
+                TacticPitchWidget::CombinedCard card;
+                card.uid = ipCell.playerUid;
+                card.name = ipCell.name;
+                card.ipSlot = ipSlot;
+                card.oopSlot = oopSlot;
+                card.ipRating = ipCell.rating;
+                card.oopRating = oopCell.rating;
+                card.value = squad.valueOfUid.value(card.uid);
+                cards.append(card);
+            }
+            return cards;
+        };
+        m_teamPages[0].combined->setCombinedTeam(combinedCards(squad.startingIp, squad.startingOop),
+                                                 lineUps.ip, layoutOf(lineUps.ip), lineUps.oop,
+                                                 layoutOf(lineUps.oop));
+        m_teamPages[1].combined->setCombinedTeam(combinedCards(squad.bTeamIp, squad.bTeamOop),
+                                                 lineUps.ip, layoutOf(lineUps.ip), lineUps.oop,
+                                                 layoutOf(lineUps.oop));
         // For the bridge search by right-click.
         m_pitchTeams.insert(m_xiIpPitch, {squad.startingIp, lineUps.ip, lineUps.ipOrder, m_xiPitch, true});
         m_pitchTeams.insert(m_xiPitch, {squad.startingOop, lineUps.oop, lineUps.oopOrder, m_xiIpPitch, false});
@@ -810,7 +925,8 @@ void BestXiPage::rebuild()
     // Squad depth per missing starter: exactly one extra player, the others
     // may move (manual bridges stay).
     fillOutageTable(m_context.squadBuilder().replacementPlans(
-                        firstPool, tactic, ratings, true, twoPhase ? m_bridge.bridges : Bridges()),
+                        firstPool, tactic, ratings, true,
+                        twoPhase ? m_bridge.bridges : Bridges(), xiLimit),
                     twoPhase);
     m_secondXiTitle->setText(secondClub.isEmpty()
                                  ? tr("Zweitteam-XI (aus Überschuss des Hauptvereins)")
@@ -846,7 +962,18 @@ void BestXiPage::saveBridges(const QString &tactic, const Bridges &bridges)
                                     QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact)));
 }
 
-void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, bool ipPhase)
+void BestXiPage::applyPhaseView()
+{
+    // FM24 page (index 2) always shows both teams side by side.
+    for (int t = 0; t < 2; ++t) {
+        const TeamPage &page = m_teamPages[t];
+        page.combinedColumn->setVisible(m_phaseView == Combined);
+        page.ipColumn->setVisible(m_phaseView == InPossession || m_phaseView == BothPhases);
+        page.oopColumn->setVisible(m_phaseView == OutOfPossession || m_phaseView == BothPhases);
+    }
+}
+
+void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, int phases)
 {
     const BridgeState state = m_bridge; // a rebuild may run while the menu is open
     const auto nameOf = [this](const QString &playerUid) {
@@ -859,33 +986,40 @@ void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, boo
     };
     PlayerActions::showContextMenu(m_context, this, uid, globalPos, [&](QMenu &menu) {
         const QPair<QString, QString> mine = state.slotsOfUid.value(uid);
-        addScoutActions(menu, ipPhase ? m_xiIpPitch : m_xiPitch, ipPhase ? mine.first : mine.second);
-        const QString current = ipPhase ? mine.first : mine.second;
-        QMenu *sub = menu.addMenu(ipPhase ? tr("↔ Platz mit Ball ändern (jetzt %1)").arg(current)
+        const bool scoutIp = (phases & 1) != 0;
+        addScoutActions(menu, scoutIp ? m_xiIpPitch : m_xiPitch, scoutIp ? mine.first : mine.second);
+        for (const bool ipPhase : {true, false}) {
+            if ((phases & (ipPhase ? 1 : 2)) == 0)
+                continue;
+            const QString current = ipPhase ? mine.first : mine.second;
+            QMenu *sub = menu.addMenu(ipPhase
+                                          ? tr("↔ Platz mit Ball ändern (jetzt %1)").arg(current)
                                           : tr("↔ Platz ohne Ball ändern (jetzt %1)").arg(current));
-        const QList<BridgeOption> options = m_context.squadBuilder().bridgeOptions(
-            state.pool, state.tactic, m_context.ratings(), state.share, state.bridges, uid,
-            ipPhase);
-        if (options.isEmpty()) {
-            sub->addAction(tr("Kein anderer Platz möglich (Position fehlt)"))->setEnabled(false);
-        } else {
-            auto *caption = sub->addAction(tr("Platz · Tausch mit · DWRS-Punkte der Elf"));
-            caption->setEnabled(false);
-            sub->addSeparator();
-        }
-        for (const BridgeOption &option : options) {
-            const QString text =
-                option.swapUid.isEmpty()
-                    ? tr("%1 (frei) · %2").arg(option.slot, delta(option.total - state.current))
-                    : tr("%1 · %2 · %3")
-                          .arg(option.slot, nameOf(option.swapUid),
-                               delta(option.total - state.current));
-            const Bridges bridges = option.bridges;
-            const QString tactic = state.tactic;
-            sub->addAction(text, this, [this, tactic, bridges] {
-                saveBridges(tactic, bridges);
-                rebuild();
-            });
+            const QList<BridgeOption> options = m_context.squadBuilder().bridgeOptions(
+                state.pool, state.tactic, m_context.ratings(), state.share, state.bridges, uid,
+                ipPhase);
+            if (options.isEmpty()) {
+                sub->addAction(tr("Kein anderer Platz möglich (Position fehlt)"))
+                    ->setEnabled(false);
+            } else {
+                auto *caption = sub->addAction(tr("Platz · Tausch mit · DWRS-Punkte der Elf"));
+                caption->setEnabled(false);
+                sub->addSeparator();
+            }
+            for (const BridgeOption &option : options) {
+                const QString text =
+                    option.swapUid.isEmpty()
+                        ? tr("%1 (frei) · %2").arg(option.slot, delta(option.total - state.current))
+                        : tr("%1 · %2 · %3")
+                              .arg(option.slot, nameOf(option.swapUid),
+                                   delta(option.total - state.current));
+                const Bridges bridges = option.bridges;
+                const QString tactic = state.tactic;
+                sub->addAction(text, this, [this, tactic, bridges] {
+                    saveBridges(tactic, bridges);
+                    rebuild();
+                });
+            }
         }
         if (state.bridges.contains(uid)) {
             menu.addAction(tr("↺ %1 wieder dem Analyzer überlassen").arg(nameOf(uid)), this,

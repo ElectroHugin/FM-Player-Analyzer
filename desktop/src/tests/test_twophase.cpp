@@ -769,6 +769,139 @@ private slots:
         QCOMPARE(plan.moves.front().to, qMakePair(QStringLiteral("AML"), QStringLiteral("AML")));
         QCOMPARE(plan.total, 130.0);
     }
+
+    // --- Matchday cover (2.2.3): explanation, tie-break, XI limit ---
+
+    // Right-back out. A weak right-back could come in directly, but moving
+    // the versatile midfielder to right-back and bringing in a midfielder
+    // keeps the XI stronger (-4 instead of -17 DWRS points).
+private:
+    struct CoverCase {
+        Definitions defs;
+        std::vector<Player> players;
+        RoleRatings ratings;
+    };
+    static void setUpCover(CoverCase &c)
+    {
+        c.defs.setRoot(root(slotMap({{"DR", "FB"}, {"MC", "W"}}),
+                            slotMap({{"DR", "PFB"}, {"MC", "WM"}})));
+        c.players = {makePlayer(QStringLiteral("rightback"), QStringLiteral("D (R)")),
+                     makePlayer(QStringLiteral("utility"), QStringLiteral("D (R), M (C)")),
+                     makePlayer(QStringLiteral("weakback"), QStringLiteral("D (R)")),
+                     makePlayer(QStringLiteral("midfielder"), QStringLiteral("M (C)"))};
+        const auto both = [&](const char *ip, const char *oop, const char *uid, double value) {
+            c.ratings[QLatin1String(ip)].insert(QLatin1String(uid), value);
+            c.ratings[QLatin1String(oop)].insert(QLatin1String(uid), value);
+        };
+        both("FB", "PFB", "rightback", 66);
+        both("FB", "PFB", "utility", 66.5);
+        both("W", "WM", "utility", 66.5);
+        both("W", "WM", "midfielder", 62);
+        both("FB", "PFB", "weakback", 49);
+    }
+
+private slots:
+
+    void coverExplainsWhoMovesAndWhoComesOn()
+    {
+        CoverCase c;
+        setUpCover(c);
+        SquadBuilder builder(c.defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : c.players)
+            pool.push_back(&p);
+        const QList<OutageCover> covers =
+            builder.replacementPlans(pool, QStringLiteral("T"), c.ratings, false);
+        OutageCover out;
+        for (const OutageCover &cover : covers)
+            if (cover.outUid == QStringLiteral("rightback"))
+                out = cover;
+        QCOMPARE(out.outSlots, qMakePair(QStringLiteral("DR"), QStringLiteral("DR")));
+        QCOMPARE(out.current, 132.5);
+        QVERIFY(out.plans.size() >= 2);
+        const ReplacementPlan &best = out.plans.front();
+        QVERIFY(best.complete);
+        QCOMPARE(best.inUid, QStringLiteral("midfielder"));
+        QCOMPARE(best.inSlots, qMakePair(QStringLiteral("MC"), QStringLiteral("MC")));
+        // The vacated right-back places go to the utility player, not to the newcomer.
+        QCOMPARE(best.coverIp, QStringLiteral("utility"));
+        QCOMPARE(best.coverOop, QStringLiteral("utility"));
+        QCOMPARE(best.moves.size(), 1);
+        QCOMPARE(best.moves.front().uid, QStringLiteral("utility"));
+        QCOMPARE(best.total - out.current, -4.0);
+        // The direct swap is the next option and costs 17.
+        const ReplacementPlan &direct = out.plans.at(1);
+        QCOMPARE(direct.inUid, QStringLiteral("weakback"));
+        QCOMPARE(direct.coverIp, QStringLiteral("weakback"));
+        QVERIFY(direct.moves.isEmpty());
+        QCOMPARE(direct.total - out.current, -17.0);
+    }
+
+    void coverPrefersFewerMovesOnATie()
+    {
+        // Same numbers on both sides: the weak right-back now matches what
+        // the reshuffle gives. Equal XI value -> the plan without a move,
+        // even though the midfielder comes first in the pool.
+        CoverCase c;
+        setUpCover(c);
+        c.ratings[QStringLiteral("FB")][QStringLiteral("weakback")] = 62;
+        c.ratings[QStringLiteral("PFB")][QStringLiteral("weakback")] = 62;
+        c.ratings[QStringLiteral("FB")][QStringLiteral("utility")] = 62;
+        c.ratings[QStringLiteral("PFB")][QStringLiteral("utility")] = 62;
+        c.ratings[QStringLiteral("W")][QStringLiteral("midfielder")] = 66.5;
+        c.ratings[QStringLiteral("WM")][QStringLiteral("midfielder")] = 66.5;
+        SquadBuilder builder(c.defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const char *uid : {"rightback", "utility", "midfielder", "weakback"})
+            for (const Player &p : c.players)
+                if (p.uid == QLatin1String(uid))
+                    pool.push_back(&p);
+        const QList<OutageCover> covers =
+            builder.replacementPlans(pool, QStringLiteral("T"), c.ratings, false);
+        for (const OutageCover &cover : covers) {
+            if (cover.outUid != QStringLiteral("rightback"))
+                continue;
+            QVERIFY(cover.plans.size() >= 2);
+            QCOMPARE(cover.plans.at(0).total, cover.plans.at(1).total);
+            QCOMPARE(cover.plans.front().inUid, QStringLiteral("weakback"));
+            QVERIFY(cover.plans.front().moves.isEmpty());
+            return;
+        }
+        QFAIL("right-back not among the starters");
+    }
+
+    void coverKeepsTheStartingXiLimit()
+    {
+        // At most one player of the limited group may start. The right-back
+        // already is one, so the stronger limited midfielder may not come in
+        // for the utility player; the unlimited one does.
+        CoverCase c;
+        setUpCover(c);
+        c.players.push_back(makePlayer(QStringLiteral("limitedmid"), QStringLiteral("M (C)")));
+        c.ratings[QStringLiteral("W")][QStringLiteral("limitedmid")] = 65;
+        c.ratings[QStringLiteral("WM")][QStringLiteral("limitedmid")] = 65;
+        SquadBuilder builder(c.defs, *m_config);
+        std::vector<const Player *> pool;
+        for (const Player &p : c.players)
+            pool.push_back(&p);
+        XiLimit limit;
+        limit.max = 1;
+        limit.uids = {QStringLiteral("rightback"), QStringLiteral("limitedmid")};
+        const auto coverOf = [&](const QList<OutageCover> &covers) {
+            for (const OutageCover &cover : covers)
+                if (cover.outUid == QStringLiteral("utility"))
+                    return cover;
+            return OutageCover();
+        };
+        const OutageCover free = coverOf(
+            builder.replacementPlans(pool, QStringLiteral("T"), c.ratings, false, {}));
+        QCOMPARE(free.plans.front().inUid, QStringLiteral("limitedmid"));
+        const OutageCover capped = coverOf(
+            builder.replacementPlans(pool, QStringLiteral("T"), c.ratings, false, {}, limit));
+        QCOMPARE(capped.plans.front().inUid, QStringLiteral("midfielder"));
+        for (const ReplacementPlan &plan : capped.plans)
+            QVERIFY(plan.inUid != QStringLiteral("limitedmid"));
+    }
 };
 
 QTEST_GUILESS_MAIN(TestTwoPhase)

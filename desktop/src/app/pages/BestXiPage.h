@@ -68,7 +68,11 @@ private:
     void saveBridges(const QString &tactic, const Bridges &bridges);
     // Right-click on a starting-XI card: the usual menu plus "move to slot"
     // entries with the value each move costs.
-    void showBridgeMenu(const QString &uid, const QPoint &globalPos, bool ipPhase);
+    // phases: which line-ups get a "move" submenu (1 = with ball, 2 = without,
+    // 3 = both, from the combined view).
+    void showBridgeMenu(const QString &uid, const QPoint &globalPos, int phases);
+    // Shows the pitches of the chosen view (two-phase tactics).
+    void applyPhaseView();
     // Who replaces the long-term injured: slot by slot, all fit vs without them.
     void fillInjuryBox(const std::vector<const Player *> &injured,
                        const SquadResult &allFit, const SquadResult &withoutInjured,
@@ -120,6 +124,17 @@ private:
     QWidget *m_teamSwitch = nullptr;           // the switch (two-phase tactics only)
     TacticPitchWidget *m_singleXiPitch = nullptr; // FM24: starting XI ...
     TacticPitchWidget *m_singleBPitch = nullptr;  // ... and B-team side by side
+    // Tactical view of a two-phase tactic: combined (one pitch, each player
+    // between his two places), with ball, without ball, or both side by side.
+    enum PhaseView { Combined = 0, InPossession = 1, OutOfPossession = 2, BothPhases = 3 };
+    QWidget *m_phaseSwitch = nullptr;
+    int m_phaseView = Combined;
+    struct TeamPage {
+        QWidget *ipColumn = nullptr;
+        QWidget *oopColumn = nullptr;
+        QWidget *combinedColumn = nullptr;
+        TacticPitchWidget *combined = nullptr;
+    } m_teamPages[3];
     QLabel *m_xiIpTitle = nullptr;
     QLabel *m_bIpTitle = nullptr;
     QLabel *m_phaseNote = nullptr;

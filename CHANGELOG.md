@@ -9,6 +9,10 @@
 - Player history: an older save imported later no longer replaces a newer state of the same month.
 - FM27 saves: a damaged scouting block is ignored completely instead of partly.
 - A database from a newer app version is no longer opened (it could lose data).
+- Best XI and Overview (FM27): choose the tactical view: Combined, In Possession, Out of Possession or Both. Combined shows one pitch with each player halfway between his two places and both roles on the card.
+- Best XI: the table for a missing starter now shows who comes on, who takes over the vacated places, other moves and the change for the whole XI. Equal plans prefer fewer moves. The non-EU starting limit is kept.
+- Overview: the positional strength shows each starter's rating and how much the XI loses if he is out, instead of an average over starters, B-team and reserves. Hover a card for who would replace him.
+- Best XI: the list of extra depth is now called "Reserve options per role".
 
 ## 2.2.2 – 2026-11-07
 

@@ -38,6 +38,27 @@ public:
 
     void clearData();
 
+    // Combined view of a two-phase tactic (FM27): one card per player at the
+    // midpoint of his slot with and without the ball, both roles on the card
+    // (with ball first). Free places of either line-up get their own marker
+    // at their slot, keyed "ip:<slot>" / "oop:<slot>" for
+    // emptySlotContextMenuRequested. Cards that would overlap are moved
+    // apart and keep a thin line to their anchor.
+    struct CombinedCard {
+        QString uid;
+        QString name;
+        QString ipSlot;
+        QString oopSlot;
+        double ipRating = 0.0;  // DWRS of the role with ball
+        double oopRating = 0.0; // ... and without
+        double value = 0.0;     // weighted value over both line-ups
+    };
+    void setCombinedTeam(const QList<CombinedCard> &cards, const QHash<QString, QString> &ipLineUp,
+                         const QHash<QString, QStringList> &ipLayout,
+                         const QHash<QString, QString> &oopLineUp,
+                         const QHash<QString, QStringList> &oopLayout);
+    bool isCombined() const { return m_combined; }
+
     // Tactic editor mode: roles: slot -> role id of the slots in use;
     // roleNames: role id -> display name. Free slots are drawn as "+" boxes
     // while showFreeSlots is true (e.g. until ten outfield players stand).
@@ -107,6 +128,15 @@ private:
     bool m_editor = false;
     bool m_showFreeSlots = true;
     QHash<QString, QString> m_editorRoles; // slot -> role id
+    // Combined view (setCombinedTeam).
+    void paintCombined(QPainter &painter, const QRectF &field);
+    bool m_combined = false;
+    QList<CombinedCard> m_combinedCards;
+    QHash<QString, QString> m_ipLineUp;
+    QHash<QString, QStringList> m_ipLayout;
+    QHash<QString, QString> m_oopLineUp;
+    QHash<QString, QStringList> m_oopLayout;
+    QHash<QString, QString> m_combinedUids; // box key -> uid ("" = free place)
 };
 
 } // namespace fm

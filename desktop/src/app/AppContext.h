@@ -145,6 +145,9 @@ public:
     // Lets the settings page announce changed DB settings (club identity,
     // favorites, …) so header and pages refresh without a full reload.
     void notifySettingsChanged() { emit dataChanged(); }
+    // Grows with every dataChanged()/databaseChanged(): a page may keep an
+    // expensive result while this stays the same.
+    quint64 dataGeneration() const { return m_dataGeneration; }
 
     // Re-reads config.ini and the open save's profile (settings, roles and
     // tactics) and refreshes the engines. Returns false if the definitions
@@ -313,6 +316,7 @@ private:
     std::unique_ptr<TacticExplorer> m_tacticExplorer;
     std::unique_ptr<GraphicsLibrary> m_graphics;
     RoleRatings m_ratings;
+    quint64 m_dataGeneration = 0;
     LatestRatings m_latestRatings;
     QString m_pendingProfileUid;
     QString m_pendingEditUid;

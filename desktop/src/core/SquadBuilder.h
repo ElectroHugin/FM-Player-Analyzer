@@ -100,6 +100,10 @@ struct ReplacementPlan {
     double inValue = 0.0;            // his value over both line-ups (DWRS)
     double total = 0.0;              // starting-XI value with the plan
     bool complete = false;           // every place the XI had is filled again
+    // Who now holds the missing player's own places (ip, oop): the extra
+    // player or a starter who moved there ("" = the place stays empty).
+    QString coverIp;
+    QString coverOop;
 };
 
 // Plans for the absence of one starting-XI player, best first.
@@ -194,12 +198,16 @@ public:
     // changes place for it (they may be redistributed; the manual bridges of
     // the others stay). A plan is complete when the extra player and every
     // remaining starter get a place again; complete plans come first, then
-    // the higher starting-XI value. At most maxPlans plans per player.
+    // the higher starting-XI value, then the fewer starters who change place
+    // (stable otherwise). At most maxPlans plans per player.
+    // xiLimit: the same cap as the displayed starting XI, so the plans start
+    // from exactly that XI and keep the cap.
     // Works for both kinds of tactic (one line-up: ip == oop slot).
     QList<OutageCover> replacementPlans(const std::vector<const Player *> &pool,
                                         const QString &tactic, const RoleRatings &ratings,
                                         bool applyAptWeight = true,
                                         const Bridges &fixedBridges = {},
+                                        const XiLimit &xiLimit = {},
                                         int maxPlans = 3) const;
 
     DevelopmentSquads calculateDevelopmentSquads(

@@ -214,6 +214,67 @@ private slots:
             QCOMPARE(defs.naturalRoleSorter(), legacyNaturalSorter(defs));
         }
     }
+
+    // --- Normalized anchors, combined view, marker spreading (2.2.3) ---
+
+    void slotAnchorsCloseUpAndGoalkeeper()
+    {
+        QHash<QString, QStringList> layout;
+        layout.insert(QStringLiteral("Defense"),
+                      {QStringLiteral("DL"), QStringLiteral("DCL"), QStringLiteral("DCR"),
+                       QStringLiteral("DR")});
+        layout.insert(QStringLiteral("Strikers"), {QStringLiteral("STC")});
+        const auto anchors = slotAnchors(QStringLiteral("fm24"), layout);
+        // Two centre-backs without a middle one close up towards the centre.
+        QCOMPARE(anchors.value(QStringLiteral("DCL")).x(), 0.37);
+        QCOMPARE(anchors.value(QStringLiteral("DCR")).x(), 0.63);
+        QCOMPARE(anchors.value(QStringLiteral("DL")).x(), 0.1);
+        QCOMPARE(anchors.value(QStringLiteral("DR")).x(), 0.9);
+        QCOMPARE(anchors.value(QStringLiteral("DL")).y(), drawingRowY(5));
+        QCOMPARE(anchors.value(QStringLiteral("STC")), QPointF(0.5, drawingRowY(1)));
+        QCOMPARE(anchors.value(QStringLiteral("GK")), QPointF(0.5, drawingRowY(6)));
+        QVERIFY(!slotAnchors(QStringLiteral("fm24"), layout, false).contains(QStringLiteral("GK")));
+    }
+
+    void combinedAnchorIsTheMidpoint()
+    {
+        // A full-back (DR) who steps into midfield with the ball (MCR): the
+        // combined marker sits halfway, whatever the possession weighting.
+        QHash<QString, QStringList> ip{{QStringLiteral("Midfield"), {QStringLiteral("MCR")}}};
+        QHash<QString, QStringList> oop{{QStringLiteral("Defense"), {QStringLiteral("DR")}}};
+        const QPointF a = slotAnchors(QStringLiteral("fm24"), ip).value(QStringLiteral("MCR"));
+        const QPointF b = slotAnchors(QStringLiteral("fm24"), oop).value(QStringLiteral("DR"));
+        const QPointF mid = combinedAnchor(a, b);
+        QCOMPARE(mid.x(), (a.x() + b.x()) / 2);
+        QCOMPARE(mid.y(), (a.y() + b.y()) / 2);
+        QCOMPARE(combinedAnchor(a, a), a);
+    }
+
+    void spreadMarkersSeparatesOnlyOverlaps()
+    {
+        const QSizeF size(0.2, 0.12);
+        // Far apart: unchanged.
+        const QList<QPointF> apart{{0.2, 0.3}, {0.8, 0.3}, {0.5, 0.7}};
+        QCOMPARE(spreadMarkers(apart, size), apart);
+        // Same spot and near the touchline: apart, inside the pitch, no overlap.
+        const QList<QPointF> clash{{0.5, 0.5}, {0.5, 0.5}, {0.05, 0.9}, {0.1, 0.92}};
+        const QList<QPointF> placed = spreadMarkers(clash, size);
+        QCOMPARE(placed.size(), clash.size());
+        for (qsizetype i = 0; i < placed.size(); ++i) {
+            QVERIFY(placed[i].x() >= size.width() / 2 - 1e-9);
+            QVERIFY(placed[i].x() <= 1 - size.width() / 2 + 1e-9);
+            QVERIFY(placed[i].y() >= size.height() / 2 - 1e-9);
+            QVERIFY(placed[i].y() <= 1 - size.height() / 2 + 1e-9);
+            for (qsizetype j = i + 1; j < placed.size(); ++j) {
+                const bool overlap = std::abs(placed[i].x() - placed[j].x()) < size.width() - 1e-9
+                                     && std::abs(placed[i].y() - placed[j].y()) < size.height() - 1e-9;
+                QVERIFY2(!overlap, qPrintable(QStringLiteral("%1/%2").arg(i).arg(j)));
+            }
+        }
+        // Moved just enough: the clashing pair stays centred around 0.5.
+        QVERIFY(std::abs((placed[0].x() + placed[1].x()) / 2 - 0.5) < 1e-6);
+        QVERIFY(std::abs(placed[1].x() - placed[0].x()) < size.width() + 0.02);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestPitchGeometry)

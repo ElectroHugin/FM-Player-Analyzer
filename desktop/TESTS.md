@@ -29,7 +29,8 @@ Abgedeckte Kernmodule (Auszug):
 | Import CSV/HTML | `test_csvimport`, `test_htmlimporter` |
 | Spielfeld-Geometrie je Version | `test_pitchgeometry` |
 | Spielstandprofile (Trennung, Migration von 2.0.4, atomares Speichern) | `test_profile` |
-| Zwei Aufstellungen (Fluss, Brücken, Ausfall mit genau einem Ersatz) | `test_twophase` |
+| Zwei Aufstellungen (Fluss, Brücken, Ausfall mit genau einem Ersatz, wer übernimmt, Startelf-Grenze) | `test_twophase` |
+| Taktikansichten (Kombiniert-Karte zwischen beiden Plätzen, Übersichts-Marker, Klicks) | `test_pitchviews` |
 | Scouting mit mehreren Anforderungen (UND, Bridge mit/ohne Ball) | `test_scoutsearch` |
 | Profile über AppContext: Wechsel A → B → A, Neustart, Kopie, Logo | `test_profileswitch` |
 

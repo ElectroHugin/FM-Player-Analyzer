@@ -6,10 +6,12 @@
 #include "../theming/ThemeManager.h"
 #include "../widgets/NumericTableItem.h"
 #include "../widgets/StrengthGridWidget.h"
+#include "PageHelpers.h"
 #include "core/Database.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
 
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QContextMenuEvent>
@@ -26,6 +28,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
+#include <QLocale>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
@@ -36,6 +39,7 @@
 #include <QVBoxLayout>
 
 #include <algorithm>
+#include <cmath>
 
 namespace fm {
 
@@ -370,9 +374,58 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     auto *gridTitle = new QLabel(tr("Positionsstärke"), widget);
     gridTitle->setObjectName(QStringLiteral("sectionTitle"));
     gridTitle->setAlignment(Qt::AlignHCenter);
-    m_strengthGrid = new StrengthGridWidget(m_theme, widget);
     gridColumn->addWidget(gridTitle);
-    gridColumn->addWidget(m_strengthGrid, 0, Qt::AlignHCenter | Qt::AlignTop);
+    // Tactical view of a two-phase tactic (hidden for one line-up).
+    auto *phases = new QFrame(widget);
+    m_phaseSwitch = phases;
+    phases->setObjectName(QStringLiteral("segmented"));
+    auto *phaseLayout = new QHBoxLayout(phases);
+    phaseLayout->setContentsMargins(3, 3, 3, 3);
+    phaseLayout->setSpacing(3);
+    auto *phaseGroup = new QButtonGroup(widget);
+    const QStringList views = {tr("Kombiniert"), tr("Mit Ball"), tr("Ohne Ball"), tr("Beide")};
+    for (int i = 0; i < views.size(); ++i) {
+        auto *button = new QPushButton(views.at(i), phases);
+        button->setCheckable(true);
+        button->setObjectName(QStringLiteral("segmentButton"));
+        button->setCursor(Qt::PointingHandCursor);
+        button->setChecked(i == m_phaseView);
+        phaseGroup->addButton(button, i);
+        phaseLayout->addWidget(button);
+    }
+    connect(phaseGroup, &QButtonGroup::idClicked, this, [this](int view) {
+        m_phaseView = view;
+        showStarterView();
+    });
+    phases->setVisible(false);
+    gridColumn->addWidget(phases, 0, Qt::AlignHCenter);
+    auto *gridRow = new QHBoxLayout;
+    const auto pitchColumn = [&](QLabel *&title, StrengthGridWidget *&grid) {
+        auto *column = new QVBoxLayout;
+        title = new QLabel(widget);
+        title->setAlignment(Qt::AlignHCenter);
+        title->setVisible(false);
+        grid = new StrengthGridWidget(m_theme, widget);
+        grid->setPitchWidth(300);
+        column->addWidget(title);
+        column->addWidget(grid, 0, Qt::AlignHCenter | Qt::AlignTop);
+        gridRow->addLayout(column);
+        connect(grid, &StrengthGridWidget::playerDoubleClicked, this,
+                [this](const QString &uid) { PlayerActions::openProfile(m_context, uid); });
+        connect(grid, &StrengthGridWidget::playerContextMenuRequested, this,
+                [this](const QString &uid, const QPoint &pos) {
+                    PlayerActions::showContextMenu(m_context, this, uid, pos);
+                });
+    };
+    pitchColumn(m_gridTitle, m_strengthGrid);
+    pitchColumn(m_gridTitleOop, m_strengthGridOop);
+    m_strengthGridOop->setVisible(false);
+    gridColumn->addLayout(gridRow);
+    m_gridLegend = new QLabel(widget);
+    m_gridLegend->setObjectName(QStringLiteral("kpiCaption"));
+    m_gridLegend->setWordWrap(true);
+    m_gridLegend->setFixedWidth(300);
+    gridColumn->addWidget(m_gridLegend, 0, Qt::AlignHCenter);
     gridColumn->addStretch(1);
     layout->addLayout(gridColumn);
 
@@ -537,7 +590,9 @@ void DashboardPage::refreshAnalysis()
     const auto positions = m_context.definitions().tacticRoles().value(tactic);
     if (clubPlayers.empty() || positions.isEmpty()) {
         m_kpiRow->hide();
+        m_starters = StarterView();
         m_strengthGrid->clearData();
+        m_strengthGridOop->clearData();
         m_analysisHint->setText(
             tr("Für die Taktik '%1' konnte kein Kader gebildet werden — es gibt "
                "keine passenden Spieler in deinem Verein.")
@@ -560,7 +615,9 @@ void DashboardPage::refreshAnalysis()
     }
     if (coreSquad.empty()) {
         m_kpiRow->hide();
+        m_starters = StarterView();
         m_strengthGrid->clearData();
+        m_strengthGridOop->clearData();
         m_analysisHint->setText(
             tr("Für die Taktik '%1' konnte kein Kader gebildet werden — es gibt "
                "keine passenden Spieler in deinem Verein.")
@@ -570,36 +627,241 @@ void DashboardPage::refreshAnalysis()
         updateKpis(coreSquad);
     }
 
-    // Positional strengths: XI + B-team + best depth options per slot.
-    QHash<QString, StrengthGridWidget::SlotStrength> strengths;
-    for (auto it = positions.constBegin(); it != positions.constEnd(); ++it) {
-        const QString &slot = it.key();
-        QList<double> values;
-        const XiCell xi = squad.startingXi.value(slot);
-        if (xi.isFilled())
-            values << xi.rating;
-        const XiCell b = squad.bTeam.value(slot);
-        if (b.isFilled())
-            values << b.rating;
-        const auto depth = squad.bestDepthOptions.value(it.value());
-        for (const DepthOption &option : depth)
-            values << option.rating;
-
-        StrengthGridWidget::SlotStrength strength;
-        if (!values.isEmpty()) {
-            strength.min = *std::min_element(values.cbegin(), values.cend());
-            strength.max = *std::max_element(values.cbegin(), values.cend());
-            double sum = 0.0;
-            for (const double v : values)
-                sum += v;
-            strength.avg = sum / values.size();
-        }
-        strengths.insert(slot, strength);
-    }
-    m_strengthGrid->setFmVersionId(m_context.fmVersionId());
-    m_strengthGrid->setData(strengths, m_context.definitions().tacticLayouts().value(tactic));
+    // Positional strength: the starter per place and what his absence costs.
+    updateStarterView(clubPlayers, tactic);
 
     rebuildSuggestions();
+}
+
+void DashboardPage::updateStarterView(const std::vector<const Player *> &clubPlayers,
+                                      const QString &tactic)
+{
+    // The same starting XI as Best XI without a competition: the whole club
+    // without the long-term injured, with the manual places of Best XI.
+    std::vector<const Player *> pool;
+    for (const Player *player : clubPlayers) {
+        if (!player->longTermInjured)
+            pool.push_back(player);
+    }
+    const Definitions &definitions = m_context.definitions();
+    const RoleRatings &ratings = m_context.ratings();
+    const SquadBuilder &builder = m_context.squadBuilder();
+    const auto bridges = loadManualBridges(m_context, tactic, &pool);
+    // The cover search tries every bench player for every starter; showing
+    // the page again with unchanged data reuses the last result.
+    QStringList keyParts{QString::number(m_context.dataGeneration()), tactic,
+                         m_context.fmVersionId(),
+                         QString::number(m_context.config().ipSharePercent())};
+    for (auto it = bridges.cbegin(); it != bridges.cend(); ++it)
+        keyParts << it.key() + QLatin1Char('=') + it->first + QLatin1Char('/') + it->second;
+    for (const Player *player : pool)
+        keyParts << player->uid;
+    const QString key = keyParts.join(QLatin1Char('|'));
+    if (m_starters.valid && m_starters.key == key) {
+        showStarterView();
+        return;
+    }
+    StarterView view;
+    view.key = key;
+    view.valid = true;
+    view.tactic = tactic;
+    view.twoPhase = definitions.isTwoPhaseTactic(tactic);
+    view.ipShare = m_context.config().ipSharePercent();
+    if (view.twoPhase) {
+        const TwoPhaseSquadResult squad = builder.calculateTwoPhaseSquad(
+            pool, tactic, ratings, view.ipShare / 100.0, true, bridges);
+        view.ip = squad.startingIp;
+        view.oop = squad.startingOop;
+        view.slotsOfUid = squad.slotsOfUid;
+        view.valueOfUid = squad.valueOfUid;
+    } else {
+        view.xi = builder.calculateSquadForTactic(pool, tactic, ratings).startingXi;
+    }
+
+    const auto nameOf = [this](const QString &uid) {
+        const Player *p = m_context.store().findByUid(uid);
+        return p ? getLastName(p->name) : uid;
+    };
+    const bool twoPhase = view.twoPhase;
+    const auto places = [twoPhase](const QPair<QString, QString> &pair) {
+        return twoPhase ? tr("mit %1 · ohne %2").arg(pair.first, pair.second) : pair.first;
+    };
+    const auto delta = [](double value) {
+        const QString text = QLocale().toString(std::abs(value), 'f', 1);
+        return value <= -0.05 ? QStringLiteral("−") + text
+               : value >= 0.05 ? QStringLiteral("+") + text
+                               : QStringLiteral("±0");
+    };
+    const QList<OutageCover> covers =
+        builder.replacementPlans(pool, tactic, ratings, true, bridges);
+    for (const OutageCover &cover : covers) {
+        const ReplacementPlan &plan = cover.plans.front();
+        QStringList lines;
+        lines << tr("Fällt %1 aus:").arg(nameOf(cover.outUid));
+        if (!plan.complete) {
+            view.impact.insert(cover.outUid, tr("Lücke"));
+            lines << tr("Kein Spieler im Kader füllt die Lücke, ein Platz bleibt frei.");
+        } else {
+            view.impact.insert(cover.outUid, tr("Elf %1").arg(delta(plan.total - cover.current)));
+            lines << tr("%1 kommt (%2).").arg(nameOf(plan.inUid), places(plan.inSlots));
+            for (const PlaceMove &move : plan.moves)
+                lines << tr("%1 rückt um: %2 → %3.")
+                             .arg(nameOf(move.uid), places(move.from), places(move.to));
+            lines << tr("Startelf %1 DWRS-Punkte (Summe aller elf).")
+                         .arg(delta(plan.total - cover.current));
+        }
+        view.tooltip.insert(cover.outUid, lines.join(QLatin1Char('\n')));
+    }
+    m_starters = view;
+    showStarterView();
+}
+
+void DashboardPage::showStarterView()
+{
+    const StarterView &view = m_starters;
+    m_phaseSwitch->setVisible(view.valid && view.twoPhase);
+    if (!view.valid) {
+        m_strengthGrid->clearData();
+        m_strengthGridOop->clearData();
+        return;
+    }
+    const Definitions &definitions = m_context.definitions();
+    const QString version = m_context.fmVersionId();
+    const auto &slotMap = masterPositionMap(version);
+    const auto layoutOf = [&](const QHash<QString, QString> &lineUp) {
+        QHash<QString, QStringList> strata;
+        for (auto it = lineUp.cbegin(); it != lineUp.cend(); ++it) {
+            if (it.key() != QLatin1String("GK"))
+                strata[slotMap.value(it.key()).stratum].append(it.key());
+        }
+        return strata;
+    };
+    const auto abbr = [](QString role) {
+        if (role.endsWith(QLatin1String("-IP")))
+            role.chop(3);
+        else if (role.endsWith(QLatin1String("-OOP")))
+            role.chop(4);
+        return role;
+    };
+    // One line-up: each starter at his slot with that line-up's role DWRS.
+    const auto singleMarkers = [&](const QHash<QString, XiCell> &team,
+                                   const QHash<QString, QString> &lineUp) {
+        QList<StrengthGridWidget::Marker> markers;
+        const QHash<QString, QPointF> anchors = slotAnchors(version, layoutOf(lineUp), true);
+        for (auto it = lineUp.cbegin(); it != lineUp.cend(); ++it) {
+            if (!anchors.contains(it.key()))
+                continue;
+            StrengthGridWidget::Marker marker;
+            marker.anchor = anchors.value(it.key());
+            marker.header = abbr(it.value());
+            const XiCell cell = team.value(it.key());
+            if (cell.isFilled()) {
+                marker.uid = cell.playerUid;
+                marker.value = cell.rating;
+                marker.impact = view.impact.value(cell.playerUid);
+                marker.tooltip = cell.name + QLatin1Char('\n')
+                                 + view.tooltip.value(cell.playerUid);
+            } else {
+                marker.impact = tr("frei");
+                marker.tooltip = tr("Für %1 hat der Kader keinen Spieler.").arg(it.key());
+            }
+            markers.append(marker);
+        }
+        return markers;
+    };
+
+    const bool both = view.twoPhase && m_phaseView == 3;
+    m_strengthGridOop->setVisible(both);
+    m_gridTitle->setVisible(both);
+    m_gridTitleOop->setVisible(both);
+    const int width = both ? 280 : 300;
+    m_strengthGrid->setPitchWidth(width);
+    m_strengthGridOop->setPitchWidth(width);
+    for (StrengthGridWidget *grid : {m_strengthGrid, m_strengthGridOop})
+        grid->setFmVersionId(version);
+
+    if (!view.twoPhase) {
+        m_strengthGrid->setMarkers(singleMarkers(view.xi, definitions.tacticRoles().value(view.tactic)));
+    } else {
+        const auto &lineUps = definitions.twoPhaseTactics().value(view.tactic);
+        if (m_phaseView == 1) {
+            m_strengthGrid->setMarkers(singleMarkers(view.ip, lineUps.ip));
+        } else if (m_phaseView == 2) {
+            m_strengthGrid->setMarkers(singleMarkers(view.oop, lineUps.oop));
+        } else if (both) {
+            m_gridTitle->setText(tr("Mit Ball"));
+            m_gridTitleOop->setText(tr("Ohne Ball"));
+            m_strengthGrid->setMarkers(singleMarkers(view.ip, lineUps.ip));
+            m_strengthGridOop->setMarkers(singleMarkers(view.oop, lineUps.oop));
+        } else {
+            // Combined: each starter midway between his two places, his
+            // weighted value; free places stay at their own slot.
+            const QHash<QString, QPointF> ipAnchors =
+                slotAnchors(version, layoutOf(lineUps.ip), true);
+            const QHash<QString, QPointF> oopAnchors =
+                slotAnchors(version, layoutOf(lineUps.oop), true);
+            QList<StrengthGridWidget::Marker> markers;
+            for (const QString &ipSlot : lineUps.ipOrder) {
+                const XiCell cell = view.ip.value(ipSlot);
+                if (!cell.isFilled()) {
+                    StrengthGridWidget::Marker marker;
+                    marker.anchor = ipAnchors.value(ipSlot);
+                    marker.header = tr("mit: %1").arg(abbr(lineUps.ip.value(ipSlot)));
+                    marker.impact = tr("frei");
+                    marker.tooltip = tr("%1 mit Ball ist frei.").arg(ipSlot);
+                    markers.append(marker);
+                    continue;
+                }
+                const QString oopSlot = view.slotsOfUid.value(cell.playerUid).second;
+                StrengthGridWidget::Marker marker;
+                marker.uid = cell.playerUid;
+                marker.anchor = combinedAnchor(ipAnchors.value(ipSlot), oopAnchors.value(oopSlot));
+                marker.header = QStringLiteral("%1 · %2").arg(abbr(lineUps.ip.value(ipSlot)),
+                                                             abbr(lineUps.oop.value(oopSlot)));
+                marker.value = view.valueOfUid.value(cell.playerUid);
+                marker.impact = view.impact.value(cell.playerUid);
+                marker.tooltip = tr("%1 (mit Ball %2, ohne Ball %3)")
+                                     .arg(cell.name, ipSlot, oopSlot)
+                                 + QLatin1Char('\n') + view.tooltip.value(cell.playerUid);
+                markers.append(marker);
+            }
+            for (const QString &oopSlot : lineUps.oopOrder) {
+                if (view.oop.value(oopSlot).isFilled())
+                    continue;
+                StrengthGridWidget::Marker marker;
+                marker.anchor = oopAnchors.value(oopSlot);
+                marker.header = tr("ohne: %1").arg(abbr(lineUps.oop.value(oopSlot)));
+                marker.impact = tr("frei");
+                marker.tooltip = tr("%1 ohne Ball ist frei.").arg(oopSlot);
+                markers.append(marker);
+            }
+            m_strengthGrid->setMarkers(markers);
+        }
+    }
+
+    QString what;
+    if (!view.twoPhase || m_phaseView == 1 || m_phaseView == 2 || both)
+        what = tr("Groß: DWRS des Starters in seiner Rolle.");
+    else
+        what = tr("Groß: Wert des Starters über beide Aufstellungen (%1 % mit Ball).")
+                   .arg(view.ipShare);
+    m_gridLegend->setFixedWidth(both ? 2 * width + 16 : width);
+    m_gridLegend->setText(what + QLatin1Char(' ')
+                          + tr("Klein: so ändert sich die Startelf, wenn er ausfällt. Details "
+                               "zeigt der Tooltip."));
+    // A wrapped label in this row does not ask for its height by itself.
+    m_gridLegend->setFixedHeight(
+        m_gridLegend->fontMetrics()
+            .boundingRect(QRect(0, 0, m_gridLegend->width(), 10000), Qt::TextWordWrap,
+                          m_gridLegend->text())
+            .height()
+        + 4);
+    m_gridLegend->setToolTip(
+        tr("„Elf −4,0“: Fällt der Spieler aus, kommt der beste Ersatz (wie in Best XI unter "
+           "„Ausfall in der Startelf“), und die Summe der DWRS der ganzen Startelf sinkt um "
+           "4,0. „Lücke“: Kein Spieler im Kader füllt den Platz. Grundlage ist der ganze Verein "
+           "ohne Langzeitverletzte und ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus "
+           "Best XI gelten."));
 }
 
 void DashboardPage::updateKpis(const std::vector<const Player *> &coreSquad)

@@ -3,7 +3,12 @@
 #include "../theming/ThemeManager.h"
 #include "core/Constants.h"
 
+#include <QContextMenuEvent>
+#include <QHelpEvent>
+#include <QLineF>
+#include <QMouseEvent>
 #include <QPainter>
+#include <QToolTip>
 #include <QPainterPath>
 #include <QSet>
 
@@ -17,13 +22,31 @@ StrengthGridWidget::StrengthGridWidget(ThemeManager &theme, QWidget *parent)
 {
     // Legacy mini-pitch: max-width 280px at a 68:105 pitch aspect ratio.
     setFixedSize(280, 280 * 105 / 68);
+    setMouseTracking(true);
     connect(&m_theme, &ThemeManager::themeChanged, this,
             qOverload<>(&QWidget::update));
+}
+
+void StrengthGridWidget::setPitchWidth(int width)
+{
+    setFixedSize(width, width * 105 / 68);
+}
+
+void StrengthGridWidget::setMarkers(const QList<Marker> &markers)
+{
+    m_markerMode = true;
+    m_markers = markers;
+    m_markerRects.clear();
+    m_strengths.clear();
+    m_layout.clear();
+    update();
 }
 
 void StrengthGridWidget::setData(const QHash<QString, SlotStrength> &strengths,
                                  const QHash<QString, QStringList> &layout)
 {
+    m_markerMode = false;
+    m_markers.clear();
     m_strengths = strengths;
     m_layout = layout;
     update();
@@ -31,6 +54,9 @@ void StrengthGridWidget::setData(const QHash<QString, SlotStrength> &strengths,
 
 void StrengthGridWidget::clearData()
 {
+    m_markerMode = false;
+    m_markers.clear();
+    m_markerRects.clear();
     m_strengths.clear();
     m_layout.clear();
     update();
@@ -97,6 +123,10 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
     painter.drawRect(QRectF(cx - goalW / 2, field.top(), goalW, goalH));
     painter.drawRect(QRectF(cx - goalW / 2, field.bottom() - goalH, goalW, goalH));
 
+    if (m_markerMode && !m_markers.isEmpty()) {
+        paintMarkers(painter, field, night);
+        return;
+    }
     if (m_layout.isEmpty()) {
         painter.setPen(Qt::white);
         painter.drawText(pitch, Qt::AlignCenter, tr("Keine Daten"));
@@ -183,6 +213,150 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
         }
     }
     drawBox(cardRectAt(6, 0.5), QStringLiteral("GK"));
+}
+
+void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bool night)
+{
+    const QColor emptyCard = night ? QColor(0x12, 0x16, 0x1c) : QColor(0xfb, 0xfb, 0xfd);
+    const QColor cardText = QColor(0x1e, 0x22, 0x2b);
+    const double cardW = 0.20;
+    const double cardH = 0.125;
+
+    double minValue = 0.0, maxValue = 0.0;
+    bool haveValue = false;
+    QList<QPointF> anchors;
+    for (const Marker &marker : std::as_const(m_markers)) {
+        anchors.append(marker.anchor);
+        if (marker.uid.isEmpty())
+            continue;
+        minValue = haveValue ? std::min(minValue, marker.value) : marker.value;
+        maxValue = haveValue ? std::max(maxValue, marker.value) : marker.value;
+        haveValue = true;
+    }
+    const QList<QPointF> placed = spreadMarkers(anchors, QSizeF(cardW, cardH));
+    const auto toField = [&](const QPointF &f) {
+        return QPointF(field.left() + field.width() * f.x(), field.top() + field.height() * f.y());
+    };
+    for (qsizetype i = 0; i < m_markers.size(); ++i) {
+        const QPointF from = toField(m_markers.at(i).anchor);
+        const QPointF to = toField(placed.at(i));
+        if (QLineF(from, to).length() < 3.0)
+            continue;
+        painter.setPen(QPen(QColor(255, 255, 255, 170), 1.0));
+        painter.drawLine(from, to);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QColor(255, 255, 255, 210));
+        painter.drawEllipse(from, 2.2, 2.2);
+    }
+
+    QFont headerFont = font();
+    headerFont.setPointSizeF(font().pointSizeF() * 0.66);
+    QFont valueFont = font();
+    valueFont.setBold(true);
+    QFont impactFont = font();
+    impactFont.setPointSizeF(font().pointSizeF() * 0.68);
+
+    m_markerRects.clear();
+    for (qsizetype i = 0; i < m_markers.size(); ++i) {
+        const Marker &marker = m_markers.at(i);
+        const QPointF centre = toField(placed.at(i));
+        const QRectF box(centre.x() - field.width() * cardW / 2,
+                         centre.y() - field.height() * cardH / 2, field.width() * cardW,
+                         field.height() * cardH);
+        m_markerRects.append(box);
+        QPainterPath path;
+        path.addRoundedRect(box, 5, 5);
+        const bool filled = !marker.uid.isEmpty();
+        // Role fit colours the card; the XI impact is a separate line of
+        // plain text on a light band, so the two never read as one number.
+        painter.fillPath(path, filled ? relativeColor(marker.value, minValue, maxValue)
+                                      : emptyCard);
+        painter.setPen(QPen(QColor(0, 0, 0, 60), 1));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawPath(path);
+        const double h = box.height();
+        const QRectF headerLine(box.left() + 2, box.top() + 1, box.width() - 4, h * 0.27);
+        const QRectF valueLine(box.left(), box.top() + h * 0.24, box.width(), h * 0.40);
+        const QRectF impactBand(box.left() + 2, box.top() + h * 0.66, box.width() - 4,
+                                h * 0.31);
+        const QColor ink = filled ? cardText : (night ? QColor(Qt::white) : cardText);
+        painter.setPen(ink);
+        painter.setFont(headerFont);
+        painter.drawText(headerLine, Qt::AlignCenter,
+                         painter.fontMetrics().elidedText(marker.header, Qt::ElideRight,
+                                                          static_cast<int>(headerLine.width())));
+        painter.setFont(valueFont);
+        painter.drawText(valueLine, Qt::AlignCenter,
+                         filled ? QStringLiteral("%1%").arg(qRound(marker.value))
+                                : QStringLiteral("–"));
+        if (!marker.impact.isEmpty()) {
+            QPainterPath band;
+            band.addRoundedRect(impactBand, 3, 3);
+            if (filled)
+                painter.fillPath(band, QColor(255, 255, 255, 150));
+            painter.setPen(ink);
+            painter.setFont(impactFont);
+            painter.drawText(impactBand, Qt::AlignCenter,
+                             painter.fontMetrics().elidedText(
+                                 marker.impact, Qt::ElideRight,
+                                 static_cast<int>(impactBand.width())));
+        }
+    }
+}
+
+int StrengthGridWidget::markerAt(const QPoint &pos) const
+{
+    if (!m_markerMode)
+        return -1;
+    for (qsizetype i = m_markerRects.size() - 1; i >= 0; --i) {
+        if (m_markerRects.at(i).contains(pos))
+            return static_cast<int>(i);
+    }
+    return -1;
+}
+
+bool StrengthGridWidget::event(QEvent *event)
+{
+    if (event->type() == QEvent::ToolTip) {
+        auto *help = static_cast<QHelpEvent *>(event);
+        const int i = markerAt(help->pos());
+        if (i >= 0 && i < m_markers.size() && !m_markers.at(i).tooltip.isEmpty())
+            QToolTip::showText(help->globalPos(), m_markers.at(i).tooltip, this);
+        else
+            QToolTip::hideText();
+        return true;
+    }
+    return QWidget::event(event);
+}
+
+void StrengthGridWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    const int i = markerAt(event->pos());
+    if (i >= 0 && !m_markers.at(i).uid.isEmpty()) {
+        emit playerDoubleClicked(m_markers.at(i).uid);
+        event->accept();
+        return;
+    }
+    QWidget::mouseDoubleClickEvent(event);
+}
+
+void StrengthGridWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    const int i = markerAt(event->pos());
+    setCursor(i >= 0 && !m_markers.at(i).uid.isEmpty() ? Qt::PointingHandCursor
+                                                        : Qt::ArrowCursor);
+    QWidget::mouseMoveEvent(event);
+}
+
+void StrengthGridWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    const int i = markerAt(event->pos());
+    if (i >= 0 && !m_markers.at(i).uid.isEmpty()) {
+        emit playerContextMenuRequested(m_markers.at(i).uid, event->globalPos());
+        event->accept();
+        return;
+    }
+    QWidget::contextMenuEvent(event);
 }
 
 } // namespace fm

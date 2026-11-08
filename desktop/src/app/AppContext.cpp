@@ -23,6 +23,9 @@ AppContext::AppContext(QObject *parent)
             &AppContext::refreshCachedCrest);
     connect(this, &AppContext::dataChanged, this, &AppContext::refreshCachedCrest);
     connect(this, &AppContext::databaseChanged, this, &AppContext::refreshCachedCrest);
+    // Counted before any page refreshes, so page caches see the new state.
+    connect(this, &AppContext::dataChanged, this, [this] { ++m_dataGeneration; });
+    connect(this, &AppContext::databaseChanged, this, [this] { ++m_dataGeneration; });
 }
 
 AppContext::~AppContext()
