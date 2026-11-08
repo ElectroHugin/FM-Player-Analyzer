@@ -125,9 +125,16 @@ FM24 löst der Analyzer das exakt mit der
 kostenminimaler Fluss: Jeder Spieler bekommt einen Platz mit Ball und einen ohne
 Ball, und sein Wert ist der gewichtete Mittelwert beider Rollen.
 
-Zum Feinschliff tauschen zwei Spieler mit derselben Rolle auf gespiegelten
-Positionen, etwa zwei Innenverteidiger, die Seite, wenn sie damit auf ihrer
-bevorzugten Seite stehen.
+Zum Feinschliff können gleichwertige Spieler auf gespiegelten zentralen
+Positionen auf ihre manuell bevorzugte Seite wechseln, auch bei unterschiedlichen
+Rollen. Der bevorzugte Fuß entscheidet darüber nicht. In FM27 werden die
+ausgewählten elf Spieler in beiden Phasen zunächst nach manuellen Seitenwünschen,
+dann nach möglichst kurzen Gesamtwegen angeordnet. Der einstellbare Spielraum
+beträgt standardmäßig **0,1 DWRS-Punkte für die gesamte Mannschaft** gegenüber
+der ursprünglichen Zuordnung, sowohl ungewichtet als auch gewichtet. Bei null
+sind nur Gleichstände erlaubt. Fest gesetzte Positionen und die ausgewählten
+Spieler bleiben erhalten. Die angezeigte Zuordnung kann deshalb einen kleinen
+Bewertungsvorteil zugunsten kürzerer Wege aufgeben.
 
 *Ein echter Fall:* Eine schrittweise Auswahl stellte einen Verteidiger in die
 Innenverteidigung, obwohl er als Sechser stärker war. Das B-Team musste dadurch

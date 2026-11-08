@@ -2,6 +2,11 @@
 
 ## 2.2.3 – unreleased
 
+- FM27: keep the selected eleven and improve their assignments across both phases: manual central-side preferences first, then shorter total paths. The configurable allowance defaults to 0.1 DWRS points for the whole team, relative to the original assignment, and also protects the weighted selection score. Pinned positions stay fixed.
+- Central side preferences now work across different roles when the assignments are equally suitable. Preferred foot is not used.
+- FM27 saves: import natural positions for fully known players. Manual overrides, including an explicitly empty selection, take priority and survive imports. The existing natural-position bonus now checks the actual slot, including the correct wing; its default multiplier remains 1.00.
+- Best XI Combined: show Starting XI and B-Team side by side when there is room, with the selected team on the left. Keep the view controls visible while scrolling, adapt pitch height and use smaller wheel steps. Player portraits now also appear in Combined.
+- Player databases migrate to schema 16 to preserve imported positions separately from manual choices; older builds cannot open the upgraded database.
 - Squad Registration (LaLiga): mark a player with "Minimum wage does not apply (e.g. loan)". He can then be registered although his wage is below the minimum.
 - Squad Registration (LaLiga): EU players aged 18 or younger on 1 January need no slot ("U18 EU"), instead of the U21 rule that LaLiga does not have. The in-game date decides unclear ages, or you set them by hand. Players without a recognised EU nationality stay unclear until you decide.
 - Squad Registration (LaLiga): the suggested list with a wage budget is calculated much faster for big squads.

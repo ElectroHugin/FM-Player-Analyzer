@@ -119,8 +119,14 @@ position at most one player. For FM24 the analyzer solves this exactly with the
 player gets one place in possession and one out of possession, and his value is
 the weighted average of both roles.
 
-As a finishing touch, two players sharing a role on mirrored slots, two
-centre-backs say, swap sides if that puts them on their preferred side.
+As a finishing touch, equally suitable players on mirrored central slots can
+swap to their manually preferred side, even with different roles. Footedness
+does not decide this. In FM27 the selected eleven are then arranged across
+both phases by preferred central sides first, then shorter total paths.
+The configurable allowance is **0.1 DWRS points for the whole team** by default,
+relative to its original assignment, for both raw and weighted totals. Set it
+to zero to allow only ties. Pinned positions and the selected players stay fixed.
+The displayed arrangement can therefore trade a small rating gain for shorter paths.
 
 *A real case:* a step-by-step picker started a defender at centre-back,
 although he was the better defensive midfielder, so the B-team had to field a

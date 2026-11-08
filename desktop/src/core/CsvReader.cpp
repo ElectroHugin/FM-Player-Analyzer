@@ -74,6 +74,7 @@ bool CsvReader::read(const QByteArray &bytes, ImportTable *out, ImportError *err
 {
     out->headers.clear();
     out->rows.clear();
+    out->naturalPositionsByUid.clear();
     out->malformedRows = 0;
 
     const QString text = decode(bytes);

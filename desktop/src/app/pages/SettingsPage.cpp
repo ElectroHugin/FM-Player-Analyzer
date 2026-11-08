@@ -927,6 +927,15 @@ QWidget *SettingsPage::buildSquadPage()
     m_maxDepthRolesSpin->setRange(1, 10);
     addRow(form, tr("Bonus natürliche Position"), m_naturalPosSpin);
     addRow(form, tr("Anteil mit Ball (ab FM27)"), m_ipShareSpin);
+    m_bridgeToleranceSpin = sized(new QDoubleSpinBox, kNumberWidth);
+    m_bridgeToleranceSpin->setRange(0.0, 1.0);
+    m_bridgeToleranceSpin->setDecimals(2);
+    m_bridgeToleranceSpin->setSingleStep(0.05);
+    addRow(form, tr("DWRS-Spielraum für kürzere Wege"), m_bridgeToleranceSpin);
+    addHint(form, tr("Maximaler Verlust für die gesamte Elf gegenüber der ursprünglichen Zuordnung. "
+                     "Gilt auch für die gewichtete Auswahlbewertung. 0 erlaubt nur Gleichstand. "
+                     "Innerhalb des Spielraums gelten zuerst manuelle Seitenpräferenzen, dann kurze Wege. "
+                     "Die ausgewählten Spieler bleiben dieselben."));
     addHint(form, tr("Ab FM27 hat jede Taktik eine Aufstellung mit Ball und eine ohne Ball. Der "
                      "Wert eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest "
                      "seiner Rolle ohne Ball. Standard 50 %."));
@@ -1657,6 +1666,7 @@ void SettingsPage::refresh()
     m_goalkeeperAgeSpin->setValue(config.ageThreshold(QStringLiteral("goalkeeper")));
     m_naturalPosSpin->setValue(config.selectionBonus(QStringLiteral("natural_position")));
     m_ipShareSpin->setValue(config.ipSharePercent());
+    m_bridgeToleranceSpin->setValue(config.bridgeTolerance());
     m_maxDepthRolesSpin->setValue(
         config.squadManagementSetting(QStringLiteral("max_roles_per_depth_player")));
     m_minLoanTalentSpin->setValue(
@@ -1831,6 +1841,7 @@ void SettingsPage::saveAll()
     config.setAgeThreshold(QStringLiteral("goalkeeper"), m_goalkeeperAgeSpin->value());
     config.setSelectionBonus(QStringLiteral("natural_position"), m_naturalPosSpin->value());
     config.setIpSharePercent(m_ipShareSpin->value());
+    config.setBridgeTolerance(m_bridgeToleranceSpin->value());
     config.setSquadManagementSetting(QStringLiteral("max_roles_per_depth_player"),
                                      m_maxDepthRolesSpin->value());
     config.setSquadManagementSetting(QStringLiteral("min_loan_talent_score"),

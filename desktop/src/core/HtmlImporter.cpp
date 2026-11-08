@@ -245,6 +245,7 @@ bool HtmlImporter::extractTable(const QString &html, ImportTable *out, ImportErr
 
     out->headers.clear();
     out->rows.clear();
+    out->naturalPositionsByUid.clear();
     out->malformedRows = 0;
 
     qsizetype pos = tableStart;
@@ -520,8 +521,7 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
             good.assignedRoles = bad.assignedRoles;
         if (good.primaryRole.isEmpty())
             good.primaryRole = bad.primaryRole;
-        if (good.naturalPositions.isEmpty())
-            good.naturalPositions = bad.naturalPositions;
+        good.mergeNaturalPositionsFrom(bad);
         if (good.preferredSide.isEmpty())
             good.preferredSide = bad.preferredSide;
         if (good.agreedPlayingTime.isEmpty())
@@ -696,6 +696,9 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
         }
 
         player.uid = ref.uid;
+        const QString sourceUid = cells.at(uidCol).trimmed();
+        if (table.naturalPositionsByUid.contains(sourceUid))
+            player.saveNaturalPositions = table.naturalPositionsByUid.value(sourceUid);
         player.lastSeenUpdate = newCounter; // present in this upload → fresh
         const int ageBefore = player.age;
         for (const auto &[column, fullName] : columnTargets)
@@ -859,8 +862,11 @@ QString HtmlImporter::forceUpdateSinglePlayer(const ImportTable &table, Database
     Player player = *existing; // app-managed fields preserved
     QSet<QString> seenHeaders;
     QString fileName;
+    QString sourceUid;
     for (int c = 0; c < table.headers.size(); ++c) {
         const QString &header = table.headers.at(c);
+        if (header == requiredImportColumns(fmVersionId).at(0))
+            sourceUid = table.rows.at(0).at(c).trimmed();
         if (seenHeaders.contains(header))
             continue;
         seenHeaders.insert(header);
@@ -872,6 +878,8 @@ QString HtmlImporter::forceUpdateSinglePlayer(const ImportTable &table, Database
             fileName = value;
         applyColumn(player, it.value(), value);
     }
+    if (table.naturalPositionsByUid.contains(sourceUid))
+        player.saveNaturalPositions = table.naturalPositionsByUid.value(sourceUid);
     player.uid = targetUid; // everything is keyed to the confirmed target
     // Targeted refresh: mark the player fresh as of the latest recorded upload
     // (does not advance the global counter).

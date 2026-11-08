@@ -227,6 +227,10 @@ private slots:
 
         ImportTable table;
         Fm27SaveImport::buildTable(save, {true}, &table);
+        QCOMPARE(table.naturalPositionsByUid.value(QStringLiteral("10")),
+                 QStringList{QStringLiteral("M (C)")});
+        QVERIFY(table.naturalPositionsByUid.contains(QStringLiteral("12")));
+        QVERIFY(!table.naturalPositionsByUid.contains(QStringLiteral("13")));
         // The save's date and the scouted players go to the import history.
         QCOMPARE(table.gameDate, QDate(2026, 9, 14));
         QCOMPARE(table.knownUids, (QStringList{QStringLiteral("12"), QStringLiteral("13")}));
@@ -305,6 +309,37 @@ private slots:
     }
 
     // Optional: a real save, end to end through the regular importer.
+    void naturalPositionsPreserveManualOverridesOnRefresh()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("natural_refresh"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("players.db"))));
+        std::vector<Player> players(1);
+        players[0].uid = QStringLiteral("10");
+        players[0].name = QStringLiteral("Player");
+        players[0].naturalPositionsManual = true;
+        players[0].naturalPositions = {QStringLiteral("AM (L)")};
+        QVERIFY(db.upsertPlayers(players));
+        SaveData save;
+        save.clubName = QStringLiteral("Home FC");
+        save.players = {makePlayer(20, 1, QStringLiteral("Player"), 500, save.clubName, 12)};
+        ImportTable table;
+        Fm27SaveImport::buildTable(save, {true}, &table);
+        ImportError error;
+        HtmlImporter::forceUpdateSinglePlayer(table, db, db.loadPlayers(), QStringLiteral("10"),
+                                               &error, QStringLiteral("fm27"));
+        QCOMPARE(error.code, ImportErrorCode::None);
+        auto refreshed = db.loadPlayers();
+        QCOMPARE(refreshed[0].saveNaturalPositions, QStringList{QStringLiteral("M (C)")});
+        QCOMPARE(refreshed[0].effectiveNaturalPositions(), QStringList{QStringLiteral("AM (L)")});
+        refreshed[0].naturalPositions.clear(); // explicit empty is also preserved
+        QVERIFY(db.upsertPlayers(refreshed));
+        HtmlImporter::forceUpdateSinglePlayer(table, db, db.loadPlayers(), QStringLiteral("10"),
+                                               &error, QStringLiteral("fm27"));
+        QCOMPARE(error.code, ImportErrorCode::None);
+        QVERIFY(db.loadPlayers()[0].effectiveNaturalPositions().isEmpty());
+    }
+
     void realSave()
     {
         const QString path = qEnvironmentVariable("FM27_TEST_SAVE");
@@ -331,6 +366,18 @@ private slots:
                 << result.unknownColumns;
         QVERIFY(result.playersImported > 20);
         QVERIFY(result.unknownColumns.isEmpty());
+        const auto imported = db.loadPlayers();
+        ImportTable expected;
+        Fm27SaveImport::buildTable(save, {true}, &expected);
+        int checked = 0;
+        for (const Player &player : imported) {
+            if (!expected.naturalPositionsByUid.contains(player.uid))
+                continue;
+            QCOMPARE(player.saveNaturalPositions, expected.naturalPositionsByUid.value(player.uid));
+            QVERIFY(!player.naturalPositionsManual);
+            ++checked;
+        }
+        QVERIFY(checked > 10);
 
         // Without masking every player with a club arrives (tens of thousands).
         Database all(QStringLiteral("fm27_save_test_all"));

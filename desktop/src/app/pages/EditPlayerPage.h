@@ -43,6 +43,7 @@ private:
     QComboBox *m_aptCombo = nullptr;
     QLabel *m_aptLabel = nullptr;
     QListWidget *m_naturalPositionsList = nullptr;
+    QCheckBox *m_manualNaturalPositions = nullptr;
     QComboBox *m_primaryRoleCombo = nullptr;
     QComboBox *m_preferredSideCombo = nullptr;
     QWidget *m_tacticalColumn = nullptr;

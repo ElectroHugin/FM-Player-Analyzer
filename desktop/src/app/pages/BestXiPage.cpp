@@ -29,6 +29,8 @@
 #include <QMenu>
 #include <QLabel>
 #include <QScrollArea>
+#include <QScrollBar>
+#include <QEvent>
 #include <QTabBar>
 #include <QTabWidget>
 #include <QTableWidget>
@@ -56,6 +58,9 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     auto *outer = new QVBoxLayout(this);
     outer->setContentsMargins(0, 0, 0, 0);
     auto *scroll = new QScrollArea(this);
+    m_scroll = scroll;
+    scroll->viewport()->installEventFilter(this);
+    scroll->verticalScrollBar()->setSingleStep(16);
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
     outer->addWidget(scroll);
@@ -170,6 +175,9 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     PlayerActions::attachToTableWidget(m_context, m_injuryTable, -1);
 
     m_tabs = new QTabWidget(content);
+    // Hidden pages (especially the signing form) must not force the pitch
+    // page wider than its viewport.
+    m_tabs->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
 
     // --- Tab 1: first team ---
     {
@@ -177,7 +185,10 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         auto *tabLayout = new QVBoxLayout(tab);
         // Starting XI / B-team: one click apart, both line-ups (FM27: with
         // ball left, without ball right, like the game) side by side.
-        auto *switchRow = new QHBoxLayout;
+        m_viewControls = new QWidget(this);
+        auto *switchRow = new QHBoxLayout(m_viewControls);
+        switchRow->setContentsMargins(18, 6, 18, 6);
+        outer->insertWidget(0, m_viewControls);
         auto *segmented = new QFrame(tab);
         m_teamSwitch = segmented;
         segmented->setObjectName(QStringLiteral("segmented"));
@@ -191,7 +202,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
             button->setCheckable(true);
             button->setObjectName(QStringLiteral("segmentButton"));
             button->setCursor(Qt::PointingHandCursor);
-            button->setFocusPolicy(Qt::NoFocus);
+            button->setFocusPolicy(Qt::StrongFocus);
             button->setMinimumWidth(110);
             teamGroup->addButton(button);
             segLayout->addWidget(button);
@@ -222,16 +233,15 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
             phaseLayout->addWidget(button);
         }
         phases->setToolTip(
-            tr("Kombiniert: ein Spielfeld, jeder Spieler mittig zwischen seinem Platz mit und "
-               "ohne Ball, beide Rollen auf der Karte (mit Ball zuerst). Beide: die zwei "
-               "Aufstellungen nebeneinander."));
+            tr("Kombiniert: Startelf und B-Team nebeneinander, die ausgewählte Mannschaft links. "
+               "Bei wenig Platz erscheint nur die Auswahl. Jeder Spieler steht zwischen seinen "
+               "beiden Positionen. Beide: mit und ohne Ball für die ausgewählte Mannschaft."));
         connect(phaseGroup, &QButtonGroup::idClicked, this, [this](int view) {
             m_phaseView = view;
             applyPhaseView();
         });
         switchRow->addWidget(phases);
         switchRow->addStretch(1);
-        tabLayout->addLayout(switchRow);
 
         m_phaseNote = new QLabel(tab);
         m_phaseNote->setWordWrap(true);
@@ -287,6 +297,8 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
             makePage(m_xiIpPitch, m_xiPitch, m_xiIpTitle, m_xiTitle, m_teamPages[0]));
         m_teamStack->addWidget(
             makePage(m_bTeamIpPitch, m_bTeamPitch, m_bIpTitle, m_bTitle, m_teamPages[1]));
+        m_teamPages[0].combinedColumn->findChild<QLabel *>()->setText(tr("Startelf · Kombiniert"));
+        m_teamPages[1].combinedColumn->findChild<QLabel *>()->setText(tr("B-Team · Kombiniert"));
         // FM24 (one line-up): starting XI and B-team side by side, as in 1.6.2.
         {
             QLabel *xiTitle = nullptr;
@@ -297,10 +309,13 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
             bTitle->setText(tr("B-Team"));
         }
         tabLayout->addWidget(m_teamStack);
-        connect(m_xiButton, &QPushButton::toggled, this, [this](bool xi) {
-            if (m_teamStack->currentIndex() != 2)
-                m_teamStack->setCurrentIndex(xi ? 0 : 1);
-        });
+        auto *combinedPage = new QWidget;
+        m_combinedLayout = new QHBoxLayout(combinedPage);
+        m_combinedLayout->setContentsMargins(0, 0, 0, 0);
+        m_combinedLayout->addWidget(m_teamPages[0].combinedColumn, 1);
+        m_combinedLayout->addWidget(m_teamPages[1].combinedColumn, 1);
+        m_teamStack->addWidget(combinedPage);
+        connect(m_xiButton, &QPushButton::toggled, this, [this] { applyPhaseView(); });
 
         m_outageBox = new QGroupBox(tr("Kadertiefe: Ausfall in der Startelf"), tab);
         auto *outageLayout = new QVBoxLayout(m_outageBox);
@@ -526,6 +541,7 @@ void BestXiPage::showSection(const QString &pageId)
 {
     const bool signing = pageId == QLatin1String("signing_advisor");
     m_tabs->setCurrentIndex(signing ? 2 : pageId == QLatin1String("best_xi_youth") ? 1 : 0);
+    m_viewControls->setVisible(m_twoPhase && m_tabs->currentIndex() == 0);
     m_heading->setText(signing ? tr("Kaufberatung") : tr("Best XI"));
 }
 
@@ -593,6 +609,10 @@ void BestXiPage::rebuild()
 
     clearPitchTeams();
     if (userClub.isEmpty() || tactic.isEmpty()) {
+        m_twoPhase = false;
+        m_viewControls->hide();
+        m_phaseNote->hide();
+        m_bridgeBar->hide();
         m_outageBox->setVisible(false);
         m_clubNotice->setVisible(true);
         m_registrationNote->setVisible(false);
@@ -794,7 +814,15 @@ void BestXiPage::rebuild()
     // One line-up (FM24): starting XI and B-team next to each other.
     m_teamSwitch->setVisible(twoPhase);
     m_phaseSwitch->setVisible(twoPhase);
-    m_teamStack->setCurrentIndex(twoPhase ? (m_xiButton->isChecked() ? 0 : 1) : 2);
+    m_twoPhase = twoPhase;
+    m_hintToggle->setText(twoPhase ? tr("So wird aufgestellt") : tr("Beweisbar optimal"));
+    m_hint->setText(twoPhase
+        ? tr("Die Spielerauswahl berücksichtigt beide Phasen, Spielzeit und natürliche Positionen. "
+             "Innerhalb des eingestellten DWRS-Spielraums werden dieselben Spieler so zugeordnet, "
+             "dass zuerst manuelle Seitenwünsche und dann kurze Wege zwischen den Phasen zählen. "
+             "Fest gesetzte Positionen bleiben erhalten.")
+        : algorithmHint());
+    m_viewControls->setVisible(twoPhase && m_tabs->currentIndex() == 0);
     applyPhaseView();
     m_phaseNote->setVisible(twoPhase);
     m_bridge = BridgeState();
@@ -832,10 +860,9 @@ void BestXiPage::rebuild()
         if (!bridges.isEmpty()) {
             const double loss = m_bridge.optimum - m_bridge.current;
             m_bridgeNote->setText(
-                tr("Von Hand angepasst (%n Spieler). Die Elf ist %1 DWRS-Punkte schwächer "
-                   "als der Vorschlag des Analyzers.",
+                tr("Von Hand angepasst (%n Spieler). DWRS-Änderung gegenüber dem Vorschlag: %1.",
                    nullptr, static_cast<int>(bridges.size()))
-                    .arg(QLocale().toString(std::max(0.0, loss), 'f', 1)));
+                    .arg(QLocale().toString(std::abs(loss) < 1e-9 ? 0.0 : -loss, 'f', 3)));
             m_bridgeBar->setVisible(true);
         }
         const auto &slotMap = masterPositionMap(m_context.fmVersionId());
@@ -904,15 +931,13 @@ void BestXiPage::rebuild()
         m_pitchTeams.insert(m_bTeamPitch, {squad.bTeamOop, lineUps.oop, lineUps.oopOrder, m_bTeamIpPitch, false});
         m_valueOfUid = squad.valueOfUid;
         m_phaseNote->setText(
-            tr("Diese Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Analyzer "
-               "wählt die Spieler so, dass die Summe aus %1 % Rolle mit Ball und %2 % Rolle "
-               "ohne Ball am höchsten ist; jeder Spieler braucht die Position in beiden "
-               "Aufstellungen. Unter dem Namen steht sein Platz in der anderen Aufstellung. "
-               "Den Anteil stellst du in den Einstellungen ein. Per Rechtsklick auf einen "
-               "Spieler der Startelf verschiebst du ihn selbst; der Analyzer zeigt, was "
-               "jeder Platz kostet.")
-                .arg(share)
-                .arg(100 - share));
+            tr("%1 % mit Ball · %2 % ohne Ball. Innerhalb des DWRS-Spielraums gelten zuerst "
+               "manuelle Seitenpräferenzen, dann kurze Wege. Rechtsklick zum Verschieben.\n"
+               "DWRS-Änderung durch die Zuordnung: Startelf %3 · B-Team %4. Spielraum je Mannschaft: %5.")
+                .arg(share).arg(100 - share)
+                .arg(QLocale().toString(std::abs(squad.startingBridgeLoss) < 1e-9 ? 0.0 : -squad.startingBridgeLoss, 'f', 3))
+                .arg(QLocale().toString(std::abs(squad.bTeamBridgeLoss) < 1e-9 ? 0.0 : -squad.bTeamBridgeLoss, 'f', 3))
+                .arg(QLocale().toString(m_context.config().bridgeTolerance(), 'f', 2)));
     } else {
         m_singleXiPitch->setTeam(first.startingXi, positions, layout, roleNames);
         m_singleBPitch->setTeam(first.bTeam, positions, layout, roleNames);
@@ -964,6 +989,11 @@ void BestXiPage::saveBridges(const QString &tactic, const Bridges &bridges)
 
 void BestXiPage::applyPhaseView()
 {
+    if (!m_teamStack || !m_combinedLayout)
+        return;
+    const int selected = m_xiButton->isChecked() ? 0 : 1;
+    m_teamStack->setCurrentIndex(!m_twoPhase ? 2 : m_phaseView == Combined ? 3 : selected);
+    m_combinedLayout->insertWidget(0, m_teamPages[selected].combinedColumn, 1);
     // FM24 page (index 2) always shows both teams side by side.
     for (int t = 0; t < 2; ++t) {
         const TeamPage &page = m_teamPages[t];
@@ -971,6 +1001,30 @@ void BestXiPage::applyPhaseView()
         page.ipColumn->setVisible(m_phaseView == InPossession || m_phaseView == BothPhases);
         page.oopColumn->setVisible(m_phaseView == OutOfPossession || m_phaseView == BothPhases);
     }
+    updatePitchLayout();
+}
+
+bool BestXiPage::eventFilter(QObject *object, QEvent *event)
+{
+    if (object == m_scroll->viewport() && event->type() == QEvent::Resize)
+        updatePitchLayout();
+    return PageBase::eventFilter(object, event);
+}
+
+void BestXiPage::updatePitchLayout()
+{
+    if (!m_teamStack || !m_combinedLayout)
+        return;
+    const int height = m_scroll->viewport()->height() - 48;
+    for (TacticPitchWidget *pitch : {m_xiIpPitch, m_xiPitch, m_bTeamIpPitch, m_bTeamPitch,
+                                     m_singleXiPitch, m_singleBPitch,
+                                     m_teamPages[0].combined, m_teamPages[1].combined})
+        pitch->fitToHeight(height);
+    const int selected = m_xiButton->isChecked() ? 0 : 1;
+    const bool bothTeams = m_scroll->viewport()->width() >= 800;
+    for (int team = 0; team < 2; ++team)
+        m_teamPages[team].combinedColumn->setVisible(m_twoPhase && m_phaseView == Combined
+                                                     && (bothTeams || team == selected));
 }
 
 void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, int phases)
@@ -981,8 +1035,8 @@ void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, int
         return p ? p->name : playerUid;
     };
     const auto delta = [](double value) {
-        const QString text = QLocale().toString(value, 'f', 1);
-        return value >= 0.05 ? QStringLiteral("+") + text : value <= -0.05 ? text : QStringLiteral("±0");
+        const QString text = QLocale().toString(value, 'f', 3);
+        return value >= 0.0005 ? QStringLiteral("+") + text : value <= -0.0005 ? text : QStringLiteral("±0");
     };
     PlayerActions::showContextMenu(m_context, this, uid, globalPos, [&](QMenu &menu) {
         const QPair<QString, QString> mine = state.slotsOfUid.value(uid);

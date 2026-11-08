@@ -2,6 +2,7 @@
         // user swapped him to the right by hand. The advisor must start from
         // that line-up, and a left-only signing then replaces Lio, not Kai.
 #include "core/AppConfig.h"
+#include "core/BridgeAssignment.h"
 #include "core/Definitions.h"
 #include "core/MinCostFlow.h"
 #include "core/Player.h"
@@ -115,6 +116,156 @@ private:
     }
 
 private slots:
+    void preferredCentralSideAcrossRolesAndPhases()
+    {
+        for (const auto &pair : {qMakePair("DCL", "DCR"), qMakePair("DMCL", "DMCR"),
+                                qMakePair("MCL", "MCR"), qMakePair("AMCL", "AMCR"),
+                                qMakePair("STL", "STR")}) {
+            Definitions defs;
+            defs.setRoot(root(slotMap({{pair.first, "IF"}, {pair.second, "W"}}),
+                              slotMap({{pair.first, "TW"}, {pair.second, "WM"}})));
+            std::vector<Player> players{
+                makePlayer(QStringLiteral("a"), QStringLiteral("D (C), DM, M (C), AM (C), ST (C)")),
+                makePlayer(QStringLiteral("b"), QStringLiteral("D (C), DM, M (C), AM (C), ST (C)"))};
+            players[0].preferredSide = QStringLiteral("Right");
+            players[0].leftFoot = QStringLiteral("Very Strong");
+            players[1].preferredSide = QStringLiteral("Left");
+            players[1].rightFoot = QStringLiteral("Very Strong");
+            RoleRatings ratings;
+            for (const char *role : {"IF", "W", "TW", "WM"})
+                ratings[QLatin1String(role)] = {{QStringLiteral("a"), 70}, {QStringLiteral("b"), 70}};
+            const auto result = solve(defs, players, ratings, 0.5);
+            QCOMPARE(result.slotsOfUid.value(QStringLiteral("a")),
+                     qMakePair(QString::fromLatin1(pair.second), QString::fromLatin1(pair.second)));
+            QCOMPARE(result.slotsOfUid.value(QStringLiteral("b")),
+                     qMakePair(QString::fromLatin1(pair.first), QString::fromLatin1(pair.first)));
+            SquadBuilder builder(defs, *m_config);
+            const QString left = QString::fromLatin1(pair.first);
+            const auto pinned = builder.calculateTwoPhaseSquad(
+                {&players[0], &players[1]}, QStringLiteral("T"), ratings, 0.5, false,
+                {{QStringLiteral("a"), {left, left}}});
+            QCOMPARE(pinned.slotsOfUid.value(QStringLiteral("a")), qMakePair(left, left));
+        }
+    }
+
+    void denseElevenPlayerRefinement()
+    {
+        using O = BridgeAssignment::Option;
+        std::vector<std::vector<O>> choices(11);
+        std::vector<O> original;
+        for (int p = 0; p < 11; ++p) {
+            for (int ip = 0; ip < 11; ++ip)
+                for (int oop = 0; oop < 11; ++oop)
+                    choices[p].push_back({ip, oop, 70, 70, 0, double(std::abs(ip - oop))});
+            original.push_back({p, (p + 3) % 11, 70, 70, 0, double(std::abs(p - (p + 3) % 11))});
+        }
+        const auto result = BridgeAssignment::refine(choices, original, 11, 11, 0.1);
+        for (const auto &o : result)
+            QCOMPARE(o.ip, o.oop);
+        // Conflicting preferences in a dense custom tactic must also finish.
+        // All eleven want one of only two left slots in each phase.
+        for (auto &options : choices)
+            for (auto &o : options)
+                o.preferredSides = int(o.ip < 2) + int(o.oop < 2);
+        for (auto &o : original)
+            o.preferredSides = int(o.ip < 2) + int(o.oop < 2);
+        const auto constrained = BridgeAssignment::refine(choices, original, 11, 11, 0.1);
+        QSet<int> ips, oops;
+        double rating = 0;
+        for (const auto &o : constrained) {
+            ips.insert(o.ip); oops.insert(o.oop); rating += o.rating;
+        }
+        QCOMPARE(ips.size(), 11);
+        QCOMPARE(oops.size(), 11);
+        QVERIFY(rating >= 770 - 0.1);
+    }
+
+    void bridgeRefinementKeepsOneTeamBudgetAndPrefersSides()
+    {
+        using O = BridgeAssignment::Option;
+        // The shorter arrangement needs a three-player cycle. Its total
+        // loss is 0.09, not three separate allowances of 0.1.
+        const std::vector<O> original{{0, 2, 70, 70, 0, 50},
+                                      {1, 0, 70, 70, 0, 30},
+                                      {2, 1, 70, 70, 0, 30}};
+        std::vector<std::vector<O>> choices{
+            {original[0], {0, 0, 69.97, 69.97, 0, 0}},
+            {original[1], {1, 1, 69.97, 69.97, 0, 0}},
+            {original[2], {2, 2, 69.97, 69.97, 0, 0}}};
+        auto result = BridgeAssignment::refine(choices, original, 3, 3, 0.1);
+        for (int i = 0; i < 3; ++i)
+            QCOMPARE(result[i].oop, i);
+        result = BridgeAssignment::refine(choices, original, 3, 3, 0.0);
+        QCOMPARE(result[0].oop, 2);
+        for (auto &player : choices)
+            player[1].rating = player[1].score = 69.96;
+        result = BridgeAssignment::refine(choices, original, 3, 3, 0.1);
+        QCOMPARE(result[0].oop, 2); // total 0.12 exceeds the one shared budget
+        for (auto &player : choices)
+            player[1].rating = 70;
+        result = BridgeAssignment::refine(choices, original, 3, 3, 0.1);
+        QCOMPARE(result[0].oop, 2); // raw tie alone cannot spend 0.12 weighted points
+        choices[0][0].preferredSides = 2;
+        for (auto &player : choices)
+            player[1].rating = player[1].score = 70;
+        result = BridgeAssignment::refine(choices, original, 3, 3, 0.1);
+        QCOMPARE(result[0].oop, 2); // explicit side in both phases wins
+    }
+
+    void bridgeRefinementMatchesExhaustiveSearch()
+    {
+        using O = BridgeAssignment::Option;
+        QRandomGenerator random(20261108);
+        for (int round = 0; round < 40; ++round) {
+            std::vector<std::vector<O>> choices(4);
+            std::vector<O> original;
+            double baseline = 0;
+            for (int p = 0; p < 4; ++p) {
+                for (int ip = 0; ip < 4; ++ip) {
+                    for (int oop = 0; oop < 4; ++oop) {
+                        const double rating = 70 + random.bounded(8) * 0.02;
+                        O o{ip, oop, rating, rating, int(random.bounded(3)), double(random.bounded(12))};
+                        choices[p].push_back(o);
+                        if (ip == p && oop == p) {
+                            original.push_back(o);
+                            baseline += rating;
+                        }
+                    }
+                }
+            }
+            int bestSides = -1;
+            double bestDistance = 1e9;
+            std::vector<int> ip{0, 1, 2, 3};
+            do {
+                std::vector<int> oop{0, 1, 2, 3};
+                do {
+                    double rating = 0, distance = 0;
+                    int sides = 0;
+                    for (int p = 0; p < 4; ++p) {
+                        const O &o = choices[p][ip[p] * 4 + oop[p]];
+                        rating += o.rating;
+                        distance += o.distance;
+                        sides += o.preferredSides;
+                    }
+                    if (rating + 0.1 + 1e-9 >= baseline
+                        && (sides > bestSides || (sides == bestSides && distance < bestDistance))) {
+                        bestSides = sides;
+                        bestDistance = distance;
+                    }
+                } while (std::next_permutation(oop.begin(), oop.end()));
+            } while (std::next_permutation(ip.begin(), ip.end()));
+            const auto result = BridgeAssignment::refine(choices, original, 4, 4, 0.1);
+            int sides = 0;
+            double distance = 0;
+            for (const O &o : result) {
+                sides += o.preferredSides;
+                distance += o.distance;
+            }
+            QCOMPARE(sides, bestSides);
+            QCOMPARE(distance, bestDistance);
+        }
+    }
+
     void initTestCase()
     {
         m_config = std::make_unique<AppConfig>(m_dir.filePath(QStringLiteral("config.ini")));

@@ -159,12 +159,27 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     tacticalTitle->setObjectName(QStringLiteral("sectionTitle"));
     tacticalLayout->addWidget(tacticalTitle);
     tacticalLayout->addWidget(new QLabel(tr("Natürliche Positionen:"), m_tacticalColumn));
+    m_manualNaturalPositions = new QCheckBox(tr("Natürliche Positionen manuell festlegen"), m_tacticalColumn);
+    m_manualNaturalPositions->setToolTip(tr("Ohne Häkchen gelten die natürlichen Positionen aus dem Spielstand. "
+                                           "Manuelle Angaben haben Vorrang und bleiben bei Importen erhalten."));
+    tacticalLayout->addWidget(m_manualNaturalPositions);
     m_naturalPositionsList = new QListWidget(m_tacticalColumn);
     m_naturalPositionsList->setMaximumHeight(120);
     m_naturalPositionsList->setToolTip(
         tr("Die Positionen, auf denen dieser Spieler am effektivsten ist "
            "(Bonus in der Kader-Berechnung)."));
     tacticalLayout->addWidget(m_naturalPositionsList);
+    connect(m_manualNaturalPositions, &QCheckBox::toggled, this, [this](bool manual) {
+        m_naturalPositionsList->setEnabled(manual);
+        const Player *player = currentPlayer();
+        if (m_updating || manual || !player)
+            return;
+        for (int i = 0; i < m_naturalPositionsList->count(); ++i) {
+            auto *item = m_naturalPositionsList->item(i);
+            item->setCheckState(player->saveNaturalPositions.contains(item->text())
+                                   ? Qt::Checked : Qt::Unchecked);
+        }
+    });
     auto *tacticalForm = new QFormLayout;
     m_primaryRoleCombo = new QComboBox(m_tacticalColumn);
     auto *primaryRoleRow = new QHBoxLayout;
@@ -178,7 +193,8 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     m_preferredSideCombo->addItem(tr("Links"), QStringLiteral("Left"));
     m_preferredSideCombo->addItem(tr("Rechts"), QStringLiteral("Right"));
     m_preferredSideCombo->setToolTip(
-        tr("Überschreibt den bevorzugten Fuß im Best-XI-Rechner bei symmetrischen Rollen."));
+        tr("Bevorzugte zentrale Seite bei gleichwertigen Zuordnungen, auch bei unterschiedlichen Rollen. "
+           "Gilt mit und ohne Ball. Der bevorzugte Fuß wird dafür nicht verwendet."));
     tacticalForm->addRow(tr("Bevorzugte Seite:"), m_preferredSideCombo);
     tacticalLayout->addLayout(tacticalForm);
     tacticalLayout->addStretch(1);
@@ -243,7 +259,7 @@ void EditPlayerPage::rebuildClubCombo()
             markers << QStringLiteral("🎯");
         if (player->agreedPlayingTime.isEmpty())
             markers << QStringLiteral("📄");
-        if (player->naturalPositions.isEmpty())
+        if (player->effectiveNaturalPositions().isEmpty())
             markers << QStringLiteral("📍");
         const QString label = markers.isEmpty()
                                   ? player->name
@@ -350,13 +366,16 @@ void EditPlayerPage::showEditor()
     m_tacticalColumn->setVisible(isClubPlayer);
     if (isClubPlayer) {
         m_naturalPositionsList->clear();
+        m_manualNaturalPositions->setChecked(player->naturalPositionsManual
+                                             || !player->naturalPositions.isEmpty());
+        m_naturalPositionsList->setEnabled(m_manualNaturalPositions->isChecked());
         const QSet<QString> parsed = player->parsedPositions();
         QStringList positions(parsed.cbegin(), parsed.cend());
         std::sort(positions.begin(), positions.end());
         for (const QString &position : positions) {
             auto *item = new QListWidgetItem(position, m_naturalPositionsList);
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-            item->setCheckState(player->naturalPositions.contains(position) ? Qt::Checked
+            item->setCheckState(player->effectiveNaturalPositions().contains(position) ? Qt::Checked
                                                                             : Qt::Unchecked);
         }
 
@@ -402,7 +421,8 @@ void EditPlayerPage::save()
             if (item->checkState() == Qt::Checked)
                 naturalPositions << item->text();
         }
-        updated.naturalPositions = naturalPositions;
+        updated.naturalPositionsManual = m_manualNaturalPositions->isChecked();
+        updated.naturalPositions = updated.naturalPositionsManual ? naturalPositions : QStringList();
         updated.primaryRole = m_primaryRoleCombo->currentData().toString();
         updated.preferredSide = m_preferredSideCombo->currentData().toString();
     }

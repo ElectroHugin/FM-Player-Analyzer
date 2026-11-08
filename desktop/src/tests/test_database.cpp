@@ -19,6 +19,45 @@ class TestDatabase : public QObject
     Q_OBJECT
 
 private slots:
+    void naturalPositionMigrationAndMerge()
+    {
+        QTemporaryDir dir;
+        const QString path = dir.filePath(QStringLiteral("natural.db"));
+        {
+            Database db(QStringLiteral("natural_seed"));
+            QVERIFY(db.open(path));
+            std::vector<Player> players(2);
+            players[0].uid = QStringLiteral("manual");
+            players[0].name = QStringLiteral("Manual");
+            players[0].naturalPositions = {QStringLiteral("AM (L)")};
+            players[1].uid = QStringLiteral("automatic");
+            players[1].name = QStringLiteral("Automatic");
+            QVERIFY(db.upsertPlayers(players));
+            QSqlQuery query(db.handle());
+            QVERIFY(query.exec(QStringLiteral("ALTER TABLE players DROP COLUMN save_natural_positions")));
+            QVERIFY(query.exec(QStringLiteral("ALTER TABLE players DROP COLUMN natural_positions_manual")));
+            QVERIFY(query.exec(QStringLiteral("PRAGMA user_version = 15")));
+        }
+        Database db(QStringLiteral("natural_migrated"));
+        QVERIFY2(db.open(path), qPrintable(db.errorString()));
+        auto players = db.loadPlayers();
+        QCOMPARE(players.size(), size_t(2));
+        QVERIFY(players[0].naturalPositionsManual);
+        QVERIFY(!players[1].naturalPositionsManual);
+        players[0].saveNaturalPositions = {QStringLiteral("AM (R)")};
+        players[1].saveNaturalPositions = {QStringLiteral("M (C)")};
+        players[1].naturalPositionsManual = true; // explicitly empty beats imported data
+        QVERIFY(db.upsertPlayers(players));
+        players = db.loadPlayers();
+        QCOMPARE(players[0].effectiveNaturalPositions(), QStringList{QStringLiteral("AM (L)")});
+        QVERIFY(players[1].effectiveNaturalPositions().isEmpty());
+        QVERIFY(db.mergePlayerInto(players[0].id, players[1].id));
+        const auto merged = db.loadPlayers();
+        QCOMPARE(merged.size(), size_t(1));
+        QVERIFY(merged[0].effectiveNaturalPositions().isEmpty());
+        QCOMPARE(merged[0].saveNaturalPositions, QStringList{QStringLiteral("M (C)")});
+    }
+
     // Regression for the WAL backup bug: a freshly committed player lives in the
     // -wal sidecar, not yet in the main .db file. createBackup must capture it
     // (VACUUM INTO), which a plain file copy of the .db would not.

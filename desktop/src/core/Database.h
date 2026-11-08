@@ -204,6 +204,7 @@ private:
     bool migrateV11ToV12();               // non-EU + not-registrable flags
     bool migrateToV14();                  // player_registration_extra (2.2.3 fields)
     bool migrateToV15();                  // registration stash + snapshot_seen
+    bool migrateToV16();                  // imported natural positions + manual override
     static QStringList createV15Sql();
     // Hands parked 2.2.3 registration fields to the surviving duplicate.
     bool reconcileRegistrationStash();
