@@ -271,16 +271,29 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     });
     connect(&m_context, &AppContext::navigationRequested, this, &MainWindow::navigateTo);
     connect(&m_context, &AppContext::databaseChanged, this, [this](const QString &) {
+        // The player store was replaced with the new save's (no dataChanged()
+        // precedes this): hidden pages drop their Player* right away and
+        // rebuild when opened (navigateTo refreshes them); the visible page is
+        // refreshed exactly once, after the save-specific updates below.
+        auto *current = qobject_cast<PageBase *>(m_stack->currentWidget());
+        for (PageBase *page : std::as_const(m_pages)) {
+            if (page != current)
+                page->releaseStoreRows();
+        }
         updateDbLabel();
         updateHeader();
         m_searchModelDirty = true;
         m_noticeBar->hide(); // hints belong to the previous save
         // Another FM version may offer other pages ("Neue Rolle" only where
-        // roles can be added).
+        // roles can be added). Rebuilding the menu navigates to its first
+        // page, which refreshes that page already.
+        const int navigationsBefore = m_navigationCount;
         if (fmDataVersion(m_context.fmVersionId()).customRoles != m_sidebarCustomRoles)
             rebuildMenu();
-        for (PageBase *page : std::as_const(m_pages))
-            page->refresh();
+        if (m_navigationCount == navigationsBefore) {
+            if (auto *visible = qobject_cast<PageBase *>(m_stack->currentWidget()))
+                visible->refresh();
+        }
         // Another database: earlier steps (e.g. a player's profile) may not
         // exist here, so the history starts over.
         resetHistory();
@@ -638,6 +651,7 @@ void MainWindow::navigateTo(const QString &pageId)
         m_pages.insert(hostId, page);
         m_stack->addWidget(page);
     }
+    ++m_navigationCount;
     page->showSection(pageId);
     m_stack->setCurrentWidget(page);
     m_currentPageId = pageId;

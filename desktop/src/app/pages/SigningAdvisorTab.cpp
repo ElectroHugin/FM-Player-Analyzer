@@ -251,6 +251,10 @@ SigningAdvisorTab::SigningAdvisorTab(AppContext &context, QWidget *parent)
         m_debounce->stop();
         loadFilters();
         m_dirty = true;
+        // Visible during the switch: the page refresh before this ran with the
+        // previous save's filters, so recompute with the loaded ones.
+        if (isVisible())
+            m_debounce->start();
     });
 }
 

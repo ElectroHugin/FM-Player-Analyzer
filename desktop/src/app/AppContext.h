@@ -286,7 +286,9 @@ signals:
     // The open save's profile was (re)loaded: colors, day/night mode, logo,
     // weights. Emitted before the players of a newly opened save load.
     void profileChanged();
-    // A different database file was opened.
+    // A different database file was opened. Its players are already loaded;
+    // no separate dataChanged() precedes it, so listeners treat this as the
+    // store having been replaced as well.
     void databaseChanged(const QString &dbName);
     // Switch to the given page (handled by MainWindow).
     void navigationRequested(const QString &pageId);
@@ -302,6 +304,8 @@ private:
 
     // Rebuilds m_latestRatings/m_ratings from dwrs_latest against the store.
     void rebuildRatingsCache();
+    // Players + both rating caches from the open database, without signals.
+    void loadFromDatabase();
 
     AppPaths m_paths;
     std::unique_ptr<AppConfig> m_config;

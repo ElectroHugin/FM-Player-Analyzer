@@ -171,7 +171,10 @@ bool AppContext::openDatabaseImpl(const QString &dbName, const QString &copyProf
     emit profileChanged();
     applyGraphicsSettings();
 
-    reloadFromDatabase();
+    // One signal for the switch: databaseChanged() also stands for the new
+    // player store, so pages refresh once instead of on dataChanged() and
+    // again on databaseChanged().
+    loadFromDatabase();
     emit databaseChanged(dbName);
     return true;
 }
@@ -437,9 +440,14 @@ bool AppContext::setFmVersion(const QString &versionId, QString *errorOut)
 
 void AppContext::reloadFromDatabase()
 {
+    loadFromDatabase();
+    emit dataChanged();
+}
+
+void AppContext::loadFromDatabase()
+{
     m_store.reset(m_database->loadPlayers());
     rebuildRatingsCache();
-    emit dataChanged();
 }
 
 void AppContext::refreshPlayers(const QList<int> &playerIds)

@@ -144,6 +144,7 @@ private:
     QList<HistoryEntry> m_history;
     int m_historyIndex = -1;
     bool m_restoringHistory = false; // navigateTo() must not record a new step
+    int m_navigationCount = 0;       // navigateTo() calls, to skip a duplicate refresh
 
     QStringList m_searchKeys; // folded "name club" per store row, for the palette
     bool m_searchModelDirty = true;
