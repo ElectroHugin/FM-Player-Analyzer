@@ -20,6 +20,7 @@ class QSlider;
 class QSpinBox;
 class QTabWidget;
 class QTableView;
+class QTimer;
 class QVBoxLayout;
 
 namespace fm {
@@ -78,7 +79,10 @@ private:
     // Game positions of the open save's FM version, pitch order.
     QStringList gamePositionChoices() const;
     void rebuildAll();
-    void rebuildScoutedOnly();
+    // columnsChanged = false: only the row set changed (age, value, DWRS bounds,
+    // free agents, nationality, shortlist star); columns, their widths and the
+    // sort column stay, so the table is not re-laid out.
+    void rebuildScoutedOnly(bool columnsChanged = true);
     QStringList selectedRoles() const;
     void toggleShortlist(const Player *player);
     void exportCsv(const TableSection &section);
@@ -115,6 +119,10 @@ private:
     QSpinBox *m_maxAgeSpin = nullptr;
     QSlider *m_maxValueSlider = nullptr;
     QLabel *m_maxValueLabel = nullptr;
+    // Coalesces slider drags and spin box steps into one row rebuild.
+    QTimer *m_scoutedRowsTimer = nullptr;
+    int m_scoutedSortColumn = 1; // default sort of the last full rebuild
+    Qt::SortOrder m_scoutedSortOrder = Qt::AscendingOrder;
 
     // Several requirements at once (AND), e.g. a bridge from the Best XI.
     ScoutRequirementsBar *m_requirements = nullptr;
