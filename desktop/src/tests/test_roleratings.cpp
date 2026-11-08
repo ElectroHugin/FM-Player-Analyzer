@@ -258,5 +258,5 @@ private slots:
     }
 };
 
-QTEST_APPLESS_MAIN(TestRoleRatings)
+QTEST_GUILESS_MAIN(TestRoleRatings) // QSqlDatabase needs a QCoreApplication
 #include "test_roleratings.moc"
