@@ -9,6 +9,9 @@
 - Player history: an older save imported later no longer replaces a newer state of the same month.
 - FM27 saves: a damaged scouting block is ignored completely instead of partly.
 - A database from a newer app version is no longer opened (it could lose data).
+- Switching saves is faster, especially for big databases: only the page you are looking at is rebuilt, and ratings load in one go.
+- Scouting: changing age, value, DWRS range, nationality or free agents updates the list much faster. Sliders wait until you let go.
+- Fixed a crash when switching saves while the Squad Matrix was open (big databases).
 
 ## 2.2.2 – 2026-11-07
 
