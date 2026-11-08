@@ -30,8 +30,12 @@ jobs:
           modules: qtcharts
           cache: true
 
+      # Ninja from PyPI: the setup action's download from GitHub releases
+      # arrived broken (Nov 2026). The Python of the Qt setup is on PATH.
       - name: Setup Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v5
+        run: |
+          python -m pip install --disable-pip-version-check ninja
+          ninja --version
 
       - name: Configure
         run: cmake --preset linux-release
