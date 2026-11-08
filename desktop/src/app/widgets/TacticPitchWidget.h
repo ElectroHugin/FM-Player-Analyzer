@@ -81,6 +81,7 @@ public:
 
     // FM version whose pitch geometry places the slots (empty = default).
     void setFmVersionId(const QString &versionId) { m_fmVersionId = versionId; }
+    void fitToHeight(int height);
 
 signals:
     // Player interactions (M13): boxes are clickable.
@@ -103,12 +104,13 @@ protected:
     // Answering with the plain ratio reserved an empty band below the pitch.
     int heightForWidth(int width) const override
     {
-        return qMin(width, kHintWidth) * 105 / 68;
+        return qMin(width, m_hintWidth) * 105 / 68;
     }
-    QSize sizeHint() const override { return {kHintWidth, kHintWidth * 105 / 68}; }
+    QSize sizeHint() const override { return {m_hintWidth, m_hintWidth * 105 / 68}; }
 
 private:
     static constexpr int kHintWidth = 480;
+    int m_hintWidth = kHintWidth;
 
     QString uidAt(const QPoint &pos) const;
     // Vertical offset in pixels for a role on a slot (negative = up).

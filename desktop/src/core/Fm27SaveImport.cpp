@@ -1,6 +1,7 @@
 #include "Fm27SaveImport.h"
 
 #include "Fm27Save.h"
+#include "Utils.h"
 
 #include <QFileInfo>
 
@@ -366,6 +367,7 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
     out->rows.clear();
     out->malformedRows = 0;
     out->knownUids.clear();
+    out->naturalPositionsByUid.clear();
     // Only the career's side of the game: a men's career leaves out every
     // women's club and the other way round.
     const bool women = womensCareer(save);
@@ -415,6 +417,17 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
         }
 
         QStringList row;
+        // Keep natural positions separate from user edits. Only carry the
+        // information for players whose positions are fully known.
+        if (!options.attributeMasking || how == Knowledge::OwnClub
+            || how == Knowledge::Famous || how == Knowledge::Scouted) {
+            auto natural = p.positions;
+            for (auto &value : natural)
+                value = value == 20 ? 20 : 0;
+            QStringList positions = parsePositionString(positionText(natural)).values();
+            positions.sort();
+            out->naturalPositionsByUid.insert(QString::number(p.uniqueId), positions);
+        }
         row.reserve(out->headers.size());
         row << QString::number(p.uniqueId) << p.name << (p.age >= 0 ? QString::number(p.age) : QString())
             << p.clubShortName << nationCode(p.nationId) << positionText(p.positions)

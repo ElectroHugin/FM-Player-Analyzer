@@ -1,4 +1,5 @@
 #include "AppConfig.h"
+#include <cmath>
 
 #include "Constants.h"
 #include "Database.h"
@@ -775,6 +776,21 @@ bool AppConfig::setIpSharePercent(int percent)
 {
     return writeValue(QStringLiteral("Phases/ip_share_percent"),
                       QString::number(std::clamp(percent, 0, 100)));
+}
+
+double AppConfig::bridgeTolerance() const
+{
+    const double value = readValue(QStringLiteral("Phases/bridge_tolerance"),
+                                   QStringLiteral("0.1")).toDouble();
+    return std::isfinite(value) ? std::clamp(value, 0.0, 1.0) : 0.1;
+}
+
+bool AppConfig::setBridgeTolerance(double value)
+{
+    if (!std::isfinite(value))
+        return false;
+    return writeValue(QStringLiteral("Phases/bridge_tolerance"),
+                      QString::number(std::clamp(value, 0.0, 1.0)));
 }
 
 double AppConfig::selectionBonus(const QString &key) const

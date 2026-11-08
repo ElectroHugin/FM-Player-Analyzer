@@ -155,6 +155,8 @@ public:
     // percent 0..100, default 50.
     int ipSharePercent() const;
     bool setIpSharePercent(int percent);
+    double bridgeTolerance() const;
+    bool setBridgeTolerance(double value);
 
     // [SquadManagement]
     int squadManagementSetting(const QString &key) const;

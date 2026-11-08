@@ -47,6 +47,28 @@ void drawFittedName(QPainter &painter, const QRectF &rect, const QString &fullNa
     painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, text);
 }
 
+void drawPortrait(QPainter &painter, const QPixmap &face, const QRectF &circle,
+                   const QColor &body, const QColor &border)
+{
+    if (face.isNull())
+        return;
+    QPainterPath clip;
+    clip.addEllipse(circle);
+    painter.save();
+    painter.fillPath(clip, body);
+    painter.setClipPath(clip, Qt::IntersectClip);
+    const QSizeF faceSize = QSizeF(face.size()) / face.devicePixelRatio();
+    const QSizeF size = faceSize * (circle.width() / qMax(faceSize.width(), faceSize.height()));
+    const QRectF target(circle.center().x() - size.width() / 2,
+                        circle.bottom() - size.height(), size.width(), size.height());
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.drawPixmap(target, face, QRectF(face.rect()));
+    painter.restore();
+    painter.setPen(QPen(border, 1.6));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawEllipse(circle);
+}
+
 TacticPitchWidget::ShiftSource &shiftSource()
 {
     static TacticPitchWidget::ShiftSource source;
@@ -89,6 +111,15 @@ TacticPitchWidget::TacticPitchWidget(ThemeManager &theme, QWidget *parent)
     setSizePolicy(policy);
     setMouseTracking(true); // pointing-hand cursor over player boxes
     connect(&m_theme, &ThemeManager::themeChanged, this, qOverload<>(&QWidget::update));
+}
+
+void TacticPitchWidget::fitToHeight(int height)
+{
+    const int width = qBound(340, height * 68 / 105, kHintWidth);
+    if (width == m_hintWidth)
+        return;
+    m_hintWidth = width;
+    updateGeometry();
 }
 
 void TacticPitchWidget::setTeam(const QHash<QString, XiCell> &team,
@@ -442,23 +473,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(path);
 
-        if (!face.isNull()) {
-            QPainterPath clip;
-            clip.addEllipse(faceCircle);
-            painter.save();
-            painter.fillPath(clip, cardBody);
-            painter.setClipPath(clip, Qt::IntersectClip);
-            const QSizeF faceSize = QSizeF(face.size()) / face.devicePixelRatio();
-            const QSizeF size = faceSize * (faceD / qMax(faceSize.width(), faceSize.height()));
-            const QRectF target(faceCircle.center().x() - size.width() / 2,
-                                faceCircle.bottom() - size.height(), size.width(), size.height());
-            painter.setRenderHint(QPainter::SmoothPixmapTransform);
-            painter.drawPixmap(target, face, QRectF(face.rect()));
-            painter.restore();
-            painter.setPen(QPen(kLineColors[qBound(0, row, 6)], 1.6));
-            painter.setBrush(Qt::NoBrush);
-            painter.drawEllipse(faceCircle);
-        }
+        drawPortrait(painter, face, faceCircle, cardBody, kLineColors[qBound(0, row, 6)]);
     };
 
     for (auto it = m_layout.constBegin(); it != m_layout.constEnd(); ++it) {
@@ -558,10 +573,25 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
     }
     const double cardW = 0.188;
     const double cardH = 0.125;
+    const double faceD = qRound(field.height() * cardH * 0.5);
+    QHash<QString, QPixmap> faces;
+    if (portraitSource()) {
+        const int wanted = (int(faceD * devicePixelRatioF()) + 7) / 8 * 8;
+        for (const Box &box : std::as_const(boxes)) {
+            if (!box.card)
+                continue;
+            const QPixmap face = portraitSource()(box.card->uid, wanted);
+            if (!face.isNull())
+                faces.insert(box.card->uid, face);
+        }
+    }
+    const double portraitPadding = faces.isEmpty() ? 0.0 : faceD / field.height();
     QList<QPointF> anchors;
     for (const Box &box : std::as_const(boxes))
-        anchors.append(box.anchor);
-    const QList<QPointF> placed = spreadMarkers(anchors, QSizeF(cardW, cardH));
+        anchors.append(box.anchor - QPointF(0, portraitPadding / 2));
+    QList<QPointF> placed = spreadMarkers(anchors, QSizeF(cardW, cardH + portraitPadding));
+    for (QPointF &point : placed)
+        point += QPointF(0, portraitPadding / 2);
     const auto toField = [&](const QPointF &f) {
         return QPointF(field.left() + field.width() * f.x(), field.top() + field.height() * f.y());
     };
@@ -633,6 +663,11 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
             continue;
         }
         const CombinedCard &card = *b.card;
+        const QPixmap face = faces.value(card.uid);
+        // Two role abbreviations need the full header width. Keep the face
+        // above it instead of covering the left half of the role pair.
+        const QRectF faceCircle(box.left(), box.top() - faceD, faceD, faceD);
+        const QRectF headerText = header;
         painter.fillPath(path, cardBody);
         painter.save();
         painter.setClipPath(path, Qt::IntersectClip);
@@ -644,9 +679,9 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         const QString roles = QStringLiteral("%1 · %2")
                                   .arg(stripPhase(m_ipLineUp.value(card.ipSlot)),
                                        stripPhase(m_oopLineUp.value(card.oopSlot)));
-        painter.drawText(header, Qt::AlignCenter,
+        painter.drawText(headerText, Qt::AlignCenter,
                          painter.fontMetrics().elidedText(roles, Qt::ElideRight,
-                                                          static_cast<int>(header.width() - 4)));
+                                                          static_cast<int>(headerText.width() - 4)));
         QRectF line(body.left(), body.top(), body.width(), lineH);
         painter.setFont(ratingFont);
         painter.setPen(textColor);
@@ -677,6 +712,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         painter.setPen(QPen(cardBorder, 1));
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(path);
+        drawPortrait(painter, face, faceCircle, cardBody, kLineColors[qBound(0, row, 6)]);
     }
 }
 

@@ -70,6 +70,8 @@ struct TwoPhaseSquadResult {
     QHash<QString, XiCell> bTeamOop;
     QHash<QString, QPair<QString, QString>> slotsOfUid; // uid -> (ip slot, oop slot)
     QHash<QString, double> valueOfUid;                  // uid -> a*ip + (1-a)*oop DWRS
+    double startingBridgeLoss = 0.0; // unrounded DWRS below the initial assignment
+    double bTeamBridgeLoss = 0.0;
     std::vector<const Player *> depthPool; // not in XI or B-team, pool order
 };
 
@@ -158,7 +160,9 @@ public:
     // (1 - ipShare) * score(oop role), score = DWRS x playing-time weight x
     // natural-position bonus. A player needs the position for both slots.
     // Exact (minimum-cost flow). The B-team is then chosen the same way from
-    // the remaining players.
+    // the remaining players. For each selected team, refine its assignment
+    // within bridgeTolerance (raw and weighted totals): manual central sides
+    // first, then minimum total distance between phases. The roster is fixed.
     // fixedBridges: manual bridges uid -> (ip slot, oop slot) for the
     // starting XI; an empty slot leaves that phase free. A fixed player may
     // only take his slot, nobody else may take it; the rest is optimised.
@@ -237,7 +241,6 @@ private:
     int m_goalkeeperCap = 25;
     double m_naturalPosMultiplier = 1.0;
     QHash<QString, double> m_aptWeights; // display name -> weight
-    QHash<QString, QStringList> m_roleToGamePositions;
 };
 
 } // namespace fm

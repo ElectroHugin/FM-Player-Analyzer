@@ -29,6 +29,40 @@ private:
     }
 
 private slots:
+    void combinedPortraitsUseTheSameSource()
+    {
+        QTemporaryDir dir;
+        AppConfig config(dir.filePath(QStringLiteral("config.ini")));
+        ThemeManager theme(config);
+        TacticPitchWidget pitch(theme);
+        pitch.resize(480, 742);
+        TacticPitchWidget::CombinedCard card;
+        card.uid = QStringLiteral("portrait-player");
+        card.name = QStringLiteral("Portrait Player");
+        card.ipSlot = card.oopSlot = QStringLiteral("STC");
+        card.value = card.ipRating = card.oopRating = 70;
+        const QHash<QString, QString> roles{{QStringLiteral("STC"), QStringLiteral("AF")}};
+        const QHash<QString, QStringList> layout{{QStringLiteral("Strikers"), {QStringLiteral("STC")}}};
+        pitch.setCombinedTeam({card}, roles, layout, roles, layout);
+        const auto before = pitch.grab().toImage();
+        QString requested;
+        TacticPitchWidget::setPortraitSource([&](const QString &uid, int size) {
+            requested = uid;
+            QPixmap face(size, size);
+            face.fill(QColor(255, 0, 255));
+            return face;
+        });
+        const auto after = pitch.grab().toImage();
+        TacticPitchWidget::setPortraitSource({});
+        QCOMPARE(requested, card.uid);
+        QVERIFY(before != after);
+        int portraitPixels = 0;
+        for (int y = 0; y < after.height(); ++y)
+            for (int x = 0; x < after.width(); ++x)
+                portraitPixels += after.pixelColor(x, y) == QColor(255, 0, 255);
+        QVERIFY(portraitPixels > 100);
+    }
+
     void combinedCardSitsBetweenBothPlaces()
     {
         QTemporaryDir dir;

@@ -989,6 +989,10 @@ Details: %1</translation>
 <context>
     <name>fm::BestXiPage</name>
     <message>
+        <source>So wird aufgestellt</source>
+        <translation>How the team is picked</translation>
+    </message>
+    <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="68"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="529"/>
         <source>Best XI</source>
@@ -1638,6 +1642,35 @@ Details: %1</translation>
         <location filename="../src/app/pages/BestXiPage.cpp" line="346"/>
         <source>Ohne Ball (OOP)</source>
         <translation>Out of possession (OOP)</translation>
+    </message>
+    <message>
+        <source>Kombiniert: Startelf und B-Team nebeneinander, die ausgewählte Mannschaft links. Bei wenig Platz erscheint nur die Auswahl. Jeder Spieler steht zwischen seinen beiden Positionen. Beide: mit und ohne Ball für die ausgewählte Mannschaft.</source>
+        <translation>Combined: Starting XI and B-team side by side, with the selected team on the left. On narrow screens only the selected team is shown. Each player sits between his two positions. Both: in and out of possession for the selected team.</translation>
+    </message>
+    <message>
+        <source>Startelf · Kombiniert</source>
+        <translation>Starting XI · Combined</translation>
+    </message>
+    <message>
+        <source>B-Team · Kombiniert</source>
+        <translation>B-Team · Combined</translation>
+    </message>
+    <message>
+        <source>Die Spielerauswahl berücksichtigt beide Phasen, Spielzeit und natürliche Positionen. Innerhalb des eingestellten DWRS-Spielraums werden dieselben Spieler so zugeordnet, dass zuerst manuelle Seitenwünsche und dann kurze Wege zwischen den Phasen zählen. Fest gesetzte Positionen bleiben erhalten.</source>
+        <translation>Player selection considers both phases, playing time and natural positions. Within the configured DWRS allowance, the same players are assigned by manual side preferences first, then short paths between phases. Pinned positions are kept.</translation>
+    </message>
+    <message numerus="yes">
+        <source>Von Hand angepasst (%n Spieler). DWRS-Änderung gegenüber dem Vorschlag: %1.</source>
+        <translation>
+            <numerusform>Adjusted by hand (%n player). DWRS change from the suggestion: %1.</numerusform>
+            <numerusform>Adjusted by hand (%n players). DWRS change from the suggestion: %1.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>%1 % mit Ball · %2 % ohne Ball. Innerhalb des DWRS-Spielraums gelten zuerst manuelle Seitenpräferenzen, dann kurze Wege. Rechtsklick zum Verschieben.
+DWRS-Änderung durch die Zuordnung: Startelf %3 · B-Team %4. Spielraum je Mannschaft: %5.</source>
+        <translation>%1 % in possession · %2 % out of possession. Within the DWRS allowance, manual side preferences come first, then short paths. Right-click to move.
+DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team: %5.</translation>
     </message>
 </context>
 <context>
@@ -2655,6 +2688,18 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="437"/>
         <source>Änderungen für %1 gespeichert.</source>
         <translation>Changes for %1 saved.</translation>
+    </message>
+    <message>
+        <source>Natürliche Positionen manuell festlegen</source>
+        <translation>Set natural positions manually</translation>
+    </message>
+    <message>
+        <source>Ohne Häkchen gelten die natürlichen Positionen aus dem Spielstand. Manuelle Angaben haben Vorrang und bleiben bei Importen erhalten.</source>
+        <translation>When unchecked, natural positions come from the save. Manual settings take priority and are kept during imports.</translation>
+    </message>
+    <message>
+        <source>Bevorzugte zentrale Seite bei gleichwertigen Zuordnungen, auch bei unterschiedlichen Rollen. Gilt mit und ohne Ball. Der bevorzugte Fuß wird dafür nicht verwendet.</source>
+        <translation>Preferred central side for equally suitable assignments, including different roles. Applies in and out of possession. Preferred foot is not used for this.</translation>
     </message>
 </context>
 <context>
@@ -7206,6 +7251,14 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
         <location filename="../src/app/pages/SettingsPage.cpp" line="705"/>
         <source>Ab diesem Tag zählt der Verlauf eine neue Saison, zum Beispiel für die Anzeige der Saison in der Übersicht und beim Verdichten alter Saisons. Der 1. Juli passt für die meisten europäischen Ligen; für Ligen, die im Kalenderjahr spielen, nimm den 1. Januar.</source>
         <translation>From this day on the history counts a new season, for example for the season shown on the overview and when condensing old seasons. 1 July fits most European leagues; for leagues that play in the calendar year, use 1 January.</translation>
+    </message>
+    <message>
+        <source>DWRS-Spielraum für kürzere Wege</source>
+        <translation>DWRS allowance for shorter paths</translation>
+    </message>
+    <message>
+        <source>Maximaler Verlust für die gesamte Elf gegenüber der ursprünglichen Zuordnung. Gilt auch für die gewichtete Auswahlbewertung. 0 erlaubt nur Gleichstand. Innerhalb des Spielraums gelten zuerst manuelle Seitenpräferenzen, dann kurze Wege. Die ausgewählten Spieler bleiben dieselben.</source>
+        <translation>Maximum loss for the whole eleven compared with the original assignment. Also applies to the weighted selection score. 0 allows ties only. Within the allowance, manual side preferences come first, then short paths. The selected players stay the same.</translation>
     </message>
 </context>
 <context>

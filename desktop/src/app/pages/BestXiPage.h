@@ -14,6 +14,8 @@
 class QCheckBox;
 class QComboBox;
 class QGroupBox;
+class QHBoxLayout;
+class QScrollArea;
 class QLabel;
 class QMenu;
 class QPushButton;
@@ -57,6 +59,9 @@ public:
     void releaseStoreRows() override;
     void showSection(const QString &pageId) override;
 
+protected:
+    bool eventFilter(QObject *object, QEvent *event) override;
+
 private:
     // How the team selection works, shown under the tactic choice.
     static QString algorithmHint();
@@ -73,6 +78,7 @@ private:
     void showBridgeMenu(const QString &uid, const QPoint &globalPos, int phases);
     // Shows the pitches of the chosen view (two-phase tactics).
     void applyPhaseView();
+    void updatePitchLayout();
     // Who replaces the long-term injured: slot by slot, all fit vs without them.
     void fillInjuryBox(const std::vector<const Player *> &injured,
                        const SquadResult &allFit, const SquadResult &withoutInjured,
@@ -99,6 +105,10 @@ private:
     void fillOutageTable(const QList<OutageCover> &covers, bool twoPhase);
 
     ThemeManager &m_theme;
+    QScrollArea *m_scroll = nullptr;
+    QWidget *m_viewControls = nullptr;
+    QHBoxLayout *m_combinedLayout = nullptr;
+    bool m_twoPhase = false;
 
     QLabel *m_heading = nullptr;
     QComboBox *m_tacticCombo = nullptr;
@@ -120,7 +130,7 @@ private:
     TacticPitchWidget *m_bTeamPitch = nullptr;
     QPushButton *m_xiButton = nullptr;         // Startelf / B-Team switch
     QPushButton *m_bButton = nullptr;
-    QStackedWidget *m_teamStack = nullptr;     // 0/1: FM27 XI/B-team, 2: FM24 both
+    QStackedWidget *m_teamStack = nullptr;     // 0/1: FM27 XI/B-team, 2: FM24, 3: combined teams
     QWidget *m_teamSwitch = nullptr;           // the switch (two-phase tactics only)
     TacticPitchWidget *m_singleXiPitch = nullptr; // FM24: starting XI ...
     TacticPitchWidget *m_singleBPitch = nullptr;  // ... and B-team side by side

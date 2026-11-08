@@ -24,7 +24,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 15;
+constexpr int kSchemaVersion = 16;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -268,6 +268,8 @@ bool Database::initSchema()
             ok = migrateToV14();
         if (ok && version < 15)
             ok = migrateToV15();
+        if (ok && version < 16)
+            ok = migrateToV16();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -311,6 +313,8 @@ bool Database::createInitialSchema()
         "  preferred_side TEXT,\n"
         "  primary_role TEXT,\n"
         "  natural_positions TEXT,\n"
+        "  save_natural_positions TEXT,\n"
+        "  natural_positions_manual INTEGER NOT NULL DEFAULT 0,\n"
         "  last_seen_update INTEGER NOT NULL DEFAULT 0,\n"
         "  transfer_status INTEGER NOT NULL DEFAULT 0,\n"
         "  loan_status INTEGER NOT NULL DEFAULT 0,\n"
@@ -393,6 +397,28 @@ bool Database::migrateV10ToV11()
             return false;
     }
     return true;
+}
+
+bool Database::migrateToV16()
+{
+    QSet<QString> columns;
+    QSqlQuery info(m_db);
+    if (!info.exec(QStringLiteral("PRAGMA table_info(players)"))) {
+        m_error = info.lastError().text();
+        return false;
+    }
+    while (info.next())
+        columns.insert(info.value(1).toString());
+    if (!columns.contains(QStringLiteral("save_natural_positions"))
+        && !exec(QStringLiteral("ALTER TABLE players ADD COLUMN save_natural_positions TEXT")))
+        return false;
+    if (!columns.contains(QStringLiteral("natural_positions_manual"))
+        && !exec(QStringLiteral("ALTER TABLE players ADD COLUMN natural_positions_manual "
+                                "INTEGER NOT NULL DEFAULT 0")))
+        return false;
+    return !columns.contains(QStringLiteral("natural_positions"))
+        || exec(QStringLiteral("UPDATE players SET natural_positions_manual = 1 "
+                               "WHERE COALESCE(natural_positions, '') <> ''"));
 }
 
 bool Database::migrateV11ToV12()
@@ -857,7 +883,8 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
     // Column indexes, resolved once from the first result row's record.
     struct Columns {
         int id, uid, name, age, club, nat, nat2, pos, pers, media, apt, wage, tvRaw, tv, avr,
-            heightRaw, height, lf, rf, pf, side, prim, natPos, lastSeen, ts, ls, newClub;
+            heightRaw, height, lf, rf, pf, side, prim, natPos, saveNatPos, manualNatPos,
+            lastSeen, ts, ls, newClub;
         std::array<int, kAttrCount> lo, hi;
     };
     std::optional<Columns> columns;
@@ -887,6 +914,8 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
         c.side = col("preferred_side");
         c.prim = col("primary_role");
         c.natPos = col("natural_positions");
+        c.saveNatPos = col("save_natural_positions");
+        c.manualNatPos = col("natural_positions_manual");
         c.lastSeen = col("last_seen_update");
         c.ts = col("transfer_status");
         c.ls = col("loan_status");
@@ -930,6 +959,8 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             p.preferredSide = query.value(c.side).toString();
             p.primaryRole = query.value(c.prim).toString();
             p.naturalPositions = splitRolesFromDb(query.value(c.natPos).toString());
+            p.saveNaturalPositions = splitRolesFromDb(query.value(c.saveNatPos).toString());
+            p.naturalPositionsManual = query.value(c.manualNatPos).toBool();
             p.lastSeenUpdate = query.value(c.lastSeen).toInt();
             p.transferStatus = query.value(c.ts).toInt() != 0;
             p.loanStatus = query.value(c.ls).toInt() != 0;
@@ -968,7 +999,8 @@ bool Database::upsertPlayers(std::vector<Player> &players, RoleWrite roles)
         QStringLiteral("av_rating"), QStringLiteral("height_raw"), QStringLiteral("height_cm"),
         QStringLiteral("left_foot"), QStringLiteral("right_foot"), QStringLiteral("preferred_foot"),
         QStringLiteral("preferred_side"), QStringLiteral("primary_role"),
-        QStringLiteral("natural_positions"), QStringLiteral("last_seen_update"),
+        QStringLiteral("natural_positions"), QStringLiteral("save_natural_positions"),
+        QStringLiteral("natural_positions_manual"), QStringLiteral("last_seen_update"),
         QStringLiteral("transfer_status"), QStringLiteral("loan_status"),
         QStringLiteral("new_club"),
     };
@@ -1033,6 +1065,8 @@ bool Database::upsertPlayers(std::vector<Player> &players, RoleWrite roles)
         query.bindValue(i++, p.preferredSide);
         query.bindValue(i++, p.primaryRole);
         query.bindValue(i++, joinRolesForDb(p.naturalPositions));
+        query.bindValue(i++, joinRolesForDb(p.saveNaturalPositions));
+        query.bindValue(i++, p.naturalPositionsManual ? 1 : 0);
         query.bindValue(i++, p.lastSeenUpdate);
         query.bindValue(i++, p.transferStatus ? 1 : 0);
         query.bindValue(i++, p.loanStatus ? 1 : 0);
@@ -1122,6 +1156,27 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
         return true;
     if (!beginTransaction())
         return false;
+    const auto players = loadPlayers({badPlayerId, goodPlayerId});
+    if (players.size() != 2) {
+        m_error = QStringLiteral("Both players must exist when merging position information.");
+        rollbackTransaction();
+        return false;
+    }
+    Player good = players[players[0].id == goodPlayerId ? 0 : 1];
+    good.mergeNaturalPositionsFrom(players[players[0].id == badPlayerId ? 0 : 1]);
+    QSqlQuery positionQuery(m_db);
+    positionQuery.prepare(QStringLiteral("UPDATE players SET natural_positions = ?, "
+                                        "save_natural_positions = ?, natural_positions_manual = ? "
+                                        "WHERE id = ?"));
+    positionQuery.addBindValue(joinRolesForDb(good.naturalPositions));
+    positionQuery.addBindValue(joinRolesForDb(good.saveNaturalPositions));
+    positionQuery.addBindValue(good.naturalPositionsManual ? 1 : 0);
+    positionQuery.addBindValue(goodPlayerId);
+    if (!positionQuery.exec()) {
+        m_error = positionQuery.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
     // OR IGNORE skips history rows that would collide on (player, role, ts);
     // leftovers under the bad id are removed with the player row (CASCADE).
     QSqlQuery query(m_db);
