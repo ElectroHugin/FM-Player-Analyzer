@@ -26,6 +26,28 @@
 #include <algorithm>
 #include <cmath>
 
+namespace {
+
+// Name of the league's youth exemption ("U21", "U18 EU"); U21 when the
+// league has none (nothing is exempt then anyway).
+QString youthName(const fm::Registration::Quota &quota)
+{
+    const QString label = fm::Registration::youthLabel(quota.youth);
+    return label.isEmpty() ? QStringLiteral("U21") : label;
+}
+
+// Whether the player's youth exemption is unclear for this list.
+bool youthUncertain(const fm::Player &player, bool uefa, const fm::Registration::Quota &quota)
+{
+    using fm::Registration::U21Status;
+    if (uefa)
+        return fm::Registration::u21Status(player) == U21Status::Uncertain;
+    return quota.youth != fm::Registration::YouthRule::None
+           && fm::Registration::youthStatus(player, quota) == U21Status::Uncertain;
+}
+
+} // namespace
+
 namespace fm {
 
 namespace {
@@ -514,7 +536,7 @@ void RegistrationPage::fillTables()
     fillTable(m_outfieldTable, outfield);
     m_updating = false;
 
-    const QString exemptLabel = uefa ? tr("Liste B") : tr("U21");
+    const QString exemptLabel = uefa ? tr("Liste B") : youthName(m_quota);
     for (QTableWidget *table : {m_keeperTable, m_outfieldTable}) {
         table->horizontalHeaderItem(ColListed)->setToolTip(
             tr("Im Spiel gemeldet. '%1' ist ohne Platz spielberechtigt.").arg(exemptLabel));
@@ -558,12 +580,13 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         }
         return tr("Reserve");
     };
-    const auto adviceText = [uefa](Advice advice) {
+    const QString youth = youthName(m_quota);
+    const auto adviceText = [uefa, youth](Advice advice) {
         switch (advice) {
         case Advice::List:
             return tr("✅ Melden");
         case Advice::Exempt:
-            return uefa ? tr("🆓 Liste B") : tr("🆓 U21");
+            return uefa ? tr("🆓 Liste B") : QStringLiteral("🆓 ") + youth;
         case Advice::LeaveOut:
             break;
         }
@@ -580,7 +603,7 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
 
         auto *listedItem = new ListedItem;
         if (entry.advice == Advice::Exempt) {
-            listedItem->setText(uefa ? tr("Liste B") : tr("U21"));
+            listedItem->setText(uefa ? tr("Liste B") : youth);
             listedItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             listedItem->setToolTip(tr("Ohne Platz auf der Meldeliste spielberechtigt."));
         } else if (!m_checkableUids.contains(p.uid)) {
@@ -621,11 +644,11 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
             notes << entry.note;
         if (m_lostExempt.contains(p.uid))
             notes.prepend(uefa ? tr("⚠️ nicht mehr Liste B – braucht einen Platz")
-                               : tr("⚠️ kein U21 mehr – braucht einen Platz"));
+                               : tr("⚠️ kein %1 mehr – braucht einen Platz").arg(youth));
         if (m_gainedExempt.contains(p.uid))
-            notes.prepend(uefa ? tr("jetzt Liste B") : tr("jetzt U21"));
-        if (Registration::u21Status(p) == Registration::U21Status::Uncertain)
-            notes << tr("U21 unklar");
+            notes.prepend(uefa ? tr("jetzt Liste B") : tr("jetzt %1").arg(youth));
+        if (youthUncertain(p, uefa, m_quota))
+            notes << tr("%1 unklar").arg(uefa ? QStringLiteral("U21") : youth);
         if (entry.advice == Advice::List && m_quota.wageBudget > 0.0
             && Registration::hasPromisedPlayingTime(p))
             notes << tr("Spielzeit zugesagt");
@@ -751,7 +774,7 @@ void RegistrationPage::updateSelection()
     else if (!uefa)
         parts << tr("Gehälter %1").arg(moneyText(check.totalWage));
     parts << (uefa ? tr("<b>Liste B</b> (ohne Platz): %1 Spieler")
-                   : tr("<b>U21</b> (ohne Platz): %1 Spieler"))
+                   : tr("<b>%1</b> (ohne Platz): %2 Spieler").arg(youthName(m_quota)))
                  .arg(exempt.size());
     m_countsLabel->setText(parts.join(QStringLiteral(" · ")));
 
@@ -856,12 +879,20 @@ void RegistrationPage::updateSelection()
                         .arg(m_quota.minGoalkeepers);
     QStringList uncertain;
     for (const Player *p : m_pool)
-        if (Registration::u21Status(*p) == Registration::U21Status::Uncertain)
+        if (youthUncertain(*p, uefa, m_quota))
             uncertain << p->name;
-    if (!uncertain.isEmpty())
-        warnings << tr("U21 unklar (Alter 21 oder unbekannt), zählt vorsichtshalber als nicht "
-                       "U21: %1. Per Rechtsklick → Registrierung festlegen.")
-                        .arg(uncertain.join(QStringLiteral(", ")));
+    if (!uncertain.isEmpty()) {
+        if (!uefa && m_quota.youth == Registration::YouthRule::U18Eu)
+            warnings << tr("U18 EU unklar (Stichtag 1. Januar je nach Geburtstag und "
+                           "Ingame-Datum, keine EU-Nationalität erkannt oder Alter unbekannt), "
+                           "zählt vorsichtshalber als nicht befreit: %1. Per Rechtsklick → "
+                           "Registrierung festlegen.")
+                            .arg(uncertain.join(QStringLiteral(", ")));
+        else
+            warnings << tr("U21 unklar (Alter 21 oder unbekannt), zählt vorsichtshalber als "
+                           "nicht U21: %1. Per Rechtsklick → Registrierung festlegen.")
+                            .arg(uncertain.join(QStringLiteral(", ")));
+    }
     // Saved entries without a checkbox any more: sold, retired, or now exempt.
     QStringList gone;
     for (const QString &uid : m_savedUids - m_checkableUids)
@@ -1057,7 +1088,7 @@ QSet<QString> RegistrationPage::currentExempt() const
 void RegistrationPage::updateChanges()
 {
     const bool uefa = competition() == Registration::Competition::Uefa;
-    const QString exemptLabel = uefa ? tr("Liste B") : tr("U21");
+    const QString exemptLabel = uefa ? tr("Liste B") : youthName(m_quota);
     const auto namesOf = [this](const QSet<QString> &uids) {
         QStringList names;
         for (const Player *p : m_pool)

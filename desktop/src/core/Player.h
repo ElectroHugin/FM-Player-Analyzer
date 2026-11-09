@@ -27,6 +27,12 @@ struct PlayerRegistration {
     // assistant never proposes him for that list.
     bool leagueBlocked = false;
     bool uefaBlocked = false;
+    // Manual override of the league's own youth exemption where it differs
+    // from U21 (LaLiga: EU players aged 18 or younger on 1 January).
+    U21 youth = U21::Auto;
+    // The league's minimum wage does not apply (e.g. a loan where the club
+    // pays only part of the wage, which the export does not show).
+    bool minWageExempt = false;
 
     bool isDefault() const { return *this == PlayerRegistration{}; }
     bool operator==(const PlayerRegistration &) const = default;
@@ -66,6 +72,22 @@ struct Player {
 
     QStringList assignedRoles;
     QStringList naturalPositions;
+    QStringList saveNaturalPositions; // natural positions reported by the FM save
+    bool naturalPositionsManual = false; // also permits an explicitly empty override
+    const QStringList &effectiveNaturalPositions() const
+    {
+        return naturalPositionsManual || !naturalPositions.isEmpty()
+                   ? naturalPositions : saveNaturalPositions;
+    }
+    void mergeNaturalPositionsFrom(const Player &other)
+    {
+        if (!naturalPositionsManual && naturalPositions.isEmpty()) {
+            naturalPositions = other.naturalPositions;
+            naturalPositionsManual = other.naturalPositionsManual;
+        }
+        if (saveNaturalPositions.isEmpty())
+            saveNaturalPositions = other.saveNaturalPositions;
+    }
     // App-managed role the training advisor optimizes for (empty = auto-pick the
     // player's best-DWRS role among those his positions and the tactic allow).
     // Stored in the training_roles table, not part of the FM-import upsert.

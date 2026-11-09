@@ -19,6 +19,45 @@ class TestDatabase : public QObject
     Q_OBJECT
 
 private slots:
+    void naturalPositionMigrationAndMerge()
+    {
+        QTemporaryDir dir;
+        const QString path = dir.filePath(QStringLiteral("natural.db"));
+        {
+            Database db(QStringLiteral("natural_seed"));
+            QVERIFY(db.open(path));
+            std::vector<Player> players(2);
+            players[0].uid = QStringLiteral("manual");
+            players[0].name = QStringLiteral("Manual");
+            players[0].naturalPositions = {QStringLiteral("AM (L)")};
+            players[1].uid = QStringLiteral("automatic");
+            players[1].name = QStringLiteral("Automatic");
+            QVERIFY(db.upsertPlayers(players));
+            QSqlQuery query(db.handle());
+            QVERIFY(query.exec(QStringLiteral("ALTER TABLE players DROP COLUMN save_natural_positions")));
+            QVERIFY(query.exec(QStringLiteral("ALTER TABLE players DROP COLUMN natural_positions_manual")));
+            QVERIFY(query.exec(QStringLiteral("PRAGMA user_version = 15")));
+        }
+        Database db(QStringLiteral("natural_migrated"));
+        QVERIFY2(db.open(path), qPrintable(db.errorString()));
+        auto players = db.loadPlayers();
+        QCOMPARE(players.size(), size_t(2));
+        QVERIFY(players[0].naturalPositionsManual);
+        QVERIFY(!players[1].naturalPositionsManual);
+        players[0].saveNaturalPositions = {QStringLiteral("AM (R)")};
+        players[1].saveNaturalPositions = {QStringLiteral("M (C)")};
+        players[1].naturalPositionsManual = true; // explicitly empty beats imported data
+        QVERIFY(db.upsertPlayers(players));
+        players = db.loadPlayers();
+        QCOMPARE(players[0].effectiveNaturalPositions(), QStringList{QStringLiteral("AM (L)")});
+        QVERIFY(players[1].effectiveNaturalPositions().isEmpty());
+        QVERIFY(db.mergePlayerInto(players[0].id, players[1].id));
+        const auto merged = db.loadPlayers();
+        QCOMPARE(merged.size(), size_t(1));
+        QVERIFY(merged[0].effectiveNaturalPositions().isEmpty());
+        QCOMPARE(merged[0].saveNaturalPositions, QStringList{QStringLiteral("M (C)")});
+    }
+
     // Regression for the WAL backup bug: a freshly committed player lives in the
     // -wal sidecar, not yet in the main .db file. createBackup must capture it
     // (VACUUM INTO), which a plain file copy of the .db would not.
@@ -751,6 +790,169 @@ private slots:
         const PlayerRegistration back = db.loadPlayers()[0].registration;
         QVERIFY(back.nonEu && back.leagueBlocked && !back.uefaBlocked && back.homeGrown);
         db.close();
+    }
+
+    void registrationExtraSurvivesOldAppWrites()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("extra.db"));
+        Database db(QStringLiteral("extra"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        std::vector<Player> batch(1);
+        batch[0].uid = QStringLiteral("loan");
+        batch[0].name = QStringLiteral("Loan");
+        QVERIFY(db.upsertPlayers(batch));
+        const int id = db.loadPlayers()[0].id;
+        PlayerRegistration r;
+        r.youth = PlayerRegistration::U21::Yes;
+        r.minWageExempt = true;
+        QVERIFY(db.setRegistrations({{id, r}}));
+        PlayerRegistration back = db.loadPlayers()[0].registration;
+        QVERIFY(back.youth == PlayerRegistration::U21::Yes && back.minWageExempt);
+        // 2.2.2's own write of the whole player_registration row (home-grown
+        // ticked) leaves the 2.2.3 fields alone.
+        QSqlQuery q(db.handle());
+        QVERIFY2(q.exec(QStringLiteral(
+                     "INSERT OR REPLACE INTO player_registration (player_id, home_grown, "
+                     "club_trained, u21, league_listed, uefa_listed, non_eu, league_blocked, "
+                     "uefa_blocked) VALUES (%1, 1, 0, -1, 0, 0, 0, 0, 0)")
+                     .arg(id)),
+                 qPrintable(q.lastError().text()));
+        back = db.loadPlayers()[0].registration;
+        QVERIFY(back.homeGrown);
+        QVERIFY(back.youth == PlayerRegistration::U21::Yes && back.minWageExempt);
+        // Back to defaults: no rows left.
+        QVERIFY(db.setRegistrations({{id, PlayerRegistration{}}}));
+        QVERIFY(q.exec(QStringLiteral("SELECT COUNT(*) FROM player_registration_extra")));
+        QVERIFY(q.next());
+        QCOMPARE(q.value(0).toInt(), 0);
+        db.close();
+    }
+
+    void migratesV13TestbuildColumnsToExtraTable()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("v13.db"));
+        {
+            Database db(QStringLiteral("v13seed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(1);
+            batch[0].uid = QStringLiteral("young");
+            batch[0].name = QStringLiteral("Young");
+            QVERIFY(db.upsertPlayers(batch));
+            const int id = db.loadPlayers()[0].id;
+            QSqlQuery q(db.handle());
+            // The 2.2.3 testbuild kept the fields as columns.
+            QVERIFY(q.exec(QStringLiteral("DROP TABLE player_registration_extra")));
+            QVERIFY(q.exec(QStringLiteral(
+                "ALTER TABLE player_registration ADD COLUMN youth INTEGER NOT NULL DEFAULT -1")));
+            QVERIFY(q.exec(QStringLiteral("ALTER TABLE player_registration ADD COLUMN "
+                                          "min_wage_exempt INTEGER NOT NULL DEFAULT 0")));
+            QVERIFY(q.exec(QStringLiteral("INSERT INTO player_registration (player_id, youth, "
+                                          "min_wage_exempt) VALUES (%1, 1, 1)")
+                               .arg(id)));
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 13")));
+            db.close();
+        }
+        Database db(QStringLiteral("v13migrate"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        const PlayerRegistration r = db.loadPlayers()[0].registration;
+        QVERIFY(r.youth == PlayerRegistration::U21::Yes);
+        QVERIFY(r.minWageExempt);
+        db.close();
+    }
+
+    void oldAppMergeHandsExtraToSurvivor()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("stash.db"));
+        {
+            Database db(QStringLiteral("stashseed"));
+            QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+            std::vector<Player> batch(4);
+            batch[0].uid = QStringLiteral("r-12345");
+            batch[0].name = QStringLiteral("Newgen Loan");
+            batch[1].uid = QStringLiteral("12345");
+            batch[1].name = QStringLiteral("Newgen Loan");
+            // Two different players sharing a name: no relation by uid.
+            batch[2].uid = QStringLiteral("777");
+            batch[2].name = QStringLiteral("Same Name");
+            batch[3].uid = QStringLiteral("888");
+            batch[3].name = QStringLiteral("Same Name");
+            QVERIFY(db.upsertPlayers(batch));
+            int badId = 0, otherId = 0;
+            for (const Player &p : db.loadPlayers()) {
+                if (p.uid == QLatin1String("r-12345"))
+                    badId = p.id;
+                if (p.uid == QLatin1String("777"))
+                    otherId = p.id;
+            }
+            PlayerRegistration r;
+            r.minWageExempt = true;
+            QVERIFY(db.setRegistrations({{badId, r}, {otherId, r}}));
+            // 2.2.2's merge/delete: it removes the row without knowing the
+            // extra table.
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("DELETE FROM players WHERE id = %1").arg(badId)));
+            QVERIFY(q.exec(QStringLiteral("DELETE FROM players WHERE id = %1").arg(otherId)));
+            db.close();
+        }
+        Database db(QStringLiteral("stashopen"));
+        QVERIFY2(db.open(dbFile), qPrintable(db.errorString()));
+        const auto players = db.loadPlayers();
+        QCOMPARE(static_cast<int>(players.size()), 2);
+        int survivorId = 0;
+        for (const Player &p : players) {
+            if (p.uid == QLatin1String("12345")) {
+                QVERIFY(p.registration.minWageExempt); // newgen twin
+                survivorId = p.id;
+            } else {
+                QVERIFY(!p.registration.minWageExempt); // same name only
+            }
+        }
+        // The app's own deletions park nothing.
+        QVERIFY(db.deletePlayers({survivorId}));
+        QSqlQuery q(db.handle());
+        QVERIFY(q.exec(QStringLiteral("SELECT COUNT(*) FROM player_registration_stash")));
+        QVERIFY(q.next());
+        QCOMPARE(q.value(0).toInt(), 0);
+        db.close();
+    }
+
+    void mergeKeepsNewestMonthSeen()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("seenmerge"));
+        QVERIFY2(db.open(dir.filePath(QStringLiteral("seen.db"))), qPrintable(db.errorString()));
+        std::vector<Player> batch(2);
+        batch[0].uid = QStringLiteral("r-5");
+        batch[0].name = QStringLiteral("N");
+        batch[1].uid = QStringLiteral("5");
+        batch[1].name = QStringLiteral("N");
+        QVERIFY(db.upsertPlayers(batch));
+        int bad = 0, good = 0;
+        for (const Player &p : db.loadPlayers())
+            (p.uid == QLatin1String("r-5") ? bad : good) = p.id;
+        QVERIFY(db.markMonthSeen({bad}, QDate(2026, 8, 30)));
+        QVERIFY(db.markMonthSeen({good}, QDate(2026, 8, 5)));
+        QVERIFY(db.mergePlayerInto(bad, good));
+        QCOMPARE(db.monthSnapshotDates(QDate(2026, 8, 1)).value(good), QDate(2026, 8, 30));
+    }
+
+    void refusesNewerSchema()
+    {
+        QTemporaryDir dir;
+        const QString dbFile = dir.filePath(QStringLiteral("future.db"));
+        {
+            Database db(QStringLiteral("futureseed"));
+            QVERIFY(db.open(dbFile));
+            QSqlQuery q(db.handle());
+            QVERIFY(q.exec(QStringLiteral("PRAGMA user_version = 999")));
+            db.close();
+        }
+        Database db(QStringLiteral("future"));
+        QVERIFY(!db.open(dbFile));
+        QVERIFY(db.errorString().contains(QStringLiteral("newer version")));
     }
 
     void migratesV5ToV6RebasesFreshnessOnFullUploads()

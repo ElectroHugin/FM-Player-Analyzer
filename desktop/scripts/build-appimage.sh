@@ -53,7 +53,7 @@ echo "Packaging version $version"
 # --- 1. linuxdeploy ---
 if [ ! -x "$linuxdeploy" ]; then
     mkdir -p "$(dirname "$linuxdeploy")"
-    curl -fsSL -o "$linuxdeploy.part" \
+    curl -fsSL --retry 4 --retry-max-time 120 --max-time 60 -o "$linuxdeploy.part" \
         "https://github.com/linuxdeploy/linuxdeploy/releases/download/$linuxdeploy_tag/linuxdeploy-x86_64.AppImage"
     echo "$linuxdeploy_sha256  $linuxdeploy.part" | sha256sum --check --quiet \
         || fail "checksum mismatch for linuxdeploy $linuxdeploy_tag"

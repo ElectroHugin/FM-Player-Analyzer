@@ -27,11 +27,11 @@ public:
     // target's page id each time the page is shown for it, before refresh().
     virtual void showSection(const QString &pageId) { Q_UNUSED(pageId); }
 
-    // Called on every non-visible page when the player store is replaced (a
-    // reload), so no page keeps dangling Player* into the old store. Pages that
-    // cache raw Player* (table models, filter pools) override this to drop them;
-    // they rebuild in refresh() when shown again. The visible page is refreshed
-    // instead, so it is not asked to release.
+    // Called on the non-visible pages whenever the player data changes, and on
+    // every page (the visible one too, refreshed right after) when the store
+    // was replaced, so no page keeps dangling Player* into the old store. Pages
+    // that cache raw Player* (table models, filter pools) override this to
+    // drop them; they rebuild in refresh() when shown again.
     virtual void releaseStoreRows() {}
 
     // Back/Forward history (MainWindow): page-specific state worth restoring

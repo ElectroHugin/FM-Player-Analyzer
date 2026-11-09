@@ -3,6 +3,8 @@ add_library(fmcore STATIC
     AppConfig.cpp
     Assignment.h
     Assignment.cpp
+    BridgeAssignment.h
+    BridgeAssignment.cpp
     AttributeTiers.h
     AttributeTiers.cpp
     Attributes.h

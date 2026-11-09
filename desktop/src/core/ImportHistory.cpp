@@ -131,6 +131,8 @@ namespace {
 bool condense(Database &db, int keepFrom, const SeasonStart &start)
 {
     const QDate cut = seasonBegin(keepFrom, start);
+    if (!db.pruneMonthSeenBefore(cut))
+        return false;
     const std::vector<Snapshot> monthly = db.monthlySnapshotsBefore(cut);
     if (monthly.empty())
         return true;
@@ -151,8 +153,10 @@ bool condense(Database &db, int keepFrom, const SeasonStart &start)
     std::vector<Snapshot> kept;
     QHash<int, std::vector<Snapshot>> condensedByPlayer;
     for (const auto &[key, snapshot] : last) {
+        // Loaded once per player, also when he has no condensed rows yet.
+        const bool loaded = condensedByPlayer.contains(key.first);
         auto &own = condensedByPlayer[key.first];
-        if (own.empty())
+        if (!loaded)
             for (const Snapshot &s : db.snapshots(key.first))
                 if (s.condensed)
                     own.push_back(s);
@@ -188,9 +192,15 @@ bool record(Database &db, const ImportRecord &import, const std::vector<Snapshot
     // unchanged player also loses an earlier snapshot of this same month.
     const QDate monthStart(import.gameDate.year(), import.gameDate.month(), 1);
     const QHash<int, Snapshot> previous = db.latestSnapshotsBefore(monthStart);
+    // A newer in-game date already stored for this month wins: an older
+    // export imported later neither replaces nor removes it.
+    const QHash<int, QDate> thisMonth = db.monthSnapshotDates(import.gameDate);
     std::vector<Snapshot> changed;
     QList<int> unchanged;
     for (const Snapshot &s : snapshots) {
+        const auto stored = thisMonth.constFind(s.playerId);
+        if (stored != thisMonth.constEnd() && stored->isValid() && *stored > import.gameDate)
+            continue;
         const auto it = previous.constFind(s.playerId);
         if (it != previous.constEnd() && it->sameData(s)) {
             unchanged << s.playerId;
@@ -202,7 +212,14 @@ bool record(Database &db, const ImportRecord &import, const std::vector<Snapshot
         copy.period = periodKey(import.gameDate, false);
         changed.push_back(std::move(copy));
     }
-    if (!db.deleteMonthSnapshots(unchanged, import.gameDate) || !db.upsertSnapshots(changed))
+    QList<int> seen;
+    for (const Snapshot &s : snapshots) {
+        const auto stored = thisMonth.constFind(s.playerId);
+        if (stored == thisMonth.constEnd() || !stored->isValid() || *stored <= import.gameDate)
+            seen << s.playerId;
+    }
+    if (!db.deleteMonthSnapshots(unchanged, import.gameDate) || !db.upsertSnapshots(changed)
+        || !db.markMonthSeen(seen, import.gameDate))
         return fail();
     const SeasonStart start = seasonStartOf(db);
     if (!condense(db, seasonOf(import.gameDate, start) - kMonthlySeasonsBack, start))

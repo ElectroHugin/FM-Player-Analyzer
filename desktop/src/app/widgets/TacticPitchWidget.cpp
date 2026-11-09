@@ -7,7 +7,10 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QLineF>
 #include <QSet>
+
+#include <cmath>
 
 namespace fm {
 
@@ -44,6 +47,28 @@ void drawFittedName(QPainter &painter, const QRectF &rect, const QString &fullNa
     painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, text);
 }
 
+void drawPortrait(QPainter &painter, const QPixmap &face, const QRectF &circle,
+                   const QColor &body, const QColor &border)
+{
+    if (face.isNull())
+        return;
+    QPainterPath clip;
+    clip.addEllipse(circle);
+    painter.save();
+    painter.fillPath(clip, body);
+    painter.setClipPath(clip, Qt::IntersectClip);
+    const QSizeF faceSize = QSizeF(face.size()) / face.devicePixelRatio();
+    const QSizeF size = faceSize * (circle.width() / qMax(faceSize.width(), faceSize.height()));
+    const QRectF target(circle.center().x() - size.width() / 2,
+                        circle.bottom() - size.height(), size.width(), size.height());
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.drawPixmap(target, face, QRectF(face.rect()));
+    painter.restore();
+    painter.setPen(QPen(border, 1.6));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawEllipse(circle);
+}
+
 TacticPitchWidget::ShiftSource &shiftSource()
 {
     static TacticPitchWidget::ShiftSource source;
@@ -61,6 +86,29 @@ static TacticPitchWidget::PortraitSource &portraitSource()
 void TacticPitchWidget::setPortraitSource(PortraitSource source)
 {
     portraitSource() = std::move(source);
+}
+
+namespace {
+TacticPitchWidget::ColorRowSource &colorRowSource()
+{
+    static TacticPitchWidget::ColorRowSource source;
+    return source;
+}
+}
+
+void TacticPitchWidget::setColorRowSource(ColorRowSource source)
+{
+    colorRowSource() = std::move(source);
+}
+
+QColor TacticPitchWidget::roleHeaderColor(const QString &role, int fallbackRow)
+{
+    static const QColor colors[] = {
+        QColor(0x4a, 0x4f, 0x63), QColor(0x9b, 0x23, 0x6f), QColor(0x5e, 0x2e, 0x8f),
+        QColor(0x27, 0x55, 0xa6), QColor(0x1e, 0x7a, 0x4a), QColor(0x0f, 0x72, 0x72),
+        QColor(0x4a, 0x4f, 0x63)};
+    const int roleRow = colorRowSource() ? colorRowSource()(role) : 0;
+    return colors[qBound(0, roleRow > 0 ? roleRow : fallbackRow, 6)];
 }
 
 void TacticPitchWidget::setShiftSource(ShiftSource source)
@@ -88,11 +136,22 @@ TacticPitchWidget::TacticPitchWidget(ThemeManager &theme, QWidget *parent)
     connect(&m_theme, &ThemeManager::themeChanged, this, qOverload<>(&QWidget::update));
 }
 
+void TacticPitchWidget::fitToHeight(int height)
+{
+    const int width = qBound(340, height * 68 / 105, kHintWidth);
+    if (width == m_hintWidth)
+        return;
+    m_hintWidth = width;
+    updateGeometry();
+}
+
 void TacticPitchWidget::setTeam(const QHash<QString, XiCell> &team,
                                 const QHash<QString, QString> &positions,
                                 const QHash<QString, QStringList> &layout,
                                 const QHash<QString, QString> &roleNames, bool showApt)
 {
+    m_combined = false;
+    m_combinedCards.clear();
     m_team = team;
     m_positions = positions;
     m_layout = layout;
@@ -124,8 +183,31 @@ void TacticPitchWidget::setEditorSlots(const QHash<QString, QString> &roles,
     update();
 }
 
+void TacticPitchWidget::setCombinedTeam(const QList<CombinedCard> &cards,
+                                        const QHash<QString, QString> &ipLineUp,
+                                        const QHash<QString, QStringList> &ipLayout,
+                                        const QHash<QString, QString> &oopLineUp,
+                                        const QHash<QString, QStringList> &oopLayout)
+{
+    m_combined = true;
+    m_combinedCards = cards;
+    m_ipLineUp = ipLineUp;
+    m_ipLayout = ipLayout;
+    m_oopLineUp = oopLineUp;
+    m_oopLayout = oopLayout;
+    m_team.clear();
+    m_positions.clear();
+    m_layout.clear();
+    m_slotColors.clear();
+    m_slotSubtexts.clear();
+    update();
+}
+
 void TacticPitchWidget::clearData()
 {
+    m_combined = false;
+    m_combinedCards.clear();
+    m_combinedUids.clear();
     m_team.clear();
     m_positions.clear();
     m_layout.clear();
@@ -177,6 +259,10 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     painter.drawRect(QRectF(cx - goalW / 2, field.top(), goalW, goalH));
     painter.drawRect(QRectF(cx - goalW / 2, field.bottom() - goalH, goalW, goalH));
 
+    if (m_combined) {
+        paintCombined(painter, field);
+        return;
+    }
     if (!m_editor && m_layout.isEmpty() && !m_positions.contains(QStringLiteral("GK"))) {
         painter.setPen(textColor);
         painter.drawText(pitch, Qt::AlignCenter, tr("Keine Daten"));
@@ -203,10 +289,6 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     };
     const auto cardRect = [&](int row, int col) { return cardRectAt(row, 0.1 + 0.2 * (col - 1)); };
     // Header colour per line, like the role colours in FM's tactics screen.
-    static const QColor kLineColors[] = {
-        QColor(0x4a, 0x4f, 0x63), QColor(0x9b, 0x23, 0x6f), QColor(0x5e, 0x2e, 0x8f),
-        QColor(0x27, 0x55, 0xa6), QColor(0x1e, 0x7a, 0x4a), QColor(0x0f, 0x72, 0x72),
-        QColor(0x4a, 0x4f, 0x63)};
 
     QFont headerFont = font();
     headerFont.setBold(true);
@@ -271,7 +353,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             const QRectF header(box.left(), box.top(), box.width(), headerH);
             painter.save();
             painter.setClipPath(path, Qt::IntersectClip);
-            painter.fillRect(header, kLineColors[qBound(0, row, 6)]);
+            painter.fillRect(header, roleHeaderColor(role, row));
             painter.restore();
             painter.setPen(Qt::white);
             painter.setFont(headerFont);
@@ -366,7 +448,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             face.isNull() ? header : header.adjusted(faceCircle.right() - box.left(), 0, 0, 0);
         painter.save();
         painter.setClipPath(path, Qt::IntersectClip);
-        painter.fillRect(header, kLineColors[qBound(0, row, 6)]);
+        painter.fillRect(header, roleHeaderColor(m_positions.value(slot), row));
         painter.restore();
         painter.setPen(Qt::white);
         painter.setFont(headerFont);
@@ -410,23 +492,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(path);
 
-        if (!face.isNull()) {
-            QPainterPath clip;
-            clip.addEllipse(faceCircle);
-            painter.save();
-            painter.fillPath(clip, cardBody);
-            painter.setClipPath(clip, Qt::IntersectClip);
-            const QSizeF faceSize = QSizeF(face.size()) / face.devicePixelRatio();
-            const QSizeF size = faceSize * (faceD / qMax(faceSize.width(), faceSize.height()));
-            const QRectF target(faceCircle.center().x() - size.width() / 2,
-                                faceCircle.bottom() - size.height(), size.width(), size.height());
-            painter.setRenderHint(QPainter::SmoothPixmapTransform);
-            painter.drawPixmap(target, face, QRectF(face.rect()));
-            painter.restore();
-            painter.setPen(QPen(kLineColors[qBound(0, row, 6)], 1.6));
-            painter.setBrush(Qt::NoBrush);
-            painter.drawEllipse(faceCircle);
-        }
+        drawPortrait(painter, face, faceCircle, cardBody, roleHeaderColor(m_positions.value(slot), row));
     };
 
     for (auto it = m_layout.constBegin(); it != m_layout.constEnd(); ++it) {
@@ -454,8 +520,230 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         drawCard(cardRect(6, 3), QStringLiteral("GK"), 6);
 }
 
+void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
+{
+    const bool night = m_theme.mode() != QLatin1String("day");
+    const QColor cardBody = night ? QColor(0x12, 0x16, 0x1c) : QColor(0xfb, 0xfb, 0xfd);
+    const QColor cardBorder = night ? QColor(255, 255, 255, 40) : QColor(0, 0, 0, 40);
+    const QColor textColor = night ? QColor(Qt::white) : QColor(0x1e, 0x22, 0x2b);
+    const QColor secondaryText = night ? QColor(0xb8, 0xbe, 0xc8) : QColor(0x5a, 0x60, 0x6c);
+    m_boxRects.clear();
+    m_combinedUids.clear();
+    if (m_combinedCards.isEmpty() && m_ipLineUp.isEmpty()) {
+        painter.setPen(textColor);
+        painter.drawText(field, Qt::AlignCenter, tr("Keine Daten"));
+        return;
+    }
+
+    const auto stripPhase = [](QString role) {
+        if (role.endsWith(QLatin1String("-IP")))
+            role.chop(3);
+        else if (role.endsWith(QLatin1String("-OOP")))
+            role.chop(4);
+        return role;
+    };
+    // Anchors in field fractions, with the same role shift as the single
+    // line-ups (display only).
+    const auto anchorsOf = [&](const QHash<QString, QStringList> &layout,
+                               const QHash<QString, QString> &lineUp) {
+        QHash<QString, QPointF> anchors = slotAnchors(m_fmVersionId, layout, true);
+        for (auto it = anchors.begin(); it != anchors.end(); ++it) {
+            if (shiftSource())
+                it->setY(it->y() - shiftSource()(lineUp.value(it.key()), it.key()) / 100.0);
+        }
+        return anchors;
+    };
+    const QHash<QString, QPointF> ipAnchors = anchorsOf(m_ipLayout, m_ipLineUp);
+    const QHash<QString, QPointF> oopAnchors = anchorsOf(m_oopLayout, m_oopLineUp);
+
+    struct Box {
+        QString key;
+        QPointF anchor;
+        const CombinedCard *card = nullptr;
+        bool ipPhase = false; // free place: its line-up
+        QString slot;
+    };
+    QList<Box> boxes;
+    QSet<QString> usedIp, usedOop;
+    for (const CombinedCard &card : std::as_const(m_combinedCards)) {
+        if (!ipAnchors.contains(card.ipSlot) || !oopAnchors.contains(card.oopSlot))
+            continue;
+        usedIp.insert(card.ipSlot);
+        usedOop.insert(card.oopSlot);
+        boxes.append({card.uid, combinedAnchor(ipAnchors.value(card.ipSlot),
+                                               oopAnchors.value(card.oopSlot)),
+                      &card, false, QString()});
+    }
+    // Free places stay at their own slot: no guessed pairing.
+    for (const bool ip : {true, false}) {
+        const QHash<QString, QString> &lineUp = ip ? m_ipLineUp : m_oopLineUp;
+        const QHash<QString, QPointF> &anchors = ip ? ipAnchors : oopAnchors;
+        const QSet<QString> &used = ip ? usedIp : usedOop;
+        for (auto it = lineUp.cbegin(); it != lineUp.cend(); ++it) {
+            if (used.contains(it.key()) || !anchors.contains(it.key()))
+                continue;
+            boxes.append({(ip ? QStringLiteral("ip:") : QStringLiteral("oop:")) + it.key(),
+                          anchors.value(it.key()), nullptr, ip, it.key()});
+        }
+    }
+    const double cardW = 0.188;
+    const double cardH = 0.125;
+    const double faceD = qRound(field.height() * cardH * 0.5);
+    QHash<QString, QPixmap> faces;
+    if (portraitSource()) {
+        const int wanted = (int(faceD * devicePixelRatioF()) + 7) / 8 * 8;
+        for (const Box &box : std::as_const(boxes)) {
+            if (!box.card)
+                continue;
+            const QPixmap face = portraitSource()(box.card->uid, wanted);
+            if (!face.isNull())
+                faces.insert(box.card->uid, face);
+        }
+    }
+    const double portraitPadding = faces.isEmpty() ? 0.0 : faceD / field.height();
+    QList<QPointF> anchors;
+    for (const Box &box : std::as_const(boxes))
+        anchors.append(box.anchor - QPointF(0, portraitPadding / 2));
+    QList<QPointF> placed = spreadMarkers(anchors, QSizeF(cardW, cardH + portraitPadding));
+    for (QPointF &point : placed)
+        point += QPointF(0, portraitPadding / 2);
+    const auto toField = [&](const QPointF &f) {
+        return QPointF(field.left() + field.width() * f.x(), field.top() + field.height() * f.y());
+    };
+    // Use each phase's original stratum, never the displaced combined card.
+    const auto rowForSlot = [&](const QString &slot, const QHash<QString, QStringList> &layout) {
+        if (slot == QLatin1String("GK"))
+            return 6;
+        for (auto it = layout.cbegin(); it != layout.cend(); ++it)
+            if (it.value().contains(slot))
+                return qBound(0, pitchGeometry(m_fmVersionId).drawingRow(it.key()), 6);
+        return 0;
+    };
+
+    QFont headerFont = font();
+    headerFont.setBold(true);
+    headerFont.setPointSizeF(font().pointSizeF() * 0.78);
+    QFont nameFont = font();
+    nameFont.setBold(true);
+    nameFont.setPointSizeF(font().pointSizeF() * 0.92);
+    QFont ratingFont = font();
+    ratingFont.setBold(true);
+    ratingFont.setPointSizeF(font().pointSizeF() * 1.05);
+    QFont smallFont = font();
+    smallFont.setPointSizeF(font().pointSizeF() * 0.74);
+
+    // Links first, so cards cover them.
+    for (qsizetype i = 0; i < boxes.size(); ++i) {
+        const QPointF from = toField(boxes.at(i).anchor);
+        const QPointF to = toField(placed.at(i));
+        if (QLineF(from, to).length() < 3.0)
+            continue;
+        painter.setPen(QPen(QColor(255, 255, 255, 170), 1.2));
+        painter.drawLine(from, to);
+        painter.setBrush(QColor(255, 255, 255, 210));
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(from, 2.6, 2.6);
+    }
+
+    for (qsizetype i = 0; i < boxes.size(); ++i) {
+        const Box &b = boxes.at(i);
+        const QPointF centre = toField(placed.at(i));
+        const QRectF box(centre.x() - field.width() * cardW / 2,
+                         centre.y() - field.height() * cardH / 2, field.width() * cardW,
+                         field.height() * cardH);
+        m_boxRects.insert(b.key, box);
+        m_combinedUids.insert(b.key, b.card ? b.card->uid : QString());
+
+        QPainterPath path;
+        path.addRoundedRect(box, 6, 6);
+        const double headerH = box.height() * 0.28;
+        const QRectF header(box.left(), box.top(), box.width(), headerH);
+        const QRectF body = box.adjusted(4, headerH + 1, -4, -2);
+        const double lineH = body.height() / 3.0;
+        if (!b.card) {
+            painter.setBrush(QColor(255, 255, 255, night ? 18 : 30));
+            painter.setPen(QPen(QColor(255, 255, 255, 170), 1.2, Qt::DashLine));
+            painter.drawPath(path);
+            painter.setPen(Qt::white);
+            painter.setFont(headerFont);
+            const QString role = stripPhase((b.ipPhase ? m_ipLineUp : m_oopLineUp).value(b.slot));
+            painter.drawText(header, Qt::AlignCenter,
+                             painter.fontMetrics().elidedText(
+                                 b.ipPhase ? tr("mit: %1").arg(role) : tr("ohne: %1").arg(role),
+                                 Qt::ElideRight, static_cast<int>(header.width() - 4)));
+            painter.setFont(smallFont);
+            painter.drawText(QRectF(body.left(), body.top() + lineH * 0.5, body.width(), lineH * 2),
+                             Qt::AlignHCenter | Qt::AlignTop | Qt::TextWordWrap,
+                             b.ipPhase ? tr("%1 frei mit Ball").arg(b.slot)
+                                       : tr("%1 frei ohne Ball").arg(b.slot));
+            continue;
+        }
+        const CombinedCard &card = *b.card;
+        const QPixmap face = faces.value(card.uid);
+        // Two role abbreviations need the full header width. Keep the face
+        // above it instead of covering the left half of the role pair.
+        const QRectF faceCircle(box.left(), box.top() - faceD, faceD, faceD);
+        const QRectF ipHeader(header.left(), header.top(), header.width() / 2, header.height());
+        const QRectF oopHeader(ipHeader.right(), header.top(), header.width() / 2, header.height());
+        const QColor ipColor = roleHeaderColor(m_ipLineUp.value(card.ipSlot), rowForSlot(card.ipSlot, m_ipLayout));
+        const QColor oopColor = roleHeaderColor(m_oopLineUp.value(card.oopSlot), rowForSlot(card.oopSlot, m_oopLayout));
+        painter.fillPath(path, cardBody);
+        painter.save();
+        painter.setClipPath(path, Qt::IntersectClip);
+        painter.fillRect(ipHeader, ipColor);
+        painter.fillRect(oopHeader, oopColor);
+        painter.restore();
+        painter.setPen(Qt::white);
+        painter.setFont(headerFont);
+        // With-ball role first, then without.
+        for (const auto &part : {qMakePair(ipHeader, m_ipLineUp.value(card.ipSlot)),
+                                 qMakePair(oopHeader, m_oopLineUp.value(card.oopSlot))})
+            painter.drawText(part.first, Qt::AlignCenter,
+                painter.fontMetrics().elidedText(stripPhase(part.second), Qt::ElideRight,
+                                                  static_cast<int>(part.first.width() - 4)));
+        QRectF line(body.left(), body.top(), body.width(), lineH);
+        painter.setFont(ratingFont);
+        painter.setPen(textColor);
+        painter.drawText(line.adjusted(0, 0, -body.width() * 0.45, 0),
+                         Qt::AlignLeft | Qt::AlignVCenter,
+                         QStringLiteral("%1%").arg(qRound(card.value)));
+        const QRectF bar(line.left() + body.width() * 0.52, line.center().y() - 2,
+                         body.width() * 0.48, 4);
+        painter.fillRect(bar, night ? QColor(255, 255, 255, 30) : QColor(0, 0, 0, 25));
+        const QColor barColor = card.value >= 75   ? QColor(0x3c, 0xc4, 0x6a)
+                                : card.value >= 65 ? QColor(0xc9, 0xb8, 0x2c)
+                                                   : QColor(0xd9, 0x6b, 0x2b);
+        painter.fillRect(QRectF(bar.left(), bar.top(),
+                                bar.width() * qBound(0.0, card.value / 100.0, 1.0), bar.height()),
+                         barColor);
+        line.translate(0, lineH);
+        painter.setPen(textColor);
+        drawFittedName(painter, line, card.name, nameFont);
+        line.translate(0, lineH);
+        painter.setPen(secondaryText);
+        painter.setFont(smallFont);
+        painter.drawText(line, Qt::AlignHCenter | Qt::AlignVCenter,
+                         painter.fontMetrics().elidedText(
+                             tr("mit %1 · ohne %2")
+                                 .arg(qRound(card.ipRating))
+                                 .arg(qRound(card.oopRating)),
+                             Qt::ElideRight, static_cast<int>(line.width())));
+        painter.setPen(QPen(cardBorder, 1));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawPath(path);
+        drawPortrait(painter, face, faceCircle, cardBody, ipColor);
+    }
+}
+
 QString TacticPitchWidget::uidAt(const QPoint &pos) const
 {
+    if (m_combined) {
+        for (auto it = m_boxRects.constBegin(); it != m_boxRects.constEnd(); ++it) {
+            if (it.value().contains(pos))
+                return m_combinedUids.value(it.key());
+        }
+        return QString();
+    }
     for (auto it = m_boxRects.constBegin(); it != m_boxRects.constEnd(); ++it) {
         if (it.value().contains(pos))
             return m_team.value(it.key()).playerUid;

@@ -120,5 +120,49 @@ RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings
     return ratings;
 }
 
+bool loadRatingCaches(Database &db, const PlayerStore &store, LatestRatings &latest,
+                      RoleRatings &ratings)
+{
+    latest.clear();
+    ratings.clear();
+
+    // Role names repeat ~store.size() times each: keep one shared copy per role
+    // (implicit sharing) together with that role's uid -> rating hash. The
+    // per-role hashes live here by value (QHash may move its values when it
+    // grows, so no pointers into `ratings`) and are moved over at the end.
+    struct RoleSlot {
+        QString name;
+        QHash<QString, double> assigned;
+    };
+    QHash<QString, RoleSlot> roles;
+
+    int currentId = -1;
+    const Player *player = nullptr;
+    const bool ok = db.forEachLatestDwrsRating(
+        [&](int playerId, const QString &role, double absolute, double normalized) {
+            if (playerId != currentId) {
+                currentId = playerId;
+                const int row = store.rowById(playerId);
+                player = row < 0 ? nullptr : &store.at(row);
+            }
+            auto slot = roles.find(role);
+            if (slot == roles.end())
+                slot = roles.insert(role, RoleSlot{role, {}});
+            latest.insert({playerId, slot->name}, {absolute, normalized});
+            if (player && player->assignedRoles.contains(slot->name))
+                slot->assigned.insert(player->uid, normalized);
+            // else: unknown player, or role removed since this rating was stored
+        });
+    if (!ok) {
+        latest.clear();
+        return false;
+    }
+    for (auto it = roles.begin(); it != roles.end(); ++it) {
+        if (!it->assigned.isEmpty())
+            ratings.insert(it->name, std::move(it->assigned));
+    }
+    return true;
+}
+
 } // namespace RatingsUpdater
 } // namespace fm

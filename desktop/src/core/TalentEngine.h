@@ -8,7 +8,7 @@ namespace fm {
 
 class Definitions;
 
-// Talent Score — exact port of legacy talent_logic.py:
+// Talent Score — development proxy using the legacy weights (not hidden PA):
 //   Talent = best DWRS of relevant roles
 //          + 2 per year under the age cap
 //          + (Determination + Work Rate - 20) / 4
@@ -25,7 +25,7 @@ double calculateTalentScore(const Definitions &definitions, double bestDwrs, dou
                             double ageCap);
 
 // Convenience over a Player (uses his attribute values; bestDwrs supplied by
-// the caller from the ratings matrix).
+// the caller from the ratings matrix). Ranges use midpoint, missing = neutral 10.
 double talentForPlayer(const Definitions &definitions, const Player &player, double bestDwrs,
                        double ageCap);
 

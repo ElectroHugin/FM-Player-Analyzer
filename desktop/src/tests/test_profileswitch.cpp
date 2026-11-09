@@ -143,8 +143,14 @@ private slots:
             AppContext context;
             startApp(context);
             QString error;
+            // A switch is announced once: databaseChanged() stands for the new
+            // player store too, so pages refresh once (no dataChanged() first).
+            QSignalSpy dataSpy(&context, &AppContext::dataChanged);
+            QSignalSpy databaseSpy(&context, &AppContext::databaseChanged);
             for (int round = 0; round < 2; ++round) {
                 QVERIFY2(context.openDatabase(QStringLiteral("alt"), &error), qPrintable(error));
+                QCOMPARE(databaseSpy.count(), 2 * round + 1);
+                QCOMPARE(dataSpy.count(), 0);
                 QCOMPARE(context.config().weight(kFm24, kTop), 11.0);
                 QCOMPARE(context.config().themeSettings().value(QStringLiteral("current_mode")),
                          QStringLiteral("day"));
@@ -204,13 +210,36 @@ private slots:
         QCOMPARE(context.config().profileSeed(), QStringLiteral("copy:neu"));
         QCOMPARE(context.config().weight(kFm24, kTop), 3.0);
         QVERIFY(hasTactic(context, QStringLiteral("Nur in Neu")));
-        QCOMPARE(context.profileImage(AppContext::ProfileImage::ClubLogo), m_logo);
-        QCOMPARE(context.userClub(), QString()); // club settings are not copied
+        // Club identity is not copied: no club settings, no logo.
+        QVERIFY(context.profileImage(AppContext::ProfileImage::ClubLogo).isEmpty());
+        QCOMPARE(context.userClub(), QString());
 
         // A copy is a copy: changing it leaves the source alone.
         QVERIFY(context.config().setWeight(kFm24, kTop, 5.0));
         QVERIFY(context.openDatabase(QStringLiteral("neu"), &error));
         QCOMPARE(context.config().weight(kFm24, kTop), 3.0);
+    }
+
+    void newSaveDoesNotCopyLiveSource()
+    {
+        AppContext context;
+        startApp(context);
+        QString error;
+        QVERIFY(context.openDatabase(QStringLiteral("neu"), &error));
+        QVERIFY(context.config().setLiveSavePath(QStringLiteral("C:/games/Career-A.fm")));
+        QVERIFY(context.config().setLiveSaveEnabled(true));
+        QVERIFY(context.config().setLiveSaveLastModified(1234));
+        QVERIFY2(context.createDatabase(QStringLiteral("karriere-b"), kFm24, QStringLiteral("neu"),
+                                        &error),
+                 qPrintable(error));
+        QVERIFY(!context.config().liveSaveEnabled());
+        QVERIFY(context.config().liveSavePath().isEmpty());
+        QCOMPARE(context.config().liveSaveLastModified(), qint64(0));
+        // The source keeps its live source.
+        QVERIFY(context.openDatabase(QStringLiteral("neu"), &error));
+        QVERIFY(context.config().liveSaveEnabled());
+        QCOMPARE(context.config().liveSavePath(), QStringLiteral("C:/games/Career-A.fm"));
+        QVERIFY(context.config().setLiveSaveEnabled(false));
     }
 
     void copyFromSaveLastUsedWith204()

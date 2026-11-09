@@ -40,6 +40,68 @@ class TestSquadBuilder : public QObject
     Q_OBJECT
 
 private slots:
+    void centralPreferenceWorksAcrossDifferentRoles()
+    {
+        QTemporaryDir dir;
+        AppConfig config(dir.filePath(QStringLiteral("config.ini")));
+        Definitions definitions;
+        SquadBuilder builder(definitions, config);
+        Player right, left;
+        right.uid = QStringLiteral("right");
+        left.uid = QStringLiteral("left");
+        right.preferredSide = QStringLiteral("Right");
+        left.preferredSide = QStringLiteral("Left");
+        // The stronger feet deliberately point the opposite way.
+        right.preferredFoot = QStringLiteral("Left");
+        left.preferredFoot = QStringLiteral("Right");
+        right.positionRaw = left.positionRaw = QStringLiteral("D (C), DM, M (C), AM (C), ST (C)");
+        RoleRatings ratings;
+        ratings[QStringLiteral("A")] = {{right.uid, 70.0}, {left.uid, 70.0}};
+        ratings[QStringLiteral("B")] = {{right.uid, 70.0}, {left.uid, 70.0}};
+        const QList<QPair<QString, QString>> pairs = {
+            {QStringLiteral("DCL"), QStringLiteral("DCR")},
+            {QStringLiteral("DMCL"), QStringLiteral("DMCR")},
+            {QStringLiteral("MCL"), QStringLiteral("MCR")},
+            {QStringLiteral("AMCL"), QStringLiteral("AMCR")},
+            {QStringLiteral("STL"), QStringLiteral("STR")}};
+        for (const auto &[l, r] : pairs) {
+            const QHash<QString, QString> roles{{l, QStringLiteral("A")}, {r, QStringLiteral("B")}};
+            const auto team = builder.calculateSquadAndSurplus({&right, &left}, roles, {l, r}, ratings);
+            QCOMPARE(team.startingXi[l].playerUid, left.uid);
+            QCOMPARE(team.startingXi[r].playerUid, right.uid);
+        }
+        ratings[QStringLiteral("A")][right.uid] = 71.0;
+        const auto stronger = builder.calculateSquadAndSurplus(
+            {&right, &left}, {{QStringLiteral("DCL"), QStringLiteral("A")},
+                             {QStringLiteral("DCR"), QStringLiteral("B")}},
+            {QStringLiteral("DCL"), QStringLiteral("DCR")}, ratings);
+        QCOMPARE(stronger.startingXi[QStringLiteral("DCL")].playerUid, right.uid);
+    }
+
+    void naturalBonusBelongsToTheActualSide()
+    {
+        QTemporaryDir dir;
+        AppConfig config(dir.filePath(QStringLiteral("config.ini")));
+        QVERIFY(config.setSelectionBonus(QStringLiteral("natural_position"), 1.1));
+        Definitions definitions;
+        SquadBuilder builder(definitions, config);
+        Player left, right;
+        left.uid = QStringLiteral("left");
+        right.uid = QStringLiteral("right");
+        left.positionRaw = right.positionRaw = QStringLiteral("AM (RL)");
+        left.naturalPositions = {QStringLiteral("AM (L)")};
+        right.saveNaturalPositions = {QStringLiteral("AM (R)")};
+        const RoleRatings ratings{{QStringLiteral("IF"), {{left.uid, 70.0}, {right.uid, 70.0}}}};
+        const auto team = builder.calculateSquadAndSurplus(
+            {&right, &left}, {{QStringLiteral("AML"), QStringLiteral("IF")},
+                             {QStringLiteral("AMR"), QStringLiteral("IF")}},
+            {QStringLiteral("AML"), QStringLiteral("AMR")}, ratings);
+        QCOMPARE(team.startingXi[QStringLiteral("AML")].playerUid, left.uid);
+        QCOMPARE(team.startingXi[QStringLiteral("AMR")].playerUid, right.uid);
+        right.naturalPositionsManual = true;
+        QVERIFY(right.effectiveNaturalPositions().isEmpty());
+    }
+
     void initTestCase()
     {
         m_definitions = std::make_unique<Definitions>();

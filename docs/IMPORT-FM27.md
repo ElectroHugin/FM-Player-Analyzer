@@ -46,9 +46,13 @@ Was übernommen wird, regelt die Einstellung **Attribut-Maskierung wie im Spiel*
   Kenntnis werden es weniger und schmalere Spannen.
 - Verdeckte Werte (Potenzial, Fähigkeit, Konstanz, Verletzungsanfälligkeit, wichtige
   Spiele, Härte, Vielseitigkeit) liest der Analyzer nie in die Datenbank.
-- Noch nicht aus dem Spielstand: Persönlichkeit, Medienverhalten, Gehalt, Marktwert,
-  Durchschnittsnote, Spielzeit. Bereits vorhandene Werte aus früheren Exporten bleiben
-  erhalten. Nationen sind für die 152 Länder hinterlegt, die in Exporten vorkamen.
+- Persönlichkeit: eindeutige Namen werden aus den gelesenen Persönlichkeitswerten abgeleitet.
+  Mit Maskierung gilt das für den eigenen Verein und vollständig gescoutete Spieler
+  (Kenntnis 100 %); ohne Maskierung für alle übernommenen Spieler. Unbekannte oder
+  mehrdeutige Namen bleiben leer und überschreiben keine frühere Exportangabe.
+  Die Rohwerte werden nicht in der Datenbank gespeichert.
+- Medienverhalten wird noch nicht aus dem Spielstand übernommen. Frühere Exportangaben
+  bleiben erhalten. Nationen sind für die 152 Länder hinterlegt, die in Exporten vorkamen.
 - Kooperationsvereine und Gegner, die das Spiel ohne Scoutbericht zeigt, fehlen noch.
 - Nach einem FM-Patch kann sich das Dateiformat ändern. Dann bricht der Import mit einer
   Meldung ab, statt falsche Werte zu übernehmen.
@@ -181,3 +185,18 @@ in keiner der beiden Listen stehen, also z. B. Spalten, die ein Patch umbenannt 
   Dann beide Stellen anpassen: `fm27.csv` im Exporter und `ImportSchema.cpp` hier.
 - Der Test `test_csvimport` (`fm27ExporterCsv`, `fm27MappingComplete`) prüft eine
   Datei im Format des Exporters und dass alle 40 bewerteten Attribute erreichbar sind.
+
+## Persönlichkeit: Grenzen und Einstufung (ab 2.2.3)
+
+Die Rekonstruktion nutzt die veröffentlichten Schwellen und Prioritäten der
+[FM-Referenzanalyse](https://github.com/Napas/fm-mcp/blob/main/internal/fm/personality.go)
+für FM26.3.2. Eine vollständige unabhängige Bestätigung sämtlicher Namen in FM27
+steht noch aus. Der eigene Parser kennt weder das Zusatzflag für negative
+Persönlichkeitsnamen noch die Vereinsbindung für „Devoted“. Sobald eines davon
+für die Auswahl nötig wäre, wird kein Name geraten. Auch ungültige Werte liefern
+keinen Namen. CSV/HTML können weiterhin den direkt vom Spiel angezeigten Namen liefern.
+
+Unter Einstellungen → Persönlichkeiten lassen sich gut/neutral/schlecht für FM24
+und FM27 getrennt ändern. Die Einteilung liegt im jeweiligen versionsabhängigen
+Definitionsdokument des Spielstands; unverändert gelten die bisherigen FM24-Defaults.
+Talent-Score, Filter und Analyse lesen dieselbe Einteilung.

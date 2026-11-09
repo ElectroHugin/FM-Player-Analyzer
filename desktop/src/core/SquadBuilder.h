@@ -70,6 +70,8 @@ struct TwoPhaseSquadResult {
     QHash<QString, XiCell> bTeamOop;
     QHash<QString, QPair<QString, QString>> slotsOfUid; // uid -> (ip slot, oop slot)
     QHash<QString, double> valueOfUid;                  // uid -> a*ip + (1-a)*oop DWRS
+    double startingBridgeLoss = 0.0; // unrounded DWRS below the initial assignment
+    double bTeamBridgeLoss = 0.0;
     std::vector<const Player *> depthPool; // not in XI or B-team, pool order
 };
 
@@ -100,6 +102,10 @@ struct ReplacementPlan {
     double inValue = 0.0;            // his value over both line-ups (DWRS)
     double total = 0.0;              // starting-XI value with the plan
     bool complete = false;           // every place the XI had is filled again
+    // Who now holds the missing player's own places (ip, oop): the extra
+    // player or a starter who moved there ("" = the place stays empty).
+    QString coverIp;
+    QString coverOop;
 };
 
 // Plans for the absence of one starting-XI player, best first.
@@ -154,7 +160,9 @@ public:
     // (1 - ipShare) * score(oop role), score = DWRS x playing-time weight x
     // natural-position bonus. A player needs the position for both slots.
     // Exact (minimum-cost flow). The B-team is then chosen the same way from
-    // the remaining players.
+    // the remaining players. For each selected team, refine its assignment
+    // within bridgeTolerance (raw and weighted totals): manual central sides
+    // first, then minimum total distance between phases. The roster is fixed.
     // fixedBridges: manual bridges uid -> (ip slot, oop slot) for the
     // starting XI; an empty slot leaves that phase free. A fixed player may
     // only take his slot, nobody else may take it; the rest is optimised.
@@ -194,12 +202,16 @@ public:
     // changes place for it (they may be redistributed; the manual bridges of
     // the others stay). A plan is complete when the extra player and every
     // remaining starter get a place again; complete plans come first, then
-    // the higher starting-XI value. At most maxPlans plans per player.
+    // the higher starting-XI value, then the fewer starters who change place
+    // (stable otherwise). At most maxPlans plans per player.
+    // xiLimit: the same cap as the displayed starting XI, so the plans start
+    // from exactly that XI and keep the cap.
     // Works for both kinds of tactic (one line-up: ip == oop slot).
     QList<OutageCover> replacementPlans(const std::vector<const Player *> &pool,
                                         const QString &tactic, const RoleRatings &ratings,
                                         bool applyAptWeight = true,
                                         const Bridges &fixedBridges = {},
+                                        const XiLimit &xiLimit = {},
                                         int maxPlans = 3) const;
 
     DevelopmentSquads calculateDevelopmentSquads(
@@ -229,7 +241,6 @@ private:
     int m_goalkeeperCap = 25;
     double m_naturalPosMultiplier = 1.0;
     QHash<QString, double> m_aptWeights; // display name -> weight
-    QHash<QString, QStringList> m_roleToGamePositions;
 };
 
 } // namespace fm

@@ -418,14 +418,14 @@ private slots:
         QCOMPARE(q.maxSize, 25);
         QCOMPARE(q.maxNonHomeGrown, 17);
         QCOMPARE(q.maxNonClubTrained, 21);
-        QVERIFY(!q.u21Exempt);
+        QVERIFY(q.youth == Registration::YouthRule::None);
         // Portugal (club with B team): 68 places, 10 trained in Portugal.
         q = quota(L::LigaPortugal);
         QCOMPARE(q.maxSize, 68);
         QCOMPARE(q.maxNonHomeGrown, 58);
         // Ukraine: U21 free, 8 trained incl. 4 at the club.
         q = quota(L::UkrainianPremierLeague);
-        QVERIFY(q.u21Exempt);
+        QVERIFY(q.youth == Registration::YouthRule::U21);
         QCOMPARE(q.maxNonClubTrained, 21);
         // Süper Lig: only the size (foreigner limits are not modelled).
         q = quota(L::SuperLig);
@@ -439,6 +439,89 @@ private slots:
         Player youngster = playerAged(19);
         QVERIFY(Registration::isEligible(youngster, C::League, quota(L::PremierLeague)));
         QVERIFY(!Registration::isEligible(youngster, C::League, quota(L::SerieA)));
+    }
+
+    void laLigaYouthExemption()
+    {
+        using L = Registration::LeagueRules;
+        using C = Registration::Competition;
+        using S = Registration::U21Status;
+        // In-game date decides which side of 1 January the season is on.
+        const QDate autumn(2026, 10, 1), spring(2027, 3, 1);
+        QCOMPARE(Registration::u18StatusByAge(17, autumn), S::Yes);
+        QCOMPARE(Registration::u18StatusByAge(18, autumn), S::Uncertain);
+        QCOMPARE(Registration::u18StatusByAge(19, autumn), S::No);
+        QCOMPARE(Registration::u18StatusByAge(18, spring), S::Yes);
+        QCOMPARE(Registration::u18StatusByAge(19, spring), S::Uncertain);
+        QCOMPARE(Registration::u18StatusByAge(20, spring), S::No);
+        QCOMPARE(Registration::u18StatusByAge(17, QDate()), S::Yes);
+        QCOMPARE(Registration::u18StatusByAge(18, QDate()), S::Uncertain);
+        QCOMPARE(Registration::u18StatusByAge(19, QDate()), S::Uncertain);
+
+        Registration::Settings settings;
+        settings.league = L::LaLiga;
+        settings.gameDate = spring;
+        const Registration::Quota quota = Registration::quotaFor(C::League, settings);
+        QVERIFY(quota.youth == Registration::YouthRule::U18Eu);
+        Player eu = playerAged(18);
+        eu.nationality = QStringLiteral("ESP");
+        QVERIFY(Registration::isEligible(eu, C::League, quota));
+        // Without a recognised EU nationality the exemption stays unclear.
+        Player brazilian = playerAged(17);
+        brazilian.nationality = QStringLiteral("BRA");
+        QCOMPARE(Registration::u18EuStatus(brazilian, spring), S::Uncertain);
+        QVERIFY(!Registration::isEligible(brazilian, C::League, quota));
+        brazilian.secondNationality = QStringLiteral("POR");
+        QVERIFY(Registration::isEligible(brazilian, C::League, quota));
+        Player nonEu = playerAged(18);
+        nonEu.nationality = QStringLiteral("ESP");
+        nonEu.registration.nonEu = true;
+        QVERIFY(!Registration::isEligible(nonEu, C::League, quota));
+        Player twenty = playerAged(20); // U21 elsewhere, not in LaLiga
+        QVERIFY(!Registration::isEligible(twenty, C::League, quota));
+        // The manual decision settles it, nationality included.
+        Player unclear = playerAged(19);
+        unclear.nationality = QStringLiteral("ESP");
+        QVERIFY(!Registration::isEligible(unclear, C::League, quota));
+        unclear.registration.youth = PlayerRegistration::U21::Yes;
+        QVERIFY(Registration::isEligible(unclear, C::League, quota));
+        nonEu.registration.youth = PlayerRegistration::U21::Yes;
+        QVERIFY(Registration::isEligible(nonEu, C::League, quota));
+        // ... until an import shows him 20.
+        PlayerRegistration r = unclear.registration;
+        QVERIFY(!Registration::expireYouthOverride(r, 19, 19));
+        QVERIFY(Registration::expireYouthOverride(r, 19, 20));
+        QVERIFY(r.youth == PlayerRegistration::U21::Auto);
+    }
+
+    void mergeKeepsBothParts()
+    {
+        // Same rule as the database: each part moves over on its own.
+        PlayerRegistration good;
+        good.homeGrown = true;
+        PlayerRegistration bad;
+        bad.minWageExempt = true;
+        bad.nonEu = true;
+        Registration::mergeInto(good, bad);
+        QVERIFY(good.homeGrown && !good.nonEu); // classic flags: good had some
+        QVERIFY(good.minWageExempt);            // 2.2.3 fields: good had none
+        PlayerRegistration empty;
+        Registration::mergeInto(empty, bad);
+        QVERIFY(empty == bad);
+    }
+
+    void minWageExemption()
+    {
+        Registration::Settings settings;
+        settings.league = Registration::LeagueRules::LaLiga;
+        settings.minWage = 1000;
+        const Registration::Quota quota =
+            Registration::quotaFor(Registration::Competition::League, settings);
+        Player loan = playerAged(25);
+        loan.wageRaw = QStringLiteral("€500 p/w");
+        QVERIFY(Registration::belowMinWage(loan, quota));
+        loan.registration.minWageExempt = true;
+        QVERIFY(!Registration::belowMinWage(loan, quota));
     }
 
     void wageRules()

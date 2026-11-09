@@ -8,6 +8,10 @@
 #include "../theming/ThemePresets.h"
 #include "core/Constants.h"
 #include "core/Utils.h"
+#include "core/ProfileStore.h"
+#include <QJsonDocument>
+#include <QTableWidget>
+#include <QHeaderView>
 
 #include <QBuffer>
 #include <QCheckBox>
@@ -310,6 +314,7 @@ SettingsPage::SettingsPage(AppContext &context, ThemeManager &theme, QWidget *pa
     addSection(tr("Daten"), tr("Porträts und Wappen"), "Porträts und Wappen", buildGraphicsPage());
     addSection(tr("Berechnung"), tr("DWRS-Gewichte"), "DWRS-Gewichte", buildWeightsPage());
     addSection(tr("Berechnung"), tr("Kader und Analyse"), "Kader und Analyse", buildSquadPage());
+    addSection(tr("Berechnung"), tr("Persönlichkeiten"), "Persönlichkeiten", buildPersonalityPage());
     addSection(tr("Berechnung"), tr("Training"), "Training", buildTrainingPage());
     addSection(tr("Programm"), tr("Design"), "Design", buildThemePage());
     addSection(tr("Programm"), tr("Spielstände"), "Spielstände", buildDatabasePage());
@@ -905,6 +910,98 @@ QWidget *SettingsPage::buildWeightsPage()
     return page;
 }
 
+QWidget *SettingsPage::buildPersonalityPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("Persönlichkeiten"),
+        tr("Einstufung für Talent-Score, Analyse und Filter. FM24 und FM27 werden getrennt "
+           "in diesem Spielstand gespeichert. Standard: bisherige FM24-Einstufung."), &cards);
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Persönlichkeiten"), QString(), &body));
+    m_personalityTable = new QTableWidget;
+    m_personalityTable->setColumnCount(3);
+    m_personalityTable->setHorizontalHeaderLabels({tr("Persönlichkeit"), QStringLiteral("FM24"),
+                                                   QStringLiteral("FM27")});
+    m_personalityTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_personalityTable->verticalHeader()->hide();
+    m_personalityTable->setMinimumHeight(480);
+    body->addWidget(m_personalityTable);
+    auto *reset = new QPushButton(tr("FM24-Standard für beide Versionen wiederherstellen"));
+    body->addWidget(reset);
+    connect(reset, &QPushButton::clicked, this, [this] {
+        for (int row = 0; row < m_personalityTable->rowCount(); ++row) {
+            const QString category = personalityDefaults().value(
+                m_personalityTable->item(row, 0)->text(), QStringLiteral("neutral"));
+            for (int col = 1; col <= 2; ++col) {
+                auto *combo = qobject_cast<QComboBox *>(m_personalityTable->cellWidget(row, col));
+                combo->setCurrentIndex(combo->findData(category));
+            }
+        }
+    });
+    cards->addStretch();
+    return page;
+}
+
+void SettingsPage::refreshPersonalities()
+{
+    m_personalityRoots.clear();
+    QSet<QString> names;
+    for (auto it = personalityDefaults().cbegin(); it != personalityDefaults().cend(); ++it)
+        names.insert(it.key());
+    ProfileStore store(m_context.database());
+    for (const QString &version : {QStringLiteral("fm24"), QStringLiteral("fm27")}) {
+        QByteArray json;
+        if (!store.readDocument(ProfileStore::definitionsDocument(version), json)) {
+            if (!store.errorString().isEmpty()) {
+                m_personalityTable->setEnabled(false);
+                return; // Never replace an unreadable document with defaults.
+            }
+            QString path = QStringLiteral(":/defaults/") + fmDataVersion(version).definitionsFileName;
+            if (m_context.config().profileSeed() == QLatin1String("config.ini")
+                && QFile::exists(m_context.paths().definitionsFile(version)))
+                path = m_context.paths().definitionsFile(version);
+            QFile file(path);
+            if (file.open(QIODevice::ReadOnly))
+                json = file.readAll();
+        }
+        QJsonParseError error;
+        const QJsonDocument doc = QJsonDocument::fromJson(json, &error);
+        if (error.error != QJsonParseError::NoError || !doc.isObject()) {
+            m_personalityTable->setEnabled(false);
+            return;
+        }
+        m_personalityRoots.insert(version, doc.object());
+        for (const QString &name : doc.object().value(QStringLiteral("personalities")).toObject().keys())
+            names.insert(name);
+    }
+    for (const Player &player : m_context.store().players())
+        if (!player.personality.trimmed().isEmpty())
+            names.insert(player.personality.trimmed());
+    QStringList sorted(names.cbegin(), names.cend());
+    sorted.sort(Qt::CaseInsensitive);
+    m_personalityTable->setEnabled(true);
+    m_personalityTable->setRowCount(sorted.size());
+    for (int row = 0; row < sorted.size(); ++row) {
+        auto *name = new QTableWidgetItem(sorted[row]);
+        name->setFlags(name->flags() & ~Qt::ItemIsEditable);
+        m_personalityTable->setItem(row, 0, name);
+        for (int col = 1; col <= 2; ++col) {
+            const QString version = col == 1 ? QStringLiteral("fm24") : QStringLiteral("fm27");
+            const auto categories = m_personalityRoots.value(version)
+                .value(QStringLiteral("personalities")).toObject();
+            const QString category = categories.value(sorted[row]).toString(
+                personalityDefaults().value(sorted[row], QStringLiteral("neutral")));
+            auto *combo = new QComboBox;
+            combo->addItem(tr("Gut"), QStringLiteral("good"));
+            combo->addItem(tr("Neutral"), QStringLiteral("neutral"));
+            combo->addItem(tr("Schlecht"), QStringLiteral("bad"));
+            combo->setCurrentIndex(combo->findData(category));
+            combo->setProperty("originalCategory", category);
+            m_personalityTable->setCellWidget(row, col, combo);
+        }
+    }
+}
+
 QWidget *SettingsPage::buildSquadPage()
 {
     QVBoxLayout *cards = nullptr;
@@ -930,6 +1027,15 @@ QWidget *SettingsPage::buildSquadPage()
     addHint(form, tr("Ab FM27 hat jede Taktik eine Aufstellung mit Ball und eine ohne Ball. Der "
                      "Wert eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest "
                      "seiner Rolle ohne Ball. Standard 50 %."));
+    m_bridgeToleranceSpin = sized(new QDoubleSpinBox, kNumberWidth);
+    m_bridgeToleranceSpin->setRange(0.0, 1.0);
+    m_bridgeToleranceSpin->setDecimals(2);
+    m_bridgeToleranceSpin->setSingleStep(0.05);
+    addRow(form, tr("DWRS-Spielraum für kürzere Wege"), m_bridgeToleranceSpin);
+    addHint(form, tr("Maximaler Verlust für die gesamte Elf gegenüber der ursprünglichen Zuordnung. "
+                     "Gilt auch für die gewichtete Auswahlbewertung. 0 erlaubt nur Gleichstand. "
+                     "Innerhalb des Spielraums gelten zuerst manuelle Seitenpräferenzen, dann kurze Wege. "
+                     "Die ausgewählten Spieler bleiben dieselben."));
     addRow(form, tr("Max. Rollen pro Depth-Spieler"), m_maxDepthRolesSpin);
 
     cards->addWidget(makeCard(tr("Jugend und Leihen"), QString(), &body));
@@ -1541,6 +1647,7 @@ QWidget *SettingsPage::buildDatabasePage()
 
 void SettingsPage::refresh()
 {
+    refreshPersonalities();
     AppConfig &config = m_context.config();
 
     // --- Club tab ---
@@ -1641,6 +1748,17 @@ void SettingsPage::refresh()
     fillTacticCombo(m_natFav2Combo,
                     m_context.database().setting(QStringLiteral("national_fav_tactic_2")));
 
+    const auto analysisSettings = [&config] {
+        auto values = config.profileValues();
+        for (auto it = values.begin(); it != values.end(); ) {
+            if (it.key().startsWith(QLatin1String("ThemeSettings/")))
+                it = values.erase(it);
+            else
+                ++it;
+        }
+        return values;
+    };
+    const auto beforeAnalysis = analysisSettings();
     const QString weightsVersion = m_context.fmVersionId();
     m_weightsVersionLabel->setText(tr("Gewichte für Spielstände von %1.")
                                        .arg(fmDataVersion(weightsVersion).displayName));
@@ -1657,6 +1775,7 @@ void SettingsPage::refresh()
     m_goalkeeperAgeSpin->setValue(config.ageThreshold(QStringLiteral("goalkeeper")));
     m_naturalPosSpin->setValue(config.selectionBonus(QStringLiteral("natural_position")));
     m_ipShareSpin->setValue(config.ipSharePercent());
+    m_bridgeToleranceSpin->setValue(config.bridgeTolerance());
     m_maxDepthRolesSpin->setValue(
         config.squadManagementSetting(QStringLiteral("max_roles_per_depth_player")));
     m_minLoanTalentSpin->setValue(
@@ -1740,6 +1859,17 @@ void SettingsPage::saveAll()
 
     // The weight spins show the version the page was refreshed for; a version
     // switch below must not redirect them to the new one.
+    const auto analysisSettings = [&config] {
+        auto values = config.profileValues();
+        for (auto it = values.begin(); it != values.end(); ) {
+            if (it.key().startsWith(QLatin1String("ThemeSettings/")))
+                it = values.erase(it);
+            else
+                ++it;
+        }
+        return values;
+    };
+    const auto beforeAnalysis = analysisSettings();
     const QString weightsVersion = m_context.fmVersionId();
     QString versionError;
     if (!m_context.setFmVersion(m_fmVersionCombo->currentData().toString(), &versionError))
@@ -1750,9 +1880,13 @@ void SettingsPage::saveAll()
     AppConfig::Transaction transaction(config);
     Database &db = m_context.database();
     bool clubSettingsOk = transaction.isActive();
-    const auto saveSetting = [&db, &clubSettingsOk](const QString &key, const QString &value) {
+    bool clubChanged = false;
+    const auto saveSetting = [&db, &clubSettingsOk, &clubChanged](const QString &key, const QString &value) {
         if (!clubSettingsOk)
             return;
+        if (db.setting(key) == value)
+            return;
+        clubChanged = true;
         clubSettingsOk = value.isEmpty() ? db.removeSetting(key) : db.setSetting(key, value);
     };
 
@@ -1831,6 +1965,7 @@ void SettingsPage::saveAll()
     config.setAgeThreshold(QStringLiteral("goalkeeper"), m_goalkeeperAgeSpin->value());
     config.setSelectionBonus(QStringLiteral("natural_position"), m_naturalPosSpin->value());
     config.setIpSharePercent(m_ipShareSpin->value());
+    config.setBridgeTolerance(m_bridgeToleranceSpin->value());
     config.setSquadManagementSetting(QStringLiteral("max_roles_per_depth_player"),
                                      m_maxDepthRolesSpin->value());
     config.setSquadManagementSetting(QStringLiteral("min_loan_talent_score"),
@@ -1869,6 +2004,34 @@ void SettingsPage::saveAll()
                                                        : QStringLiteral("false"));
     config.saveThemeSettings(themeSettings);
 
+    bool personalitiesChanged = false;
+    ProfileStore personalityStore(db);
+    if (m_personalityTable->isEnabled() && m_personalityRoots.size() == 2) {
+        for (int col = 1; col <= 2; ++col) {
+            const QString version = col == 1 ? QStringLiteral("fm24") : QStringLiteral("fm27");
+            QJsonObject root = m_personalityRoots.value(version);
+            QJsonObject categories = root.value(QStringLiteral("personalities")).toObject();
+            // Preserve every old category, including unlisted/custom names.
+            if (!root.contains(QStringLiteral("personalities")))
+                for (auto it = personalityDefaults().cbegin(); it != personalityDefaults().cend(); ++it)
+                    categories.insert(it.key(), it.value());
+            bool changed = false;
+            for (int row = 0; row < m_personalityTable->rowCount(); ++row) {
+                auto *combo = qobject_cast<QComboBox *>(m_personalityTable->cellWidget(row, col));
+                if (combo->currentData() == combo->property("originalCategory"))
+                    continue;
+                changed = true;
+                categories.insert(m_personalityTable->item(row, 0)->text(), combo->currentData().toString());
+            }
+            if (changed) {
+                root.insert(QStringLiteral("personalities"), categories);
+                clubSettingsOk = clubSettingsOk && personalityStore.saveDefinitions(
+                    version, QJsonDocument(root).toJson());
+                personalitiesChanged = true;
+            }
+        }
+    }
+
     QString error = clubSettingsOk ? QString() : db.errorString();
     if (!clubSettingsOk || !transaction.commit(&error)) {
         // Nothing was written; the page shows the stored state again.
@@ -1881,11 +2044,17 @@ void SettingsPage::saveAll()
         return;
     }
 
-    m_context.reloadEngines();
-    m_context.applyGraphicsSettings();
-    m_theme.setMode(m_modeCombo->currentData().toString());
-    m_theme.apply();
-    m_context.notifySettingsChanged();
+    const bool analysisChanged = personalitiesChanged || clubChanged || beforeAnalysis != analysisSettings()
+                                 || weightsVersion != m_context.fmVersionId();
+    if (personalitiesChanged)
+        m_context.reloadConfigAndDefinitions();
+    if (analysisChanged && !personalitiesChanged) {
+        m_context.reloadEngines();
+        m_context.applyGraphicsSettings();
+    }
+    m_theme.reload();
+    if (analysisChanged)
+        m_context.notifySettingsChanged();
 
     if (weightsChanged) {
         emit recalcRequested();

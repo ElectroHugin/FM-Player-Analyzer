@@ -2,6 +2,8 @@
 
 #include <QHash>
 #include <QList>
+#include <QPointF>
+#include <QSizeF>
 #include <QString>
 #include <QStringList>
 
@@ -62,6 +64,31 @@ const QHash<QString, QStringList> &tacticalSlotToGamePositions(const QString &ve
 
 // Vertical ordering of strata on the pitch (GK=0 ... Strikers=5).
 const QHash<QString, int> &stratumOrder(const QString &versionId);
+
+// --- Normalized drawing positions (shared by every pitch drawing) ---
+// x: 0 = left touchline ... 1 = right, y: 0 = opponent goal line ... 1 = own.
+// Centre of each slot of one line-up: rows from PitchGeometry::drawingRow,
+// five columns, two inside players without a middle one close up (DCL+DCR,
+// DMCL+DMCR, STL+STR). layout: stratum -> slots (as Definitions::tacticLayouts);
+// the goalkeeper ("GK") is always placed when withGoalkeeper is set.
+QHash<QString, QPointF> slotAnchors(const QString &versionId,
+                                    const QHash<QString, QStringList> &layout,
+                                    bool withGoalkeeper = true);
+// Vertical centre of a drawing row (1 = strikers ... 6 = goalkeeper).
+double drawingRowY(int row);
+
+// Combined view of a two-phase tactic: a player's marker sits at the
+// geometric midpoint of his slot with and his slot without the ball,
+// independent of the possession weighting.
+inline QPointF combinedAnchor(const QPointF &ip, const QPointF &oop)
+{
+    return (ip + oop) / 2.0;
+}
+
+// Places cards of `size` (normalized) at their anchors and moves overlapping
+// ones apart just far enough to be readable, keeping each as close to its
+// anchor as possible and inside [0, 1]. Same order as anchors.
+QList<QPointF> spreadMarkers(const QList<QPointF> &anchors, const QSizeF &size);
 
 // Default-version (FM24) wrappers of the three tables above.
 const QHash<QString, SlotPosition> &masterPositionMap();

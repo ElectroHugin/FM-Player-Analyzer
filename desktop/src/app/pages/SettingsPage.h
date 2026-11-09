@@ -7,6 +7,7 @@
 #include "PageBase.h"
 
 #include <QHash>
+#include <QJsonObject>
 
 class QCheckBox;
 class QDateEdit;
@@ -18,6 +19,7 @@ class QListWidget;
 class QPushButton;
 class QSpinBox;
 class QStackedWidget;
+class QTableWidget;
 
 namespace fm {
 
@@ -51,6 +53,10 @@ private:
     QWidget *buildWeightsPage();
     QWidget *buildSquadPage();
     QWidget *buildTrainingPage();
+    QWidget *buildPersonalityPage();
+    void refreshPersonalities();
+    QTableWidget *m_personalityTable = nullptr;
+    QHash<QString, QJsonObject> m_personalityRoots;
     QWidget *buildThemePage();
     QWidget *buildDatabasePage();
     void addSection(const QString &groupTitle, const QString &title, const char *germanTitle,
@@ -78,6 +84,7 @@ private:
     QSpinBox *m_goalkeeperAgeSpin = nullptr;
     QDoubleSpinBox *m_naturalPosSpin = nullptr;
     QSpinBox *m_ipShareSpin = nullptr; // FM26+: share of the in-possession role
+    QDoubleSpinBox *m_bridgeToleranceSpin = nullptr;
     QSpinBox *m_maxDepthRolesSpin = nullptr;
     QSpinBox *m_minLoanTalentSpin = nullptr;
     QSpinBox *m_minLoanAgeSpin = nullptr;

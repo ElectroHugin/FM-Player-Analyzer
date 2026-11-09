@@ -2,16 +2,22 @@ name: Testbuild
 
 # Release candidate of a branch that is not on main yet, built exactly like the
 # Release workflow (same windeployqt + Inno Setup installer, version from
-# Version.cpp) but uploaded as a run artifact instead of a GitHub release.
-# Also a portable zip that leaves the installed version alone. Both use the
-# data folder %LOCALAPPDATA%\FM24PlayerAnalyzer — back that up first.
+# Version.cpp), plus a portable zip that leaves the installed version alone.
+# Both use the data folder %LOCALAPPDATA%\FM24PlayerAnalyzer — back that up first.
+# Every push to a release/X.Y.Z branch replaces the GitHub pre-release
+# "testbuild-X.Y.Z" (never marked as latest, separate from the vX.Y.Z tags the
+# Release workflow checks). Other branches (manual run) get run artifacts only.
 on:
   workflow_dispatch:
   push:
-    branches: [claude/project-thread-2i3rhj]
+    branches: ['release/**']
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: testbuild-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   windows-portable:
@@ -34,8 +40,12 @@ jobs:
         with:
           arch: x64
 
+      # Ninja from PyPI: the setup action's download from GitHub releases
+      # arrived broken (Nov 2026). The Python of the Qt setup is on PATH.
       - name: Setup Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v5
+        run: |
+          python -m pip install --disable-pip-version-check ninja
+          ninja --version
 
       - name: Configure
         run: cmake -S desktop -B build -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$env:QT_ROOT_DIR"
@@ -92,3 +102,28 @@ jobs:
           name: FMPlayerAnalyzer-Testbuild-Windows-portable
           path: portable/
           retention-days: 30
+
+      - name: Publish testbuild pre-release
+        if: startsWith(github.ref, 'refs/heads/release/')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $tag = "testbuild-$version"
+          $sha = "${{ github.sha }}".Substring(0, 7)
+          $zip = "FMPlayerAnalyzer-$version-Testbuild-Windows-portable.zip"
+          Compress-Archive -Path "portable/FMPlayerAnalyzer-Testbuild" -DestinationPath $zip -Force
+          $setup = "desktop/installer/output/FMPlayerAnalyzer-$version-Windows-x64-Setup.exe"
+          # Replace the previous testbuild (same tag, so the page address stays).
+          $PSNativeCommandUseErrorActionPreference = $false
+          gh release delete $tag --repo $env:GITHUB_REPOSITORY --yes --cleanup-tag *> $null
+          $notes = "Testbuild of $version (branch $env:GITHUB_REF_NAME, commit $sha). Not an official release, replaced on every change. Back up %LOCALAPPDATA%\FM24PlayerAnalyzer before installing."
+          gh release create $tag $setup $zip `
+            --repo $env:GITHUB_REPOSITORY `
+            --target $env:GITHUB_SHA `
+            --prerelease --latest=false `
+            --title "Testbuild $version" `
+            --notes $notes
+          if ($LASTEXITCODE -ne 0) { throw "Testbuild-Release fehlgeschlagen." }
+          exit 0

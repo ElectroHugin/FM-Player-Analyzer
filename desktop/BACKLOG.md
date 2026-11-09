@@ -356,3 +356,43 @@ Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
   `RatingsUpdater`, `GapAnalysis`, `TacticExplorer`, `TalentEngine`; der
   Squad-Golden-Vergleich (`fmsquad`) läuft nicht in CI. Mindestens #23 und #25
   mit Regressionstests absichern.
+
+---
+
+# Performance-Review 2026-11-08 (Stand 2.2.3)
+
+Umgesetzt in 2.2.3: Bewertungs-Caches in einem Durchlauf
+(`RatingsUpdater::loadRatingCaches`, Lesefehler werden gemeldet), Spielstandwechsel
+baut nur die sichtbare Seite einmal neu auf, Scouting-Filter ändern nur die
+Zeilen (Spalten/Breiten bleiben, Regler entprellt). Nebenbei behoben: Absturz
+beim Wechsel aus der Squad Matrix mit großem Spielstand (Seiten gaben die
+Zeiger des alten Bestands zu spät ab). Messung synthetisch (80.000 Spieler,
+960.000 Ratings): Wechsel ~8 s → ~4,8 s, Filteränderung ~800 → ~50 ms.
+
+## ⚪ #39 — Spielstand im Hintergrund laden (zurückgestellt)
+
+- `AppContext::openDatabaseImpl` lädt Spieler + Caches synchron auf dem UI-Thread
+  (bei 80.000 Spielern noch ~3,5 s, bei 35.000 ~1,5 s).
+- **Vorschlag:** Worker mit eigener Read-only-Verbindung lädt Store + beide
+  Caches in einer Lesetransaktion, die UI übernimmt per `adoptState`. Wechsel
+  mit Import/Neuberechnung serialisieren, Profil/Version erst bei Erfolg
+  aktivieren, Fehlerfall in `test_profileswitch`.
+- **Warum zurückgestellt:** greift tief in Profil-Aktivierung und Fehlerpfade
+  ein; die Wartezeit ist nach den Umbauten oben etwa halbiert.
+
+## ⚪ #40 — Schneller Abschluss kleiner Teil-Importe (zurückgestellt)
+
+- `ImportPipeline` (Stufe Finalize) liest nach jedem Import den ganzen Bestand
+  und alle Ratings neu, auch bei 25 geänderten Spielern.
+- **Vorschlag:** Für Teil-Importe ohne UID-Wechsel/Zusammenführung nur die
+  geänderten Spieler (inkl. Auto-Rollen) und deren Ratings zurückgeben und per
+  `patchRoleRatings` einspielen.
+- **Warum zurückgestellt:** läuft schon im Worker (kein Einfrieren der UI),
+  Gewinn ~2–3 s Wartezeit bei sehr großen Spielständen, aber hohes Risiko
+  auseinanderlaufender Caches.
+
+## ⚪ #41 — `fmbench --import` genauer (zurückgestellt)
+
+- Backup-Stufe mitmessen, erstes Laden des Bestands getrennt vom Parsen,
+  echte UI-Fertigmeldung messen. Vor einem Wechsel des Backup-Verfahrens
+  (`VACUUM INTO` vs. Online-Backup-API) erst den heutigen Weg messen.

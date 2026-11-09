@@ -156,12 +156,17 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
         return;
     }
     m_outageNote->setText(
-        twoPhase ? tr("Fällt ein Spieler der Startelf aus, kommt genau ein Spieler dazu. Die "
-                      "übrigen dürfen dafür ihre Plätze mit und ohne Ball tauschen. „Volle "
-                      "Bridge“ heißt: Der Ersatz übernimmt beide Plätze des Ausfalls. Von Hand "
-                      "gesetzte Plätze bleiben. Weitere Lösungen zeigt der Tooltip.")
-                 : tr("Fällt ein Spieler der Startelf aus, kommt genau ein Spieler dazu. Die "
-                      "übrigen dürfen dafür ihre Plätze tauschen. Weitere Lösungen zeigt der "
+        twoPhase ? tr("Fällt ein Spieler der Startelf aus, zeigt die Tabelle den besten geprüften "
+                      "Ersatzplan: Genau ein Spieler kommt dazu, die übrigen dürfen dafür ihre "
+                      "Plätze mit und ohne Ball tauschen. „Wer übernimmt“ nennt, wer die frei "
+                      "gewordenen Plätze besetzt, auch wenn das ein Mitspieler ist, der dafür "
+                      "umrückt. „Volle Bridge“ heißt: Der Neue übernimmt beide Plätze. Von Hand "
+                      "gesetzte Plätze und eine Startelf-Grenze gelten weiter. Weitere Lösungen "
+                      "zeigt der Tooltip.")
+                 : tr("Fällt ein Spieler der Startelf aus, zeigt die Tabelle den besten geprüften "
+                      "Ersatzplan: Genau ein Spieler kommt dazu, die übrigen dürfen dafür ihre "
+                      "Plätze tauschen. „Wer übernimmt“ nennt, wer den frei gewordenen Platz "
+                      "besetzt. Eine Startelf-Grenze gilt weiter. Weitere Lösungen zeigt der "
                       "Tooltip."));
 
     const auto nameOf = [this](const QString &uid) {
@@ -171,19 +176,43 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
     const auto places = [twoPhase](const QPair<QString, QString> &pair) {
         return twoPhase ? tr("mit %1 · ohne %2").arg(pair.first, pair.second) : pair.first;
     };
-    const auto movesText = [&](const ReplacementPlan &plan) {
+    const auto moveText = [twoPhase](const PlaceMove &move) {
+        QStringList changes;
+        if (move.from.first != move.to.first)
+            changes << (twoPhase ? tr("mit %1 → %2").arg(move.from.first, move.to.first)
+                                 : QStringLiteral("%1 → %2").arg(move.from.first, move.to.first));
+        if (twoPhase && move.from.second != move.to.second)
+            changes << tr("ohne %1 → %2").arg(move.from.second, move.to.second);
+        return changes.join(QStringLiteral(", "));
+    };
+    // except: starters already named under "who covers".
+    const auto movesText = [&](const ReplacementPlan &plan, const QSet<QString> &except) {
         QStringList parts;
         for (const PlaceMove &move : plan.moves) {
-            QStringList changes;
-            if (move.from.first != move.to.first)
-                changes << (twoPhase ? tr("mit %1 → %2").arg(move.from.first, move.to.first)
-                                     : QStringLiteral("%1 → %2").arg(move.from.first, move.to.first));
-            if (twoPhase && move.from.second != move.to.second)
-                changes << tr("ohne %1 → %2").arg(move.from.second, move.to.second);
-            parts << QStringLiteral("%1: %2").arg(getLastName(nameOf(move.uid)),
-                                                  changes.join(QStringLiteral(", ")));
+            if (except.contains(move.uid))
+                continue;
+            parts << QStringLiteral("%1: %2").arg(getLastName(nameOf(move.uid)), moveText(move));
         }
         return parts.isEmpty() ? tr("keine") : parts.join(QStringLiteral("; "));
+    };
+    // Who holds a vacated place: the newcomer, or a starter who moved there.
+    const auto coverName = [&](const ReplacementPlan &plan, const QString &uid) {
+        if (uid.isEmpty())
+            return tr("niemand");
+        if (uid == plan.inUid)
+            return tr("%1 (kommt)").arg(getLastName(nameOf(uid)));
+        for (const PlaceMove &move : plan.moves) {
+            if (move.uid == uid)
+                return tr("%1 (rückt von %2)").arg(getLastName(nameOf(uid)), places(move.from));
+        }
+        return getLastName(nameOf(uid));
+    };
+    const auto coverText = [&](const OutageCover &cover, const ReplacementPlan &plan) {
+        if (!twoPhase || plan.coverIp == plan.coverOop)
+            return coverName(plan, plan.coverIp);
+        return tr("mit %1: %2 · ohne %3: %4")
+            .arg(cover.outSlots.first, coverName(plan, plan.coverIp), cover.outSlots.second,
+                 coverName(plan, plan.coverOop));
     };
     const auto delta = [](double value) {
         const QString text = QLocale().toString(std::abs(value), 'f', 1);
@@ -212,7 +241,7 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
         for (qsizetype i = 1; i < cover.plans.size(); ++i) {
             const ReplacementPlan &alt = cover.plans.at(i);
             alternatives << tr("%1: %2, Umstellungen: %3, Elf %4")
-                                .arg(nameOf(alt.inUid), places(alt.inSlots), movesText(alt),
+                                .arg(nameOf(alt.inUid), places(alt.inSlots), movesText(alt, {}),
                                      delta(alt.total - cover.current));
         }
         if (!alternatives.isEmpty())
@@ -220,14 +249,14 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
                                + alternatives.join(QLatin1Char('\n')));
         m_outageTable->setItem(row, column++, inItem);
 
-        QString covers;
+        QString plays;
         if (plan.inUid.isEmpty())
-            covers = tr("Platz bleibt frei");
+            plays = QStringLiteral("–");
         else if (twoPhase && plan.inSlots == cover.outSlots)
-            covers = tr("%1 (volle Bridge)").arg(places(plan.inSlots));
+            plays = tr("%1 (volle Bridge)").arg(places(plan.inSlots));
         else
-            covers = places(plan.inSlots);
-        m_outageTable->setItem(row, column++, new QTableWidgetItem(covers));
+            plays = places(plan.inSlots);
+        m_outageTable->setItem(row, column++, new QTableWidgetItem(plays));
 
         auto *valueItem = new NumericItem(
             plan.inUid.isEmpty() ? QStringLiteral("–") : QString::number(qRound(plan.inValue)),
@@ -240,11 +269,27 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
         }
         m_outageTable->setItem(row, column++, valueItem);
 
-        const double change = plan.total - cover.current;
-        auto *changeItem = new NumericItem(delta(change), change);
-        changeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        m_outageTable->setItem(row, column++, changeItem);
-        m_outageTable->setItem(row, column++, new QTableWidgetItem(movesText(plan)));
+        // Without a full eleven there is nothing fair to compare.
+        if (plan.complete) {
+            const double change = plan.total - cover.current;
+            auto *changeItem = new NumericItem(delta(change), change);
+            changeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            m_outageTable->setItem(row, column++, changeItem);
+        } else {
+            auto *changeItem = new NumericItem(tr("Keine volle Elf möglich"), -1e9);
+            changeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            m_outageTable->setItem(row, column++, changeItem);
+        }
+
+        QSet<QString> named;
+        if (plan.complete) {
+            m_outageTable->setItem(row, column++,
+                                   new QTableWidgetItem(coverText(cover, plan)));
+            named = {plan.coverIp, plan.coverOop};
+        } else {
+            m_outageTable->setItem(row, column++, new QTableWidgetItem(tr("Platz bleibt frei")));
+        }
+        m_outageTable->setItem(row, column++, new QTableWidgetItem(movesText(plan, named)));
         ++row;
     }
     m_outageTable->setSortingEnabled(true);

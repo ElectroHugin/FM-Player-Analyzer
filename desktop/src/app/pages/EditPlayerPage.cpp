@@ -117,12 +117,26 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     registrationLayout->addWidget(m_homeGrownCheck);
     registrationLayout->addWidget(m_clubTrainedCheck);
     registrationLayout->addWidget(m_nonEuCheck);
+    m_minWageExemptCheck =
+        new QCheckBox(tr("Mindestgehalt gilt nicht (z. B. Leihe)"), m_registrationBox);
+    m_minWageExemptCheck->setToolTip(
+        tr("Im Spiel registrierbar, obwohl das Gehalt unter dem Mindestgehalt liegt, z. B. "
+           "bei einer Leihe mit Gehaltsanteil. Fürs Gehaltsbudget zählt weiter das Gehalt "
+           "aus dem Export."));
+    registrationLayout->addWidget(m_minWageExemptCheck);
     auto *u21Form = new QFormLayout;
     m_u21Combo = new QComboBox(m_registrationBox);
     m_u21Combo->setToolTip(
         tr("U21-Spieler brauchen keinen Platz in der Meldeliste. Automatisch: bis 20 ja, "
            "ab 22 nein, mit 21 unklar (zählt vorsichtshalber als nicht U21)."));
     u21Form->addRow(tr("U21:"), m_u21Combo);
+    m_youthCombo = new QComboBox(m_registrationBox);
+    m_youthCombo->setToolTip(
+        tr("LaLiga: EU-Spieler, die am 1. Januar der Saison höchstens 18 sind, brauchen "
+           "keinen Platz in der Meldeliste. Automatisch nach Alter, Ingame-Datum, Nationalität "
+           "und Nicht-EU-Markierung; Ja/Nein entscheidet von Hand."));
+    u21Form->addRow(tr("U18 EU:"), m_youthCombo);
+    m_youthForm = u21Form;
     registrationLayout->addLayout(u21Form);
     adminColumn->addWidget(m_registrationBox);
     // Club-trained implies home-grown; unticking home-grown drops club-trained.
@@ -145,12 +159,27 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     tacticalTitle->setObjectName(QStringLiteral("sectionTitle"));
     tacticalLayout->addWidget(tacticalTitle);
     tacticalLayout->addWidget(new QLabel(tr("Natürliche Positionen:"), m_tacticalColumn));
+    m_manualNaturalPositions = new QCheckBox(tr("Natürliche Positionen manuell festlegen"), m_tacticalColumn);
+    m_manualNaturalPositions->setToolTip(tr("Ohne Häkchen gelten die natürlichen Positionen aus dem Spielstand. "
+                                           "Manuelle Angaben haben Vorrang und bleiben bei Importen erhalten."));
+    tacticalLayout->addWidget(m_manualNaturalPositions);
     m_naturalPositionsList = new QListWidget(m_tacticalColumn);
     m_naturalPositionsList->setMaximumHeight(120);
     m_naturalPositionsList->setToolTip(
         tr("Die Positionen, auf denen dieser Spieler am effektivsten ist "
            "(Bonus in der Kader-Berechnung)."));
     tacticalLayout->addWidget(m_naturalPositionsList);
+    connect(m_manualNaturalPositions, &QCheckBox::toggled, this, [this](bool manual) {
+        m_naturalPositionsList->setEnabled(manual);
+        const Player *player = currentPlayer();
+        if (m_updating || manual || !player)
+            return;
+        for (int i = 0; i < m_naturalPositionsList->count(); ++i) {
+            auto *item = m_naturalPositionsList->item(i);
+            item->setCheckState(player->saveNaturalPositions.contains(item->text())
+                                   ? Qt::Checked : Qt::Unchecked);
+        }
+    });
     auto *tacticalForm = new QFormLayout;
     m_primaryRoleCombo = new QComboBox(m_tacticalColumn);
     auto *primaryRoleRow = new QHBoxLayout;
@@ -164,7 +193,8 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     m_preferredSideCombo->addItem(tr("Links"), QStringLiteral("Left"));
     m_preferredSideCombo->addItem(tr("Rechts"), QStringLiteral("Right"));
     m_preferredSideCombo->setToolTip(
-        tr("Überschreibt den bevorzugten Fuß im Best-XI-Rechner bei symmetrischen Rollen."));
+        tr("Bevorzugte zentrale Seite bei gleichwertigen Zuordnungen, auch bei unterschiedlichen Rollen. "
+           "Gilt mit und ohne Ball. Der bevorzugte Fuß wird dafür nicht verwendet."));
     tacticalForm->addRow(tr("Bevorzugte Seite:"), m_preferredSideCombo);
     tacticalLayout->addLayout(tacticalForm);
     tacticalLayout->addStretch(1);
@@ -229,7 +259,7 @@ void EditPlayerPage::rebuildClubCombo()
             markers << QStringLiteral("🎯");
         if (player->agreedPlayingTime.isEmpty())
             markers << QStringLiteral("📄");
-        if (player->naturalPositions.isEmpty())
+        if (player->effectiveNaturalPositions().isEmpty())
             markers << QStringLiteral("📍");
         const QString label = markers.isEmpty()
                                   ? player->name
@@ -307,18 +337,45 @@ void EditPlayerPage::showEditor()
     m_u21Combo->addItem(tr("Nein"), static_cast<int>(PlayerRegistration::U21::No));
     m_u21Combo->setCurrentIndex(
         std::max(0, m_u21Combo->findData(static_cast<int>(player->registration.u21))));
+    // U21 matters where the league exempts U21 players and for UEFA list B.
+    const Registration::YouthRule youthRule =
+        Registration::youthRule(registrationSettings.league);
+    m_youthForm->setRowVisible(m_u21Combo, youthRule != Registration::YouthRule::U18Eu
+                                               || registrationSettings.uefa);
+    m_youthForm->setRowVisible(m_youthCombo, youthRule == Registration::YouthRule::U18Eu);
+    PlayerRegistration autoYouth = player->registration;
+    autoYouth.youth = PlayerRegistration::U21::Auto;
+    Player autoPlayer = *player;
+    autoPlayer.registration = autoYouth;
+    const Registration::U21Status autoU18 =
+        Registration::u18EuStatus(autoPlayer, registrationSettings.gameDate);
+    m_youthCombo->clear();
+    m_youthCombo->addItem(autoU18 == Registration::U21Status::Yes ? tr("Automatisch (ja)")
+                          : autoU18 == Registration::U21Status::No
+                              ? tr("Automatisch (nein)")
+                              : tr("Automatisch (unklar)"),
+                          static_cast<int>(PlayerRegistration::U21::Auto));
+    m_youthCombo->addItem(tr("Ja"), static_cast<int>(PlayerRegistration::U21::Yes));
+    m_youthCombo->addItem(tr("Nein"), static_cast<int>(PlayerRegistration::U21::No));
+    m_youthCombo->setCurrentIndex(
+        std::max(0, m_youthCombo->findData(static_cast<int>(player->registration.youth))));
+    m_minWageExemptCheck->setVisible(Registration::hasWageRules(registrationSettings.league));
+    m_minWageExemptCheck->setChecked(player->registration.minWageExempt);
 
     // Tactical profile only for own club players (legacy).
     m_tacticalColumn->setVisible(isClubPlayer);
     if (isClubPlayer) {
         m_naturalPositionsList->clear();
+        m_manualNaturalPositions->setChecked(player->naturalPositionsManual
+                                             || !player->naturalPositions.isEmpty());
+        m_naturalPositionsList->setEnabled(m_manualNaturalPositions->isChecked());
         const QSet<QString> parsed = player->parsedPositions();
         QStringList positions(parsed.cbegin(), parsed.cend());
         std::sort(positions.begin(), positions.end());
         for (const QString &position : positions) {
             auto *item = new QListWidgetItem(position, m_naturalPositionsList);
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-            item->setCheckState(player->naturalPositions.contains(position) ? Qt::Checked
+            item->setCheckState(player->effectiveNaturalPositions().contains(position) ? Qt::Checked
                                                                             : Qt::Unchecked);
         }
 
@@ -364,7 +421,8 @@ void EditPlayerPage::save()
             if (item->checkState() == Qt::Checked)
                 naturalPositions << item->text();
         }
-        updated.naturalPositions = naturalPositions;
+        updated.naturalPositionsManual = m_manualNaturalPositions->isChecked();
+        updated.naturalPositions = updated.naturalPositionsManual ? naturalPositions : QStringList();
         updated.primaryRole = m_primaryRoleCombo->currentData().toString();
         updated.preferredSide = m_preferredSideCombo->currentData().toString();
     }
@@ -376,6 +434,11 @@ void EditPlayerPage::save()
             updated.registration.nonEu = m_nonEuCheck->isChecked();
         updated.registration.u21 =
             static_cast<PlayerRegistration::U21>(m_u21Combo->currentData().toInt());
+        if (m_youthForm->isRowVisible(m_youthCombo))
+            updated.registration.youth =
+                static_cast<PlayerRegistration::U21>(m_youthCombo->currentData().toInt());
+        if (!m_minWageExemptCheck->isHidden())
+            updated.registration.minWageExempt = m_minWageExemptCheck->isChecked();
         Registration::normalize(updated.registration);
     }
 

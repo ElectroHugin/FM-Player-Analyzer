@@ -107,6 +107,14 @@ public:
     bool appendDwrsRatings(const std::vector<DwrsEntry> &entries,
                            RatingsOrigin origin = RatingsOrigin::Import);
     LatestRatings latestDwrsRatings();
+    // Streams every dwrs_latest row in (player_id, role) order — the table's
+    // primary-key order, so SQLite scans without a separate sort. Used to
+    // build both rating caches in one pass (RatingsUpdater::loadRatingCaches).
+    // Returns false with errorString() set when the query fails, so a failed
+    // read cannot pass for an empty ratings table.
+    bool forEachLatestDwrsRating(
+        const std::function<void(int playerId, const QString &role, double absolute,
+                                 double normalized)> &visit);
     // Latest ratings of just these players (queried in id chunks).
     LatestRatings latestDwrsRatings(const QList<int> &playerIds);
     // Full history for a set of players (optionally one role), ordered by
@@ -129,6 +137,12 @@ public:
     bool upsertSnapshots(const std::vector<ImportHistory::Snapshot> &snapshots);
     // Removes the monthly snapshots of these players in the month of `date`.
     bool deleteMonthSnapshots(const QList<int> &playerIds, const QDate &date);
+    // In-game date of each player's monthly snapshot for date's month.
+    QHash<int, QDate> monthSnapshotDates(const QDate &date);
+    // Remembers that an import of this in-game date contained these players.
+    bool markMonthSeen(const QList<int> &playerIds, const QDate &date);
+    // Forgets those marks for months before this date (condensed seasons).
+    bool pruneMonthSeenBefore(const QDate &before);
     // Monthly snapshots dated before `before` (condensing candidates).
     std::vector<ImportHistory::Snapshot> monthlySnapshotsBefore(const QDate &before);
     // Deletes snapshots by (player, period key).
@@ -188,9 +202,17 @@ private:
     bool migrateV9ToV10();                // communication/eccentricity columns
     bool migrateV10ToV11();               // import log + player snapshots
     bool migrateV11ToV12();               // non-EU + not-registrable flags
+    bool migrateToV14();                  // player_registration_extra (2.2.3 fields)
+    bool migrateToV15();                  // registration stash + snapshot_seen
+    bool migrateToV16();                  // imported natural positions + manual override
+    static QStringList createV15Sql();
+    // Hands parked 2.2.3 registration fields to the surviving duplicate.
+    bool reconcileRegistrationStash();
+    bool clearStash(const QList<int> &playerIds);
     static QStringList createImportHistorySql(); // shared by create + migrate paths
     static QString createDwrsLatestSql(); // shared by create + migrate paths
-    static QString createPlayerRegistrationSql(); // ditto
+    static QString createPlayerRegistrationSql();
+    static QString createPlayerRegistrationExtraSql(); // ditto
     static QString createLongTermInjuriesSql();   // ditto
     static QString createDwrsRecalcsSql();        // ditto
     std::vector<Player> loadPlayersImpl(const QList<int> *ids); // nullptr = all

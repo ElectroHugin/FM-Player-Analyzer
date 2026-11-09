@@ -40,6 +40,15 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
 // role in Best XI, gap analysis, call-ups and transfer suggestions.
 RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings &latest);
 
+// Full load of both caches in ONE pass over dwrs_latest: `latest` gets every
+// latest row (also those of roles removed since), `ratings` the same result as
+// roleRatingsForAssigned(store, latest). Rows arrive ordered by player, so each
+// player is resolved once instead of once per rating, and every role name is
+// stored once (shared) instead of once per row. Returns false with
+// db.errorString() set when the read fails; both outputs are then empty.
+bool loadRatingCaches(Database &db, const PlayerStore &store, LatestRatings &latest,
+                      RoleRatings &ratings);
+
 // Incremental form of roleRatingsForAssigned for ONE changed player: drops his
 // entries (under previousUid and his current uid) and re-adds those of his
 // currently assigned roles from `latest`. Afterwards `ratings` holds the same

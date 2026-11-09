@@ -2,6 +2,8 @@
 
 #include "AppConfig.h"
 #include "Assignment.h"
+#include "BridgeAssignment.h"
+#include "PitchGeometry.h"
 #include "MinCostFlow.h"
 #include "Constants.h"
 #include "Definitions.h"
@@ -9,6 +11,8 @@
 #include "Utils.h"
 
 #include <algorithm>
+#include <functional>
+#include <numeric>
 #include <memory>
 #include <cmath>
 #include <cstdint>
@@ -80,15 +84,6 @@ void SquadBuilder::reloadConfig()
     for (const QString &apt : gkAptOptions())
         m_aptWeights.insert(apt, m_config.aptWeight(apt));
 
-    // role -> game positions it can be played from (reverse of
-    // position_to_role_mapping), in the mapping's iteration order — only used
-    // as a set membership test, so order is irrelevant here.
-    m_roleToGamePositions.clear();
-    const auto mapping = m_definitions.positionToRoleMapping();
-    for (auto it = mapping.constBegin(); it != mapping.constEnd(); ++it) {
-        for (const QString &role : it.value())
-            m_roleToGamePositions[role].append(it.key());
-    }
 }
 
 double SquadBuilder::bestDwrsForPlayer(const Player &player, const RoleRatings &ratings)
@@ -126,7 +121,6 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
                                      const std::vector<const Player *> &available) {
         const QStringList allowedList = slotToGamePositions.value(slot);
         const QSet<QString> allowed(allowedList.begin(), allowedList.end());
-        const QStringList naturalGamePositions = m_roleToGamePositions.value(role);
         const QHash<QString, double> roleRatings = ratings.value(role);
 
         std::vector<Candidate> candidates;
@@ -145,8 +139,8 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
             const double aptWeight =
                 applyAptWeight ? m_aptWeights.value(apt, 1.0) : 1.0;
             double naturalBonus = 1.0;
-            for (const QString &np : player->naturalPositions) {
-                if (naturalGamePositions.contains(np)) {
+            for (const QString &np : player->effectiveNaturalPositions()) {
+                if (allowed.contains(np)) {
                     naturalBonus = m_naturalPosMultiplier;
                     break;
                 }
@@ -291,9 +285,10 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
             depthPool.push_back(p);
     }
 
-    // Footedness swaps on symmetrical same-role slot pairs; only EXPLICIT
-    // preferred_side counts, swap only on strict improvement.
-    const auto applyFootednessSwaps = [&](QHash<QString, XiCell> &team) {
+    // Manual central-side preferences may break a rating tie even when the
+    // roles differ. Re-evaluate both destinations, including eligibility and
+    // bonuses, and keep the displayed ratings tied to the destination role.
+    const auto applySidePreferences = [&](QHash<QString, XiCell> &team) {
         static const QList<QPair<QString, QString>> symmetricalPairs = {
             {QStringLiteral("DCL"), QStringLiteral("DCR")},
             {QStringLiteral("DMCL"), QStringLiteral("DMCR")},
@@ -315,8 +310,6 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
         for (const auto &[slotL, slotR] : symmetricalPairs) {
             if (!team.contains(slotL) || !team.contains(slotR))
                 continue;
-            if (positions.value(slotL) != positions.value(slotR))
-                continue;
             const Player *playerL = playerByUid.value(team[slotL].playerUid);
             const Player *playerR = playerByUid.value(team[slotR].playerUid);
             if (!playerL || !playerR)
@@ -327,12 +320,26 @@ SquadResult SquadBuilder::calculateSquadAndSurplus(const std::vector<const Playe
                                      + int(prefR == QLatin1String("Right"));
             const int satisfiedAfter = int(prefL == QLatin1String("Right"))
                                        + int(prefR == QLatin1String("Left"));
-            if (satisfiedAfter > satisfiedNow)
-                std::swap(team[slotL], team[slotR]);
+            if (satisfiedAfter <= satisfiedNow)
+                continue;
+            const auto leftNow = buildCandidates(slotL, positions.value(slotL), {playerL});
+            const auto rightNow = buildCandidates(slotR, positions.value(slotR), {playerR});
+            const auto leftAfter = buildCandidates(slotL, positions.value(slotL), {playerR});
+            const auto rightAfter = buildCandidates(slotR, positions.value(slotR), {playerL});
+            if (leftNow.empty() || rightNow.empty() || leftAfter.empty() || rightAfter.empty())
+                continue;
+            if (std::abs(leftNow[0].score + rightNow[0].score
+                         - leftAfter[0].score - rightAfter[0].score) > 1e-9
+                || std::abs(leftNow[0].rating + rightNow[0].rating
+                            - leftAfter[0].rating - rightAfter[0].rating) > 1e-9)
+                continue;
+            std::swap(team[slotL], team[slotR]);
+            team[slotL].rating = std::trunc(leftAfter[0].rating);
+            team[slotR].rating = std::trunc(rightAfter[0].rating);
         }
     };
-    applyFootednessSwaps(xi);
-    applyFootednessSwaps(bTeam);
+    applySidePreferences(xi);
+    applySidePreferences(bTeam);
 
     // Fill unassigned slots with the default placeholder cell.
     for (const QString &slot : slotOrder) {
@@ -601,6 +608,25 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
     }
     const Definitions::TwoPhaseTactic &lineUps = tacticIt.value();
     ipShare = std::clamp(ipShare, 0.0, 1.0);
+    const auto anchorsFor = [&](const QStringList &slotOrder) {
+        QHash<QString, QStringList> layout;
+        const auto &geometry = pitchGeometry(m_definitions.fmVersionId());
+        for (const QString &slot : slotOrder)
+            layout[geometry.slotPositions.value(slot).stratum].append(slot);
+        return slotAnchors(m_definitions.fmVersionId(), layout);
+    };
+    const auto ipAnchors = anchorsFor(lineUps.ipOrder);
+    const auto oopAnchors = anchorsFor(lineUps.oopOrder);
+    const auto preferredSide = [](const Player &player, const QString &slot) {
+        static const QStringList left{QStringLiteral("DCL"), QStringLiteral("DMCL"),
+                                      QStringLiteral("MCL"), QStringLiteral("AMCL"),
+                                      QStringLiteral("STL")};
+        static const QStringList right{QStringLiteral("DCR"), QStringLiteral("DMCR"),
+                                       QStringLiteral("MCR"), QStringLiteral("AMCR"),
+                                       QStringLiteral("STR")};
+        return int((player.preferredSide == QLatin1String("Left") && left.contains(slot))
+                   || (player.preferredSide == QLatin1String("Right") && right.contains(slot)));
+    };
 
     QHash<QString, QSet<QString>> parsedPositions;
     for (const Player *p : pool)
@@ -618,15 +644,24 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
         double score = 0.0;  // rating x playing-time weight x natural bonus
         QString apt;
     };
+    // Game positions per slot, built once per call (not per player).
+    QHash<QString, QStringList> allowedBySlot;
+    for (const QStringList *order : {&lineUps.ipOrder, &lineUps.oopOrder}) {
+        for (const QString &slot : *order) {
+            if (!allowedBySlot.contains(slot))
+                allowedBySlot.insert(slot, slot == QLatin1String("GK")
+                                               ? QStringList{QStringLiteral("GK")}
+                                               : slotToGamePositions.value(slot));
+        }
+    }
     // Score of `player` in `slot` (role from `lineUp`), or nothing if ineligible.
     const auto option = [&](const Player &player, const QString &slot,
                             const QHash<QString, QString> &lineUp,
                             const QString &phase) -> std::optional<Option> {
-        const QStringList allowedList = slot == QLatin1String("GK")
-                                            ? QStringList{QStringLiteral("GK")}
-                                            : slotToGamePositions.value(slot);
-        const QSet<QString> allowed(allowedList.begin(), allowedList.end());
-        if (!parsedPositions[player.uid].intersects(allowed))
+        const QSet<QString> &own = parsedPositions[player.uid];
+        const QStringList &allowed = allowedBySlot[slot];
+        if (std::none_of(allowed.cbegin(), allowed.cend(),
+                         [&](const QString &position) { return own.contains(position); }))
             return std::nullopt;
         const QString role = lineUp.value(slot);
         if (pinnedOut(player, role, phase))
@@ -640,9 +675,8 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
                                                    : player.agreedPlayingTime;
         const double aptWeight = applyAptWeight ? m_aptWeights.value(o.apt, 1.0) : 1.0;
         double naturalBonus = 1.0;
-        const QStringList naturalGamePositions = m_roleToGamePositions.value(role);
-        for (const QString &np : player.naturalPositions) {
-            if (naturalGamePositions.contains(np)) {
+        for (const QString &np : player.effectiveNaturalPositions()) {
+            if (allowed.contains(np)) {
                 naturalBonus = m_naturalPosMultiplier;
                 break;
             }
@@ -660,7 +694,7 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
     using Bridges = QHash<QString, QPair<QString, QString>>;
     const auto pickTeam = [&](const std::vector<const Player *> &available,
                               QHash<QString, XiCell> &ipTeam, QHash<QString, XiCell> &oopTeam,
-                              const Bridges &fixed, const XiLimit &limit) {
+                              const Bridges &fixed, const XiLimit &limit, double &bridgeLoss) {
         QSet<QString> fixedIp, fixedOop;
         for (auto it = fixed.cbegin(); it != fixed.cend(); ++it) {
             if (!it->first.isEmpty())
@@ -797,9 +831,21 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
         const std::vector<std::vector<int>> &ipEdge = solved.ipEdge;
         const std::vector<std::vector<int>> &oopEdge = solved.oopEdge;
 
-        QSet<QString> taken;
+        std::vector<int> selected;
+        std::vector<BridgeAssignment::Option> original;
+        std::vector<std::vector<BridgeAssignment::Option>> bridgeOptions;
+        const auto bridgeOption = [&](int p, int ip, int oop) {
+            const Option &withBall = *ipOpt[p][ip];
+            const Option &withoutBall = *oopOpt[p][oop];
+            const QPointF delta = ipAnchors.value(ipSlots[ip]) - oopAnchors.value(oopSlots[oop]);
+            return BridgeAssignment::Option{
+                ip, oop,
+                ipShare * withBall.rating + (1.0 - ipShare) * withoutBall.rating,
+                ipShare * withBall.score + (1.0 - ipShare) * withoutBall.score,
+                preferredSide(*available[p], ipSlots[ip]) + preferredSide(*available[p], oopSlots[oop]),
+                std::hypot(delta.x() * 68.0, delta.y() * 105.0)};
+        };
         for (int p = 0; p < nPlayers; ++p) {
-            const Player &player = *available[static_cast<size_t>(p)];
             int ipK = -1;
             int oopJ = -1;
             for (int k = 0; k < nIp; ++k) {
@@ -814,6 +860,27 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
             }
             if (ipK < 0 || oopJ < 0)
                 continue;
+            selected.push_back(p);
+            original.push_back(bridgeOption(p, ipK, oopJ));
+            std::vector<BridgeAssignment::Option> choices;
+            for (int ip = 0; ip < nIp; ++ip) {
+                if (!ipOpt[p][ip])
+                    continue;
+                for (int oop = 0; oop < nOop; ++oop) {
+                    if (oopOpt[p][oop])
+                        choices.push_back(bridgeOption(p, ip, oop));
+                }
+            }
+            bridgeOptions.push_back(std::move(choices));
+        }
+        const auto refined = BridgeAssignment::refine(bridgeOptions, original, nIp, nOop,
+                                                       m_config.bridgeTolerance());
+        QSet<QString> taken;
+        for (size_t index = 0; index < selected.size(); ++index) {
+            const int p = selected[index];
+            const Player &player = *available[p];
+            const int ipK = refined[index].ip, oopJ = refined[index].oop;
+            bridgeLoss += original[index].rating - refined[index].rating;
             const Option &ipO = *ipOpt[static_cast<size_t>(p)][static_cast<size_t>(ipK)];
             const Option &oopO = *oopOpt[static_cast<size_t>(p)][static_cast<size_t>(oopJ)];
             const auto cell = [&](const Option &o) {
@@ -848,8 +915,9 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
     };
 
     const std::vector<const Player *> afterXi =
-        pickTeam(pool, result.startingIp, result.startingOop, fixedBridges, xiLimit);
-    result.depthPool = pickTeam(afterXi, result.bTeamIp, result.bTeamOop, {}, {});
+        pickTeam(pool, result.startingIp, result.startingOop, fixedBridges, xiLimit,
+                 result.startingBridgeLoss);
+    result.depthPool = pickTeam(afterXi, result.bTeamIp, result.bTeamOop, {}, {}, result.bTeamBridgeLoss);
     return result;
 }
 
@@ -866,7 +934,8 @@ double SquadBuilder::startingValue(const TwoPhaseSquadResult &squad)
 QList<OutageCover> SquadBuilder::replacementPlans(const std::vector<const Player *> &pool,
                                                   const QString &tactic,
                                                   const RoleRatings &ratings, bool applyAptWeight,
-                                                  const Bridges &fixedBridges, int maxPlans) const
+                                                  const Bridges &fixedBridges,
+                                                  const XiLimit &xiLimit, int maxPlans) const
 {
     QList<OutageCover> covers;
     const bool twoPhase = m_definitions.isTwoPhaseTactic(tactic);
@@ -887,8 +956,8 @@ QList<OutageCover> SquadBuilder::replacementPlans(const std::vector<const Player
                                 const Bridges &fixed) {
         Xi xi;
         if (twoPhase) {
-            const TwoPhaseSquadResult r =
-                calculateTwoPhaseSquad(players, tactic, ratings, ipShare, applyAptWeight, fixed);
+            const TwoPhaseSquadResult r = calculateTwoPhaseSquad(
+                players, tactic, ratings, ipShare, applyAptWeight, fixed, xiLimit);
             for (const XiCell &cell : r.startingIp) {
                 if (!cell.isFilled())
                     continue;
@@ -898,7 +967,7 @@ QList<OutageCover> SquadBuilder::replacementPlans(const std::vector<const Player
             xi.total = startingValue(r);
         } else {
             const SquadResult r = calculateSquadAndSurplus(players, positions, slotOrder,
-                                                           ratings, applyAptWeight);
+                                                           ratings, applyAptWeight, xiLimit);
             for (auto it = r.startingXi.cbegin(); it != r.startingXi.cend(); ++it) {
                 if (!it->isFilled())
                     continue;
@@ -924,6 +993,38 @@ QList<OutageCover> SquadBuilder::replacementPlans(const std::vector<const Player
     for (const Player *p : pool) {
         if (!current.places.contains(p->uid))
             bench.push_back(p);
+    }
+    // Upper bound of a player's value in any place of the tactic (his best
+    // role DWRS per line-up over the slots his positions allow): no plan
+    // can beat the sum.
+    QHash<QString, double> upperBound;
+    {
+        const auto &slotToGamePositions = tacticalSlotToGamePositions(m_definitions.fmVersionId());
+        QHash<QString, QSet<QString>> allowedOf;
+        const auto bestOf = [&](const QString &uid, const QSet<QString> &own,
+                                const QHash<QString, QString> &lineUp) {
+            double best = 0.0;
+            for (auto it = lineUp.cbegin(); it != lineUp.cend(); ++it) {
+                auto allowed = allowedOf.constFind(it.key());
+                if (allowed == allowedOf.cend()) {
+                    const QStringList list = it.key() == QLatin1String("GK")
+                                                 ? QStringList{QStringLiteral("GK")}
+                                                 : slotToGamePositions.value(it.key());
+                    allowed = allowedOf.insert(it.key(), QSet<QString>(list.begin(), list.end()));
+                }
+                if (own.intersects(*allowed))
+                    best = std::max(best, ratings.value(it.value()).value(uid, 0.0));
+            }
+            return best;
+        };
+        const auto &lineUps = m_definitions.twoPhaseTactics().value(tactic);
+        for (const Player *p : pool) {
+            const QSet<QString> own = parsePositionString(p->positionRaw);
+            upperBound.insert(p->uid,
+                              twoPhase ? ipShare * bestOf(p->uid, own, lineUps.ip)
+                                             + (1.0 - ipShare) * bestOf(p->uid, own, lineUps.oop)
+                                       : bestOf(p->uid, own, positions));
+        }
     }
 
     // Starters in pitch order of the line-up with ball.
@@ -963,12 +1064,41 @@ QList<OutageCover> SquadBuilder::replacementPlans(const std::vector<const Player
                 if (from != to)
                     plan.moves.append({uid, from, to});
             }
+            for (auto it = xi.places.cbegin(); it != xi.places.cend(); ++it) {
+                if (it->first == cover.outSlots.first)
+                    plan.coverIp = it.key();
+                if (it->second == cover.outSlots.second)
+                    plan.coverOop = it.key();
+            }
             plan.complete = !inUid.isEmpty();
             return plan;
         };
 
-        QList<ReplacementPlan> plans;
-        for (const Player *candidate : bench) {
+        // Candidates by their upper bound, best first: once maxPlans complete
+        // plans are found, nobody whose bound is below the weakest of them
+        // can make the list (exact; ties are still evaluated).
+        double restBound = 0.0;
+        for (const QString &uid : std::as_const(rest))
+            restBound += upperBound.value(uid);
+        std::vector<int> order(bench.size());
+        std::iota(order.begin(), order.end(), 0);
+        std::stable_sort(order.begin(), order.end(), [&](int a, int b) {
+            return upperBound.value(bench[static_cast<size_t>(a)]->uid)
+                   > upperBound.value(bench[static_cast<size_t>(b)]->uid);
+        });
+        struct Ranked {
+            ReplacementPlan plan;
+            int benchIndex = 0;
+        };
+        QList<Ranked> ranked;
+        std::vector<double> bestTotals; // complete plans found, best first
+        const Bridges restBridges = twoPhase ? bridgesFor(rest) : Bridges();
+        for (const int index : order) {
+            const Player *candidate = bench[static_cast<size_t>(index)];
+            if (static_cast<int>(bestTotals.size()) >= maxPlans
+                && restBound + upperBound.value(candidate->uid)
+                       < bestTotals[static_cast<size_t>(maxPlans - 1)] - 1e-6)
+                break;
             QSet<QString> uids = rest;
             uids.insert(candidate->uid);
             std::vector<const Player *> trial;
@@ -976,26 +1106,40 @@ QList<OutageCover> SquadBuilder::replacementPlans(const std::vector<const Player
                 if (uids.contains(p->uid))
                     trial.push_back(p);
             }
-            Xi xi = startingXi(trial, twoPhase ? bridgesFor(rest) : Bridges());
+            Xi xi = startingXi(trial, restBridges);
             // Exactly one extra player: he and every remaining starter play.
             if (xi.places.size() != uids.size())
                 continue;
-            if (twoPhase) {
+            bool anyMove = false;
+            for (const QString &uid : std::as_const(rest))
+                anyMove |= xi.places.value(uid) != current.places.value(uid);
+            if (twoPhase && anyMove) {
                 // Among equally good line-ups, the one where nobody else moves
                 // (e.g. not a centre-back swapping sides for no gain).
-                Bridges stay = bridgesFor(rest);
+                Bridges stay = restBridges;
                 for (const QString &uid : std::as_const(rest))
                     stay.insert(uid, current.places.value(uid));
                 const Xi still = startingXi(trial, stay);
                 if (still.places.size() == uids.size() && still.total >= xi.total - 1e-6)
                     xi = still;
             }
-            plans.append(planFrom(xi, candidate->uid));
+            ranked.append({planFrom(xi, candidate->uid), index});
+            bestTotals.insert(std::upper_bound(bestTotals.begin(), bestTotals.end(), xi.total,
+                                               std::greater<double>()),
+                              xi.total);
         }
-        std::stable_sort(plans.begin(), plans.end(),
-                         [](const ReplacementPlan &a, const ReplacementPlan &b) {
-                             return a.total > b.total + 1e-9;
-                         });
+        // Best whole-XI value first; on a tie the plan that moves fewer
+        // starters; otherwise the bench order.
+        std::sort(ranked.begin(), ranked.end(), [](const Ranked &a, const Ranked &b) {
+            if (std::abs(a.plan.total - b.plan.total) > 1e-6)
+                return a.plan.total > b.plan.total;
+            if (a.plan.moves.size() != b.plan.moves.size())
+                return a.plan.moves.size() < b.plan.moves.size();
+            return a.benchIndex < b.benchIndex;
+        });
+        QList<ReplacementPlan> plans;
+        for (const Ranked &r : std::as_const(ranked))
+            plans.append(r.plan);
         if (plans.size() > maxPlans)
             plans.resize(std::max(1, maxPlans));
         if (plans.isEmpty()) {
@@ -1036,21 +1180,25 @@ QList<BridgeOption> SquadBuilder::bridgeOptions(const std::vector<const Player *
         if (slot == oldSlot)
             continue;
         Bridges trial = fixed;
-        auto own = trial.value(uid, {mine->first, mine->second});
+        auto own = *mine;
         (ipPhase ? own.first : own.second) = slot;
-        trial.insert(uid, own);
         // Whoever holds the slot moves to the player's old one (a swap).
         const QString other = team.value(slot).playerUid;
         if (!other.isEmpty()) {
             auto theirs = current.slotsOfUid.value(other);
+            // Swap the same two players in both phases; roles stay at their slots.
+            (ipPhase ? own.second : own.first) = ipPhase ? theirs.second : theirs.first;
+            (ipPhase ? theirs.second : theirs.first) = ipPhase ? mine->second : mine->first;
             (ipPhase ? theirs.first : theirs.second) = oldSlot;
             trial.insert(other, theirs);
         }
+        trial.insert(uid, own);
         const TwoPhaseSquadResult result =
             calculateTwoPhaseSquad(pool, tactic, ratings, ipShare, applyAptWeight, trial);
         const auto placed = result.slotsOfUid.constFind(uid);
         if (placed == result.slotsOfUid.cend()
-            || (ipPhase ? placed->first : placed->second) != slot)
+            || *placed != own
+            || (!other.isEmpty() && result.slotsOfUid.value(other) != trial.value(other)))
             continue; // not possible (position missing)
         BridgeOption option;
         option.slot = slot;

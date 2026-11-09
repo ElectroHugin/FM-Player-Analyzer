@@ -7,6 +7,7 @@
 #include <QSet>
 
 #include <algorithm>
+#include <limits>
 #include <optional>
 
 namespace fm {
@@ -108,6 +109,32 @@ int nonEuLimit(LeagueRules rules)
     }
 }
 
+YouthRule youthRule(LeagueRules rules)
+{
+    switch (rules) {
+    case LeagueRules::PremierLeague:
+    case LeagueRules::UkrainianPremierLeague:
+        return YouthRule::U21;
+    case LeagueRules::LaLiga:
+        return YouthRule::U18Eu;
+    default:
+        return YouthRule::None;
+    }
+}
+
+QString youthLabel(YouthRule rule)
+{
+    switch (rule) {
+    case YouthRule::U21:
+        return QStringLiteral("U21");
+    case YouthRule::U18Eu:
+        return QStringLiteral("U18 EU");
+    case YouthRule::None:
+        break;
+    }
+    return {};
+}
+
 int nonEuStartingLimit(LeagueRules rules)
 {
     return rules == LeagueRules::SwissSuperLeague ? 5 : 0;
@@ -167,6 +194,66 @@ bool expireU21Override(PlayerRegistration &registration, int oldAge, int newAge)
     return true;
 }
 
+U21Status u18StatusByAge(int age, const QDate &gameDate)
+{
+    if (age <= 0)
+        return U21Status::Uncertain;
+    // The cut-off is 1 January within the season (seasons start mid-year):
+    // from January on the player's age then is his age now or one less.
+    const bool pastCutoff = gameDate.isValid() && gameDate.month() < 7;
+    const bool beforeCutoff = gameDate.isValid() && !pastCutoff;
+    if (age <= 17)
+        return U21Status::Yes;
+    if (age == 18)
+        return pastCutoff ? U21Status::Yes : U21Status::Uncertain;
+    if (age == 19)
+        return beforeCutoff ? U21Status::No : U21Status::Uncertain;
+    return U21Status::No;
+}
+
+bool hasEuNationality(const Player &player)
+{
+    // EU member states plus the EEA (Iceland, Liechtenstein, Norway).
+    static const QSet<QString> eu = {
+        QStringLiteral("AUT"), QStringLiteral("BEL"), QStringLiteral("BUL"), QStringLiteral("CRO"),
+        QStringLiteral("CYP"), QStringLiteral("CZE"), QStringLiteral("DEN"), QStringLiteral("EST"),
+        QStringLiteral("FIN"), QStringLiteral("FRA"), QStringLiteral("GER"), QStringLiteral("GRE"),
+        QStringLiteral("HUN"), QStringLiteral("IRL"), QStringLiteral("ITA"), QStringLiteral("LVA"),
+        QStringLiteral("LTU"), QStringLiteral("LUX"), QStringLiteral("MLT"), QStringLiteral("NED"),
+        QStringLiteral("POL"), QStringLiteral("POR"), QStringLiteral("ROU"), QStringLiteral("SVK"),
+        QStringLiteral("SVN"), QStringLiteral("ESP"), QStringLiteral("SWE"), QStringLiteral("ISL"),
+        QStringLiteral("LIE"), QStringLiteral("NOR"),
+    };
+    return eu.contains(player.nationality.trimmed().toUpper())
+           || eu.contains(player.secondNationality.trimmed().toUpper());
+}
+
+U21Status u18EuStatus(const Player &player, const QDate &gameDate)
+{
+    switch (player.registration.youth) {
+    case PlayerRegistration::U21::Yes:
+        return U21Status::Yes;
+    case PlayerRegistration::U21::No:
+        return U21Status::No;
+    case PlayerRegistration::U21::Auto:
+        break;
+    }
+    if (player.registration.nonEu)
+        return U21Status::No;
+    const U21Status byAge = u18StatusByAge(player.age, gameDate);
+    if (byAge == U21Status::Yes && !hasEuNationality(player))
+        return U21Status::Uncertain;
+    return byAge;
+}
+
+bool expireYouthOverride(PlayerRegistration &registration, int oldAge, int newAge)
+{
+    if (registration.youth == PlayerRegistration::U21::Auto || newAge <= oldAge || newAge < 20)
+        return false;
+    registration.youth = PlayerRegistration::U21::Auto;
+    return true;
+}
+
 QString expiredU21SettingKey()
 {
     return QStringLiteral("registration_u21_expired");
@@ -192,6 +279,24 @@ bool isListBEligible(const Player &player)
     return isU21(player) && isClubTrained(player);
 }
 
+void mergeInto(PlayerRegistration &good, const PlayerRegistration &bad)
+{
+    PlayerRegistration goodBase = good;
+    goodBase.youth = PlayerRegistration::U21::Auto;
+    goodBase.minWageExempt = false;
+    if (goodBase.isDefault()) {
+        const PlayerRegistration::U21 youth = good.youth;
+        const bool minWageExempt = good.minWageExempt;
+        good = bad;
+        good.youth = youth;
+        good.minWageExempt = minWageExempt;
+    }
+    if (good.youth == PlayerRegistration::U21::Auto && !good.minWageExempt) {
+        good.youth = bad.youth;
+        good.minWageExempt = bad.minWageExempt;
+    }
+}
+
 void normalize(PlayerRegistration &registration)
 {
     if (registration.clubTrained)
@@ -212,36 +317,37 @@ Quota quotaFor(Competition competition, const Settings &settings)
     // Size and the trained-in-country (home-grown) / club-trained minimums
     // become nested maximums: e.g. 25 places with at least 8 home-grown, 4 of
     // them club-trained = at most 17 non-home-grown and 21 non-club-trained.
-    const auto set = [&quota](int size, int minHomeGrown, int minClubTrained, bool u21Exempt) {
+    const auto set = [&quota, &settings](int size, int minHomeGrown, int minClubTrained) {
         quota.maxSize = size;
         quota.maxNonHomeGrown = size - minHomeGrown;
         quota.maxNonClubTrained = size - minClubTrained;
-        quota.u21Exempt = u21Exempt;
+        quota.youth = youthRule(settings.league);
     };
+    quota.gameDate = settings.gameDate;
     switch (settings.league) {
     case LeagueRules::PremierLeague:
-        set(25, 8, 0, true); // U21 need no slot
+        set(25, 8, 0); // U21 need no slot
         break;
     case LeagueRules::LaLiga:
-        set(25, 0, 0, false); // U19-EU exemption not modelled
+        set(25, 0, 0); // EU players aged 18 or younger need no slot
         break;
     case LeagueRules::SerieA:
-        set(25, 8, 4, false);
+        set(25, 8, 4);
         break;
     case LeagueRules::LigaPortugal:
-        set(68, 10, 0, false); // clubs with a B team; without one not documented
+        set(68, 10, 0); // clubs with a B team; without one not documented
         break;
     case LeagueRules::SwissSuperLeague:
-        set(25, 8, 0, false);
+        set(25, 8, 0);
         break;
     case LeagueRules::RussianPremierLiga:
-        set(55, 8, 4, false); // foreigner limit and domestic U18 exemption not modelled
+        set(55, 8, 4); // foreigner limit and domestic U18 exemption not modelled
         break;
     case LeagueRules::UkrainianPremierLeague:
-        set(25, 8, 4, true); // U21 need no slot
+        set(25, 8, 4); // U21 need no slot
         break;
     case LeagueRules::SuperLig:
-        set(28, 0, 0, false); // foreigner limits and domestic U21 exemption not modelled
+        set(28, 0, 0); // foreigner limits and domestic U21 exemption not modelled
         break;
     case LeagueRules::Bundesliga:
     case LeagueRules::Ligue1:
@@ -278,7 +384,7 @@ double weeklyWage(const Player &player)
 
 bool belowMinWage(const Player &player, const Quota &quota)
 {
-    if (quota.minWage <= 0.0)
+    if (quota.minWage <= 0.0 || player.registration.minWageExempt)
         return false;
     const double wage = wageToWeekly(player.wageRaw);
     // FM prints rounded wages ("€12K"): allow half a percent below the line.
@@ -325,11 +431,24 @@ bool isExempt(const Player &player, Competition competition)
     return competition == Competition::Uefa ? isListBEligible(player) : isU21(player);
 }
 
+U21Status youthStatus(const Player &player, const Quota &quota)
+{
+    switch (quota.youth) {
+    case YouthRule::U21:
+        return u21Status(player);
+    case YouthRule::U18Eu:
+        return u18EuStatus(player, quota.gameDate);
+    case YouthRule::None:
+        break;
+    }
+    return U21Status::No;
+}
+
 bool isExempt(const Player &player, Competition competition, const Quota &quota)
 {
     if (competition == Competition::Uefa)
         return isListBEligible(player);
-    return quota.u21Exempt && isU21(player);
+    return youthStatus(player, quota) == U21Status::Yes;
 }
 
 Category category(const Player &player)
@@ -417,51 +536,84 @@ void improveWithinBudget(std::vector<const RankedPlayer *> &listed,
                          const std::vector<const RankedPlayer *> &candidates,
                          const Quota &quota, int exemptKeepers)
 {
-    const auto keepersOf = [](const std::vector<const RankedPlayer *> &list) {
-        int keepers = 0;
-        for (const RankedPlayer *e : list)
-            keepers += e->player->isGoalkeeper() ? 1 : 0;
-        return keepers;
+    // Everything the search needs per player, worked out once: the inner
+    // loops below only add numbers (wage texts were re-parsed per pair).
+    struct Item {
+        int nonHomeGrown = 0, nonClubTrained = 0, keeper = 0, nonEu = 0;
+        double wage = 0.0, value = 0.0;
+        bool movable = true; // may leave the list (no starter, no promise)
     };
+    QHash<const RankedPlayer *, Item> items;
+    const auto itemOf = [&](const RankedPlayer *e) -> const Item & {
+        auto it = items.find(e);
+        if (it != items.end())
+            return *it;
+        Item item;
+        const Category cat = category(*e->player);
+        item.nonHomeGrown = cat == Category::NonHomeGrown ? 1 : 0;
+        item.nonClubTrained = cat != Category::ClubTrained ? 1 : 0;
+        item.keeper = e->player->isGoalkeeper() ? 1 : 0;
+        item.nonEu = countsAsNonEu(*e->player, quota) ? 1 : 0;
+        item.wage = weeklyWage(*e->player);
+        item.value = registrationValue(*e);
+        // Starters stay: two cheaper players never make up for a weaker XI.
+        item.movable = !hasPromisedPlayingTime(*e->player) && e->tier != Tier::StartingXi;
+        return *items.insert(e, item);
+    };
+    // Fill the table up front: later lookups never insert, so references
+    // into it stay valid.
+    items.reserve(static_cast<qsizetype>(listed.size() + candidates.size()));
+    for (const RankedPlayer *e : listed)
+        itemOf(e);
+    for (const RankedPlayer *e : candidates)
+        itemOf(e);
+
+    int listedKeepers = 0;
+    for (const RankedPlayer *e : listed)
+        listedKeepers += itemOf(e).keeper;
     const int keeperFloor =
-        std::min(quota.minGoalkeepers, keepersOf(listed) + exemptKeepers) - exemptKeepers;
+        std::min(quota.minGoalkeepers, listedKeepers + exemptKeepers) - exemptKeepers;
 
     struct Totals {
         int size = 0, nonHomeGrown = 0, nonClubTrained = 0, keepers = 0, nonEu = 0;
         double wage = 0.0, value = 0.0;
     };
-    const auto add = [&quota](Totals &t, const RankedPlayer *e, int sign) {
+    const auto add = [](Totals &t, const Item &item, int sign) {
         t.size += sign;
-        if (countsAsNonEu(*e->player, quota))
-            t.nonEu += sign;
-        const Category cat = category(*e->player);
-        if (cat == Category::NonHomeGrown)
-            t.nonHomeGrown += sign;
-        if (cat != Category::ClubTrained)
-            t.nonClubTrained += sign;
-        if (e->player->isGoalkeeper())
-            t.keepers += sign;
-        t.wage += sign * weeklyWage(*e->player);
-        t.value += sign * registrationValue(*e);
+        t.nonEu += sign * item.nonEu;
+        t.nonHomeGrown += sign * item.nonHomeGrown;
+        t.nonClubTrained += sign * item.nonClubTrained;
+        t.keepers += sign * item.keeper;
+        t.wage += sign * item.wage;
+        t.value += sign * item.value;
     };
-    const auto fits = [&quota, keeperFloor](const Totals &t) {
+    const double wageLimit = quota.wageBudget + 0.01;
+    const auto fits = [&quota, keeperFloor, wageLimit](const Totals &t) {
         return t.size <= quota.maxSize && t.nonHomeGrown <= quota.maxNonHomeGrown
                && t.nonClubTrained <= quota.maxNonClubTrained
                && (quota.maxNonEu <= 0 || t.nonEu <= quota.maxNonEu)
-               && t.wage <= quota.wageBudget + 0.01 && t.keepers >= keeperFloor;
+               && t.wage <= wageLimit && t.keepers >= keeperFloor;
     };
 
     for (int round = 0; round < 200; ++round) {
         Totals base;
-        for (const RankedPlayer *e : listed)
-            add(base, e, +1);
         QSet<const Player *> inList;
-        for (const RankedPlayer *e : listed)
+        for (const RankedPlayer *e : listed) {
+            add(base, itemOf(e), +1);
             inList.insert(e->player);
+        }
         std::vector<const RankedPlayer *> rest;
-        for (const RankedPlayer *e : candidates)
-            if (!inList.contains(e->player) && !belowMinWage(*e->player, quota))
-                rest.push_back(e);
+        std::vector<const Item *> restItems;
+        double maxRestValue = 0.0, minRestWage = std::numeric_limits<double>::max();
+        for (const RankedPlayer *e : candidates) {
+            if (inList.contains(e->player) || belowMinWage(*e->player, quota))
+                continue;
+            const Item &item = itemOf(e);
+            rest.push_back(e);
+            restItems.push_back(&item);
+            maxRestValue = std::max(maxRestValue, item.value);
+            minRestWage = std::min(minRestWage, item.wage);
+        }
         if (rest.empty())
             return;
 
@@ -470,27 +622,35 @@ void improveWithinBudget(std::vector<const RankedPlayer *> &listed,
         const int listedCount = static_cast<int>(listed.size());
         const int restCount = static_cast<int>(rest.size());
         for (int out = -1; out < listedCount; ++out) {
-            // Starters stay: two cheaper players never make up for a weaker XI.
-            if (out >= 0
-                && (hasPromisedPlayingTime(*listed[static_cast<size_t>(out)]->player)
-                    || listed[static_cast<size_t>(out)]->tier == Tier::StartingXi))
-                continue;
             Totals afterOut = base;
-            if (out >= 0)
-                add(afterOut, listed[static_cast<size_t>(out)], -1);
+            if (out >= 0) {
+                const Item &leaving = itemOf(listed[static_cast<size_t>(out)]);
+                if (!leaving.movable)
+                    continue;
+                add(afterOut, leaving, -1);
+            }
             for (int in1 = 0; in1 < restCount; ++in1) {
                 Totals one = afterOut;
-                add(one, rest[static_cast<size_t>(in1)], +1);
-                if (one.wage > quota.wageBudget + 0.01)
+                add(one, *restItems[static_cast<size_t>(in1)], +1);
+                if (one.wage > wageLimit)
                     continue; // too expensive alone; a second player only costs more
                 if (fits(one) && one.value - base.value > bestGain) {
                     bestGain = one.value - base.value;
                     bestOut = out, bestIn1 = in1, bestIn2 = -1;
                 }
+                // A second player: only while there is a place and money for
+                // the cheapest one, and the best one could still beat the gain.
+                if (one.size + 1 > quota.maxSize || one.wage + minRestWage > wageLimit
+                    || one.value + maxRestValue - base.value <= bestGain)
+                    continue;
                 for (int in2 = in1 + 1; in2 < restCount; ++in2) {
+                    const Item &second = *restItems[static_cast<size_t>(in2)];
+                    if (one.wage + second.wage > wageLimit
+                        || one.value + second.value - base.value <= bestGain)
+                        continue;
                     Totals two = one;
-                    add(two, rest[static_cast<size_t>(in2)], +1);
-                    if (fits(two) && two.value - base.value > bestGain) {
+                    add(two, second, +1);
+                    if (fits(two)) {
                         bestGain = two.value - base.value;
                         bestOut = out, bestIn1 = in1, bestIn2 = in2;
                     }

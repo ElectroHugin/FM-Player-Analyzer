@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDate>
+#include <QHash>
 #include <QList>
 #include <QString>
 #include <QStringList>
@@ -19,6 +20,9 @@ struct ImportTable {
     // UIDs of players the user's scouting knows (FM27 save): followed by the
     // import history like the own squad (see ImportHistory).
     QStringList knownUids;
+    // Save-only metadata. Presence means the save supplied the information,
+    // including an empty list; CSV/HTML leave existing save information intact.
+    QHash<QString, QStringList> naturalPositionsByUid;
 };
 
 // Why reading or importing an export failed. The core keeps an English

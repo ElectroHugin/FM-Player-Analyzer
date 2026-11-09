@@ -229,15 +229,15 @@ private slots:
         const double bad = TalentEngine::calculateTalentScore(
             defs, 60.0, 17.0, 15.0, 14.0, QStringLiteral("Slack"), 20.0);
         QCOMPARE(bad, 63.25);
-        // Masked ranges count as 0 (legacy parity).
+        // Masked ranges use midpoint; an unknown attribute is neutral.
         Player p;
         p.age = 17;
         p.personality = QStringLiteral("Balanced");
         const int det = idx(Attr::Determination);
         p.attrLo[det] = 12;
-        p.attrHi[det] = 15; // masked -> 0
+        p.attrHi[det] = 15; // masked -> 13.5
         const double withRange = TalentEngine::talentForPlayer(defs, p, 50.0, 20.0);
-        QCOMPARE(withRange, 50.0 + 2.0 * 3.0 + (0.0 + 0.0 - 20.0) / 4.0);
+        QCOMPARE(withRange, 50.0 + 2.0 * 3.0 + (13.5 + 10.0 - 20.0) / 4.0);
     }
 
     void batchMatchesScalar()

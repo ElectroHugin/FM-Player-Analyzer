@@ -4,6 +4,7 @@
 #include "core/Utils.h"
 
 #include <QApplication>
+#include <QWidget>
 #include <QDir>
 #include <QFile>
 #include <QPainter>
@@ -171,7 +172,20 @@ void ThemeManager::apply()
         != QLatin1String("false");
     m_headerPalette = clubHeaderPalette(m_primary, m_interactive, m_sidebar);
 
-    qApp->setStyleSheet(buildStyleSheet());
+    const QString styleSheet = buildStyleSheet();
+    // Reapplying identical QSS repolishes every widget, including large hidden tables.
+    if (qApp->styleSheet() != styleSheet) {
+        QList<QWidget *> updates;
+        for (QWidget *window : QApplication::topLevelWidgets()) {
+            if (window->updatesEnabled()) {
+                updates.append(window);
+                window->setUpdatesEnabled(false);
+            }
+        }
+        qApp->setStyleSheet(styleSheet);
+        for (QWidget *window : updates)
+            window->setUpdatesEnabled(true);
+    }
     emit themeChanged();
 }
 
@@ -210,6 +224,7 @@ QString ThemeManager::buildStyleSheet() const
     const QString check = checkMark(QColor(interactiveText));
     const QString sidebarHover = rgba(m_text, night ? 0.07 : 0.06);
 
+    // In parts: MSVC limits a single string literal to about 16,000 characters.
     QString qss = QStringLiteral(R"(
 /* ===== Base ===== */
 QMainWindow, QDialog, QWizard { background-color: %BG%; color: %FG%; }
@@ -222,6 +237,8 @@ QLabel#cardTitle { font-size: 10.5pt; font-weight: 600; }
 QStackedWidget, QScrollArea, QScrollArea > QWidget > QWidget { background-color: %BG%; }
 QSplitter::handle { background: transparent; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Sidebar ===== */
 QFrame#sidebar { background-color: %SIDEBAR%; border-right: 1px solid %BORDER%; }
 QFrame#sidebar QListWidget { background: transparent; border: none; outline: none; }
@@ -240,6 +257,8 @@ QFrame#sidebar QToolButton#creditButton {
     background: transparent; border: none; color: %MUTED%; font-size: 8.5pt; padding: 2px 6px; }
 QFrame#sidebar QToolButton#creditButton:hover { color: %FG%; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Header bar ===== */
 QFrame#headerBar { background-color: %HEADER%; border-bottom: 1px solid %BORDER%; }
 QFrame#headerBar QLabel { color: %HEADERTEXT%; }
@@ -249,6 +268,8 @@ QFrame#headerBar QToolButton#navButton:pressed { background-color: %INTERACTIVES
 QFrame#headerBar QToolButton#navButton:disabled {
     color: %MUTED%; background: transparent; border-color: %BORDER%; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Cards ===== */
 QFrame#kpiTile, QFrame#suggestionCard {
     background-color: %SURFACE%; border: 1px solid %BORDER%; border-radius: 10px; }
@@ -267,6 +288,8 @@ QFrame#ipSwatch, QFrame#oopSwatch { border-radius: 3px; }
 QFrame#ipSwatch { background-color: %IPMARK%; }
 QFrame#oopSwatch { background-color: %OOPMARK%; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Buttons ===== */
 QPushButton {
     background-color: %SURFACE%; color: %FG%; border: 1px solid %BORDER%;
@@ -284,6 +307,8 @@ QToolButton:hover { background-color: %HOVER%; border-color: %ACCENTUI%; }
 QToolButton::menu-indicator { image: url(%CHEVRON%); width: 12px; height: 12px;
     subcontrol-position: right center; subcontrol-origin: padding; right: 6px; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Inputs ===== */
 QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QDateEdit, QTextEdit, QPlainTextEdit {
     background-color: %SURFACE%; color: %FG%; border: 1px solid %BORDER%;
@@ -305,6 +330,8 @@ QSpinBox::down-button, QDoubleSpinBox::down-button, QDateEdit::down-button {
 QSpinBox::up-arrow, QDoubleSpinBox::up-arrow, QDateEdit::up-arrow { image: url(%CHEVRON%); width: 10px; height: 10px; }
 QSpinBox::down-arrow, QDoubleSpinBox::down-arrow, QDateEdit::down-arrow { image: url(%CHEVRON%); width: 10px; height: 10px; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Check boxes / radios ===== */
 QCheckBox, QRadioButton { spacing: 8px; padding: 3px 0; }
 QCheckBox::indicator, QRadioButton::indicator { width: 18px; height: 18px; }
@@ -317,6 +344,8 @@ QRadioButton::indicator { border: 2px solid %BORDER%; border-radius: 10px; backg
 QRadioButton::indicator:hover { border-color: %ACCENTUI%; }
 QRadioButton::indicator:checked { border: 6px solid %INTERACTIVE%; background: %INTERACTIVETEXT%; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Lists / tables / trees ===== */
 QListWidget, QListView { background-color: %SURFACE%; border: 1px solid %BORDER%;
     border-radius: 8px; outline: none; }
@@ -336,6 +365,8 @@ QHeaderView::section {
 QHeaderView::section:hover { color: %FG%; }
 QTableCornerButton::section { background-color: %BG%; border: none; border-bottom: 2px solid %BORDER%; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Tabs ===== */
 QTabWidget::pane { border: 1px solid %BORDER%; border-radius: 8px; background-color: %BG%; top: -1px; }
 QTabBar::tab {
@@ -347,6 +378,8 @@ QTabBar::tab:selected { color: %FG%; border-bottom: 3px solid %ACCENTUI%; font-w
 QFrame#pageTabStrip { background-color: %BG%; border-bottom: 1px solid %BORDER%; }
 QFrame#pageTabStrip QTabBar::tab { padding: 10px 20px; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Group boxes as cards ===== */
 /* Title inside the card as a quiet section heading (not on the border line),
    neutral text: the club color is reserved for selection and actions. */
@@ -361,6 +394,8 @@ QGroupBox::indicator { width: 18px; height: 18px; border: 2px solid %BORDER%;
 QGroupBox::indicator:hover { border-color: %ACCENTUI%; }
 QGroupBox::indicator:checked { background-color: %INTERACTIVE%; border-color: %INTERACTIVE%; image: url(%CHECK%); }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Sliders ===== */
 QSlider { min-height: 24px; }
 QSlider::groove:horizontal { height: 5px; border-radius: 2px; background: %BORDER%; }
@@ -370,6 +405,8 @@ QSlider::handle:horizontal {
     background: %INTERACTIVE%; border: 2px solid %INTERACTIVETEXT%; }
 QSlider::handle:horizontal:hover { background: %INTERACTIVEHOVER%; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Scrollbars ===== */
 QScrollBar:vertical { background: transparent; width: 10px; margin: 2px; }
 QScrollBar::handle:vertical { background: %BORDER%; border-radius: 4px; min-height: 32px; }
@@ -380,6 +417,8 @@ QScrollBar::handle:horizontal:hover { background: %MUTED%; }
 QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; }
 QScrollBar::add-page, QScrollBar::sub-page { background: transparent; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Main window frame ===== */
 QFrame#headerBar QLabel#breadcrumb { color: %MUTED%; font-weight: 600; padding-left: 4px; }
 QFrame#headerBar QPushButton#paletteButton {
@@ -421,6 +460,8 @@ QListWidget#paletteList { background: transparent; border: none; }
 QListWidget#paletteList::item { padding: 7px 10px; border-radius: 7px; }
 QListWidget#paletteList::item:disabled { color: %MUTED%; padding: 10px 10px 2px 10px; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Start screen / new save wizard ===== */
 QFrame#startHero { background-color: %SIDEBAR%; border-right: 1px solid %BORDER%; }
 QLabel#startTitle { font-size: 16pt; font-weight: 500; }
@@ -482,6 +523,8 @@ QPushButton#choiceCard:checked { border: 2px solid %ACCENTUI%; background-color:
 QLabel#choiceTitle { font-size: 14pt; font-weight: 700; }
 QToolButton#foldButton { background: transparent; border: none; color: %MUTED%; padding: 2px 0; }
 QToolButton#foldButton:hover { color: %FG%; }
+)")
+                  + QStringLiteral(R"(
 /* ===== Settings: section list, cards, footer ===== */
 QFrame#settingsNavPanel { background-color: %BG%; border-right: 1px solid %BORDER%; }
 QLabel#settingsNavTitle { font-size: 13pt; font-weight: 600; padding: 0 8px 4px 8px; }
@@ -503,6 +546,8 @@ QFrame#dropZone[hovered="true"] { background-color: %INTERACTIVESUBTLE%; }
 QLabel#dropZoneIcon { font-size: 22pt; color: %ACCENTTEXT%; }
 QLabel#dropZoneTitle { font-size: 11pt; font-weight: 600; }
 
+)")
+                  + QStringLiteral(R"(
 /* ===== Menus / tooltips / statusbar / progress ===== */
 QMenuBar { background-color: %SIDEBAR%; color: %FG%; border-bottom: 1px solid %BORDER%; padding: 2px 6px; }
 QMenuBar::item { background: transparent; padding: 5px 10px; border-radius: 6px; }

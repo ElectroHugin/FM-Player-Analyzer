@@ -24,7 +24,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 12;
+constexpr int kSchemaVersion = 16;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -40,7 +40,8 @@ QStringList splitRolesFromDb(const QString &value)
 }
 
 // Reads home_grown, club_trained, u21, league_listed, uefa_listed, non_eu,
-// league_blocked, uefa_blocked starting at column `first`.
+// league_blocked, uefa_blocked starting at column `first`. The fields added in
+// 2.2.3 live in player_registration_extra (see createPlayerRegistrationExtraSql).
 PlayerRegistration registrationFromRow(const QSqlQuery &q, int first)
 {
     PlayerRegistration r;
@@ -55,6 +56,24 @@ PlayerRegistration registrationFromRow(const QSqlQuery &q, int first)
     r.nonEu = q.value(first + 5).toInt() != 0;
     r.leagueBlocked = q.value(first + 6).toInt() != 0;
     r.uefaBlocked = q.value(first + 7).toInt() != 0;
+    return r;
+}
+
+// Reads youth, min_wage_exempt starting at column `first` into r.
+void registrationExtraFromRow(const QSqlQuery &q, int first, PlayerRegistration &r)
+{
+    const int youth = q.value(first).toInt();
+    r.youth = youth == 1   ? PlayerRegistration::U21::Yes
+              : youth == 0 ? PlayerRegistration::U21::No
+                           : PlayerRegistration::U21::Auto;
+    r.minWageExempt = q.value(first + 1).toInt() != 0;
+}
+
+// The registration without the 2.2.3 fields (what player_registration holds).
+PlayerRegistration withoutExtra(PlayerRegistration r)
+{
+    r.youth = PlayerRegistration::U21::Auto;
+    r.minWageExempt = false;
     return r;
 }
 
@@ -100,7 +119,8 @@ bool Database::open(const QString &filePath)
         m_error = m_db.lastError().text();
         return false;
     }
-    return initSchema();
+    // Parked 2.2.3 fields of duplicates an older version merged away.
+    return initSchema() && reconcileRegistrationStash();
 }
 
 void Database::close()
@@ -198,7 +218,17 @@ bool Database::initSchema()
     if (versionQuery.next())
         version = versionQuery.value(0).toInt();
 
-    if (version >= kSchemaVersion)
+    if (version > kSchemaVersion) {
+        // Written by a newer version of the app: its new fields would be lost
+        // or overwritten by this one's writes.
+        m_error = QStringLiteral("This database was created by a newer version of FM Player "
+                                 "Analyzer (schema %1, this version knows %2). Please update "
+                                 "the app.")
+                      .arg(version)
+                      .arg(kSchemaVersion);
+        return false;
+    }
+    if (version == kSchemaVersion)
         return true;
 
     if (!beginTransaction())
@@ -234,6 +264,12 @@ bool Database::initSchema()
             ok = migrateV10ToV11();
         if (ok && version < 12)
             ok = migrateV11ToV12();
+        if (ok && version < 14)
+            ok = migrateToV14();
+        if (ok && version < 15)
+            ok = migrateToV15();
+        if (ok && version < 16)
+            ok = migrateToV16();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -277,6 +313,8 @@ bool Database::createInitialSchema()
         "  preferred_side TEXT,\n"
         "  primary_role TEXT,\n"
         "  natural_positions TEXT,\n"
+        "  save_natural_positions TEXT,\n"
+        "  natural_positions_manual INTEGER NOT NULL DEFAULT 0,\n"
         "  last_seen_update INTEGER NOT NULL DEFAULT 0,\n"
         "  transfer_status INTEGER NOT NULL DEFAULT 0,\n"
         "  loan_status INTEGER NOT NULL DEFAULT 0,\n"
@@ -309,13 +347,14 @@ bool Database::createInitialSchema()
                        " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE,"
                        " role TEXT NOT NULL)"),
         createPlayerRegistrationSql(),
+        createPlayerRegistrationExtraSql(),
         createLongTermInjuriesSql(),
         createDwrsRecalcsSql(),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_dwrs_history_role_ts ON dwrs_history(role, ts)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_player_roles_role ON player_roles(role)"),
         QStringLiteral("CREATE INDEX IF NOT EXISTS idx_players_club ON players(club)"),
     };
-    for (const QString &sql : statements + createImportHistorySql()) {
+    for (const QString &sql : statements + createImportHistorySql() + createV15Sql()) {
         if (!exec(sql))
             return false;
     }
@@ -358,6 +397,28 @@ bool Database::migrateV10ToV11()
             return false;
     }
     return true;
+}
+
+bool Database::migrateToV16()
+{
+    QSet<QString> columns;
+    QSqlQuery info(m_db);
+    if (!info.exec(QStringLiteral("PRAGMA table_info(players)"))) {
+        m_error = info.lastError().text();
+        return false;
+    }
+    while (info.next())
+        columns.insert(info.value(1).toString());
+    if (!columns.contains(QStringLiteral("save_natural_positions"))
+        && !exec(QStringLiteral("ALTER TABLE players ADD COLUMN save_natural_positions TEXT")))
+        return false;
+    if (!columns.contains(QStringLiteral("natural_positions_manual"))
+        && !exec(QStringLiteral("ALTER TABLE players ADD COLUMN natural_positions_manual "
+                                "INTEGER NOT NULL DEFAULT 0")))
+        return false;
+    return !columns.contains(QStringLiteral("natural_positions"))
+        || exec(QStringLiteral("UPDATE players SET natural_positions_manual = 1 "
+                               "WHERE COALESCE(natural_positions, '') <> ''"));
 }
 
 bool Database::migrateV11ToV12()
@@ -454,6 +515,155 @@ QString Database::createPlayerRegistrationSql()
                           " non_eu INTEGER NOT NULL DEFAULT 0,"
                           " league_blocked INTEGER NOT NULL DEFAULT 0,"
                           " uefa_blocked INTEGER NOT NULL DEFAULT 0)");
+}
+
+QString Database::createPlayerRegistrationExtraSql()
+{
+    // Registration fields added in 2.2.3 (LaLiga youth override, minimum wage
+    // does not apply). A table of their own: 2.2.2 and older rewrite whole
+    // player_registration rows and would reset columns they do not know.
+    return QStringLiteral("CREATE TABLE IF NOT EXISTS player_registration_extra ("
+                          " player_id INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE,"
+                          " youth INTEGER NOT NULL DEFAULT -1,"
+                          " min_wage_exempt INTEGER NOT NULL DEFAULT 0)");
+}
+
+bool Database::migrateToV14()
+{
+    if (!exec(createPlayerRegistrationExtraSql()))
+        return false;
+    // 2.2.3 testbuilds (schema 13) kept these fields as columns of
+    // player_registration: move them over. The columns stay, unused.
+    QSet<QString> existing;
+    QSqlQuery info(m_db);
+    if (!info.exec(QStringLiteral("PRAGMA table_info(player_registration)"))) {
+        m_error = info.lastError().text();
+        return false;
+    }
+    while (info.next())
+        existing.insert(info.value(1).toString());
+    info.finish();
+    if (!existing.contains(QStringLiteral("youth"))
+        || !existing.contains(QStringLiteral("min_wage_exempt")))
+        return true;
+    return exec(QStringLiteral("INSERT OR REPLACE INTO player_registration_extra "
+                               "(player_id, youth, min_wage_exempt) "
+                               "SELECT player_id, youth, min_wage_exempt FROM player_registration "
+                               "WHERE youth != -1 OR min_wage_exempt != 0"));
+}
+
+QStringList Database::createV15Sql()
+{
+    return {
+        // A player deleted by any app version (2.2.2 merges duplicates by
+        // deleting one) parks his 2.2.3 registration fields here first; 2.2.3
+        // clears what its own deletions park and hands the rest to the
+        // surviving duplicate on the next open (reconcileRegistrationStash).
+        QStringLiteral("CREATE TABLE IF NOT EXISTS player_registration_stash ("
+                       " player_id INTEGER PRIMARY KEY,"
+                       " uid TEXT NOT NULL,"
+                       " name TEXT NOT NULL,"
+                       " youth INTEGER NOT NULL,"
+                       " min_wage_exempt INTEGER NOT NULL)"),
+        QStringLiteral("CREATE TRIGGER IF NOT EXISTS stash_registration_extra"
+                       " BEFORE DELETE ON players"
+                       " WHEN EXISTS (SELECT 1 FROM player_registration_extra"
+                       " WHERE player_id = OLD.id)"
+                       " BEGIN"
+                       " INSERT OR REPLACE INTO player_registration_stash"
+                       " (player_id, uid, name, youth, min_wage_exempt)"
+                       " SELECT OLD.id, OLD.uid, OLD.name, youth, min_wage_exempt"
+                       " FROM player_registration_extra WHERE player_id = OLD.id;"
+                       " END"),
+        // Newest in-game date imported per player and month, also when his
+        // data did not change (no snapshot row): an older export imported
+        // later must not become that month's state.
+        QStringLiteral("CREATE TABLE IF NOT EXISTS snapshot_seen ("
+                       " player_id INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,"
+                       " period TEXT NOT NULL,"
+                       " game_date TEXT NOT NULL,"
+                       " PRIMARY KEY (player_id, period)) WITHOUT ROWID"),
+    };
+}
+
+bool Database::migrateToV15()
+{
+    for (const QString &sql : createV15Sql()) {
+        if (!exec(sql))
+            return false;
+    }
+    return true;
+}
+
+bool Database::reconcileRegistrationStash()
+{
+    QSqlQuery q(m_db);
+    if (!q.exec(QStringLiteral("SELECT player_id, uid, name, youth, min_wage_exempt "
+                               "FROM player_registration_stash")))
+        return true; // nothing parked (or an older schema): nothing to do
+    struct Parked {
+        int id;
+        QString uid, name;
+        int youth, minWageExempt;
+    };
+    std::vector<Parked> parked;
+    while (q.next())
+        parked.push_back({q.value(0).toInt(), q.value(1).toString(), q.value(2).toString(),
+                          q.value(3).toInt(), q.value(4).toInt()});
+    q.finish();
+    if (parked.empty())
+        return true;
+    if (!beginTransaction())
+        return false;
+    for (const Parked &p : parked) {
+        // The surviving duplicate by the known uid relation only: the same
+        // uid (re-imported) or its newgen twin (12345 <-> r-12345). A name
+        // alone is not enough: two players may share one.
+        const QString bare = p.uid.startsWith(QLatin1String("r-")) ? p.uid.mid(2) : p.uid;
+        QSqlQuery find(m_db);
+        find.prepare(QStringLiteral(
+            "SELECT id FROM players WHERE uid IN (?, ?, ?) AND id NOT IN "
+            "(SELECT player_id FROM player_registration_extra)"));
+        find.bindValue(0, p.uid);
+        find.bindValue(1, bare);
+        find.bindValue(2, QStringLiteral("r-") + bare);
+        QList<int> matches;
+        if (find.exec())
+            while (find.next())
+                matches << find.value(0).toInt();
+        if (matches.size() == 1) {
+            QSqlQuery put(m_db);
+            put.prepare(QStringLiteral("INSERT OR IGNORE INTO player_registration_extra "
+                                       "(player_id, youth, min_wage_exempt) VALUES (?, ?, ?)"));
+            put.bindValue(0, matches.first());
+            put.bindValue(1, p.youth);
+            put.bindValue(2, p.minWageExempt);
+            if (!put.exec()) {
+                m_error = put.lastError().text();
+                rollbackTransaction();
+                return false;
+            }
+        }
+    }
+    if (!exec(QStringLiteral("DELETE FROM player_registration_stash"))) {
+        rollbackTransaction();
+        return false;
+    }
+    return commitTransaction();
+}
+
+bool Database::clearStash(const QList<int> &playerIds)
+{
+    QSqlQuery query(m_db);
+    query.prepare(QStringLiteral("DELETE FROM player_registration_stash WHERE player_id = ?"));
+    for (const int id : playerIds) {
+        query.bindValue(0, id);
+        if (!query.exec()) {
+            m_error = query.lastError().text();
+            return false;
+        }
+    }
+    return true;
 }
 
 bool Database::migrateV4ToV5()
@@ -662,11 +872,19 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             [&](const QSqlQuery &q) {
                 registrationById.insert(q.value(0).toInt(), registrationFromRow(q, 1));
             });
+    forRows(QStringLiteral("SELECT player_id, youth, min_wage_exempt "
+                           "FROM player_registration_extra"),
+            QStringLiteral("SELECT player_id, youth, min_wage_exempt "
+                           "FROM player_registration_extra WHERE player_id IN (%1)"),
+            [&](const QSqlQuery &q) {
+                registrationExtraFromRow(q, 1, registrationById[q.value(0).toInt()]);
+            });
 
     // Column indexes, resolved once from the first result row's record.
     struct Columns {
         int id, uid, name, age, club, nat, nat2, pos, pers, media, apt, wage, tvRaw, tv, avr,
-            heightRaw, height, lf, rf, pf, side, prim, natPos, lastSeen, ts, ls, newClub;
+            heightRaw, height, lf, rf, pf, side, prim, natPos, saveNatPos, manualNatPos,
+            lastSeen, ts, ls, newClub;
         std::array<int, kAttrCount> lo, hi;
     };
     std::optional<Columns> columns;
@@ -696,6 +914,8 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
         c.side = col("preferred_side");
         c.prim = col("primary_role");
         c.natPos = col("natural_positions");
+        c.saveNatPos = col("save_natural_positions");
+        c.manualNatPos = col("natural_positions_manual");
         c.lastSeen = col("last_seen_update");
         c.ts = col("transfer_status");
         c.ls = col("loan_status");
@@ -739,6 +959,8 @@ std::vector<Player> Database::loadPlayersImpl(const QList<int> *ids)
             p.preferredSide = query.value(c.side).toString();
             p.primaryRole = query.value(c.prim).toString();
             p.naturalPositions = splitRolesFromDb(query.value(c.natPos).toString());
+            p.saveNaturalPositions = splitRolesFromDb(query.value(c.saveNatPos).toString());
+            p.naturalPositionsManual = query.value(c.manualNatPos).toBool();
             p.lastSeenUpdate = query.value(c.lastSeen).toInt();
             p.transferStatus = query.value(c.ts).toInt() != 0;
             p.loanStatus = query.value(c.ls).toInt() != 0;
@@ -777,7 +999,8 @@ bool Database::upsertPlayers(std::vector<Player> &players, RoleWrite roles)
         QStringLiteral("av_rating"), QStringLiteral("height_raw"), QStringLiteral("height_cm"),
         QStringLiteral("left_foot"), QStringLiteral("right_foot"), QStringLiteral("preferred_foot"),
         QStringLiteral("preferred_side"), QStringLiteral("primary_role"),
-        QStringLiteral("natural_positions"), QStringLiteral("last_seen_update"),
+        QStringLiteral("natural_positions"), QStringLiteral("save_natural_positions"),
+        QStringLiteral("natural_positions_manual"), QStringLiteral("last_seen_update"),
         QStringLiteral("transfer_status"), QStringLiteral("loan_status"),
         QStringLiteral("new_club"),
     };
@@ -842,6 +1065,8 @@ bool Database::upsertPlayers(std::vector<Player> &players, RoleWrite roles)
         query.bindValue(i++, p.preferredSide);
         query.bindValue(i++, p.primaryRole);
         query.bindValue(i++, joinRolesForDb(p.naturalPositions));
+        query.bindValue(i++, joinRolesForDb(p.saveNaturalPositions));
+        query.bindValue(i++, p.naturalPositionsManual ? 1 : 0);
         query.bindValue(i++, p.lastSeenUpdate);
         query.bindValue(i++, p.transferStatus ? 1 : 0);
         query.bindValue(i++, p.loanStatus ? 1 : 0);
@@ -904,6 +1129,11 @@ bool Database::deletePlayers(const QList<int> &playerIds)
             return false;
         }
     }
+    // Deleted on purpose here: nothing to hand over (see createV15Sql).
+    if (!clearStash(playerIds)) {
+        rollbackTransaction();
+        return false;
+    }
     return commitTransaction();
 }
 
@@ -926,6 +1156,27 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
         return true;
     if (!beginTransaction())
         return false;
+    const auto players = loadPlayers({badPlayerId, goodPlayerId});
+    if (players.size() != 2) {
+        m_error = QStringLiteral("Both players must exist when merging position information.");
+        rollbackTransaction();
+        return false;
+    }
+    Player good = players[players[0].id == goodPlayerId ? 0 : 1];
+    good.mergeNaturalPositionsFrom(players[players[0].id == badPlayerId ? 0 : 1]);
+    QSqlQuery positionQuery(m_db);
+    positionQuery.prepare(QStringLiteral("UPDATE players SET natural_positions = ?, "
+                                        "save_natural_positions = ?, natural_positions_manual = ? "
+                                        "WHERE id = ?"));
+    positionQuery.addBindValue(joinRolesForDb(good.naturalPositions));
+    positionQuery.addBindValue(joinRolesForDb(good.saveNaturalPositions));
+    positionQuery.addBindValue(good.naturalPositionsManual ? 1 : 0);
+    positionQuery.addBindValue(goodPlayerId);
+    if (!positionQuery.exec()) {
+        m_error = positionQuery.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
     // OR IGNORE skips history rows that would collide on (player, role, ts);
     // leftovers under the bad id are removed with the player row (CASCADE).
     QSqlQuery query(m_db);
@@ -938,9 +1189,35 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
         rollbackTransaction();
         return false;
     }
-    // Snapshots follow the same way (the good record's own rows win).
+    // Snapshots follow the same way; per month the newer in-game state wins.
+    query.prepare(QStringLiteral(
+        "DELETE FROM player_snapshots WHERE player_id = ? AND EXISTS ("
+        " SELECT 1 FROM player_snapshots b WHERE b.player_id = ?"
+        " AND b.period = player_snapshots.period"
+        " AND b.game_date > player_snapshots.game_date)"));
+    query.bindValue(0, goodPlayerId);
+    query.bindValue(1, badPlayerId);
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
     query.prepare(QStringLiteral(
         "UPDATE OR IGNORE player_snapshots SET player_id = ? WHERE player_id = ?"));
+    query.bindValue(0, goodPlayerId);
+    query.bindValue(1, badPlayerId);
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+    // The newest in-game date seen per month moves over too (the newer wins),
+    // so an older export cannot slip into the merged player's history.
+    query.prepare(QStringLiteral(
+        "INSERT INTO snapshot_seen (player_id, period, game_date) "
+        "SELECT ?, period, game_date FROM snapshot_seen WHERE player_id = ? "
+        "ON CONFLICT(player_id, period) DO UPDATE SET "
+        "game_date = MAX(game_date, excluded.game_date)"));
     query.bindValue(0, goodPlayerId);
     query.bindValue(1, badPlayerId);
     if (!query.exec()) {
@@ -990,6 +1267,16 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
         rollbackTransaction();
         return false;
     }
+    query.prepare(QStringLiteral(
+        "INSERT OR IGNORE INTO player_registration_extra (player_id, youth, min_wage_exempt) "
+        "SELECT ?, youth, min_wage_exempt FROM player_registration_extra WHERE player_id = ?"));
+    query.bindValue(0, goodPlayerId);
+    query.bindValue(1, badPlayerId);
+    if (!query.exec()) {
+        m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
 
     // The user's own decisions on the duplicate survive the merge instead of
     // vanishing with its row (CASCADE): national squad, shortlist and
@@ -1022,6 +1309,10 @@ bool Database::mergePlayerInto(int badPlayerId, int goodPlayerId)
     query.bindValue(0, badPlayerId);
     if (!query.exec()) {
         m_error = query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+    if (!clearStash({badPlayerId})) {
         rollbackTransaction();
         return false;
     }
@@ -1211,6 +1502,27 @@ LatestRatings Database::latestDwrsRatings()
                       {query.value(2).toDouble(), query.value(3).toDouble()});
     }
     return result;
+}
+
+bool Database::forEachLatestDwrsRating(
+    const std::function<void(int, const QString &, double, double)> &visit)
+{
+    QSqlQuery query(m_db);
+    query.setForwardOnly(true);
+    if (!query.exec(QStringLiteral("SELECT player_id, role, absolute, normalized FROM dwrs_latest "
+                                   "ORDER BY player_id, role"))) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    while (query.next()) {
+        visit(query.value(0).toInt(), query.value(1).toString(), query.value(2).toDouble(),
+              query.value(3).toDouble());
+    }
+    if (query.lastError().isValid()) {
+        m_error = query.lastError().text();
+        return false;
+    }
+    return true;
 }
 
 std::vector<DwrsEntry> Database::dwrsHistory(const QList<int> &playerIds, const QString &role)
@@ -1410,6 +1722,63 @@ bool Database::deleteMonthSnapshots(const QList<int> &playerIds, const QDate &da
                           QStringLiteral("DELETE FROM player_snapshots WHERE player_id IN (%1)"
                                          " AND period = ?"),
                           {period}, [](const QSqlQuery &) {});
+}
+
+QHash<int, QDate> Database::monthSnapshotDates(const QDate &date)
+{
+    // Newest of the month's snapshot row and the newest import that saw the
+    // player (snapshot_seen; also when nothing changed).
+    QHash<int, QDate> out;
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("SELECT player_id, MAX(game_date) FROM ("
+                             " SELECT player_id, game_date FROM player_snapshots"
+                             "  WHERE condensed = 0 AND period = ?"
+                             " UNION ALL"
+                             " SELECT player_id, game_date FROM snapshot_seen WHERE period = ?)"
+                             " GROUP BY player_id"));
+    const QString period = ImportHistory::periodKey(date, false);
+    q.bindValue(0, period);
+    q.bindValue(1, period);
+    if (!q.exec()) {
+        m_error = q.lastError().text();
+        return out;
+    }
+    while (q.next())
+        out.insert(q.value(0).toInt(),
+                   QDate::fromString(q.value(1).toString(), QLatin1String(kDateFormat)));
+    return out;
+}
+
+bool Database::markMonthSeen(const QList<int> &playerIds, const QDate &date)
+{
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("INSERT INTO snapshot_seen (player_id, period, game_date)"
+                             " VALUES (?, ?, ?) ON CONFLICT(player_id, period)"
+                             " DO UPDATE SET game_date = MAX(game_date, excluded.game_date)"));
+    const QString period = ImportHistory::periodKey(date, false);
+    const QString day = date.toString(QLatin1String(kDateFormat));
+    for (const int id : playerIds) {
+        q.bindValue(0, id);
+        q.bindValue(1, period);
+        q.bindValue(2, day);
+        if (!q.exec()) {
+            m_error = q.lastError().text();
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Database::pruneMonthSeenBefore(const QDate &before)
+{
+    QSqlQuery q(m_db);
+    q.prepare(QStringLiteral("DELETE FROM snapshot_seen WHERE period < ?"));
+    q.bindValue(0, ImportHistory::periodKey(before, false));
+    if (!q.exec()) {
+        m_error = q.lastError().text();
+        return false;
+    }
+    return true;
 }
 
 std::vector<ImportHistory::Snapshot> Database::monthlySnapshotsBefore(const QDate &before)
@@ -1635,10 +2004,18 @@ bool Database::setRegistrations(const std::vector<std::pair<int, PlayerRegistrat
         "(player_id, home_grown, club_trained, u21, league_listed, uefa_listed, non_eu, "
         "league_blocked, uefa_blocked) "
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+    QSqlQuery removeExtra(m_db);
+    removeExtra.prepare(
+        QStringLiteral("DELETE FROM player_registration_extra WHERE player_id = ?"));
+    QSqlQuery upsertExtra(m_db);
+    upsertExtra.prepare(QStringLiteral("INSERT OR REPLACE INTO player_registration_extra "
+                                       "(player_id, youth, min_wage_exempt) VALUES (?, ?, ?)"));
     for (const auto &[playerId, r] : byId) {
-        QSqlQuery &query = r.isDefault() ? remove : upsert;
+        // Only non-default players have a row, in each table.
+        const PlayerRegistration base = withoutExtra(r);
+        QSqlQuery &query = base.isDefault() ? remove : upsert;
         query.bindValue(0, playerId);
-        if (!r.isDefault()) {
+        if (!base.isDefault()) {
             query.bindValue(1, r.homeGrown ? 1 : 0);
             query.bindValue(2, r.clubTrained ? 1 : 0);
             query.bindValue(3, static_cast<int>(r.u21));
@@ -1648,8 +2025,15 @@ bool Database::setRegistrations(const std::vector<std::pair<int, PlayerRegistrat
             query.bindValue(7, r.leagueBlocked ? 1 : 0);
             query.bindValue(8, r.uefaBlocked ? 1 : 0);
         }
-        if (!query.exec()) {
-            m_error = query.lastError().text();
+        const bool extraDefault = r.youth == PlayerRegistration::U21::Auto && !r.minWageExempt;
+        QSqlQuery &extra = extraDefault ? removeExtra : upsertExtra;
+        extra.bindValue(0, playerId);
+        if (!extraDefault) {
+            extra.bindValue(1, static_cast<int>(r.youth));
+            extra.bindValue(2, r.minWageExempt ? 1 : 0);
+        }
+        if (!query.exec() || !extra.exec()) {
+            m_error = (query.lastError().isValid() ? query : extra).lastError().text();
             rollbackTransaction();
             return false;
         }

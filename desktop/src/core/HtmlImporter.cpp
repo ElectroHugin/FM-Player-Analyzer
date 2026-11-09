@@ -245,6 +245,7 @@ bool HtmlImporter::extractTable(const QString &html, ImportTable *out, ImportErr
 
     out->headers.clear();
     out->rows.clear();
+    out->naturalPositionsByUid.clear();
     out->malformedRows = 0;
 
     qsizetype pos = tableStart;
@@ -331,7 +332,9 @@ void HtmlImporter::applyColumn(Player &player, const QString &fullColumnName, co
     } else if (fullColumnName == QLatin1String("Position")) {
         player.positionRaw = value;
     } else if (fullColumnName == QLatin1String("Personality")) {
-        player.personality = value;
+        // Unknown save-derived personality must not erase an earlier report.
+        if (!value.isEmpty())
+            player.personality = value;
     } else if (fullColumnName == QLatin1String("Media Handling")) {
         player.mediaHandling = value;
     } else if (fullColumnName == QLatin1String("Agreed Playing Time")) {
@@ -520,15 +523,15 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
             good.assignedRoles = bad.assignedRoles;
         if (good.primaryRole.isEmpty())
             good.primaryRole = bad.primaryRole;
-        if (good.naturalPositions.isEmpty())
-            good.naturalPositions = bad.naturalPositions;
+        good.mergeNaturalPositionsFrom(bad);
         if (good.preferredSide.isEmpty())
             good.preferredSide = bad.preferredSide;
         if (good.agreedPlayingTime.isEmpty())
             good.agreedPlayingTime = bad.agreedPlayingTime;
-        // Mirrors Database::mergePlayerInto, which moved the rows already.
-        if (good.registration.isDefault())
-            good.registration = bad.registration;
+        // Mirrors Database::mergePlayerInto, which moved the rows already:
+        // the classic flags and the 2.2.3 fields each move over only when the
+        // good player has none of them (two tables, two separate rules).
+        Registration::mergeInto(good.registration, bad.registration);
         if (good.trainingRole.isEmpty())
             good.trainingRole = bad.trainingRole;
         good.inNationalSquad = good.inNationalSquad || bad.inNationalSquad;
@@ -695,17 +698,26 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
         }
 
         player.uid = ref.uid;
+        const QString sourceUid = cells.at(uidCol).trimmed();
+        if (table.naturalPositionsByUid.contains(sourceUid))
+            player.saveNaturalPositions = table.naturalPositionsByUid.value(sourceUid);
         player.lastSeenUpdate = newCounter; // present in this upload → fresh
         const int ageBefore = player.age;
         for (const auto &[column, fullName] : columnTargets)
             applyColumn(player, fullName, cells.at(column).trimmed());
         if (player.name.isEmpty())
             player.name = cells.at(nameCol).trimmed();
-        if (player.id > 0
-            && Registration::expireU21Override(player.registration, ageBefore, player.age)) {
-            expiredU21.push_back({player.id, player.registration});
-            expiredU21Uids << player.uid;
-            result.expiredU21Names << player.name;
+        if (player.id > 0) {
+            const bool u21Expired =
+                Registration::expireU21Override(player.registration, ageBefore, player.age);
+            const bool youthExpired =
+                Registration::expireYouthOverride(player.registration, ageBefore, player.age);
+            if (u21Expired || youthExpired)
+                expiredU21.push_back({player.id, player.registration});
+            if (u21Expired) {
+                expiredU21Uids << player.uid;
+                result.expiredU21Names << player.name;
+            }
         }
 
         result.affectedUids << ref.uid;
@@ -852,8 +864,11 @@ QString HtmlImporter::forceUpdateSinglePlayer(const ImportTable &table, Database
     Player player = *existing; // app-managed fields preserved
     QSet<QString> seenHeaders;
     QString fileName;
+    QString sourceUid;
     for (int c = 0; c < table.headers.size(); ++c) {
         const QString &header = table.headers.at(c);
+        if (header == requiredImportColumns(fmVersionId).at(0))
+            sourceUid = table.rows.at(0).at(c).trimmed();
         if (seenHeaders.contains(header))
             continue;
         seenHeaders.insert(header);
@@ -865,6 +880,8 @@ QString HtmlImporter::forceUpdateSinglePlayer(const ImportTable &table, Database
             fileName = value;
         applyColumn(player, it.value(), value);
     }
+    if (table.naturalPositionsByUid.contains(sourceUid))
+        player.saveNaturalPositions = table.naturalPositionsByUid.value(sourceUid);
     player.uid = targetUid; // everything is keyed to the confirmed target
     // Targeted refresh: mark the player fresh as of the latest recorded upload
     // (does not advance the global counter).
@@ -872,11 +889,16 @@ QString HtmlImporter::forceUpdateSinglePlayer(const ImportTable &table, Database
         db.setting(QStringLiteral("update_counter"), QStringLiteral("0")).toInt();
     // A birthday shown by the refresh ends a manual U21 decision, as on import.
     std::vector<std::pair<int, PlayerRegistration>> expiredU21;
-    if (Registration::expireU21Override(player.registration, existing->age, player.age))
+    const bool u21Expired =
+        Registration::expireU21Override(player.registration, existing->age, player.age);
+    const bool youthExpired =
+        Registration::expireYouthOverride(player.registration, existing->age, player.age);
+    if (u21Expired || youthExpired)
         expiredU21.push_back({player.id, player.registration});
 
     std::vector<Player> batch{std::move(player)};
-    if (!db.upsertPlayers(batch) || !storeExpiredU21(db, expiredU21, {targetUid}))
+    if (!db.upsertPlayers(batch) || !storeExpiredU21(db, expiredU21,
+                                                    u21Expired ? QStringList{targetUid} : QStringList{}))
         return fail(ImportErrorCode::Other, QString(), db.errorString());
     return fileName;
 }

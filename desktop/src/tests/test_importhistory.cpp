@@ -158,6 +158,53 @@ private slots:
         QCOMPARE(db.snapshots(b).front().transferValueText, QStringLiteral("€1M"));
     }
 
+    void olderImportKeepsNewerMonthState()
+    {
+        QTemporaryDir dir;
+        Database db(QStringLiteral("ih_order"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+        const std::vector<Player> players = twoPlayers(db);
+        const int a = players[0].id;
+        const int b = players[1].id;
+        QVERIFY(ImportHistory::record(db, importAt("2026-11-01 10:00:00", QDate(2026, 7, 20)),
+                                      {snap(b, 14)}));
+        QVERIFY(ImportHistory::record(db, importAt("2026-11-01 11:00:00", QDate(2026, 8, 30)),
+                                      {snap(a, 15), snap(b, 16)}));
+        // An older export of the same month, imported afterwards: neither
+        // replaces (A) nor removes (B, same data as July) the newer state.
+        QVERIFY(ImportHistory::record(db, importAt("2026-11-01 12:00:00", QDate(2026, 8, 10)),
+                                      {snap(a, 12), snap(b, 14)}));
+        QCOMPARE(db.snapshots(a).size(), size_t(1));
+        QCOMPARE(db.snapshots(a).front().gameDate, QDate(2026, 8, 30));
+        QCOMPARE(db.snapshots(a).front().attrLo[0], uint8_t(15));
+        QCOMPARE(db.snapshots(b).size(), size_t(2));
+        QCOMPARE(db.snapshots(b).back().attrLo[0], uint8_t(16));
+    }
+
+    void olderImportKeepsUnchangedNewerMonth()
+    {
+        // July 14; on 30 August still 14 (no row stored); an older export of
+        // 10 August with 12 imported afterwards must not become August.
+        QTemporaryDir dir;
+        Database db(QStringLiteral("ih_seen"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+        const std::vector<Player> players = twoPlayers(db);
+        const int a = players[0].id;
+        QVERIFY(ImportHistory::record(db, importAt("2026-11-01 10:00:00", QDate(2026, 7, 20)),
+                                      {snap(a, 14)}));
+        QVERIFY(ImportHistory::record(db, importAt("2026-11-01 11:00:00", QDate(2026, 8, 30)),
+                                      {snap(a, 14)}));
+        QCOMPARE(db.snapshots(a).size(), size_t(1));
+        QVERIFY(ImportHistory::record(db, importAt("2026-11-01 12:00:00", QDate(2026, 8, 10)),
+                                      {snap(a, 12)}));
+        QCOMPARE(db.snapshots(a).size(), size_t(1));
+        QCOMPARE(db.snapshots(a).front().attrLo[0], uint8_t(14));
+        // A newer export still records normally.
+        QVERIFY(ImportHistory::record(db, importAt("2026-11-01 13:00:00", QDate(2026, 8, 31)),
+                                      {snap(a, 13)}));
+        QCOMPARE(db.snapshots(a).size(), size_t(2));
+    }
+
     void noDateNoSnapshots()
     {
         QTemporaryDir dir;

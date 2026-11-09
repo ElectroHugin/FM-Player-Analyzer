@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "SquadBuilder.h"
 
+#include <QDate>
 #include <QList>
 #include <QString>
 #include <QStringList>
@@ -69,6 +70,12 @@ int nonEuLimit(LeagueRules rules);
 // the Swiss Super League has one (5). Best XI honours it for league matches.
 int nonEuStartingLimit(LeagueRules rules);
 
+// Youth exemption of the league's squad list: who may play without a slot.
+// U21 (Premier League, Ukraine): U21 per the PL cut-off. U18Eu (LaLiga): EU
+// players aged 18 or younger on 1 January of the season.
+enum class YouthRule { None, U21, U18Eu };
+YouthRule youthRule(LeagueRules rules);
+
 // League rule sets available for an FM version (rules are per game release).
 QList<LeagueRules> leagueRulesFor(const QString &fmVersionId);
 // Whether the UEFA club competitions (CL/EL/ECL, identical rules) are modelled.
@@ -85,6 +92,9 @@ struct Settings {
     // is what a player must earn to be registered at all.
     double wageBudget = 0.0;
     double minWage = 0.0;
+    // In-game date of the newest import (invalid = unknown); settles which
+    // side of a youth cut-off date the season is on.
+    QDate gameDate;
 
     // Some competition needs a squad list (markings + assistant are in use).
     bool active() const { return restrictsSquad(league) || uefa; }
@@ -107,6 +117,25 @@ bool expireU21Override(PlayerRegistration &registration, int oldAge, int newAge)
 // expired since the registration page last took stock; it reports them once.
 QString expiredU21SettingKey();
 
+// LaLiga youth exemption by age alone: aged 18 or younger on 1 January of the
+// season. FM exports only the whole age, so the in-game date decides: from
+// January on (until the season ends) 18 is fine and 19 unclear; before January
+// 18 is unclear (he may turn 19 by then) and 17 fine. Unknown date: 17 fine,
+// 18 and 19 unclear.
+U21Status u18StatusByAge(int age, const QDate &gameDate);
+// EU/EEA nationality by the game's three-letter codes (first or second
+// nationality). Not proof on its own (passports, agreements), but without it
+// the automatic EU youth exemption is never certain.
+bool hasEuNationality(const Player &player);
+// The same honouring the manual override (PlayerRegistration::youth), which
+// settles the whole exemption (nationality included). Automatic: marked non-EU
+// means no; without a recognised EU nationality it is at most unclear.
+U21Status u18EuStatus(const Player &player, const QDate &gameDate);
+
+// A manual youth decision ends once the player is 20 or older after an import.
+// Returns whether the override was reset.
+bool expireYouthOverride(PlayerRegistration &registration, int oldAge, int newAge);
+
 // Free of a registration slot: definitely U21. Uncertain counts as not U21 —
 // registering him is always legal, leaving him off may not be.
 bool isU21(const Player &player);
@@ -118,6 +147,12 @@ bool isClubTrained(const Player &player);
 // UEFA list B needs U21 and two uninterrupted years at the club since age 15;
 // club-trained is the closest hand-maintained stand-in for the latter.
 bool isListBEligible(const Player &player);
+
+// Fill-empty merge of a duplicate's registration into the surviving player,
+// the rule Database::mergePlayerInto applies to its two tables: the classic
+// flags move over when the survivor has none, the fields added in 2.2.3
+// (youth override, minimum-wage exemption) likewise on their own.
+void mergeInto(PlayerRegistration &good, const PlayerRegistration &bad);
 
 // Keeps the flags consistent: club-trained implies home-grown.
 void normalize(PlayerRegistration &registration);
@@ -137,10 +172,10 @@ struct Quota {
     // Exempt keepers (U21) count towards the minimum: true for the league
     // (they may play), false for UEFA (the minimum applies to list A itself).
     bool exemptKeepersCount = true;
-    // League: U21 players need no slot (Premier League, Ukraine). Leagues
-    // whose youth exemption depends on nationality or is not documented
-    // register everyone.
-    bool u21Exempt = true;
+    // League: who needs no slot for being young (see YouthRule). Leagues
+    // whose youth exemption is not documented register everyone.
+    YouthRule youth = YouthRule::U21;
+    QDate gameDate; // for the U18 cut-off (see u18StatusByAge)
     // Wage rules (league only), weekly; 0 = none. Players without a known wage
     // count as 0 and are never held back by the minimum.
     double wageBudget = 0.0;
@@ -158,6 +193,7 @@ bool isBlocked(const Player &player, Competition competition);
 // Weekly wage of a player for the wage rules; unknown counts as 0.
 double weeklyWage(const Player &player);
 // Below the minimum wage (known wage only; FM rounds, so a hair below is fine).
+// Never for players marked as exempt from it (PlayerRegistration::minWageExempt).
 bool belowMinWage(const Player &player, const Quota &quota);
 // Settings units for the wage fields (registration_wage_period).
 enum class WagePeriod { Week, Month, Year };
@@ -166,8 +202,14 @@ WagePeriod wagePeriodFromKey(const QString &key); // unknown -> Week
 double weeksPer(WagePeriod period);
 Quota quotaFor(Competition competition, const Settings &settings);
 
-// Eligible without a slot: U21 where the league exempts them, or list B
-// (UEFA). Without a quota the Premier League rule (U21 exempt) applies.
+// Youth status under the quota's youth rule (None counts as No).
+U21Status youthStatus(const Player &player, const Quota &quota);
+// Short label of the youth exemption ("U21", "U18 EU"); empty for None.
+QString youthLabel(YouthRule rule);
+
+// Eligible without a slot: young enough where the league exempts them (see
+// YouthRule), or list B (UEFA). Without a quota the Premier League rule (U21
+// exempt) applies.
 bool isExempt(const Player &player, Competition competition);
 bool isExempt(const Player &player, Competition competition, const Quota &quota);
 

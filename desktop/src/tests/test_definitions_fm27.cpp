@@ -51,6 +51,18 @@ private slots:
         m_phases = m_defs.root().value(QLatin1String("role_phases")).toObject();
     }
 
+    void roleColourGroups()
+    {
+        for (const QString &role : {QStringLiteral("BBM"), QStringLiteral("BBP"), QStringLiteral("DM-OOP")})
+            QCOMPARE(m_defs.roleDrawingRow(role), 4);
+        QCOMPARE(m_defs.roleDrawingRow(QStringLiteral("AM-IP")), 2);
+        QCOMPARE(m_defs.roleDrawingRow(QStringLiteral("PCM")), 3);
+        QCOMPARE(m_defs.roleDrawingRow(QStringLiteral("DLF")), 1);
+        QCOMPARE(m_defs.roleDrawingRow(QStringLiteral("TCF")), 1);
+        QCOMPARE(m_defs.roleDrawingRow(QStringLiteral("BCB")), 5);
+        QCOMPARE(m_defs.roleDrawingRow(QStringLiteral("CB-OOP")), 5);
+    }
+
     void roleCounts()
     {
         QCOMPARE(m_defs.validRoles().size(), 79);

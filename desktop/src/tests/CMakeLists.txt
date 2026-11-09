@@ -71,6 +71,19 @@ set_tests_properties(test_charts PROPERTIES
     ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
 )
 
+# Tactical views (2.2.3): combined pitch and overview markers, headless.
+add_executable(test_pitchviews test_pitchviews.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/widgets/TacticPitchWidget.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/widgets/StrengthGridWidget.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/theming/ThemeManager.cpp)
+target_include_directories(test_pitchviews PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_pitchviews PRIVATE fmcore Qt6::Widgets Qt6::Test)
+add_test(NAME test_pitchviews COMMAND test_pitchviews)
+set_tests_properties(test_pitchviews PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+    ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
+)
+
 # Sidebar structure (app/Navigation): plain Qt Core, compiled in directly.
 add_executable(test_navigation test_navigation.cpp
     ${CMAKE_SOURCE_DIR}/src/app/Navigation.cpp)
