@@ -186,7 +186,7 @@ in keiner der beiden Listen stehen, also z. B. Spalten, die ein Patch umbenannt 
 - Der Test `test_csvimport` (`fm27ExporterCsv`, `fm27MappingComplete`) prüft eine
   Datei im Format des Exporters und dass alle 40 bewerteten Attribute erreichbar sind.
 
-## Persönlichkeit: Grenzen und Einstufung (Testbuild 2.2.3)
+## Persönlichkeit: Grenzen und Einstufung (ab 2.2.3)
 
 Die Rekonstruktion nutzt die veröffentlichten Schwellen und Prioritäten der
 [FM-Referenzanalyse](https://github.com/Napas/fm-mcp/blob/main/internal/fm/personality.go)
