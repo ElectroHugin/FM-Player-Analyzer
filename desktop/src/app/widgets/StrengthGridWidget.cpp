@@ -2,6 +2,7 @@
 
 #include "../theming/ThemeManager.h"
 #include "core/Constants.h"
+#include "core/Utils.h"
 
 #include <QContextMenuEvent>
 #include <QHelpEvent>
@@ -60,28 +61,6 @@ void StrengthGridWidget::clearData()
     m_strengths.clear();
     m_layout.clear();
     update();
-}
-
-QColor StrengthGridWidget::relativeColor(double value, double minAvg, double maxAvg) const
-{
-    // Legacy red -> yellow -> green gradient, relative to the squad's own
-    // spread of positional averages.
-    const double delta = maxAvg - minAvg;
-    if (delta <= 0.0)
-        return QColor(100, 166, 100);
-
-    const double normalized = std::clamp((value - minAvg) / delta, 0.0, 1.0);
-    int red, green, blue;
-    if (normalized < 0.5) {
-        red = 221;
-        green = 43 + static_cast<int>((240 - 43) * (normalized * 2));
-        blue = 43;
-    } else {
-        red = 240 - static_cast<int>((240 - 98) * ((normalized - 0.5) * 2));
-        green = 240 - static_cast<int>((240 - 186) * ((normalized - 0.5) * 2));
-        blue = 43 + static_cast<int>((98 - 43) * ((normalized - 0.5) * 2));
-    }
-    return QColor(red, green, blue);
 }
 
 void StrengthGridWidget::paintEvent(QPaintEvent *)
@@ -148,21 +127,6 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
         return QRectF(x - cardW / 2, y - cardH / 2, cardW, cardH);
     };
 
-    // Relative color range over the occupied positions.
-    double minAvg = 0.0, maxAvg = 0.0;
-    bool haveAvg = false;
-    for (auto it = m_strengths.constBegin(); it != m_strengths.constEnd(); ++it) {
-        if (it.value().avg > 0.0) {
-            if (!haveAvg) {
-                minAvg = maxAvg = it.value().avg;
-                haveAvg = true;
-            } else {
-                minAvg = std::min(minAvg, it.value().avg);
-                maxAvg = std::max(maxAvg, it.value().avg);
-            }
-        }
-    }
-
     QFont avgFont = font();
     avgFont.setBold(true);
     avgFont.setPointSizeF(font().pointSizeF() * 1.0);
@@ -174,11 +138,11 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
         QPainterPath path;
         path.addRoundedRect(box, 5, 5);
         if (stats.avg > 0.0) {
-            painter.fillPath(path, relativeColor(stats.avg, minAvg, maxAvg));
+            painter.fillPath(path, dwrsCellStyle(stats.avg).background);
             painter.setPen(QPen(QColor(0, 0, 0, 60), 1));
             painter.setBrush(Qt::NoBrush);
             painter.drawPath(path);
-            painter.setPen(cardText);
+            painter.setPen(dwrsCellStyle(stats.avg).text);
             painter.setFont(avgFont);
             painter.drawText(box.adjusted(0, 1, 0, -box.height() * 0.42), Qt::AlignCenter,
                              QStringLiteral("%1%").arg(qRound(stats.avg)));
@@ -222,17 +186,9 @@ void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bo
     const double cardW = 0.20;
     const double cardH = 0.125;
 
-    double minValue = 0.0, maxValue = 0.0;
-    bool haveValue = false;
     QList<QPointF> anchors;
-    for (const Marker &marker : std::as_const(m_markers)) {
+    for (const Marker &marker : std::as_const(m_markers))
         anchors.append(marker.anchor);
-        if (marker.uid.isEmpty())
-            continue;
-        minValue = haveValue ? std::min(minValue, marker.value) : marker.value;
-        maxValue = haveValue ? std::max(maxValue, marker.value) : marker.value;
-        haveValue = true;
-    }
     const QList<QPointF> placed = spreadMarkers(anchors, QSizeF(cardW, cardH));
     const auto toField = [&](const QPointF &f) {
         return QPointF(field.left() + field.width() * f.x(), field.top() + field.height() * f.y());
@@ -269,7 +225,7 @@ void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bo
         const bool filled = !marker.uid.isEmpty();
         // Role fit colours the card; the XI impact is a separate line of
         // plain text on a light band, so the two never read as one number.
-        painter.fillPath(path, filled ? relativeColor(marker.value, minValue, maxValue)
+        painter.fillPath(path, filled ? dwrsCellStyle(marker.value).background
                                       : emptyCard);
         painter.setPen(QPen(QColor(0, 0, 0, 60), 1));
         painter.setBrush(Qt::NoBrush);
@@ -279,7 +235,7 @@ void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bo
         const QRectF valueLine(box.left(), box.top() + h * 0.24, box.width(), h * 0.40);
         const QRectF impactBand(box.left() + 2, box.top() + h * 0.66, box.width() - 4,
                                 h * 0.31);
-        const QColor ink = filled ? cardText : (night ? QColor(Qt::white) : cardText);
+        const QColor ink = filled ? dwrsCellStyle(marker.value).text : (night ? QColor(Qt::white) : cardText);
         painter.setPen(ink);
         painter.setFont(headerFont);
         painter.drawText(headerLine, Qt::AlignCenter,

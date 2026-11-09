@@ -349,7 +349,10 @@ QWidget *SquadMatrixPage::buildScoutingTab()
 
     auto *talentHint = new QLabel(
         tr("Talent-Score = bester DWRS der angezeigten Rollen + 2 je Jahr unter der "
-           "Altersgrenze + (Ent + Arb − 20) / 4 + 3 (gute) / − 5 (schlechte Persönlichkeit)."),
+           "Altersgrenze + (Ent + Arb − 20) / 4 + 3 (gute) / − 5 (schlechte Persönlichkeit). "
+           "Grobe Entwicklungseinschätzung, kein versteckter Potenzialwert. Attributspannen "
+           "zählen mit ihrem Mittelwert, unbekannte Attribute neutral mit 10. Vergleiche "
+           "Spieler mit denselben Rollen und Altersgrenzen."),
         m_talentBox);
     talentHint->setObjectName(QStringLiteral("kpiCaption"));
     talentHint->setWordWrap(true);

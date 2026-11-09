@@ -329,6 +329,30 @@ private slots:
         QCOMPARE(config.weight(kFm24, kTop), 9.5);
     }
 
+    void personalityCategoriesStaySeparateByVersion()
+    {
+        QTemporaryDir dir;
+        Database db(Database::uniqueConnectionName(QStringLiteral("personality")));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("profile.db"))));
+        AppConfig config(dir.filePath(QStringLiteral("config.ini")));
+        QVERIFY(config.attachProfile(db, AppConfig::ProfileSeed::Defaults));
+        ProfileStore store(db);
+        for (const QString &version : {QStringLiteral("fm24"), QStringLiteral("fm27")}) {
+            QJsonObject root{{QStringLiteral("personalities"), QJsonObject{
+                {QStringLiteral("Professional"), version == QLatin1String("fm24")
+                    ? QStringLiteral("good") : QStringLiteral("neutral")}}}};
+            QVERIFY(store.saveDefinitions(version, QJsonDocument(root).toJson()));
+        }
+        for (const QString &version : {QStringLiteral("fm24"), QStringLiteral("fm27")}) {
+            QByteArray json;
+            QVERIFY(store.readDocument(ProfileStore::definitionsDocument(version), json));
+            Definitions defs;
+            QVERIFY(defs.loadFromJson(json, version));
+            QCOMPARE(defs.personalityCategory(QStringLiteral("Professional")),
+                     version == QLatin1String("fm24") ? QStringLiteral("good") : QStringLiteral("neutral"));
+        }
+    }
+
     void withoutProfileBehavesLike204()
     {
         QTemporaryDir dir;

@@ -88,6 +88,29 @@ void TacticPitchWidget::setPortraitSource(PortraitSource source)
     portraitSource() = std::move(source);
 }
 
+namespace {
+TacticPitchWidget::ColorRowSource &colorRowSource()
+{
+    static TacticPitchWidget::ColorRowSource source;
+    return source;
+}
+}
+
+void TacticPitchWidget::setColorRowSource(ColorRowSource source)
+{
+    colorRowSource() = std::move(source);
+}
+
+QColor TacticPitchWidget::roleHeaderColor(const QString &role, int fallbackRow)
+{
+    static const QColor colors[] = {
+        QColor(0x4a, 0x4f, 0x63), QColor(0x9b, 0x23, 0x6f), QColor(0x5e, 0x2e, 0x8f),
+        QColor(0x27, 0x55, 0xa6), QColor(0x1e, 0x7a, 0x4a), QColor(0x0f, 0x72, 0x72),
+        QColor(0x4a, 0x4f, 0x63)};
+    const int roleRow = colorRowSource() ? colorRowSource()(role) : 0;
+    return colors[qBound(0, roleRow > 0 ? roleRow : fallbackRow, 6)];
+}
+
 void TacticPitchWidget::setShiftSource(ShiftSource source)
 {
     shiftSource() = std::move(source);
@@ -266,10 +289,6 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     };
     const auto cardRect = [&](int row, int col) { return cardRectAt(row, 0.1 + 0.2 * (col - 1)); };
     // Header colour per line, like the role colours in FM's tactics screen.
-    static const QColor kLineColors[] = {
-        QColor(0x4a, 0x4f, 0x63), QColor(0x9b, 0x23, 0x6f), QColor(0x5e, 0x2e, 0x8f),
-        QColor(0x27, 0x55, 0xa6), QColor(0x1e, 0x7a, 0x4a), QColor(0x0f, 0x72, 0x72),
-        QColor(0x4a, 0x4f, 0x63)};
 
     QFont headerFont = font();
     headerFont.setBold(true);
@@ -334,7 +353,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             const QRectF header(box.left(), box.top(), box.width(), headerH);
             painter.save();
             painter.setClipPath(path, Qt::IntersectClip);
-            painter.fillRect(header, kLineColors[qBound(0, row, 6)]);
+            painter.fillRect(header, roleHeaderColor(role, row));
             painter.restore();
             painter.setPen(Qt::white);
             painter.setFont(headerFont);
@@ -429,7 +448,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
             face.isNull() ? header : header.adjusted(faceCircle.right() - box.left(), 0, 0, 0);
         painter.save();
         painter.setClipPath(path, Qt::IntersectClip);
-        painter.fillRect(header, kLineColors[qBound(0, row, 6)]);
+        painter.fillRect(header, roleHeaderColor(m_positions.value(slot), row));
         painter.restore();
         painter.setPen(Qt::white);
         painter.setFont(headerFont);
@@ -473,7 +492,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(path);
 
-        drawPortrait(painter, face, faceCircle, cardBody, kLineColors[qBound(0, row, 6)]);
+        drawPortrait(painter, face, faceCircle, cardBody, roleHeaderColor(m_positions.value(slot), row));
     };
 
     for (auto it = m_layout.constBegin(); it != m_layout.constEnd(); ++it) {
@@ -508,10 +527,6 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
     const QColor cardBorder = night ? QColor(255, 255, 255, 40) : QColor(0, 0, 0, 40);
     const QColor textColor = night ? QColor(Qt::white) : QColor(0x1e, 0x22, 0x2b);
     const QColor secondaryText = night ? QColor(0xb8, 0xbe, 0xc8) : QColor(0x5a, 0x60, 0x6c);
-    static const QColor kLineColors[] = {
-        QColor(0x4a, 0x4f, 0x63), QColor(0x9b, 0x23, 0x6f), QColor(0x5e, 0x2e, 0x8f),
-        QColor(0x27, 0x55, 0xa6), QColor(0x1e, 0x7a, 0x4a), QColor(0x0f, 0x72, 0x72),
-        QColor(0x4a, 0x4f, 0x63)};
     m_boxRects.clear();
     m_combinedUids.clear();
     if (m_combinedCards.isEmpty() && m_ipLineUp.isEmpty()) {
@@ -595,13 +610,14 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
     const auto toField = [&](const QPointF &f) {
         return QPointF(field.left() + field.width() * f.x(), field.top() + field.height() * f.y());
     };
-    const auto rowOf = [](double y) {
-        int best = 1;
-        for (int row = 1; row <= 6; ++row) {
-            if (std::abs(drawingRowY(row) - y) < std::abs(drawingRowY(best) - y))
-                best = row;
-        }
-        return best;
+    // Use each phase's original stratum, never the displaced combined card.
+    const auto rowForSlot = [&](const QString &slot, const QHash<QString, QStringList> &layout) {
+        if (slot == QLatin1String("GK"))
+            return 6;
+        for (auto it = layout.cbegin(); it != layout.cend(); ++it)
+            if (it.value().contains(slot))
+                return qBound(0, pitchGeometry(m_fmVersionId).drawingRow(it.key()), 6);
+        return 0;
     };
 
     QFont headerFont = font();
@@ -637,7 +653,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
                          field.height() * cardH);
         m_boxRects.insert(b.key, box);
         m_combinedUids.insert(b.key, b.card ? b.card->uid : QString());
-        const int row = rowOf(placed.at(i).y());
+
         QPainterPath path;
         path.addRoundedRect(box, 6, 6);
         const double headerH = box.height() * 0.28;
@@ -667,21 +683,24 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         // Two role abbreviations need the full header width. Keep the face
         // above it instead of covering the left half of the role pair.
         const QRectF faceCircle(box.left(), box.top() - faceD, faceD, faceD);
-        const QRectF headerText = header;
+        const QRectF ipHeader(header.left(), header.top(), header.width() / 2, header.height());
+        const QRectF oopHeader(ipHeader.right(), header.top(), header.width() / 2, header.height());
+        const QColor ipColor = roleHeaderColor(m_ipLineUp.value(card.ipSlot), rowForSlot(card.ipSlot, m_ipLayout));
+        const QColor oopColor = roleHeaderColor(m_oopLineUp.value(card.oopSlot), rowForSlot(card.oopSlot, m_oopLayout));
         painter.fillPath(path, cardBody);
         painter.save();
         painter.setClipPath(path, Qt::IntersectClip);
-        painter.fillRect(header, kLineColors[qBound(0, row, 6)]);
+        painter.fillRect(ipHeader, ipColor);
+        painter.fillRect(oopHeader, oopColor);
         painter.restore();
         painter.setPen(Qt::white);
         painter.setFont(headerFont);
         // With-ball role first, then without.
-        const QString roles = QStringLiteral("%1 · %2")
-                                  .arg(stripPhase(m_ipLineUp.value(card.ipSlot)),
-                                       stripPhase(m_oopLineUp.value(card.oopSlot)));
-        painter.drawText(headerText, Qt::AlignCenter,
-                         painter.fontMetrics().elidedText(roles, Qt::ElideRight,
-                                                          static_cast<int>(headerText.width() - 4)));
+        for (const auto &part : {qMakePair(ipHeader, m_ipLineUp.value(card.ipSlot)),
+                                 qMakePair(oopHeader, m_oopLineUp.value(card.oopSlot))})
+            painter.drawText(part.first, Qt::AlignCenter,
+                painter.fontMetrics().elidedText(stripPhase(part.second), Qt::ElideRight,
+                                                  static_cast<int>(part.first.width() - 4)));
         QRectF line(body.left(), body.top(), body.width(), lineH);
         painter.setFont(ratingFont);
         painter.setPen(textColor);
@@ -712,7 +731,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         painter.setPen(QPen(cardBorder, 1));
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(path);
-        drawPortrait(painter, face, faceCircle, cardBody, kLineColors[qBound(0, row, 6)]);
+        drawPortrait(painter, face, faceCircle, cardBody, ipColor);
     }
 }
 

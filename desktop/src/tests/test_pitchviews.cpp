@@ -2,6 +2,7 @@
 // player midway between his two places and routes clicks to him; the club
 // overview's markers show the starter and route clicks too. Headless.
 #include "core/AppConfig.h"
+#include "core/Utils.h"
 #include "core/PitchGeometry.h"
 #include "theming/ThemeManager.h"
 #include "widgets/StrengthGridWidget.h"
@@ -29,6 +30,56 @@ private:
     }
 
 private slots:
+    void independentRoleColours()
+    {
+        QTemporaryDir dir;
+        AppConfig config(dir.filePath(QStringLiteral("config.ini")));
+        ThemeManager theme(config);
+        TacticPitchWidget pitch(theme);
+        pitch.resize(480, 742);
+        TacticPitchWidget::CombinedCard card;
+        card.uid = QStringLiteral("saibari");
+        card.ipSlot = QStringLiteral("AMC");
+        card.oopSlot = QStringLiteral("MC");
+        card.name = QStringLiteral("Saibari");
+        pitch.setCombinedTeam({card}, {{card.ipSlot, QStringLiteral("AM-IP")}},
+            {{QStringLiteral("Attacking Midfield"), {card.ipSlot}}},
+            {{card.oopSlot, QStringLiteral("PCM")}},
+            {{QStringLiteral("Midfield"), {card.oopSlot}}});
+        TacticPitchWidget::setColorRowSource([](const QString &role) {
+            return role == QLatin1String("AM-IP") ? 2 : 3;
+        });
+        const auto rendered = pitch.grab().toImage(); // isolated offscreen widget, no desktop capture
+        TacticPitchWidget::setColorRowSource({});
+        int purple = 0, blue = 0;
+        for (int y = 0; y < rendered.height(); ++y)
+            for (int x = 0; x < rendered.width(); ++x) {
+                purple += rendered.pixelColor(x, y) == QColor(0x5e, 0x2e, 0x8f);
+                blue += rendered.pixelColor(x, y) == QColor(0x27, 0x55, 0xa6);
+            }
+        QVERIFY(purple > 100);
+        QVERIFY(blue > 100);
+    }
+
+    void strengthUsesAbsoluteDwrsColours()
+    {
+        QTemporaryDir dir;
+        AppConfig config(dir.filePath(QStringLiteral("config.ini")));
+        ThemeManager theme(config);
+        StrengthGridWidget pitch(theme);
+        StrengthGridWidget::Marker marker;
+        marker.uid = QStringLiteral("player");
+        marker.anchor = QPointF(0.5, 0.5);
+        marker.value = 73;
+        pitch.setMarkers({marker});
+        const auto rendered = pitch.grab().toImage();
+        int matching = 0;
+        for (int y = 0; y < rendered.height(); ++y)
+            for (int x = 0; x < rendered.width(); ++x)
+                matching += rendered.pixelColor(x, y) == dwrsCellStyle(73).background;
+        QVERIFY(matching > 100);
+    }
+
     void combinedPortraitsUseTheSameSource()
     {
         QTemporaryDir dir;

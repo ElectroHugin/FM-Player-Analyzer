@@ -2,6 +2,17 @@
 
 ## 2.2.3 – unreleased
 
+### Testbuild follow-up
+
+- Manual player swaps now exchange both IP and OOP places, keeping each phase's slot roles.
+- IP and OOP show A/B teams side by side like Combined; Both retains one team's two phases.
+- Combined role headers have independent, consistent role colours. Positional Strength uses the DWRS colour scale.
+- Lineup explanations sit below their own setting. Appearance saves avoid analysis reloads and duplicate stylesheet work.
+- FM27 save import reconstructs unambiguous personality names for the own club / fully scouted players (all imported players with masking off); ambiguous names preserve earlier reports.
+- Personality categories are editable separately for FM24 and FM27 in Settings, with the existing FM24 defaults.
+- Talent Score keeps its familiar weights, uses midpoint estimates for masked mental attributes and neutral values for missing ones, and explains its limits as a development proxy.
+
+
 - FM27: keep the selected eleven and improve their assignments across both phases: manual central-side preferences first, then shorter total paths. The configurable allowance defaults to 0.1 DWRS points for the whole team, relative to the original assignment, and also protects the weighted selection score. Pinned positions stay fixed.
 - Central side preferences now work across different roles when the assignments are equally suitable. Preferred foot is not used.
 - FM27 saves: import natural positions for fully known players. Manual overrides, including an explicitly empty selection, take priority and survive imports. The existing natural-position bonus now checks the actual slot, including the correct wing; its default multiplier remains 1.00.

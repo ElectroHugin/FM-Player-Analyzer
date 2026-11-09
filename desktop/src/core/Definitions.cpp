@@ -572,6 +572,25 @@ QStringList Definitions::rolesWithWeights() const
     return m_root.value(QLatin1String("role_specific_weights")).toObject().keys();
 }
 
+int Definitions::roleDrawingRow(const QString &role) const
+{
+    int result = 7;
+    for (auto it = m_positionToRoles.cbegin(); it != m_positionToRoles.cend(); ++it) {
+        if (!it.value().contains(role))
+            continue;
+        const QString &position = it.key();
+        const int row = position.startsWith(QLatin1String("ST")) ? 1
+                      : position.startsWith(QLatin1String("AM")) ? 2
+                      : position.startsWith(QLatin1String("M")) ? 3
+                      : position.startsWith(QLatin1String("DM")) ? 4
+                      : position.startsWith(QLatin1String("WB")) ? 4
+                      : position.startsWith(QLatin1String("D")) ? 5
+                      : position == QLatin1String("GK") ? 6 : 7;
+        result = qMin(result, row);
+    }
+    return result == 7 ? 0 : result;
+}
+
 QString Definitions::personalityCategory(const QString &name) const
 {
     if (name.isEmpty())

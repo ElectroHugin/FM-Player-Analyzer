@@ -67,7 +67,6 @@ protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
-    QColor relativeColor(double value, double minAvg, double maxAvg) const;
     void paintMarkers(QPainter &painter, const QRectF &field, bool night);
     int markerAt(const QPoint &pos) const;
 

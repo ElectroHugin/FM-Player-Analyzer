@@ -332,7 +332,9 @@ void HtmlImporter::applyColumn(Player &player, const QString &fullColumnName, co
     } else if (fullColumnName == QLatin1String("Position")) {
         player.positionRaw = value;
     } else if (fullColumnName == QLatin1String("Personality")) {
-        player.personality = value;
+        // Unknown save-derived personality must not erase an earlier report.
+        if (!value.isEmpty())
+            player.personality = value;
     } else if (fullColumnName == QLatin1String("Media Handling")) {
         player.mediaHandling = value;
     } else if (fullColumnName == QLatin1String("Agreed Playing Time")) {

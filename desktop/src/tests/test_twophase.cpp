@@ -553,11 +553,16 @@ private slots:
         QCOMPARE(options[0].slot, QStringLiteral("AMC"));
         QCOMPARE(options[0].swapUid, QStringLiteral("musiala"));
         QCOMPARE(options[0].total, 125.0);
-        // Out of possession both slots are worth the same: a free swap.
+        QCOMPARE(options[0].bridges.value(QStringLiteral("olise")),
+                 best.slotsOfUid.value(QStringLiteral("musiala")));
+        QCOMPARE(options[0].bridges.value(QStringLiteral("musiala")),
+                 best.slotsOfUid.value(QStringLiteral("olise")));
+        // An OOP swap exchanges the IP places too, with the same cost.
         const auto oopOptions = builder.bridgeOptions(pool, QStringLiteral("T"), ratings, 0.5, {},
                                                       QStringLiteral("olise"), false, false);
         QCOMPARE(oopOptions.size(), 1);
-        QCOMPARE(oopOptions[0].total, 147.5);
+        QCOMPARE(oopOptions[0].total, 125.0);
+        QCOMPARE(oopOptions[0].bridges, options[0].bridges);
     }
     void xiLimitCapsAGroupInBothLineUps()
     {
