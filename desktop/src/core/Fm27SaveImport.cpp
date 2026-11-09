@@ -355,13 +355,75 @@ Knowledge knowledgeOf(const SavePlayer &p, const SaveData &save, quint32 ownClub
     return k >= 0 ? Knowledge::TooLittle : Knowledge::None;
 }
 
+// Conservative label reconstruction. Thresholds/precedence documented in
+// docs/IMPORT-FM27.md; raw hidden values never enter the player database.
+QString personalityText(const SavePlayer &p)
+{
+    if (!p.personFound || p.age < 0)
+        return {};
+    for (const auto value : p.personality)
+        if (value < 1 || value > 20)
+            return {};
+    const int determination = p.attributes[Determination];
+    const int leadership = p.attributes[Leadership];
+    if (determination < 1 || determination > 20 || leadership < 1 || leadership > 20)
+        return {};
+    const int ambition = p.personality[Ambition], loyalty = p.personality[Loyalty];
+    const int pressure = p.personality[Pressure], professional = p.personality[Professionalism];
+    const int sporting = p.personality[Sportsmanship], temperament = p.personality[Temperament];
+    // Missing negative-description and club-affinity flags must not be guessed.
+    // An empty label at an ambiguous rule preserves an existing export value.
+    const std::pair<bool, QString> rules[] = {
+        {determination >= 14 && ambition >= 12 && professional >= 15 && temperament >= 15
+             && pressure >= 14 && loyalty >= 15 && sporting >= 15, QStringLiteral("Model Citizen")},
+        {determination >= 14 && ambition >= 14 && professional >= 14 && temperament <= 9,
+             QStringLiteral("Perfectionist")},
+        {temperament <= 4 && professional <= 10, {}},
+        {p.age >= 23 && leadership == 20 && determination == 20, QStringLiteral("Born Leader")},
+        {p.age >= 23 && leadership >= 19 && temperament >= 18 && sporting >= 18,
+             QStringLiteral("Charismatic Leader")},
+        {p.age >= 23 && leadership >= 19, QStringLiteral("Leader")},
+        {professional == 20 && temperament >= 10 && p.age >= 23, QStringLiteral("Model Professional")},
+        {professional >= 18 && temperament >= 10, QStringLiteral("Professional")},
+        {determination >= 18 && ambition >= 12, QStringLiteral("Driven")},
+        {determination >= 18, QStringLiteral("Determined")},
+        {professional <= 4 && determination <= 9, {}},
+        {loyalty <= 6 && ambition >= 16, {}},
+        {ambition == 20 && loyalty <= 9, QStringLiteral("Very Ambitious")},
+        {ambition >= 16 && loyalty <= 9, QStringLiteral("Ambitious")},
+        {ambition <= 5 && loyalty >= 11, {}},
+        {sporting == 20 && determination <= 9, QStringLiteral("Honest")},
+        {sporting >= 18 && determination <= 9, QStringLiteral("Sporting")},
+        {sporting <= 4 && determination >= 11, {}},
+        {determination <= 5 && ambition <= 9, {}},
+        {loyalty == 20 && ambition <= 7, {}},
+        {loyalty >= 18 && ambition <= 7, QStringLiteral("Loyal")},
+        {pressure == 20 && determination >= 15, QStringLiteral("Iron Willed")},
+        {pressure >= 17 && determination >= 15, QStringLiteral("Resilient")},
+        {pressure <= 3 && determination <= 9, {}},
+        {pressure >= 15 && temperament >= 10 && sporting >= 15, QStringLiteral("Light-Hearted")},
+        {pressure >= 15 && temperament >= 10 && professional >= 11, QStringLiteral("Spirited")},
+        {pressure >= 15 && temperament >= 10, QStringLiteral("Jovial")},
+        {determination >= 15 && professional >= 15, QStringLiteral("Resolute")},
+        {determination >= 15, QStringLiteral("Fairly Determined")},
+        {professional >= 15, QStringLiteral("Fairly Professional")},
+        {ambition >= 15, QStringLiteral("Fairly Ambitious")},
+        {loyalty >= 15, QStringLiteral("Fairly Loyal")},
+        {sporting >= 15, QStringLiteral("Fairly Sporting")},
+    };
+    for (const auto &rule : rules)
+        if (rule.first)
+            return rule.second;
+    return QStringLiteral("Balanced");
+}
+
 void buildTable(const SaveData &save, const Options &options, ImportTable *out)
 {
     out->headers = {QStringLiteral("Unique ID"), QStringLiteral("Player"), QStringLiteral("Age"),
                     QStringLiteral("Club"), QStringLiteral("Nation"), QStringLiteral("Position"),
                     QStringLiteral("Height"), QStringLiteral("Left Foot"), QStringLiteral("Right Foot"),
                     QStringLiteral("Wage"), QStringLiteral("Transfer Value"), QStringLiteral("Playing Time"),
-                    QStringLiteral("Rating")};
+                    QStringLiteral("Rating"), QStringLiteral("Personality")};
     for (const VisibleAttr &a : kVisible)
         out->headers << QString::fromLatin1(a.column);
     out->rows.clear();
@@ -456,6 +518,11 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
         row << playingTimeText(p.squadStatus, p.positions[PosGK] >= 15);
         // Season statistics are public: the average rating of everyone imported.
         row << (p.averageRating > 0 ? QString::number(p.averageRating, 'f', 2) : QString());
+        // Personality requires own-club or complete scouting knowledge; fame
+        // alone is not evidence of a personality report.
+        row << (!options.attributeMasking || how == Knowledge::OwnClub
+                    || save.knowledgeByPindex.value(p.pindex) >= 100
+                    ? personalityText(p) : QString());
         for (const VisibleAttr &a : kVisible) {
             const int value = p.attributes[size_t(a.saveIndex)];
             if (asRange[a.saveIndex]) {

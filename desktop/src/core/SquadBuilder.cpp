@@ -1180,21 +1180,25 @@ QList<BridgeOption> SquadBuilder::bridgeOptions(const std::vector<const Player *
         if (slot == oldSlot)
             continue;
         Bridges trial = fixed;
-        auto own = trial.value(uid, {mine->first, mine->second});
+        auto own = *mine;
         (ipPhase ? own.first : own.second) = slot;
-        trial.insert(uid, own);
         // Whoever holds the slot moves to the player's old one (a swap).
         const QString other = team.value(slot).playerUid;
         if (!other.isEmpty()) {
             auto theirs = current.slotsOfUid.value(other);
+            // Swap the same two players in both phases; roles stay at their slots.
+            (ipPhase ? own.second : own.first) = ipPhase ? theirs.second : theirs.first;
+            (ipPhase ? theirs.second : theirs.first) = ipPhase ? mine->second : mine->first;
             (ipPhase ? theirs.first : theirs.second) = oldSlot;
             trial.insert(other, theirs);
         }
+        trial.insert(uid, own);
         const TwoPhaseSquadResult result =
             calculateTwoPhaseSquad(pool, tactic, ratings, ipShare, applyAptWeight, trial);
         const auto placed = result.slotsOfUid.constFind(uid);
         if (placed == result.slotsOfUid.cend()
-            || (ipPhase ? placed->first : placed->second) != slot)
+            || *placed != own
+            || (!other.isEmpty() && result.slotsOfUid.value(other) != trial.value(other)))
             continue; // not possible (position missing)
         BridgeOption option;
         option.slot = slot;

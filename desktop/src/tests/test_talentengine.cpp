@@ -63,15 +63,15 @@ private slots:
         QCOMPARE(TalentEngine::talentForPlayer(m_defs, p, 50.0, 24.0), 50.0 + 8.0 + 3.0);
     }
 
-    void maskedRangesCountAsZero()
+    void maskedRangesUseMidpoint()
     {
-        // Legacy parity: "12-15" fails float() in the Python app and counts as 0.
+        // A scouted range contributes its midpoint.
         Player p;
         p.age = 24;
         p.attrLo[idx(Attr::Determination)] = 12;
         p.attrHi[idx(Attr::Determination)] = 15;
         setExact(p, Attr::WorkRate, 20);
-        QCOMPARE(TalentEngine::talentForPlayer(m_defs, p, 50.0, 24.0), 50.0 + (0.0 + 20.0 - 20.0) / 4.0);
+        QCOMPARE(TalentEngine::talentForPlayer(m_defs, p, 50.0, 24.0), 50.0 + (13.5 + 20.0 - 20.0) / 4.0);
     }
 
     void missingAgeGivesNoRunway()
@@ -80,6 +80,26 @@ private slots:
         setExact(p, Attr::Determination, 10);
         setExact(p, Attr::WorkRate, 10);
         QCOMPARE(TalentEngine::talentForPlayer(m_defs, p, 40.0, 24.0), 40.0);
+    }
+
+    void comparableProspects()
+    {
+        Player young, older, unknown;
+        young.age = 17;
+        older.age = 21;
+        unknown.age = 17;
+        for (Player *p : {&young, &older}) {
+            setExact(*p, Attr::Determination, 10);
+            setExact(*p, Attr::WorkRate, 10);
+        }
+        // Same current ability: the younger prospect has more development runway.
+        QVERIFY(TalentEngine::talentForPlayer(m_defs, young, 60, 24)
+                > TalentEngine::talentForPlayer(m_defs, older, 60, 24));
+        // An older but substantially stronger prospect still wins.
+        QVERIFY(TalentEngine::talentForPlayer(m_defs, older, 75, 24)
+                > TalentEngine::talentForPlayer(m_defs, young, 60, 24));
+        QCOMPARE(TalentEngine::talentForPlayer(m_defs, unknown, 60, 24),
+                 TalentEngine::talentForPlayer(m_defs, young, 60, 24));
     }
 
     void goalkeepersUseTheirOwnCap()

@@ -7260,6 +7260,34 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
         <source>Maximaler Verlust für die gesamte Elf gegenüber der ursprünglichen Zuordnung. Gilt auch für die gewichtete Auswahlbewertung. 0 erlaubt nur Gleichstand. Innerhalb des Spielraums gelten zuerst manuelle Seitenpräferenzen, dann kurze Wege. Die ausgewählten Spieler bleiben dieselben.</source>
         <translation>Maximum loss for the whole eleven compared with the original assignment. Also applies to the weighted selection score. 0 allows ties only. Within the allowance, manual side preferences come first, then short paths. The selected players stay the same.</translation>
     </message>
+    <message>
+        <source>Persönlichkeiten</source>
+        <translation>Personalities</translation>
+    </message>
+    <message>
+        <source>Einstufung für Talent-Score, Analyse und Filter. FM24 und FM27 werden getrennt in diesem Spielstand gespeichert. Standard: bisherige FM24-Einstufung.</source>
+        <translation>Categories for Talent Score, analysis and filters. FM24 and FM27 are stored separately in this save. Default: the existing FM24 categories.</translation>
+    </message>
+    <message>
+        <source>Persönlichkeit</source>
+        <translation>Personality</translation>
+    </message>
+    <message>
+        <source>FM24-Standard für beide Versionen wiederherstellen</source>
+        <translation>Restore FM24 defaults for both versions</translation>
+    </message>
+    <message>
+        <source>Gut</source>
+        <translation>Good</translation>
+    </message>
+    <message>
+        <source>Neutral</source>
+        <translation>Neutral</translation>
+    </message>
+    <message>
+        <source>Schlecht</source>
+        <translation>Bad</translation>
+    </message>
 </context>
 <context>
     <name>fm::SigningAdvisorTab</name>
@@ -7937,6 +7965,10 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="531"/>
         <source>Daten veraltet: seit %1 Komplett-Exporten nicht mehr gesehen.</source>
         <translation>Data outdated: not seen in the last %1 full exports.</translation>
+    </message>
+    <message>
+        <source>Talent-Score = bester DWRS der angezeigten Rollen + 2 je Jahr unter der Altersgrenze + (Ent + Arb − 20) / 4 + 3 (gute) / − 5 (schlechte Persönlichkeit). Grobe Entwicklungseinschätzung, kein versteckter Potenzialwert. Attributspannen zählen mit ihrem Mittelwert, unbekannte Attribute neutral mit 10. Vergleiche Spieler mit denselben Rollen und Altersgrenzen.</source>
+        <translation>Talent Score = best DWRS of the displayed roles + 2 per year below the age cap + (Det + WR − 20) / 4 + 3 (good) / − 5 (bad personality). A rough development estimate, not hidden potential ability. Attribute ranges use their midpoint; unknown attributes are neutral at 10. Compare players with the same roles and age caps.</translation>
     </message>
 </context>
 <context>

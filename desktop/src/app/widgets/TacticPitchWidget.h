@@ -72,6 +72,9 @@ public:
     // display only.
     using ShiftSource = std::function<double(const QString &role, const QString &slot)>;
     static void setShiftSource(ShiftSource source);
+    using ColorRowSource = std::function<int(const QString &)>;
+    static void setColorRowSource(ColorRowSource source);
+    static QColor roleHeaderColor(const QString &role, int fallbackRow);
 
     // Optional small portrait per player card (graphics folder, see
     // GraphicsLibrary). Returns a null pixmap when off or missing: the card

@@ -93,6 +93,9 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     TacticPitchWidget::setShiftSource([this](const QString &role, const QString &slot) {
         return m_context.definitions().roleShiftPercent(role, slot);
     });
+    TacticPitchWidget::setColorRowSource([this](const QString &role) {
+        return m_context.definitions().roleDrawingRow(role);
+    });
     // Small portraits on the pitch cards, only with the graphics folder on.
     TacticPitchWidget::setPortraitSource([this](const QString &uid, int size) {
         return m_context.graphics().portrait(uid, size);

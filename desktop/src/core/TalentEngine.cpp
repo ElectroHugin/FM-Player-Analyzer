@@ -26,16 +26,15 @@ double calculateTalentScore(const Definitions &definitions, double bestDwrs, dou
 double talentForPlayer(const Definitions &definitions, const Player &player, double bestDwrs,
                        double ageCap)
 {
-    // Legacy semantics: missing age falls back to the cap (no runway bonus).
-    // Masked attribute ranges ("12-15") count as 0 — legacy parses them with
-    // float()/to_numeric, which fails on ranges. Kept for golden parity.
+    // Development proxy, not hidden PA: unknown attributes are neutral,
+    // observed ranges use their midpoint instead of penalising lack of scouting.
     const double age = player.age > 0 ? player.age : ageCap;
-    const auto exactValue = [&](Attr attr) {
-        const int i = idx(attr);
-        return player.attrLo[i] == player.attrHi[i] ? static_cast<double>(player.attrLo[i]) : 0.0;
+    const auto estimate = [&](Attr attr) {
+        const int lo = player.attrLo[idx(attr)], hi = player.attrHi[idx(attr)];
+        return lo >= 1 && hi >= lo && hi <= 20 ? (lo + hi) / 2.0 : 10.0;
     };
-    return calculateTalentScore(definitions, bestDwrs, age, exactValue(Attr::Determination),
-                                exactValue(Attr::WorkRate), player.personality, ageCap);
+    return calculateTalentScore(definitions, bestDwrs, age, estimate(Attr::Determination),
+                                estimate(Attr::WorkRate), player.personality, ageCap);
 }
 
 double ageCapForPlayer(const Player &player, int outfielderCap, int goalkeeperCap)

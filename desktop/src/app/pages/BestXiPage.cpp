@@ -992,7 +992,23 @@ void BestXiPage::applyPhaseView()
     if (!m_teamStack || !m_combinedLayout)
         return;
     const int selected = m_xiButton->isChecked() ? 0 : 1;
-    m_teamStack->setCurrentIndex(!m_twoPhase ? 2 : m_phaseView == Combined ? 3 : selected);
+    // Return phase columns to their own team for Both, otherwise share the
+    // comparison page just like Combined. Reparenting preserves pitch state.
+    for (int t = 0; t < 2; ++t) {
+        auto *row = qobject_cast<QHBoxLayout *>(m_teamStack->widget(t)->layout());
+        row->addWidget(m_teamPages[t].ipColumn, 1);
+        row->addWidget(m_teamPages[t].oopColumn, 1);
+    }
+    if (m_phaseView == InPossession || m_phaseView == OutOfPossession) {
+        for (int t : {selected, 1 - selected})
+            m_combinedLayout->addWidget(m_phaseView == InPossession
+                ? m_teamPages[t].ipColumn : m_teamPages[t].oopColumn, 1);
+    }
+    m_xiIpTitle->setText(tr("Startelf") + QStringLiteral(" · ") + tr("Mit Ball"));
+    m_bIpTitle->setText(tr("B-Team") + QStringLiteral(" · ") + tr("Mit Ball"));
+    m_xiTitle->setText(tr("Startelf") + QStringLiteral(" · ") + tr("Ohne Ball"));
+    m_bTitle->setText(tr("B-Team") + QStringLiteral(" · ") + tr("Ohne Ball"));
+    m_teamStack->setCurrentIndex(!m_twoPhase ? 2 : m_phaseView == BothPhases ? selected : 3);
     m_combinedLayout->insertWidget(0, m_teamPages[selected].combinedColumn, 1);
     // FM24 page (index 2) always shows both teams side by side.
     for (int t = 0; t < 2; ++t) {
@@ -1022,9 +1038,14 @@ void BestXiPage::updatePitchLayout()
         pitch->fitToHeight(height);
     const int selected = m_xiButton->isChecked() ? 0 : 1;
     const bool bothTeams = m_scroll->viewport()->width() >= 800;
-    for (int team = 0; team < 2; ++team)
-        m_teamPages[team].combinedColumn->setVisible(m_twoPhase && m_phaseView == Combined
-                                                     && (bothTeams || team == selected));
+    for (int team = 0; team < 2; ++team) {
+        const bool visible = bothTeams || team == selected;
+        m_teamPages[team].combinedColumn->setVisible(m_twoPhase && m_phaseView == Combined && visible);
+        m_teamPages[team].ipColumn->setVisible(m_twoPhase
+            && (m_phaseView == BothPhases || (m_phaseView == InPossession && visible)));
+        m_teamPages[team].oopColumn->setVisible(m_twoPhase
+            && (m_phaseView == BothPhases || (m_phaseView == OutOfPossession && visible)));
+    }
 }
 
 void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, int phases)

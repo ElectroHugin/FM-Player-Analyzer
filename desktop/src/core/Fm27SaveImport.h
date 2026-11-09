@@ -70,6 +70,9 @@ bool attributeMasking();
 
 // --- Exposed for tests ---------------------------------------------------------
 
+// Reconstruct an unambiguous personality label; empty when unknown.
+QString personalityText(const fm27save::SavePlayer &player);
+
 // FM's position text ("D (RC), WB (R)") from the 15 position ratings.
 QString positionText(const std::array<uint8_t, 15> &ratings);
 // FM's foot word for a 1-20 strength.

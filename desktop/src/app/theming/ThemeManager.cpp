@@ -4,6 +4,7 @@
 #include "core/Utils.h"
 
 #include <QApplication>
+#include <QWidget>
 #include <QDir>
 #include <QFile>
 #include <QPainter>
@@ -171,7 +172,20 @@ void ThemeManager::apply()
         != QLatin1String("false");
     m_headerPalette = clubHeaderPalette(m_primary, m_interactive, m_sidebar);
 
-    qApp->setStyleSheet(buildStyleSheet());
+    const QString styleSheet = buildStyleSheet();
+    // Reapplying identical QSS repolishes every widget, including large hidden tables.
+    if (qApp->styleSheet() != styleSheet) {
+        QList<QWidget *> updates;
+        for (QWidget *window : QApplication::topLevelWidgets()) {
+            if (window->updatesEnabled()) {
+                updates.append(window);
+                window->setUpdatesEnabled(false);
+            }
+        }
+        qApp->setStyleSheet(styleSheet);
+        for (QWidget *window : updates)
+            window->setUpdatesEnabled(true);
+    }
     emit themeChanged();
 }
 

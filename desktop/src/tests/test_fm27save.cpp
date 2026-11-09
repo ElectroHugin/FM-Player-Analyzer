@@ -69,6 +69,54 @@ class TestFm27Save : public QObject {
     Q_OBJECT
 
 private slots:
+    void personalityLabelsAndVisibility()
+    {
+        SavePlayer p = makePlayer(100, 1, QStringLiteral("Prospect"), 500,
+                                  QStringLiteral("Home FC"), 12);
+        QVERIFY(Fm27SaveImport::personalityText(p).isEmpty());
+        p.personality.fill(10);
+        QCOMPARE(Fm27SaveImport::personalityText(p), QStringLiteral("Balanced"));
+        p.personality[Professionalism] = 20;
+        QCOMPARE(Fm27SaveImport::personalityText(p), QStringLiteral("Model Professional"));
+        p.age = 18;
+        QCOMPARE(Fm27SaveImport::personalityText(p), QStringLiteral("Professional"));
+        p.personality.fill(16);
+        p.attributes[Determination] = 16;
+        QCOMPARE(Fm27SaveImport::personalityText(p), QStringLiteral("Model Citizen"));
+        p.personality.fill(10);
+        p.personality[Professionalism] = 1;
+        p.attributes[Determination] = 5;
+        QVERIFY(Fm27SaveImport::personalityText(p).isEmpty()); // negative-label flag unknown
+        Player existing;
+        existing.personality = QStringLiteral("Resolute");
+        HtmlImporter::applyColumn(existing, QStringLiteral("Personality"), {});
+        QCOMPARE(existing.personality, QStringLiteral("Resolute"));
+        p.personality.fill(10);
+        p.personality[Professionalism] = 18;
+        p.attributes[Determination] = 12;
+        SaveData save;
+        save.clubName = QStringLiteral("Home FC");
+        save.players = {p};
+        p.uniqueId = 101;
+        p.pindex = 2;
+        p.clubUid = p.fieldingClubUid = 600;
+        p.clubShortName = QStringLiteral("Away FC");
+        p.worldReputation = 9000;
+        save.players.append(p);
+        ImportTable table;
+        Fm27SaveImport::buildTable(save, {true}, &table);
+        const int col = column(table, QStringLiteral("Personality"));
+        QCOMPARE(table.rows.size(), 2);
+        QCOMPARE(table.rows[0][col], QStringLiteral("Professional"));
+        QVERIFY(table.rows[1][col].isEmpty()); // fame does not reveal personality
+        save.knowledgeByPindex.insert(2, 100);
+        Fm27SaveImport::buildTable(save, {true}, &table);
+        QCOMPARE(table.rows[1][col], QStringLiteral("Professional"));
+        save.knowledgeByPindex.clear();
+        Fm27SaveImport::buildTable(save, {false}, &table);
+        QCOMPARE(table.rows[1][col], QStringLiteral("Professional"));
+    }
+
     void saveFamily()
     {
         using namespace fm::Fm27SaveFamily;
@@ -245,7 +293,7 @@ private slots:
         for (const char *hidden : {"Consistency", "Dirtiness", "Important Matches", "Injury Proneness",
                                    "Versatility", "Current Ability", "Potential Ability", "CA", "PA"})
             QVERIFY2(!table.headers.contains(QString::fromLatin1(hidden)), hidden);
-        QCOMPARE(table.headers.size(), 13 + 47);
+        QCOMPARE(table.headers.size(), 14 + 47);
         QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Wage"))), QStringLiteral("€12K p/w"));
         QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Playing Time"))),
                  QStringLiteral("Regular Starter"));
