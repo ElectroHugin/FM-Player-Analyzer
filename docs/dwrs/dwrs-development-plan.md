@@ -36,3 +36,14 @@ Status labels describe verified completion only. No test build is ready yet.
 ## Verified implementation checkpoint (2026-11-10)
 
 See development-checkpoint-2026-11-10.md for the exact completed foundations, verification and next steps. Curve/profile/library cores, schema-v17 visible attribute flow, 4,608 Classic references, immutable compiled snapshots and nonlinear training overloads are implemented. Full application activation, built-in Classic/goalkeeper representation, UI, history and release gates above remain open. The final full build and all 45 suites passed, including the import-validation additions.
+
+## Editor checkpoint
+
+See development-checkpoint-editor.md. The DWRS settings page now contains the
+profile library and 20-point curve editor while retaining all legacy controls.
+All 47 visible attributes have English/German labels and category/search filters.
+Draft persistence, conflict handling, reset/discard and theme/language rendering
+have widget coverage. This is still an incomplete development build: activation,
+advanced rules UI, preview, migration, history and the other release gates above
+remain open. The built-in definitions are not yet seeded into the UI library.
+Final editor verification: MSVC release build and 47/47 CTest suites passed (7.26 seconds), including the user-requested two-decimal display and preservation of underlying curve precision.

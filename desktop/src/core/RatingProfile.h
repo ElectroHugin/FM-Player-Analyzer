@@ -9,6 +9,7 @@ namespace fm {
 
 struct RatingOverride {
     std::optional<double> weight;
+    std::optional<double> baseline;
     std::optional<std::array<double, 20>> shape;
     std::optional<double> factor;
 };
@@ -17,6 +18,7 @@ struct ResolvedRatingAttribute {
     RatingCurve curve;
     double factor = 1.0;
     QString weightOrigin = QStringLiteral("base");
+    QString baselineOrigin = QStringLiteral("base");
     QString shapeOrigin = QStringLiteral("base");
     QString factorOrigin = QStringLiteral("role-category");
 };

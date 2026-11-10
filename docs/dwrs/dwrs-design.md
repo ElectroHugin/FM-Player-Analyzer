@@ -6,10 +6,11 @@ remains active until all consumers and migrations are integrated and verified.
 ## Calculation contract
 
 `RatingCurve` stores a finite nonnegative total weight and 20 dimensionless,
-nondecreasing shape values with endpoints 0 and 1. Contribution is weight times
-shape. Disabling sets weight to zero and retains the shape for later editing.
-An additive constant in a curve cancels during normalization; canonical curves
-therefore start at zero. No role multiplier or weight is applied twice.
+nondecreasing shape values with endpoints 0 and 1, plus a finite baseline.
+Contribution is baseline plus weight times shape. Disabling sets weight to zero
+and retains shape and baseline for later editing. The baseline cancels during
+normalization; storing it allows all 20 contribution points to be edited without
+silently shifting other points. No role multiplier or weight is applied twice.
 
 `evaluateCurves` returns an explicit status and optional unrounded normalized
 score. A zero denominator is unavailable, not zero. Active missing attributes

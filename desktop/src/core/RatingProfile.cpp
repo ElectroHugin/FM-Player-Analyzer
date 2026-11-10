@@ -42,6 +42,7 @@ QJsonObject overridesJson(const QMap<QString, QMap<QString, RatingOverride>> &sc
         QJsonObject attributes;
         for (auto attr = scope->begin(); attr != scope->end(); ++attr) {
             QJsonObject fields;
+            if (attr->baseline) fields.insert(QStringLiteral("baseline"), *attr->baseline);
             if (attr->weight) fields.insert(QStringLiteral("weight"), *attr->weight);
             if (attr->shape) fields.insert(QStringLiteral("shape"), shapeJson(*attr->shape));
             if (attr->factor) fields.insert(QStringLiteral("factor"), *attr->factor);
@@ -62,9 +63,13 @@ bool readOverrides(const QJsonValue &value, QMap<QString, QMap<QString, RatingOv
         for (auto attr = object.begin(); attr != object.end(); ++attr) {
             if (!attr->isObject()) return false;
             const auto fields = attr->toObject();
-            if (!onlyKeys(fields, {QStringLiteral("weight"), QStringLiteral("shape"), QStringLiteral("factor")}))
+            if (!onlyKeys(fields, {QStringLiteral("baseline"), QStringLiteral("weight"), QStringLiteral("shape"), QStringLiteral("factor")}))
                 return false;
             RatingOverride rule;
+            if (fields.contains(QStringLiteral("baseline"))) {
+                if (!fields.value(QStringLiteral("baseline")).isDouble()) return false;
+                rule.baseline = fields.value(QStringLiteral("baseline")).toDouble();
+            }
             if (fields.contains(QStringLiteral("weight"))) {
                 if (!fields.value(QStringLiteral("weight")).isDouble()) return false;
                 rule.weight = fields.value(QStringLiteral("weight")).toDouble();
@@ -111,7 +116,8 @@ QString RatingProfile::validate() const
             if (!validScope(scope.key(), scopes == &roles)) return QStringLiteral("invalid-scope");
             for (auto rule = scope->begin(); rule != scope->end(); ++rule) {
                 if (!attributes.contains(rule.key())) return QStringLiteral("unknown-override-attribute");
-                if ((rule->weight && !nonnegative(*rule->weight))
+                if ((rule->baseline && !std::isfinite(*rule->baseline))
+                    || (rule->weight && !nonnegative(*rule->weight))
                     || (rule->factor && !nonnegative(*rule->factor))
                     || (rule->shape && !RatingCurve{0, *rule->shape}.isValid()))
                     return QStringLiteral("invalid-override");
@@ -134,6 +140,7 @@ ResolvedRatingAttribute RatingProfile::resolve(const QString &attribute, const Q
     auto apply = [&](const QMap<QString, RatingOverride> &rules, const QString &origin) {
         const auto found = rules.constFind(attribute);
         if (found == rules.constEnd()) return;
+        if (found->baseline) { result.curve.baseline = *found->baseline; result.baselineOrigin = origin; }
         if (found->weight) { result.curve.weight = *found->weight; result.weightOrigin = origin; }
         if (found->shape) { result.curve.shape = *found->shape; result.shapeOrigin = origin; }
         if (found->factor) { result.factor = *found->factor; result.factorOrigin = origin; }
@@ -149,7 +156,8 @@ QJsonObject RatingProfile::toJson() const
     QJsonObject curves;
     for (auto it = attributes.begin(); it != attributes.end(); ++it)
         curves.insert(it.key(), QJsonObject{{QStringLiteral("weight"), it->weight},
-                                           {QStringLiteral("shape"), shapeJson(it->shape)}});
+                                           {QStringLiteral("shape"), shapeJson(it->shape)},
+                                           {QStringLiteral("baseline"), it->baseline}});
     QJsonObject mapping;
     for (auto it = rolePositions.begin(); it != rolePositions.end(); ++it)
         mapping.insert(it.key(), it.value());
@@ -212,12 +220,15 @@ std::optional<RatingProfile> RatingProfile::fromJson(const QJsonObject &json, QS
     for (auto it = attrs.begin(); it != attrs.end(); ++it) {
         if (!it->isObject()) return fail(QStringLiteral("invalid-attribute"));
         const auto fields = it->toObject();
-        if (!onlyKeys(fields, {QStringLiteral("weight"), QStringLiteral("shape")})
+        if (!onlyKeys(fields, {QStringLiteral("baseline"), QStringLiteral("weight"), QStringLiteral("shape")})
             || !fields.value(QStringLiteral("weight")).isDouble())
             return fail(QStringLiteral("invalid-attribute"));
         const auto shape = readShape(fields.value(QStringLiteral("shape")));
         if (!shape) return fail(QStringLiteral("invalid-shape"));
-        result.attributes.insert(it.key(), {fields.value(QStringLiteral("weight")).toDouble(), *shape});
+        if (fields.contains(QStringLiteral("baseline")) && !fields.value(QStringLiteral("baseline")).isDouble())
+            return fail(QStringLiteral("invalid-baseline"));
+        result.attributes.insert(it.key(), {fields.value(QStringLiteral("weight")).toDouble(), *shape,
+                                            fields.value(QStringLiteral("baseline")).toDouble()});
     }
     if (!readOverrides(json.value(QStringLiteral("positions")), result.positions)
         || !readOverrides(json.value(QStringLiteral("roles")), result.roles))

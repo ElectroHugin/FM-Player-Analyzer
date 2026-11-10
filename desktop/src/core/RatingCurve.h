@@ -11,6 +11,7 @@ namespace fm {
 struct RatingCurve {
     double weight = 0.0;
     std::array<double, 20> shape{};
+    double baseline = 0.0; // contribution at level 1; cancels in normalization
 
     static RatingCurve linear(double weight);
     bool isValid() const;

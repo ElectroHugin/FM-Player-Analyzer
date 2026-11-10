@@ -24,6 +24,7 @@ class QTableWidget;
 namespace fm {
 
 class ThemeManager;
+class RatingProfileEditor;
 
 // Central settings page. A section list on the left (grouped: save, data,
 // calculation, program) switches between short pages of cards; one footer
@@ -51,6 +52,7 @@ private:
     QWidget *buildHistoryPage();
     QWidget *buildGraphicsPage();
     QWidget *buildWeightsPage();
+    RatingProfileEditor *m_ratingProfileEditor = nullptr;
     QWidget *buildSquadPage();
     QWidget *buildTrainingPage();
     QWidget *buildPersonalityPage();

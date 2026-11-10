@@ -7288,6 +7288,9 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
         <source>Schlecht</source>
         <translation>Bad</translation>
     </message>
+    <message><source>DWRS-Bewertung</source><translation>DWRS Rating</translation></message>
+    <message><source>Bewertungsprofile</source><translation>Rating profiles</translation></message>
+    <message><source>Profile als Entwurf bearbeiten, speichern und austauschen.</source><translation>Edit drafts, save and exchange profiles.</translation></message>
 </context>
 <context>
     <name>fm::SigningAdvisorTab</name>
@@ -8963,5 +8966,108 @@ A backup is created automatically in the “backups” folder first. You can bri
         <source>(kein Logo)</source>
         <translation>(no logo)</translation>
     </message>
+</context>
+<context>
+    <name>fm::RatingCurveEditor</name>
+    <message><source>Gesamtgewicht</source><translation>Total weight</translation></message>
+    <message><source>Gesamtbeitrag</source><translation>Total contribution</translation></message>
+    <message><source>Zuwachs je Attributpunkt</source><translation>Increment per attribute point</translation></message>
+    <message><source>Kurvendarstellung</source><translation>Curve display</translation></message>
+    <message><source>Links/Rechts wählt einen Punkt. Oben/Unten ändert seinen Beitrag.</source><translation>Left/Right selects a point. Up/Down changes its contribution.</translation></message>
+    <message><source>Beitrag bei Attributwert %1</source><translation>Contribution at attribute level %1</translation></message>
+    <message><source>Linear</source><translation>Linear</translation></message>
+    <message><source>Plateau ab</source><translation>Plateau from</translation></message>
+    <message><source>Beginn des Plateaus</source><translation>Plateau start</translation></message>
+    <message><source>Zurücksetzen</source><translation>Reset</translation></message>
+    <message><source>Rückgängig</source><translation>Undo</translation></message>
+    <message><source>Wiederholen</source><translation>Redo</translation></message>
+    <message><source>Beiträge müssen endlich sein und dürfen nicht fallen. Die Änderung wurde nicht übernommen.</source><translation>Contributions must be finite and must not decrease. The change was not applied.</translation></message>
+    <message><source>Gewicht bestimmt die gesamte Bedeutung. Die Kurve verteilt den Beitrag auf die Attributstufen.</source><translation>Weight sets the overall importance. The curve distributes the contribution across attribute levels.</translation></message>
+    <message><source>Beitragskurve</source><translation>Contribution curve</translation></message>
+</context>
+<context>
+    <name>fm::RatingProfileEditor</name>
+    <message><source>Bewertungsprofil</source><translation>Rating profile</translation></message>
+    <message><source>Neu</source><translation>New</translation></message>
+    <message><source>Importieren</source><translation>Import</translation></message>
+    <message><source>Exportieren</source><translation>Export</translation></message>
+    <message><source>Löschen</source><translation>Delete</translation></message>
+    <message><source>Profilname</source><translation>Profile name</translation></message>
+    <message><source>Attribute suchen</source><translation>Search attributes</translation></message>
+    <message><source>Attribute</source><translation>Attributes</translation></message>
+    <message><source>Profil speichern</source><translation>Save profile</translation></message>
+    <message><source>Als neues Profil speichern</source><translation>Save as new profile</translation></message>
+    <message><source>Ursprung wiederherstellen</source><translation>Restore original</translation></message>
+    <message><source>Entwurf verwerfen</source><translation>Discard draft</translation></message>
+    <message><source>Ungespeicherter Entwurf. Bestehende Bewertungen bleiben unverändert.</source><translation>Unsaved draft. Existing ratings remain unchanged.</translation></message>
+    <message><source>Ungespeicherte Profiländerungen verwerfen?</source><translation>Discard unsaved profile changes?</translation></message>
+    <message><source> · Angepasst</source><translation> · Customized</translation></message>
+    <message><source>Profile bearbeiten und austauschen. Speichern aktiviert ein Profil nicht für den Spielstand.</source><translation>Edit and exchange profiles. Saving does not activate a profile for this save.</translation></message>
+    <message><source>Neues Profil</source><translation>New profile</translation></message>
+    <message><source>Profil löschen</source><translation>Delete profile</translation></message>
+    <message><source>Dieses Profil löschen?</source><translation>Delete this profile?</translation></message>
+    <message><source>Profil importieren</source><translation>Import profile</translation></message>
+    <message><source>JSON-Profile (*.json)</source><translation>JSON profiles (*.json)</translation></message>
+    <message><source>Als neues Profil importieren</source><translation>Import as new profile</translation></message>
+    <message><source>Ein Profil mit dieser Kennung oder diesem Namen existiert bereits. Neuen Namen vergeben:</source><translation>A profile with this ID or name already exists. Enter a new name:</translation></message>
+    <message><source>Profilentwurf exportieren</source><translation>Export profile draft</translation></message>
+    <message><source>Name oder Kennung bereits vorhanden. Bitte einen anderen Namen verwenden.</source><translation>Name or ID already exists. Please use a different name.</translation></message>
+    <message><source>Die Profilbibliothek wurde zwischenzeitlich geändert. Bitte die Einstellungen neu öffnen, bevor du speicherst.</source><translation>The profile library has changed. Please reopen settings before saving.</translation></message>
+    <message><source>Das Profil konnte nicht übernommen werden. Prüfe Namen, Dateiformat, gültige Kurven und Schreibrechte.</source><translation>The profile could not be saved or loaded. Check the name, file format, curve validity and write permissions.</translation></message>
+    <message><source>Attributkategorie</source><translation>Attribute category</translation></message>
+    <message><source>Alle Attribute</source><translation>All attributes</translation></message>
+    <message><source>Technisch</source><translation>Technical</translation></message>
+    <message><source>Mental</source><translation>Mental</translation></message>
+    <message><source>Physisch</source><translation>Physical</translation></message>
+    <message><source>Torhüter</source><translation>Goalkeeping</translation></message>
+    <message><source>Deaktiviert – im Editor bearbeitbar</source><translation>Disabled – editable</translation></message>
+    <message><source>Aktiv</source><translation>Active</translation></message>
+    <message><source>Eins gegen Eins</source><translation>One vs One</translation></message>
+    <message><source>Antritt</source><translation>Acceleration</translation></message>
+    <message><source>Reichweite</source><translation>Aerial Reach</translation></message>
+    <message><source>Aggressivität</source><translation>Aggression</translation></message>
+    <message><source>Beweglichkeit</source><translation>Agility</translation></message>
+    <message><source>Antizipation</source><translation>Anticipation</translation></message>
+    <message><source>Balance</source><translation>Balance</translation></message>
+    <message><source>Mut</source><translation>Bravery</translation></message>
+    <message><source>Strafraumbeherrschung</source><translation>Command of Area</translation></message>
+    <message><source>Konzentration</source><translation>Concentration</translation></message>
+    <message><source>Nervenstärke</source><translation>Composure</translation></message>
+    <message><source>Ecken</source><translation>Corners</translation></message>
+    <message><source>Flanken</source><translation>Crossing</translation></message>
+    <message><source>Entscheidungen</source><translation>Decisions</translation></message>
+    <message><source>Zielstrebigkeit</source><translation>Determination</translation></message>
+    <message><source>Dribbling</source><translation>Dribbling</translation></message>
+    <message><source>Abschluss</source><translation>Finishing</translation></message>
+    <message><source>Ballannahme</source><translation>First Touch</translation></message>
+    <message><source>Flair</source><translation>Flair</translation></message>
+    <message><source>Fangsicherheit</source><translation>Handling</translation></message>
+    <message><source>Kopfballtechnik</source><translation>Heading</translation></message>
+    <message><source>Sprunghöhe</source><translation>Jumping Reach</translation></message>
+    <message><source>Abschläge</source><translation>Kicking</translation></message>
+    <message><source>Führungsqualitäten</source><translation>Leadership</translation></message>
+    <message><source>Weitschüsse</source><translation>Long Shots</translation></message>
+    <message><source>Deckung</source><translation>Marking</translation></message>
+    <message><source>Ohne Ball</source><translation>Off the Ball</translation></message>
+    <message><source>Schnelligkeit</source><translation>Pace</translation></message>
+    <message><source>Passen</source><translation>Passing</translation></message>
+    <message><source>Stellungsspiel</source><translation>Positioning</translation></message>
+    <message><source>Reflexe</source><translation>Reflexes</translation></message>
+    <message><source>Herauslaufen (Tendenz)</source><translation>Rushing Out (Tendency)</translation></message>
+    <message><source>Ausdauer</source><translation>Stamina</translation></message>
+    <message><source>Kraft</source><translation>Strength</translation></message>
+    <message><source>Tackling</source><translation>Tackling</translation></message>
+    <message><source>Teamwork</source><translation>Teamwork</translation></message>
+    <message><source>Technik</source><translation>Technique</translation></message>
+    <message><source>Abwürfe</source><translation>Throwing</translation></message>
+    <message><source>Übersicht</source><translation>Vision</translation></message>
+    <message><source>Einsatzfreude</source><translation>Work Rate</translation></message>
+    <message><source>Kommunikation</source><translation>Communication</translation></message>
+    <message><source>Exzentrik</source><translation>Eccentricity</translation></message>
+    <message><source>Grundfitness</source><translation>Natural Fitness</translation></message>
+    <message><source>Freistöße</source><translation>Free Kick Taking</translation></message>
+    <message><source>Weite Einwürfe</source><translation>Long Throws</translation></message>
+    <message><source>Elfmeter</source><translation>Penalty Taking</translation></message>
+    <message><source>Fausten</source><translation>Punching</translation></message>
 </context>
 </TS>

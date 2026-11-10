@@ -1,4 +1,5 @@
 #include "SettingsPage.h"
+#include "../widgets/RatingProfileEditor.h"
 #include "core/ImportHistory.h"
 
 #include "../AppContext.h"
@@ -312,7 +313,7 @@ SettingsPage::SettingsPage(AppContext &context, ThemeManager &theme, QWidget *pa
     addSection(tr("Daten"), tr("Verlauf und Datenfrische"), "Verlauf und Datenfrische",
                buildHistoryPage());
     addSection(tr("Daten"), tr("Porträts und Wappen"), "Porträts und Wappen", buildGraphicsPage());
-    addSection(tr("Berechnung"), tr("DWRS-Gewichte"), "DWRS-Gewichte", buildWeightsPage());
+    addSection(tr("Berechnung"), tr("DWRS-Bewertung"), "DWRS-Gewichte", buildWeightsPage());
     addSection(tr("Berechnung"), tr("Kader und Analyse"), "Kader und Analyse", buildSquadPage());
     addSection(tr("Berechnung"), tr("Persönlichkeiten"), "Persönlichkeiten", buildPersonalityPage());
     addSection(tr("Berechnung"), tr("Training"), "Training", buildTrainingPage());
@@ -825,11 +826,31 @@ QWidget *SettingsPage::buildGraphicsPage()
 QWidget *SettingsPage::buildWeightsPage()
 {
     QVBoxLayout *cards = nullptr;
-    QWidget *page = makePage(tr("DWRS-Gewichte"),
+    QWidget *page = makePage(tr("DWRS-Bewertung"),
                              tr("Wie stark die Attribut-Kategorien in die DWRS-Bewertung "
                                 "eingehen. Geänderte Gewichte berechnen beim Speichern alle "
                                 "Bewertungen neu."),
                              &cards);
+
+    QVBoxLayout *profileBody = nullptr;
+    cards->addWidget(makeCard(tr("Bewertungsprofile"),
+        tr("Profile als Entwurf bearbeiten, speichern und austauschen."), &profileBody));
+    m_ratingProfileEditor = new RatingProfileEditor(
+        QDir(m_context.paths().dataDir()).filePath(QStringLiteral("rating_profiles.json")),
+        m_context.fmVersionId());
+    m_ratingProfileEditor->setMinimumHeight(600);
+    profileBody->addWidget(m_ratingProfileEditor);
+    const auto updateCurveTheme = [this] {
+        QPalette palette;
+        palette.setColor(QPalette::Base, m_theme.surface());
+        palette.setColor(QPalette::Text, m_theme.text());
+        auto grid = m_theme.text(); grid.setAlpha(45);
+        palette.setColor(QPalette::Mid, grid);
+        palette.setColor(QPalette::Highlight, m_theme.accentUi());
+        m_ratingProfileEditor->setChartPalette(palette);
+    };
+    connect(&m_theme, &ThemeManager::themeChanged, m_ratingProfileEditor, updateCurveTheme);
+    updateCurveTheme();
 
     const auto makeSpin = [](double max = 20.0) {
         auto *spin = sized(new QDoubleSpinBox, kNumberWidth);
@@ -1647,6 +1668,7 @@ QWidget *SettingsPage::buildDatabasePage()
 
 void SettingsPage::refresh()
 {
+    if (m_ratingProfileEditor) m_ratingProfileEditor->setGame(m_context.fmVersionId());
     refreshPersonalities();
     AppConfig &config = m_context.config();
 

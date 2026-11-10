@@ -33,6 +33,7 @@ private:
     struct RolePlan {
         std::vector<AttributePlan> attributes;
         double denominator = 0;
+        double baseline = 0;
         bool goalkeeper = false;
     };
     static CurveScore evaluatePlan(const Player &player, const RolePlan &plan);

@@ -16,7 +16,8 @@ RatingCurve RatingCurve::linear(double weight)
 
 bool RatingCurve::isValid() const
 {
-    if (!std::isfinite(weight) || weight < 0.0 || shape.front() != 0.0
+    if (!std::isfinite(baseline) || !std::isfinite(baseline + weight)
+        || !std::isfinite(weight) || weight < 0.0 || shape.front() != 0.0
         || shape.back() != 1.0)
         return false;
     double previous = 0.0;
@@ -32,7 +33,7 @@ std::optional<double> RatingCurve::contribution(int value) const
 {
     if (!isValid() || value < 1 || value > 20)
         return std::nullopt;
-    return weight * shape[value - 1];
+    return baseline + weight * shape[value - 1];
 }
 
 std::optional<double> RatingCurve::expectedContribution(int low, int high) const
@@ -44,13 +45,14 @@ std::optional<double> RatingCurve::expectedContribution(int low, int high) const
     double mean = 0.0;
     for (int value = low; value <= high; ++value)
         mean += shape[value - 1] / (high - low + 1);
-    return weight * std::clamp(mean, 0.0, 1.0);
+    return baseline + weight * std::clamp(mean, 0.0, 1.0);
 }
 
 CurveScore evaluateCurves(const std::vector<CurveObservation> &observations)
 {
     CurveScore score;
     double denominator = 0.0;
+    double numerator = 0.0;
     for (const auto &observation : observations) {
         if (!observation.curve.isValid() || !std::isfinite(observation.roleFactor)
             || observation.roleFactor < 0.0) {
@@ -75,6 +77,9 @@ CurveScore evaluateCurves(const std::vector<CurveObservation> &observations)
             return score;
         }
         score.absolute += *contribution * observation.roleFactor;
+        auto relative = observation.curve;
+        relative.baseline = 0;
+        numerator += *relative.expectedContribution(observation.low, observation.high) * observation.roleFactor;
         denominator += weight;
         if (!std::isfinite(score.absolute) || !std::isfinite(denominator)) {
             score.absolute = 0.0;
@@ -85,7 +90,7 @@ CurveScore evaluateCurves(const std::vector<CurveObservation> &observations)
     if (denominator == 0.0)
         return score;
     score.status = CurveScore::Status::Available;
-    score.normalized = std::clamp(score.absolute / denominator * 100.0, 0.0, 100.0);
+    score.normalized = std::clamp(numerator / denominator * 100.0, 0.0, 100.0);
     return score;
 }
 

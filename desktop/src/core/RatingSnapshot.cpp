@@ -52,9 +52,12 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
         for (auto it = profile.attributes.begin(); it != profile.attributes.end(); ++it) {
             const auto effective = profile.resolve(it.key(), roleKey, weights.key.contains(it.key()),
                                                     weights.preferable.contains(it.key()));
+            if (!effective.curve.isValid()) return fail(QStringLiteral("invalid-effective-curve"));
             const double total = effective.curve.weight * effective.factor;
             if (!std::isfinite(total)) return fail(QStringLiteral("contribution-overflow"));
             if (total == 0) continue;
+            plan.baseline += effective.curve.baseline * effective.factor;
+            if (!std::isfinite(plan.baseline)) return fail(QStringLiteral("contribution-overflow"));
             AttributePlan attr;
             attr.index = attrIndexByName(it.key());
             attr.weight = total;
@@ -70,7 +73,8 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
             plan.attributes.push_back(attr);
         }
         compiledRoles.insert(roleKey, QJsonObject{{QStringLiteral("attributes"), compiledAttributes},
-                                                 {QStringLiteral("goalkeeper"), plan.goalkeeper}});
+                                                 {QStringLiteral("goalkeeper"), plan.goalkeeper},
+                                                 {QStringLiteral("baseline"), plan.baseline}});
         snapshot->m_roles.insert(role, std::move(plan));
     }
     const QJsonObject identity{{QStringLiteral("profileRevision"), profile.revision()},
@@ -110,6 +114,12 @@ CurveScore RatingSnapshot::evaluatePlan(const Player &player, const RolePlan &pl
     }
     result.status = CurveScore::Status::Available;
     result.normalized = std::clamp(result.absolute / plan.denominator * 100.0, 0.0, 100.0);
+    result.absolute += plan.baseline;
+    if (!std::isfinite(result.absolute)) {
+        result.absolute = 0;
+        result.normalized.reset();
+        result.status = CurveScore::Status::InvalidInput;
+    }
     return result;
 }
 

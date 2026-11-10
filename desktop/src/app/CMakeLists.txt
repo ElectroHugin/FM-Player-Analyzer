@@ -160,3 +160,5 @@ qt_add_resources(fmplayeranalyzer "translations"
     PREFIX "/i18n"
     FILES ${FM_QM_FILE}
 )
+target_sources(fmplayeranalyzer PRIVATE widgets/RatingCurveEditor.h widgets/RatingCurveEditor.cpp)
+target_sources(fmplayeranalyzer PRIVATE widgets/RatingProfileEditor.h widgets/RatingProfileEditor.cpp)
