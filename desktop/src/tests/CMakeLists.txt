@@ -120,3 +120,10 @@ fm_add_test(test_tacticlibrary)
 target_compile_definitions(test_tacticlibrary PRIVATE
     DEFINITIONS_FM27="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json"
     DEFINITIONS_FM24="${CMAKE_SOURCE_DIR}/src/app/resources/definitions.json")
+fm_add_test(test_ratingcurve)
+fm_add_test(test_ratingprofile)
+fm_add_test(test_ratingprofilelibrary)
+fm_add_test(test_classicreference)
+target_compile_definitions(test_classicreference PRIVATE DEFINITIONS_DIR="${CMAKE_SOURCE_DIR}/src/app/resources" CLASSIC_FIXTURE="${CMAKE_CURRENT_SOURCE_DIR}/fixtures/classic-2.2.3.json")
+fm_add_test(test_visibleattributes)
+fm_add_test(test_ratingsnapshot)

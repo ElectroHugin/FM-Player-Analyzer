@@ -24,7 +24,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 16;
+constexpr int kSchemaVersion = 17;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -230,6 +230,19 @@ bool Database::initSchema()
     }
     if (version == kSchemaVersion)
         return true;
+    versionQuery.finish();
+
+    // Preserve a dedicated pre-2.3.0 snapshot, including committed WAL data.
+    // It is never rotated with routine backups or overwritten on a retry.
+    if (version > 0 && version < 17 && m_filePath != QStringLiteral(":memory:")) {
+        const QString backup = m_filePath + QStringLiteral(".pre-2.3.0-%1.db")
+            .arg(QUuid::createUuid().toString(QUuid::Id128));
+        QString error;
+        if (!snapshotTo(m_filePath, backup, &error)) {
+            m_error = QStringLiteral("Pre-migration backup failed: %1").arg(error);
+            return false;
+        }
+    }
 
     if (!beginTransaction())
         return false;
@@ -270,6 +283,8 @@ bool Database::initSchema()
             ok = migrateToV15();
         if (ok && version < 16)
             ok = migrateToV16();
+        if (ok && version < 17)
+            ok = migrateToV17();
     }
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
@@ -797,6 +812,29 @@ bool Database::migrateV9ToV10()
     for (const QString &name : {QStringLiteral("Communication"), QStringLiteral("Eccentricity")}) {
         for (const QString &suffix : {QStringLiteral("_lo"), QStringLiteral("_hi")}) {
             const QString column = attrColumnName(name) + suffix;
+            if (!existing.contains(column)
+                && !exec(QStringLiteral("ALTER TABLE players ADD COLUMN %1 INTEGER").arg(column)))
+                return false;
+        }
+    }
+    return true;
+}
+
+bool Database::migrateToV17()
+{
+    QSet<QString> existing;
+    QSqlQuery info(m_db);
+    if (!info.exec(QStringLiteral("PRAGMA table_info(players)"))) {
+        m_error = info.lastError().text();
+        return false;
+    }
+    while (info.next()) existing.insert(info.value(1).toString());
+    info.finish();
+    for (const auto &name : {QStringLiteral("Natural Fitness"), QStringLiteral("Free Kick Taking"),
+                             QStringLiteral("Long Throws"), QStringLiteral("Penalty Taking"),
+                             QStringLiteral("Punching")}) {
+        for (const auto &suffix : {QStringLiteral("_lo"), QStringLiteral("_hi")}) {
+            const auto column = attrColumnName(name) + suffix;
             if (!existing.contains(column)
                 && !exec(QStringLiteral("ALTER TABLE players ADD COLUMN %1 INTEGER").arg(column)))
                 return false;

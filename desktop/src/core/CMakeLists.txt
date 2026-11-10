@@ -20,6 +20,14 @@ add_library(fmcore STATIC
     Development.cpp
     ImportHistory.h
     ImportHistory.cpp
+    RatingProfileLibrary.h
+    RatingProfileLibrary.cpp
+    RatingSnapshot.h
+    RatingSnapshot.cpp
+    RatingProfile.h
+    RatingProfile.cpp
+    RatingCurve.h
+    RatingCurve.cpp
     DwrsEngine.h
     DwrsEngine.cpp
     Fm27Save.h

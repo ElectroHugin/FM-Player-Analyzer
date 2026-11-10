@@ -49,6 +49,11 @@ const std::array<QString, kAttrCount> &attrNames()
         QStringLiteral("Work Rate"),
         QStringLiteral("Communication"),
         QStringLiteral("Eccentricity"),
+        QStringLiteral("Natural Fitness"),
+        QStringLiteral("Free Kick Taking"),
+        QStringLiteral("Long Throws"),
+        QStringLiteral("Penalty Taking"),
+        QStringLiteral("Punching"),
     };
     return names;
 }

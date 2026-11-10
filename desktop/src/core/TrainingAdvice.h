@@ -9,6 +9,7 @@
 namespace fm {
 
 class DwrsEngine;
+class RatingSnapshot;
 
 // Training advisor. Frames "what should this player train?" as a DWRS
 // optimization: among the attributes that (a) actually feed the chosen role's
@@ -45,7 +46,7 @@ struct Recommendation {
     int currentValue = 0;      // rounded attribute mean
     double dwrsPerPoint = 0.0; // marginal normalized DWRS per +1 for the role
     double devFactor = 0.0;    // 0..1 trainability at this age
-    double priority = 0.0;     // dwrsPerPoint * devFactor * headroom
+    double priority = 0.0;     // Classic: marginal * age * headroom; curves: expected +1 gain * age
     bool mentoringOnly = false;
 };
 
@@ -59,6 +60,10 @@ struct Advice {
 // role must be a valid DWRS role for the player. windows come from AppConfig.
 Advice adviseForRole(const Player &player, const QString &role,
                      const DwrsEngine &engine, const AgeWindows &windows);
+
+// Nonlinear profiles use the expected +1 gain at the current attribute range.
+Advice adviseForRole(const Player &player, const QString &role,
+                     const RatingSnapshot &snapshot, const AgeWindows &windows);
 
 // --- Training focuses (the in-game training methods) --------------------------
 // FM does not train single attributes; the player picks a training focus that
@@ -97,6 +102,9 @@ struct FocusAdvice {
 // the given role, honoring age windows and headroom, excluding injury rehab.
 FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
                                  const DwrsEngine &engine, const AgeWindows &windows);
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const RatingSnapshot &snapshot, const AgeWindows &windows);
 
 } // namespace TrainingAdvice
 

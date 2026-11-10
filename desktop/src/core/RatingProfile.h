@@ -1,0 +1,55 @@
+#pragma once
+
+#include "RatingCurve.h"
+#include <QJsonObject>
+#include <QMap>
+#include <QStringList>
+
+namespace fm {
+
+struct RatingOverride {
+    std::optional<double> weight;
+    std::optional<std::array<double, 20>> shape;
+    std::optional<double> factor;
+};
+
+struct ResolvedRatingAttribute {
+    RatingCurve curve;
+    double factor = 1.0;
+    QString weightOrigin = QStringLiteral("base");
+    QString shapeOrigin = QStringLiteral("base");
+    QString factorOrigin = QStringLiteral("role-category");
+};
+
+// Value type. Workers receive a const copy/shared_ptr<const RatingProfile>.
+// Dictionary keys are stable attribute IDs and explicit version/phase/role IDs.
+struct RatingProfile {
+    static constexpr int formatVersion = 1;
+    QString id;
+    QString name;
+    QString description;
+    QString origin;
+    QString sourceVersion;
+    QStringList sources;
+    QStringList compatibleGames;
+    QString calculationVersion = QStringLiteral("curves-uniform-range-v1");
+    QMap<QString, RatingCurve> attributes;
+    // Independent optional fields, never whole-record replacement.
+    QMap<QString, QMap<QString, RatingOverride>> positions;
+    QMap<QString, QMap<QString, RatingOverride>> roles;
+    // Explicit one-parent mapping avoids ambiguous multi-position roles.
+    QMap<QString, QString> rolePositions;
+    double keyFactor = 1.5;
+    double preferableFactor = 1.2;
+
+    QString validate() const;
+    ResolvedRatingAttribute resolve(const QString &attribute, const QString &role,
+                                    bool key, bool preferable) const;
+    QJsonObject toJson() const;
+    // Formula digest excludes names/provenance, includes compatibility and every
+    // effective rule. Role-definition snapshots form a separate cache key.
+    QString revision() const;
+    static std::optional<RatingProfile> fromJson(const QJsonObject &json, QString *error);
+};
+
+} // namespace fm

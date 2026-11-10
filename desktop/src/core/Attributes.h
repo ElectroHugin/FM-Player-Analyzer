@@ -7,7 +7,7 @@
 
 namespace fm {
 
-// The 40 rated 1-20 attributes, in a fixed canonical order. Index into
+// The visible 1-20 attributes, in a fixed canonical order. Index into
 // Player::attrLo/attrHi. Names are the full names used as DB columns in the
 // legacy app (attribute_mapping values), which keeps the migration and the
 // DWRS spec readable.
@@ -56,7 +56,13 @@ enum class Attr : uint8_t {
     // them (FmDataVersion::unratedAttributes).
     Communication,
     Eccentricity,
-    Count // = 42
+    // Appended in schema v17: never reorder persisted attribute indexes.
+    NaturalFitness,
+    FreeKickTaking,
+    LongThrows,
+    PenaltyTaking,
+    Punching,
+    Count // = 47
 };
 
 inline constexpr int kAttrCount = static_cast<int>(Attr::Count);

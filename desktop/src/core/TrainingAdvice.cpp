@@ -2,6 +2,7 @@
 
 #include "Attributes.h"
 #include "DwrsEngine.h"
+#include "RatingSnapshot.h"
 
 #include <QHash>
 #include <QSet>
@@ -120,11 +121,10 @@ double devFactor(Group group, int age, const AgeWindows &windows)
     return 0.0;
 }
 
-Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine &engine,
-                     const AgeWindows &windows)
+static Advice adviceFromGains(const Player &player, const QHash<int, double> &perPoint,
+                               const AgeWindows &windows, bool legacyHeadroom)
 {
     Advice advice;
-    const QHash<int, double> perPoint = engine.attributeDwrsPerPoint(role);
     if (perPoint.isEmpty())
         return advice; // role has no ratable attributes (unknown role)
     advice.valid = true;
@@ -149,7 +149,7 @@ Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine
         rec.dwrsPerPoint = it.value();
         rec.devFactor = dev;
         rec.mentoringOnly = group == Group::Character;
-        rec.priority = it.value() * dev * headroom;
+        rec.priority = it.value() * dev * (legacyHeadroom ? headroom : 1.0);
 
         if (rec.mentoringOnly) {
             // Character attrs never train via focus, but a weak one that matters
@@ -176,6 +176,18 @@ Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine
 
     advice.formLimited = player.averageRating > 0.0 && player.averageRating < 7.0;
     return advice;
+}
+
+Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine &engine,
+                     const AgeWindows &windows)
+{
+    return adviceFromGains(player, engine.attributeDwrsPerPoint(role), windows, true);
+}
+
+Advice adviseForRole(const Player &player, const QString &role, const RatingSnapshot &snapshot,
+                     const AgeWindows &windows)
+{
+    return adviceFromGains(player, snapshot.trainingGains(player, role), windows, false);
 }
 
 const std::vector<TrainingFocus> &trainingFocuses()
@@ -261,14 +273,12 @@ const std::vector<TrainingFocus> &trainingFocuses()
     return focuses;
 }
 
-FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
-                                 const DwrsEngine &engine, const AgeWindows &windows)
+static FocusAdvice focusesFromAdvice(const Advice &attrAdvice, bool isGkRole)
 {
     FocusAdvice out;
     // Reuse the per-attribute optimization: each trainable, role-relevant
     // attribute already carries its DWRS-gain priority. A focus is then just the
     // sum of the priorities of the attributes it trains.
-    const Advice attrAdvice = adviseForRole(player, role, engine, windows);
     if (!attrAdvice.valid)
         return out;
     out.valid = true;
@@ -277,24 +287,6 @@ FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
     QHash<QString, const Recommendation *> byName;
     for (const Recommendation &r : attrAdvice.focus)
         byName.insert(r.attrName, &r);
-
-    // Detect a goalkeeper role from its rating attributes: GK roles rate the
-    // GK-only attributes, outfield roles never do. GK training methods (name
-    // starts with "GK") apply only to GK roles and vice versa — without this,
-    // GK methods leak onto outfielders through shared mental attributes
-    // (e.g. GK Reactions -> Anticipation/Concentration).
-    static const QSet<QString> kGkMarkers = {
-        QStringLiteral("Aerial Reach"), QStringLiteral("Reflexes"),
-        QStringLiteral("Command of Area"), QStringLiteral("Handling"),
-        QStringLiteral("One vs One")};
-    bool isGkRole = false;
-    {
-        const QHash<int, double> perPoint = engine.attributeDwrsPerPoint(role);
-        for (auto it = perPoint.constBegin(); it != perPoint.constEnd() && !isGkRole; ++it) {
-            if (kGkMarkers.contains(attrNames()[it.key()]))
-                isGkRole = true;
-        }
-    }
 
     for (const TrainingFocus &f : trainingFocuses()) {
         if (f.rehab)
@@ -344,6 +336,36 @@ FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
                   return a.focus < b.focus;
               });
     return out;
+}
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const DwrsEngine &engine, const AgeWindows &windows)
+{
+    // Detect a goalkeeper role from its rating attributes: GK roles rate the
+    // GK-only attributes, outfield roles never do. GK training methods (name
+    // starts with "GK") apply only to GK roles and vice versa — without this,
+    // GK methods leak onto outfielders through shared mental attributes
+    // (e.g. GK Reactions -> Anticipation/Concentration).
+    static const QSet<QString> kGkMarkers = {
+        QStringLiteral("Aerial Reach"), QStringLiteral("Reflexes"),
+        QStringLiteral("Command of Area"), QStringLiteral("Handling"),
+        QStringLiteral("One vs One")};
+    bool isGkRole = false;
+    {
+        const QHash<int, double> perPoint = engine.attributeDwrsPerPoint(role);
+        for (auto it = perPoint.constBegin(); it != perPoint.constEnd() && !isGkRole; ++it) {
+            if (kGkMarkers.contains(attrNames()[it.key()]))
+                isGkRole = true;
+        }
+    }
+
+    return focusesFromAdvice(adviseForRole(player, role, engine, windows), isGkRole);
+}
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const RatingSnapshot &snapshot, const AgeWindows &windows)
+{
+    return focusesFromAdvice(adviseForRole(player, role, snapshot, windows), snapshot.isGoalkeeperRole(role));
 }
 
 } // namespace TrainingAdvice
