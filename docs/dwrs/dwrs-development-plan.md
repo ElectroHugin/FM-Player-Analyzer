@@ -47,3 +47,20 @@ have widget coverage. This is still an incomplete development build: activation,
 advanced rules UI, preview, migration, history and the other release gates above
 remain open. The built-in definitions are not yet seeded into the UI library.
 Final editor verification: MSVC release build and 47/47 CTest suites passed (7.26 seconds), including the user-requested two-decimal display and preservation of underlying curve precision.
+
+## Frozen Classic calculation checkpoint
+
+`ClassicRatingSnapshot` captures the existing engine's compiled group distribution,
+role factors and participating attributes as an immutable value. Its versioned,
+strictly validated JSON preserves the exact arithmetic order and can reproduce
+ratings without reading mutable settings or role definitions. All 4,608 frozen
+FM24/FM27 reference cases also pass through a JSON-restored snapshot. Tests cover
+custom settings, later settings changes, invalid group counts, unsupported format
+versions and a zero denominator. Full MSVC build and 47/47 suites pass (9.58 s).
+This is an internal compatibility record, not a substitute for the editable
+universal profile format. Built-in profile construction, selection/migration and
+history integration are still required. Existing historical entries are not
+assigned to this snapshot merely because it can be captured today.
+
+The development branch is published on GitHub as
+`feature/2.3.0-dwrs-profiles`; it is not a released or complete test.1 build.

@@ -5,6 +5,7 @@
 #include "core/AppConfig.h"
 #include "core/Definitions.h"
 #include "core/DwrsEngine.h"
+#include "core/ClassicRatingSnapshot.h"
 #include <cmath>
 
 using namespace fm;
@@ -14,6 +15,37 @@ using namespace fm;
 class TestClassicReference : public QObject {
     Q_OBJECT
 private slots:
+    void snapshotIsolationAndValidation() {
+        Definitions definitions;
+        QVERIFY(definitions.load(QStringLiteral(DEFINITIONS_DIR) + QStringLiteral("/definitions.json")));
+        QTemporaryDir temporary; AppConfig config(temporary.filePath("settings.ini"));
+        DwrsEngine engine(definitions, config);
+        const auto frozen = ClassicRatingSnapshot::capture(engine); QVERIFY(frozen);
+        Player player;
+        for (int a = 0; a < kAttrCount; ++a) player.attrLo[a] = player.attrHi[a] = 1 + a % 20;
+        const auto before = frozen->evaluate(player, "AF-A"); QVERIFY(before.normalized);
+        QVERIFY(config.setRoleMultiplier("key", 3.0)); engine.reloadConfig();
+        const auto changed = ClassicRatingSnapshot::capture(engine); QVERIFY(changed);
+        QVERIFY(changed->revision() != frozen->revision());
+        QCOMPARE(frozen->evaluate(player, "AF-A").normalized, before.normalized);
+        QCOMPARE(frozen->evaluate(player, "AF-A").absolute, before.absolute);
+        auto json = frozen->toJson(); json.insert("version", 1.5);
+        QVERIFY(!ClassicRatingSnapshot::fromJson(json, nullptr));
+        json = frozen->toJson(); auto roles = json.value("roles").toObject();
+        auto plan = roles.value("AF-A").toObject(); auto counts = plan.value("counts").toArray();
+        counts[0] = counts[0].toInt() + 1; plan.insert("counts", counts); roles.insert("AF-A", plan); json.insert("roles", roles);
+        QVERIFY(!ClassicRatingSnapshot::fromJson(json, nullptr));
+        json = frozen->toJson(); roles = json.value("roles").toObject();
+        for (auto it = roles.begin(); it != roles.end(); ++it) {
+            auto empty = it->toObject(); auto weights = empty.value("weights").toArray();
+            for (int i = 0; i < weights.size(); ++i) weights[i] = 0;
+            empty.insert("weights", weights); it.value() = empty;
+        }
+        json.insert("roles", roles);
+        const auto empty = ClassicRatingSnapshot::fromJson(json, nullptr); QVERIFY(empty);
+        QCOMPARE(empty->evaluate(player, "AF-A").status, CurveScore::Status::NoVariation);
+        QVERIFY(!empty->evaluate(player, "AF-A").normalized);
+    }
     void everyRoleBothGames()
     {
         const QString fixturePath = QStringLiteral(CLASSIC_FIXTURE);
@@ -48,6 +80,9 @@ private slots:
                         QVERIFY(config.setGkWeight(version, it.key(), it.value() * 0.8 + 0.2));
                 }
                 DwrsEngine engine(definitions, config);
+                const auto snapshot = ClassicRatingSnapshot::capture(engine); QVERIFY(snapshot);
+                const auto restored = ClassicRatingSnapshot::fromJson(snapshot->toJson(), nullptr); QVERIFY(restored);
+                QCOMPARE(restored->revision(), snapshot->revision());
                 for (int sample = 0; sample < 16; ++sample) {
                     Player player;
                     constexpr int levels[] = {1, 6, 12, 18, 19, 20};
@@ -62,6 +97,8 @@ private slots:
                     }
                     for (const auto &role : definitions.validRoles()) {
                         const auto rating = engine.calculate(player, role);
+                        const auto frozen = restored->evaluate(player, role); QVERIFY(frozen.normalized);
+                        QCOMPARE(frozen.absolute, rating.first); QCOMPARE(*frozen.normalized, rating.second);
                         QJsonObject row{{QStringLiteral("game"), version}, {QStringLiteral("custom"), custom},
                                         {QStringLiteral("sample"), sample}, {QStringLiteral("role"), role},
                                         {QStringLiteral("absolute"), rating.first}, {QStringLiteral("normalized"), rating.second}};

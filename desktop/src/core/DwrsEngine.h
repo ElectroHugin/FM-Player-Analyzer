@@ -12,6 +12,7 @@
 namespace fm {
 
 class AppConfig;
+class ClassicRatingSnapshot;
 class Definitions;
 
 // Result of one role's batch calculation.
@@ -59,6 +60,7 @@ public:
                                      const QStringList &validRoles) const;
 
 private:
+    friend class ClassicRatingSnapshot;
     struct RolePlan {
         // Per attribute participating in this role's rating:
         std::vector<int> attrIndexes;      // index into Player::attrLo/attrHi
