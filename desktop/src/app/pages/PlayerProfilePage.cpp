@@ -392,6 +392,11 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     // One player's own history: each point is a stored change of his ratings.
     m_chart->setAxisTitle(tr("Gespeicherte Veränderungen vor dem aktuellen Wert"));
     detailLayout->addWidget(m_chart);
+    m_switchNote = new QLabel(m_detailWidget);
+    m_switchNote->setObjectName(QStringLiteral("kpiCaption"));
+    m_switchNote->setWordWrap(true);
+    m_switchNote->setVisible(false);
+    detailLayout->addWidget(m_switchNote);
 
     auto *historyTitle = new QLabel(tr("Verlauf nach Ingame-Datum"), m_detailWidget);
     historyTitle->setObjectName(QStringLiteral("sectionTitle"));
@@ -868,6 +873,14 @@ void PlayerProfilePage::showPlayer()
     else
         m_chart->setSeries(std::move(chartSeries), snapshotLabels,
                            LineChartWidget::ValueMode::Percent, markers);
+    // Profile switches are recalculations: the chart marks them and computes
+    // no development across them. Name them here.
+    QStringList switches;
+    for (const auto &[when, name] : m_context.ratingProfileSwitches())
+        switches << tr("%1: %2").arg(when, name);
+    m_switchNote->setText(tr("Profilwechsel (Markierung im Diagramm, keine Entwicklung über den Wechsel): %1")
+                              .arg(switches.join(QStringLiteral(" · "))));
+    m_switchNote->setVisible(!switches.isEmpty());
     fillHistory(player);
 }
 

@@ -14,6 +14,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QLocale>
 #include <QSet>
 #include <QSqlQuery>
 #include <QTemporaryDir>
@@ -596,6 +597,26 @@ QString AppContext::activateRatingProfile(const QString &profileId)
     if (m_store.size() > 0 && (!m_ratingSnapshot || m_ratingSnapshot->cacheKey() != before))
         emit ratingRecalcRequested();
     return {};
+}
+
+QList<QPair<QString, QString>> AppContext::ratingProfileSwitches() const
+{
+    QList<QPair<QString, QString>> result;
+    if (!m_ratingSelection)
+        return result;
+    for (const QJsonValue &value : m_ratingSelection->switches) {
+        const QJsonObject entry = value.toObject();
+        const QDate gameDate = QDate::fromString(entry.value(QStringLiteral("saveDate")).toString(), Qt::ISODate);
+        const QDateTime at = QDateTime::fromString(entry.value(QStringLiteral("at")).toString(), Qt::ISODateWithMs);
+        const QString when = gameDate.isValid() ? QLocale().toString(gameDate, QLocale::ShortFormat)
+                                                : QLocale().toString(at.toLocalTime().date(), QLocale::ShortFormat);
+        const QString id = entry.value(QStringLiteral("profileId")).toString();
+        QString name = m_ratingLibrary.profiles().contains(id) ? m_ratingLibrary.profiles().value(id).name : id;
+        if (id == m_ratingSelection->profile.id)
+            name = m_ratingSelection->profile.name;
+        result.append({when, name});
+    }
+    return result;
 }
 
 QString AppContext::keepPreviousRatingProfile()

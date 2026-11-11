@@ -79,6 +79,9 @@ public:
     bool ratingDecisionPending() const;
     // Records "keep the previous profile" for that one-time question.
     QString keepPreviousRatingProfile();
+    // Profile switches of the open save, oldest first: (in-game date or, if
+    // unknown, the local date of the switch; profile name).
+    QList<QPair<QString, QString>> ratingProfileSwitches() const;
     // Re-reads the shared library file (after the editor saved it).
     void reloadRatingLibrary();
     // Profiles of the library usable with the open save's game.
