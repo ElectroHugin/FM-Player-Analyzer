@@ -367,11 +367,29 @@ besser voraus als die frühere (Korrelation 0,58 statt 0,43).
 | Preferable | 0,25 | weitere bevorzugte Attribute der Rolle (z. B. Passing, Vision) |
 | Other | 0,2 | Bravery, One vs One, Rushing Out |
 
-Die Stufengewichte, die Multiplikatoren und die Schlüssel- bzw. bevorzugten
-Attribute jeder Rolle lassen sich unter **Einstellungen** ändern. Passe sie an
-deine Spielidee an und starte dort unter **DWRS-Gewichte** die Neuberechnung.
+Diese Rechnung heißt ab 2.3.0 **DWRS Classic** und bleibt für FM24 der Standard.
 
 </details>
+
+**Bewertungsprofile (ab 2.3.0).** Jeder Spielstand rechnet mit genau einem
+Profil, zu sehen unter **Einstellungen → DWRS-Bewertung**. Dort lassen sich
+Profile bearbeiten, als neues Profil speichern, exportieren und importieren;
+„Für diesen Spielstand verwenden“ rechnet einmal neu.
+
+- **DWRS FM27 · harvestgreen22** (Standard für neue FM27-Spielstände): Kurven je
+  Attribut aus den Messungen von harvestgreen22, mit einer Nachkommastelle.
+  Vorläufig, bis die Messung mit dem fertigen Spiel wiederholt ist.
+- **Rollenanteil** (optional, im FM27-Profil 33 %): Ein Teil der Bewertung kommt
+  aus den Schlüssel- und bevorzugten Attributen der Rolle. Ohne ihn wären viele
+  Rollen fast gleich, weil die Messung Attribute allgemein bewertet.
+- **Fehlende Attribute** zählen nicht als 0, sondern fallen heraus. Fehlen mehr
+  als 30 % des Gewichts, gibt es keine Bewertung.
+- **Farben:** sechs Stufen (Schwach, Gewöhnlich, Gut, Selten, Episch, Legendär),
+  für Torhüter mit eigenen Grenzen. Grenzen gehören zum Profil, die Farben
+  stellst du unter **Einstellungen → Design** ein.
+
+Bestehende Spielstände behalten ihre Zahlen. Eigene, geänderte Gewichte werden
+zum persönlichen Profil „Meine Gewichte“.
 
 ---
 

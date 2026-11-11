@@ -351,11 +351,28 @@ instead of 0.43).
 | Preferable | 0.25 | other preferred attributes of the role (e.g. Passing, Vision) |
 | Other | 0.2 | Bravery, One vs One, Rushing Out |
 
-The tier weights, the multipliers and the key/preferred attributes of every
-role can be changed under **Settings** — tune them to your philosophy and start
-the recalculation under **DWRS Weights**.
+This calculation is called **DWRS Classic** from 2.3.0 on and stays the FM24 default.
 
 </details>
+
+**Rating profiles (from 2.3.0).** Every save calculates with exactly one
+profile, shown under **Settings → DWRS Rating**. Profiles can be edited, saved
+as new, exported and imported; "Use for this save" recalculates once.
+
+- **DWRS FM27 · harvestgreen22** (default for new FM27 saves): per-attribute
+  curves from harvestgreen22's measurements, shown with one decimal.
+  Provisional until the measurement is repeated with the full game.
+- **Role share** (optional, 33 % in the FM27 profile): part of the rating comes
+  from the role's key and preferable attributes. Without it many roles would be
+  nearly identical, because the measurement rates attributes in general.
+- **Missing attributes** no longer count as 0; they are left out. If more than
+  30 % of the weight is missing, there is no rating.
+- **Colours:** six tiers (Poor, Common, Uncommon, Rare, Epic, Legendary), with
+  separate goalkeeper thresholds. Thresholds belong to the profile; the colours
+  are set under **Settings → Appearance**.
+
+Existing saves keep their numbers. Your own changed weights become the
+personal profile "My weights".
 
 ---
 
