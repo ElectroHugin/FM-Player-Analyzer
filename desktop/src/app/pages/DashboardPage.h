@@ -13,6 +13,7 @@ class QComboBox;
 class QGridLayout;
 class QGroupBox;
 class QFrame;
+class QButtonGroup;
 class QLabel;
 class QLineEdit;
 class QProgressDialog;
@@ -103,6 +104,8 @@ private:
     QLabel *m_gridTitleOop = nullptr;
     QLabel *m_gridLegend = nullptr;
     QWidget *m_phaseSwitch = nullptr;
+    QButtonGroup *m_colorModeGroup = nullptr;
+    void applyStrengthColorMode();
     int m_phaseView = 0; // 0 combined, 1 with ball, 2 without, 3 both
     // Last computed starters (no pointers into the store).
     struct StarterView {

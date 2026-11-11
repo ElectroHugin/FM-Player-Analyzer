@@ -2,6 +2,7 @@
 
 #include "core/BuiltinRatingProfiles.h"
 #include "core/ClassicRatingSnapshot.h"
+#include "core/DwrsDisplay.h"
 #include "core/ProfileStore.h"
 #include "RatingProfileDefaults.h"
 #include "core/RatingsUpdater.h"
@@ -31,6 +32,14 @@ AppContext::AppContext(QObject *parent)
     // Counted before any page refreshes, so page caches see the new state.
     connect(this, &AppContext::dataChanged, this, [this] { ++m_dataGeneration; });
     connect(this, &AppContext::databaseChanged, this, [this] { ++m_dataGeneration; });
+    // DWRS colours (Settings -> Design) before any page redraws.
+    connect(this, &AppContext::profileChanged, this, [this] {
+        if (!m_config) return;
+        const auto theme = m_config->themeSettings();
+        setDwrsColorMode(theme.value(QStringLiteral("dwrs_color_mode")) == QLatin1String("rainbow")
+                             ? DwrsColorMode::Rainbow : DwrsColorMode::Tiers);
+        setDwrsTierColors(colorsFromString(theme.value(QStringLiteral("dwrs_tier_colors"))));
+    });
 }
 
 AppContext::~AppContext()
@@ -534,8 +543,16 @@ void AppContext::recompileRatingSnapshot()
         if (auto classic = classicRatingProfile({*m_definitions}, *m_config, &error))
             snapshot = RatingSnapshot::compile(*classic, *m_definitions, &error);
     }
-    const bool changed = !m_ratingSnapshot || !snapshot || m_ratingSnapshot->cacheKey() != snapshot->cacheKey();
+    const bool changed = !m_ratingSnapshot || !snapshot || m_ratingSnapshot->cacheKey() != snapshot->cacheKey()
+                         || m_ratingSnapshot->fieldTiers() != snapshot->fieldTiers()
+                         || m_ratingSnapshot->goalkeeperTiers() != snapshot->goalkeeperTiers();
     m_ratingSnapshot = snapshot;
+    if (snapshot) {
+        setDwrsDecimals(snapshot->isClassic() ? 0 : 1);
+        setDwrsTierThresholds(snapshot->fieldTiers(), snapshot->goalkeeperTiers());
+    }
+    const QStringList goalkeepers = m_definitions->gkRoles();
+    setDwrsGoalkeeperRoles(QSet<QString>(goalkeepers.begin(), goalkeepers.end()));
     if (changed)
         emit ratingProfileChanged();
 }
@@ -572,9 +589,11 @@ QString AppContext::activateRatingProfile(const QString &profileId)
         gameDate.isValid() ? gameDate.toString(Qt::ISODate) : QString(), &error);
     if (!selection)
         return error.isEmpty() ? tr("Das Profil konnte nicht aktiviert werden.") : error;
+    const QString before = m_ratingSnapshot ? m_ratingSnapshot->cacheKey() : QString();
     m_ratingSelection = selection;
     recompileRatingSnapshot();
-    if (m_store.size() > 0)
+    // Only a different formula needs new ratings (colour tiers or names do not).
+    if (m_store.size() > 0 && (!m_ratingSnapshot || m_ratingSnapshot->cacheKey() != before))
         emit ratingRecalcRequested();
     return {};
 }

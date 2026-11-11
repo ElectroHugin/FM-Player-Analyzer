@@ -1,4 +1,5 @@
 #include "TacticPitchWidget.h"
+#include "core/DwrsDisplay.h"
 
 #include "../theming/ThemeManager.h"
 #include "core/Constants.h"
@@ -465,14 +466,15 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.setPen(cell.isFilled() ? textColor : secondaryText);
         painter.drawText(line.adjusted(0, 0, -body.width() * 0.45, 0),
                          Qt::AlignLeft | Qt::AlignVCenter,
-                         cell.isFilled() ? QStringLiteral("%1%").arg(qRound(rating))
+                         cell.isFilled() ? formatDwrsPercent(rating)
                                          : QStringLiteral("–"));
         const QRectF bar(line.left() + body.width() * 0.52, line.center().y() - 2,
                          body.width() * 0.48, 4);
         painter.fillRect(bar, night ? QColor(255, 255, 255, 30) : QColor(0, 0, 0, 25));
-        const QColor barColor = rating >= 75   ? QColor(0x3c, 0xc4, 0x6a)
-                                : rating >= 65 ? QColor(0xc9, 0xb8, 0x2c)
-                                               : QColor(0xd9, 0x6b, 0x2b);
+        // Same colour tiers as every DWRS value; Common has no colour of its own.
+        const CellStyle tier = dwrsCellStyle(rating, roleAbbr);
+        const QColor barColor = tier.isValid() ? tier.background
+                                               : (night ? QColor(255, 255, 255, 150) : QColor(0, 0, 0, 120));
         painter.fillRect(QRectF(bar.left(), bar.top(), bar.width() * qBound(0.0, rating / 100.0, 1.0),
                                 bar.height()),
                          barColor);
@@ -706,13 +708,13 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         painter.setPen(textColor);
         painter.drawText(line.adjusted(0, 0, -body.width() * 0.45, 0),
                          Qt::AlignLeft | Qt::AlignVCenter,
-                         QStringLiteral("%1%").arg(qRound(card.value)));
+                         formatDwrsPercent(card.value));
         const QRectF bar(line.left() + body.width() * 0.52, line.center().y() - 2,
                          body.width() * 0.48, 4);
         painter.fillRect(bar, night ? QColor(255, 255, 255, 30) : QColor(0, 0, 0, 25));
-        const QColor barColor = card.value >= 75   ? QColor(0x3c, 0xc4, 0x6a)
-                                : card.value >= 65 ? QColor(0xc9, 0xb8, 0x2c)
-                                                   : QColor(0xd9, 0x6b, 0x2b);
+        const CellStyle tier = dwrsCellStyle(card.value);
+        const QColor barColor = tier.isValid() ? tier.background
+                                               : (night ? QColor(255, 255, 255, 150) : QColor(0, 0, 0, 120));
         painter.fillRect(QRectF(bar.left(), bar.top(),
                                 bar.width() * qBound(0.0, card.value / 100.0, 1.0), bar.height()),
                          barColor);
@@ -725,8 +727,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         painter.drawText(line, Qt::AlignHCenter | Qt::AlignVCenter,
                          painter.fontMetrics().elidedText(
                              tr("mit %1 · ohne %2")
-                                 .arg(qRound(card.ipRating))
-                                 .arg(qRound(card.oopRating)),
+                                 .arg(formatDwrs(card.ipRating), formatDwrs(card.oopRating)),
                              Qt::ElideRight, static_cast<int>(line.width())));
         painter.setPen(QPen(cardBorder, 1));
         painter.setBrush(Qt::NoBrush);

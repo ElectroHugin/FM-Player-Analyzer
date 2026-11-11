@@ -1,4 +1,5 @@
 #include "SquadMatrixPage.h"
+#include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
 #include "PageHelpers.h"
@@ -563,7 +564,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                         },
                         nullptr,
                         [talentScores](const Player &p) {
-                            return dwrsCellStyle(talentScores.value(p.uid, 0.0));
+                            return rainbowCellStyle(talentScores.value(p.uid, 0.0));
                         },
                         Qt::AlignRight | Qt::AlignVCenter});
     }
@@ -698,7 +699,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
             {tr("⌀ Anforderungen"),
              [valueOf](const Player &p) -> QVariant {
                  const double v = valueOf(p);
-                 return v < 0.0 ? QVariant(QStringLiteral("–")) : QVariant(qRound(v));
+                 return v < 0.0 ? QVariant(QStringLiteral("–")) : QVariant(formatDwrs(v));
              },
              valueOf,
              [valueOf](const Player &p) -> CellStyle {
@@ -709,23 +710,22 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
              tr("Mittel der DWRS in den verlangten Rollen; bei einer Bridge gewichtet mit dem "
                 "Anteil mit Ball aus den Einstellungen, wie in Best XI.")});
         if (!m_referenceName.isEmpty() && m_referenceValue >= 0.0) {
-            const int best = qRound(m_referenceValue);
+            const double best = roundDwrs(m_referenceValue);
             focusColumns.append(
-                {tr("Δ %1 (%2)").arg(m_referenceName).arg(best),
+                {tr("Δ %1 (%2)").arg(m_referenceName, formatDwrs(best)),
                  [valueOf, best](const Player &p) -> QVariant {
                      const double v = valueOf(p);
                      if (v < 0.0)
                          return QStringLiteral("–");
-                     const int delta = qRound(v) - best;
-                     return delta > 0 ? QStringLiteral("+%1").arg(delta) : QString::number(delta);
+                     return formatDwrsDelta(roundDwrs(v) - best);
                  },
                  [valueOf, best](const Player &p) {
                      const double v = valueOf(p);
-                     return v < 0.0 ? -1000 : qRound(v) - best;
+                     return v < 0.0 ? -1000.0 : roundDwrs(v) - best;
                  },
                  [valueOf, best](const Player &p) -> CellStyle {
                      const double v = valueOf(p);
-                     return v >= 0.0 && qRound(v) > best ? thresholdMetStyle() : CellStyle{};
+                     return v >= 0.0 && roundDwrs(v) > best ? thresholdMetStyle() : CellStyle{};
                  },
                  Qt::AlignRight | Qt::AlignVCenter,
                  tr("Abstand zum Wert des Spielers, für den die Suche gestartet wurde.")});
@@ -740,36 +740,35 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                             const auto it = roleRatings.constFind(p.uid);
                             if (it == roleRatings.constEnd())
                                 return QStringLiteral("–");
-                            return qRound(it.value());
+                            return formatDwrs(it.value());
                         },
                         [roleRatings](const Player &p) {
                             return roleRatings.value(p.uid, -1.0);
                         },
-                        [roleRatings](const Player &p) -> CellStyle {
+                        [roleRatings, role](const Player &p) -> CellStyle {
                             const auto it = roleRatings.constFind(p.uid);
                             if (it == roleRatings.constEnd())
                                 return {};
-                            return dwrsCellStyle(it.value());
+                            return dwrsCellStyle(it.value(), role);
                         },
                         Qt::AlignRight | Qt::AlignVCenter, roleHeaderToolTip(*definitions, role)});
         if (role == focusRole && benchmark >= 0.0) {
-            const int best = qRound(benchmark);
+            const double best = roundDwrs(benchmark);
             focusColumns.append(
-                {tr("Δ %1 (%2)").arg(benchmarkName).arg(best),
+                {tr("Δ %1 (%2)").arg(benchmarkName, formatDwrs(best)),
                  [roleRatings, best](const Player &p) -> QVariant {
                      const auto it = roleRatings.constFind(p.uid);
                      if (it == roleRatings.constEnd())
                          return QStringLiteral("–");
-                     const int delta = qRound(it.value()) - best;
-                     return delta > 0 ? QStringLiteral("+%1").arg(delta) : QString::number(delta);
+                     return formatDwrsDelta(roundDwrs(it.value()) - best);
                  },
                  [roleRatings, best](const Player &p) {
                      const auto it = roleRatings.constFind(p.uid);
-                     return it == roleRatings.constEnd() ? -1000 : qRound(it.value()) - best;
+                     return it == roleRatings.constEnd() ? -1000.0 : roundDwrs(it.value()) - best;
                  },
                  [roleRatings, best](const Player &p) -> CellStyle {
                      const auto it = roleRatings.constFind(p.uid);
-                     if (it == roleRatings.constEnd() || qRound(it.value()) <= best)
+                     if (it == roleRatings.constEnd() || roundDwrs(it.value()) <= best)
                          return {};
                      return thresholdMetStyle();
                  },

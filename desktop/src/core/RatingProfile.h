@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RatingCurve.h"
+#include "DwrsDisplay.h"
 #include <QJsonObject>
 #include <QMap>
 #include <QStringList>
@@ -51,6 +52,12 @@ struct RatingProfile {
     // revisions stay unchanged.
     double roleShare = 0.0;
     static constexpr double kMaxRoleShare = 0.6;
+    // Colour tier thresholds (Common .. Legendary). Display only: not part of
+    // the formula revision. Unset = defaults for the calculation version.
+    std::optional<DwrsTierThresholds> fieldTiers;
+    std::optional<DwrsTierThresholds> goalkeeperTiers;
+    DwrsTierThresholds effectiveFieldTiers() const;
+    DwrsTierThresholds effectiveGoalkeeperTiers() const;
 
     QString validate() const;
     ResolvedRatingAttribute resolve(const QString &attribute, const QString &role,

@@ -1,4 +1,5 @@
 #include "SigningAdvisorTab.h"
+#include "core/DwrsDisplay.h"
 
 #include "PageHelpers.h"
 
@@ -405,7 +406,7 @@ void SigningAdvisorTab::fillNeeds()
         maxGain = std::max(maxGain, need.bestGain());
 
     const auto dwrsItem = [](double value, bool known) {
-        auto *item = new NumericItem(known ? QStringLiteral("%1%").arg(qRound(value))
+        auto *item = new NumericItem(known ? formatDwrsPercent(value)
                                            : QStringLiteral("–"),
                                      known ? value : -1.0);
         const CellStyle style = dwrsCellStyle(value);
@@ -511,7 +512,7 @@ void SigningAdvisorTab::showOptions()
         m_optionsTable->setItem(r, column++, new NumericItem(QString::number(p.age), p.age));
         m_optionsTable->setItem(r, column++, new QTableWidgetItem(p.club));
         m_optionsTable->setItem(r, column++, new QTableWidgetItem(p.positionRaw));
-        auto *dwrs = new NumericItem(QStringLiteral("%1%").arg(qRound(option.rating)),
+        auto *dwrs = new NumericItem(formatDwrsPercent(option.rating),
                                      option.rating);
         const CellStyle style = dwrsCellStyle(option.rating);
         if (style.isValid()) {
@@ -587,7 +588,7 @@ void SigningAdvisorTab::fillGapTables(const SquadResult &squad)
             table->setItem(row, 1, new QTableWidgetItem(roleNames.value(gap.role, gap.role)));
             table->setItem(row, 2, new QTableWidgetItem(gap.playerName));
             table->setItem(row, 3,
-                           new NumericItem(QString::number(qRound(gap.assignedDwrs)),
+                           new NumericItem(formatDwrs(gap.assignedDwrs),
                                            gap.assignedDwrs));
             table->setItem(row, 4, new QTableWidgetItem(gapTypeLabel(gap)));
             auto *scoreItem =

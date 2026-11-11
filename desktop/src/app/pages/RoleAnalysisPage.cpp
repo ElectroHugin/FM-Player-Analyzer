@@ -1,4 +1,5 @@
 #include "RoleAnalysisPage.h"
+#include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
@@ -261,7 +262,7 @@ void RoleAnalysisPage::rebuildTables()
              Qt::AlignRight | Qt::AlignVCenter},
             {tr("DWRS"),
              [normalizedOf](const Player &p) {
-                 return QStringLiteral("%1%").arg(qRound(normalizedOf(p)));
+                 return formatDwrsPercent(normalizedOf(p));
              },
              [normalizedOf](const Player &p) { return normalizedOf(p); },
              [normalizedOf](const Player &p) { return dwrsCellStyle(normalizedOf(p)); },

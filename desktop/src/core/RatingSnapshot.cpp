@@ -66,6 +66,8 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
     snapshot->m_profileName = profile.name;
     snapshot->m_calculationVersion = profile.calculationVersion;
     snapshot->m_game = definitions.fmVersionId();
+    snapshot->m_fieldTiers = profile.effectiveFieldTiers();
+    snapshot->m_goalkeeperTiers = profile.effectiveGoalkeeperTiers();
     QJsonObject compiledRoles;
     for (const auto &role : definitions.validRoles()) {
         const auto weights = definitions.roleWeights(role);

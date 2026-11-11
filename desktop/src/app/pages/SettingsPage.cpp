@@ -1,5 +1,6 @@
 #include "SettingsPage.h"
 #include "../widgets/RatingProfileEditor.h"
+#include "core/DwrsDisplay.h"
 #include "../RatingProfileDefaults.h"
 #include "core/ImportHistory.h"
 
@@ -1310,8 +1311,75 @@ QWidget *SettingsPage::buildThemePage()
     m_contrastLabel = caption(QString());
     body->addWidget(m_contrastLabel);
 
+    // --- DWRS colours ---
+    cards->addWidget(makeCard(tr("DWRS-Farben"),
+                              tr("Wie Bewertungen in Tabellen, auf dem Spielfeld und im Dashboard "
+                                 "eingefärbt werden."), &body));
+    form = makeForm(body);
+    m_dwrsColorModeCombo = sized(new QComboBox, kFieldWidth);
+    m_dwrsColorModeCombo->addItem(tr("Seltenheitsstufen"), QStringLiteral("tiers"));
+    m_dwrsColorModeCombo->addItem(tr("Regenbogen (bisher)"), QStringLiteral("rainbow"));
+    addRow(form, tr("Darstellung"), m_dwrsColorModeCombo);
+    auto *tierGrid = new QGridLayout;
+    tierGrid->setContentsMargins(0, 0, 0, 0);
+    tierGrid->setHorizontalSpacing(16);
+    tierGrid->setVerticalSpacing(8);
+    for (int tier = 0; tier < kDwrsTierCount; ++tier) {
+        auto *name = new QLabel(RatingProfileEditor::tierName(tier));
+        name->setMinimumWidth(kLabelWidth);
+        tierGrid->addWidget(name, tier, 0);
+        auto *button = new QPushButton;
+        button->setObjectName(QStringLiteral("colorSwatch"));
+        button->setFixedSize(kSwatchWidth, 32);
+        button->setCursor(Qt::PointingHandCursor);
+        button->setAccessibleName(RatingProfileEditor::tierName(tier));
+        m_tierButtons[tier] = button;
+        connect(button, &QPushButton::clicked, this, [this, tier] {
+            const QColor initial = m_pendingTierColors[tier].isValid() ? m_pendingTierColors[tier]
+                                                                       : QColor(Qt::white);
+            const QColor picked = QColorDialog::getColor(initial, this, tr("Farbe wählen"));
+            if (!picked.isValid())
+                return;
+            m_pendingTierColors[tier] = picked;
+            updateTierButtons();
+        });
+        tierGrid->addWidget(button, tier, 1);
+    }
+    tierGrid->setColumnStretch(2, 1);
+    body->addLayout(tierGrid);
+    auto *resetTiers = new QPushButton(tr("Auf Standard zurücksetzen"));
+    body->addLayout(hbox({resetTiers}));
+    connect(resetTiers, &QPushButton::clicked, this, [this] {
+        m_pendingTierColors = defaultDwrsTierColors();
+        m_dwrsColorModeCombo->setCurrentIndex(0);
+        updateTierButtons();
+    });
+    body->addWidget(foldableHint(
+        tr("Ab welchem Wert eine Stufe beginnt, legt das Bewertungsprofil fest (Einstellungen → "
+           "DWRS-Bewertung), getrennt für Feldspieler und Torhüter. Die Schrift wählt der "
+           "Analyzer automatisch hell oder dunkel, damit sie auf jeder Farbe lesbar bleibt. "
+           "„Gewöhnlich“ hat standardmäßig keine eigene Farbe.")));
+
     finishPage(cards);
     return page;
+}
+
+void SettingsPage::updateTierButtons()
+{
+    for (int tier = 0; tier < kDwrsTierCount; ++tier) {
+        QPushButton *button = m_tierButtons[tier];
+        if (!button) continue;
+        const QColor color = m_pendingTierColors[tier];
+        if (color.isValid()) {
+            const CellStyle style = dwrsTierStyleFor(color);
+            button->setText(RatingProfileEditor::tierName(tier));
+            button->setStyleSheet(QStringLiteral("QPushButton { background: %1; color: %2; border-radius: 6px; }")
+                                      .arg(style.background.name(), style.text.name()));
+        } else {
+            button->setText(tr("ohne Füllung"));
+            button->setStyleSheet(QString());
+        }
+    }
 }
 
 
@@ -1893,6 +1961,10 @@ void SettingsPage::refresh()
     m_watermarkCheck->setChecked(
         themeSettings.value(QStringLiteral("header_crest_watermark"), QStringLiteral("true"))
         != QLatin1String("false"));
+    m_dwrsColorModeCombo->setCurrentIndex(
+        themeSettings.value(QStringLiteral("dwrs_color_mode")) == QLatin1String("rainbow") ? 1 : 0);
+    m_pendingTierColors = colorsFromString(themeSettings.value(QStringLiteral("dwrs_tier_colors")));
+    updateTierButtons();
     m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
                                  != QLatin1String("solid"));
     m_pendingColors.clear();
@@ -2082,7 +2154,12 @@ void SettingsPage::saveAll()
     themeSettings.insert(QStringLiteral("header_crest_watermark"),
                          m_watermarkCheck->isChecked() ? QStringLiteral("true")
                                                        : QStringLiteral("false"));
+    themeSettings.insert(QStringLiteral("dwrs_color_mode"), m_dwrsColorModeCombo->currentData().toString());
+    themeSettings.insert(QStringLiteral("dwrs_tier_colors"), colorsToString(m_pendingTierColors));
     config.saveThemeSettings(themeSettings);
+    setDwrsColorMode(m_dwrsColorModeCombo->currentData().toString() == QLatin1String("rainbow")
+                         ? DwrsColorMode::Rainbow : DwrsColorMode::Tiers);
+    setDwrsTierColors(m_pendingTierColors);
 
     bool personalitiesChanged = false;
     ProfileStore personalityStore(db);

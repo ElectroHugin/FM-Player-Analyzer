@@ -1,4 +1,5 @@
 #include "PlayerProfilePage.h"
+#include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
@@ -755,7 +756,7 @@ void PlayerProfilePage::showPlayer()
                "+ Mentalität (Ent %5 / Arb %6) + Persönlichkeit (%7).")
                 .arg(static_cast<int>(ageCap))
                 .arg(qRound(score))
-                .arg(topRoles.front().normalized)
+                .arg(formatDwrs(topRoles.front().normalized))
                 .arg(player->age)
                 .arg(static_cast<int>(player->attrMean(idx(Attr::Determination))))
                 .arg(static_cast<int>(player->attrMean(idx(Attr::WorkRate))))

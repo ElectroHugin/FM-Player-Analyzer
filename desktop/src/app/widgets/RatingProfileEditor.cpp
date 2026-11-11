@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
+#include <QGridLayout>
 #include <QSpinBox>
 #include <QToolButton>
 #include <QFile>
@@ -108,6 +109,40 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
         m_dirty = true;
         m_status->setText(tr("Ungespeicherter Entwurf. Bestehende Bewertungen bleiben unverändert."));
     };
+    // Colour tier thresholds (display only, not part of the formula).
+    auto *tierToggle = new QToolButton; tierToggle->setText(tr("Farbstufen ab …"));
+    tierToggle->setCheckable(true); tierToggle->setAutoRaise(true); tierToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    tierToggle->setArrowType(Qt::RightArrow);
+    auto *tierBox = new QWidget; tierBox->setVisible(false);
+    auto *tierGrid = new QGridLayout(tierBox); tierGrid->setContentsMargins(0, 0, 0, 0); tierGrid->setHorizontalSpacing(8);
+    tierGrid->addWidget(new QLabel(tr("Feldspieler")), 1, 0);
+    tierGrid->addWidget(new QLabel(tr("Torhüter")), 2, 0);
+    for (int i = 0; i < 5; ++i) {
+        auto *head = new QLabel(tierName(i + 1)); head->setAlignment(Qt::AlignCenter);
+        tierGrid->addWidget(head, 0, i + 1);
+        for (int row = 1; row <= 2; ++row) {
+            auto *spin = new QDoubleSpinBox; spin->setRange(0, 100); spin->setDecimals(1); spin->setSingleStep(0.5);
+            spin->setAccessibleName((row == 1 ? tr("Feldspieler") : tr("Torhüter")) + QLatin1Char(' ') + tierName(i + 1));
+            tierGrid->addWidget(spin, row, i + 1);
+            (row == 1 ? m_fieldTiers : m_goalkeeperTiers)[i] = spin;
+            connect(spin, &QDoubleSpinBox::valueChanged, this, [this] {
+                if (m_loading || m_selectedId.isEmpty()) return;
+                DwrsTierThresholds field{}, goalkeeper{};
+                for (int k = 0; k < 5; ++k) { field[k] = m_fieldTiers[k]->value(); goalkeeper[k] = m_goalkeeperTiers[k]->value(); }
+                m_draft.fieldTiers = field; m_draft.goalkeeperTiers = goalkeeper; m_dirty = true;
+                m_status->setText(tr("Ungespeicherter Entwurf. Farbstufen ändern keine Bewertung."));
+            });
+        }
+    }
+    auto *tierHint = new QLabel(tr("Ab diesem Wert beginnt die Stufe. Torhüter rechnen auf der bisherigen Grundlage "
+                                   "und haben deshalb eigene Grenzen. Die Grenzen färben nur und ändern keine Bewertung."));
+    tierHint->setWordWrap(true); tierHint->setObjectName(QStringLiteral("kpiCaption"));
+    tierGrid->addWidget(tierHint, 3, 0, 1, 6);
+    connect(tierToggle, &QToolButton::toggled, this, [tierBox, tierToggle](bool on) {
+        tierBox->setVisible(on); tierToggle->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
+    });
+    layout->addWidget(tierToggle, 0, Qt::AlignLeft);
+    layout->addWidget(tierBox);
     connect(m_keyFactor, &QDoubleSpinBox::valueChanged, this, factorsEdited);
     connect(m_preferableFactor, &QDoubleSpinBox::valueChanged, this, factorsEdited);
     connect(m_roleShareOn, &QCheckBox::toggled, this, factorsEdited);
@@ -202,6 +237,17 @@ QString RatingProfileEditor::provenanceText(const RatingProfile &profile)
         lines << tr("Quellen (zum Kopieren): %1").arg(profile.sources.join(QStringLiteral("  ·  ")));
     return lines.join(QLatin1Char('\n'));
 }
+QString RatingProfileEditor::tierName(int tier)
+{
+    switch (tier) {
+    case 0: return tr("Schwach");
+    case 1: return tr("Gewöhnlich");
+    case 2: return tr("Gut");
+    case 3: return tr("Selten");
+    case 4: return tr("Episch");
+    default: return tr("Legendär");
+    }
+}
 void RatingProfileEditor::updateFactors()
 {
     m_loading = true;
@@ -215,6 +261,11 @@ void RatingProfileEditor::updateFactors()
     m_roleShareOn->setChecked(m_draft.roleShare > 0);
     if (m_draft.roleShare > 0) m_roleShare->setValue(qRound(m_draft.roleShare * 100));
     m_roleShare->setEnabled(enabled && !classic && m_draft.roleShare > 0);
+    const auto field = m_draft.effectiveFieldTiers(), goalkeeper = m_draft.effectiveGoalkeeperTiers();
+    for (int k = 0; k < 5; ++k) {
+        m_fieldTiers[k]->setValue(field[k]); m_fieldTiers[k]->setEnabled(enabled);
+        m_goalkeeperTiers[k]->setValue(goalkeeper[k]); m_goalkeeperTiers[k]->setEnabled(enabled);
+    }
     m_roleShareOn->setToolTip(classic ? tr("Das Classic-Verfahren rechnet unverändert wie 2.2.3 und hat keinen Rollenanteil.") : QString());
     m_loading = false;
 }

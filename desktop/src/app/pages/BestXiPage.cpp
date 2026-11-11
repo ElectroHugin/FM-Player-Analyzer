@@ -1,4 +1,5 @@
 #include "BestXiPage.h"
+#include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -1134,8 +1135,8 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
         names << QStringLiteral("<a href=\"%1\" style=\"color:%3\">%2</a>")
                      .arg(player->uid.toHtmlEscaped(), player->name.toHtmlEscaped(),
                           m_theme.text().name());
-    const int xiLoss = qRound(total(allFit.startingXi) - total(withoutInjured.startingXi));
-    const int bLoss = qRound(total(allFit.bTeam) - total(withoutInjured.bTeam));
+    const double xiLoss = roundDwrs(total(allFit.startingXi) - total(withoutInjured.startingXi));
+    const double bLoss = roundDwrs(total(allFit.bTeam) - total(withoutInjured.bTeam));
     QString text = (m_planInjuredCheck->isChecked() ? tr("Trotz Verletzung eingeplant: %1.")
                                                     : tr("Nicht eingeplant: %1."))
                        .arg(names.join(QStringLiteral(", ")));
@@ -1145,10 +1146,10 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
         text += QLatin1Char(' ')
                 + tr("Der Kader gleicht das so aus — Startelf %1, B-Team %2 DWRS-Punkte "
                      "(Summe über alle Positionen):")
-                      .arg(xiLoss > 0 ? QStringLiteral("−%1").arg(xiLoss)
+                      .arg(xiLoss > 0 ? QStringLiteral("−%1").arg(formatDwrs(xiLoss))
                                       : QStringLiteral("±0"))
-                      .arg(bLoss > 0 ? QStringLiteral("−%1").arg(bLoss)
-                                     : bLoss < 0 ? QStringLiteral("+%1").arg(-bLoss)
+                      .arg(bLoss > 0 ? QStringLiteral("−%1").arg(formatDwrs(bLoss))
+                                     : bLoss < 0 ? QStringLiteral("+%1").arg(formatDwrs(-bLoss))
                                                  : QStringLiteral("±0"));
     m_injuryNote->setText(text);
     m_injuryBox->setTitle(tr("Langzeitverletzt (%1)").arg(injured.size()));
@@ -1211,7 +1212,7 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
         return item;
     };
     const auto dwrsItem = [](const XiCell &cell) {
-        auto *item = new NumericItem(cell.isFilled() ? QStringLiteral("%1%").arg(qRound(cell.rating))
+        auto *item = new NumericItem(cell.isFilled() ? formatDwrsPercent(cell.rating)
                                                      : QStringLiteral("–"),
                                      cell.rating);
         const CellStyle style = dwrsCellStyle(cell.rating);
@@ -1235,11 +1236,8 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
         m_injuryTable->setItem(row, 4, dwrsItem(change.before));
         m_injuryTable->setItem(row, 5, playerItem(change.after));
         m_injuryTable->setItem(row, 6, dwrsItem(change.after));
-        const int delta = qRound(change.after.rating - change.before.rating);
-        m_injuryTable->setItem(row, 7,
-                               new NumericItem(delta > 0 ? QStringLiteral("+%1").arg(delta)
-                                                         : QString::number(delta),
-                                               delta));
+        const double delta = roundDwrs(change.after.rating - change.before.rating);
+        m_injuryTable->setItem(row, 7, new NumericItem(formatDwrsDelta(delta), delta));
         ++row;
     }
     // Size the table to its rows: no inner scrollbar, no dead space.
@@ -1286,7 +1284,7 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
                        new QTableWidgetItem(bestRole.isEmpty()
                                                 ? QStringLiteral("–")
                                                 : roleNames.value(bestRole, bestRole)));
-        auto *dwrsItem = new NumericItem(QStringLiteral("%1%").arg(qRound(bestDwrs)), bestDwrs);
+        auto *dwrsItem = new NumericItem(formatDwrsPercent(bestDwrs), bestDwrs);
         if (bestDwrs > 0.0) {
             const CellStyle dwrsStyle = dwrsCellStyle(bestDwrs);
             dwrsItem->setBackground(dwrsStyle.background);
@@ -1299,7 +1297,7 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
             const double talent = TalentEngine::talentForPlayer(m_context.definitions(),
                                                                 *player, bestDwrs, ageCap);
             auto *item = new NumericItem(QString::number(qRound(talent)), talent);
-            const CellStyle style = dwrsCellStyle(talent);
+            const CellStyle style = rainbowCellStyle(talent);
             if (style.isValid()) {
                 item->setBackground(style.background);
                 item->setForeground(style.text);
@@ -1386,7 +1384,7 @@ void BestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>> &option
                 table->setItem(row, column++,
                                new NumericItem(QString::number(option.age), option.age));
 
-                auto *dwrsItem = new NumericItem(QStringLiteral("%1%").arg(qRound(option.rating)),
+                auto *dwrsItem = new NumericItem(formatDwrsPercent(option.rating),
                                                  option.rating);
                 dwrsItem->setTextAlignment(Qt::AlignCenter);
                 const CellStyle style = dwrsCellStyle(option.rating);

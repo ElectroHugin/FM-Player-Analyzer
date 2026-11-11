@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/ColorTemplates.h"
+#include "core/DwrsDisplay.h"
 
 #include <memory>
 
@@ -118,6 +119,10 @@ private:
     QHash<QString, QString> m_pendingColors;
     QString m_pendingPreset;
     QLabel *m_contrastLabel = nullptr;
+    QComboBox *m_dwrsColorModeCombo = nullptr;
+    std::array<QPushButton *, kDwrsTierCount> m_tierButtons{};
+    DwrsTierColors m_pendingTierColors = defaultDwrsTierColors();
+    void updateTierButtons();
 
     void applyPresetToPending(const QString &presetId);
     // Built-in presets and the user's templates, grouped by league; own

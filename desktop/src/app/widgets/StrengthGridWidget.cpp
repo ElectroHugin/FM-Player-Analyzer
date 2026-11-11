@@ -1,4 +1,5 @@
 #include "StrengthGridWidget.h"
+#include "core/DwrsDisplay.h"
 
 #include "../theming/ThemeManager.h"
 #include "core/Constants.h"
@@ -51,6 +52,40 @@ void StrengthGridWidget::setData(const QHash<QString, SlotStrength> &strengths,
     m_strengths = strengths;
     m_layout = layout;
     update();
+}
+
+void StrengthGridWidget::setColorMode(ColorMode mode)
+{
+    m_colorMode = mode;
+    update();
+}
+
+double StrengthGridWidget::shownMedian() const
+{
+    std::vector<double> values;
+    if (m_markerMode) {
+        for (const Marker &marker : m_markers)
+            if (!marker.uid.isEmpty()) values.push_back(marker.value);
+    } else {
+        for (const SlotStrength &stats : m_strengths)
+            if (stats.avg > 0.0) values.push_back(stats.avg);
+    }
+    if (values.empty())
+        return 0.0;
+    std::sort(values.begin(), values.end());
+    const size_t n = values.size();
+    return n % 2 ? values[n / 2] : (values[n / 2 - 1] + values[n / 2]) / 2.0;
+}
+
+CellStyle StrengthGridWidget::cardStyle(double value, bool goalkeeper, double median, bool night) const
+{
+    CellStyle style = m_colorMode == ColorMode::SquadComparison ? dwrsComparisonStyle(value - median)
+                                                                : dwrsCellStyleFor(value, goalkeeper);
+    if (!style.isValid()) {
+        style.background = night ? QColor(0x12, 0x16, 0x1c) : QColor(0xfb, 0xfb, 0xfd);
+        style.text = night ? QColor(Qt::white) : QColor(0x1e, 0x22, 0x2b);
+    }
+    return style;
 }
 
 void StrengthGridWidget::clearData()
@@ -133,22 +168,24 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
     QFont rangeFont = font();
     rangeFont.setPointSizeF(font().pointSizeF() * 0.72);
 
+    const double median = shownMedian();
     const auto drawBox = [&](const QRectF &box, const QString &slot) {
         const SlotStrength stats = m_strengths.value(slot);
         QPainterPath path;
         path.addRoundedRect(box, 5, 5);
         if (stats.avg > 0.0) {
-            painter.fillPath(path, dwrsCellStyle(stats.avg).background);
+            const CellStyle style = cardStyle(stats.avg, slot.startsWith(QLatin1String("GK")), median, night);
+            painter.fillPath(path, style.background);
             painter.setPen(QPen(QColor(0, 0, 0, 60), 1));
             painter.setBrush(Qt::NoBrush);
             painter.drawPath(path);
-            painter.setPen(dwrsCellStyle(stats.avg).text);
+            painter.setPen(style.text);
             painter.setFont(avgFont);
             painter.drawText(box.adjusted(0, 1, 0, -box.height() * 0.42), Qt::AlignCenter,
-                             QStringLiteral("%1%").arg(qRound(stats.avg)));
+                             formatDwrsPercent(stats.avg));
             painter.setFont(rangeFont);
             painter.drawText(box.adjusted(0, box.height() * 0.55, 0, -1), Qt::AlignCenter,
-                             QStringLiteral("%1–%2").arg(qRound(stats.min)).arg(qRound(stats.max)));
+                             QStringLiteral("%1–%2").arg(formatDwrs(stats.min), formatDwrs(stats.max)));
         } else {
             painter.fillPath(path, emptyCard);
             painter.setPen(night ? QColor(Qt::white) : cardText);
@@ -181,6 +218,7 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
 
 void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bool night)
 {
+    const double median = shownMedian();
     const QColor emptyCard = night ? QColor(0x12, 0x16, 0x1c) : QColor(0xfb, 0xfb, 0xfd);
     const QColor cardText = QColor(0x1e, 0x22, 0x2b);
     const double cardW = 0.20;
@@ -223,10 +261,11 @@ void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bo
         QPainterPath path;
         path.addRoundedRect(box, 5, 5);
         const bool filled = !marker.uid.isEmpty();
+        const CellStyle style = cardStyle(marker.value,
+            isDwrsGoalkeeperRole(marker.header.section(QLatin1Char('/'), 0, 0).trimmed()), median, night);
         // Role fit colours the card; the XI impact is a separate line of
         // plain text on a light band, so the two never read as one number.
-        painter.fillPath(path, filled ? dwrsCellStyle(marker.value).background
-                                      : emptyCard);
+        painter.fillPath(path, filled ? style.background : emptyCard);
         painter.setPen(QPen(QColor(0, 0, 0, 60), 1));
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(path);
@@ -235,7 +274,7 @@ void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bo
         const QRectF valueLine(box.left(), box.top() + h * 0.24, box.width(), h * 0.40);
         const QRectF impactBand(box.left() + 2, box.top() + h * 0.66, box.width() - 4,
                                 h * 0.31);
-        const QColor ink = filled ? dwrsCellStyle(marker.value).text : (night ? QColor(Qt::white) : cardText);
+        const QColor ink = filled ? style.text : (night ? QColor(Qt::white) : cardText);
         painter.setPen(ink);
         painter.setFont(headerFont);
         painter.drawText(headerLine, Qt::AlignCenter,
@@ -243,7 +282,7 @@ void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bo
                                                           static_cast<int>(headerLine.width())));
         painter.setFont(valueFont);
         painter.drawText(valueLine, Qt::AlignCenter,
-                         filled ? QStringLiteral("%1%").arg(qRound(marker.value))
+                         filled ? formatDwrsPercent(marker.value)
                                 : QStringLiteral("–"));
         if (!marker.impact.isEmpty()) {
             QPainterPath band;

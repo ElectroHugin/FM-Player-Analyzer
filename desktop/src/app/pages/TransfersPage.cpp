@@ -1,4 +1,5 @@
 #include "TransfersPage.h"
+#include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -210,7 +211,7 @@ void TransfersPage::fillTable(Section &section, const std::vector<const Player *
 
         auto *dwrsItem = new QTableWidgetItem(
             bestRole.isEmpty() ? QStringLiteral("–")
-                               : QStringLiteral("%1% (%2)").arg(qRound(bestDwrs)).arg(bestRole));
+                               : QStringLiteral("%1 (%2)").arg(formatDwrsPercent(bestDwrs), bestRole));
         dwrsItem->setFlags(dwrsItem->flags() & ~Qt::ItemIsEditable);
         if (bestDwrs > 0.0) {
             const CellStyle dwrsStyle = dwrsCellStyle(bestDwrs);

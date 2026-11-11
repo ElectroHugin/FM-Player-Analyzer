@@ -7,13 +7,16 @@
 #include <QStringList>
 #include <QWidget>
 
+#include "core/Utils.h"
+
 namespace fm {
 
 class ThemeManager;
 
 // Miniaturized, color-coded tactical pitch showing the average, min and max
-// DWRS per position of the selected tactic. Colors are relative to the
-// squad's own strength (red = weakest position, green = strongest).
+// DWRS per position of the selected tactic. Colours either show the level
+// (rarity tiers, as everywhere) or the squad comparison: distance to the
+// median of all shown positions in fixed point steps.
 // Port of legacy ui_components.display_strength_grid.
 class StrengthGridWidget : public QWidget
 {
@@ -55,6 +58,10 @@ public:
 
     bool hasData() const { return !m_layout.isEmpty(); }
 
+    enum class ColorMode { Level, SquadComparison };
+    void setColorMode(ColorMode mode);
+    ColorMode colorMode() const { return m_colorMode; }
+
 signals:
     void playerDoubleClicked(const QString &uid);
     void playerContextMenuRequested(const QString &uid, const QPoint &globalPos);
@@ -78,6 +85,10 @@ private:
     QHash<QString, SlotStrength> m_strengths;
     QHash<QString, QStringList> m_layout;
     QString m_fmVersionId;
+    ColorMode m_colorMode = ColorMode::Level;
+    // Fill and text for a value; neutral card colours where no tier applies.
+    CellStyle cardStyle(double value, bool goalkeeper, double median, bool night) const;
+    double shownMedian() const;
 };
 
 } // namespace fm

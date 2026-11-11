@@ -163,3 +163,4 @@ set_tests_properties(test_ratingactivation PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
     ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
 )
+fm_add_test(test_dwrsdisplay)

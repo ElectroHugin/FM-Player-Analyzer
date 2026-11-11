@@ -1,4 +1,5 @@
 #include "NationalCallupPage.h"
+#include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
 #include "../ImportRunner.h"
@@ -488,7 +489,7 @@ void NationalCallupPage::compute()
         auto *item = new QListWidgetItem(
             tr("%1  ·  %2  ·  DWRS %3%")
                 .arg(playerLine(*p), tierLabel(rec.tierByUid.value(p->uid)))
-                .arg(qRound(rating)),
+                .arg(formatDwrs(rating)),
             m_inviteList);
         item->setData(Qt::UserRole, p->uid);
         item->setData(Qt::UserRole + 1, p->name); // bare name for copying

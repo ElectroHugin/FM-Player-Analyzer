@@ -26,6 +26,8 @@ public:
     void setActiveProfile(const QString &id);
     // Text for a profile's source line: version, provisional note, sources.
     static QString provenanceText(const RatingProfile &profile);
+    // Translated name of a DWRS colour tier (0 Poor .. 5 Legendary).
+    static QString tierName(int tier);
 signals:
     void activateRequested(const QString &id);
     void librarySaved();
@@ -64,5 +66,7 @@ private:
     QDoubleSpinBox *m_preferableFactor = nullptr;
     QCheckBox *m_roleShareOn = nullptr;
     QSpinBox *m_roleShare = nullptr;
+    std::array<QDoubleSpinBox *, 5> m_fieldTiers{};
+    std::array<QDoubleSpinBox *, 5> m_goalkeeperTiers{};
 };
 } // namespace fm
