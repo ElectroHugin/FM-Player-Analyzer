@@ -261,8 +261,7 @@ void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bo
         QPainterPath path;
         path.addRoundedRect(box, 5, 5);
         const bool filled = !marker.uid.isEmpty();
-        const CellStyle style = cardStyle(marker.value,
-            isDwrsGoalkeeperRole(marker.header.section(QLatin1Char('/'), 0, 0).trimmed()), median, night);
+        const CellStyle style = cardStyle(marker.value, marker.goalkeeper, median, night);
         // Role fit colours the card; the XI impact is a separate line of
         // plain text on a light band, so the two never read as one number.
         painter.fillPath(path, filled ? style.background : emptyCard);
@@ -287,9 +286,10 @@ void StrengthGridWidget::paintMarkers(QPainter &painter, const QRectF &field, bo
         if (!marker.impact.isEmpty()) {
             QPainterPath band;
             band.addRoundedRect(impactBand, 3, 3);
+            // An opaque light band with dark text reads on every card colour.
             if (filled)
-                painter.fillPath(band, QColor(255, 255, 255, 150));
-            painter.setPen(ink);
+                painter.fillPath(band, QColor(255, 255, 255, 225));
+            painter.setPen(filled ? cardText : ink);
             painter.setFont(impactFont);
             painter.drawText(impactBand, Qt::AlignCenter,
                              painter.fontMetrics().elidedText(

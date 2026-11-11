@@ -64,9 +64,9 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
 
     // Profile-wide factors. They belong to the profile and change its formula.
     auto *factors = new QFormLayout; factors->setContentsMargins(0, 0, 0, 0);
-    m_keyFactor = new QDoubleSpinBox; m_keyFactor->setRange(0, 5); m_keyFactor->setDecimals(2); m_keyFactor->setSingleStep(0.1);
+    m_keyFactor = new QDoubleSpinBox; m_keyFactor->setRange(0, 5); m_keyFactor->setDecimals(2); m_keyFactor->setSingleStep(0.1); m_keyFactor->setMaximumWidth(120);
     m_keyFactor->setAccessibleName(tr("Faktor Schlüssel-Attribute"));
-    m_preferableFactor = new QDoubleSpinBox; m_preferableFactor->setRange(0, 5); m_preferableFactor->setDecimals(2); m_preferableFactor->setSingleStep(0.1);
+    m_preferableFactor = new QDoubleSpinBox; m_preferableFactor->setRange(0, 5); m_preferableFactor->setDecimals(2); m_preferableFactor->setSingleStep(0.1); m_preferableFactor->setMaximumWidth(120);
     m_preferableFactor->setAccessibleName(tr("Faktor bevorzugte Attribute"));
     factors->addRow(tr("Faktor Schlüssel-Attribute"), m_keyFactor);
     factors->addRow(tr("Faktor bevorzugte Attribute"), m_preferableFactor);
@@ -323,7 +323,13 @@ void RatingProfileEditor::updateFactors()
 }
 void RatingProfileEditor::setActiveProfile(const QString &id)
 {
+    // A newly active profile opens in the editor unless a draft is pending.
+    const bool changed = m_activeId != id;
     m_activeId = id;
+    if (changed && !m_dirty && id != m_selectedId) {
+        const int index = m_profiles->findData(id);
+        if (index >= 0) m_profiles->setCurrentIndex(index);
+    }
     const auto profile = m_library.profiles().value(m_selectedId);
     const bool compatible = !m_selectedId.isEmpty() && profile.compatibleGames.contains(m_game);
     m_useForSave->setEnabled(compatible);

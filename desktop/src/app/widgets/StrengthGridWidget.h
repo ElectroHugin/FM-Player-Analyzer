@@ -48,6 +48,7 @@ public:
         double value = 0.0;  // starter DWRS
         QString impact;      // secondary line
         QString tooltip;     // who comes on, who moves
+        bool goalkeeper = false; // goalkeeper slot: goalkeeper colour tiers
     };
     void setMarkers(const QList<Marker> &markers);
     // Width in pixels at the pitch ratio (default 280).

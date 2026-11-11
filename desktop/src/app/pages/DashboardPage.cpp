@@ -802,6 +802,7 @@ void DashboardPage::showStarterView()
             StrengthGridWidget::Marker marker;
             marker.anchor = anchors.value(it.key());
             marker.header = abbr(it.value());
+            marker.goalkeeper = it.key() == QLatin1String("GK");
             const XiCell cell = team.value(it.key());
             if (cell.isFilled()) {
                 marker.uid = cell.playerUid;
@@ -863,6 +864,7 @@ void DashboardPage::showStarterView()
                 const QString oopSlot = view.slotsOfUid.value(cell.playerUid).second;
                 StrengthGridWidget::Marker marker;
                 marker.uid = cell.playerUid;
+                marker.goalkeeper = ipSlot == QLatin1String("GK");
                 marker.anchor = combinedAnchor(ipAnchors.value(ipSlot), oopAnchors.value(oopSlot));
                 marker.header = QStringLiteral("%1 · %2").arg(abbr(lineUps.ip.value(ipSlot)),
                                                              abbr(lineUps.oop.value(oopSlot)));

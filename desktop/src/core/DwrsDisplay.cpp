@@ -77,7 +77,12 @@ void setDwrsTierThresholds(const DwrsTierThresholds &field, const DwrsTierThresh
 }
 void setDwrsTierColors(const DwrsTierColors &colors) { g_colors = colors; }
 void setDwrsGoalkeeperRoles(const QSet<QString> &roles) { g_goalkeeperRoles = roles; }
-bool isDwrsGoalkeeperRole(const QString &role) { return g_goalkeeperRoles.contains(role); }
+bool isDwrsGoalkeeperRole(const QString &role)
+{
+    // Shown abbreviations drop the phase suffix ("GK" for "GK-IP").
+    return g_goalkeeperRoles.contains(role) || g_goalkeeperRoles.contains(role + QLatin1String("-IP"))
+           || g_goalkeeperRoles.contains(role + QLatin1String("-OOP"));
+}
 
 int dwrsTier(double value, bool goalkeeper)
 {
