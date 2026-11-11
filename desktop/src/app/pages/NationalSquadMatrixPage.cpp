@@ -1,4 +1,5 @@
 #include "NationalSquadMatrixPage.h"
+#include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -151,16 +152,16 @@ QList<PlayerColumn> NationalSquadMatrixPage::buildColumns() const
                             const auto it = roleRatings.constFind(p.uid);
                             if (it == roleRatings.constEnd())
                                 return QStringLiteral("–");
-                            return qRound(it.value());
+                            return formatDwrs(it.value());
                         },
                         [roleRatings](const Player &p) {
                             return roleRatings.value(p.uid, -1.0);
                         },
-                        [roleRatings](const Player &p) -> CellStyle {
+                        [roleRatings, role](const Player &p) -> CellStyle {
                             const auto it = roleRatings.constFind(p.uid);
                             if (it == roleRatings.constEnd())
                                 return {};
-                            return dwrsCellStyle(it.value());
+                            return dwrsCellStyle(it.value(), role);
                         },
                         Qt::AlignRight | Qt::AlignVCenter, roleHeaderToolTip(*definitions, role)});
     }

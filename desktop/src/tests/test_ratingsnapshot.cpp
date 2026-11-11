@@ -56,6 +56,61 @@ private slots:
         QCOMPARE(advice.focus.size(), size_t(1));
         QVERIFY(std::abs(advice.focus.front().priority - 200.0 / 57) < 1e-12);
     }
+    void roleShareKeepsScaleAndRewardsRoleAttributes() {
+        auto base = profile;
+        base.attributes.insert(QStringLiteral("Acceleration"), RatingCurve::linear(10));
+        base.attributes.insert(QStringLiteral("Stamina"), RatingCurve::linear(4));
+        const auto off = RatingSnapshot::compile(base, definitions, nullptr);
+        auto zero = base; zero.roleShare = 0;
+        QCOMPARE(RatingSnapshot::compile(zero, definitions, nullptr)->cacheKey(), off->cacheKey());
+        QVERIFY(!zero.toJson().contains(QStringLiteral("roleShare")));
+        const auto role = QStringLiteral("AF-A");
+        const auto weights = definitions.roleWeights(role);
+        QVERIFY(!weights.key.isEmpty());
+        double previous = -1;
+        for (const double share : {0.0, 0.2, 0.33, 0.5, 0.6}) {
+            auto shared = base; shared.roleShare = share;
+            QVERIFY(shared.validate().isEmpty());
+            const auto restored = RatingProfile::fromJson(shared.toJson(), nullptr);
+            QVERIFY(restored && restored->roleShare == share);
+            const auto snapshot = RatingSnapshot::compile(shared, definitions, nullptr);
+            Player worst, best, specialist;
+            for (int a = 0; a < kAttrCount; ++a) {
+                worst.attrLo[a] = worst.attrHi[a] = 1;
+                best.attrLo[a] = best.attrHi[a] = 20;
+                specialist.attrLo[a] = specialist.attrHi[a] = 10;
+            }
+            for (const auto &name : weights.key)
+                if (const int a = attrIndexByName(name); a >= 0) specialist.attrLo[a] = specialist.attrHi[a] = 18;
+            QCOMPARE(*snapshot->evaluate(worst, role).normalized, 0.0);
+            QVERIFY(std::abs(*snapshot->evaluate(best, role).normalized - 100.0) < 1e-9);
+            const double value = *snapshot->evaluate(specialist, role).normalized;
+            QVERIFY(value > previous);
+            previous = value;
+        }
+        auto invalid = base; invalid.roleShare = 0.61;
+        QVERIFY(!invalid.validate().isEmpty());
+    }
+    void missingAttributesUseAvailableWeight() {
+        auto base = profile;
+        base.attributes[QStringLiteral("Pace")] = RatingCurve::linear(8);
+        base.attributes.insert(QStringLiteral("Acceleration"), RatingCurve::linear(8));
+        base.attributes.insert(QStringLiteral("Natural Fitness"), RatingCurve::linear(2));
+        const auto snapshot = RatingSnapshot::compile(base, definitions, nullptr);
+        const auto role = QStringLiteral("AF-A");
+        Player p;
+        p.attrLo[idx(Attr::Pace)] = p.attrHi[idx(Attr::Pace)] = 20;
+        p.attrLo[idx(Attr::Acceleration)] = p.attrHi[idx(Attr::Acceleration)] = 20;
+        auto score = snapshot->evaluate(p, role);
+        QVERIFY(score.normalized);
+        QVERIFY(std::abs(*score.normalized - 100.0) < 1e-9);
+        QVERIFY(score.coverage < 1.0 && score.coverage > 0.7);
+        QCOMPARE(snapshot->missingAttributes(p, role), QList<int>{idx(Attr::NaturalFitness)});
+        p.attrLo[idx(Attr::Acceleration)] = p.attrHi[idx(Attr::Acceleration)] = 0;
+        score = snapshot->evaluate(p, role);
+        QVERIFY(!score.normalized);
+        QCOMPARE(score.status, CurveScore::Status::MissingAttribute);
+    }
     void snapshotIsIndependentAndCacheTracksDefinitions() {
         auto source = profile;
         auto defs = definitions;

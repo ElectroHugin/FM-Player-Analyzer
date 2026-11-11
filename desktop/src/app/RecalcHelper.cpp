@@ -20,7 +20,8 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
 
     const QString dbFile = context.database().filePath();
     const QStringList validRoles = context.definitions().validRoles();
-    const DwrsEngine *engine = &context.dwrsEngine();
+    const std::shared_ptr<const RatingSnapshot> snapshot = context.ratingSnapshot();
+    const QDate gameDate = context.database().lastGameDate();
     // Copy only the affected players (often one), not the whole store.
     std::vector<Player> players;
     QList<int> ids;
@@ -45,7 +46,7 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                      });
 
     const QFuture<RatingsUpdater::Result> future = QtConcurrent::run(
-        [dbFile, players = std::move(players), engine, validRoles, origin,
+        [dbFile, players = std::move(players), snapshot, validRoles, origin, gameDate,
          dialogGuard = QPointer<BusyProgressDialog>(dialog)] {
             Database db(Database::uniqueConnectionName(QStringLiteral("recalc_helper")));
             if (!db.open(dbFile)) {
@@ -58,7 +59,7 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
             for (size_t i = 0; i < players.size(); ++i)
                 subset[i] = static_cast<int>(i);
             return RatingsUpdater::updateDwrsRatings(
-                db, players, *engine, validRoles, subset,
+                db, players, *snapshot, validRoles, subset,
                 [dialogGuard](int current, int total) {
                     const int percent = total > 0 ? current * 100 / total : 0;
                     QMetaObject::invokeMethod(
@@ -69,7 +70,7 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                         },
                         Qt::QueuedConnection);
                 },
-                origin);
+                origin, gameDate);
         });
     context.registerBackgroundTask(QFuture<void>(future));
     watcher->setFuture(future);

@@ -24,7 +24,10 @@ struct DwrsEntry {
     QString role;
     double absolute = 0.0;
     double normalized = 0.0; // 0-100, numeric (legacy stored "68%")
-    QString timestamp;       // "yyyy-MM-dd HH:mm:ss"
+    QString timestamp;       // "yyyy-MM-dd HH:mm:ss[.zzz]"
+    QString basisKey, profileId, profileRevision, calculationVersion;
+    QDate gameDate;
+    QByteArray attributes; // visible-lo-hi-v1: canonical low bytes, then high bytes; 0 means unknown.
 };
 
 // Who wrote a batch of ratings: an import (real development) or a
@@ -105,7 +108,7 @@ public:
     // --- DWRS history ---
     // A Recalc batch also records its timestamps in dwrs_recalcs.
     bool appendDwrsRatings(const std::vector<DwrsEntry> &entries,
-                           RatingsOrigin origin = RatingsOrigin::Import);
+                           RatingsOrigin origin = RatingsOrigin::Import, bool recordHistory = true);
     LatestRatings latestDwrsRatings();
     // Streams every dwrs_latest row in (player_id, role) order — the table's
     // primary-key order, so SQLite scans without a separate sort. Used to
@@ -205,6 +208,7 @@ private:
     bool migrateToV14();                  // player_registration_extra (2.2.3 fields)
     bool migrateToV15();                  // registration stash + snapshot_seen
     bool migrateToV17();                  // remaining visible attribute ranges
+    bool migrateToV18();                  // rating provenance (dwrs_provenance, basis_key)
     bool migrateToV16();                  // imported natural positions + manual override
     static QStringList createV15Sql();
     // Hands parked 2.2.3 registration fields to the surviving duplicate.

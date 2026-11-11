@@ -10,10 +10,19 @@
 namespace fm {
 namespace RatingsUpdater {
 
-Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
-                         const DwrsEngine &engine, const QStringList &validRoles,
-                         const std::vector<int> &playersSubset,
-                         std::function<void(int, int)> progress, RatingsOrigin origin)
+namespace {
+
+struct RatedValue {
+    bool valid = false;
+    double absolute = 0;
+    double normalized = 0;
+};
+using RoleRater = std::function<std::vector<RatedValue>(const std::vector<int> &rows, const QString &role)>;
+
+Result updateWith(Database &db, const std::vector<Player> &players, const RoleRater &rate,
+                  double gate, const QStringList &validRoles, const std::vector<int> &playersSubset,
+                  const std::function<void(int, int)> &progress, RatingsOrigin origin,
+                  const std::function<void(DwrsEntry &, const Player &)> &annotate)
 {
     Result result;
 
@@ -31,7 +40,7 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
         return result;
     }
 
-    // The 1% gate compares against the stored latest rating. For a subset only
+    // The gate compares against the stored latest rating. For a subset only
     // those players' rows are needed — not the whole table (~400k rows).
     LatestRatings latest;
     if (playersSubset.empty()) {
@@ -60,21 +69,25 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
     int done = 0;
     const int total = roleRows.size();
     for (auto it = roleRows.constBegin(); it != roleRows.constEnd(); ++it) {
-        const DwrsRoleResult batch = engine.calculateRole(players, it.value(), it.key());
+        const std::vector<RatedValue> batch = rate(it.value(), it.key());
         for (size_t j = 0; j < it.value().size(); ++j) {
+            if (!batch[j].valid)
+                continue;
             const Player &p = players[it.value()[j]];
-            const double newValue = batch.normalized[j];
+            const double newValue = batch[j].normalized;
             ++result.computed;
 
             const auto old = latest.constFind({p.id, it.key()});
-            // Insert only if new or changed by at least 1% (legacy gate).
-            if (old == latest.constEnd() || std::abs(newValue - old->second) >= 1.0) {
+            // Insert only if new or changed by at least the gate.
+            if (old == latest.constEnd() || std::abs(newValue - old->second) >= gate - 1e-9) {
                 DwrsEntry entry;
                 entry.playerId = p.id;
                 entry.role = it.key();
-                entry.absolute = batch.absolute[j];
+                entry.absolute = batch[j].absolute;
                 entry.normalized = newValue;
                 entry.timestamp = timestamp;
+                if (annotate)
+                    annotate(entry, p);
                 toInsert.push_back(std::move(entry));
             }
         }
@@ -89,6 +102,62 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
     result.inserted = static_cast<int>(toInsert.size());
     result.success = true;
     return result;
+}
+
+} // namespace
+
+QByteArray encodeAttributes(const Player &player)
+{
+    QByteArray bytes(2 * kAttrCount, 0);
+    for (int a = 0; a < kAttrCount; ++a) {
+        int low = player.attrLo[a], high = player.attrHi[a];
+        if (low < 1 || high < low || high > 20) low = high = 0; // unknown or invalid
+        bytes[a] = static_cast<char>(low);
+        bytes[a + kAttrCount] = static_cast<char>(high);
+    }
+    return bytes;
+}
+
+Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
+                         const DwrsEngine &engine, const QStringList &validRoles,
+                         const std::vector<int> &playersSubset,
+                         std::function<void(int, int)> progress, RatingsOrigin origin)
+{
+    const RoleRater rate = [&](const std::vector<int> &rows, const QString &role) {
+        const DwrsRoleResult batch = engine.calculateRole(players, rows, role);
+        std::vector<RatedValue> values(rows.size());
+        for (size_t j = 0; j < rows.size(); ++j)
+            values[j] = {true, batch.absolute[j], batch.normalized[j]};
+        return values;
+    };
+    return updateWith(db, players, rate, 1.0, validRoles, playersSubset, progress, origin, {});
+}
+
+Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
+                         const RatingSnapshot &snapshot, const QStringList &validRoles,
+                         const std::vector<int> &playersSubset,
+                         std::function<void(int, int)> progress, RatingsOrigin origin,
+                         const QDate &gameDate)
+{
+    const RoleRater rate = [&](const std::vector<int> &rows, const QString &role) {
+        std::vector<RatedValue> values(rows.size());
+        for (size_t j = 0; j < rows.size(); ++j) {
+            const CurveScore score = snapshot.evaluate(players[rows[j]], role);
+            if (score.normalized)
+                values[j] = {true, score.absolute, *score.normalized};
+        }
+        return values;
+    };
+    const auto annotate = [&](DwrsEntry &entry, const Player &player) {
+        entry.basisKey = snapshot.cacheKey();
+        entry.profileId = snapshot.profileId();
+        entry.profileRevision = snapshot.profileRevision();
+        entry.calculationVersion = snapshot.calculationVersion();
+        entry.gameDate = gameDate;
+        entry.attributes = encodeAttributes(player);
+    };
+    return updateWith(db, players, rate, snapshot.isClassic() ? 1.0 : 0.1, validRoles,
+                      playersSubset, progress, origin, annotate);
 }
 
 void patchRoleRatings(RoleRatings &ratings, const Player &player, const QString &previousUid,

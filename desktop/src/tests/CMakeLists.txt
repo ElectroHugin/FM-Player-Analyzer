@@ -146,3 +146,21 @@ target_compile_definitions(test_builtinratingprofiles PRIVATE DEFINITIONS_DIR="$
 target_sources(test_profileswitch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/RatingProfileDefaults.cpp)
 fm_add_test(test_ratingselection)
 target_compile_definitions(test_ratingselection PRIVATE FM27_DEFINITIONS="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json")
+fm_add_test(test_ratingprovenance)
+
+# Rating profile selection per save through AppContext (temporary data folder).
+add_executable(test_ratingactivation test_ratingactivation.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/AppContext.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/GraphicsLibrary.h
+    ${CMAKE_SOURCE_DIR}/src/app/GraphicsLibrary.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/AppPaths.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/RatingProfileDefaults.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/resources/app.qrc)
+target_include_directories(test_ratingactivation PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_ratingactivation PRIVATE fmcore Qt6::Gui Qt6::Concurrent Qt6::Test)
+add_test(NAME test_ratingactivation COMMAND test_ratingactivation)
+set_tests_properties(test_ratingactivation PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+    ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
+)
+fm_add_test(test_dwrsdisplay)

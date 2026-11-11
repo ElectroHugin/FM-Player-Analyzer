@@ -143,7 +143,7 @@ jobs:
         run: |
           choco install innosetup -y --no-progress
           $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-          & $iscc "/DMyAppVersion=${{ steps.version.outputs.version }}" "desktop\installer\setup.iss"
+          & $iscc "/DMyAppVersion=${{ steps.version.outputs.version }}" "/DMyAppNumericVersion=${{ steps.version.outputs.version }}" "desktop\installer\setup.iss"
           if ($LASTEXITCODE -ne 0) { throw "ISCC fehlgeschlagen." }
 
       # --- Code signing, part 2: the installer ---------------------------------

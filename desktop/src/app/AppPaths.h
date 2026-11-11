@@ -36,6 +36,8 @@ public:
     // <dataDir>/definitions_<id>.json for later releases.
     QString definitionsFile(const QString &fmVersionId) const;
     QString databaseFile(const QString &dbName) const;
+    // Shared rating profile library: <dataDir>/rating_profiles.json
+    QString ratingLibraryFile() const;
 
     // Creates the directory skeleton. Returns false on IO failure.
     bool ensureDataDirInitialized();

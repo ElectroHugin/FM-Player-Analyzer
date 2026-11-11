@@ -1,4 +1,5 @@
 #include "RegistrationPage.h"
+#include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -629,7 +630,7 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         table->setItem(row, ColNeed,
                        new NumericItem(tierText(entry.entry.tier),
                                        static_cast<int>(entry.entry.tier)));
-        auto *dwrsItem = new NumericItem(QStringLiteral("%1%").arg(qRound(entry.entry.bestDwrs)),
+        auto *dwrsItem = new NumericItem(formatDwrsPercent(entry.entry.bestDwrs),
                                          entry.entry.bestDwrs);
         if (entry.entry.bestDwrs > 0.0) {
             const CellStyle style = dwrsCellStyle(entry.entry.bestDwrs);

@@ -4,7 +4,12 @@
 
 #define MyAppName "FM Player Analyzer"
 #ifndef MyAppVersion
-  #define MyAppVersion "2.2.3"
+  #define MyAppVersion "2.3.0-test.1"
+#endif
+; Windows version fields take numbers only: a test build "X.Y.Z-test.N"
+; becomes X.Y.Z.N, a release X.Y.Z stays X.Y.Z.
+#ifndef MyAppNumericVersion
+  #define MyAppNumericVersion "2.3.0.1"
 #endif
 #define MyAppExeName "fmplayeranalyzer.exe"
 
@@ -18,9 +23,9 @@ AppPublisher=ElectroHugin
 ; Version info of the setup .exe (Properties > Details). Code signing
 ; (SignPath) checks product name and version, so they must match the program
 ; file (src/app/app.rc.in).
-VersionInfoVersion={#MyAppVersion}
+VersionInfoVersion={#MyAppNumericVersion}
 VersionInfoProductName={#MyAppName}
-VersionInfoProductVersion={#MyAppVersion}
+VersionInfoProductVersion={#MyAppNumericVersion}
 VersionInfoProductTextVersion={#MyAppVersion}
 VersionInfoCompany=ElectroHugin
 VersionInfoDescription={#MyAppName} Setup

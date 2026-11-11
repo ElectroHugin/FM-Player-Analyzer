@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/ColorTemplates.h"
+#include "core/DwrsDisplay.h"
 
 #include <memory>
 
@@ -37,6 +38,7 @@ public:
     SettingsPage(AppContext &context, ThemeManager &theme, QWidget *parent = nullptr);
 
     void refresh() override;
+    bool confirmLeave() override;
 
     // Opens a section by its German title (screenshot tour); false if unknown.
     bool openSettingsSection(const QString &germanTitle);
@@ -53,6 +55,8 @@ private:
     QWidget *buildGraphicsPage();
     QWidget *buildWeightsPage();
     RatingProfileEditor *m_ratingProfileEditor = nullptr;
+    QLabel *m_activeRatingLabel = nullptr;
+    void updateActiveRatingProfile();
     QWidget *buildSquadPage();
     QWidget *buildTrainingPage();
     QWidget *buildPersonalityPage();
@@ -115,6 +119,10 @@ private:
     QHash<QString, QString> m_pendingColors;
     QString m_pendingPreset;
     QLabel *m_contrastLabel = nullptr;
+    QComboBox *m_dwrsColorModeCombo = nullptr;
+    std::array<QPushButton *, kDwrsTierCount> m_tierButtons{};
+    DwrsTierColors m_pendingTierColors = defaultDwrsTierColors();
+    void updateTierButtons();
 
     void applyPresetToPending(const QString &presetId);
     // Built-in presets and the user's templates, grouped by league; own

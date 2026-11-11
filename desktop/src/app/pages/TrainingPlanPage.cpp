@@ -153,7 +153,7 @@ QString TrainingPlanPage::focusText(const Player &player, const QString &role) c
     if (role.isEmpty())
         return QStringLiteral("—");
     const TrainingAdvice::FocusAdvice advice = TrainingAdvice::adviseFocusesForRole(
-        player, role, m_context.dwrsEngine(), trainingWindows(m_context));
+        player, role, *m_context.ratingSnapshot(), trainingWindows(m_context));
     if (!advice.valid || advice.focus.empty())
         return tr("nichts sinnvoll trainierbar");
     QStringList parts;

@@ -7,6 +7,7 @@
 #include <QTranslator>
 
 #include "AppContext.h"
+#include "core/DwrsDisplay.h"
 #include "FirstRunDialog.h"
 #include "MainWindow.h"
 #include "ScreenshotTour.h"
@@ -39,6 +40,10 @@ int main(int argc, char *argv[])
         && appTranslator.load(QStringLiteral(":/i18n/fmplayeranalyzer_en.qm"))) {
         QApplication::installTranslator(&appTranslator);
     }
+
+    // DWRS decimals use the separator of the UI language (restart on change).
+    fm::setDwrsLocale(QLocale(context.paths().language() == QLatin1String("de") ? QLocale::German
+                                                                                 : QLocale::English));
 
     if (context.paths().isFirstRun()) {
         fm::FirstRunDialog dialog(fm::AppPaths::defaultDataDir());

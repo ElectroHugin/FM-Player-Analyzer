@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include "DwrsDisplay.h"
 
 #include "GistRainbowLut.h"
 #include "PlayerStatus.h"
@@ -266,7 +267,8 @@ int positionSortKey(const QString &posStr)
 
 QDateTime parseDwrsTimestamp(const QString &timestamp)
 {
-    return QDateTime::fromString(timestamp, QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+    const auto precise = QDateTime::fromString(timestamp, QStringLiteral("yyyy-MM-dd HH:mm:ss.zzz"));
+    return precise.isValid() ? precise : QDateTime::fromString(timestamp, QStringLiteral("yyyy-MM-dd HH:mm:ss"));
 }
 
 double relativeLuminance(const QColor &color)
@@ -290,6 +292,11 @@ double contrastRatio(const QColor &a, const QColor &b)
 }
 
 CellStyle dwrsCellStyle(double normalizedValue)
+{
+    return dwrsCellStyle(normalizedValue, QString());
+}
+
+CellStyle rainbowCellStyle(double normalizedValue)
 {
     // Same normalization window as legacy: Normalize(vmin=30, vmax=95), clipped.
     constexpr double vmin = 30.0;

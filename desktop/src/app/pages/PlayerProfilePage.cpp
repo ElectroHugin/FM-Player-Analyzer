@@ -1,4 +1,6 @@
 #include "PlayerProfilePage.h"
+#include "core/DwrsDisplay.h"
+#include "../widgets/RatingProfileEditor.h"
 #include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
@@ -321,6 +323,11 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     auto *tilesHost = new QWidget(m_detailWidget);
     m_topRolesLayout = new FlowLayout(tilesHost, 10, 10);
     detailLayout->addWidget(tilesHost);
+    m_coverageNote = new QLabel(m_detailWidget);
+    m_coverageNote->setObjectName(QStringLiteral("kpiCaption"));
+    m_coverageNote->setWordWrap(true);
+    m_coverageNote->setVisible(false);
+    detailLayout->addWidget(m_coverageNote);
 
     m_talentBox = new QGroupBox(tr("🌱 Talent-Projektion"), m_detailWidget);
     auto *talentLayout = new QVBoxLayout(m_talentBox);
@@ -385,6 +392,11 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     // One player's own history: each point is a stored change of his ratings.
     m_chart->setAxisTitle(tr("Gespeicherte Veränderungen vor dem aktuellen Wert"));
     detailLayout->addWidget(m_chart);
+    m_switchNote = new QLabel(m_detailWidget);
+    m_switchNote->setObjectName(QStringLiteral("kpiCaption"));
+    m_switchNote->setWordWrap(true);
+    m_switchNote->setVisible(false);
+    detailLayout->addWidget(m_switchNote);
 
     auto *historyTitle = new QLabel(tr("Verlauf nach Ingame-Datum"), m_detailWidget);
     historyTitle->setObjectName(QStringLiteral("sectionTitle"));
@@ -735,6 +747,25 @@ void PlayerProfilePage::showPlayer()
     m_roleFilterCombo->setVisible(m_context.definitions().hasRolePhases());
     fillRoleTiles();
 
+    // Partial data: say which attributes the rating had to leave out.
+    m_coverageNote->setVisible(false);
+    if (const auto snapshot = m_context.ratingSnapshot(); snapshot && !topRoles.empty()) {
+        const QString role = topRoles.front().role;
+        const QList<int> missing = snapshot->missingAttributes(*player, role);
+        if (!missing.isEmpty()) {
+            QStringList names;
+            for (const int index : missing)
+                names << RatingProfileEditor::attributeLabel(index);
+            const double coverage = snapshot->evaluate(*player, role).coverage;
+            m_coverageNote->setText(
+                tr("Die Bewertung beruht auf den vorhandenen Attributen (%1 % des Rollengewichts). "
+                   "Es fehlen: %2.")
+                    .arg(qRound(coverage * 100))
+                    .arg(names.join(QStringLiteral(", "))));
+            m_coverageNote->setVisible(true);
+        }
+    }
+
     if (topRoles.empty()) {
         m_detailWidget->setVisible(false);
         m_noRolesLabel->setVisible(true);
@@ -755,7 +786,7 @@ void PlayerProfilePage::showPlayer()
                "+ Mentalität (Ent %5 / Arb %6) + Persönlichkeit (%7).")
                 .arg(static_cast<int>(ageCap))
                 .arg(qRound(score))
-                .arg(topRoles.front().normalized)
+                .arg(formatDwrs(topRoles.front().normalized))
                 .arg(player->age)
                 .arg(static_cast<int>(player->attrMean(idx(Attr::Determination))))
                 .arg(static_cast<int>(player->attrMean(idx(Attr::WorkRate))))
@@ -842,6 +873,14 @@ void PlayerProfilePage::showPlayer()
     else
         m_chart->setSeries(std::move(chartSeries), snapshotLabels,
                            LineChartWidget::ValueMode::Percent, markers);
+    // Profile switches are recalculations: the chart marks them and computes
+    // no development across them. Name them here.
+    QStringList switches;
+    for (const auto &[when, name] : m_context.ratingProfileSwitches())
+        switches << tr("%1: %2").arg(when, name);
+    m_switchNote->setText(tr("Profilwechsel (Markierung im Diagramm, keine Entwicklung über den Wechsel): %1")
+                              .arg(switches.join(QStringLiteral(" · "))));
+    m_switchNote->setVisible(!switches.isEmpty());
     fillHistory(player);
 }
 
@@ -1077,7 +1116,7 @@ void PlayerProfilePage::showTrainingAdvice(const Player *player)
     }
 
     const TrainingAdvice::FocusAdvice advice = TrainingAdvice::adviseFocusesForRole(
-        *player, role, m_context.dwrsEngine(), trainingWindows(m_context));
+        *player, role, *m_context.ratingSnapshot(), trainingWindows(m_context));
     if (!advice.valid || advice.focus.empty()) {
         m_trainingLabel->setText(
             tr("Für diese Rolle gibt es aktuell keine sinnvolle Trainingsmethode "

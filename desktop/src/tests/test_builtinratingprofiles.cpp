@@ -41,6 +41,11 @@ private slots:
         QCOMPARE(restored->revision(), harvest->revision());
         for (const auto &d : definitions) {
             const auto old = RatingSnapshot::compile(*classic, d, &error); QVERIFY2(old, qPrintable(error));
+            if (d.fmVersionId() != QStringLiteral("fm27")) {
+                QVERIFY(!RatingSnapshot::compile(*harvest, d, &error));
+                QCOMPARE(error, QStringLiteral("incompatible-game"));
+                continue;
+            }
             const auto current = RatingSnapshot::compile(*harvest, d, &error); QVERIFY2(current, qPrintable(error));
             Player player;
             for (int a = 0; a < kAttrCount; ++a) player.attrLo[a] = player.attrHi[a] = 1 + a % 20;

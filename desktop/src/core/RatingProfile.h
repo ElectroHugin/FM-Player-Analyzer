@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RatingCurve.h"
+#include "DwrsDisplay.h"
 #include <QJsonObject>
 #include <QMap>
 #include <QStringList>
@@ -45,6 +46,18 @@ struct RatingProfile {
     QMap<QString, QString> rolePolicies; // Explicit per-role calculation policy, e.g. legacy goalkeepers.
     double keyFactor = 1.5;
     double preferableFactor = 1.2;
+    // Share of the finished outfield rating (0..kMaxRoleShare) that comes from
+    // an additional linear weight on the role's key and preferable attributes.
+    // 0 disables it. Omitted from JSON when 0, so older files and formula
+    // revisions stay unchanged.
+    double roleShare = 0.0;
+    static constexpr double kMaxRoleShare = 0.6;
+    // Colour tier thresholds (Common .. Legendary). Display only: not part of
+    // the formula revision. Unset = defaults for the calculation version.
+    std::optional<DwrsTierThresholds> fieldTiers;
+    std::optional<DwrsTierThresholds> goalkeeperTiers;
+    DwrsTierThresholds effectiveFieldTiers() const;
+    DwrsTierThresholds effectiveGoalkeeperTiers() const;
 
     QString validate() const;
     ResolvedRatingAttribute resolve(const QString &attribute, const QString &role,

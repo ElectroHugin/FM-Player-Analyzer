@@ -21,6 +21,8 @@ public:
     }
 
     virtual void refresh() {}
+    // Called before navigating away; false keeps the page (e.g. unsaved draft).
+    virtual bool confirmLeave() { return true; }
 
     // One page object can serve several navigation targets (tabs), e.g. Best
     // XI's first-team and youth views share the tactic choice. Called with the

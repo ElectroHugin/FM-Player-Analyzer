@@ -87,7 +87,9 @@ double relativeLuminance(const QColor &color);
 double contrastRatio(const QColor &a, const QColor &b);
 
 // DWRS (0-100, normalized 30-95) -> gist_rainbow background with smart
-// black/white text.
+// black/white text (the pre-2.3.0 colouring, still selectable).
+CellStyle rainbowCellStyle(double normalizedValue);
+// The configured DWRS colouring (see DwrsDisplay.h) for an outfield role.
 CellStyle dwrsCellStyle(double normalizedValue);
 
 // Attribute (1-20) -> 5-tier color (red/orange/yellow/light green/green).

@@ -2,7 +2,13 @@
 #include "RatingCurveEditor.h"
 #include "FlowLayout.h"
 #include "core/Attributes.h"
+#include <QCheckBox>
 #include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QGridLayout>
+#include <QSpinBox>
+#include <QToolButton>
 #include <QFile>
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -36,7 +42,111 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     layout->addLayout(top);
     m_name = new QLineEdit; m_name->setObjectName(QStringLiteral("ratingProfileName")); m_name->setPlaceholderText(tr("Profilname")); m_name->setAccessibleName(tr("Profilname"));
     layout->addWidget(m_name);
-    m_provenance = new QLabel; m_provenance->setWordWrap(true); layout->addWidget(m_provenance);
+    m_provenance = new QLabel; m_provenance->setWordWrap(true);
+    // Sources are plain, selectable text: the app never opens internet links.
+    m_provenance->setTextFormat(Qt::PlainText);
+    m_provenance->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    layout->addWidget(m_provenance);
+    m_useForSave = new QPushButton(tr("Für diesen Spielstand verwenden"));
+    m_useForSave->setObjectName(QStringLiteral("useRatingProfile"));
+    connect(m_useForSave, &QPushButton::clicked, this, [this] {
+        if (m_dirty) {
+            const auto answer = QMessageBox::question(this, tr("Für diesen Spielstand verwenden"),
+                tr("Das Profil hat ungespeicherte Änderungen. Erst speichern und dann verwenden?"),
+                QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save);
+            if (answer != QMessageBox::Save) return;
+            save(false);
+            if (m_dirty) return;
+        }
+        emit activateRequested(m_selectedId);
+    });
+    layout->addWidget(m_useForSave, 0, Qt::AlignLeft);
+
+    // Profile-wide factors. They belong to the profile and change its formula.
+    auto *factors = new QFormLayout; factors->setContentsMargins(0, 0, 0, 0);
+    m_keyFactor = new QDoubleSpinBox; m_keyFactor->setRange(0, 5); m_keyFactor->setDecimals(2); m_keyFactor->setSingleStep(0.1); m_keyFactor->setMaximumWidth(120);
+    m_keyFactor->setAccessibleName(tr("Faktor Schlüssel-Attribute"));
+    m_preferableFactor = new QDoubleSpinBox; m_preferableFactor->setRange(0, 5); m_preferableFactor->setDecimals(2); m_preferableFactor->setSingleStep(0.1); m_preferableFactor->setMaximumWidth(120);
+    m_preferableFactor->setAccessibleName(tr("Faktor bevorzugte Attribute"));
+    factors->addRow(tr("Faktor Schlüssel-Attribute"), m_keyFactor);
+    factors->addRow(tr("Faktor bevorzugte Attribute"), m_preferableFactor);
+    auto *shareRow = new QHBoxLayout; shareRow->setContentsMargins(0, 0, 0, 0);
+    m_roleShareOn = new QCheckBox(tr("Rollenanteil verwenden"));
+    m_roleShareOn->setObjectName(QStringLiteral("roleShareEnabled"));
+    m_roleShare = new QSpinBox; m_roleShare->setRange(1, int(RatingProfile::kMaxRoleShare * 100)); m_roleShare->setSuffix(QStringLiteral(" %"));
+    m_roleShare->setObjectName(QStringLiteral("roleShare")); m_roleShare->setValue(33);
+    m_roleShare->setAccessibleName(tr("Rollenanteil"));
+    shareRow->addWidget(m_roleShareOn); shareRow->addWidget(m_roleShare); shareRow->addStretch(1);
+    factors->addRow(tr("Rollenanteil"), shareRow);
+    layout->addLayout(factors);
+    auto *explainToggle = new QToolButton; explainToggle->setText(tr("Was ist der Rollenanteil?"));
+    explainToggle->setCheckable(true); explainToggle->setAutoRaise(true); explainToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    explainToggle->setArrowType(Qt::RightArrow);
+    auto *explain = new QLabel(tr(
+        "Die Grundkurven eines Profils gelten für alle Rollen gleich. Die Faktoren für Schlüssel- "
+        "und bevorzugte Attribute verstärken nur Attribute, die schon ein Gewicht haben. "
+        "Beim FM27-Profil haben zum Beispiel Abschluss, Passen oder Tackling kaum Grundgewicht, "
+        "deshalb unterscheiden sich die Rollen eines Spielers sonst kaum.\n\n"
+        "Der Rollenanteil gibt jedem Schlüssel- und bevorzugten Attribut der Rolle zusätzlich ein "
+        "eigenes, gleichmäßig steigendes Gewicht (Schlüssel 1,5-fach). Der eingestellte Prozentsatz "
+        "ist der Anteil dieses Rollenteils an der fertigen Bewertung; 0 bis 100 bleibt die Skala. "
+        "Torhüterrollen bekommen keinen Rollenanteil.\n\n"
+        "Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser voraus als "
+        "ohne (Zusammenhang 0,207 statt 0,188) und trennt die Rollen deutlicher. "
+        "Ohne Haken rechnet das Profil nur mit den Grundkurven."));
+    explain->setWordWrap(true); explain->setVisible(false); explain->setObjectName(QStringLiteral("kpiCaption"));
+    connect(explainToggle, &QToolButton::toggled, this, [explain, explainToggle](bool on) {
+        explain->setVisible(on); explainToggle->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
+    });
+    layout->addWidget(explainToggle, 0, Qt::AlignLeft);
+    layout->addWidget(explain);
+    const auto factorsEdited = [this] {
+        if (m_loading || m_selectedId.isEmpty()) return;
+        m_draft.keyFactor = m_keyFactor->value();
+        m_draft.preferableFactor = m_preferableFactor->value();
+        m_draft.roleShare = m_roleShareOn->isChecked() ? m_roleShare->value() / 100.0 : 0.0;
+        m_roleShare->setEnabled(m_roleShareOn->isChecked());
+        m_dirty = true;
+        m_status->setText(tr("Ungespeicherter Entwurf. Bestehende Bewertungen bleiben unverändert."));
+    };
+    // Colour tier thresholds (display only, not part of the formula).
+    auto *tierToggle = new QToolButton; tierToggle->setText(tr("Farbstufen ab …"));
+    tierToggle->setCheckable(true); tierToggle->setAutoRaise(true); tierToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    tierToggle->setArrowType(Qt::RightArrow);
+    auto *tierBox = new QWidget; tierBox->setVisible(false);
+    auto *tierGrid = new QGridLayout(tierBox); tierGrid->setContentsMargins(0, 0, 0, 0); tierGrid->setHorizontalSpacing(8);
+    tierGrid->addWidget(new QLabel(tr("Feldspieler")), 1, 0);
+    tierGrid->addWidget(new QLabel(tr("Torhüter")), 2, 0);
+    for (int i = 0; i < 5; ++i) {
+        auto *head = new QLabel(tierName(i + 1)); head->setAlignment(Qt::AlignCenter);
+        tierGrid->addWidget(head, 0, i + 1);
+        for (int row = 1; row <= 2; ++row) {
+            auto *spin = new QDoubleSpinBox; spin->setRange(0, 100); spin->setDecimals(1); spin->setSingleStep(0.5);
+            spin->setAccessibleName((row == 1 ? tr("Feldspieler") : tr("Torhüter")) + QLatin1Char(' ') + tierName(i + 1));
+            tierGrid->addWidget(spin, row, i + 1);
+            (row == 1 ? m_fieldTiers : m_goalkeeperTiers)[i] = spin;
+            connect(spin, &QDoubleSpinBox::valueChanged, this, [this] {
+                if (m_loading || m_selectedId.isEmpty()) return;
+                DwrsTierThresholds field{}, goalkeeper{};
+                for (int k = 0; k < 5; ++k) { field[k] = m_fieldTiers[k]->value(); goalkeeper[k] = m_goalkeeperTiers[k]->value(); }
+                m_draft.fieldTiers = field; m_draft.goalkeeperTiers = goalkeeper; m_dirty = true;
+                m_status->setText(tr("Ungespeicherter Entwurf. Farbstufen ändern keine Bewertung."));
+            });
+        }
+    }
+    auto *tierHint = new QLabel(tr("Ab diesem Wert beginnt die Stufe. Torhüter rechnen auf der bisherigen Grundlage "
+                                   "und haben deshalb eigene Grenzen. Die Grenzen färben nur und ändern keine Bewertung."));
+    tierHint->setWordWrap(true); tierHint->setObjectName(QStringLiteral("kpiCaption"));
+    tierGrid->addWidget(tierHint, 3, 0, 1, 6);
+    connect(tierToggle, &QToolButton::toggled, this, [tierBox, tierToggle](bool on) {
+        tierBox->setVisible(on); tierToggle->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
+    });
+    layout->addWidget(tierToggle, 0, Qt::AlignLeft);
+    layout->addWidget(tierBox);
+    connect(m_keyFactor, &QDoubleSpinBox::valueChanged, this, factorsEdited);
+    connect(m_preferableFactor, &QDoubleSpinBox::valueChanged, this, factorsEdited);
+    connect(m_roleShareOn, &QCheckBox::toggled, this, factorsEdited);
+    connect(m_roleShare, &QSpinBox::valueChanged, this, factorsEdited);
     auto *body = new QHBoxLayout; body->setSpacing(16);
     auto *left = new QVBoxLayout;
     m_search = new QLineEdit; m_search->setPlaceholderText(tr("Attribute suchen")); m_search->setAccessibleName(tr("Attribute suchen"));
@@ -108,15 +218,28 @@ void RatingProfileEditor::selectProfile(const QString &id)
     m_selectedId = id; m_dirty = false;
     m_draft = m_library.profiles().value(id);
     m_expectedRevision = RatingProfileLibrary::documentRevision(m_draft);
-    m_provenance->setText(m_draft.sourceVersion.isEmpty() ? tr("Keine Quelle angegeben") : tr("Quelle: %1").arg(m_draft.sourceVersion));
+    m_provenance->setText(provenanceText(m_draft));
     m_name->setText(m_draft.name); m_name->setEnabled(!id.isEmpty());
+    updateFactors();
+    setActiveProfile(m_activeId);
     fillAttributes();
-    if (m_storageValid) m_status->setText(tr("Profile bearbeiten und austauschen. Speichern aktiviert ein Profil nicht für den Spielstand."));
+    if (m_storageValid) m_status->setText(tr("Profile bearbeiten und austauschen. Speichern ändert den Spielstand nicht; "
+                                             "„Für diesen Spielstand verwenden“ rechnet mit dem gespeicherten Profil neu."));
 }
-void RatingProfileEditor::fillAttributes()
+QString RatingProfileEditor::provenanceText(const RatingProfile &profile)
 {
-    const QSignalBlocker blocker(m_attributes); m_attributes->clear();
-    const QStringList labels = {
+    QStringList lines;
+    lines << (profile.sourceVersion.isEmpty() ? tr("Keine Quelle angegeben") : tr("Quelle: %1").arg(profile.sourceVersion));
+    if (profile.origin == QStringLiteral("builtin-harvestgreen"))
+        lines << tr("Vorläufig: harvestgreen22 misst nach dem offiziellen Release von FM27 neu. "
+                    "Die Werte können sich mit einem späteren Update ändern.");
+    if (!profile.sources.isEmpty())
+        lines << tr("Quellen (zum Kopieren): %1").arg(profile.sources.join(QStringLiteral("  ·  ")));
+    return lines.join(QLatin1Char('\n'));
+}
+QString RatingProfileEditor::attributeLabel(int index)
+{
+    static const QStringList labels = {
         tr("Eins gegen Eins"),
         tr("Antritt"),
         tr("Reichweite"),
@@ -164,10 +287,71 @@ void RatingProfileEditor::fillAttributes()
         tr("Weite Einwürfe"),
         tr("Elfmeter"),
         tr("Fausten")};
+    return index >= 0 && index < labels.size() ? labels[index] : QString();
+}
+QString RatingProfileEditor::tierName(int tier)
+{
+    switch (tier) {
+    case 0: return tr("Schwach");
+    case 1: return tr("Gewöhnlich");
+    case 2: return tr("Gut");
+    case 3: return tr("Selten");
+    case 4: return tr("Episch");
+    default: return tr("Legendär");
+    }
+}
+void RatingProfileEditor::updateFactors()
+{
+    m_loading = true;
+    const bool enabled = !m_selectedId.isEmpty();
+    m_keyFactor->setEnabled(enabled); m_preferableFactor->setEnabled(enabled); m_roleShareOn->setEnabled(enabled);
+    m_keyFactor->setValue(m_draft.keyFactor);
+    m_preferableFactor->setValue(m_draft.preferableFactor);
+    // Classic keeps 2.2.3 arithmetic: no role part.
+    const bool classic = m_draft.calculationVersion == QStringLiteral("classic-midpoint-v1");
+    m_roleShareOn->setEnabled(enabled && !classic);
+    m_roleShareOn->setChecked(m_draft.roleShare > 0);
+    if (m_draft.roleShare > 0) m_roleShare->setValue(qRound(m_draft.roleShare * 100));
+    m_roleShare->setEnabled(enabled && !classic && m_draft.roleShare > 0);
+    const auto field = m_draft.effectiveFieldTiers(), goalkeeper = m_draft.effectiveGoalkeeperTiers();
+    for (int k = 0; k < 5; ++k) {
+        m_fieldTiers[k]->setValue(field[k]); m_fieldTiers[k]->setEnabled(enabled);
+        m_goalkeeperTiers[k]->setValue(goalkeeper[k]); m_goalkeeperTiers[k]->setEnabled(enabled);
+    }
+    m_roleShareOn->setToolTip(classic ? tr("Das Classic-Verfahren rechnet unverändert wie 2.2.3 und hat keinen Rollenanteil.") : QString());
+    m_loading = false;
+}
+void RatingProfileEditor::setActiveProfile(const QString &id)
+{
+    // A newly active profile opens in the editor unless a draft is pending.
+    const bool changed = m_activeId != id;
+    m_activeId = id;
+    if (changed && !m_dirty && id != m_selectedId) {
+        const int index = m_profiles->findData(id);
+        if (index >= 0) m_profiles->setCurrentIndex(index);
+    }
+    const auto profile = m_library.profiles().value(m_selectedId);
+    const bool compatible = !m_selectedId.isEmpty() && profile.compatibleGames.contains(m_game);
+    m_useForSave->setEnabled(compatible);
+    m_useForSave->setToolTip(compatible ? QString()
+                             : tr("Dieses Profil passt nicht zur Football-Manager-Version des Spielstands."));
+    for (int i = 0; i < m_profiles->count(); ++i) {
+        const auto itemId = m_profiles->itemData(i).toString();
+        const auto &p = m_library.profiles().value(itemId);
+        QString label = p.name + (m_library.customized(itemId) ? tr(" · Angepasst") : QString());
+        if (itemId == m_activeId) label += tr(" · Aktiv");
+        if (!p.compatibleGames.contains(m_game)) label += tr(" · nur %1").arg(p.compatibleGames.join(QStringLiteral("/")).toUpper());
+        m_profiles->setItemText(i, label);
+    }
+}
+void RatingProfileEditor::fillAttributes()
+{
+    const QSignalBlocker blocker(m_attributes); m_attributes->clear();
     const int categories[] = {4, 3, 4, 2, 3, 2, 3, 2, 4, 2, 2, 1, 1, 2, 2, 1, 1, 1, 2, 4, 1, 3, 4, 2, 1, 1, 2, 3, 1, 2, 4, 4, 3, 3, 1, 2, 1, 4, 2, 2, 4, 4, 3, 1, 1, 1, 4};
     if (!m_selectedId.isEmpty()) for (int i = 0; i < kAttrCount; ++i) {
         const auto &key = attrNames()[i];
-        auto *item = new QListWidgetItem(labels[i], m_attributes);
+        const QString label = attributeLabel(i);
+        auto *item = new QListWidgetItem(label, m_attributes);
         item->setData(Qt::UserRole, key); item->setData(Qt::UserRole + 1, categories[i]);
         QString evidence;
         const auto state = m_draft.attributeEvidence.value(key);
@@ -177,7 +361,7 @@ void RatingProfileEditor::fillAttributes()
         else if (state == QStringLiteral("legacy")) evidence = tr("Bisherige DWRS-Bewertungsgrundlage");
         const auto active = m_draft.attributes.value(key, RatingCurve::linear(0)).weight == 0
                             ? tr("Deaktiviert – im Editor bearbeitbar") : tr("Aktiv");
-        item->setToolTip(labels[i] + QLatin1Char('\n') + active + QLatin1Char('\n') + evidence);
+        item->setToolTip(label + QLatin1Char('\n') + active + QLatin1Char('\n') + evidence);
     }
     filterAttributes();
     if (m_attributes->count()) {
@@ -210,7 +394,9 @@ bool RatingProfileEditor::persist(RatingProfileLibrary candidate, const QString 
     if (!m_storageValid) { reportError(QStringLiteral("library-conflict")); return false; }
     const auto error = candidate.save(m_path);
     if (!error.isEmpty()) { reportError(error); return false; }
-    m_library = std::move(candidate); m_dirty = false; fillProfiles(selected); return true;
+    m_library = std::move(candidate); m_dirty = false; fillProfiles(selected);
+    emit librarySaved();
+    return true;
 }
 void RatingProfileEditor::save(bool asNew)
 {
@@ -234,6 +420,7 @@ void RatingProfileEditor::newProfile()
     if (!ok) return;
     RatingProfile profile; profile.id = QUuid::createUuid().toString(QUuid::WithoutBraces); profile.name = name;
     profile.compatibleGames = {m_game};
+    profile.origin = QStringLiteral("personal");
     for (const auto &name : attrNames()) profile.attributes.insert(name, RatingCurve::linear(0));
     auto candidate = m_library; const auto error = candidate.insert(profile);
     if (!error.isEmpty()) { reportError(error); return; }

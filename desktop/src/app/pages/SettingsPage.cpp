@@ -1,5 +1,6 @@
 #include "SettingsPage.h"
 #include "../widgets/RatingProfileEditor.h"
+#include "core/DwrsDisplay.h"
 #include "../RatingProfileDefaults.h"
 #include "core/ImportHistory.h"
 
@@ -828,10 +829,23 @@ QWidget *SettingsPage::buildWeightsPage()
 {
     QVBoxLayout *cards = nullptr;
     QWidget *page = makePage(tr("DWRS-Bewertung"),
-                             tr("Wie stark die Attribut-Kategorien in die DWRS-Bewertung "
-                                "eingehen. Geänderte Gewichte berechnen beim Speichern alle "
-                                "Bewertungen neu."),
+                             tr("Ein Bewertungsprofil legt fest, wie die Attribute in die "
+                                "DWRS-Bewertung eingehen. Jeder Spielstand rechnet mit genau "
+                                "einem Profil."),
                              &cards);
+
+    QVBoxLayout *activeBody = nullptr;
+    cards->addWidget(makeCard(tr("Profil dieses Spielstands"), QString(), &activeBody));
+    m_activeRatingLabel = new QLabel;
+    m_activeRatingLabel->setObjectName(QStringLiteral("activeRatingProfile"));
+    m_activeRatingLabel->setWordWrap(true);
+    m_activeRatingLabel->setTextFormat(Qt::PlainText);
+    m_activeRatingLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    activeBody->addWidget(m_activeRatingLabel);
+    activeBody->addWidget(foldableHint(
+        tr("Ein Profilwechsel berechnet alle Bewertungen des Spielstands im Hintergrund neu. "
+           "Im Verlauf erscheint der Wechsel als Markierung; über ihn hinweg wird keine "
+           "Entwicklung berechnet. Ältere Bewertungen bleiben unverändert gespeichert.")));
 
     QVBoxLayout *profileBody = nullptr;
     cards->addWidget(makeCard(tr("Bewertungsprofile"),
@@ -847,6 +861,16 @@ QWidget *SettingsPage::buildWeightsPage()
         qWarning("DWRS built-in profiles unavailable: %s", qPrintable(builtinError));
         profileBody->addWidget(caption(tr("Mitgelieferte Profile konnten nicht geladen werden.")));
     } else m_ratingProfileEditor->installBuiltins(builtins);
+    connect(m_ratingProfileEditor, &RatingProfileEditor::librarySaved, this, [this] {
+        m_context.reloadRatingLibrary();
+    });
+    connect(m_ratingProfileEditor, &RatingProfileEditor::activateRequested, this, [this](const QString &id) {
+        m_context.reloadRatingLibrary();
+        const QString error = m_context.activateRatingProfile(id);
+        if (!error.isEmpty())
+            QMessageBox::warning(this, tr("Bewertungsprofil"), error);
+        updateActiveRatingProfile();
+    });
     const auto updateCurveTheme = [this] {
         QPalette palette;
         palette.setColor(QPalette::Base, m_theme.surface());
@@ -892,8 +916,16 @@ QWidget *SettingsPage::buildWeightsPage()
     }
     pair->addWidget(gkCard, 1);
     cards->addLayout(pair);
+    // Since 2.3.0 group weights and role factors live in the rating profile
+    // (existing values became "My weights"). The controls stay hidden so the
+    // stored values are kept unchanged.
+    fieldCard->setVisible(false);
+    gkCard->setVisible(false);
+    m_weightsVersionLabel->setVisible(false);
 
-    cards->addWidget(makeCard(tr("Rollen-Multiplikatoren"), QString(), &body));
+    auto *multiplierCard = makeCard(tr("Rollen-Multiplikatoren"), QString(), &body);
+    multiplierCard->setVisible(false);
+    cards->addWidget(multiplierCard);
     form = makeForm(body);
     m_keyMultSpin = makeSpin();
     m_prefMultSpin = makeSpin();
@@ -929,8 +961,8 @@ QWidget *SettingsPage::buildWeightsPage()
     auto *recalcButton = new QPushButton(tr("Alle Bewertungen neu berechnen"));
     body->addLayout(hbox({recalcButton}));
     body->addWidget(foldableHint(
-        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit den "
-           "gespeicherten Gewichten neu. Nicht gespeicherte Änderungen auf dieser Seite "
+        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit dem Profil "
+           "dieses Spielstands neu. Nicht gespeicherte Änderungen auf dieser Seite "
            "werden dabei nicht berücksichtigt.")));
     connect(recalcButton, &QPushButton::clicked, this, &SettingsPage::recalcRequested);
 
@@ -1279,8 +1311,75 @@ QWidget *SettingsPage::buildThemePage()
     m_contrastLabel = caption(QString());
     body->addWidget(m_contrastLabel);
 
+    // --- DWRS colours ---
+    cards->addWidget(makeCard(tr("DWRS-Farben"),
+                              tr("Wie Bewertungen in Tabellen, auf dem Spielfeld und im Dashboard "
+                                 "eingefärbt werden."), &body));
+    form = makeForm(body);
+    m_dwrsColorModeCombo = sized(new QComboBox, kFieldWidth);
+    m_dwrsColorModeCombo->addItem(tr("Seltenheitsstufen"), QStringLiteral("tiers"));
+    m_dwrsColorModeCombo->addItem(tr("Regenbogen (bisher)"), QStringLiteral("rainbow"));
+    addRow(form, tr("Darstellung"), m_dwrsColorModeCombo);
+    auto *tierGrid = new QGridLayout;
+    tierGrid->setContentsMargins(0, 0, 0, 0);
+    tierGrid->setHorizontalSpacing(16);
+    tierGrid->setVerticalSpacing(8);
+    for (int tier = 0; tier < kDwrsTierCount; ++tier) {
+        auto *name = new QLabel(RatingProfileEditor::tierName(tier));
+        name->setMinimumWidth(kLabelWidth);
+        tierGrid->addWidget(name, tier, 0);
+        auto *button = new QPushButton;
+        button->setObjectName(QStringLiteral("colorSwatch"));
+        button->setFixedSize(kSwatchWidth, 32);
+        button->setCursor(Qt::PointingHandCursor);
+        button->setAccessibleName(RatingProfileEditor::tierName(tier));
+        m_tierButtons[tier] = button;
+        connect(button, &QPushButton::clicked, this, [this, tier] {
+            const QColor initial = m_pendingTierColors[tier].isValid() ? m_pendingTierColors[tier]
+                                                                       : QColor(Qt::white);
+            const QColor picked = QColorDialog::getColor(initial, this, tr("Farbe wählen"));
+            if (!picked.isValid())
+                return;
+            m_pendingTierColors[tier] = picked;
+            updateTierButtons();
+        });
+        tierGrid->addWidget(button, tier, 1);
+    }
+    tierGrid->setColumnStretch(2, 1);
+    body->addLayout(tierGrid);
+    auto *resetTiers = new QPushButton(tr("Auf Standard zurücksetzen"));
+    body->addLayout(hbox({resetTiers}));
+    connect(resetTiers, &QPushButton::clicked, this, [this] {
+        m_pendingTierColors = defaultDwrsTierColors();
+        m_dwrsColorModeCombo->setCurrentIndex(0);
+        updateTierButtons();
+    });
+    body->addWidget(foldableHint(
+        tr("Ab welchem Wert eine Stufe beginnt, legt das Bewertungsprofil fest (Einstellungen → "
+           "DWRS-Bewertung), getrennt für Feldspieler und Torhüter. Die Schrift wählt der "
+           "Analyzer automatisch hell oder dunkel, damit sie auf jeder Farbe lesbar bleibt. "
+           "„Gewöhnlich“ hat standardmäßig keine eigene Farbe.")));
+
     finishPage(cards);
     return page;
+}
+
+void SettingsPage::updateTierButtons()
+{
+    for (int tier = 0; tier < kDwrsTierCount; ++tier) {
+        QPushButton *button = m_tierButtons[tier];
+        if (!button) continue;
+        const QColor color = m_pendingTierColors[tier];
+        if (color.isValid()) {
+            const CellStyle style = dwrsTierStyleFor(color);
+            button->setText(RatingProfileEditor::tierName(tier));
+            button->setStyleSheet(QStringLiteral("QPushButton { background: %1; color: %2; border-radius: 6px; }")
+                                      .arg(style.background.name(), style.text.name()));
+        } else {
+            button->setText(tr("ohne Füllung"));
+            button->setStyleSheet(QString());
+        }
+    }
 }
 
 
@@ -1673,9 +1772,29 @@ QWidget *SettingsPage::buildDatabasePage()
 }
 
 
+void SettingsPage::updateActiveRatingProfile()
+{
+    if (!m_activeRatingLabel)
+        return;
+    const QString id = m_context.activeRatingProfileId();
+    QString text = id.isEmpty() ? tr("Kein Profil aktiv.") : tr("Aktiv: %1").arg(m_context.activeRatingProfileName());
+    for (const auto &profile : m_context.compatibleRatingProfiles())
+        if (profile.id == id)
+            text += QLatin1Char('\n') + RatingProfileEditor::provenanceText(profile);
+    m_activeRatingLabel->setText(text);
+    if (m_ratingProfileEditor)
+        m_ratingProfileEditor->setActiveProfile(id);
+}
+
+bool SettingsPage::confirmLeave()
+{
+    return !m_ratingProfileEditor || m_ratingProfileEditor->confirmDiscard();
+}
+
 void SettingsPage::refresh()
 {
     if (m_ratingProfileEditor) m_ratingProfileEditor->setGame(m_context.fmVersionId());
+    updateActiveRatingProfile();
     refreshPersonalities();
     AppConfig &config = m_context.config();
 
@@ -1842,6 +1961,10 @@ void SettingsPage::refresh()
     m_watermarkCheck->setChecked(
         themeSettings.value(QStringLiteral("header_crest_watermark"), QStringLiteral("true"))
         != QLatin1String("false"));
+    m_dwrsColorModeCombo->setCurrentIndex(
+        themeSettings.value(QStringLiteral("dwrs_color_mode")) == QLatin1String("rainbow") ? 1 : 0);
+    m_pendingTierColors = colorsFromString(themeSettings.value(QStringLiteral("dwrs_tier_colors")));
+    updateTierButtons();
     m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
                                  != QLatin1String("solid"));
     m_pendingColors.clear();
@@ -2031,7 +2154,12 @@ void SettingsPage::saveAll()
     themeSettings.insert(QStringLiteral("header_crest_watermark"),
                          m_watermarkCheck->isChecked() ? QStringLiteral("true")
                                                        : QStringLiteral("false"));
+    themeSettings.insert(QStringLiteral("dwrs_color_mode"), m_dwrsColorModeCombo->currentData().toString());
+    themeSettings.insert(QStringLiteral("dwrs_tier_colors"), colorsToString(m_pendingTierColors));
     config.saveThemeSettings(themeSettings);
+    setDwrsColorMode(m_dwrsColorModeCombo->currentData().toString() == QLatin1String("rainbow")
+                         ? DwrsColorMode::Rainbow : DwrsColorMode::Tiers);
+    setDwrsTierColors(m_pendingTierColors);
 
     bool personalitiesChanged = false;
     ProfileStore personalityStore(db);

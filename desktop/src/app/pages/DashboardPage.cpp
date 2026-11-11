@@ -1,4 +1,5 @@
 #include "DashboardPage.h"
+#include "core/DwrsDisplay.h"
 #include "core/ImportHistory.h"
 
 #include "../AppContext.h"
@@ -399,6 +400,40 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     });
     phases->setVisible(false);
     gridColumn->addWidget(phases, 0, Qt::AlignHCenter);
+    // Colouring: level (rarity tiers) or squad comparison; stored per save.
+    auto *colorRow = new QHBoxLayout;
+    colorRow->setSpacing(6);
+    auto *colorLabel = new QLabel(tr("Färben nach:"), widget);
+    colorLabel->setObjectName(QStringLiteral("kpiCaption"));
+    colorRow->addStretch(1);
+    colorRow->addWidget(colorLabel);
+    auto *colorModes = new QFrame(widget);
+    colorModes->setObjectName(QStringLiteral("segmented"));
+    auto *colorLayout = new QHBoxLayout(colorModes);
+    colorLayout->setContentsMargins(3, 3, 3, 3);
+    colorLayout->setSpacing(3);
+    m_colorModeGroup = new QButtonGroup(widget);
+    const QStringList colorViews = {tr("Niveau"), tr("Kadervergleich")};
+    for (int i = 0; i < colorViews.size(); ++i) {
+        auto *button = new QPushButton(colorViews.at(i), colorModes);
+        button->setCheckable(true);
+        button->setObjectName(QStringLiteral("segmentButton"));
+        button->setCursor(Qt::PointingHandCursor);
+        button->setChecked(i == 0);
+        button->setToolTip(i == 0 ? tr("Farbstufen wie überall in der App: Schwach bis Legendär.")
+                                  : tr("Abstand zum Median aller Positionen dieses Kaders: bis 1,5 Punkte "
+                                       "neutral, bis 4 Punkte leicht, darüber kräftig; warm darunter, kühl darüber."));
+        m_colorModeGroup->addButton(button, i);
+        colorLayout->addWidget(button);
+    }
+    colorRow->addWidget(colorModes);
+    colorRow->addStretch(1);
+    connect(m_colorModeGroup, &QButtonGroup::idClicked, this, [this](int mode) {
+        m_context.database().setSetting(QStringLiteral("dashboard_strength_colors"),
+                                        mode == 1 ? QStringLiteral("squad") : QStringLiteral("level"));
+        applyStrengthColorMode();
+    });
+    gridColumn->addLayout(colorRow);
     auto *gridRow = new QHBoxLayout;
     const auto pitchColumn = [&](QLabel *&title, StrengthGridWidget *&grid) {
         auto *column = new QVBoxLayout;
@@ -519,8 +554,21 @@ double DashboardPage::maxValueFilter() const
     return m_valueSlider->value() * 500'000.0;
 }
 
+void DashboardPage::applyStrengthColorMode()
+{
+    const bool squad = m_context.database().setting(QStringLiteral("dashboard_strength_colors"))
+                       == QLatin1String("squad");
+    if (auto *button = m_colorModeGroup->button(squad ? 1 : 0))
+        button->setChecked(true);
+    const auto mode = squad ? StrengthGridWidget::ColorMode::SquadComparison
+                            : StrengthGridWidget::ColorMode::Level;
+    m_strengthGrid->setColorMode(mode);
+    m_strengthGridOop->setColorMode(mode);
+}
+
 void DashboardPage::refresh()
 {
+    applyStrengthColorMode();
     refreshCombos();
     refreshAnalysis();
 }
@@ -754,6 +802,7 @@ void DashboardPage::showStarterView()
             StrengthGridWidget::Marker marker;
             marker.anchor = anchors.value(it.key());
             marker.header = abbr(it.value());
+            marker.goalkeeper = it.key() == QLatin1String("GK");
             const XiCell cell = team.value(it.key());
             if (cell.isFilled()) {
                 marker.uid = cell.playerUid;
@@ -815,6 +864,7 @@ void DashboardPage::showStarterView()
                 const QString oopSlot = view.slotsOfUid.value(cell.playerUid).second;
                 StrengthGridWidget::Marker marker;
                 marker.uid = cell.playerUid;
+                marker.goalkeeper = ipSlot == QLatin1String("GK");
                 marker.anchor = combinedAnchor(ipAnchors.value(ipSlot), oopAnchors.value(oopSlot));
                 marker.header = QStringLiteral("%1 · %2").arg(abbr(lineUps.ip.value(ipSlot)),
                                                              abbr(lineUps.oop.value(oopSlot)));
@@ -1064,8 +1114,8 @@ void DashboardPage::rebuildSuggestions()
         figures->setVerticalSpacing(2);
         const QList<QPair<QString, QString>> rows = {
             {tr("Bewertung"), tr("%1 % (dein Bester %2 %)")
-                                  .arg(qRound(suggestion.rating))
-                                  .arg(qRound(suggestion.myBest))},
+                                  .arg(formatDwrs(suggestion.rating))
+                                  .arg(formatDwrs(suggestion.myBest))},
             {tr("Wert"), player->transferValueRaw},
             {tr("Alter"), QString::number(player->age)},
         };
@@ -1096,7 +1146,7 @@ void DashboardPage::rebuildSuggestions()
         std::vector<std::pair<QString, QString>> ownEntries; // uid, label
         for (const auto &[own, ownRating] : suggestion.mine)
             ownEntries.emplace_back(own->uid,
-                                    tr("%1 (%2 %)").arg(own->name).arg(qRound(ownRating)));
+                                    tr("%1 (%2 %)").arg(own->name).arg(formatDwrs(ownRating)));
         const auto showMenu = [this, targetUid, targetRole, ownEntries](const QPoint &pos) {
             // The window, not the card, owns the menu: a shortlist toggle
             // rebuilds the cards while the menu is still open.
