@@ -37,6 +37,7 @@ public:
     SettingsPage(AppContext &context, ThemeManager &theme, QWidget *parent = nullptr);
 
     void refresh() override;
+    bool confirmLeave() override;
 
     // Opens a section by its German title (screenshot tour); false if unknown.
     bool openSettingsSection(const QString &germanTitle);
@@ -53,6 +54,8 @@ private:
     QWidget *buildGraphicsPage();
     QWidget *buildWeightsPage();
     RatingProfileEditor *m_ratingProfileEditor = nullptr;
+    QLabel *m_activeRatingLabel = nullptr;
+    void updateActiveRatingProfile();
     QWidget *buildSquadPage();
     QWidget *buildTrainingPage();
     QWidget *buildPersonalityPage();

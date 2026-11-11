@@ -702,6 +702,13 @@ void MainWindow::releaseAllStoreRows()
 
 void MainWindow::navigateTo(const QString &pageId)
 {
+    if (auto *current = qobject_cast<PageBase *>(m_stack->currentWidget());
+        current && Navigation::hostPage(pageId) != Navigation::hostPage(m_currentPageId)
+        && !current->confirmLeave()) {
+        selectMenuEntry(m_currentPageId);
+        updateTabBar(m_currentPageId);
+        return;
+    }
     // Remember what the page being left shows (e.g. the profile's player) so
     // Back returns to exactly that — unless the history itself is navigating.
     if (!m_restoringHistory)

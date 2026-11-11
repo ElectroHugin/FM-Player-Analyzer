@@ -1,7 +1,11 @@
 #pragma once
 #include "core/RatingProfileLibrary.h"
 #include <QWidget>
+class QCheckBox;
 class QComboBox;
+class QDoubleSpinBox;
+class QPushButton;
+class QSpinBox;
 class QLineEdit;
 class QListWidget;
 class QLabel;
@@ -15,7 +19,18 @@ public:
     bool installBuiltins(const QList<RatingProfile> &profiles);
     void setGame(const QString &game) { m_game = game; }
     bool hasDraftChanges() const { return m_dirty; }
+    // Asks before unsaved changes are lost; false keeps the draft.
+    bool confirmDiscard() { return discardDraft(); }
+    // Marks the open save's profile and enables "use for this save" for
+    // profiles compatible with its game.
+    void setActiveProfile(const QString &id);
+    // Text for a profile's source line: version, provisional note, sources.
+    static QString provenanceText(const RatingProfile &profile);
+signals:
+    void activateRequested(const QString &id);
+    void librarySaved();
 private:
+    void updateFactors();
     bool discardDraft();
     void fillProfiles(const QString &select = {});
     void selectProfile(const QString &id);
@@ -43,5 +58,11 @@ private:
     RatingCurveEditor *m_curve;
     QLabel *m_status;
     QLabel *m_provenance;
+    QString m_activeId;
+    QPushButton *m_useForSave = nullptr;
+    QDoubleSpinBox *m_keyFactor = nullptr;
+    QDoubleSpinBox *m_preferableFactor = nullptr;
+    QCheckBox *m_roleShareOn = nullptr;
+    QSpinBox *m_roleShare = nullptr;
 };
 } // namespace fm

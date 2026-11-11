@@ -828,10 +828,23 @@ QWidget *SettingsPage::buildWeightsPage()
 {
     QVBoxLayout *cards = nullptr;
     QWidget *page = makePage(tr("DWRS-Bewertung"),
-                             tr("Wie stark die Attribut-Kategorien in die DWRS-Bewertung "
-                                "eingehen. Geänderte Gewichte berechnen beim Speichern alle "
-                                "Bewertungen neu."),
+                             tr("Ein Bewertungsprofil legt fest, wie die Attribute in die "
+                                "DWRS-Bewertung eingehen. Jeder Spielstand rechnet mit genau "
+                                "einem Profil."),
                              &cards);
+
+    QVBoxLayout *activeBody = nullptr;
+    cards->addWidget(makeCard(tr("Profil dieses Spielstands"), QString(), &activeBody));
+    m_activeRatingLabel = new QLabel;
+    m_activeRatingLabel->setObjectName(QStringLiteral("activeRatingProfile"));
+    m_activeRatingLabel->setWordWrap(true);
+    m_activeRatingLabel->setTextFormat(Qt::PlainText);
+    m_activeRatingLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    activeBody->addWidget(m_activeRatingLabel);
+    activeBody->addWidget(foldableHint(
+        tr("Ein Profilwechsel berechnet alle Bewertungen des Spielstands im Hintergrund neu. "
+           "Im Verlauf erscheint der Wechsel als Markierung; über ihn hinweg wird keine "
+           "Entwicklung berechnet. Ältere Bewertungen bleiben unverändert gespeichert.")));
 
     QVBoxLayout *profileBody = nullptr;
     cards->addWidget(makeCard(tr("Bewertungsprofile"),
@@ -847,6 +860,16 @@ QWidget *SettingsPage::buildWeightsPage()
         qWarning("DWRS built-in profiles unavailable: %s", qPrintable(builtinError));
         profileBody->addWidget(caption(tr("Mitgelieferte Profile konnten nicht geladen werden.")));
     } else m_ratingProfileEditor->installBuiltins(builtins);
+    connect(m_ratingProfileEditor, &RatingProfileEditor::librarySaved, this, [this] {
+        m_context.reloadRatingLibrary();
+    });
+    connect(m_ratingProfileEditor, &RatingProfileEditor::activateRequested, this, [this](const QString &id) {
+        m_context.reloadRatingLibrary();
+        const QString error = m_context.activateRatingProfile(id);
+        if (!error.isEmpty())
+            QMessageBox::warning(this, tr("Bewertungsprofil"), error);
+        updateActiveRatingProfile();
+    });
     const auto updateCurveTheme = [this] {
         QPalette palette;
         palette.setColor(QPalette::Base, m_theme.surface());
@@ -892,8 +915,16 @@ QWidget *SettingsPage::buildWeightsPage()
     }
     pair->addWidget(gkCard, 1);
     cards->addLayout(pair);
+    // Since 2.3.0 group weights and role factors live in the rating profile
+    // (existing values became "My weights"). The controls stay hidden so the
+    // stored values are kept unchanged.
+    fieldCard->setVisible(false);
+    gkCard->setVisible(false);
+    m_weightsVersionLabel->setVisible(false);
 
-    cards->addWidget(makeCard(tr("Rollen-Multiplikatoren"), QString(), &body));
+    auto *multiplierCard = makeCard(tr("Rollen-Multiplikatoren"), QString(), &body);
+    multiplierCard->setVisible(false);
+    cards->addWidget(multiplierCard);
     form = makeForm(body);
     m_keyMultSpin = makeSpin();
     m_prefMultSpin = makeSpin();
@@ -929,8 +960,8 @@ QWidget *SettingsPage::buildWeightsPage()
     auto *recalcButton = new QPushButton(tr("Alle Bewertungen neu berechnen"));
     body->addLayout(hbox({recalcButton}));
     body->addWidget(foldableHint(
-        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit den "
-           "gespeicherten Gewichten neu. Nicht gespeicherte Änderungen auf dieser Seite "
+        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit dem Profil "
+           "dieses Spielstands neu. Nicht gespeicherte Änderungen auf dieser Seite "
            "werden dabei nicht berücksichtigt.")));
     connect(recalcButton, &QPushButton::clicked, this, &SettingsPage::recalcRequested);
 
@@ -1673,9 +1704,29 @@ QWidget *SettingsPage::buildDatabasePage()
 }
 
 
+void SettingsPage::updateActiveRatingProfile()
+{
+    if (!m_activeRatingLabel)
+        return;
+    const QString id = m_context.activeRatingProfileId();
+    QString text = id.isEmpty() ? tr("Kein Profil aktiv.") : tr("Aktiv: %1").arg(m_context.activeRatingProfileName());
+    for (const auto &profile : m_context.compatibleRatingProfiles())
+        if (profile.id == id)
+            text += QLatin1Char('\n') + RatingProfileEditor::provenanceText(profile);
+    m_activeRatingLabel->setText(text);
+    if (m_ratingProfileEditor)
+        m_ratingProfileEditor->setActiveProfile(id);
+}
+
+bool SettingsPage::confirmLeave()
+{
+    return !m_ratingProfileEditor || m_ratingProfileEditor->confirmDiscard();
+}
+
 void SettingsPage::refresh()
 {
     if (m_ratingProfileEditor) m_ratingProfileEditor->setGame(m_context.fmVersionId());
+    updateActiveRatingProfile();
     refreshPersonalities();
     AppConfig &config = m_context.config();
 
