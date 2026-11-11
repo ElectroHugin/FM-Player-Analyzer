@@ -96,6 +96,12 @@ std::optional<RatingProfile> harvestgreenRatingProfile(const QList<Definitions> 
     result.sources = {QStringLiteral("https://sortitoutsi.net/content/78219/fm27-attribute-test-tactical-understanding-training-system-preset-tactics-ai-reverse-engineering-engine-for-test"), QStringLiteral("https://github.com/ElectroHugin/FM-Player-Analyzer/issues/17")};
     result.calculationVersion = QStringLiteral("curves-uniform-range-v1"); result.roles.clear();
     result.keyFactor = 1.5; result.preferableFactor = 1.2;
+    // The measurements come from FM27 matches only, so the profile is FM27-only.
+    result.roleShare = 0.33;
+    result.compatibleGames = {QStringLiteral("fm27")};
+    for (auto it = result.rolePositions.begin(); it != result.rolePositions.end();)
+        it = it.key().startsWith(QStringLiteral("fm27/")) ? std::next(it) : result.rolePositions.erase(it);
+    result.rolePolicies.clear(); result.positions.clear();
     for (const auto &name : attrNames()) { result.attributes[name] = RatingCurve::linear(0); result.attributeEvidence[name] = QStringLiteral("not-investigated"); }
     QSet<QString> measured;
     int measuredCount = 0;
@@ -119,7 +125,10 @@ std::optional<RatingProfile> harvestgreenRatingProfile(const QList<Definitions> 
         result.attributeEvidence[name] = curve->weight > 0 ? QStringLiteral("measured") : QStringLiteral("noise-filtered");
     }
     if (measuredCount != 33 || measured.size() != 39) return fail(QStringLiteral("incomplete-measurements"));
-    for (const auto &defs : definitions) for (const auto &role : defs.gkRoles()) {
+    if (!result.compatibleGames.isEmpty() && std::none_of(definitions.begin(), definitions.end(),
+            [](const Definitions &d) { return d.fmVersionId() == QStringLiteral("fm27"); }))
+        return fail(QStringLiteral("fm27-definitions-required"));
+    for (const auto &defs : definitions) if (defs.fmVersionId() == QStringLiteral("fm27")) for (const auto &role : defs.gkRoles()) {
         const auto id = roleId(defs, role); const auto weights = defs.roleWeights(role);
         for (const auto &name : attrNames()) {
             const auto original = classic->resolve(name, id, weights.key.contains(name), weights.preferable.contains(name));

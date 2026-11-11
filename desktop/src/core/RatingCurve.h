@@ -32,6 +32,9 @@ struct CurveScore {
     Status status = Status::NoVariation;
     double absolute = 0.0;
     std::optional<double> normalized;
+    // Share (0..1) of the role's total weight that was known for this player.
+    // Below 1 the rating was formed from the available attributes only.
+    double coverage = 1.0;
 };
 
 // Pure evaluator: missing active attributes prevent a point score. Unknown is

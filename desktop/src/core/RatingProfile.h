@@ -45,6 +45,12 @@ struct RatingProfile {
     QMap<QString, QString> rolePolicies; // Explicit per-role calculation policy, e.g. legacy goalkeepers.
     double keyFactor = 1.5;
     double preferableFactor = 1.2;
+    // Share of the finished outfield rating (0..kMaxRoleShare) that comes from
+    // an additional linear weight on the role's key and preferable attributes.
+    // 0 disables it. Omitted from JSON when 0, so older files and formula
+    // revisions stay unchanged.
+    double roleShare = 0.0;
+    static constexpr double kMaxRoleShare = 0.6;
 
     QString validate() const;
     ResolvedRatingAttribute resolve(const QString &attribute, const QString &role,

@@ -21,6 +21,18 @@ public:
     // capped at 20. A range preserves its original probability masses.
     QHash<int, double> trainingGains(const Player &player, const QString &role) const;
     bool isGoalkeeperRole(const QString &role) const;
+    bool hasRole(const QString &role) const { return m_roles.contains(role); }
+    // Active (weighted) attributes of the role that this player lacks. Always
+    // empty for the Classic policy, which treats unknown values as before.
+    QList<int> missingAttributes(const Player &player, const QString &role) const;
+    // Every attribute that feeds at least one curve-policy role.
+    QList<int> ratedAttributes() const;
+    // Classic snapshots round to whole percent; curve profiles keep decimals.
+    bool isClassic() const { return m_calculationVersion == QStringLiteral("classic-midpoint-v1"); }
+    QString profileId() const { return m_profileId; }
+    QString profileName() const { return m_profileName; }
+    QString calculationVersion() const { return m_calculationVersion; }
+    QString game() const { return m_game; }
     QString cacheKey() const { return m_cacheKey; }
     QString profileRevision() const { return m_profileRevision; }
 
@@ -41,5 +53,12 @@ private:
     QHash<QString, RolePlan> m_roles;
     QString m_cacheKey;
     QString m_profileRevision;
+    QString m_profileId;
+    QString m_profileName;
+    QString m_calculationVersion;
+    QString m_game;
 };
+
+// Goalkeeper-only attributes; the role part never weights them.
+bool isGoalkeeperAttribute(int index);
 } // namespace fm

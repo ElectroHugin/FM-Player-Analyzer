@@ -103,6 +103,8 @@ QString RatingProfile::validate() const
             return QStringLiteral("unsupported-game");
     if (!nonnegative(keyFactor) || !nonnegative(preferableFactor))
         return QStringLiteral("invalid-role-factor");
+    if (!std::isfinite(roleShare) || roleShare < 0.0 || roleShare > kMaxRoleShare)
+        return QStringLiteral("invalid-role-share");
     for (auto it = attributes.begin(); it != attributes.end(); ++it)
         if (attrIndexByName(it.key()) < 0 || !it->isValid()) return QStringLiteral("invalid-attribute-curve");
     for (auto it = attributeEvidence.begin(); it != attributeEvidence.end(); ++it)
@@ -173,7 +175,7 @@ QJsonObject RatingProfile::toJson() const
     for (auto it = attributeEvidence.begin(); it != attributeEvidence.end(); ++it) evidence.insert(it.key(), it.value());
     QJsonObject policies;
     for (auto it = rolePolicies.begin(); it != rolePolicies.end(); ++it) policies.insert(it.key(), it.value());
-    return {{QStringLiteral("attributeEvidence"), evidence}, {QStringLiteral("rolePolicies"), policies}, {QStringLiteral("format"), QStringLiteral("fm-dwrs-profile")},
+    QJsonObject result{{QStringLiteral("attributeEvidence"), evidence}, {QStringLiteral("rolePolicies"), policies}, {QStringLiteral("format"), QStringLiteral("fm-dwrs-profile")},
             {QStringLiteral("version"), formatVersion},
             {QStringLiteral("id"), id}, {QStringLiteral("name"), name},
             {QStringLiteral("description"), description}, {QStringLiteral("origin"), origin},
@@ -184,6 +186,8 @@ QJsonObject RatingProfile::toJson() const
             {QStringLiteral("keyFactor"), keyFactor}, {QStringLiteral("preferableFactor"), preferableFactor},
             {QStringLiteral("attributes"), curves}, {QStringLiteral("positions"), overridesJson(positions)},
             {QStringLiteral("roles"), overridesJson(roles)}, {QStringLiteral("rolePositions"), mapping}};
+    if (roleShare != 0.0) result.insert(QStringLiteral("roleShare"), roleShare);
+    return result;
 }
 
 QString RatingProfile::revision() const
@@ -208,7 +212,12 @@ std::optional<RatingProfile> RatingProfile::fromJson(const QJsonObject &json, QS
         return fail(QStringLiteral("unsupported-format"));
     RatingProfile result;
     const auto expected = result.toJson();
-    if (!onlyKeys(json, expected.keys())) return fail(QStringLiteral("unknown-field"));
+    if (!onlyKeys(json, expected.keys() + QStringList{QStringLiteral("roleShare")}))
+        return fail(QStringLiteral("unknown-field"));
+    if (json.contains(QStringLiteral("roleShare"))) {
+        if (!json.value(QStringLiteral("roleShare")).isDouble()) return fail(QStringLiteral("missing-or-invalid-field:roleShare"));
+        result.roleShare = json.value(QStringLiteral("roleShare")).toDouble();
+    }
     for (auto it = expected.begin(); it != expected.end(); ++it)
         if (!((it.key() == QStringLiteral("rolePolicies") || it.key() == QStringLiteral("attributeEvidence")) && !json.contains(it.key()))
             && (!json.contains(it.key()) || json.value(it.key()).type() != it.value().type()))

@@ -3,10 +3,28 @@
 #include <QCryptographicHash>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QSet>
 #include <algorithm>
 #include <cmath>
 
 namespace fm {
+namespace {
+constexpr double kRoleKeyRatio = 1.5;   // key attribute : preferable attribute in the role part
+constexpr double kMinimumCoverage = 0.7; // below this share of known weight there is no rating
+}
+
+bool isGoalkeeperAttribute(int index)
+{
+    switch (static_cast<Attr>(index)) {
+    case Attr::Handling: case Attr::AerialReach: case Attr::CommandOfArea: case Attr::Communication:
+    case Attr::Kicking: case Attr::Throwing: case Attr::OneVsOne: case Attr::Reflexes:
+    case Attr::Eccentricity: case Attr::RushingOutTendency: case Attr::Punching:
+        return true;
+    default:
+        return false;
+    }
+}
+
 std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfile &profile,
                                                              const Definitions &definitions,
                                                              QString *error)
@@ -44,6 +62,10 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
     }
     auto snapshot = std::shared_ptr<RatingSnapshot>(new RatingSnapshot);
     snapshot->m_profileRevision = profile.revision();
+    snapshot->m_profileId = profile.id;
+    snapshot->m_profileName = profile.name;
+    snapshot->m_calculationVersion = profile.calculationVersion;
+    snapshot->m_game = definitions.fmVersionId();
     QJsonObject compiledRoles;
     for (const auto &role : definitions.validRoles()) {
         const auto weights = definitions.roleWeights(role);
@@ -76,6 +98,46 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
             if (!std::isfinite(plan.denominator)) return fail(QStringLiteral("contribution-overflow"));
             plan.attributes.push_back(attr);
         }
+        if (!plan.classic && !plan.goalkeeper && profile.roleShare > 0 && plan.denominator > 0) {
+            // Role emphasis: every outfield key/preferable attribute of the role
+            // gets an extra linear weight on top of its base curve, so that the
+            // role part is exactly roleShare of the finished scale.
+            QList<int> key, preferable;
+            for (const auto &name : weights.key)
+                if (const int index = attrIndexByName(name); index >= 0 && !isGoalkeeperAttribute(index) && !key.contains(index))
+                    key.append(index);
+            for (const auto &name : weights.preferable)
+                if (const int index = attrIndexByName(name); index >= 0 && !isGoalkeeperAttribute(index)
+                    && !key.contains(index) && !preferable.contains(index))
+                    preferable.append(index);
+            const double units = kRoleKeyRatio * key.size() + preferable.size();
+            if (units > 0) {
+                const double total = profile.roleShare / (1.0 - profile.roleShare) * plan.denominator;
+                const double unit = total / units;
+                const auto addLinear = [&](int index, double weight) {
+                    auto found = std::find_if(plan.attributes.begin(), plan.attributes.end(),
+                                              [index](const AttributePlan &a) { return a.index == index; });
+                    if (found == plan.attributes.end()) {
+                        AttributePlan attr; attr.index = index;
+                        plan.attributes.push_back(attr);
+                        found = plan.attributes.end() - 1;
+                    }
+                    found->weight += weight;
+                    for (int x = 0; x < 20; ++x) found->contributions[x] += weight * x / 19.0;
+                    plan.denominator += weight;
+                };
+                for (const int index : key) addLinear(index, kRoleKeyRatio * unit);
+                for (const int index : preferable) addLinear(index, unit);
+                QJsonArray roleAttributes;
+                for (const auto &attr : plan.attributes) {
+                    QJsonArray contributions;
+                    for (double value : attr.contributions) contributions.append(value);
+                    roleAttributes.append(QJsonObject{{QStringLiteral("attribute"), attrNames()[attr.index]},
+                                                      {QStringLiteral("contributions"), contributions}});
+                }
+                compiledAttributes = roleAttributes;
+            }
+        }
         compiledRoles.insert(roleKey, QJsonObject{{QStringLiteral("attributes"), compiledAttributes},
                                                  {QStringLiteral("goalkeeper"), plan.goalkeeper}, {QStringLiteral("classic"), plan.classic},
                                                  {QStringLiteral("baseline"), plan.baseline}});
@@ -94,13 +156,11 @@ CurveScore RatingSnapshot::evaluatePlan(const Player &player, const RolePlan &pl
 {
     CurveScore result;
     if (plan.denominator == 0) return result;
+    double known = 0;
     for (const auto &attribute : plan.attributes) {
         const int low = player.attrLo[attribute.index];
         const int high = player.attrHi[attribute.index];
-        if (low == 0 && high == 0 && !plan.classic) {
-            result.status = CurveScore::Status::MissingAttribute;
-            return result;
-        }
+        if (low == 0 && high == 0 && !plan.classic) continue; // missing: left out of both sides
         if ((low < 1 && !(plan.classic && low == 0 && high == 0)) || high > 20 || low > high) {
             result.status = CurveScore::Status::InvalidInput;
             return result;
@@ -117,15 +177,22 @@ CurveScore RatingSnapshot::evaluatePlan(const Player &player, const RolePlan &pl
         } else for (int x = low; x <= high; ++x)
             mean += attribute.contributions[x - 1] / (high - low + 1);
         result.absolute += plan.classic ? mean : std::clamp(mean, 0.0, attribute.weight);
+        known += attribute.weight;
     }
     if (!std::isfinite(result.absolute)) {
         result.absolute = 0;
         result.status = CurveScore::Status::InvalidInput;
         return result;
     }
+    result.coverage = plan.classic ? 1.0 : std::clamp(known / plan.denominator, 0.0, 1.0);
+    if (!plan.classic && (known <= 0 || known < kMinimumCoverage * plan.denominator - 1e-9)) {
+        result.absolute = 0;
+        result.status = CurveScore::Status::MissingAttribute;
+        return result;
+    }
     result.status = CurveScore::Status::Available;
     result.normalized = plan.classic ? std::nearbyint(result.absolute / plan.denominator * 100.0)
-                                     : std::clamp(result.absolute / plan.denominator * 100.0, 0.0, 100.0);
+                                     : std::clamp(result.absolute / known * 100.0, 0.0, 100.0);
     result.absolute += plan.baseline;
     if (!std::isfinite(result.absolute)) {
         result.absolute = 0;
@@ -161,7 +228,11 @@ QHash<int, double> RatingSnapshot::trainingGains(const Player &player, const QSt
 {
     QHash<int, double> result;
     const auto found = m_roles.constFind(role);
-    if (found == m_roles.constEnd() || !evaluatePlan(player, *found).normalized) return result;
+    if (found == m_roles.constEnd()) return result;
+    const auto score = evaluatePlan(player, *found);
+    if (!score.normalized) return result;
+    const double known = found->classic ? found->denominator : found->denominator * score.coverage;
+    if (known <= 0) return result;
     for (const auto &attribute : found->attributes) {
         const int low = player.attrLo[attribute.index];
         const int high = player.attrHi[attribute.index];
@@ -177,8 +248,30 @@ QHash<int, double> RatingSnapshot::trainingGains(const Player &player, const QSt
         } else for (int x = low; x <= high; ++x)
             gain += (attribute.contributions[std::min(x, 19)] - attribute.contributions[x - 1])
                     / (high - low + 1);
-        result.insert(attribute.index, gain / found->denominator * 100.0);
+        result.insert(attribute.index, gain / known * 100.0);
     }
+    return result;
+}
+
+QList<int> RatingSnapshot::missingAttributes(const Player &player, const QString &role) const
+{
+    QList<int> result;
+    const auto found = m_roles.constFind(role);
+    if (found == m_roles.constEnd() || found->classic) return result;
+    for (const auto &attribute : found->attributes)
+        if (player.attrLo[attribute.index] == 0 && player.attrHi[attribute.index] == 0)
+            result.append(attribute.index);
+    return result;
+}
+
+QList<int> RatingSnapshot::ratedAttributes() const
+{
+    QSet<int> seen;
+    for (const auto &plan : m_roles)
+        if (!plan.classic)
+            for (const auto &attribute : plan.attributes) seen.insert(attribute.index);
+    QList<int> result(seen.begin(), seen.end());
+    std::sort(result.begin(), result.end());
     return result;
 }
 
