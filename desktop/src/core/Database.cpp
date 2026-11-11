@@ -1,4 +1,5 @@
 #include "Database.h"
+#include <cmath>
 
 #include "Constants.h"
 #include "Freshness.h"
@@ -24,7 +25,7 @@ namespace fm {
 
 namespace {
 
-constexpr int kSchemaVersion = 17;
+constexpr int kSchemaVersion = 18;
 
 QString joinRolesForDb(const QStringList &roles)
 {
@@ -234,7 +235,7 @@ bool Database::initSchema()
 
     // Preserve a dedicated pre-2.3.0 snapshot, including committed WAL data.
     // It is never rotated with routine backups or overwritten on a retry.
-    if (version > 0 && version < 17 && m_filePath != QStringLiteral(":memory:")) {
+    if (version > 0 && version < 18 && m_filePath != QStringLiteral(":memory:")) {
         const QString backup = m_filePath + QStringLiteral(".pre-2.3.0-%1.db")
             .arg(QUuid::createUuid().toString(QUuid::Id128));
         QString error;
@@ -286,11 +287,30 @@ bool Database::initSchema()
         if (ok && version < 17)
             ok = migrateToV17();
     }
+    if (ok && version < 18) ok = migrateToV18();
     if (!ok || !exec(QStringLiteral("PRAGMA user_version = %1").arg(kSchemaVersion))) {
         rollbackTransaction();
         return false;
     }
     return commitTransaction();
+}
+
+bool Database::migrateToV18()
+{
+    QSqlQuery columns(m_db);
+    if (!columns.exec(QStringLiteral("PRAGMA table_info(dwrs_latest)"))) { m_error = columns.lastError().text(); return false; }
+    bool hasBasis = false;
+    while (columns.next()) if (columns.value(1).toString() == QStringLiteral("basis_key")) hasBasis = true;
+    columns.finish();
+    if (!hasBasis && !exec(QStringLiteral("ALTER TABLE dwrs_latest ADD COLUMN basis_key TEXT NOT NULL DEFAULT ''"))) return false;
+    return exec(QStringLiteral(
+        "CREATE TABLE IF NOT EXISTS dwrs_provenance ("
+        "player_id INTEGER NOT NULL, role TEXT NOT NULL, ts TEXT NOT NULL,"
+        "basis_key TEXT NOT NULL, profile_id TEXT NOT NULL, profile_revision TEXT NOT NULL,"
+        "calculation_version TEXT NOT NULL, game_date TEXT, attributes BLOB NOT NULL,"
+        "attribute_format TEXT NOT NULL DEFAULT 'visible-lo-hi-v1',"
+        "PRIMARY KEY(player_id, role, ts),"
+        "FOREIGN KEY(player_id, role, ts) REFERENCES dwrs_history(player_id, role, ts) ON DELETE CASCADE ON UPDATE CASCADE) WITHOUT ROWID"));
 }
 
 bool Database::createInitialSchema()
@@ -1388,14 +1408,31 @@ bool Database::replacePlayerRoles(const std::vector<std::pair<int, QStringList>>
     return commitTransaction();
 }
 
-bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsOrigin origin)
+bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsOrigin origin, bool recordHistory)
 {
     if (entries.empty())
         return true;
+    for (const auto &entry : entries) {
+        if (!std::isfinite(entry.absolute) || !std::isfinite(entry.normalized)) {
+            m_error = QStringLiteral("Invalid non-finite rating"); return false;
+        }
+        if (entry.basisKey.isEmpty()) continue;
+        if (entry.profileId.isEmpty() || entry.profileRevision.isEmpty() || entry.calculationVersion.isEmpty()
+            || entry.attributes.size() != 2 * kAttrCount) {
+            m_error = QStringLiteral("Incomplete rating provenance"); return false;
+        }
+        for (int a = 0; a < kAttrCount; ++a) {
+            const auto low = static_cast<unsigned char>(entry.attributes[a]);
+            const auto high = static_cast<unsigned char>(entry.attributes[a + kAttrCount]);
+            if (low > high || high > 20 || (low == 0 && high != 0)) {
+                m_error = QStringLiteral("Invalid historical attribute range"); return false;
+            }
+        }
+    }
     if (!beginTransaction())
         return false;
 
-    if (origin == RatingsOrigin::Recalc) {
+    if (recordHistory && origin == RatingsOrigin::Recalc) {
         QSet<QString> stamps;
         for (const DwrsEntry &entry : entries)
             stamps.insert(entry.timestamp);
@@ -1423,8 +1460,10 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
             values << QStringLiteral("(?, ?, ?, ?, ?)");
         return values.join(QStringLiteral(", "));
     };
+    const bool preserveHistory = std::any_of(entries.begin(), entries.end(), [](const DwrsEntry &e) { return !e.basisKey.isEmpty(); });
     const auto historySql = [&](int rows) {
-        return QStringLiteral("INSERT OR REPLACE INTO dwrs_history "
+        return (preserveHistory ? QStringLiteral("INSERT INTO dwrs_history ") : QStringLiteral("INSERT OR REPLACE INTO dwrs_history "))
+               + QStringLiteral(
                               "(player_id, role, absolute, normalized, ts) VALUES ")
                + rowsSql(rows);
     };
@@ -1438,7 +1477,7 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
                + rowsSql(rows)
                + QStringLiteral(" ON CONFLICT(player_id, role) DO UPDATE SET "
                                 "  absolute = excluded.absolute, "
-                                "  normalized = excluded.normalized, ts = excluded.ts "
+                                "  normalized = excluded.normalized, ts = excluded.ts, basis_key = '' "
                                 "WHERE excluded.ts >= dwrs_latest.ts");
     };
 
@@ -1457,6 +1496,7 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
         QSqlQuery &history = rows == kChunkRows ? fullHistory : partialHistory;
         QSqlQuery &latest = rows == kChunkRows ? fullLatest : partialLatest;
         for (QSqlQuery *statement : {&history, &latest}) {
+            if (statement == &history && !recordHistory) continue;
             int bind = 0;
             for (int r = start; r < start + rows; ++r) {
                 const DwrsEntry &entry = entries[static_cast<size_t>(r)];
@@ -1472,6 +1512,23 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
                 return false;
             }
         }
+    }
+    QSqlQuery provenance(m_db), basis(m_db);
+    provenance.prepare(QStringLiteral("INSERT OR REPLACE INTO dwrs_provenance "
+        "(player_id,role,ts,basis_key,profile_id,profile_revision,calculation_version,game_date,attributes) VALUES (?,?,?,?,?,?,?,?,?)"));
+    basis.prepare(QStringLiteral("UPDATE dwrs_latest SET basis_key=? WHERE player_id=? AND role=? AND ts=?"));
+    for (const auto &entry : entries) {
+        if (entry.basisKey.isEmpty()) continue;
+        basis.bindValue(0, entry.basisKey.isNull() ? QStringLiteral("") : entry.basisKey);
+        basis.bindValue(1, entry.playerId); basis.bindValue(2, entry.role); basis.bindValue(3, entry.timestamp);
+        if (!basis.exec()) { m_error = basis.lastError().text(); rollbackTransaction(); return false; }
+        if (entry.basisKey.isEmpty() || !recordHistory) continue;
+        provenance.bindValue(0, entry.playerId); provenance.bindValue(1, entry.role); provenance.bindValue(2, entry.timestamp);
+        provenance.bindValue(3, entry.basisKey); provenance.bindValue(4, entry.profileId);
+        provenance.bindValue(5, entry.profileRevision); provenance.bindValue(6, entry.calculationVersion);
+        provenance.bindValue(7, entry.gameDate.isValid() ? QVariant(entry.gameDate.toString(Qt::ISODate)) : QVariant());
+        provenance.bindValue(8, entry.attributes);
+        if (!provenance.exec()) { m_error = provenance.lastError().text(); rollbackTransaction(); return false; }
     }
     return commitTransaction();
 }
@@ -1572,11 +1629,13 @@ std::vector<DwrsEntry> Database::dwrsHistory(const QList<int> &playerIds, const 
     // Chunked IN (…) lists: an unbounded list could exceed SQLite's
     // bound-variable limit for very large id sets.
     const bool oneRole = !role.isEmpty() && role != QLatin1String("All Roles");
-    QString sql = QStringLiteral("SELECT player_id, role, absolute, normalized, ts "
-                                 "FROM dwrs_history WHERE player_id IN (%1)");
+    QString sql = QStringLiteral("SELECT h.player_id, h.role, h.absolute, h.normalized, h.ts, "
+                                 "p.basis_key,p.profile_id,p.profile_revision,p.calculation_version,p.game_date,p.attributes "
+                                 "FROM dwrs_history h LEFT JOIN dwrs_provenance p "
+                                 "ON p.player_id=h.player_id AND p.role=h.role AND p.ts=h.ts WHERE h.player_id IN (%1)");
     if (oneRole)
-        sql += QStringLiteral(" AND role = ?");
-    sql += QStringLiteral(" ORDER BY player_id, role, ts");
+        sql += QStringLiteral(" AND h.role = ?");
+    sql += QStringLiteral(" ORDER BY h.player_id, h.role, h.ts");
 
     forEachIdChunk(playerIds, sql, oneRole ? QVariantList{role} : QVariantList{},
                    [&result](const QSqlQuery &query) {
@@ -1586,6 +1645,10 @@ std::vector<DwrsEntry> Database::dwrsHistory(const QList<int> &playerIds, const 
                        entry.absolute = query.value(2).toDouble();
                        entry.normalized = query.value(3).toDouble();
                        entry.timestamp = query.value(4).toString();
+                       entry.basisKey = query.value(5).toString(); entry.profileId = query.value(6).toString();
+                       entry.profileRevision = query.value(7).toString(); entry.calculationVersion = query.value(8).toString();
+                       entry.gameDate = QDate::fromString(query.value(9).toString(), Qt::ISODate);
+                       entry.attributes = query.value(10).toByteArray();
                        result.push_back(std::move(entry));
                    });
     return result;

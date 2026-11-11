@@ -91,6 +91,11 @@ QString AppPaths::databaseFile(const QString &dbName) const
     return QDir(databasesDir()).filePath(dbName + QStringLiteral(".db"));
 }
 
+QString AppPaths::ratingLibraryFile() const
+{
+    return QDir(dataDir()).filePath(QStringLiteral("rating_profiles.json"));
+}
+
 bool AppPaths::ensureDataDirInitialized()
 {
     QDir dir(dataDir());

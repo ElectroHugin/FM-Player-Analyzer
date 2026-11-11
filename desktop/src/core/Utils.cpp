@@ -266,7 +266,8 @@ int positionSortKey(const QString &posStr)
 
 QDateTime parseDwrsTimestamp(const QString &timestamp)
 {
-    return QDateTime::fromString(timestamp, QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+    const auto precise = QDateTime::fromString(timestamp, QStringLiteral("yyyy-MM-dd HH:mm:ss.zzz"));
+    return precise.isValid() ? precise : QDateTime::fromString(timestamp, QStringLiteral("yyyy-MM-dd HH:mm:ss"));
 }
 
 double relativeLuminance(const QColor &color)

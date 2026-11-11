@@ -146,3 +146,4 @@ target_compile_definitions(test_builtinratingprofiles PRIVATE DEFINITIONS_DIR="$
 target_sources(test_profileswitch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/RatingProfileDefaults.cpp)
 fm_add_test(test_ratingselection)
 target_compile_definitions(test_ratingselection PRIVATE FM27_DEFINITIONS="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json")
+fm_add_test(test_ratingprovenance)

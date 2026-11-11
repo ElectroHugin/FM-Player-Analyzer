@@ -9,6 +9,8 @@
 #include "core/DwrsEngine.h"
 #include "core/PlayerStatus.h"
 #include "core/PlayerStore.h"
+#include "core/RatingProfileLibrary.h"
+#include "core/RatingSnapshot.h"
 #include "core/Registration.h"
 #include "core/ScoutSearch.h"
 #include "core/SquadBuilder.h"
@@ -54,6 +56,21 @@ public:
     DwrsEngine &dwrsEngine() { return *m_dwrsEngine; }
     SquadBuilder &squadBuilder() { return *m_squadBuilder; }
     TacticExplorer &tacticExplorer() { return *m_tacticExplorer; }
+
+    // --- Rating profile library and active snapshot ---
+    // The library is shared across all saves; the active profile is per-save.
+    // The snapshot is immutable once published; workers receive a copy of the
+    // shared_ptr and are unaffected by subsequent profile changes.
+    const RatingProfileLibrary &ratingLibrary() const { return m_ratingLibrary; }
+    // Returns the compiled snapshot for the active save's rating profile,
+    // or nullptr when no profile is active or compilation failed.
+    std::shared_ptr<const RatingSnapshot> ratingSnapshot() const { return m_ratingSnapshot; }
+    // Profile ID stored in the open save's profile settings ("" = none / legacy).
+    QString activeRatingProfileId() const;
+    // Activates the named profile for the open save: persists the choice,
+    // recompiles the snapshot and emits ratingProfileChanged(). Returns an
+    // error string on failure, empty on success.
+    QString activateRatingProfile(const QString &profileId);
 
     // uid-keyed latest normalized ratings (master_role_ratings equivalent),
     // limited to each player's currently assigned roles.
@@ -293,6 +310,9 @@ signals:
     // The open save's profile was (re)loaded: colors, day/night mode, logo,
     // weights. Emitted before the players of a newly opened save load.
     void profileChanged();
+    // The active rating profile or its compiled snapshot changed.
+    // Consumers that cache rating results must invalidate their caches.
+    void ratingProfileChanged();
     // A different database file was opened. Its players are already loaded;
     // no separate dataChanged() precedes it, so listeners treat this as the
     // store having been replaced as well.
@@ -335,6 +355,12 @@ private:
     bool m_hasPendingScoutSearch = false;
     bool m_nationalUiMode = false;
     QList<QFuture<void>> m_backgroundTasks;
+    // Rating profile library (shared, app-wide) and active compiled snapshot.
+    RatingProfileLibrary m_ratingLibrary;
+    std::shared_ptr<const RatingSnapshot> m_ratingSnapshot;
+    // Loads/refreshes the library from disk and rebuilds the active snapshot.
+    void reloadRatingLibrary();
+    void recompileRatingSnapshot();
 };
 
 } // namespace fm
