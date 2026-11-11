@@ -95,6 +95,7 @@ private:
     void fillRoleTiles();
     QGroupBox *m_talentBox = nullptr;
     QLabel *m_talentLabel = nullptr;
+    QLabel *m_coverageNote = nullptr;
     QGroupBox *m_trainingBox = nullptr;
     QComboBox *m_trainingRoleCombo = nullptr;
     QLabel *m_trainingLabel = nullptr;

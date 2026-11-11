@@ -28,6 +28,9 @@ struct ImportPipelineResult {
     QString autoAssignError; // non-fatal
     bool recalcRan = false;
     RatingsUpdater::Result recalc;
+    // Attributes the active rating profile weights but that no imported
+    // player has (a column missing from the export view). Snapshot runs only.
+    QStringList unratedColumns;
 
     // Post-import state, built entirely on the worker so the UI thread only
     // swaps it in (valid when import.success): the player store — same content

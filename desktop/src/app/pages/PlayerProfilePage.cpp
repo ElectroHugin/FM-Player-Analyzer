@@ -1,5 +1,6 @@
 #include "PlayerProfilePage.h"
 #include "core/DwrsDisplay.h"
+#include "../widgets/RatingProfileEditor.h"
 #include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
@@ -322,6 +323,11 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     auto *tilesHost = new QWidget(m_detailWidget);
     m_topRolesLayout = new FlowLayout(tilesHost, 10, 10);
     detailLayout->addWidget(tilesHost);
+    m_coverageNote = new QLabel(m_detailWidget);
+    m_coverageNote->setObjectName(QStringLiteral("kpiCaption"));
+    m_coverageNote->setWordWrap(true);
+    m_coverageNote->setVisible(false);
+    detailLayout->addWidget(m_coverageNote);
 
     m_talentBox = new QGroupBox(tr("🌱 Talent-Projektion"), m_detailWidget);
     auto *talentLayout = new QVBoxLayout(m_talentBox);
@@ -735,6 +741,25 @@ void PlayerProfilePage::showPlayer()
         m_roleTiles.append({topRole.role, topRole.roleName, topRole.normalized});
     m_roleFilterCombo->setVisible(m_context.definitions().hasRolePhases());
     fillRoleTiles();
+
+    // Partial data: say which attributes the rating had to leave out.
+    m_coverageNote->setVisible(false);
+    if (const auto snapshot = m_context.ratingSnapshot(); snapshot && !topRoles.empty()) {
+        const QString role = topRoles.front().role;
+        const QList<int> missing = snapshot->missingAttributes(*player, role);
+        if (!missing.isEmpty()) {
+            QStringList names;
+            for (const int index : missing)
+                names << RatingProfileEditor::attributeLabel(index);
+            const double coverage = snapshot->evaluate(*player, role).coverage;
+            m_coverageNote->setText(
+                tr("Die Bewertung beruht auf den vorhandenen Attributen (%1 % des Rollengewichts). "
+                   "Es fehlen: %2.")
+                    .arg(qRound(coverage * 100))
+                    .arg(names.join(QStringLiteral(", "))));
+            m_coverageNote->setVisible(true);
+        }
+    }
 
     if (topRoles.empty()) {
         m_detailWidget->setVisible(false);

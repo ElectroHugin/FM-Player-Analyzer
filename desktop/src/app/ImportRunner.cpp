@@ -104,10 +104,21 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
                          ImportPipelineResult result = std::move(*holder);
                          watcher->deleteLater();
                          dialog->finish();
-                         if (result.import.success)
+                         if (result.import.success) {
                              context.adoptState(std::move(result.store),
                                                 std::move(result.latestRatings),
                                                 std::move(result.ratings));
+                             // Tell about a missing rated column once per save.
+                             const QString key = QStringLiteral("notified_unrated_columns");
+                             QStringList known = context.database().setting(key).split(
+                                 QLatin1Char(','), Qt::SkipEmptyParts);
+                             QStringList fresh;
+                             for (const QString &column : std::as_const(result.unratedColumns))
+                                 if (!known.contains(column)) fresh << column;
+                             result.unratedColumns = fresh;
+                             if (!fresh.isEmpty())
+                                 context.database().setSetting(key, (known + fresh).join(QLatin1Char(',')));
+                         }
                          if (onDone)
                              onDone(result);
                      });
@@ -187,6 +198,11 @@ QStringList importWarningLines(const ImportPipelineResult &result)
     if (!result.autoAssignError.isEmpty())
         warnings << ImportText::tr("Automatische Rollen-Zuweisung fehlgeschlagen: %1")
                         .arg(result.autoAssignError);
+    if (!result.unratedColumns.isEmpty())
+        warnings << ImportText::tr("Das Bewertungsprofil nutzt Spalten, die in dieser Ansicht fehlen: %1. "
+                                   "Die Bewertungen beruhen auf den übrigen Attributen; nimm die Spalten "
+                                   "in die Exportansicht in FM auf.")
+                        .arg(result.unratedColumns.join(QStringLiteral(", ")));
     if (result.recalcRan && !result.recalc.success)
         warnings << ImportText::tr("DWRS-Berechnung fehlgeschlagen: %1").arg(result.recalc.error);
     return warnings;

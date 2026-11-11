@@ -237,6 +237,58 @@ QString RatingProfileEditor::provenanceText(const RatingProfile &profile)
         lines << tr("Quellen (zum Kopieren): %1").arg(profile.sources.join(QStringLiteral("  ·  ")));
     return lines.join(QLatin1Char('\n'));
 }
+QString RatingProfileEditor::attributeLabel(int index)
+{
+    static const QStringList labels = {
+        tr("Eins gegen Eins"),
+        tr("Antritt"),
+        tr("Reichweite"),
+        tr("Aggressivität"),
+        tr("Beweglichkeit"),
+        tr("Antizipation"),
+        tr("Balance"),
+        tr("Mut"),
+        tr("Strafraumbeherrschung"),
+        tr("Konzentration"),
+        tr("Nervenstärke"),
+        tr("Ecken"),
+        tr("Flanken"),
+        tr("Entscheidungen"),
+        tr("Zielstrebigkeit"),
+        tr("Dribbling"),
+        tr("Abschluss"),
+        tr("Ballannahme"),
+        tr("Flair"),
+        tr("Fangsicherheit"),
+        tr("Kopfballtechnik"),
+        tr("Sprunghöhe"),
+        tr("Abschläge"),
+        tr("Führungsqualitäten"),
+        tr("Weitschüsse"),
+        tr("Deckung"),
+        tr("Ohne Ball"),
+        tr("Schnelligkeit"),
+        tr("Passen"),
+        tr("Stellungsspiel"),
+        tr("Reflexe"),
+        tr("Herauslaufen (Tendenz)"),
+        tr("Ausdauer"),
+        tr("Kraft"),
+        tr("Tackling"),
+        tr("Teamwork"),
+        tr("Technik"),
+        tr("Abwürfe"),
+        tr("Übersicht"),
+        tr("Einsatzfreude"),
+        tr("Kommunikation"),
+        tr("Exzentrik"),
+        tr("Grundfitness"),
+        tr("Freistöße"),
+        tr("Weite Einwürfe"),
+        tr("Elfmeter"),
+        tr("Fausten")};
+    return index >= 0 && index < labels.size() ? labels[index] : QString();
+}
 QString RatingProfileEditor::tierName(int tier)
 {
     switch (tier) {
@@ -289,58 +341,11 @@ void RatingProfileEditor::setActiveProfile(const QString &id)
 void RatingProfileEditor::fillAttributes()
 {
     const QSignalBlocker blocker(m_attributes); m_attributes->clear();
-    const QStringList labels = {
-        tr("Eins gegen Eins"),
-        tr("Antritt"),
-        tr("Reichweite"),
-        tr("Aggressivität"),
-        tr("Beweglichkeit"),
-        tr("Antizipation"),
-        tr("Balance"),
-        tr("Mut"),
-        tr("Strafraumbeherrschung"),
-        tr("Konzentration"),
-        tr("Nervenstärke"),
-        tr("Ecken"),
-        tr("Flanken"),
-        tr("Entscheidungen"),
-        tr("Zielstrebigkeit"),
-        tr("Dribbling"),
-        tr("Abschluss"),
-        tr("Ballannahme"),
-        tr("Flair"),
-        tr("Fangsicherheit"),
-        tr("Kopfballtechnik"),
-        tr("Sprunghöhe"),
-        tr("Abschläge"),
-        tr("Führungsqualitäten"),
-        tr("Weitschüsse"),
-        tr("Deckung"),
-        tr("Ohne Ball"),
-        tr("Schnelligkeit"),
-        tr("Passen"),
-        tr("Stellungsspiel"),
-        tr("Reflexe"),
-        tr("Herauslaufen (Tendenz)"),
-        tr("Ausdauer"),
-        tr("Kraft"),
-        tr("Tackling"),
-        tr("Teamwork"),
-        tr("Technik"),
-        tr("Abwürfe"),
-        tr("Übersicht"),
-        tr("Einsatzfreude"),
-        tr("Kommunikation"),
-        tr("Exzentrik"),
-        tr("Grundfitness"),
-        tr("Freistöße"),
-        tr("Weite Einwürfe"),
-        tr("Elfmeter"),
-        tr("Fausten")};
     const int categories[] = {4, 3, 4, 2, 3, 2, 3, 2, 4, 2, 2, 1, 1, 2, 2, 1, 1, 1, 2, 4, 1, 3, 4, 2, 1, 1, 2, 3, 1, 2, 4, 4, 3, 3, 1, 2, 1, 4, 2, 2, 4, 4, 3, 1, 1, 1, 4};
     if (!m_selectedId.isEmpty()) for (int i = 0; i < kAttrCount; ++i) {
         const auto &key = attrNames()[i];
-        auto *item = new QListWidgetItem(labels[i], m_attributes);
+        const QString label = attributeLabel(i);
+        auto *item = new QListWidgetItem(label, m_attributes);
         item->setData(Qt::UserRole, key); item->setData(Qt::UserRole + 1, categories[i]);
         QString evidence;
         const auto state = m_draft.attributeEvidence.value(key);
@@ -350,7 +355,7 @@ void RatingProfileEditor::fillAttributes()
         else if (state == QStringLiteral("legacy")) evidence = tr("Bisherige DWRS-Bewertungsgrundlage");
         const auto active = m_draft.attributes.value(key, RatingCurve::linear(0)).weight == 0
                             ? tr("Deaktiviert – im Editor bearbeitbar") : tr("Aktiv");
-        item->setToolTip(labels[i] + QLatin1Char('\n') + active + QLatin1Char('\n') + evidence);
+        item->setToolTip(label + QLatin1Char('\n') + active + QLatin1Char('\n') + evidence);
     }
     filterAttributes();
     if (m_attributes->count()) {

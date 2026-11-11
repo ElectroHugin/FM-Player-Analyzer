@@ -100,13 +100,22 @@ ImportPipelineResult run(const Request &request, const Definitions &definitions,
 ImportPipelineResult run(const Request &request, const Definitions &definitions,
                          const RatingSnapshot &snapshot, const StageCallback &stage)
 {
-    return runWith(request, definitions,
+    QStringList unrated;
+    ImportPipelineResult result = runWith(request, definitions,
                    [&](Database &db, const std::vector<Player> &players, const std::vector<int> &subset,
                        std::function<void(int, int)> progress, const QDate &gameDate) {
+                       for (const int index : snapshot.ratedAttributes()) {
+                           bool seen = subset.empty();
+                           for (const int row : subset)
+                               if (players[row].attrHi[index] > 0) { seen = true; break; }
+                           if (!seen) unrated << attrNames()[index];
+                       }
                        return RatingsUpdater::updateDwrsRatings(db, players, snapshot, definitions.validRoles(),
                                                                 subset, std::move(progress),
                                                                 RatingsOrigin::Import, gameDate);
                    }, stage);
+    result.unratedColumns = unrated;
+    return result;
 }
 
 } // namespace ImportPipeline

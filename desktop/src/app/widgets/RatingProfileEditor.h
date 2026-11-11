@@ -28,6 +28,8 @@ public:
     static QString provenanceText(const RatingProfile &profile);
     // Translated name of a DWRS colour tier (0 Poor .. 5 Legendary).
     static QString tierName(int tier);
+    // Translated name of an attribute by its index (Attributes.h order).
+    static QString attributeLabel(int index);
 signals:
     void activateRequested(const QString &id);
     void librarySaved();
