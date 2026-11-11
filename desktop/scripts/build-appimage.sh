@@ -45,7 +45,7 @@ qt_plugin_dir="$("$qmake" -query QT_INSTALL_PLUGINS)"
 qt_lib_dir="$("$qmake" -query QT_INSTALL_LIBS)"
 
 # Version from Version.cpp (single source of truth).
-version="$(sed -nE 's/.*QStringLiteral\("([0-9]+\.[0-9]+\.[0-9]+)"\).*/\1/p' \
+version="$(sed -nE 's/.*QStringLiteral\("([0-9]+\.[0-9]+\.[0-9]+(-test\.[0-9]+)?)"\).*/\1/p' \
     "$desktop_dir/src/core/Version.cpp" | head -n 1)"
 [ -n "$version" ] || fail "could not read the version from Version.cpp"
 echo "Packaging version $version"
