@@ -1,6 +1,9 @@
 #include "AppContext.h"
 
+#include "core/BuiltinRatingProfiles.h"
+#include "core/ClassicRatingSnapshot.h"
 #include "core/ProfileStore.h"
+#include "RatingProfileDefaults.h"
 #include "core/RatingsUpdater.h"
 
 #include <QCryptographicHash>
@@ -11,6 +14,8 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QSet>
+#include <QSqlQuery>
+#include <QTemporaryDir>
 
 namespace fm {
 
@@ -415,7 +420,175 @@ bool AppContext::activateFmVersion(Database &db, const QString &versionId, QStri
         return true;
     });
     reloadEngines();
+    initializeRatingSelection(db);
     return true;
+}
+
+namespace {
+const QString kClassicId = QStringLiteral("dwrs-classic-florin133");
+const QString kHarvestgreenId = QStringLiteral("dwrs-fm27-harvestgreen22");
+}
+
+void AppContext::reloadRatingLibrary()
+{
+    QString error;
+    auto library = QFile::exists(m_paths.ratingLibraryFile())
+                       ? RatingProfileLibrary::load(m_paths.ratingLibraryFile(), &error)
+                       : std::optional<RatingProfileLibrary>(RatingProfileLibrary{});
+    if (!library) {
+        qWarning("Rating profile library unreadable: %s", qPrintable(error));
+        library = RatingProfileLibrary{};
+    }
+    const auto builtins = loadBuiltinRatingProfiles(&error);
+    if (builtins.isEmpty())
+        qWarning("DWRS built-in profiles unavailable: %s", qPrintable(error));
+    else if (library->seedBuiltins(builtins).isEmpty())
+        library->save(m_paths.ratingLibraryFile());
+    m_ratingLibrary = std::move(*library);
+}
+
+QList<RatingProfile> AppContext::compatibleRatingProfiles() const
+{
+    QList<RatingProfile> result;
+    for (const auto &profile : m_ratingLibrary.profiles())
+        if (profile.compatibleGames.contains(m_definitions->fmVersionId()))
+            result.append(profile);
+    return result;
+}
+
+void AppContext::initializeRatingSelection(Database &db)
+{
+    if (m_ratingLibrary.profiles().isEmpty())
+        reloadRatingLibrary();
+    const QString game = m_definitions->fmVersionId();
+    RatingSelectionStore store(db);
+    QString error;
+    auto selection = store.load(&error);
+    if (!error.isEmpty())
+        qWarning("Rating selection unreadable, recreated: %s", qPrintable(error));
+    bool hasPlayers = false;
+    {
+        QSqlQuery query(db.handle());
+        hasPlayers = query.exec(QStringLiteral("SELECT EXISTS(SELECT 1 FROM players)")) && query.next()
+                     && query.value(0).toBool();
+    }
+    // The version of an empty save can still change (new-save wizard): its
+    // selection follows the game.
+    if ((selection && selection->game != game && !hasPlayers) || (!selection && !error.isEmpty())) {
+        ProfileStore(db).removeDocument(RatingSelectionStore::documentName());
+        selection.reset();
+    }
+    if (!selection) {
+        std::optional<RatingProfile> profile;
+        std::shared_ptr<const ClassicRatingSnapshot> legacy;
+        if (hasPlayers) {
+            // Existing save: keep exactly its current weights. Default weights use
+            // the shared built-in; changed ones become a personal profile.
+            legacy = ClassicRatingSnapshot::capture(*m_dwrsEngine);
+            auto own = classicRatingProfile({*m_definitions}, *m_config, &error);
+            QTemporaryDir temporary;
+            AppConfig defaults(temporary.filePath(QStringLiteral("defaults.ini")));
+            const auto standard = classicRatingProfile({*m_definitions}, defaults, &error);
+            if (own && standard && own->revision() == standard->revision()
+                && m_ratingLibrary.profiles().contains(kClassicId)) {
+                profile = m_ratingLibrary.profiles().value(kClassicId);
+            } else if (own) {
+                own->id = QStringLiteral("my-weights-%1-%2").arg(game, own->revision().left(8));
+                own->name = tr("Meine Gewichte (%1)").arg(fmDataVersion(game).displayName);
+                own->origin = QStringLiteral("personal");
+                own->description = tr("Aus den bisherigen Gewichten dieses Spielstands übernommen.");
+                profile = own;
+                if (!m_ratingLibrary.profiles().contains(own->id)
+                    && m_ratingLibrary.insert(*own).isEmpty())
+                    m_ratingLibrary.save(m_paths.ratingLibraryFile());
+            }
+        } else {
+            const QString id = game == QStringLiteral("fm27") ? kHarvestgreenId : kClassicId;
+            if (m_ratingLibrary.profiles().contains(id))
+                profile = m_ratingLibrary.profiles().value(id);
+        }
+        if (!profile) {
+            QTemporaryDir temporary;
+            AppConfig defaults(temporary.filePath(QStringLiteral("defaults.ini")));
+            profile = classicRatingProfile({*m_definitions}, defaults, &error);
+        }
+        if (profile)
+            selection = store.initialize(*profile, *m_definitions, hasPlayers && legacy, legacy, &error);
+        if (!selection)
+            qWarning("Rating selection could not be created: %s", qPrintable(error));
+    }
+    m_ratingSelection = selection;
+    recompileRatingSnapshot();
+}
+
+void AppContext::recompileRatingSnapshot()
+{
+    QString error;
+    std::shared_ptr<const RatingSnapshot> snapshot;
+    if (m_ratingSelection)
+        snapshot = RatingSnapshot::compile(m_ratingSelection->profile, *m_definitions, &error);
+    if (!snapshot) {
+        // Never leave the app without a rating basis: the save's own Classic weights.
+        if (m_ratingSelection)
+            qWarning("Active rating profile does not compile: %s", qPrintable(error));
+        if (auto classic = classicRatingProfile({*m_definitions}, *m_config, &error))
+            snapshot = RatingSnapshot::compile(*classic, *m_definitions, &error);
+    }
+    const bool changed = !m_ratingSnapshot || !snapshot || m_ratingSnapshot->cacheKey() != snapshot->cacheKey();
+    m_ratingSnapshot = snapshot;
+    if (changed)
+        emit ratingProfileChanged();
+}
+
+QString AppContext::activeRatingProfileId() const
+{
+    return m_ratingSelection ? m_ratingSelection->profile.id : QString();
+}
+
+QString AppContext::activeRatingProfileName() const
+{
+    return m_ratingSelection ? m_ratingSelection->profile.name : QString();
+}
+
+bool AppContext::ratingDecisionPending() const
+{
+    return m_ratingSelection && m_ratingSelection->migrationDecision == QStringLiteral("pending");
+}
+
+QString AppContext::activateRatingProfile(const QString &profileId)
+{
+    if (!m_database || !m_ratingSelection)
+        return tr("Kein Spielstand geöffnet.");
+    if (!m_ratingLibrary.profiles().contains(profileId))
+        return tr("Das Bewertungsprofil wurde nicht gefunden.");
+    const RatingProfile profile = m_ratingLibrary.profiles().value(profileId);
+    if (!profile.compatibleGames.contains(fmVersionId()))
+        return tr("Das Profil passt nicht zur Football-Manager-Version dieses Spielstands.");
+    // Workers hold their own snapshot copy; they are not disturbed.
+    QString error;
+    const QDate gameDate = m_database->lastGameDate();
+    auto selection = RatingSelectionStore(*m_database).activate(
+        profile, *m_definitions, m_ratingSelection->generation,
+        gameDate.isValid() ? gameDate.toString(Qt::ISODate) : QString(), &error);
+    if (!selection)
+        return error.isEmpty() ? tr("Das Profil konnte nicht aktiviert werden.") : error;
+    m_ratingSelection = selection;
+    recompileRatingSnapshot();
+    if (m_store.size() > 0)
+        emit ratingRecalcRequested();
+    return {};
+}
+
+QString AppContext::keepPreviousRatingProfile()
+{
+    if (!m_database || !m_ratingSelection)
+        return tr("Kein Spielstand geöffnet.");
+    QString error;
+    auto selection = RatingSelectionStore(*m_database).keepPrevious(m_ratingSelection->generation, &error);
+    if (!selection)
+        return error;
+    m_ratingSelection = selection;
+    return {};
 }
 
 bool AppContext::setFmVersion(const QString &versionId, QString *errorOut)
@@ -611,6 +784,8 @@ void AppContext::reloadEngines()
     waitForBackgroundTasks();
     m_dwrsEngine->reloadConfig();
     m_squadBuilder->reloadConfig();
+    if (m_ratingSelection && m_ratingSelection->game == m_definitions->fmVersionId())
+        recompileRatingSnapshot(); // role definitions may have changed
 }
 
 bool AppContext::reloadConfigAndDefinitions()

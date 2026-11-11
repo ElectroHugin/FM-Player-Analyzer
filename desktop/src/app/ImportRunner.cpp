@@ -42,7 +42,7 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
     // A save game (.fm) is filtered on the worker by the save's masking option.
     Fm27SaveImport::setAttributeMasking(context.config().attributeMasking());
     const Definitions *definitions = &context.definitions();
-    const DwrsEngine *engine = &context.dwrsEngine();
+    const std::shared_ptr<const RatingSnapshot> snapshot = context.ratingSnapshot();
 
     // Maps pipeline stages to label + percent. Guards against the dialog being
     // destroyed while the worker still posts progress: qApp is a stable context
@@ -112,8 +112,8 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
                              onDone(result);
                      });
 
-    const QFuture<void> future = QtConcurrent::run([request, definitions, engine, stage, holder] {
-        *holder = ImportPipeline::run(request, *definitions, *engine, stage);
+    const QFuture<void> future = QtConcurrent::run([request, definitions, snapshot, stage, holder] {
+        *holder = ImportPipeline::run(request, *definitions, *snapshot, stage);
     });
     context.registerBackgroundTask(future);
     watcher->setFuture(future);

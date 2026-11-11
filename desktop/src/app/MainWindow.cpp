@@ -274,6 +274,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         updateDbLabel(); // and the save switcher shows the same crest
     });
     connect(&m_context, &AppContext::navigationRequested, this, &MainWindow::navigateTo);
+    connect(&m_context, &AppContext::ratingRecalcRequested, this, &MainWindow::requestFullRecalc);
     connect(&m_context, &AppContext::databaseChanged, this, [this](const QString &) {
         // The player store was replaced with the new save's (no dataChanged()
         // precedes this): every page drops its Player* right away. Hidden pages
@@ -343,6 +344,9 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
                                         QString::number(kDwrsSchemeVersion));
         // A recalc only writes ratings; the players are unchanged.
         m_context.reloadRatings();
+        // The profile changed while this run used the previous one: run again.
+        if (m_context.ratingSnapshot() && m_context.ratingSnapshot()->cacheKey() != m_recalcBasis)
+            QTimer::singleShot(0, this, &MainWindow::startDwrsRecalc);
     });
 
     navigateTo(QStringLiteral("dashboard"));
@@ -350,8 +354,49 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     QTimer::singleShot(0, this, &MainWindow::offerRecalcIfOutdated);
 }
 
+void MainWindow::requestFullRecalc()
+{
+    // An import or partial recalc still writes ratings: run right after it.
+    if (m_recalcWatcher.isRunning() || m_context.hasRunningBackgroundTask()) {
+        if (!m_recalcWatcher.isRunning())
+            QTimer::singleShot(500, this, &MainWindow::requestFullRecalc);
+        return; // a running full recalc re-runs itself for the new profile
+    }
+    startDwrsRecalc();
+}
+
+bool MainWindow::askRatingProfileDecision()
+{
+    if (!m_context.ratingDecisionPending())
+        return false;
+    QMessageBox box(this);
+    box.setIcon(QMessageBox::Question);
+    box.setWindowTitle(tr("Neues FM27-Bewertungsprofil"));
+    box.setText(tr("Für FM27 gibt es ein neues Bewertungsprofil: „DWRS FM27 · harvestgreen22“ "
+                   "(vorläufig)."));
+    box.setInformativeText(
+        tr("Es beruht auf Messungen in FM27-Spielen und unterscheidet Rollen stärker. "
+           "Die Werte haben eine Nachkommastelle. Beim Wechsel werden alle Bewertungen "
+           "dieses Spielstands neu berechnet; der Verlauf markiert den Wechsel. "
+           "Du kannst das Profil jederzeit unter Einstellungen → DWRS-Bewertung ändern."));
+    auto *useNew = box.addButton(tr("Neues Profil verwenden"), QMessageBox::AcceptRole);
+    box.addButton(tr("Bisheriges behalten"), QMessageBox::RejectRole);
+    box.setDefaultButton(useNew);
+    box.exec();
+    QString error;
+    if (box.clickedButton() == useNew)
+        error = m_context.activateRatingProfile(QStringLiteral("dwrs-fm27-harvestgreen22"));
+    else
+        error = m_context.keepPreviousRatingProfile();
+    if (!error.isEmpty())
+        QMessageBox::warning(this, tr("Bewertungsprofil"), error);
+    return true;
+}
+
 void MainWindow::offerRecalcIfOutdated()
 {
+    if (askRatingProfileDecision())
+        return;
     Database &db = m_context.database();
     // Databases without the setting predate it: their ratings are scheme 1.
     if (db.setting(QStringLiteral("dwrs_scheme"), QStringLiteral("1")).toInt()
@@ -866,12 +911,16 @@ void MainWindow::startDwrsRecalc()
     const QString dbFile = m_context.database().filePath();
     std::vector<Player> players = m_context.store().players();
     const QStringList validRoles = m_context.definitions().validRoles();
-    // The engine reads Definitions/AppConfig only during reloadConfig(), which
-    // ran on the UI thread; calculateRole afterwards touches cached plans only.
-    const DwrsEngine *engine = &m_context.dwrsEngine();
+    // The worker owns its copy of the immutable snapshot: a profile switch
+    // meanwhile cannot change what it computes (it is re-run afterwards).
+    const std::shared_ptr<const RatingSnapshot> snapshot = m_context.ratingSnapshot();
+    if (!snapshot)
+        return;
+    m_recalcBasis = snapshot->cacheKey();
+    const QDate gameDate = m_context.database().lastGameDate();
 
     const QFuture<RatingsUpdater::Result> future = QtConcurrent::run(
-        [dbFile, players = std::move(players), engine, validRoles,
+        [dbFile, players = std::move(players), snapshot, validRoles, gameDate,
          dialogGuard = QPointer<BusyProgressDialog>(m_recalcDialog)] {
             Database db(Database::uniqueConnectionName(QStringLiteral("recalc_worker")));
             if (!db.open(dbFile)) {
@@ -880,7 +929,7 @@ void MainWindow::startDwrsRecalc()
                 return result;
             }
             return RatingsUpdater::updateDwrsRatings(
-                db, players, *engine, validRoles, {},
+                db, players, *snapshot, validRoles, {},
                 [dialogGuard](int current, int total) {
                     const int percent = total > 0 ? current * 100 / total : 0;
                     QMetaObject::invokeMethod(
@@ -891,7 +940,7 @@ void MainWindow::startDwrsRecalc()
                         },
                         Qt::QueuedConnection);
                 },
-                RatingsOrigin::Recalc);
+                RatingsOrigin::Recalc, gameDate);
         });
     m_context.registerBackgroundTask(QFuture<void>(future));
     m_recalcWatcher.setFuture(future);

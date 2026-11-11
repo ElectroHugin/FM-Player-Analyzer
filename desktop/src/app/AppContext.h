@@ -11,6 +11,7 @@
 #include "core/PlayerStore.h"
 #include "core/RatingProfileLibrary.h"
 #include "core/RatingSnapshot.h"
+#include "core/RatingSelectionStore.h"
 #include "core/Registration.h"
 #include "core/ScoutSearch.h"
 #include "core/SquadBuilder.h"
@@ -71,6 +72,17 @@ public:
     // recompiles the snapshot and emits ratingProfileChanged(). Returns an
     // error string on failure, empty on success.
     QString activateRatingProfile(const QString &profileId);
+    // Profile name of the open save's selection ("" without a save).
+    QString activeRatingProfileName() const;
+    // An existing FM27 save has not yet chosen between its previous ratings
+    // and the new FM27 profile (asked once).
+    bool ratingDecisionPending() const;
+    // Records "keep the previous profile" for that one-time question.
+    QString keepPreviousRatingProfile();
+    // Re-reads the shared library file (after the editor saved it).
+    void reloadRatingLibrary();
+    // Profiles of the library usable with the open save's game.
+    QList<RatingProfile> compatibleRatingProfiles() const;
 
     // uid-keyed latest normalized ratings (master_role_ratings equivalent),
     // limited to each player's currently assigned roles.
@@ -313,6 +325,9 @@ signals:
     // The active rating profile or its compiled snapshot changed.
     // Consumers that cache rating results must invalidate their caches.
     void ratingProfileChanged();
+    // A different profile was activated for the open save: every stored rating
+    // must be recalculated (as a recalculation, not as player development).
+    void ratingRecalcRequested();
     // A different database file was opened. Its players are already loaded;
     // no separate dataChanged() precedes it, so listeners treat this as the
     // store having been replaced as well.
@@ -359,8 +374,10 @@ private:
     RatingProfileLibrary m_ratingLibrary;
     std::shared_ptr<const RatingSnapshot> m_ratingSnapshot;
     // Loads/refreshes the library from disk and rebuilds the active snapshot.
-    void reloadRatingLibrary();
     void recompileRatingSnapshot();
+    // Loads or creates the open save's rating selection (after its definitions).
+    void initializeRatingSelection(Database &db);
+    std::optional<RatingSelection> m_ratingSelection;
 };
 
 } // namespace fm

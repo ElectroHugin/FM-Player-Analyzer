@@ -17,6 +17,7 @@ namespace fm {
 
 class Definitions;
 class DwrsEngine;
+class RatingSnapshot;
 
 // Everything the background import pipeline produces (import + optional
 // auto-assign + DWRS recalculation for the affected players).
@@ -60,6 +61,9 @@ using StageCallback = std::function<void(Stage stage, int done, int total)>;
 // worker). definitions/engine are only read.
 ImportPipelineResult run(const Request &request, const Definitions &definitions,
                          const DwrsEngine &engine, const StageCallback &stage = {});
+// The same with the active rating profile (what the app uses).
+ImportPipelineResult run(const Request &request, const Definitions &definitions,
+                         const RatingSnapshot &snapshot, const StageCallback &stage = {});
 
 } // namespace ImportPipeline
 

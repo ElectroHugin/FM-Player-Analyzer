@@ -1460,9 +1460,10 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
             values << QStringLiteral("(?, ?, ?, ?, ?)");
         return values.join(QStringLiteral(", "));
     };
-    const bool preserveHistory = std::any_of(entries.begin(), entries.end(), [](const DwrsEntry &e) { return !e.basisKey.isEmpty(); });
+    // A repeated (player, role, timestamp) replaces the earlier row, as before;
+    // its provenance row is replaced together with it below.
     const auto historySql = [&](int rows) {
-        return (preserveHistory ? QStringLiteral("INSERT INTO dwrs_history ") : QStringLiteral("INSERT OR REPLACE INTO dwrs_history "))
+        return QStringLiteral("INSERT OR REPLACE INTO dwrs_history ")
                + QStringLiteral(
                               "(player_id, role, absolute, normalized, ts) VALUES ")
                + rowsSql(rows);
