@@ -36,6 +36,7 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     layout->addLayout(top);
     m_name = new QLineEdit; m_name->setObjectName(QStringLiteral("ratingProfileName")); m_name->setPlaceholderText(tr("Profilname")); m_name->setAccessibleName(tr("Profilname"));
     layout->addWidget(m_name);
+    m_provenance = new QLabel; m_provenance->setWordWrap(true); layout->addWidget(m_provenance);
     auto *body = new QHBoxLayout; body->setSpacing(16);
     auto *left = new QVBoxLayout;
     m_search = new QLineEdit; m_search->setPlaceholderText(tr("Attribute suchen")); m_search->setAccessibleName(tr("Attribute suchen"));
@@ -79,6 +80,14 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     fillProfiles();
 }
 void RatingProfileEditor::setChartPalette(const QPalette &palette) { m_curve->setChartPalette(palette); }
+bool RatingProfileEditor::installBuiltins(const QList<RatingProfile> &profiles)
+{
+    auto candidate = m_library;
+    const auto error = candidate.seedBuiltins(profiles);
+    if (!error.isEmpty()) { reportError(error); return false; }
+    if (candidate.toJson() == m_library.toJson()) return true;
+    return persist(std::move(candidate), m_selectedId);
+}
 bool RatingProfileEditor::discardDraft()
 {
     if (!m_dirty) return true;
@@ -99,6 +108,7 @@ void RatingProfileEditor::selectProfile(const QString &id)
     m_selectedId = id; m_dirty = false;
     m_draft = m_library.profiles().value(id);
     m_expectedRevision = RatingProfileLibrary::documentRevision(m_draft);
+    m_provenance->setText(m_draft.sourceVersion.isEmpty() ? tr("Keine Quelle angegeben") : tr("Quelle: %1").arg(m_draft.sourceVersion));
     m_name->setText(m_draft.name); m_name->setEnabled(!id.isEmpty());
     fillAttributes();
     if (m_storageValid) m_status->setText(tr("Profile bearbeiten und austauschen. Speichern aktiviert ein Profil nicht für den Spielstand."));
@@ -159,8 +169,15 @@ void RatingProfileEditor::fillAttributes()
         const auto &key = attrNames()[i];
         auto *item = new QListWidgetItem(labels[i], m_attributes);
         item->setData(Qt::UserRole, key); item->setData(Qt::UserRole + 1, categories[i]);
-        item->setToolTip(m_draft.attributes.value(key, RatingCurve::linear(0)).weight == 0
-                            ? tr("Deaktiviert – im Editor bearbeitbar") : tr("Aktiv"));
+        QString evidence;
+        const auto state = m_draft.attributeEvidence.value(key);
+        if (state == QStringLiteral("measured")) evidence = tr("Untersucht – angepasste Messkurve");
+        else if (state == QStringLiteral("noise-filtered")) evidence = tr("Als Rauschen eingestuft – im Editor bearbeitbar");
+        else if (state == QStringLiteral("not-investigated")) evidence = tr("Nicht untersucht – im Editor bearbeitbar");
+        else if (state == QStringLiteral("legacy")) evidence = tr("Bisherige DWRS-Bewertungsgrundlage");
+        const auto active = m_draft.attributes.value(key, RatingCurve::linear(0)).weight == 0
+                            ? tr("Deaktiviert – im Editor bearbeitbar") : tr("Aktiv");
+        item->setToolTip(labels[i] + QLatin1Char('\n') + active + QLatin1Char('\n') + evidence);
     }
     filterAttributes();
     if (m_attributes->count()) {

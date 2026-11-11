@@ -12,6 +12,7 @@ class RatingProfileEditor : public QWidget {
 public:
     RatingProfileEditor(const QString &libraryPath, const QString &game, QWidget *parent = nullptr);
     void setChartPalette(const QPalette &palette);
+    bool installBuiltins(const QList<RatingProfile> &profiles);
     void setGame(const QString &game) { m_game = game; }
     bool hasDraftChanges() const { return m_dirty; }
 private:
@@ -41,5 +42,6 @@ private:
     QListWidget *m_attributes;
     RatingCurveEditor *m_curve;
     QLabel *m_status;
+    QLabel *m_provenance;
 };
 } // namespace fm

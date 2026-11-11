@@ -35,6 +35,7 @@ private:
         double denominator = 0;
         double baseline = 0;
         bool goalkeeper = false;
+        bool classic = false;
     };
     static CurveScore evaluatePlan(const Player &player, const RolePlan &plan);
     QHash<QString, RolePlan> m_roles;

@@ -94,7 +94,8 @@ QString RatingProfile::validate() const
 {
     if (id.trimmed().isEmpty() || name.trimmed().isEmpty())
         return QStringLiteral("identity-required");
-    if (calculationVersion != QStringLiteral("curves-uniform-range-v1"))
+    if (calculationVersion != QStringLiteral("curves-uniform-range-v1")
+        && calculationVersion != QStringLiteral("classic-midpoint-v1"))
         return QStringLiteral("unsupported-calculation-version");
     if (compatibleGames.isEmpty()) return QStringLiteral("compatibility-required");
     for (const auto &game : compatibleGames)
@@ -104,6 +105,10 @@ QString RatingProfile::validate() const
         return QStringLiteral("invalid-role-factor");
     for (auto it = attributes.begin(); it != attributes.end(); ++it)
         if (attrIndexByName(it.key()) < 0 || !it->isValid()) return QStringLiteral("invalid-attribute-curve");
+    for (auto it = attributeEvidence.begin(); it != attributeEvidence.end(); ++it)
+        if (!attributes.contains(it.key()) || (it.value() != QStringLiteral("measured")
+            && it.value() != QStringLiteral("noise-filtered") && it.value() != QStringLiteral("not-investigated")
+            && it.value() != QStringLiteral("legacy"))) return QStringLiteral("invalid-attribute-evidence");
     const auto validScope = [&](const QString &scope, bool role) {
         const auto parts = scope.split(QLatin1Char('/'));
         if (parts.size() != (role ? 3 : 2) || !compatibleGames.contains(parts.front())
@@ -124,6 +129,9 @@ QString RatingProfile::validate() const
             }
         }
     }
+    for (auto it = rolePolicies.begin(); it != rolePolicies.end(); ++it)
+        if (!validScope(it.key(), true) || (it.value() != QStringLiteral("classic-midpoint-v1")
+             && it.value() != QStringLiteral("curves-uniform-range-v1"))) return QStringLiteral("invalid-role-policy");
     for (auto it = rolePositions.begin(); it != rolePositions.end(); ++it)
         if (!validScope(it.key(), true) || !validScope(it.value(), false)
             || it.key().section(QLatin1Char('/'), 0, 0) != it.value().section(QLatin1Char('/'), 0, 0))
@@ -161,7 +169,11 @@ QJsonObject RatingProfile::toJson() const
     QJsonObject mapping;
     for (auto it = rolePositions.begin(); it != rolePositions.end(); ++it)
         mapping.insert(it.key(), it.value());
-    return {{QStringLiteral("format"), QStringLiteral("fm-dwrs-profile")},
+    QJsonObject evidence;
+    for (auto it = attributeEvidence.begin(); it != attributeEvidence.end(); ++it) evidence.insert(it.key(), it.value());
+    QJsonObject policies;
+    for (auto it = rolePolicies.begin(); it != rolePolicies.end(); ++it) policies.insert(it.key(), it.value());
+    return {{QStringLiteral("attributeEvidence"), evidence}, {QStringLiteral("rolePolicies"), policies}, {QStringLiteral("format"), QStringLiteral("fm-dwrs-profile")},
             {QStringLiteral("version"), formatVersion},
             {QStringLiteral("id"), id}, {QStringLiteral("name"), name},
             {QStringLiteral("description"), description}, {QStringLiteral("origin"), origin},
@@ -177,7 +189,8 @@ QJsonObject RatingProfile::toJson() const
 QString RatingProfile::revision() const
 {
     auto formula = toJson();
-    for (const auto &key : {"id", "name", "description", "origin", "sourceVersion", "sources"})
+    if (rolePolicies.isEmpty()) formula.remove(QStringLiteral("rolePolicies"));
+    for (const auto &key : {"id", "name", "description", "origin", "sourceVersion", "sources", "attributeEvidence"})
         formula.remove(QLatin1String(key));
     return QString::fromLatin1(QCryptographicHash::hash(QJsonDocument(formula).toJson(QJsonDocument::Compact),
                                                        QCryptographicHash::Sha256).toHex());
@@ -197,7 +210,8 @@ std::optional<RatingProfile> RatingProfile::fromJson(const QJsonObject &json, QS
     const auto expected = result.toJson();
     if (!onlyKeys(json, expected.keys())) return fail(QStringLiteral("unknown-field"));
     for (auto it = expected.begin(); it != expected.end(); ++it)
-        if (!json.contains(it.key()) || json.value(it.key()).type() != it.value().type())
+        if (!((it.key() == QStringLiteral("rolePolicies") || it.key() == QStringLiteral("attributeEvidence")) && !json.contains(it.key()))
+            && (!json.contains(it.key()) || json.value(it.key()).type() != it.value().type()))
             return fail(QStringLiteral("missing-or-invalid-field:") + it.key());
     result.id = json.value(QStringLiteral("id")).toString();
     result.name = json.value(QStringLiteral("name")).toString();
@@ -237,6 +251,16 @@ std::optional<RatingProfile> RatingProfile::fromJson(const QJsonObject &json, QS
     for (auto it = mapping.begin(); it != mapping.end(); ++it) {
         if (!it->isString()) return fail(QStringLiteral("invalid-role-position"));
         result.rolePositions.insert(it.key(), it->toString());
+    }
+    const auto policies = json.value(QStringLiteral("rolePolicies")).toObject();
+    for (auto it = policies.begin(); it != policies.end(); ++it) {
+        if (!it->isString()) return fail(QStringLiteral("invalid-role-policy"));
+        result.rolePolicies.insert(it.key(), it->toString());
+    }
+    const auto evidence = json.value(QStringLiteral("attributeEvidence")).toObject();
+    for (auto it = evidence.begin(); it != evidence.end(); ++it) {
+        if (!it->isString()) return fail(QStringLiteral("invalid-attribute-evidence"));
+        result.attributeEvidence.insert(it.key(), it->toString());
     }
     const auto issue = result.validate();
     if (!issue.isEmpty()) return fail(issue);

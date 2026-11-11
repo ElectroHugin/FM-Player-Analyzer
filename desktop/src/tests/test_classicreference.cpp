@@ -6,6 +6,8 @@
 #include "core/Definitions.h"
 #include "core/DwrsEngine.h"
 #include "core/ClassicRatingSnapshot.h"
+#include "core/BuiltinRatingProfiles.h"
+#include "core/RatingSnapshot.h"
 #include <cmath>
 
 using namespace fm;
@@ -81,6 +83,8 @@ private slots:
                 }
                 DwrsEngine engine(definitions, config);
                 const auto snapshot = ClassicRatingSnapshot::capture(engine); QVERIFY(snapshot);
+                const auto classicProfile = classicRatingProfile({definitions}, config, nullptr); QVERIFY(classicProfile);
+                const auto curves = RatingSnapshot::compile(*classicProfile, definitions, nullptr); QVERIFY(curves);
                 const auto restored = ClassicRatingSnapshot::fromJson(snapshot->toJson(), nullptr); QVERIFY(restored);
                 QCOMPARE(restored->revision(), snapshot->revision());
                 for (int sample = 0; sample < 16; ++sample) {
@@ -97,6 +101,9 @@ private slots:
                     }
                     for (const auto &role : definitions.validRoles()) {
                         const auto rating = engine.calculate(player, role);
+                        const auto curveRating = curves->evaluate(player, role); QVERIFY(curveRating.normalized);
+                        QVERIFY(std::abs(curveRating.absolute - rating.first) <= 1e-12 * std::max(1.0, std::abs(rating.first)));
+                        QCOMPARE(*curveRating.normalized, rating.second);
                         const auto frozen = restored->evaluate(player, role); QVERIFY(frozen.normalized);
                         QCOMPARE(frozen.absolute, rating.first); QCOMPARE(*frozen.normalized, rating.second);
                         QJsonObject row{{QStringLiteral("game"), version}, {QStringLiteral("custom"), custom},

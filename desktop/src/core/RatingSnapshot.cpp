@@ -29,6 +29,9 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
     for (auto it = profile.roles.begin(); it != profile.roles.end(); ++it)
         if (it.key().startsWith(gamePrefix) && !roleIds.contains(it.key()))
             return fail(QStringLiteral("unknown-role:") + it.key());
+    for (auto it = profile.rolePolicies.begin(); it != profile.rolePolicies.end(); ++it)
+        if (it.key().startsWith(gamePrefix) && !roleIds.contains(it.key()))
+            return fail(QStringLiteral("unknown-role:") + it.key());
     for (auto it = profile.positions.begin(); it != profile.positions.end(); ++it)
         if (it.key().startsWith(gamePrefix)
             && !definitions.positionToRoleMapping().contains(it.key().mid(gamePrefix.size())))
@@ -47,6 +50,7 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
         const auto roleKey = definitions.fmVersionId() + QLatin1Char('/')
                              + definitions.rolePhase(role) + QLatin1Char('/') + role;
         RolePlan plan;
+        plan.classic = profile.rolePolicies.value(roleKey, profile.calculationVersion) == QStringLiteral("classic-midpoint-v1");
         plan.goalkeeper = definitions.gkRoles().contains(role);
         QJsonArray compiledAttributes;
         for (auto it = profile.attributes.begin(); it != profile.attributes.end(); ++it) {
@@ -73,7 +77,7 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
             plan.attributes.push_back(attr);
         }
         compiledRoles.insert(roleKey, QJsonObject{{QStringLiteral("attributes"), compiledAttributes},
-                                                 {QStringLiteral("goalkeeper"), plan.goalkeeper},
+                                                 {QStringLiteral("goalkeeper"), plan.goalkeeper}, {QStringLiteral("classic"), plan.classic},
                                                  {QStringLiteral("baseline"), plan.baseline}});
         snapshot->m_roles.insert(role, std::move(plan));
     }
@@ -93,19 +97,26 @@ CurveScore RatingSnapshot::evaluatePlan(const Player &player, const RolePlan &pl
     for (const auto &attribute : plan.attributes) {
         const int low = player.attrLo[attribute.index];
         const int high = player.attrHi[attribute.index];
-        if (low == 0 && high == 0) {
+        if (low == 0 && high == 0 && !plan.classic) {
             result.status = CurveScore::Status::MissingAttribute;
             return result;
         }
-        if (low < 1 || high > 20 || low > high) {
+        if ((low < 1 && !(plan.classic && low == 0 && high == 0)) || high > 20 || low > high) {
             result.status = CurveScore::Status::InvalidInput;
             return result;
         }
         double mean = 0;
-        for (int x = low; x <= high; ++x)
+        if (plan.classic) {
+            const double midpoint = (low + high) / 2.0;
+            if (midpoint == 0) mean = -attribute.contributions[1];
+            else {
+                const int lower = int(std::floor(midpoint));
+                mean = attribute.contributions[lower - 1];
+                if (lower < 20) mean += (midpoint - lower) * (attribute.contributions[lower] - mean);
+            }
+        } else for (int x = low; x <= high; ++x)
             mean += attribute.contributions[x - 1] / (high - low + 1);
-        // Bound accumulated roundoff at the theoretical per-attribute maximum.
-        result.absolute += std::clamp(mean, 0.0, attribute.weight);
+        result.absolute += plan.classic ? mean : std::clamp(mean, 0.0, attribute.weight);
     }
     if (!std::isfinite(result.absolute)) {
         result.absolute = 0;
@@ -113,7 +124,8 @@ CurveScore RatingSnapshot::evaluatePlan(const Player &player, const RolePlan &pl
         return result;
     }
     result.status = CurveScore::Status::Available;
-    result.normalized = std::clamp(result.absolute / plan.denominator * 100.0, 0.0, 100.0);
+    result.normalized = plan.classic ? std::nearbyint(result.absolute / plan.denominator * 100.0)
+                                     : std::clamp(result.absolute / plan.denominator * 100.0, 0.0, 100.0);
     result.absolute += plan.baseline;
     if (!std::isfinite(result.absolute)) {
         result.absolute = 0;
@@ -153,8 +165,16 @@ QHash<int, double> RatingSnapshot::trainingGains(const Player &player, const QSt
     for (const auto &attribute : found->attributes) {
         const int low = player.attrLo[attribute.index];
         const int high = player.attrHi[attribute.index];
+        if (low == 0) continue;
         double gain = 0;
-        for (int x = low; x <= high; ++x)
+        if (found->classic) {
+            const auto at = [&](double x) {
+                const int lower = int(std::floor(x));
+                const double value = attribute.contributions[lower - 1];
+                return lower == 20 ? value : value + (x - lower) * (attribute.contributions[lower] - value);
+            };
+            gain = at((std::min(low + 1, 20) + std::min(high + 1, 20)) / 2.0) - at((low + high) / 2.0);
+        } else for (int x = low; x <= high; ++x)
             gain += (attribute.contributions[std::min(x, 19)] - attribute.contributions[x - 1])
                     / (high - low + 1);
         result.insert(attribute.index, gain / found->denominator * 100.0);

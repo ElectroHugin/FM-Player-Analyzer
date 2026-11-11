@@ -7291,6 +7291,7 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
     <message><source>DWRS-Bewertung</source><translation>DWRS Rating</translation></message>
     <message><source>Bewertungsprofile</source><translation>Rating profiles</translation></message>
     <message><source>Profile als Entwurf bearbeiten, speichern und austauschen.</source><translation>Edit drafts, save and exchange profiles.</translation></message>
+    <message><source>Mitgelieferte Profile konnten nicht geladen werden.</source><translation>The built-in profiles could not be loaded.</translation></message>
 </context>
 <context>
     <name>fm::SigningAdvisorTab</name>
@@ -9069,5 +9070,11 @@ A backup is created automatically in the “backups” folder first. You can bri
     <message><source>Weite Einwürfe</source><translation>Long Throws</translation></message>
     <message><source>Elfmeter</source><translation>Penalty Taking</translation></message>
     <message><source>Fausten</source><translation>Punching</translation></message>
+    <message><source>Keine Quelle angegeben</source><translation>No source specified</translation></message>
+    <message><source>Quelle: %1</source><translation>Source: %1</translation></message>
+    <message><source>Untersucht – angepasste Messkurve</source><translation>Investigated – fitted measurement curve</translation></message>
+    <message><source>Als Rauschen eingestuft – im Editor bearbeitbar</source><translation>Classified as noise – editable</translation></message>
+    <message><source>Nicht untersucht – im Editor bearbeitbar</source><translation>Not investigated – editable</translation></message>
+    <message><source>Bisherige DWRS-Bewertungsgrundlage</source><translation>Previous DWRS rating basis</translation></message>
 </context>
 </TS>

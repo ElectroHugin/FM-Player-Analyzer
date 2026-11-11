@@ -141,3 +141,8 @@ set_tests_properties(test_ratingprofileeditor PROPERTIES ENVIRONMENT "QT_QPA_PLA
 target_sources(test_ratingcurveeditor PRIVATE ${CMAKE_SOURCE_DIR}/src/app/widgets/FlowLayout.cpp)
 target_sources(test_ratingprofileeditor PRIVATE ${CMAKE_SOURCE_DIR}/src/app/theming/ThemeManager.cpp)
 target_compile_definitions(test_ratingprofileeditor PRIVATE EDITOR_QM="${CMAKE_BINARY_DIR}/src/app/fmplayeranalyzer_en.qm")
+fm_add_test(test_builtinratingprofiles)
+target_compile_definitions(test_builtinratingprofiles PRIVATE DEFINITIONS_DIR="${CMAKE_SOURCE_DIR}/src/app/resources" HARVEST_DATA="${CMAKE_SOURCE_DIR}/../docs/dwrs/harvestgreen-comparison.json")
+target_sources(test_profileswitch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/RatingProfileDefaults.cpp)
+fm_add_test(test_ratingselection)
+target_compile_definitions(test_ratingselection PRIVATE FM27_DEFINITIONS="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json")

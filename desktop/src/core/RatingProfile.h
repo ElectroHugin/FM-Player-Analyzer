@@ -36,11 +36,13 @@ struct RatingProfile {
     QStringList compatibleGames;
     QString calculationVersion = QStringLiteral("curves-uniform-range-v1");
     QMap<QString, RatingCurve> attributes;
+    QMap<QString, QString> attributeEvidence; // Provenance only; excluded from formula revision.
     // Independent optional fields, never whole-record replacement.
     QMap<QString, QMap<QString, RatingOverride>> positions;
     QMap<QString, QMap<QString, RatingOverride>> roles;
     // Explicit one-parent mapping avoids ambiguous multi-position roles.
     QMap<QString, QString> rolePositions;
+    QMap<QString, QString> rolePolicies; // Explicit per-role calculation policy, e.g. legacy goalkeepers.
     double keyFactor = 1.5;
     double preferableFactor = 1.2;
 

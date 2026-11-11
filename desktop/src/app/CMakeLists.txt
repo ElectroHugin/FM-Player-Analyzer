@@ -162,3 +162,4 @@ qt_add_resources(fmplayeranalyzer "translations"
 )
 target_sources(fmplayeranalyzer PRIVATE widgets/RatingCurveEditor.h widgets/RatingCurveEditor.cpp)
 target_sources(fmplayeranalyzer PRIVATE widgets/RatingProfileEditor.h widgets/RatingProfileEditor.cpp)
+target_sources(fmplayeranalyzer PRIVATE RatingProfileDefaults.h RatingProfileDefaults.cpp)

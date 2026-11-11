@@ -26,6 +26,16 @@ QString RatingProfileLibrary::documentRevision(const RatingProfile &profile)
     return QString::fromLatin1(digest(profileBytes(profile)).toHex());
 }
 
+QString RatingProfileLibrary::seedBuiltins(const QList<RatingProfile> &profiles)
+{
+    auto candidate = *this;
+    for (const auto &profile : profiles) {
+        if (candidate.m_originals.contains(profile.id)) continue;
+        const auto error = candidate.insert(profile); if (!error.isEmpty()) return error;
+    }
+    *this = std::move(candidate); return {};
+}
+
 QString RatingProfileLibrary::insert(const RatingProfile &profile)
 {
     const auto error = profile.validate();

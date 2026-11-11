@@ -1,5 +1,6 @@
 #include "SettingsPage.h"
 #include "../widgets/RatingProfileEditor.h"
+#include "../RatingProfileDefaults.h"
 #include "core/ImportHistory.h"
 
 #include "../AppContext.h"
@@ -840,6 +841,12 @@ QWidget *SettingsPage::buildWeightsPage()
         m_context.fmVersionId());
     m_ratingProfileEditor->setMinimumHeight(600);
     profileBody->addWidget(m_ratingProfileEditor);
+    QString builtinError;
+    const auto builtins = loadBuiltinRatingProfiles(&builtinError);
+    if (builtins.isEmpty()) {
+        qWarning("DWRS built-in profiles unavailable: %s", qPrintable(builtinError));
+        profileBody->addWidget(caption(tr("Mitgelieferte Profile konnten nicht geladen werden.")));
+    } else m_ratingProfileEditor->installBuiltins(builtins);
     const auto updateCurveTheme = [this] {
         QPalette palette;
         palette.setColor(QPalette::Base, m_theme.surface());

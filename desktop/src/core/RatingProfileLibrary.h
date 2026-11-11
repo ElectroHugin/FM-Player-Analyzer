@@ -8,6 +8,7 @@ namespace fm {
 class RatingProfileLibrary {
 public:
     const QMap<QString, RatingProfile> &profiles() const { return m_profiles; }
+    QString seedBuiltins(const QList<RatingProfile> &profiles);
     QString insert(const RatingProfile &profile);
     QString update(const RatingProfile &profile, const QString &expectedDocumentRevision);
     QString duplicate(const QString &id, const QString &name, QString *newId);

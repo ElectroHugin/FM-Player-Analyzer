@@ -64,3 +64,11 @@ assigned to this snapshot merely because it can be captured today.
 
 The development branch is published on GitHub as
 `feature/2.3.0-dwrs-profiles`; it is not a released or complete test.1 build.
+
+## Built-in profiles and selection persistence
+
+See development-checkpoint-builtins.md for the editable Classic/Harvestgreen
+profiles, source-state labels, seeding guarantees, explicit calculation policies
+and the transactional per-save selection/archive component. Full application
+activation is not yet connected; the remaining acceptance gates are unchanged.
+The previous editor and frozen-Classic commits both passed GitHub Windows/Linux CI.
