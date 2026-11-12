@@ -209,16 +209,31 @@ QWidget *foldableHint(const QString &text)
     toggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toggle->setArrowType(Qt::RightArrow);
     toggle->setCursor(Qt::PointingHandCursor);
-    auto *body = new QLabel(text, box);
+    // The text sits in a row with a stretch: the row hands the label its
+    // capped width, so the height for the wrapped text is computed from the
+    // width it really gets (a capped label straight in the column was asked
+    // for the full card width and could come out one line too short).
+    auto *row = new QWidget(box);
+    auto *rowLayout = new QHBoxLayout(row);
+    rowLayout->setContentsMargins(0, 0, 0, 0);
+    auto *body = new QLabel(text, row);
     body->setObjectName(QStringLiteral("kpiCaption"));
     body->setWordWrap(true);
     body->setMaximumWidth(620);
-    body->hide();
+    rowLayout->addWidget(body, 1);
+    rowLayout->addStretch(0);
+    row->hide();
     layout->addWidget(toggle, 0, Qt::AlignLeft);
-    layout->addWidget(body);
-    QObject::connect(toggle, &QToolButton::toggled, body, [toggle, body](bool on) {
+    layout->addWidget(row);
+    QObject::connect(toggle, &QToolButton::toggled, row, [toggle, row](bool on) {
         toggle->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
-        body->setVisible(on);
+        row->setVisible(on);
+        // Let the card and the scrolled page grow with the opened text.
+        for (QWidget *w = row->parentWidget(); w; w = w->parentWidget()) {
+            if (w->layout())
+                w->layout()->invalidate();
+            w->updateGeometry();
+        }
     });
     return box;
 }
