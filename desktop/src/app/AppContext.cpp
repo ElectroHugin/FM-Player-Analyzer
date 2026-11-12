@@ -33,13 +33,10 @@ AppContext::AppContext(QObject *parent)
     // Counted before any page refreshes, so page caches see the new state.
     connect(this, &AppContext::dataChanged, this, [this] { ++m_dataGeneration; });
     connect(this, &AppContext::databaseChanged, this, [this] { ++m_dataGeneration; });
-    // DWRS colours (Settings -> Design) before any page redraws.
+    // DWRS colours (Settings -> DWRS colours) before any page redraws.
     connect(this, &AppContext::profileChanged, this, [this] {
         if (!m_config) return;
-        const auto theme = m_config->themeSettings();
-        setDwrsColorMode(theme.value(QStringLiteral("dwrs_color_mode")) == QLatin1String("rainbow")
-                             ? DwrsColorMode::Rainbow : DwrsColorMode::Tiers);
-        setDwrsTierColors(colorsFromString(theme.value(QStringLiteral("dwrs_tier_colors"))));
+        setDwrsColorScheme(resolveDwrsColorScheme(m_config->themeSettings()));
     });
 }
 
@@ -439,6 +436,25 @@ const QString kClassicId = QStringLiteral("dwrs-classic-florin133");
 const QString kHarvestgreenId = QStringLiteral("dwrs-fm27-harvestgreen22");
 }
 
+DwrsColorScheme AppContext::resolveDwrsColorScheme(const QHash<QString, QString> &theme) const
+{
+    const QString id = theme.value(QStringLiteral("dwrs_color_scheme"), originalDwrsColorSchemeId());
+    if (auto builtin = builtinDwrsColorScheme(id))
+        return *builtin;
+    if (id != QLatin1String("custom")) {
+        for (const auto &scheme : loadDwrsColorSchemes(m_paths.dwrsColorSchemesFile(), nullptr))
+            if (scheme.id == id)
+                return scheme;
+    }
+    // Unsaved custom colours, or an own scheme deleted meanwhile: the copy
+    // kept in this save.
+    QString error;
+    const auto json = QJsonDocument::fromJson(theme.value(QStringLiteral("dwrs_color_custom")).toUtf8());
+    if (auto custom = DwrsColorScheme::fromJson(json.object(), &error))
+        return *custom;
+    return *builtinDwrsColorScheme(originalDwrsColorSchemeId());
+}
+
 void AppContext::reloadRatingLibrary()
 {
     QString error;
@@ -544,13 +560,10 @@ void AppContext::recompileRatingSnapshot()
         if (auto classic = classicRatingProfile({*m_definitions}, *m_config, &error))
             snapshot = RatingSnapshot::compile(*classic, *m_definitions, &error);
     }
-    const bool changed = !m_ratingSnapshot || !snapshot || m_ratingSnapshot->cacheKey() != snapshot->cacheKey()
-                         || m_ratingSnapshot->fieldTiers() != snapshot->fieldTiers()
-                         || m_ratingSnapshot->goalkeeperTiers() != snapshot->goalkeeperTiers();
+    const bool changed = !m_ratingSnapshot || !snapshot || m_ratingSnapshot->cacheKey() != snapshot->cacheKey();
     m_ratingSnapshot = snapshot;
     if (snapshot) {
         setDwrsDecimals(snapshot->isClassic() ? 0 : 1);
-        setDwrsTierThresholds(snapshot->fieldTiers(), snapshot->goalkeeperTiers());
     }
     const QStringList goalkeepers = m_definitions->gkRoles();
     setDwrsGoalkeeperRoles(QSet<QString>(goalkeepers.begin(), goalkeepers.end()));

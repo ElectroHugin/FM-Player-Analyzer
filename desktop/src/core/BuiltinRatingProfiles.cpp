@@ -46,7 +46,7 @@ std::optional<RatingProfile> classicRatingProfile(const QList<Definitions> &defi
     result.id = QStringLiteral("dwrs-classic-florin133"); result.name = QStringLiteral("DWRS Classic · florin133");
     result.description = QStringLiteral("FM Player Analyzer 2.2.3 DWRS implementation based on florin133. Linear contributions, legacy midpoint ranges and missing-value behavior; not an unchanged research dataset.");
     result.origin = QStringLiteral("builtin-classic"); result.sourceVersion = QStringLiteral("FM Player Analyzer 2.2.3");
-    result.sources = {QStringLiteral("https://www.reddit.com/r/footballmanagergames/comments/16fuksi/a_not_so_short_guide_to_meta_player_attributes/")};
+    result.sources = {QStringLiteral("florin133: A not so short guide to meta player attributes (Reddit, r/footballmanagergames)")};
     result.calculationVersion = QStringLiteral("classic-midpoint-v1");
     result.keyFactor = config.roleMultiplier(QStringLiteral("key"));
     result.preferableFactor = config.roleMultiplier(QStringLiteral("preferable"));
@@ -93,7 +93,7 @@ std::optional<RatingProfile> harvestgreenRatingProfile(const QList<Definitions> 
     result.id = QStringLiteral("dwrs-fm27-harvestgreen22"); result.name = QStringLiteral("DWRS FM27 · harvestgreen22");
     result.origin = QStringLiteral("builtin-harvestgreen"); result.sourceVersion = QStringLiteral("harvestgreen22 2026-11-03 · isotonic equal weights · cutoff 4 pp");
     result.description = QStringLiteral("Visible FM27 measurements fitted monotonically with equal knot weights; totals <=4 pp disabled by modelling choice, not a statistical confidence threshold. Plateau 18–20. Unmeasured outfield attributes disabled. Goalkeepers retain the separately identified 2.2.3 basis. Role factors 1.5/1.2 are DWRS model choices. Scores are not win probabilities.");
-    result.sources = {QStringLiteral("https://sortitoutsi.net/content/78219/fm27-attribute-test-tactical-understanding-training-system-preset-tactics-ai-reverse-engineering-engine-for-test"), QStringLiteral("https://github.com/ElectroHugin/FM-Player-Analyzer/issues/17")};
+    result.sources = {QStringLiteral("harvestgreen22: FM27 attribute test (sortitoutsi)"), QStringLiteral("FM Player Analyzer issue #17 (GitHub)")};
     result.calculationVersion = QStringLiteral("curves-uniform-range-v1"); result.roles.clear();
     result.keyFactor = 1.5; result.preferableFactor = 1.2;
     // The measurements come from FM27 matches only, so the profile is FM27-only.

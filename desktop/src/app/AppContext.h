@@ -1,4 +1,5 @@
 #pragma once
+#include "core/DwrsColorScheme.h"
 
 #include "AppPaths.h"
 #include "GraphicsLibrary.h"
@@ -83,6 +84,10 @@ public:
     // unknown, the local date of the switch; profile name).
     QList<QPair<QString, QString>> ratingProfileSwitches() const;
     // Re-reads the shared library file (after the editor saved it).
+    // The DWRS colour scheme a save selects (Settings -> DWRS colours):
+    // a built-in, an own scheme or its unsaved custom colours. Falls back to
+    // "Original".
+    DwrsColorScheme resolveDwrsColorScheme(const QHash<QString, QString> &themeSettings) const;
     void reloadRatingLibrary();
     // Profiles of the library usable with the open save's game.
     QList<RatingProfile> compatibleRatingProfiles() const;

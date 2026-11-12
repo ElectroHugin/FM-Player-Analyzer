@@ -92,8 +92,10 @@ add_library(fmcore STATIC
     TalentEngine.cpp
     Utils.h
     DwrsDisplay.h
+    DwrsColorScheme.h
     Utils.cpp
     DwrsDisplay.cpp
+    DwrsColorScheme.cpp
     ThemeColors.h
     ThemeColors.cpp
     ColorTemplates.h
