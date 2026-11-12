@@ -21,6 +21,14 @@ Test build 2.3.0-test.2:
 - Switching the profile recalculates once and marks it in the history; development does not count it as progress.
 - Player databases migrate to schema 18; 2.2.3 cannot open the upgraded database. A backup is made first.
 
+Added for 2.3.0-test.3:
+
+- FM27 save import: when the game renames clubs (e.g. after a data update), your club and second team follow automatically instead of showing an empty squad.
+- Training: your own training profile per save. Choose which attributes belong to which band, the age windows, a weight per band, add or remove bands, and import/export the profile as JSON. Today's values are the standard.
+- Personalities: a save only shows and edits the classification of its own FM version.
+- Overview, squad comparison: grey for the squad median instead of dark cards, a colour legend and the distance in the tooltip.
+- Settings: opened explanations are no longer cut off.
+
 ## 2.2.3 – 2026-11-09
 
 - Manual player swaps now exchange both IP and OOP places, keeping each phase's slot roles.
