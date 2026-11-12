@@ -25,7 +25,6 @@ public:
     // profiles compatible with its game.
     void setActiveProfile(const QString &id);
     // Text for a profile's source line: version, provisional note, sources.
-    static QString provenanceText(const RatingProfile &profile);
     // Translated name of an attribute by its index (Attributes.h order).
     static QString attributeLabel(int index);
 signals:
@@ -59,7 +58,6 @@ private:
     QListWidget *m_attributes;
     RatingCurveEditor *m_curve;
     QLabel *m_status;
-    QLabel *m_provenance;
     QString m_activeId;
     QPushButton *m_useForSave = nullptr;
     QDoubleSpinBox *m_keyFactor = nullptr;

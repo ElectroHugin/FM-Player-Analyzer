@@ -1838,9 +1838,6 @@ void SettingsPage::updateActiveRatingProfile()
         return;
     const QString id = m_context.activeRatingProfileId();
     QString text = id.isEmpty() ? tr("Kein Profil aktiv.") : tr("Aktiv: %1").arg(m_context.activeRatingProfileName());
-    for (const auto &profile : m_context.compatibleRatingProfiles())
-        if (profile.id == id)
-            text += QLatin1Char('\n') + RatingProfileEditor::provenanceText(profile);
     m_activeRatingLabel->setText(text);
     if (m_ratingProfileEditor)
         m_ratingProfileEditor->setActiveProfile(id);

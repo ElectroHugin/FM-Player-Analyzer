@@ -1,5 +1,4 @@
 #include "RatingProfileEditor.h"
-#include <QUrl>
 #include "RatingCurveEditor.h"
 #include "FlowLayout.h"
 #include "core/Attributes.h"
@@ -43,11 +42,6 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     layout->addLayout(top);
     m_name = new QLineEdit; m_name->setObjectName(QStringLiteral("ratingProfileName")); m_name->setPlaceholderText(tr("Profilname")); m_name->setAccessibleName(tr("Profilname"));
     layout->addWidget(m_name);
-    m_provenance = new QLabel; m_provenance->setWordWrap(true);
-    // Sources are plain, selectable text: the app never opens internet links.
-    m_provenance->setTextFormat(Qt::PlainText);
-    m_provenance->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    layout->addWidget(m_provenance);
     m_useForSave = new QPushButton(tr("Für diesen Spielstand verwenden"));
     m_useForSave->setObjectName(QStringLiteral("useRatingProfile"));
     connect(m_useForSave, &QPushButton::clicked, this, [this] {
@@ -72,7 +66,7 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     factors->addRow(tr("Faktor Schlüssel-Attribute"), m_keyFactor);
     factors->addRow(tr("Faktor bevorzugte Attribute"), m_preferableFactor);
     auto *shareRow = new QHBoxLayout; shareRow->setContentsMargins(0, 0, 0, 0);
-    m_roleShareOn = new QCheckBox(tr("Rollenanteil verwenden"));
+    m_roleShareOn = new QCheckBox(tr("Verwenden"));
     m_roleShareOn->setObjectName(QStringLiteral("roleShareEnabled"));
     m_roleShare = new QSpinBox; m_roleShare->setRange(1, int(RatingProfile::kMaxRoleShare * 100)); m_roleShare->setSuffix(QStringLiteral(" %"));
     m_roleShare->setObjectName(QStringLiteral("roleShare")); m_roleShare->setValue(33);
@@ -80,7 +74,7 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     shareRow->addWidget(m_roleShareOn); shareRow->addWidget(m_roleShare); shareRow->addStretch(1);
     factors->addRow(tr("Rollenanteil"), shareRow);
     auto *goalkeeperRow = new QHBoxLayout; goalkeeperRow->setContentsMargins(0, 0, 0, 0);
-    m_goalkeeperShareOn = new QCheckBox(tr("Rollenanteil verwenden"));
+    m_goalkeeperShareOn = new QCheckBox(tr("Verwenden"));
     m_goalkeeperShareOn->setObjectName(QStringLiteral("goalkeeperRoleShareEnabled"));
     m_goalkeeperShare = new QSpinBox; m_goalkeeperShare->setRange(1, int(RatingProfile::kMaxRoleShare * 100)); m_goalkeeperShare->setSuffix(QStringLiteral(" %"));
     m_goalkeeperShare->setObjectName(QStringLiteral("goalkeeperRoleShare")); m_goalkeeperShare->setValue(20);
@@ -200,41 +194,12 @@ void RatingProfileEditor::selectProfile(const QString &id)
     m_selectedId = id; m_dirty = false;
     m_draft = m_library.profiles().value(id);
     m_expectedRevision = RatingProfileLibrary::documentRevision(m_draft);
-    m_provenance->setText(provenanceText(m_draft));
     m_name->setText(m_draft.name); m_name->setEnabled(!id.isEmpty());
     updateFactors();
     setActiveProfile(m_activeId);
     fillAttributes();
     if (m_storageValid) m_status->setText(tr("Profile bearbeiten und austauschen. Speichern ändert den Spielstand nicht; "
                                              "„Für diesen Spielstand verwenden“ rechnet mit dem gespeicherten Profil neu."));
-}
-QString RatingProfileEditor::provenanceText(const RatingProfile &profile)
-{
-    QStringList lines;
-    lines << (profile.sourceVersion.isEmpty() ? tr("Keine Quelle angegeben") : tr("Quelle: %1").arg(profile.sourceVersion));
-    if (profile.origin == QStringLiteral("builtin-harvestgreen"))
-        lines << tr("Vorläufig: harvestgreen22 misst nach dem offiziellen Release von FM27 neu. "
-                    "Die Werte können sich mit einem späteren Update ändern.")
-              << tr("Torhüter: Diese Gewichte stammen nicht von harvestgreen22, sondern aus unserer eigenen "
-                    "Auswertung der FM27-Saisonstatistik (verhinderte Tore je Schuss aufs Tor, an einem zweiten "
-                    "Spielstand gegengeprüft). Am stärksten zählen Antizipation, Fangsicherheit, Reflexe und "
-                    "Stellungsspiel.");
-    // The app shows no internet addresses: an address becomes its site name.
-    QStringList sources;
-    for (const QString &source : profile.sources) {
-        const QUrl url(source.trimmed());
-        if (url.isValid() && (url.scheme() == QLatin1String("http") || url.scheme() == QLatin1String("https"))) {
-            QString host = url.host();
-            if (host.startsWith(QLatin1String("www."))) host.remove(0, 4);
-            if (!host.isEmpty()) sources << host;
-        } else if (!source.trimmed().isEmpty()) {
-            sources << source.trimmed();
-        }
-    }
-    sources.removeDuplicates();
-    if (!sources.isEmpty())
-        lines << tr("Quellen: %1").arg(sources.join(QStringLiteral(" · ")));
-    return lines.join(QLatin1Char('\n'));
 }
 QString RatingProfileEditor::attributeLabel(int index)
 {
