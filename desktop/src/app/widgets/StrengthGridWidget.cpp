@@ -79,8 +79,12 @@ double StrengthGridWidget::shownMedian() const
 
 CellStyle StrengthGridWidget::cardStyle(double value, bool goalkeeper, double median, bool night) const
 {
-    CellStyle style = m_colorMode == ColorMode::SquadComparison ? dwrsComparisonStyle(value - median)
-                                                                : dwrsCellStyleFor(value, goalkeeper);
+    if (m_colorMode == ColorMode::SquadComparison) {
+        // Near the median: a calm grey in both themes, never the dark empty card.
+        const CellStyle style = dwrsComparisonStyle(value - median);
+        return style.isValid() ? style : dwrsComparisonNeutralStyle();
+    }
+    CellStyle style = dwrsCellStyleFor(value, goalkeeper);
     if (!style.isValid()) {
         style.background = night ? QColor(0x12, 0x16, 0x1c) : QColor(0xfb, 0xfb, 0xfd);
         style.text = night ? QColor(Qt::white) : QColor(0x1e, 0x22, 0x2b);
@@ -315,8 +319,17 @@ bool StrengthGridWidget::event(QEvent *event)
     if (event->type() == QEvent::ToolTip) {
         auto *help = static_cast<QHelpEvent *>(event);
         const int i = markerAt(help->pos());
-        if (i >= 0 && i < m_markers.size() && !m_markers.at(i).tooltip.isEmpty())
-            QToolTip::showText(help->globalPos(), m_markers.at(i).tooltip, this);
+        if (i >= 0 && i < m_markers.size() && !m_markers.at(i).tooltip.isEmpty()) {
+            const Marker &marker = m_markers.at(i);
+            QString text = marker.tooltip;
+            if (m_colorMode == ColorMode::SquadComparison && !marker.uid.isEmpty()) {
+                const double median = shownMedian();
+                text = tr("%1 zur Kadermitte (%2)")
+                           .arg(formatDwrsDelta(marker.value - median), formatDwrs(median))
+                       + QLatin1Char('\n') + text;
+            }
+            QToolTip::showText(help->globalPos(), text, this);
+        }
         else
             QToolTip::hideText();
         return true;

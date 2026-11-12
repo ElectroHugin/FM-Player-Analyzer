@@ -62,6 +62,8 @@ public:
     enum class ColorMode { Level, SquadComparison };
     void setColorMode(ColorMode mode);
     ColorMode colorMode() const { return m_colorMode; }
+    // Median of the shown values (squad comparison reference).
+    double shownMedian() const;
 
 signals:
     void playerDoubleClicked(const QString &uid);
@@ -89,7 +91,6 @@ private:
     ColorMode m_colorMode = ColorMode::Level;
     // Fill and text for a value; neutral card colours where no tier applies.
     CellStyle cardStyle(double value, bool goalkeeper, double median, bool night) const;
-    double shownMedian() const;
 };
 
 } // namespace fm

@@ -421,8 +421,9 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
         button->setCursor(Qt::PointingHandCursor);
         button->setChecked(i == 0);
         button->setToolTip(i == 0 ? tr("Farbstufen wie überall in der App: Schwach bis Legendär.")
-                                  : tr("Abstand zum Median aller Positionen dieses Kaders: bis 1,5 Punkte "
-                                       "neutral, bis 4 Punkte leicht, darüber kräftig; warm darunter, kühl darüber."));
+                                  : tr("Jeder Starter im Vergleich zur Kadermitte (Median der gezeigten "
+                                       "Starter): grau bis 1,5 Punkte Abstand, darunter orange, darüber "
+                                       "blau, ab 4 Punkten kräftig."));
         m_colorModeGroup->addButton(button, i);
         colorLayout->addWidget(button);
     }
@@ -461,6 +462,13 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     m_gridLegend->setWordWrap(true);
     m_gridLegend->setFixedWidth(300);
     gridColumn->addWidget(m_gridLegend, 0, Qt::AlignHCenter);
+    m_colorLegend = new QLabel(widget);
+    m_colorLegend->setObjectName(QStringLiteral("kpiCaption"));
+    m_colorLegend->setTextFormat(Qt::RichText);
+    m_colorLegend->setAlignment(Qt::AlignHCenter);
+    m_colorLegend->setWordWrap(true);
+    m_colorLegend->setVisible(false);
+    gridColumn->addWidget(m_colorLegend, 0, Qt::AlignHCenter);
     gridColumn->addStretch(1);
     layout->addLayout(gridColumn);
 
@@ -564,6 +572,30 @@ void DashboardPage::applyStrengthColorMode()
                             : StrengthGridWidget::ColorMode::Level;
     m_strengthGrid->setColorMode(mode);
     m_strengthGridOop->setColorMode(mode);
+    updateColorLegend();
+}
+
+void DashboardPage::updateColorLegend()
+{
+    const bool squad = m_strengthGrid->colorMode() == StrengthGridWidget::ColorMode::SquadComparison;
+    const double median = m_strengthGrid->shownMedian();
+    m_colorLegend->setVisible(squad && median > 0.0);
+    if (!m_colorLegend->isVisibleTo(m_colorLegend->parentWidget()))
+        return;
+    // Five swatches from far below to far above the squad median.
+    const QList<QColor> colors = dwrsComparisonColors();
+    const QStringList labels = {tr("weit darunter"), tr("darunter"), tr("Kadermitte"),
+                                tr("darüber"), tr("weit darüber")};
+    QStringList parts;
+    for (int i = 0; i < colors.size() && i < labels.size(); ++i)
+        parts << QStringLiteral("<span style=\"color:%1\">&#9632;</span>&nbsp;%2")
+                     .arg(colors.at(i).name(), labels.at(i).toHtmlEscaped());
+    QString text = parts.join(QStringLiteral(" &nbsp; "));
+    const bool both = m_strengthGridOop->isVisibleTo(m_strengthGridOop->parentWidget());
+    if (!both)
+        text = tr("Kadermitte: %1").arg(formatDwrs(median)).toHtmlEscaped() + QStringLiteral("<br>") + text;
+    m_colorLegend->setFixedWidth(m_gridLegend->width());
+    m_colorLegend->setText(text);
 }
 
 void DashboardPage::refresh()
@@ -912,6 +944,7 @@ void DashboardPage::showStarterView()
            "4,0. „Lücke“: Kein Spieler im Kader füllt den Platz. Grundlage ist der ganze Verein "
            "ohne Langzeitverletzte und ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus "
            "Best XI gelten."));
+    updateColorLegend();
 }
 
 void DashboardPage::updateKpis(const std::vector<const Player *> &coreSquad)

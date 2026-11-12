@@ -103,6 +103,8 @@ private:
     QLabel *m_gridTitle = nullptr;
     QLabel *m_gridTitleOop = nullptr;
     QLabel *m_gridLegend = nullptr;
+    QLabel *m_colorLegend = nullptr; // squad comparison: what the colours mean
+    void updateColorLegend();
     QWidget *m_phaseSwitch = nullptr;
     QButtonGroup *m_colorModeGroup = nullptr;
     void applyStrengthColorMode();
