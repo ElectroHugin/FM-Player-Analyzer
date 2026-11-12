@@ -72,8 +72,8 @@ QList<DwrsColorScheme> builtinDwrsColorSchemes()
               {55, 48, QColor()},
               {65, 55, QColor(0x2E, 0x9E, 0x4F)},
               {72, 61, QColor(0x2F, 0x7F, 0xD8)},
-              {78, 68, QColor(0x8E, 0x4E, 0xC6)},
-              {84, 76, QColor(0xE8, 0x89, 0x1C)}}),
+              {78, 69, QColor(0x8E, 0x4E, 0xC6)},
+              {84, 78, QColor(0xE8, 0x89, 0x1C)}}),
         // Red to green with soft borders.
         make(QStringLiteral("traffic-light"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Ampel"), 2.0,
              {{0, 0, QColor(0xD6, 0x45, 0x45)},

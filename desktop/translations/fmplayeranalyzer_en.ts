@@ -5552,163 +5552,184 @@ Details: %1</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="44"/>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="371"/>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="383"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="391"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="403"/>
         <source>Profilname</source>
         <translation>Profile name</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="119"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="134"/>
         <source>Attribute suchen</source>
         <translation>Search attributes</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="121"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="136"/>
         <source>Attribute</source>
         <translation>Attributes</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="130"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="145"/>
         <source>Profil speichern</source>
         <translation>Save profile</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="131"/>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="371"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="146"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="391"/>
         <source>Als neues Profil speichern</source>
         <translation>Save as new profile</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="132"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="147"/>
         <source>Ursprung wiederherstellen</source>
         <translation>Restore original</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="133"/>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="171"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="148"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="186"/>
         <source>Entwurf verwerfen</source>
         <translation>Discard draft</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="111"/>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="149"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="124"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="164"/>
         <source>Ungespeicherter Entwurf. Bestehende Bewertungen bleiben unverändert.</source>
         <translation>Unsaved draft. Existing ratings remain unchanged.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="171"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="87"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="89"/>
+        <source>Rollenanteil Torhüter</source>
+        <translation>Goalkeeper role share</translation>
+    </message>
+    <message>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="94"/>
+        <source>Die Grundkurven eines Profils gelten für alle Rollen gleich. Die Faktoren für Schlüssel- und bevorzugte Attribute verstärken nur Attribute, die schon ein Gewicht haben. Beim FM27-Profil haben zum Beispiel Abschluss, Passen oder Tackling kaum Grundgewicht, deshalb unterscheiden sich die Rollen eines Spielers sonst kaum.
+
+Der Rollenanteil gibt jedem Schlüssel- und bevorzugten Attribut der Rolle zusätzlich ein eigenes, gleichmäßig steigendes Gewicht (Schlüssel 1,5-fach). Der eingestellte Prozentsatz ist der Anteil dieses Rollenteils an der fertigen Bewertung; 0 bis 100 bleibt die Skala. Bei Torhütern stehen in allen Rollen fast dieselben Attribute. Ihr Rollenanteil zählt deshalb nur die Attribute, in denen sich eine Rolle von den anderen Torhüterrollen derselben Phase unterscheidet (Exzentrik nie). Der Prozentsatz gilt für die Rolle mit den meisten Unterschieden, die anderen bekommen anteilig weniger.
+
+Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser voraus als ohne (Zusammenhang 0,207 statt 0,188) und trennt die Rollen deutlicher. Ohne Haken rechnet das Profil nur mit den Grundkurven.</source>
+        <translation>The base curves of a profile are the same for every role. The factors for key and preferable attributes only strengthen attributes that already have a weight. In the FM27 profile, for example, Finishing, Passing or Tackling have hardly any base weight, so a player's roles would otherwise barely differ.
+
+The role share gives every key and preferable attribute of the role an extra, evenly rising weight (key 1.5 times). The percentage is the share of this role part in the finished rating; the scale stays 0 to 100.
+
+Goalkeeper roles list almost the same attributes. Their role share therefore only counts the attributes in which a role differs from the other goalkeeper roles of the same phase (never Eccentricity). The percentage applies to the role with the most differences; the others get proportionally less.
+
+On the test save the FM27 profile with 33 % predicts the average rating better than without (correlation 0.207 instead of 0.188) and separates the roles more clearly. Without the tick the profile only uses the base curves.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="186"/>
         <source>Ungespeicherte Profiländerungen verwerfen?</source>
         <translation>Discard unsaved profile changes?</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="179"/>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="305"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="194"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="325"/>
         <source> · Angepasst</source>
         <translation> · Customized</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="217"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="232"/>
         <source>Quellen: %1</source>
         <translation>Sources: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="383"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="403"/>
         <source>Neues Profil</source>
         <translation>New profile</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="396"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="416"/>
         <source>Profil löschen</source>
         <translation>Delete profile</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="396"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="416"/>
         <source>Dieses Profil löschen?</source>
         <translation>Delete this profile?</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="412"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="432"/>
         <source>Profil importieren</source>
         <translation>Import profile</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="412"/>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="435"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="432"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="455"/>
         <source>JSON-Profile (*.json)</source>
         <translation>JSON profiles (*.json)</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="422"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="442"/>
         <source>Als neues Profil importieren</source>
         <translation>Import as new profile</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="422"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="442"/>
         <source>Ein Profil mit dieser Kennung oder diesem Namen existiert bereits. Neuen Namen vergeben:</source>
         <translation>A profile with this ID or name already exists. Enter a new name:</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="435"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="455"/>
         <source>Profilentwurf exportieren</source>
         <translation>Export profile draft</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="445"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="465"/>
         <source>Name oder Kennung bereits vorhanden. Bitte einen anderen Namen verwenden.</source>
         <translation>Name or ID already exists. Please use a different name.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="447"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="467"/>
         <source>Die Profilbibliothek wurde zwischenzeitlich geändert. Bitte die Einstellungen neu öffnen, bevor du speicherst.</source>
         <translation>The profile library has changed. Please reopen settings before saving.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="448"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="468"/>
         <source>Das Profil konnte nicht übernommen werden. Prüfe Namen, Dateiformat, gültige Kurven und Schreibrechte.</source>
         <translation>The profile could not be saved or loaded. Check the name, file format, curve validity and write permissions.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="122"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="137"/>
         <source>Attributkategorie</source>
         <translation>Attribute category</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="123"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="138"/>
         <source>Alle Attribute</source>
         <translation>All attributes</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="123"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="138"/>
         <source>Technisch</source>
         <translation>Technical</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="123"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="138"/>
         <source>Mental</source>
         <translation>Mental</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="123"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="138"/>
         <source>Physisch</source>
         <translation>Physical</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="123"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="138"/>
         <source>Torhüter</source>
         <translation>Goalkeeping</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="327"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="347"/>
         <source>Deaktiviert – im Editor bearbeitbar</source>
         <translation>Disabled – editable</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="327"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="347"/>
         <source>Aktiv</source>
         <translation>Active</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="223"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="238"/>
         <source>Eins gegen Eins</source>
         <translation>One vs One</translation>
     </message>
@@ -5737,6 +5758,7 @@ Details: %1</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="75"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="83"/>
         <source>Rollenanteil verwenden</source>
         <translation>Use role emphasis</translation>
     </message>
@@ -5747,310 +5769,297 @@ Details: %1</translation>
         <translation>Role emphasis</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="83"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="91"/>
         <source>Was ist der Rollenanteil?</source>
         <translation>What is role emphasis?</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="86"/>
-        <source>Die Grundkurven eines Profils gelten für alle Rollen gleich. Die Faktoren für Schlüssel- und bevorzugte Attribute verstärken nur Attribute, die schon ein Gewicht haben. Beim FM27-Profil haben zum Beispiel Abschluss, Passen oder Tackling kaum Grundgewicht, deshalb unterscheiden sich die Rollen eines Spielers sonst kaum.
-
-Der Rollenanteil gibt jedem Schlüssel- und bevorzugten Attribut der Rolle zusätzlich ein eigenes, gleichmäßig steigendes Gewicht (Schlüssel 1,5-fach). Der eingestellte Prozentsatz ist der Anteil dieses Rollenteils an der fertigen Bewertung; 0 bis 100 bleibt die Skala. Torhüterrollen bekommen keinen Rollenanteil.
-
-Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser voraus als ohne (Zusammenhang 0,207 statt 0,188) und trennt die Rollen deutlicher. Ohne Haken rechnet das Profil nur mit den Grundkurven.</source>
-        <translation>A profile&apos;s base curves are the same for every role. The key and preferable factors only strengthen attributes that already have a weight. In the FM27 profile, for example, Finishing, Passing or Tackling have almost no base weight, so a player&apos;s roles would otherwise hardly differ.
-
-Role emphasis gives every key and preferable attribute of the role an additional weight of its own that rises evenly (key attributes 1.5×). The percentage is the share of this role part in the finished rating; the scale stays 0 to 100. Goalkeeper roles get no role emphasis.
-
-On the test save, the FM27 profile with 33 % predicts the average match rating better than without (correlation 0.207 instead of 0.188) and separates roles more clearly. Unticked, the profile uses its base curves only.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="193"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="208"/>
         <source>Profile bearbeiten und austauschen. Speichern ändert den Spielstand nicht; „Für diesen Spielstand verwenden“ rechnet mit dem gespeicherten Profil neu.</source>
         <translation>Edit and exchange profiles. Saving does not change the save; “Use for this save” recalculates with the saved profile.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="201"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="216"/>
         <source>Vorläufig: harvestgreen22 misst nach dem offiziellen Release von FM27 neu. Die Werte können sich mit einem späteren Update ändern.</source>
         <translation>Provisional: harvestgreen22 will measure again after the official FM27 release. Values may change with a later update.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="224"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="239"/>
         <source>Antritt</source>
         <translation>Acceleration</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="225"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="240"/>
         <source>Reichweite</source>
         <translation>Aerial Reach</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="226"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="241"/>
         <source>Aggressivität</source>
         <translation>Aggression</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="227"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="242"/>
         <source>Beweglichkeit</source>
         <translation>Agility</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="228"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="243"/>
         <source>Antizipation</source>
         <translation>Anticipation</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="229"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="244"/>
         <source>Balance</source>
         <translation>Balance</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="230"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="245"/>
         <source>Mut</source>
         <translation>Bravery</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="231"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="246"/>
         <source>Strafraumbeherrschung</source>
         <translation>Command of Area</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="232"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="247"/>
         <source>Konzentration</source>
         <translation>Concentration</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="233"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="248"/>
         <source>Nervenstärke</source>
         <translation>Composure</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="234"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="249"/>
         <source>Ecken</source>
         <translation>Corners</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="235"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="250"/>
         <source>Flanken</source>
         <translation>Crossing</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="236"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="251"/>
         <source>Entscheidungen</source>
         <translation>Decisions</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="237"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="252"/>
         <source>Zielstrebigkeit</source>
         <translation>Determination</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="238"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="253"/>
         <source>Dribbling</source>
         <translation>Dribbling</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="239"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="254"/>
         <source>Abschluss</source>
         <translation>Finishing</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="240"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="255"/>
         <source>Ballannahme</source>
         <translation>First Touch</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="241"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="256"/>
         <source>Flair</source>
         <translation>Flair</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="242"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="257"/>
         <source>Fangsicherheit</source>
         <translation>Handling</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="243"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="258"/>
         <source>Kopfballtechnik</source>
         <translation>Heading</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="244"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="259"/>
         <source>Sprunghöhe</source>
         <translation>Jumping Reach</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="245"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="260"/>
         <source>Abschläge</source>
         <translation>Kicking</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="246"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="261"/>
         <source>Führungsqualitäten</source>
         <translation>Leadership</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="247"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="262"/>
         <source>Weitschüsse</source>
         <translation>Long Shots</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="248"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="263"/>
         <source>Deckung</source>
         <translation>Marking</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="249"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="264"/>
         <source>Ohne Ball</source>
         <translation>Off the Ball</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="250"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="265"/>
         <source>Schnelligkeit</source>
         <translation>Pace</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="251"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="266"/>
         <source>Passen</source>
         <translation>Passing</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="252"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="267"/>
         <source>Stellungsspiel</source>
         <translation>Positioning</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="253"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="268"/>
         <source>Reflexe</source>
         <translation>Reflexes</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="254"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="269"/>
         <source>Herauslaufen (Tendenz)</source>
         <translation>Rushing Out (Tendency)</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="255"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="270"/>
         <source>Ausdauer</source>
         <translation>Stamina</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="256"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="271"/>
         <source>Kraft</source>
         <translation>Strength</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="257"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="272"/>
         <source>Tackling</source>
         <translation>Tackling</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="258"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="273"/>
         <source>Teamwork</source>
         <translation>Teamwork</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="259"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="274"/>
         <source>Technik</source>
         <translation>Technique</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="260"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="275"/>
         <source>Abwürfe</source>
         <translation>Throwing</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="261"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="276"/>
         <source>Übersicht</source>
         <translation>Vision</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="262"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="277"/>
         <source>Einsatzfreude</source>
         <translation>Work Rate</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="263"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="278"/>
         <source>Kommunikation</source>
         <translation>Communication</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="264"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="279"/>
         <source>Exzentrik</source>
         <translation>Eccentricity</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="265"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="280"/>
         <source>Grundfitness</source>
         <translation>Natural Fitness</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="266"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="281"/>
         <source>Freistöße</source>
         <translation>Free Kick Taking</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="267"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="282"/>
         <source>Weite Einwürfe</source>
         <translation>Long Throws</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="268"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="283"/>
         <source>Elfmeter</source>
         <translation>Penalty Taking</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="269"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="284"/>
         <source>Fausten</source>
         <translation>Punching</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="199"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="214"/>
         <source>Keine Quelle angegeben</source>
         <translation>No source specified</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="199"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="214"/>
         <source>Quelle: %1</source>
         <translation>Source: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="285"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="300"/>
         <source>Das Classic-Verfahren rechnet unverändert wie 2.2.3 und hat keinen Rollenanteil.</source>
         <translation>The Classic method calculates exactly as in 2.2.3 and has no role emphasis.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="301"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="321"/>
         <source>Dieses Profil passt nicht zur Football-Manager-Version des Spielstands.</source>
         <translation>This profile does not match the save&apos;s Football Manager version.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="306"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="326"/>
         <source> · Aktiv</source>
         <translation> · Active</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="307"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="327"/>
         <source> · nur %1</source>
         <translation> · %1 only</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="322"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="342"/>
         <source>Untersucht – angepasste Messkurve</source>
         <translation>Investigated – fitted measurement curve</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="323"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="343"/>
         <source>Als Rauschen eingestuft – im Editor bearbeitbar</source>
         <translation>Classified as noise – editable</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="324"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="344"/>
         <source>Nicht untersucht – im Editor bearbeitbar</source>
         <translation>Not investigated – editable</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="325"/>
+        <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="345"/>
         <source>Bisherige DWRS-Bewertungsgrundlage</source>
         <translation>Previous DWRS rating basis</translation>
     </message>

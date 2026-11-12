@@ -6,7 +6,7 @@ Source: harvestgreen22 workbook dated 2026-11-03, Sheet1, Tables 1–3. Values b
 
 Approved rule: fit all four observations with equal-weight isotonic regression, subtract the fitted first value, then disable the entire attribute when the fitted 1→18 total is at most 4 percentage points. Keep the entire fitted curve otherwise. This is an explicit modelling choice, not a statistically validated threshold. It does not clip individual negative segments and retain every positive fluctuation.
 
-Interpolate retained curves linearly between knots and hold them constant at 18–20. Total weight is the fitted endpoint difference; the normalized shape carries no second weight. Role factors 1.5 / 1.2 / 1.0 remain separate DWRS choices. Hidden attributes are excluded regardless of magnitude. Goalkeepers retain the separate Classic basis.
+Interpolate retained curves linearly between knots and hold them constant at 18–20. Total weight is the fitted endpoint difference; the normalized shape carries no second weight. Role factors 1.5 / 1.2 / 1.0 remain separate DWRS choices. Hidden attributes are excluded regardless of magnitude. Goalkeepers are not covered by these measurements; the FM27 profile uses its own goalkeeper weights (see profiles-2.3.0.md).
 
 | Attribute | Original 1 / 6 / 12 / 18 | Isotonic, baseline removed | Approved weight | Treatment |
 |---|---:|---:|---:|---|

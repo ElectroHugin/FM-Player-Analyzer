@@ -79,6 +79,14 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     m_roleShare->setAccessibleName(tr("Rollenanteil"));
     shareRow->addWidget(m_roleShareOn); shareRow->addWidget(m_roleShare); shareRow->addStretch(1);
     factors->addRow(tr("Rollenanteil"), shareRow);
+    auto *goalkeeperRow = new QHBoxLayout; goalkeeperRow->setContentsMargins(0, 0, 0, 0);
+    m_goalkeeperShareOn = new QCheckBox(tr("Rollenanteil verwenden"));
+    m_goalkeeperShareOn->setObjectName(QStringLiteral("goalkeeperRoleShareEnabled"));
+    m_goalkeeperShare = new QSpinBox; m_goalkeeperShare->setRange(1, int(RatingProfile::kMaxRoleShare * 100)); m_goalkeeperShare->setSuffix(QStringLiteral(" %"));
+    m_goalkeeperShare->setObjectName(QStringLiteral("goalkeeperRoleShare")); m_goalkeeperShare->setValue(20);
+    m_goalkeeperShare->setAccessibleName(tr("Rollenanteil Torhüter"));
+    goalkeeperRow->addWidget(m_goalkeeperShareOn); goalkeeperRow->addWidget(m_goalkeeperShare); goalkeeperRow->addStretch(1);
+    factors->addRow(tr("Rollenanteil Torhüter"), goalkeeperRow);
     layout->addLayout(factors);
     auto *explainToggle = new QToolButton; explainToggle->setText(tr("Was ist der Rollenanteil?"));
     explainToggle->setCheckable(true); explainToggle->setAutoRaise(true); explainToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -91,7 +99,10 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
         "Der Rollenanteil gibt jedem Schlüssel- und bevorzugten Attribut der Rolle zusätzlich ein "
         "eigenes, gleichmäßig steigendes Gewicht (Schlüssel 1,5-fach). Der eingestellte Prozentsatz "
         "ist der Anteil dieses Rollenteils an der fertigen Bewertung; 0 bis 100 bleibt die Skala. "
-        "Torhüterrollen bekommen keinen Rollenanteil.\n\n"
+        "Bei Torhütern stehen in allen Rollen fast dieselben Attribute. Ihr Rollenanteil zählt deshalb "
+        "nur die Attribute, in denen sich eine Rolle von den anderen Torhüterrollen derselben Phase "
+        "unterscheidet (Exzentrik nie). Der Prozentsatz gilt für die Rolle mit den meisten Unterschieden, "
+        "die anderen bekommen anteilig weniger.\n\n"
         "Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser voraus als "
         "ohne (Zusammenhang 0,207 statt 0,188) und trennt die Rollen deutlicher. "
         "Ohne Haken rechnet das Profil nur mit den Grundkurven."));
@@ -107,6 +118,8 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
         m_draft.preferableFactor = m_preferableFactor->value();
         m_draft.roleShare = m_roleShareOn->isChecked() ? m_roleShare->value() / 100.0 : 0.0;
         m_roleShare->setEnabled(m_roleShareOn->isChecked());
+        m_draft.goalkeeperRoleShare = m_goalkeeperShareOn->isChecked() ? m_goalkeeperShare->value() / 100.0 : 0.0;
+        m_goalkeeperShare->setEnabled(m_goalkeeperShareOn->isChecked());
         m_dirty = true;
         m_status->setText(tr("Ungespeicherter Entwurf. Bestehende Bewertungen bleiben unverändert."));
     };
@@ -114,6 +127,8 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     connect(m_preferableFactor, &QDoubleSpinBox::valueChanged, this, factorsEdited);
     connect(m_roleShareOn, &QCheckBox::toggled, this, factorsEdited);
     connect(m_roleShare, &QSpinBox::valueChanged, this, factorsEdited);
+    connect(m_goalkeeperShareOn, &QCheckBox::toggled, this, factorsEdited);
+    connect(m_goalkeeperShare, &QSpinBox::valueChanged, this, factorsEdited);
     auto *body = new QHBoxLayout; body->setSpacing(16);
     auto *left = new QVBoxLayout;
     m_search = new QLineEdit; m_search->setPlaceholderText(tr("Attribute suchen")); m_search->setAccessibleName(tr("Attribute suchen"));
@@ -283,6 +298,11 @@ void RatingProfileEditor::updateFactors()
     if (m_draft.roleShare > 0) m_roleShare->setValue(qRound(m_draft.roleShare * 100));
     m_roleShare->setEnabled(enabled && !classic && m_draft.roleShare > 0);
     m_roleShareOn->setToolTip(classic ? tr("Das Classic-Verfahren rechnet unverändert wie 2.2.3 und hat keinen Rollenanteil.") : QString());
+    m_goalkeeperShareOn->setEnabled(enabled && !classic);
+    m_goalkeeperShareOn->setChecked(m_draft.goalkeeperRoleShare > 0);
+    if (m_draft.goalkeeperRoleShare > 0) m_goalkeeperShare->setValue(qRound(m_draft.goalkeeperRoleShare * 100));
+    m_goalkeeperShare->setEnabled(enabled && !classic && m_draft.goalkeeperRoleShare > 0);
+    m_goalkeeperShareOn->setToolTip(m_roleShareOn->toolTip());
     m_loading = false;
 }
 void RatingProfileEditor::setActiveProfile(const QString &id)

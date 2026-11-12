@@ -50,6 +50,11 @@ struct RatingProfile {
     // 0 disables it. Omitted from JSON when 0, so older files and formula
     // revisions stay unchanged.
     double roleShare = 0.0;
+    // Goalkeepers: share (0..kMaxRoleShare) for the best-separated goalkeeper
+    // role. Only attributes in which a goalkeeper role differs from the other
+    // goalkeeper roles of the same phase get the extra weight (the role lists
+    // are almost identical). Omitted from JSON when 0.
+    double goalkeeperRoleShare = 0.0;
     static constexpr double kMaxRoleShare = 0.6;
 
     QString validate() const;

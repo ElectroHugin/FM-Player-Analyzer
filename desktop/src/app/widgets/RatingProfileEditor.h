@@ -66,5 +66,7 @@ private:
     QDoubleSpinBox *m_preferableFactor = nullptr;
     QCheckBox *m_roleShareOn = nullptr;
     QSpinBox *m_roleShare = nullptr;
+    QCheckBox *m_goalkeeperShareOn = nullptr;
+    QSpinBox *m_goalkeeperShare = nullptr;
 };
 } // namespace fm

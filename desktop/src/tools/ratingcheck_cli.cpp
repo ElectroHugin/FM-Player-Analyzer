@@ -1,6 +1,6 @@
 // Development check of a rating profile against a real FM27 table.
 //
-//   fmratingcheck DEFINITIONS_FM27.json HARVESTGREEN.json TABLE.csv [--role-share X] [--club NAME] [--player NAME]...
+//   fmratingcheck DEFINITIONS_FM27.json HARVESTGREEN.json TABLE.csv [--role-share X] [--gk-role-share X] [--club NAME] [--player NAME]...
 //
 // TABLE.csv is the output of `fm27savedump SAVE OUT --table --unmasked`. For
 // every listed player (or the whole club) the best role and, for single
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     const QStringList args = app.arguments();
     if (args.size() < 4) {
         std::fprintf(stderr, "usage: fmratingcheck DEFINITIONS_FM27.json HARVESTGREEN.json TABLE.csv "
-                             "[--role-share X] [--club NAME] [--player NAME]...\n");
+                             "[--role-share X] [--gk-role-share X] [--club NAME] [--player NAME]...\n");
         return 2;
     }
     fm::Definitions definitions;
@@ -67,6 +67,7 @@ int main(int argc, char **argv)
     QStringList players, clubs;
     for (int i = 4; i < args.size(); ++i) {
         if (args[i] == QStringLiteral("--role-share") && i + 1 < args.size()) profile->roleShare = args[++i].toDouble();
+        else if (args[i] == QStringLiteral("--gk-role-share") && i + 1 < args.size()) profile->goalkeeperRoleShare = args[++i].toDouble();
         else if (args[i] == QStringLiteral("--club") && i + 1 < args.size()) clubs << args[++i];
         else if (args[i] == QStringLiteral("--player") && i + 1 < args.size()) players << args[++i];
     }
@@ -100,7 +101,6 @@ int main(int argc, char **argv)
         }
         QList<QPair<double, QString>> scores;
         for (const QString &role : defaults.forPosition(row[posCol])) {
-            if (snapshot->isGoalkeeperRole(role)) continue;
             const auto score = snapshot->evaluate(player, role);
             if (score.normalized) scores.append({*score.normalized, role});
         }

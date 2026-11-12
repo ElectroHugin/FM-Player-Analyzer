@@ -105,6 +105,8 @@ QString RatingProfile::validate() const
         return QStringLiteral("invalid-role-factor");
     if (!std::isfinite(roleShare) || roleShare < 0.0 || roleShare > kMaxRoleShare)
         return QStringLiteral("invalid-role-share");
+    if (!std::isfinite(goalkeeperRoleShare) || goalkeeperRoleShare < 0.0 || goalkeeperRoleShare > kMaxRoleShare)
+        return QStringLiteral("invalid-role-share");
     for (auto it = attributes.begin(); it != attributes.end(); ++it)
         if (attrIndexByName(it.key()) < 0 || !it->isValid()) return QStringLiteral("invalid-attribute-curve");
     for (auto it = attributeEvidence.begin(); it != attributeEvidence.end(); ++it)
@@ -187,6 +189,7 @@ QJsonObject RatingProfile::toJson() const
             {QStringLiteral("attributes"), curves}, {QStringLiteral("positions"), overridesJson(positions)},
             {QStringLiteral("roles"), overridesJson(roles)}, {QStringLiteral("rolePositions"), mapping}};
     if (roleShare != 0.0) result.insert(QStringLiteral("roleShare"), roleShare);
+    if (goalkeeperRoleShare != 0.0) result.insert(QStringLiteral("goalkeeperRoleShare"), goalkeeperRoleShare);
     return result;
 }
 
@@ -214,11 +217,16 @@ std::optional<RatingProfile> RatingProfile::fromJson(const QJsonObject &json, QS
     const auto expected = result.toJson();
     // "tierThresholds" (2.3.0-test.1) is accepted and ignored: colours are an
     // app setting now (DWRS colour schemes).
-    if (!onlyKeys(json, expected.keys() + QStringList{QStringLiteral("roleShare"), QStringLiteral("tierThresholds")}))
+    if (!onlyKeys(json, expected.keys() + QStringList{QStringLiteral("roleShare"), QStringLiteral("goalkeeperRoleShare"), QStringLiteral("tierThresholds")}))
         return fail(QStringLiteral("unknown-field"));
     if (json.contains(QStringLiteral("roleShare"))) {
         if (!json.value(QStringLiteral("roleShare")).isDouble()) return fail(QStringLiteral("missing-or-invalid-field:roleShare"));
         result.roleShare = json.value(QStringLiteral("roleShare")).toDouble();
+    }
+    if (json.contains(QStringLiteral("goalkeeperRoleShare"))) {
+        if (!json.value(QStringLiteral("goalkeeperRoleShare")).isDouble())
+            return fail(QStringLiteral("missing-or-invalid-field:goalkeeperRoleShare"));
+        result.goalkeeperRoleShare = json.value(QStringLiteral("goalkeeperRoleShare")).toDouble();
     }
     for (auto it = expected.begin(); it != expected.end(); ++it)
         if (!((it.key() == QStringLiteral("rolePolicies") || it.key() == QStringLiteral("attributeEvidence")) && !json.contains(it.key()))

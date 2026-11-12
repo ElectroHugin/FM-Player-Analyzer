@@ -5,14 +5,17 @@
 Test build 2.3.0-test.1:
 
 - DWRS now uses rating profiles. Each save calculates with exactly one profile, shown in Settings → DWRS Rating.
-- New FM27 profile "DWRS FM27 · harvestgreen22", based on harvestgreen22's attribute measurements (thank you!). Provisional: values can change after his re-test with the full game.
+- New FM27 profile "DWRS FM27 · harvestgreen22", based on harvestgreen22's attribute measurements (thank you!). Provisional: values can change after their re-test with the full game.
 - New FM27 saves use it automatically. Existing saves keep their numbers and ask once whether to switch.
 - FM24 keeps the familiar calculation ("DWRS Classic"). Your own changed weights become a personal profile.
 - Optional role share: part of the rating comes from the role's key and preferable attributes. On by default (33 %) for the FM27 profile, explained in the editor.
 - Missing attributes no longer count as zero: they are left out. Below 70 % known weight there is no rating.
 - Profiles can be edited, saved as new, exported and imported.
 - DWRS shows one decimal for curve profiles; Classic stays whole numbers.
-- DWRS colours in six rarity tiers (Poor, Common, Uncommon, Rare, Epic, Legendary) with separate goalkeeper thresholds. Colours are adjustable in Settings → Appearance; the old rainbow scale is still available.
+- FM27 goalkeepers get their own weights from our own analysis of FM27 match statistics (not from harvestgreen22), plus a 20 % goalkeeper role share for the attributes that set a goalkeeper role apart.
+- New settings page "DWRS colouring": the original rainbow stays the default; more colour schemes (e.g. Rarity), own colours, thresholds and soft borders, saved as your own schemes.
+- No web links inside the app; sources are linked in the README.
+- Saving ratings after a recalculation is faster and the progress dialog shows the saving step.
 - Overview: colour positional strength by level or by comparison with the rest of the squad.
 - Switching the profile recalculates once and marks it in the history; development does not count it as progress.
 - Player databases migrate to schema 18; 2.2.3 cannot open the upgraded database. A backup is made first.

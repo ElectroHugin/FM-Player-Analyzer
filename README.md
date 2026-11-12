@@ -360,16 +360,24 @@ profile, shown under **Settings → DWRS Rating**. Profiles can be edited, saved
 as new, exported and imported; "Use for this save" recalculates once.
 
 - **DWRS FM27 · harvestgreen22** (default for new FM27 saves): per-attribute
-  curves from harvestgreen22's measurements, shown with one decimal.
-  Provisional until the measurement is repeated with the full game.
+  curves from [harvestgreen22's FM27 attribute test](https://sortitoutsi.net/content/78219/fm27-attribute-test-tactical-understanding-training-system-preset-tactics-ai-reverse-engineering-engine-for-test), shown with one
+  decimal. Provisional until the measurement is repeated with the full game.
+  Background in [issue #17](https://github.com/ElectroHugin/FM-Player-Analyzer/issues/17).
+- **Goalkeepers (FM27 profile):** their weights are our own analysis of FM27
+  season statistics (goals prevented per shot on target), not part of
+  harvestgreen22's measurements. Reflexes, Anticipation, Handling and Positioning
+  count most; Punching, Eccentricity and Rushing Out are tendencies and do not
+  count as skill. A 20 % goalkeeper role share only uses the attributes in which
+  a goalkeeper role differs from the others.
 - **Role share** (optional, 33 % in the FM27 profile): part of the rating comes
   from the role's key and preferable attributes. Without it many roles would be
   nearly identical, because the measurement rates attributes in general.
 - **Missing attributes** no longer count as 0; they are left out. If more than
   30 % of the weight is missing, there is no rating.
-- **Colours:** six tiers (Poor, Common, Uncommon, Rare, Epic, Legendary), with
-  separate goalkeeper thresholds. Thresholds belong to the profile; the colours
-  are set under **Settings → Appearance**.
+- **Colours:** under **Settings → DWRS colouring**. "Original" (the rainbow
+  scale) stays the default; there are more schemes such as "Rarity", and you can
+  pick your own colours, thresholds (field and goalkeeper) and soft borders and
+  save them as your own scheme.
 
 Existing saves keep their numbers. Your own changed weights become the
 personal profile "My weights".
