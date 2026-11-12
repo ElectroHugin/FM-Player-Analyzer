@@ -71,6 +71,46 @@ private slots:
             QStringLiteral("<table><tr><td>no header</td></tr></table>"), &table, &error));
     }
 
+    // The game renamed the own club between two saves (same club id): the
+    // import follows own club and second team by id instead of losing them.
+    void saveImportFollowsClubRenames()
+    {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        Database db(QStringLiteral("import_club_rename"));
+        QVERIFY(db.open(dir.filePath(QStringLiteral("t.db"))));
+        QVERIFY(db.setSetting(QStringLiteral("user_club"), QStringLiteral("Bayern München")));
+        QVERIFY(db.setSetting(QStringLiteral("club_fm_id"), QStringLiteral("915")));
+        QVERIFY(db.setSetting(QStringLiteral("second_team_club"), QStringLiteral("Bayern II")));
+        QVERIFY(db.setSetting(QStringLiteral("club_fm_ids"),
+                              QStringLiteral("{\"Bayern II\":\"103287\",\"Benfica\":\"234\"}")));
+
+        ImportTable table;
+        HtmlImporter::extractTable(htmlExport({playerRow(QStringLiteral("1"), QStringLiteral("A"),
+                                                         QStringLiteral("20"), QStringLiteral("FC Bayern")),
+                                               playerRow(QStringLiteral("2"), QStringLiteral("B"),
+                                                         QStringLiteral("19"), QStringLiteral("FC Bayern II")),
+                                               playerRow(QStringLiteral("3"), QStringLiteral("C"),
+                                                         QStringLiteral("25"), QStringLiteral("SL Benfica"))}),
+                                   &table);
+        table.clubIdByName = {{QStringLiteral("FC Bayern"), 915},
+                              {QStringLiteral("FC Bayern II"), 103287},
+                              {QStringLiteral("SL Benfica"), 234}};
+        const ImportResult result = HtmlImporter::importTable(table, db, {}, {}, QString(), nullptr);
+        QVERIFY2(result.success, qPrintable(result.error));
+        QCOMPARE(db.setting(QStringLiteral("user_club")), QStringLiteral("FC Bayern"));
+        QCOMPARE(db.setting(QStringLiteral("second_team_club")), QStringLiteral("FC Bayern II"));
+        const QString ids = db.setting(QStringLiteral("club_fm_ids"));
+        QVERIFY(ids.contains(QStringLiteral("SL Benfica")));
+        QVERIFY(!ids.contains(QStringLiteral("\"Benfica\"")));
+
+        // Unknown id: learnt from the name, nothing renamed.
+        QVERIFY(db.setSetting(QStringLiteral("club_fm_id"), QString()));
+        QVERIFY(HtmlImporter::importTable(table, db, db.loadPlayers(), {}, QString(), nullptr).success);
+        QCOMPARE(db.setting(QStringLiteral("club_fm_id")), QStringLiteral("915"));
+        QCOMPARE(db.setting(QStringLiteral("user_club")), QStringLiteral("FC Bayern"));
+    }
+
     void extractTableEdgeCases()
     {
         // Backlog #38: the rewritten tag scanner must keep every quirk of the

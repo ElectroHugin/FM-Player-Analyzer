@@ -123,8 +123,7 @@ public:
     // "Transfer Value") to a player. Unknown columns are ignored.
     static void applyColumn(Player &player, const QString &fullColumnName, const QString &value);
 
-private:
-    // Shared import body once the table is extracted.
+    // Shared import body once the table is extracted (public for tests).
     static ImportResult importTable(const ImportTable &table, Database &db,
                                     const std::vector<Player> &existingPlayers,
                                     const std::function<void(int, int)> &progress,
