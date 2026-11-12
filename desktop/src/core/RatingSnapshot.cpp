@@ -66,8 +66,40 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
     snapshot->m_profileName = profile.name;
     snapshot->m_calculationVersion = profile.calculationVersion;
     snapshot->m_game = definitions.fmVersionId();
-    snapshot->m_fieldTiers = profile.effectiveFieldTiers();
-    snapshot->m_goalkeeperTiers = profile.effectiveGoalkeeperTiers();
+    // Goalkeeper role part: per phase, the extra marking (key 1.5, preferable 1)
+    // a role has over the least-marked goalkeeper role of that phase.
+    // Eccentricity is a tendency and never counts.
+    QHash<QString, QMap<int, double>> goalkeeperDifferences;
+    double goalkeeperMaxDifference = 0;
+    if (profile.goalkeeperRoleShare > 0) {
+        QHash<QString, QMap<int, double>> marks;
+        for (const auto &role : definitions.gkRoles()) {
+            const auto weights = definitions.roleWeights(role);
+            QMap<int, double> &mark = marks[role];
+            for (const auto &name : weights.preferable)
+                if (const int index = attrIndexByName(name); index >= 0) mark[index] = 1.0;
+            for (const auto &name : weights.key)
+                if (const int index = attrIndexByName(name); index >= 0) mark[index] = kRoleKeyRatio;
+            mark.remove(static_cast<int>(Attr::Eccentricity));
+        }
+        for (const auto &role : definitions.gkRoles()) {
+            QSet<int> attributes;
+            QStringList group;
+            for (const auto &other : definitions.gkRoles())
+                if (definitions.rolePhase(other) == definitions.rolePhase(role)) {
+                    group.append(other);
+                    for (auto it = marks[other].cbegin(); it != marks[other].cend(); ++it) attributes.insert(it.key());
+                }
+            double sum = 0;
+            for (const int index : attributes) {
+                double lowest = marks[role].value(index, 0.0);
+                for (const auto &other : group) lowest = std::min(lowest, marks[other].value(index, 0.0));
+                const double difference = marks[role].value(index, 0.0) - lowest;
+                if (difference > 0) { goalkeeperDifferences[role][index] = difference; sum += difference; }
+            }
+            goalkeeperMaxDifference = std::max(goalkeeperMaxDifference, sum);
+        }
+    }
     QJsonObject compiledRoles;
     for (const auto &role : definitions.validRoles()) {
         const auto weights = definitions.roleWeights(role);
@@ -139,6 +171,33 @@ std::shared_ptr<const RatingSnapshot> RatingSnapshot::compile(const RatingProfil
                 }
                 compiledAttributes = roleAttributes;
             }
+        }
+        if (!plan.classic && plan.goalkeeper && goalkeeperMaxDifference > 0 && plan.denominator > 0
+            && goalkeeperDifferences.contains(role)) {
+            const double share = profile.goalkeeperRoleShare;
+            const double unit = share / (1.0 - share) * plan.denominator / goalkeeperMaxDifference;
+            const auto &differences = goalkeeperDifferences[role];
+            for (auto it = differences.cbegin(); it != differences.cend(); ++it) {
+                const double weight = unit * it.value();
+                auto found = std::find_if(plan.attributes.begin(), plan.attributes.end(),
+                                          [&](const AttributePlan &a) { return a.index == it.key(); });
+                if (found == plan.attributes.end()) {
+                    AttributePlan attr; attr.index = it.key();
+                    plan.attributes.push_back(attr);
+                    found = plan.attributes.end() - 1;
+                }
+                found->weight += weight;
+                for (int x = 0; x < 20; ++x) found->contributions[x] += weight * x / 19.0;
+                plan.denominator += weight;
+            }
+            QJsonArray roleAttributes;
+            for (const auto &attr : plan.attributes) {
+                QJsonArray contributions;
+                for (double value : attr.contributions) contributions.append(value);
+                roleAttributes.append(QJsonObject{{QStringLiteral("attribute"), attrNames()[attr.index]},
+                                                  {QStringLiteral("contributions"), contributions}});
+            }
+            compiledAttributes = roleAttributes;
         }
         compiledRoles.insert(roleKey, QJsonObject{{QStringLiteral("attributes"), compiledAttributes},
                                                  {QStringLiteral("goalkeeper"), plan.goalkeeper}, {QStringLiteral("classic"), plan.classic},

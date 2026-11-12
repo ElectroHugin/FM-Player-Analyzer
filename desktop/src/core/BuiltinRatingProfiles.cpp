@@ -46,7 +46,7 @@ std::optional<RatingProfile> classicRatingProfile(const QList<Definitions> &defi
     result.id = QStringLiteral("dwrs-classic-florin133"); result.name = QStringLiteral("DWRS Classic · florin133");
     result.description = QStringLiteral("FM Player Analyzer 2.2.3 DWRS implementation based on florin133. Linear contributions, legacy midpoint ranges and missing-value behavior; not an unchanged research dataset.");
     result.origin = QStringLiteral("builtin-classic"); result.sourceVersion = QStringLiteral("FM Player Analyzer 2.2.3");
-    result.sources = {QStringLiteral("https://www.reddit.com/r/footballmanagergames/comments/16fuksi/a_not_so_short_guide_to_meta_player_attributes/")};
+    result.sources = {QStringLiteral("florin133: A not so short guide to meta player attributes (Reddit, r/footballmanagergames)")};
     result.calculationVersion = QStringLiteral("classic-midpoint-v1");
     result.keyFactor = config.roleMultiplier(QStringLiteral("key"));
     result.preferableFactor = config.roleMultiplier(QStringLiteral("preferable"));
@@ -92,8 +92,8 @@ std::optional<RatingProfile> harvestgreenRatingProfile(const QList<Definitions> 
     RatingProfile result = *classic;
     result.id = QStringLiteral("dwrs-fm27-harvestgreen22"); result.name = QStringLiteral("DWRS FM27 · harvestgreen22");
     result.origin = QStringLiteral("builtin-harvestgreen"); result.sourceVersion = QStringLiteral("harvestgreen22 2026-11-03 · isotonic equal weights · cutoff 4 pp");
-    result.description = QStringLiteral("Visible FM27 measurements fitted monotonically with equal knot weights; totals <=4 pp disabled by modelling choice, not a statistical confidence threshold. Plateau 18–20. Unmeasured outfield attributes disabled. Goalkeepers retain the separately identified 2.2.3 basis. Role factors 1.5/1.2 are DWRS model choices. Scores are not win probabilities.");
-    result.sources = {QStringLiteral("https://sortitoutsi.net/content/78219/fm27-attribute-test-tactical-understanding-training-system-preset-tactics-ai-reverse-engineering-engine-for-test"), QStringLiteral("https://github.com/ElectroHugin/FM-Player-Analyzer/issues/17")};
+    result.description = QStringLiteral("Visible FM27 measurements fitted monotonically with equal knot weights; totals <=4 pp disabled by modelling choice, not a statistical confidence threshold. Plateau 18–20. Unmeasured outfield attributes disabled. Goalkeeper weights do not come from harvestgreen22: they are our own analysis of FM27 save statistics (goals prevented per shot on target, checked on a second save), with a 20 % goalkeeper role share for the attributes that set a goalkeeper role apart. Role factors 1.5/1.2 are DWRS model choices. Scores are not win probabilities.");
+    result.sources = {QStringLiteral("harvestgreen22: FM27 attribute test (sortitoutsi)"), QStringLiteral("FM Player Analyzer issue #17 (GitHub)")};
     result.calculationVersion = QStringLiteral("curves-uniform-range-v1"); result.roles.clear();
     result.keyFactor = 1.5; result.preferableFactor = 1.2;
     // The measurements come from FM27 matches only, so the profile is FM27-only.
@@ -128,16 +128,37 @@ std::optional<RatingProfile> harvestgreenRatingProfile(const QList<Definitions> 
     if (!result.compatibleGames.isEmpty() && std::none_of(definitions.begin(), definitions.end(),
             [](const Definitions &d) { return d.fmVersionId() == QStringLiteral("fm27"); }))
         return fail(QStringLiteral("fm27-definitions-required"));
-    for (const auto &defs : definitions) if (defs.fmVersionId() == QStringLiteral("fm27")) for (const auto &role : defs.gkRoles()) {
-        const auto id = roleId(defs, role); const auto weights = defs.roleWeights(role);
-        for (const auto &name : attrNames()) {
-            const auto original = classic->resolve(name, id, weights.key.contains(name), weights.preferable.contains(name));
-            RatingOverride rule; rule.weight = original.curve.weight; rule.baseline = original.curve.baseline;
-            rule.shape = original.curve.shape; rule.factor = original.factor;
-            result.roles[id][name] = rule;
+    // Goalkeepers: own FM27 analysis (save statistics, goals prevented per shot
+    // on target), not part of the harvestgreen22 measurements. Linear curves,
+    // weights as percentage shares of the base part. Punching, Eccentricity and
+    // Rushing Out are tendencies and stay out of the base part.
+    static const QList<QPair<QString, double>> goalkeeperWeights{
+        {QStringLiteral("Anticipation"), 12}, {QStringLiteral("Handling"), 12},
+        {QStringLiteral("Reflexes"), 12}, {QStringLiteral("Positioning"), 12},
+        {QStringLiteral("Concentration"), 8}, {QStringLiteral("Communication"), 8},
+        {QStringLiteral("One vs One"), 8}, {QStringLiteral("Agility"), 8},
+        {QStringLiteral("Aerial Reach"), 4}, {QStringLiteral("Command of Area"), 4},
+        {QStringLiteral("Composure"), 4},
+        {QStringLiteral("Kicking"), 2}, {QStringLiteral("Throwing"), 2},
+        {QStringLiteral("Bravery"), 2}, {QStringLiteral("Decisions"), 2}};
+    for (const auto &defs : definitions) if (defs.fmVersionId() == QStringLiteral("fm27")) {
+        QSet<QString> goalkeeperPositions;
+        for (const auto &role : defs.gkRoles()) goalkeeperPositions.insert(result.rolePositions.value(roleId(defs, role)));
+        goalkeeperPositions.remove(QString());
+        for (const auto &position : goalkeeperPositions) {
+            auto &rules = result.positions[position];
+            for (const auto &name : attrNames()) {
+                RatingOverride rule; rule.weight = 0; rule.baseline = 0;
+                rule.shape = RatingCurve::linear(1).shape;
+                rules.insert(name, rule);
+            }
+            for (const auto &[name, weight] : goalkeeperWeights) {
+                if (!rules.contains(name)) return fail(QStringLiteral("unknown-goalkeeper-attribute"));
+                rules[name].weight = weight;
+            }
         }
-        result.rolePolicies[id] = QStringLiteral("classic-midpoint-v1");
     }
+    result.goalkeeperRoleShare = 0.20;
     const auto validation = result.validate(); if (!validation.isEmpty()) return fail(validation);
     return result;
 }

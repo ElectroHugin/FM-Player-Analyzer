@@ -25,9 +25,6 @@ public:
     // profiles compatible with its game.
     void setActiveProfile(const QString &id);
     // Text for a profile's source line: version, provisional note, sources.
-    static QString provenanceText(const RatingProfile &profile);
-    // Translated name of a DWRS colour tier (0 Poor .. 5 Legendary).
-    static QString tierName(int tier);
     // Translated name of an attribute by its index (Attributes.h order).
     static QString attributeLabel(int index);
 signals:
@@ -61,14 +58,13 @@ private:
     QListWidget *m_attributes;
     RatingCurveEditor *m_curve;
     QLabel *m_status;
-    QLabel *m_provenance;
     QString m_activeId;
     QPushButton *m_useForSave = nullptr;
     QDoubleSpinBox *m_keyFactor = nullptr;
     QDoubleSpinBox *m_preferableFactor = nullptr;
     QCheckBox *m_roleShareOn = nullptr;
     QSpinBox *m_roleShare = nullptr;
-    std::array<QDoubleSpinBox *, 5> m_fieldTiers{};
-    std::array<QDoubleSpinBox *, 5> m_goalkeeperTiers{};
+    QCheckBox *m_goalkeeperShareOn = nullptr;
+    QSpinBox *m_goalkeeperShare = nullptr;
 };
 } // namespace fm

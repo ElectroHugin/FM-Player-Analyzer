@@ -19,7 +19,29 @@ part adds linear contributions for the role's key and preferable attributes:
 - `ρ` = role share (0..0.6, FM27 profile 0.33), `M` = the plan's denominator.
 - Role mass `R = ρ / (1 − ρ) · M`, unit `u = R / (1.5·|K| + |P|)`.
 - Each key attribute adds `1.5·u·x/19`, each preferable one `u·x/19` (x = value − 1).
-- Outfield attributes only; goalkeeper roles and Classic have no role part.
+- Outfield attributes only for this part; Classic has no role part.
+
+## FM27 goalkeepers
+
+Own analysis of FM27 save statistics (goals prevented per shot on target, checked
+on a second save), not harvestgreen22 data. Linear curves, base weights as shares:
+
+| Weight | Attributes |
+|---:|---|
+| 12 | Anticipation, Handling, Reflexes, Positioning |
+| 8 | Concentration, Communication, One vs One, Agility |
+| 4 | Aerial Reach, Command of Area, Composure |
+| 2 | Kicking, Throwing, Bravery, Decisions |
+| 0 | Punching, Eccentricity, Rushing Out and all others |
+
+Role part (`goalkeeperRoleShare`, FM27 profile 0.20): goalkeeper role lists are
+almost identical, so only the differences count.
+
+- Mark per role: key 1.5, preferable 1, else 0; Eccentricity is ignored.
+- `d(r, a)` = mark of `r` minus the lowest mark among goalkeeper roles of the same phase.
+- `D_max` = largest `Σ d(r, ·)` over all goalkeeper roles (4.5, BGK).
+- Unit `u = ρ / (1 − ρ) · M / D_max`; each difference attribute adds `u·d·x/19`.
+- NGK has no differences and uses the base part only.
 
 ## Missing attributes
 
@@ -27,14 +49,16 @@ part adds linear contributions for the role's key and preferable attributes:
 - Below 70 % known weight (`CurveScore.coverage`) there is no rating.
 - Classic keeps its 2.2.3 behaviour.
 
-## Colour tiers
+## Colour schemes
 
-- Six tiers: Poor, Common (no fill), Uncommon, Rare, Epic, Legendary.
-- Thresholds belong to the profile (`tierThresholds.field` / `.goalkeeper`, not part
-  of the revision). Defaults: curves 55/65/72/78/84, Classic 48/55/61/68/76,
-  goalkeepers 48/55/61/68/76.
-- Colours are an app setting (`dwrs_color_mode`, `dwrs_tier_colors`); text colour is
-  chosen for maximum contrast. The old rainbow scale remains as a mode.
+- Colours are an app setting (Settings → DWRS colouring), not part of a profile.
+  `tierThresholds` in older profile files is accepted and ignored.
+- Built-in schemes: Original (rainbow, default), Rarity, Traffic light,
+  Colour-blind friendly, Subtle (purple). Each band has a field and a goalkeeper
+  threshold, a colour or no fill, and an optional blend width at the borders.
+- Rarity: field 55/65/72/78/84, goalkeepers 48/55/61/69/78.
+- Own schemes are saved app-wide in `dwrs_color_schemes.json`; the save stores the
+  chosen id plus a copy. Text colour is chosen for maximum contrast.
 
 ## Display
 

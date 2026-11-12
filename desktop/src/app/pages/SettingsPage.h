@@ -26,6 +26,7 @@ namespace fm {
 
 class ThemeManager;
 class RatingProfileEditor;
+class DwrsColorSchemeEditor;
 
 // Central settings page. A section list on the left (grouped: save, data,
 // calculation, program) switches between short pages of cards; one footer
@@ -119,10 +120,13 @@ private:
     QHash<QString, QString> m_pendingColors;
     QString m_pendingPreset;
     QLabel *m_contrastLabel = nullptr;
-    QComboBox *m_dwrsColorModeCombo = nullptr;
-    std::array<QPushButton *, kDwrsTierCount> m_tierButtons{};
-    DwrsTierColors m_pendingTierColors = defaultDwrsTierColors();
-    void updateTierButtons();
+    // DWRS colours: scheme picker, own schemes (app-wide) and the editor.
+    QComboBox *m_dwrsSchemeCombo = nullptr;
+    QPushButton *m_dwrsDeleteSchemeButton = nullptr;
+    DwrsColorSchemeEditor *m_dwrsSchemeEditor = nullptr;
+    QList<DwrsColorScheme> m_dwrsCustomSchemes;
+    QWidget *buildDwrsColorPage();
+    void fillDwrsSchemeCombo(const QString &selectId);
 
     void applyPresetToPending(const QString &presetId);
     // Built-in presets and the user's templates, grouped by league; own

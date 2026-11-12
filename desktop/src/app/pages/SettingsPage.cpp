@@ -1,4 +1,6 @@
 #include "SettingsPage.h"
+#include "../widgets/DwrsColorSchemeEditor.h"
+#include <QUuid>
 #include "../widgets/RatingProfileEditor.h"
 #include "core/DwrsDisplay.h"
 #include "../RatingProfileDefaults.h"
@@ -320,6 +322,7 @@ SettingsPage::SettingsPage(AppContext &context, ThemeManager &theme, QWidget *pa
     addSection(tr("Berechnung"), tr("Persönlichkeiten"), "Persönlichkeiten", buildPersonalityPage());
     addSection(tr("Berechnung"), tr("Training"), "Training", buildTrainingPage());
     addSection(tr("Programm"), tr("Design"), "Design", buildThemePage());
+    addSection(tr("Programm"), tr("DWRS-Färbung"), "DWRS-Färbung", buildDwrsColorPage());
     addSection(tr("Programm"), tr("Spielstände"), "Spielstände", buildDatabasePage());
 
     connect(m_nav, &QListWidget::currentRowChanged, this, [this](int row) {
@@ -1311,77 +1314,134 @@ QWidget *SettingsPage::buildThemePage()
     m_contrastLabel = caption(QString());
     body->addWidget(m_contrastLabel);
 
-    // --- DWRS colours ---
-    cards->addWidget(makeCard(tr("DWRS-Farben"),
-                              tr("Wie Bewertungen in Tabellen, auf dem Spielfeld und im Dashboard "
-                                 "eingefärbt werden."), &body));
-    form = makeForm(body);
-    m_dwrsColorModeCombo = sized(new QComboBox, kFieldWidth);
-    m_dwrsColorModeCombo->addItem(tr("Seltenheitsstufen"), QStringLiteral("tiers"));
-    m_dwrsColorModeCombo->addItem(tr("Regenbogen (bisher)"), QStringLiteral("rainbow"));
-    addRow(form, tr("Darstellung"), m_dwrsColorModeCombo);
-    auto *tierGrid = new QGridLayout;
-    tierGrid->setContentsMargins(0, 0, 0, 0);
-    tierGrid->setHorizontalSpacing(16);
-    tierGrid->setVerticalSpacing(8);
-    for (int tier = 0; tier < kDwrsTierCount; ++tier) {
-        auto *name = new QLabel(RatingProfileEditor::tierName(tier));
-        name->setMinimumWidth(kLabelWidth);
-        tierGrid->addWidget(name, tier, 0);
-        auto *button = new QPushButton;
-        button->setObjectName(QStringLiteral("colorSwatch"));
-        button->setFixedSize(kSwatchWidth, 32);
-        button->setCursor(Qt::PointingHandCursor);
-        button->setAccessibleName(RatingProfileEditor::tierName(tier));
-        m_tierButtons[tier] = button;
-        connect(button, &QPushButton::clicked, this, [this, tier] {
-            const QColor initial = m_pendingTierColors[tier].isValid() ? m_pendingTierColors[tier]
-                                                                       : QColor(Qt::white);
-            const QColor picked = QColorDialog::getColor(initial, this, tr("Farbe wählen"));
-            if (!picked.isValid())
-                return;
-            m_pendingTierColors[tier] = picked;
-            updateTierButtons();
-        });
-        tierGrid->addWidget(button, tier, 1);
-    }
-    tierGrid->setColumnStretch(2, 1);
-    body->addLayout(tierGrid);
-    auto *resetTiers = new QPushButton(tr("Auf Standard zurücksetzen"));
-    body->addLayout(hbox({resetTiers}));
-    connect(resetTiers, &QPushButton::clicked, this, [this] {
-        m_pendingTierColors = defaultDwrsTierColors();
-        m_dwrsColorModeCombo->setCurrentIndex(0);
-        updateTierButtons();
-    });
+    finishPage(cards);
+    return page;
+}
+
+QWidget *SettingsPage::buildDwrsColorPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("DWRS-Färbung"),
+                             tr("Wie Bewertungen in Tabellen, auf dem Spielfeld und im Dashboard "
+                                "eingefärbt werden."), &cards);
+
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Farbprofil"), QString(), &body));
+    QFormLayout *form = makeForm(body);
+    m_dwrsSchemeCombo = sized(new QComboBox, kFieldWidth);
+    addRow(form, tr("Profil"), m_dwrsSchemeCombo);
+    auto *saveScheme = new QPushButton(tr("Als eigenes Profil speichern …"));
+    saveScheme->setToolTip(tr("Eigene Farbprofile stehen in allen Spielständen zur Wahl und "
+                              "bleiben bei Updates erhalten."));
+    m_dwrsDeleteSchemeButton = new QPushButton(tr("Profil löschen"));
+    m_dwrsDeleteSchemeButton->setEnabled(false);
+    form->addRow(QString(), [&] {
+        auto *w = new QWidget;
+        w->setLayout(hbox({saveScheme, m_dwrsDeleteSchemeButton}));
+        return w;
+    }());
+    addHint(form, tr("„Original“ ist der Regenbogen der bisherigen Versionen. „Seltenheit“ färbt in "
+                     "Stufen wie bei Gegenständen in Rollenspielen (Schwach, Gewöhnlich, Gut, Selten, "
+                     "Episch, Legendär). „Farbenblind-freundlich“ bleibt auch bei Rot-Grün-Schwäche "
+                     "unterscheidbar. Änderst du unten eine Farbe oder Grenze, wird daraus "
+                     "„Benutzerdefiniert“; mit „Als eigenes Profil speichern“ bleibt es erhalten. "
+                     "Die Schrift wählt der Analyzer automatisch hell oder dunkel, damit sie auf jeder "
+                     "Farbe gut lesbar bleibt."));
+
+    cards->addWidget(makeCard(tr("Stufen und Farben"),
+                              tr("Ab welchem Wert eine Farbe gilt, getrennt für Feldspieler und Torhüter."),
+                              &body));
+    m_dwrsSchemeEditor = new DwrsColorSchemeEditor;
+    body->addWidget(m_dwrsSchemeEditor);
     body->addWidget(foldableHint(
-        tr("Ab welchem Wert eine Stufe beginnt, legt das Bewertungsprofil fest (Einstellungen → "
-           "DWRS-Bewertung), getrennt für Feldspieler und Torhüter. Die Schrift wählt der "
-           "Analyzer automatisch hell oder dunkel, damit sie auf jeder Farbe lesbar bleibt. "
-           "„Gewöhnlich“ hat standardmäßig keine eigene Farbe.")));
+        tr("Ein weicher Übergang mischt die Farben benachbarter Stufen in diesem Abstand um die "
+           "Grenze, so dass etwa 71,5 und 72,5 nicht mehr völlig verschieden aussehen. Stufen ohne "
+           "Füllung werden nie gemischt. Torhüter haben eigene Grenzen, weil ihre Bewertung auf "
+           "einer anderen Grundlage rechnet.")));
+
+    connect(m_dwrsSchemeCombo, &QComboBox::activated, this, [this] {
+        const QString id = m_dwrsSchemeCombo->currentData().toString();
+        if (id == QLatin1String("custom"))
+            return;
+        if (auto builtin = builtinDwrsColorScheme(id)) {
+            m_dwrsSchemeEditor->setScheme(*builtin);
+        } else {
+            for (const auto &scheme : m_dwrsCustomSchemes)
+                if (scheme.id == id)
+                    m_dwrsSchemeEditor->setScheme(scheme);
+        }
+        fillDwrsSchemeCombo(id);
+    });
+    connect(m_dwrsSchemeEditor, &DwrsColorSchemeEditor::edited, this,
+            [this] { fillDwrsSchemeCombo(QStringLiteral("custom")); });
+    connect(saveScheme, &QPushButton::clicked, this, [this] {
+        bool ok = false;
+        const QString current = m_dwrsSchemeEditor->scheme().builtin
+                                    ? tr("%1 (eigen)").arg(m_dwrsSchemeEditor->scheme().name)
+                                    : (m_dwrsSchemeEditor->scheme().id == QLatin1String("custom")
+                                           ? QString() : m_dwrsSchemeEditor->scheme().name);
+        const QString name = QInputDialog::getText(this, tr("Eigenes Farbprofil"), tr("Name:"),
+                                                   QLineEdit::Normal, current, &ok).trimmed();
+        if (!ok || name.isEmpty())
+            return;
+        DwrsColorScheme scheme = m_dwrsSchemeEditor->scheme().editableCopy(QString(), name);
+        scheme.id = QStringLiteral("own-%1").arg(QUuid::createUuid().toString(QUuid::Id128).left(12));
+        bool replaced = false;
+        for (auto &existing : m_dwrsCustomSchemes) {
+            if (existing.name.compare(name, Qt::CaseInsensitive) == 0) {
+                scheme.id = existing.id;
+                existing = scheme;
+                replaced = true;
+            }
+        }
+        if (!replaced)
+            m_dwrsCustomSchemes.append(scheme);
+        QString error;
+        if (!saveDwrsColorSchemes(m_context.paths().dwrsColorSchemesFile(), m_dwrsCustomSchemes, &error)) {
+            QMessageBox::warning(this, tr("Eigenes Farbprofil"),
+                                 tr("Das Farbprofil konnte nicht gespeichert werden: %1").arg(error));
+            return;
+        }
+        m_dwrsSchemeEditor->setScheme(scheme);
+        fillDwrsSchemeCombo(scheme.id);
+    });
+    connect(m_dwrsDeleteSchemeButton, &QPushButton::clicked, this, [this] {
+        const QString id = m_dwrsSchemeCombo->currentData().toString();
+        const auto it = std::find_if(m_dwrsCustomSchemes.begin(), m_dwrsCustomSchemes.end(),
+                                     [&](const DwrsColorScheme &scheme) { return scheme.id == id; });
+        if (it == m_dwrsCustomSchemes.end())
+            return;
+        if (QMessageBox::question(this, tr("Profil löschen"),
+                                  tr("Das Farbprofil „%1“ löschen?").arg(it->name))
+            != QMessageBox::Yes)
+            return;
+        m_dwrsCustomSchemes.erase(it);
+        QString error;
+        saveDwrsColorSchemes(m_context.paths().dwrsColorSchemesFile(), m_dwrsCustomSchemes, &error);
+        m_dwrsSchemeEditor->setScheme(*builtinDwrsColorScheme(originalDwrsColorSchemeId()));
+        fillDwrsSchemeCombo(originalDwrsColorSchemeId());
+    });
 
     finishPage(cards);
     return page;
 }
 
-void SettingsPage::updateTierButtons()
+void SettingsPage::fillDwrsSchemeCombo(const QString &selectId)
 {
-    for (int tier = 0; tier < kDwrsTierCount; ++tier) {
-        QPushButton *button = m_tierButtons[tier];
-        if (!button) continue;
-        const QColor color = m_pendingTierColors[tier];
-        if (color.isValid()) {
-            const CellStyle style = dwrsTierStyleFor(color);
-            button->setText(RatingProfileEditor::tierName(tier));
-            button->setStyleSheet(QStringLiteral("QPushButton { background: %1; color: %2; border-radius: 6px; }")
-                                      .arg(style.background.name(), style.text.name()));
-        } else {
-            button->setText(tr("ohne Füllung"));
-            button->setStyleSheet(QString());
-        }
-    }
+    const QSignalBlocker blocker(m_dwrsSchemeCombo);
+    m_dwrsSchemeCombo->clear();
+    for (const auto &scheme : builtinDwrsColorSchemes())
+        m_dwrsSchemeCombo->addItem(scheme.name, scheme.id);
+    if (!m_dwrsCustomSchemes.isEmpty())
+        m_dwrsSchemeCombo->insertSeparator(m_dwrsSchemeCombo->count());
+    for (const auto &scheme : m_dwrsCustomSchemes)
+        m_dwrsSchemeCombo->addItem(scheme.name, scheme.id);
+    if (selectId == QLatin1String("custom"))
+        m_dwrsSchemeCombo->addItem(tr("Benutzerdefiniert"), QStringLiteral("custom"));
+    m_dwrsSchemeCombo->setCurrentIndex(std::max(0, m_dwrsSchemeCombo->findData(selectId)));
+    const QString id = m_dwrsSchemeCombo->currentData().toString();
+    m_dwrsDeleteSchemeButton->setEnabled(id.startsWith(QLatin1String("own-")));
 }
-
 
 void SettingsPage::updateGraphicsStatus()
 {
@@ -1778,9 +1838,6 @@ void SettingsPage::updateActiveRatingProfile()
         return;
     const QString id = m_context.activeRatingProfileId();
     QString text = id.isEmpty() ? tr("Kein Profil aktiv.") : tr("Aktiv: %1").arg(m_context.activeRatingProfileName());
-    for (const auto &profile : m_context.compatibleRatingProfiles())
-        if (profile.id == id)
-            text += QLatin1Char('\n') + RatingProfileEditor::provenanceText(profile);
     m_activeRatingLabel->setText(text);
     if (m_ratingProfileEditor)
         m_ratingProfileEditor->setActiveProfile(id);
@@ -1961,10 +2018,10 @@ void SettingsPage::refresh()
     m_watermarkCheck->setChecked(
         themeSettings.value(QStringLiteral("header_crest_watermark"), QStringLiteral("true"))
         != QLatin1String("false"));
-    m_dwrsColorModeCombo->setCurrentIndex(
-        themeSettings.value(QStringLiteral("dwrs_color_mode")) == QLatin1String("rainbow") ? 1 : 0);
-    m_pendingTierColors = colorsFromString(themeSettings.value(QStringLiteral("dwrs_tier_colors")));
-    updateTierButtons();
+    m_dwrsCustomSchemes = loadDwrsColorSchemes(m_context.paths().dwrsColorSchemesFile(), nullptr);
+    const DwrsColorScheme dwrsScheme = m_context.resolveDwrsColorScheme(themeSettings);
+    m_dwrsSchemeEditor->setScheme(dwrsScheme);
+    fillDwrsSchemeCombo(dwrsScheme.id);
     m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
                                  != QLatin1String("solid"));
     m_pendingColors.clear();
@@ -2154,12 +2211,14 @@ void SettingsPage::saveAll()
     themeSettings.insert(QStringLiteral("header_crest_watermark"),
                          m_watermarkCheck->isChecked() ? QStringLiteral("true")
                                                        : QStringLiteral("false"));
-    themeSettings.insert(QStringLiteral("dwrs_color_mode"), m_dwrsColorModeCombo->currentData().toString());
-    themeSettings.insert(QStringLiteral("dwrs_tier_colors"), colorsToString(m_pendingTierColors));
+    // The selected scheme, plus a copy of its colours so the save keeps them
+    // if an own scheme is deleted later.
+    const DwrsColorScheme &dwrsScheme = m_dwrsSchemeEditor->scheme();
+    themeSettings.insert(QStringLiteral("dwrs_color_scheme"), dwrsScheme.id);
+    themeSettings.insert(QStringLiteral("dwrs_color_custom"),
+                         QString::fromUtf8(QJsonDocument(dwrsScheme.toJson()).toJson(QJsonDocument::Compact)));
     config.saveThemeSettings(themeSettings);
-    setDwrsColorMode(m_dwrsColorModeCombo->currentData().toString() == QLatin1String("rainbow")
-                         ? DwrsColorMode::Rainbow : DwrsColorMode::Tiers);
-    setDwrsTierColors(m_pendingTierColors);
+    setDwrsColorScheme(dwrsScheme);
 
     bool personalitiesChanged = false;
     ProfileStore personalityStore(db);

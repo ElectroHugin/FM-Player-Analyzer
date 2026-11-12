@@ -33,8 +33,6 @@ public:
     QString profileName() const { return m_profileName; }
     QString calculationVersion() const { return m_calculationVersion; }
     QString game() const { return m_game; }
-    DwrsTierThresholds fieldTiers() const { return m_fieldTiers; }
-    DwrsTierThresholds goalkeeperTiers() const { return m_goalkeeperTiers; }
     QString cacheKey() const { return m_cacheKey; }
     QString profileRevision() const { return m_profileRevision; }
 
@@ -59,8 +57,6 @@ private:
     QString m_profileName;
     QString m_calculationVersion;
     QString m_game;
-    DwrsTierThresholds m_fieldTiers{};
-    DwrsTierThresholds m_goalkeeperTiers{};
 };
 
 // Goalkeeper-only attributes; the role part never weights them.

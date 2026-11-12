@@ -71,6 +71,11 @@ QString AppPaths::colorTemplatesFile() const
     return QDir(dataDir()).filePath(QStringLiteral("color_templates.json"));
 }
 
+QString AppPaths::dwrsColorSchemesFile() const
+{
+    return QDir(dataDir()).filePath(QStringLiteral("dwrs_color_schemes.json"));
+}
+
 QString AppPaths::assetsDir() const
 {
     return QDir(dataDir()).filePath(QStringLiteral("assets"));

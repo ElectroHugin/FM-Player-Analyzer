@@ -89,6 +89,8 @@ add_executable(fmplayeranalyzer
     widgets/CommandPalette.cpp
     widgets/DropZone.h
     widgets/ColumnChooser.h
+    widgets/DwrsColorSchemeEditor.h
+    widgets/DwrsColorSchemeEditor.cpp
     widgets/ColumnChooser.cpp
     widgets/FlowLayout.h
     widgets/FlowLayout.cpp

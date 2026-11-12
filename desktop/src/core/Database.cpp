@@ -1453,11 +1453,15 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
     // >10 s); the SQL work itself is unchanged. 5 binds per row keeps a chunk
     // far below SQLite's bound-variable limit.
     constexpr int kChunkRows = 200;
-    const auto rowsSql = [](int rows) {
+    const auto rowsSql = [](int rows, int columns = 5) {
+        QStringList marks;
+        for (int c = 0; c < columns; ++c)
+            marks << QStringLiteral("?");
+        const QString row = QLatin1Char('(') + marks.join(QStringLiteral(", ")) + QLatin1Char(')');
         QStringList values;
         values.reserve(rows);
         for (int i = 0; i < rows; ++i)
-            values << QStringLiteral("(?, ?, ?, ?, ?)");
+            values << row;
         return values.join(QStringLiteral(", "));
     };
     // A repeated (player, role, timestamp) replaces the earlier row, as before;
@@ -1474,11 +1478,12 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
     // statement are applied in order, exactly like the former per-row upsert.
     const auto latestSql = [&](int rows) {
         return QStringLiteral("INSERT INTO dwrs_latest "
-                              "(player_id, role, absolute, normalized, ts) VALUES ")
-               + rowsSql(rows)
+                              "(player_id, role, absolute, normalized, ts, basis_key) VALUES ")
+               + rowsSql(rows, 6)
                + QStringLiteral(" ON CONFLICT(player_id, role) DO UPDATE SET "
                                 "  absolute = excluded.absolute, "
-                                "  normalized = excluded.normalized, ts = excluded.ts, basis_key = '' "
+                                "  normalized = excluded.normalized, ts = excluded.ts, "
+                                "  basis_key = excluded.basis_key "
                                 "WHERE excluded.ts >= dwrs_latest.ts");
     };
 
@@ -1506,6 +1511,8 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
                 statement->bindValue(bind++, entry.absolute);
                 statement->bindValue(bind++, entry.normalized);
                 statement->bindValue(bind++, entry.timestamp);
+                if (statement == &latest)
+                    statement->bindValue(bind++, entry.basisKey.isNull() ? QStringLiteral("") : entry.basisKey);
             }
             if (!statement->exec()) {
                 m_error = statement->lastError().text();
@@ -1514,22 +1521,49 @@ bool Database::appendDwrsRatings(const std::vector<DwrsEntry> &entries, RatingsO
             }
         }
     }
-    QSqlQuery provenance(m_db), basis(m_db);
-    provenance.prepare(QStringLiteral("INSERT OR REPLACE INTO dwrs_provenance "
-        "(player_id,role,ts,basis_key,profile_id,profile_revision,calculation_version,game_date,attributes) VALUES (?,?,?,?,?,?,?,?,?)"));
-    basis.prepare(QStringLiteral("UPDATE dwrs_latest SET basis_key=? WHERE player_id=? AND role=? AND ts=?"));
-    for (const auto &entry : entries) {
-        if (entry.basisKey.isEmpty()) continue;
-        basis.bindValue(0, entry.basisKey.isNull() ? QStringLiteral("") : entry.basisKey);
-        basis.bindValue(1, entry.playerId); basis.bindValue(2, entry.role); basis.bindValue(3, entry.timestamp);
-        if (!basis.exec()) { m_error = basis.lastError().text(); rollbackTransaction(); return false; }
-        if (entry.basisKey.isEmpty() || !recordHistory) continue;
-        provenance.bindValue(0, entry.playerId); provenance.bindValue(1, entry.role); provenance.bindValue(2, entry.timestamp);
-        provenance.bindValue(3, entry.basisKey); provenance.bindValue(4, entry.profileId);
-        provenance.bindValue(5, entry.profileRevision); provenance.bindValue(6, entry.calculationVersion);
-        provenance.bindValue(7, entry.gameDate.isValid() ? QVariant(entry.gameDate.toString(Qt::ISODate)) : QVariant());
-        provenance.bindValue(8, entry.attributes);
-        if (!provenance.exec()) { m_error = provenance.lastError().text(); rollbackTransaction(); return false; }
+    // Provenance in multi-row chunks too: one statement per rating made a
+    // recalc of a big save sit at 100 % for about a minute.
+    if (recordHistory) {
+        std::vector<const DwrsEntry *> annotated;
+        for (const auto &entry : entries)
+            if (!entry.basisKey.isEmpty())
+                annotated.push_back(&entry);
+        constexpr int kProvenanceRows = 100; // 9 binds per row
+        const auto provenanceSql = [&](int rows) {
+            return QStringLiteral("INSERT OR REPLACE INTO dwrs_provenance "
+                                  "(player_id,role,ts,basis_key,profile_id,profile_revision,"
+                                  "calculation_version,game_date,attributes) VALUES ")
+                   + rowsSql(rows, 9);
+        };
+        QSqlQuery fullProvenance(m_db);
+        fullProvenance.prepare(provenanceSql(kProvenanceRows));
+        const int count = static_cast<int>(annotated.size());
+        for (int start = 0; start < count; start += kProvenanceRows) {
+            const int rows = std::min(kProvenanceRows, count - start);
+            QSqlQuery partial(m_db);
+            if (rows != kProvenanceRows)
+                partial.prepare(provenanceSql(rows));
+            QSqlQuery &provenance = rows == kProvenanceRows ? fullProvenance : partial;
+            int bind = 0;
+            for (int r = start; r < start + rows; ++r) {
+                const DwrsEntry &entry = *annotated[static_cast<size_t>(r)];
+                provenance.bindValue(bind++, entry.playerId);
+                provenance.bindValue(bind++, entry.role);
+                provenance.bindValue(bind++, entry.timestamp);
+                provenance.bindValue(bind++, entry.basisKey);
+                provenance.bindValue(bind++, entry.profileId);
+                provenance.bindValue(bind++, entry.profileRevision);
+                provenance.bindValue(bind++, entry.calculationVersion);
+                provenance.bindValue(bind++, entry.gameDate.isValid()
+                                                 ? QVariant(entry.gameDate.toString(Qt::ISODate)) : QVariant());
+                provenance.bindValue(bind++, entry.attributes);
+            }
+            if (!provenance.exec()) {
+                m_error = provenance.lastError().text();
+                rollbackTransaction();
+                return false;
+            }
+        }
     }
     return commitTransaction();
 }

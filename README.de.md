@@ -377,16 +377,24 @@ Profile bearbeiten, als neues Profil speichern, exportieren und importieren;
 „Für diesen Spielstand verwenden“ rechnet einmal neu.
 
 - **DWRS FM27 · harvestgreen22** (Standard für neue FM27-Spielstände): Kurven je
-  Attribut aus den Messungen von harvestgreen22, mit einer Nachkommastelle.
-  Vorläufig, bis die Messung mit dem fertigen Spiel wiederholt ist.
+  Attribut aus dem [FM27-Attributtest von harvestgreen22](https://sortitoutsi.net/content/78219/fm27-attribute-test-tactical-understanding-training-system-preset-tactics-ai-reverse-engineering-engine-for-test), mit einer
+  Nachkommastelle. Vorläufig, bis die Messung mit dem fertigen Spiel wiederholt
+  ist. Hintergrund in [Issue #17](https://github.com/ElectroHugin/FM-Player-Analyzer/issues/17).
+- **Torhüter (FM27-Profil):** Die Gewichte stammen aus unserer eigenen Auswertung
+  der FM27-Saisonstatistik (verhinderte Tore je Schuss aufs Tor), nicht aus den
+  Messungen von harvestgreen22. Am stärksten zählen Reflexe, Antizipation,
+  Fangsicherheit und Stellungsspiel; Fausten, Exzentrik und Herauslaufen sind
+  Neigungen und zählen nicht als Können. Ein Torhüter-Rollenanteil von 20 % nutzt
+  nur die Attribute, in denen sich eine Torhüterrolle von den anderen unterscheidet.
 - **Rollenanteil** (optional, im FM27-Profil 33 %): Ein Teil der Bewertung kommt
   aus den Schlüssel- und bevorzugten Attributen der Rolle. Ohne ihn wären viele
   Rollen fast gleich, weil die Messung Attribute allgemein bewertet.
 - **Fehlende Attribute** zählen nicht als 0, sondern fallen heraus. Fehlen mehr
   als 30 % des Gewichts, gibt es keine Bewertung.
-- **Farben:** sechs Stufen (Schwach, Gewöhnlich, Gut, Selten, Episch, Legendär),
-  für Torhüter mit eigenen Grenzen. Grenzen gehören zum Profil, die Farben
-  stellst du unter **Einstellungen → Design** ein.
+- **Farben:** unter **Einstellungen → DWRS-Färbung**. „Original“ (die
+  Regenbogen-Skala) bleibt Standard; dazu gibt es weitere Farbprofile wie
+  „Seltenheit“, und du kannst eigene Farben, Schwellen (Feld und Torhüter) und
+  weiche Übergänge wählen und als eigenes Farbprofil speichern.
 
 Bestehende Spielstände behalten ihre Zahlen. Eigene, geänderte Gewichte werden
 zum persönlichen Profil „Meine Gewichte“.

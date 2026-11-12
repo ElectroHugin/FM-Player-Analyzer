@@ -942,8 +942,12 @@ void MainWindow::startDwrsRecalc()
                     QMetaObject::invokeMethod(
                         qApp,
                         [dialogGuard, percent] {
-                            if (dialogGuard)
-                                dialogGuard->setValue(percent);
+                            if (!dialogGuard)
+                                return;
+                            dialogGuard->setValue(percent);
+                            // Writing to the database follows the last player.
+                            if (percent >= 100)
+                                dialogGuard->setLabelText(QCoreApplication::translate("MainWindow", "Bewertungen werden gespeichert …"));
                         },
                         Qt::QueuedConnection);
                 },

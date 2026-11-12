@@ -105,10 +105,8 @@ QString RatingProfile::validate() const
         return QStringLiteral("invalid-role-factor");
     if (!std::isfinite(roleShare) || roleShare < 0.0 || roleShare > kMaxRoleShare)
         return QStringLiteral("invalid-role-share");
-    for (const auto &tiers : {effectiveFieldTiers(), effectiveGoalkeeperTiers()})
-        for (int i = 0; i < int(tiers.size()); ++i)
-            if (!std::isfinite(tiers[i]) || tiers[i] < 0 || tiers[i] > 100 || (i > 0 && tiers[i] < tiers[i - 1]))
-                return QStringLiteral("invalid-tier-thresholds");
+    if (!std::isfinite(goalkeeperRoleShare) || goalkeeperRoleShare < 0.0 || goalkeeperRoleShare > kMaxRoleShare)
+        return QStringLiteral("invalid-role-share");
     for (auto it = attributes.begin(); it != attributes.end(); ++it)
         if (attrIndexByName(it.key()) < 0 || !it->isValid()) return QStringLiteral("invalid-attribute-curve");
     for (auto it = attributeEvidence.begin(); it != attributeEvidence.end(); ++it)
@@ -191,26 +189,8 @@ QJsonObject RatingProfile::toJson() const
             {QStringLiteral("attributes"), curves}, {QStringLiteral("positions"), overridesJson(positions)},
             {QStringLiteral("roles"), overridesJson(roles)}, {QStringLiteral("rolePositions"), mapping}};
     if (roleShare != 0.0) result.insert(QStringLiteral("roleShare"), roleShare);
-    if (fieldTiers || goalkeeperTiers) {
-        const auto array = [](const DwrsTierThresholds &t) {
-            QJsonArray a; for (double v : t) a.append(v); return a;
-        };
-        result.insert(QStringLiteral("tierThresholds"),
-                      QJsonObject{{QStringLiteral("field"), array(effectiveFieldTiers())},
-                                  {QStringLiteral("goalkeeper"), array(effectiveGoalkeeperTiers())}});
-    }
+    if (goalkeeperRoleShare != 0.0) result.insert(QStringLiteral("goalkeeperRoleShare"), goalkeeperRoleShare);
     return result;
-}
-
-DwrsTierThresholds RatingProfile::effectiveFieldTiers() const
-{
-    return fieldTiers ? *fieldTiers
-                      : defaultFieldTierThresholds(calculationVersion == QStringLiteral("classic-midpoint-v1"));
-}
-
-DwrsTierThresholds RatingProfile::effectiveGoalkeeperTiers() const
-{
-    return goalkeeperTiers ? *goalkeeperTiers : defaultGoalkeeperTierThresholds();
 }
 
 QString RatingProfile::revision() const
@@ -235,27 +215,18 @@ std::optional<RatingProfile> RatingProfile::fromJson(const QJsonObject &json, QS
         return fail(QStringLiteral("unsupported-format"));
     RatingProfile result;
     const auto expected = result.toJson();
-    if (json.contains(QStringLiteral("tierThresholds"))) {
-        const auto tiers = json.value(QStringLiteral("tierThresholds")).toObject();
-        const auto read = [&](const QString &key) -> std::optional<DwrsTierThresholds> {
-            const auto array = tiers.value(key).toArray();
-            if (array.size() != int(DwrsTierThresholds{}.size())) return std::nullopt;
-            DwrsTierThresholds t{};
-            for (int i = 0; i < array.size(); ++i) {
-                if (!array[i].isDouble()) return std::nullopt;
-                t[i] = array[i].toDouble();
-            }
-            return t;
-        };
-        result.fieldTiers = read(QStringLiteral("field"));
-        result.goalkeeperTiers = read(QStringLiteral("goalkeeper"));
-        if (!result.fieldTiers || !result.goalkeeperTiers) return fail(QStringLiteral("invalid-tier-thresholds"));
-    }
-    if (!onlyKeys(json, expected.keys() + QStringList{QStringLiteral("roleShare"), QStringLiteral("tierThresholds")}))
+    // "tierThresholds" (2.3.0-test.1) is accepted and ignored: colours are an
+    // app setting now (DWRS colour schemes).
+    if (!onlyKeys(json, expected.keys() + QStringList{QStringLiteral("roleShare"), QStringLiteral("goalkeeperRoleShare"), QStringLiteral("tierThresholds")}))
         return fail(QStringLiteral("unknown-field"));
     if (json.contains(QStringLiteral("roleShare"))) {
         if (!json.value(QStringLiteral("roleShare")).isDouble()) return fail(QStringLiteral("missing-or-invalid-field:roleShare"));
         result.roleShare = json.value(QStringLiteral("roleShare")).toDouble();
+    }
+    if (json.contains(QStringLiteral("goalkeeperRoleShare"))) {
+        if (!json.value(QStringLiteral("goalkeeperRoleShare")).isDouble())
+            return fail(QStringLiteral("missing-or-invalid-field:goalkeeperRoleShare"));
+        result.goalkeeperRoleShare = json.value(QStringLiteral("goalkeeperRoleShare")).toDouble();
     }
     for (auto it = expected.begin(); it != expected.end(); ++it)
         if (!((it.key() == QStringLiteral("rolePolicies") || it.key() == QStringLiteral("attributeEvidence")) && !json.contains(it.key()))

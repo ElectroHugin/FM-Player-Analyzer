@@ -399,6 +399,7 @@ void DwrsProgressPage::reloadTimeline()
     Database &db = m_context.database();
     m_timeline = Development::buildTimeline(db.dwrsHistory(ids), db.dwrsRecalcTimestamps());
     m_snapshotLabels = developmentSnapshotLabels(m_context, m_timeline);
+    m_snapshotGameDates = developmentSnapshotGameDates(m_context, m_timeline);
 }
 
 void DwrsProgressPage::reloadLineup()
@@ -868,7 +869,7 @@ void DwrsProgressPage::rebuildChart()
         m_chart->clearChart(tr("Keine historischen Daten für die aktuelle Auswahl."));
     else
         m_chart->setSeries(std::move(series), m_snapshotLabels, mode,
-                           Development::recalcMarkers(shownTracks, start));
+                           Development::recalcMarkers(shownTracks, start), m_snapshotGameDates);
 }
 
 } // namespace fm

@@ -9,9 +9,7 @@ class TestDwrsDisplay : public QObject
 private slots:
     void init()
     {
-        setDwrsColorMode(DwrsColorMode::Tiers);
-        setDwrsTierColors(defaultDwrsTierColors());
-        setDwrsTierThresholds(defaultFieldTierThresholds(false), defaultGoalkeeperTierThresholds());
+        setDwrsColorScheme(*builtinDwrsColorScheme(QStringLiteral("rarity")));
         setDwrsGoalkeeperRoles({QStringLiteral("GK")});
     }
     void formatsWithLanguageSeparator()
@@ -29,27 +27,44 @@ private slots:
         QCOMPARE(formatDwrsDelta(-2.4), QStringLiteral("-2"));
         QCOMPARE(roundDwrs(86.49), 86.0);
     }
-    void tiersFollowThresholdsAndRoleKind()
+    void schemesFollowThresholdsAndRoleKind()
     {
         setDwrsDecimals(1);
-        QCOMPARE(dwrsTier(54.9), 0);
-        QCOMPARE(dwrsTier(55.0), 1);
-        QCOMPARE(dwrsTier(64.96), 2); // shown as 65.0
-        QCOMPARE(dwrsTier(83.9), 4);
-        QCOMPARE(dwrsTier(84.0), 5);
-        QCOMPARE(dwrsTier(50.0, true), 1); // goalkeeper thresholds start at 48
+        const auto rarity = *builtinDwrsColorScheme(QStringLiteral("rarity"));
+        QCOMPARE(dwrsCellStyle(54.9, QStringLiteral("AF")).background, rarity.stops[0].color);
         QVERIFY(!dwrsCellStyle(60.0, QStringLiteral("AF")).isValid()); // Common: no fill
-        QVERIFY(dwrsCellStyle(50.0, QStringLiteral("GK")).isValid() == false);
-        QCOMPARE(dwrsCellStyle(90.0, QStringLiteral("AF")).background, defaultDwrsTierColors()[5]);
-        setDwrsColorMode(DwrsColorMode::Rainbow);
+        QCOMPARE(dwrsCellStyle(64.96, QStringLiteral("AF")).background, rarity.stops[2].color); // shown 65.0
+        QCOMPARE(dwrsCellStyle(90.0, QStringLiteral("AF")).background, rarity.stops[5].color);
+        QVERIFY(!dwrsCellStyle(50.0, QStringLiteral("GK")).isValid()); // keeper thresholds start at 48
+        setDwrsGoalkeeperRoles({QStringLiteral("SK-IP")});
+        QVERIFY(!dwrsCellStyle(50.0, QStringLiteral("SK")).isValid()); // shown without phase suffix
+        setDwrsColorScheme(*builtinDwrsColorScheme(originalDwrsColorSchemeId()));
         QCOMPARE(dwrsCellStyle(90.0, QStringLiteral("AF")).background, rainbowCellStyle(90.0).background);
+        QCOMPARE(originalDwrsColorSchemeId(), QStringLiteral("original"));
     }
-    void defaultTierColorsAreReadable()
+    void blendMixesNeighboursNearBorders()
     {
-        for (int tier = 0; tier < kDwrsTierCount; ++tier) {
-            const CellStyle style = dwrsTierStyle(tier);
-            if (!style.isValid()) continue;
-            QVERIFY2(contrastRatio(style.background, style.text) >= 4.5, qPrintable(style.background.name()));
+        DwrsColorScheme scheme;
+        scheme.id = QStringLiteral("t");
+        scheme.blend = 2.0;
+        scheme.stops = {{0, 0, QColor(0, 0, 0)}, {50, 40, QColor(200, 200, 200)}};
+        QCOMPARE(scheme.style(40.0, false).background, QColor(0, 0, 0));
+        QCOMPARE(scheme.style(60.0, false).background, QColor(200, 200, 200));
+        QCOMPARE(scheme.style(50.0, false).background, QColor(100, 100, 100));
+        QCOMPARE(scheme.style(40.0, true).background, QColor(100, 100, 100)); // keeper border
+        scheme.blend = 0.0;
+        QCOMPARE(scheme.style(49.9, false).background, QColor(0, 0, 0));
+        QCOMPARE(scheme.style(50.0, false).background, QColor(200, 200, 200));
+    }
+    void builtinColorsAreReadable()
+    {
+        for (const auto &scheme : builtinDwrsColorSchemes()) {
+            QVERIFY2(scheme.validate().isEmpty(), qPrintable(scheme.id));
+            for (const auto &stop : scheme.stops) {
+                if (!stop.color.isValid()) continue;
+                const CellStyle style = dwrsReadableStyle(stop.color);
+                QVERIFY2(contrastRatio(style.background, style.text) >= 4.5, qPrintable(stop.color.name()));
+            }
         }
         for (const double delta : {-6.0, -2.0, 2.0, 6.0}) {
             const CellStyle style = dwrsComparisonStyle(delta);
@@ -57,15 +72,27 @@ private slots:
             QVERIFY(contrastRatio(style.background, style.text) >= 4.5);
         }
         QVERIFY(!dwrsComparisonStyle(1.5).isValid());
-        QVERIFY(!dwrsComparisonStyle(-1.2).isValid());
     }
-    void colorsRoundTrip()
+    void ownSchemesRoundTrip()
     {
-        auto colors = defaultDwrsTierColors();
-        colors[3] = QColor(0x12, 0x34, 0x56);
-        const auto restored = colorsFromString(colorsToString(colors));
-        for (int i = 0; i < kDwrsTierCount; ++i) QCOMPARE(restored[i], colors[i]);
-        QCOMPARE(colorsFromString(QStringLiteral("junk"))[0], defaultDwrsTierColors()[0]);
+        QTemporaryDir dir;
+        const auto original = *builtinDwrsColorScheme(originalDwrsColorSchemeId());
+        DwrsColorScheme own = original.editableCopy(QStringLiteral("own-1"), QStringLiteral("Mine"));
+        QVERIFY(!own.rainbow);
+        QVERIFY(!own.builtin);
+        QCOMPARE(own.stops.size(), 6);
+        own.stops[1].color = QColor();
+        const QString path = dir.filePath(QStringLiteral("schemes.json"));
+        QString error;
+        QVERIFY(saveDwrsColorSchemes(path, {own}, &error));
+        const auto loaded = loadDwrsColorSchemes(path, &error);
+        QCOMPARE(loaded.size(), 1);
+        QVERIFY(loaded[0].sameColors(own));
+        QCOMPARE(loaded[0].name, QStringLiteral("Mine"));
+        QVERIFY(loadDwrsColorSchemes(dir.filePath(QStringLiteral("missing.json")), &error).isEmpty());
+        DwrsColorScheme bad = own;
+        bad.stops[2].field = bad.stops[1].field; // not ascending
+        QVERIFY(!bad.validate().isEmpty());
     }
 };
 
