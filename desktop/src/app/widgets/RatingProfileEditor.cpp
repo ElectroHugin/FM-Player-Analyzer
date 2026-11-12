@@ -214,7 +214,11 @@ QString RatingProfileEditor::provenanceText(const RatingProfile &profile)
     lines << (profile.sourceVersion.isEmpty() ? tr("Keine Quelle angegeben") : tr("Quelle: %1").arg(profile.sourceVersion));
     if (profile.origin == QStringLiteral("builtin-harvestgreen"))
         lines << tr("Vorläufig: harvestgreen22 misst nach dem offiziellen Release von FM27 neu. "
-                    "Die Werte können sich mit einem späteren Update ändern.");
+                    "Die Werte können sich mit einem späteren Update ändern.")
+              << tr("Torhüter: Diese Gewichte stammen nicht von harvestgreen22, sondern aus unserer eigenen "
+                    "Auswertung der FM27-Saisonstatistik (verhinderte Tore je Schuss aufs Tor, an einem zweiten "
+                    "Spielstand gegengeprüft). Am stärksten zählen Antizipation, Fangsicherheit, Reflexe und "
+                    "Stellungsspiel.");
     // The app shows no internet addresses: an address becomes its site name.
     QStringList sources;
     for (const QString &source : profile.sources) {
