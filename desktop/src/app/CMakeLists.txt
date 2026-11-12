@@ -97,6 +97,8 @@ add_executable(fmplayeranalyzer
     widgets/FootStrengthWidget.h
     widgets/FootStrengthWidget.cpp
     widgets/RolePhaseSwitch.h
+    widgets/TrainingProfileEditor.h
+    widgets/TrainingProfileEditor.cpp
     widgets/RolePhaseSwitch.cpp
     widgets/ClubHeaderBar.h
     widgets/LineIcons.h

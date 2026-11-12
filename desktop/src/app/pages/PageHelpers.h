@@ -3,6 +3,7 @@
 #include "../AppContext.h"
 #include "core/Development.h"
 #include "core/ImportHistory.h"
+#include "core/ProfileStore.h"
 #include "core/TrainingAdvice.h"
 #include "core/Utils.h"
 
@@ -134,6 +135,19 @@ inline TrainingAdvice::AgeWindows trainingWindows(AppContext &context)
     w.technicalPeak = c.trainingSetting(QStringLiteral("technical_peak_age"));
     w.technicalLocked = c.trainingSetting(QStringLiteral("technical_locked_age"));
     return w;
+}
+
+// The save's training profile (Settings -> Training); without a stored
+// profile the standard one from the age windows.
+inline TrainingAdvice::TrainingProfile trainingProfile(AppContext &context)
+{
+    QByteArray json;
+    TrainingAdvice::TrainingProfile profile;
+    if (ProfileStore(context.database()).readDocument(ProfileStore::trainingProfileDocument(), json)
+        && !json.isEmpty()
+        && TrainingAdvice::TrainingProfile::fromJson(QJsonDocument::fromJson(json).object(), &profile))
+        return profile;
+    return TrainingAdvice::standardProfile(trainingWindows(context));
 }
 
 // Roles a player may train for: intersection of the roles he can play and the

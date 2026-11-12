@@ -1,4 +1,5 @@
 #include "SettingsPage.h"
+#include "PageHelpers.h"
 #include "../widgets/DwrsColorSchemeEditor.h"
 #include <QUuid>
 #include "../widgets/RatingProfileEditor.h"
@@ -31,6 +32,7 @@
 #include <QDoubleSpinBox>
 #include <QFile>
 #include <QFileDialog>
+#include "../widgets/TrainingProfileEditor.h"
 #include <QStandardPaths>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -1167,57 +1169,20 @@ QWidget *SettingsPage::buildTrainingPage()
 {
     QVBoxLayout *cards = nullptr;
     QWidget *page = makePage(tr("Training"),
-                             tr("Bis zu welchem Alter sich Attributgruppen noch trainieren "
-                                "lassen. Steuert die Trainingsempfehlung."),
+                             tr("Welche Attribute bis zu welchem Alter wie stark trainiert "
+                                "werden. Steuert die Trainingsempfehlung."),
                              &cards);
 
     QVBoxLayout *body = nullptr;
-    cards->addWidget(makeCard(tr("Trainings-Altersfenster"), QString(), &body));
-    auto *grid = new QGridLayout;
-    grid->setContentsMargins(0, 0, 0, 0);
-    grid->setHorizontalSpacing(24);
-    grid->setVerticalSpacing(12);
-    auto *peakHead = caption(tr("Voll trainierbar bis"));
-    auto *lockedHead = caption(tr("Gesperrt ab"));
-    grid->addWidget(peakHead, 0, 1);
-    grid->addWidget(lockedHead, 0, 2);
-    const auto makeAgeSpin = [] {
-        auto *spin = sized(new QSpinBox, kNumberWidth);
-        spin->setRange(15, 40);
-        return spin;
-    };
-    int row = 1;
-    const auto addWindow = [&](const QString &group, const QString &detail, QSpinBox *&peak,
-                               QSpinBox *&locked) {
-        auto *labels = new QVBoxLayout;
-        labels->setSpacing(0);
-        auto *name = new QLabel(group);
-        labels->addWidget(name);
-        if (!detail.isEmpty())
-            labels->addWidget(caption(detail));
-        auto *holder = new QWidget;
-        labels->setContentsMargins(0, 0, 0, 0);
-        holder->setLayout(labels);
-        holder->setMinimumWidth(kLabelWidth);
-        peak = makeAgeSpin();
-        locked = makeAgeSpin();
-        grid->addWidget(holder, row, 0);
-        grid->addWidget(peak, row, 1);
-        grid->addWidget(locked, row, 2);
-        ++row;
-    };
-    addWindow(tr("Explosiv"), tr("Tempo, Antritt, Beweglichkeit"), m_explosivePeakSpin,
-              m_explosiveLockedSpin);
-    addWindow(tr("Kraft"), tr("Kraft, Ausdauer, Sprungkraft, Balance"), m_strengthPeakSpin,
-              m_strengthLockedSpin);
-    addWindow(tr("Technik"), QString(), m_technicalPeakSpin, m_technicalLockedSpin);
-    grid->setColumnStretch(3, 1);
-    body->addLayout(grid);
+    cards->addWidget(makeCard(tr("Trainingsprofil"), QString(), &body));
+    m_trainingEditor = new TrainingProfileEditor;
+    body->addWidget(m_trainingEditor);
     body->addWidget(foldableHint(
-        tr("Bis 'voll trainierbar bis' gilt eine Gruppe als voll trainierbar, danach nimmt die "
-           "Wirkung linear ab bis 'gesperrt ab'. Mentale Attribute gelten immer als "
-           "trainierbar, Charakter-Attribute (Entschlossenheit, Arbeitsrate) nie (nur über "
-           "Mentoring).")));
+        tr("Ein Band fasst Attribute zusammen, die sich gleich entwickeln. Bis „voll trainierbar "
+           "bis“ wirkt Training voll, danach nimmt die Wirkung linear ab bis „gesperrt ab“; „immer“ "
+           "heißt nie gesperrt. Das Gewicht verstärkt oder schwächt ein Band in der Empfehlung. "
+           "Bänder mit „Nur Mentoring“ erscheinen nur als Mentoring-Hinweis. Attribute ohne Band "
+           "werden nicht empfohlen. Das Profil gehört zu diesem Spielstand.")));
 
     finishPage(cards);
     return page;
@@ -2019,12 +1984,8 @@ void SettingsPage::refresh()
     m_wrongSideSpin->setValue(config.gapAnalysisSetting(QStringLiteral("wrong_side_penalty")));
     m_retirementAgeSpin->setValue(config.freshnessSetting(QStringLiteral("retirement_age")));
     m_staleUploadsSpin->setValue(config.freshnessSetting(QStringLiteral("stale_after_full_uploads")));
-    m_explosivePeakSpin->setValue(config.trainingSetting(QStringLiteral("explosive_peak_age")));
-    m_explosiveLockedSpin->setValue(config.trainingSetting(QStringLiteral("explosive_locked_age")));
-    m_strengthPeakSpin->setValue(config.trainingSetting(QStringLiteral("strength_peak_age")));
-    m_strengthLockedSpin->setValue(config.trainingSetting(QStringLiteral("strength_locked_age")));
-    m_technicalPeakSpin->setValue(config.trainingSetting(QStringLiteral("technical_peak_age")));
-    m_technicalLockedSpin->setValue(config.trainingSetting(QStringLiteral("technical_locked_age")));
+    m_trainingEditor->setProfile(trainingProfile(m_context),
+                                 TrainingAdvice::standardProfile(trainingWindows(m_context)));
 
     const auto themeSettings = config.themeSettings();
     m_modeCombo->setCurrentIndex(
@@ -2213,15 +2174,6 @@ void SettingsPage::saveAll()
     config.setGapAnalysisSetting(QStringLiteral("wrong_side_penalty"), m_wrongSideSpin->value());
     config.setFreshnessSetting(QStringLiteral("retirement_age"), m_retirementAgeSpin->value());
     config.setFreshnessSetting(QStringLiteral("stale_after_full_uploads"), m_staleUploadsSpin->value());
-    config.setTrainingSetting(QStringLiteral("explosive_peak_age"), m_explosivePeakSpin->value());
-    config.setTrainingSetting(QStringLiteral("explosive_locked_age"),
-                              m_explosiveLockedSpin->value());
-    config.setTrainingSetting(QStringLiteral("strength_peak_age"), m_strengthPeakSpin->value());
-    config.setTrainingSetting(QStringLiteral("strength_locked_age"),
-                              m_strengthLockedSpin->value());
-    config.setTrainingSetting(QStringLiteral("technical_peak_age"), m_technicalPeakSpin->value());
-    config.setTrainingSetting(QStringLiteral("technical_locked_age"),
-                              m_technicalLockedSpin->value());
 
     auto themeSettings = config.themeSettings();
     themeSettings.insert(QStringLiteral("current_mode"),
@@ -2244,6 +2196,19 @@ void SettingsPage::saveAll()
                          QString::fromUtf8(QJsonDocument(dwrsScheme.toJson()).toJson(QJsonDocument::Compact)));
     config.saveThemeSettings(themeSettings);
     setDwrsColorScheme(dwrsScheme);
+
+    // Training profile: stored only when it differs from the standard.
+    {
+        const TrainingAdvice::TrainingProfile training = m_trainingEditor->profile();
+        ProfileStore trainingStore(db);
+        const bool standard = training == TrainingAdvice::standardProfile(trainingWindows(m_context));
+        clubSettingsOk = clubSettingsOk
+                         && (standard ? trainingStore.removeDocument(ProfileStore::trainingProfileDocument())
+                                      : trainingStore.writeDocument(ProfileStore::trainingProfileDocument(),
+                                                                    QJsonDocument(training.toJson()).toJson(
+                                                                        QJsonDocument::Compact),
+                                                                    false));
+    }
 
     bool personalitiesChanged = false;
     ProfileStore personalityStore(db);
