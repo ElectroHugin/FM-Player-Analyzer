@@ -8,11 +8,13 @@
 #include <QChartView>
 #include <QGraphicsLineItem>
 #include <QGraphicsSimpleTextItem>
+#include <QLabel>
 #include <QLegendMarker>
 #include <QLineSeries>
 #include <QLocale>
 #include <QMouseEvent>
 #include <QPolarChart>
+#include <QSet>
 #include <QToolTip>
 #include <QVBoxLayout>
 #include <QValueAxis>
@@ -81,6 +83,14 @@ void styleAxis(QAbstractAxis *axis, const ThemeManager &theme)
 namespace {
 
 // Distance between labelled snapshots, so that at most ~10 ticks carry a label.
+// Secondary text: the text colour halfway towards the panel background.
+QColor mutedText(const ThemeManager &theme)
+{
+    const QColor a = theme.text(), b = theme.surface();
+    return QColor((a.red() * 3 + b.red() * 2) / 5, (a.green() * 3 + b.green() * 2) / 5,
+                  (a.blue() * 3 + b.blue() * 2) / 5);
+}
+
 int tickStep(int count)
 {
     for (const int step : {1, 2, 5, 10, 20, 50, 100, 200, 500}) {
@@ -137,10 +147,11 @@ void LineChartWidget::setAxisTitle(const QString &title)
 }
 
 void LineChartWidget::setSeries(QList<Series> series, QStringList snapshotLabels,
-                                ValueMode mode, QList<int> markers)
+                                ValueMode mode, QList<int> markers, QList<QDate> gameDates)
 {
     m_series = std::move(series);
     m_labels = std::move(snapshotLabels);
+    m_gameDates = std::move(gameDates);
     m_mode = mode;
     m_markers = std::move(markers);
     m_emptyMessage = tr("Noch keine historischen DWRS-Daten vorhanden.");
@@ -151,6 +162,7 @@ void LineChartWidget::clearChart(const QString &message)
 {
     m_series.clear();
     m_labels.clear();
+    m_gameDates.clear();
     m_markers.clear();
     m_emptyMessage = message;
     rebuild();
@@ -249,13 +261,25 @@ void LineChartWidget::rebuild()
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
     xAxis->setStartValue(minX - 0.3);
     xAxis->setRange(minX - 0.3, maxX + 0.3);
-    const int step = tickStep(maxX - minX + 1);
+    // Dates are wider than "-5": fewer of them fit.
+    bool anyDate = false;
+    for (int index = minX; index <= maxX; ++index)
+        anyDate = anyDate || gameDate(index).isValid();
+    const int step = tickStep((maxX - minX + 1) * (anyDate ? 2 : 1));
+    QSet<QString> used; // category labels must be unique
     for (int index = minX; index <= maxX; ++index) {
         if ((now - index) % step != 0)
             continue;
-        xAxis->append(index == now ? tr("jetzt") : QStringLiteral("−%1").arg(now - index), index);
+        const QDate date = gameDate(index);
+        QString label = date.isValid() ? QLocale().toString(date, QLocale::ShortFormat)
+                        : index == now ? tr("jetzt")
+                                       : QStringLiteral("−%1").arg(now - index);
+        while (used.contains(label))
+            label += QChar(0x200B); // same in-game date twice: invisible suffix
+        used.insert(label);
+        xAxis->append(label, index);
     }
-    xAxis->setTitleText(m_axisTitle);
+    xAxis->setTitleText(anyDate ? tr("Ingame-Datum") : m_axisTitle);
 
     auto *yAxis = new QValueAxis(chart);
     yAxis->setRange(low, high);
@@ -333,8 +357,10 @@ void LineChartWidget::updateHover(const QPoint &viewPos)
     QAbstractSeries *reference = chart->series().first();
     const int index = std::clamp(qRound(chart->mapToValue(chartPos, reference).x()),
                                  m_firstIndex, m_lastIndex);
-    if (index == m_hoverIndex)
+    if (index == m_hoverIndex) {
+        placeHover(viewPos);
         return;
+    }
     m_hoverIndex = index;
 
     const qreal x = chart->mapToPosition(QPointF(index, 0.0), reference).x();
@@ -363,27 +389,74 @@ void LineChartWidget::updateHover(const QPoint &viewPos)
               [](const auto &a, const auto &b) { return a.first > b.first; });
 
     const int now = m_labels.isEmpty() ? m_lastIndex : static_cast<int>(m_labels.size()) - 1;
-    QString html = QStringLiteral("<b>%1</b>")
-                       .arg(index == now ? tr("Aktueller Stand")
-                                         : tr("Datenstand −%1").arg(now - index));
-    if (index >= 0 && index < m_labels.size())
-        html += QStringLiteral(" · %1").arg(m_labels.at(index).toHtmlEscaped());
+    const QString position = index == now ? tr("Aktueller Stand") : tr("Datenstand −%1").arg(now - index);
+    QString html;
+    const QDate date = gameDate(index);
+    if (date.isValid()) {
+        // The in-game date leads; the upload time says little and is left out.
+        QString format = QLocale().dateFormat(QLocale::ShortFormat);
+        if (!format.contains(QStringLiteral("yyyy")))
+            format.replace(QStringLiteral("yy"), QStringLiteral("yyyy"));
+        html = QStringLiteral("<span style='font-size:large'><b>%1</b></span><br><span style='color:%2'>%3</span>")
+                   .arg(QLocale().toString(date, format).toHtmlEscaped(),
+                        mutedText(m_theme).name(),
+                        position.toHtmlEscaped());
+    } else {
+        html = QStringLiteral("<b>%1</b>").arg(position.toHtmlEscaped());
+        if (index >= 0 && index < m_labels.size())
+            html += QStringLiteral(" · %1").arg(m_labels.at(index).toHtmlEscaped());
+    }
     for (const auto &row : std::as_const(rows))
         html += QStringLiteral("<br>") + row.second;
     if (m_markers.contains(index))
         html += QStringLiteral("<br><i>%1</i>")
                     .arg(tr("Neuberechnung: herausgerechnet, frühere Werte sind auf die "
                             "neue Berechnung umgerechnet."));
-    QToolTip::showText(m_view->viewport()->mapToGlobal(viewPos) + QPoint(18, 18), html,
-                       m_view->viewport());
+    // An own panel instead of QToolTip: a tooltip closes by itself after a few
+    // seconds, this one stays while the mouse is over the plot.
+    if (!m_hoverPanel) {
+        m_hoverPanel = new QLabel(m_view->viewport());
+        m_hoverPanel->setObjectName(QStringLiteral("chartHoverPanel"));
+        m_hoverPanel->setTextFormat(Qt::RichText);
+        m_hoverPanel->setAttribute(Qt::WA_TransparentForMouseEvents);
+        m_hoverPanel->setMargin(8);
+    }
+    m_hoverPanel->setStyleSheet(QStringLiteral("QLabel#chartHoverPanel { background: %1; color: %2; border: 1px solid %3; border-radius: 6px; }")
+                                    .arg(m_theme.surface().name(), m_theme.text().name(), m_theme.interactive().name()));
+    m_hoverPanel->setText(html);
+    m_hoverPanel->adjustSize();
+    m_hoverPanel->show();
+    m_hoverPanel->raise();
+    placeHover(viewPos);
+}
+
+void LineChartWidget::placeHover(const QPoint &viewPos)
+{
+    if (!m_hoverPanel || !m_hoverPanel->isVisible())
+        return;
+    const QRect area = m_view->viewport()->rect();
+    const QSize size = m_hoverPanel->size();
+    QPoint at = viewPos + QPoint(18, 18);
+    if (at.x() + size.width() > area.right())
+        at.setX(viewPos.x() - 18 - size.width()); // flip to the left of the cursor
+    if (at.y() + size.height() > area.bottom())
+        at.setY(viewPos.y() - 18 - size.height()); // above the cursor
+    at.setX(std::max(at.x(), area.left()));
+    at.setY(std::max(at.y(), area.top()));
+    m_hoverPanel->move(at);
+}
+
+QDate LineChartWidget::gameDate(int index) const
+{
+    return index >= 0 && index < m_gameDates.size() ? m_gameDates.at(index) : QDate();
 }
 
 void LineChartWidget::hideHover()
 {
     if (m_crosshair)
         m_crosshair->hide();
-    if (m_hoverIndex >= 0)
-        QToolTip::hideText();
+    if (m_hoverPanel)
+        m_hoverPanel->hide();
     m_hoverIndex = -1;
 }
 

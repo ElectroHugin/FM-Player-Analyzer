@@ -41,6 +41,18 @@ inline QStringList developmentSnapshotLabels(AppContext &context,
     return labels;
 }
 
+// In-game date per development snapshot (invalid when the import had none).
+inline QList<QDate> developmentSnapshotGameDates(AppContext &context,
+                                                 const Development::Timeline &timeline)
+{
+    const std::vector<ImportHistory::ImportRecord> imports = context.database().imports();
+    QList<QDate> dates;
+    dates.reserve(timeline.size());
+    for (const Development::Session &session : timeline.sessions)
+        dates << ImportHistory::gameDateAt(imports, session.last);
+    return dates;
+}
+
 // Tactic names with the (club or national) favorite tactics first — the
 // legacy ordering used by Best XI, Gap Analysis and the national pages.
 inline QStringList favoritesFirstTactics(AppContext &context, bool national)

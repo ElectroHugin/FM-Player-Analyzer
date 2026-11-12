@@ -872,7 +872,8 @@ void PlayerProfilePage::showPlayer()
                                "weitere Snapshots, um die Entwicklung zu sehen."));
     else
         m_chart->setSeries(std::move(chartSeries), snapshotLabels,
-                           LineChartWidget::ValueMode::Percent, markers);
+                           LineChartWidget::ValueMode::Percent, markers,
+                           developmentSnapshotGameDates(m_context, timeline));
     // Profile switches are recalculations: the chart marks them and computes
     // no development across them. Name them here.
     QStringList switches;
