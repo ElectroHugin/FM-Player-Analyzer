@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-Test build 2.3.0-test.1:
+Test build 2.3.0-test.2:
 
 - DWRS now uses rating profiles. Each save calculates with exactly one profile, shown in Settings → DWRS Rating.
 - New FM27 profile "DWRS FM27 · harvestgreen22", based on harvestgreen22's attribute measurements (thank you!). Provisional: values can change after their re-test with the full game.
@@ -16,6 +16,7 @@ Test build 2.3.0-test.1:
 - New settings page "DWRS colouring": the original rainbow stays the default; more colour schemes (e.g. Rarity), own colours, thresholds and soft borders, saved as your own schemes.
 - No web links inside the app; sources are linked in the README.
 - Saving ratings after a recalculation is faster and the progress dialog shows the saving step.
+- DWRS development chart: the hover panel stays open, and the in-game date replaces "−1/−2" on the axis and in the panel.
 - Overview: colour positional strength by level or by comparison with the rest of the squad.
 - Switching the profile recalculates once and marks it in the history; development does not count it as progress.
 - Player databases migrate to schema 18; 2.2.3 cannot open the upgraded database. A backup is made first.
