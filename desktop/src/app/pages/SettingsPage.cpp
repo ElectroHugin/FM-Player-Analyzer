@@ -992,8 +992,8 @@ QWidget *SettingsPage::buildPersonalityPage()
 {
     QVBoxLayout *cards = nullptr;
     QWidget *page = makePage(tr("Persönlichkeiten"),
-        tr("Einstufung für Talent-Score, Analyse und Filter. FM24 und FM27 werden getrennt "
-           "in diesem Spielstand gespeichert. Standard: bisherige FM24-Einstufung."), &cards);
+        tr("Einstufung für Talent-Score, Analyse und Filter, passend zur FM-Version dieses "
+           "Spielstands."), &cards);
     QVBoxLayout *body = nullptr;
     cards->addWidget(makeCard(tr("Persönlichkeiten"), QString(), &body));
     m_personalityTable = new QTableWidget;
@@ -1004,13 +1004,15 @@ QWidget *SettingsPage::buildPersonalityPage()
     m_personalityTable->verticalHeader()->hide();
     m_personalityTable->setMinimumHeight(480);
     body->addWidget(m_personalityTable);
-    auto *reset = new QPushButton(tr("FM24-Standard für beide Versionen wiederherstellen"));
+    auto *reset = new QPushButton(tr("Standard wiederherstellen"));
     body->addWidget(reset);
     connect(reset, &QPushButton::clicked, this, [this] {
         for (int row = 0; row < m_personalityTable->rowCount(); ++row) {
             const QString category = personalityDefaults().value(
                 m_personalityTable->item(row, 0)->text(), QStringLiteral("neutral"));
             for (int col = 1; col <= 2; ++col) {
+                if (m_personalityTable->isColumnHidden(col))
+                    continue; // only the save's own FM version
                 auto *combo = qobject_cast<QComboBox *>(m_personalityTable->cellWidget(row, col));
                 combo->setCurrentIndex(combo->findData(category));
             }
@@ -1078,6 +1080,14 @@ void SettingsPage::refreshPersonalities()
             m_personalityTable->setCellWidget(row, col, combo);
         }
     }
+    // A save belongs to one FM version: show and edit only its column (the
+    // other version's stored values stay as they are).
+    const QString version = m_context.fmVersionId();
+    const bool fm24 = version == QLatin1String("fm24"), fm27 = version == QLatin1String("fm27");
+    m_personalityTable->setColumnHidden(1, fm27);
+    m_personalityTable->setColumnHidden(2, fm24);
+    m_personalityTable->horizontalHeaderItem(1)->setText(fm24 ? tr("Einstufung") : QStringLiteral("FM24"));
+    m_personalityTable->horizontalHeaderItem(2)->setText(fm27 ? tr("Einstufung") : QStringLiteral("FM27"));
 }
 
 QWidget *SettingsPage::buildSquadPage()
