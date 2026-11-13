@@ -28,7 +28,7 @@ Added for 2.3.0-test.3:
 - Personalities: a save only shows and edits the classification of its own FM version.
 - Overview, squad comparison: grey for the squad median instead of dark cards, a colour legend and the distance in the tooltip.
 - Settings: opened explanations are no longer cut off.
-- Leagues without a squad list (e.g. Bundesliga): mark a player as "Not registered" in the context menu. Best XI and the Overview then leave him out.
+- Leagues without a squad list (e.g. Bundesliga): mark a player as "Not registered" in the context menu. Best XI and the Overview then leave him out. Squad Registration lists the squad with a "Registered" tick for these leagues.
 
 ## 2.2.3 – 2026-11-09
 

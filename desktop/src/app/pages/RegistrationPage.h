@@ -102,6 +102,11 @@ private:
     QScrollArea *m_scroll = nullptr;
     QWidget *m_content = nullptr;
     QLabel *m_hint = nullptr;
+    // Leagues without a squad list: who is registered in the game at all.
+    QGroupBox *m_registeredBox = nullptr;
+    QLabel *m_registeredSummary = nullptr;
+    QTableWidget *m_registeredTable = nullptr;
+    void fillRegisteredTable();
     QLabel *m_usageHint = nullptr;
     QFrame *m_changesBox = nullptr; // what changed since the last save
     QLabel *m_changesLabel = nullptr;
