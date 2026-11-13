@@ -1,5 +1,6 @@
 #include "DashboardPage.h"
 #include "core/DwrsDisplay.h"
+#include "core/Registration.h"
 #include "core/ImportHistory.h"
 
 #include "../AppContext.h"
@@ -718,9 +719,12 @@ void DashboardPage::updateStarterView(const std::vector<const Player *> &clubPla
 {
     // The same starting XI as Best XI without a competition: the whole club
     // without the long-term injured, with the manual places of Best XI.
+    // Without a squad list, players marked "not registered" stay out too.
+    const bool skipUnregistered =
+        !Registration::restrictsSquad(m_context.registrationSettings().league);
     std::vector<const Player *> pool;
     for (const Player *player : clubPlayers) {
-        if (!player->longTermInjured)
+        if (!player->longTermInjured && !(skipUnregistered && player->registration.leagueBlocked))
             pool.push_back(player);
     }
     const Definitions &definitions = m_context.definitions();
@@ -942,8 +946,8 @@ void DashboardPage::showStarterView()
         tr("„Elf −4,0“: Fällt der Spieler aus, kommt der beste Ersatz (wie in Best XI unter "
            "„Ausfall in der Startelf“), und die Summe der DWRS der ganzen Startelf sinkt um "
            "4,0. „Lücke“: Kein Spieler im Kader füllt den Platz. Grundlage ist der ganze Verein "
-           "ohne Langzeitverletzte und ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus "
-           "Best XI gelten."));
+           "ohne Langzeitverletzte und ohne Spieler, die als nicht registriert markiert sind, "
+           "sonst ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus Best XI gelten."));
     updateColorLegend();
 }
 
