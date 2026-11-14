@@ -42,17 +42,17 @@ private slots:
         p.attrHi[idx(Attr::Pace)] = 20;
         QCOMPARE(snapshot->trainingGains(p, QStringLiteral("AF-A")).value(idx(Attr::Pace)), 0.0);
         p.age = 18;
-        const auto plateauAdvice = TrainingAdvice::adviseForRole(p, QStringLiteral("AF-A"), *snapshot, {});
+        const auto plateauAdvice = TrainingAdvice::adviseForRole(p, QStringLiteral("AF-A"), *snapshot, TrainingAdvice::AgeWindows{});
         QVERIFY(plateauAdvice.valid);
         QVERIFY(plateauAdvice.focus.empty());
-        QVERIFY(TrainingAdvice::adviseFocusesForRole(p, QStringLiteral("AF-A"), *snapshot, {}).focus.empty());
+        QVERIFY(TrainingAdvice::adviseFocusesForRole(p, QStringLiteral("AF-A"), *snapshot, TrainingAdvice::AgeWindows{}).focus.empty());
         auto linear = profile;
         linear.attributes[QStringLiteral("Pace")] = RatingCurve::linear(1);
         snapshot = RatingSnapshot::compile(linear, definitions, nullptr);
         // Three equally likely original values map to 19,20,20: retain duplicate mass at cap.
         QVERIFY(std::abs(snapshot->trainingGains(p, QStringLiteral("AF-A")).value(idx(Attr::Pace))
                          - 200.0 / 57) < 1e-12);
-        const auto advice = TrainingAdvice::adviseForRole(p, QStringLiteral("AF-A"), *snapshot, {});
+        const auto advice = TrainingAdvice::adviseForRole(p, QStringLiteral("AF-A"), *snapshot, TrainingAdvice::AgeWindows{});
         QCOMPARE(advice.focus.size(), size_t(1));
         QVERIFY(std::abs(advice.focus.front().priority - 200.0 / 57) < 1e-12);
     }

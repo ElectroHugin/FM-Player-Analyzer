@@ -67,7 +67,9 @@ Result updateWith(Database &db, const std::vector<Player> &players, const RoleRa
 
     std::vector<DwrsEntry> toInsert;
     int done = 0;
-    const int total = roleRows.size();
+    // Three units per role batch, then one quarter of the scale for writing.
+    const int batches = roleRows.size();
+    const int total = batches * 4;
     for (auto it = roleRows.constBegin(); it != roleRows.constEnd(); ++it) {
         const std::vector<RatedValue> batch = rate(it.value(), it.key());
         for (size_t j = 0; j < it.value().size(); ++j) {
@@ -91,11 +93,16 @@ Result updateWith(Database &db, const std::vector<Player> &players, const RoleRa
                 toInsert.push_back(std::move(entry));
             }
         }
+        done += 3;
         if (progress)
-            progress(++done, total);
+            progress(done, total);
     }
 
-    if (!db.appendDwrsRatings(toInsert, origin)) {
+    const auto written = [&progress, batches, total](int rows, int of) {
+        if (progress && of > 0)
+            progress(batches * 3 + static_cast<int>(qint64(rows) * batches / of), total);
+    };
+    if (!db.appendDwrsRatings(toInsert, origin, true, written)) {
         result.error = db.errorString();
         return result;
     }

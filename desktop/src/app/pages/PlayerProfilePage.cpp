@@ -1117,7 +1117,7 @@ void PlayerProfilePage::showTrainingAdvice(const Player *player)
     }
 
     const TrainingAdvice::FocusAdvice advice = TrainingAdvice::adviseFocusesForRole(
-        *player, role, *m_context.ratingSnapshot(), trainingWindows(m_context));
+        *player, role, *m_context.ratingSnapshot(), trainingProfile(m_context));
     if (!advice.valid || advice.focus.empty()) {
         m_trainingLabel->setText(
             tr("Für diese Rolle gibt es aktuell keine sinnvolle Trainingsmethode "

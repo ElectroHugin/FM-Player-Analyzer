@@ -4,6 +4,7 @@
 #include "Utils.h"
 
 #include <QColor>
+#include <QList>
 #include <QLocale>
 #include <QSet>
 #include <QString>
@@ -42,5 +43,9 @@ CellStyle dwrsCellStyleFor(double normalizedValue, bool goalkeeper);
 // steps. Up to 1.5 neutral (invalid style), 1.5-4 light, beyond strong; warm
 // below, cool above.
 CellStyle dwrsComparisonStyle(double deltaToMedian);
+// The five comparison fills from far below to far above; the middle one is
+// the calm grey for "at the squad median" (used for the legend too).
+QList<QColor> dwrsComparisonColors();
+CellStyle dwrsComparisonNeutralStyle();
 
 } // namespace fm

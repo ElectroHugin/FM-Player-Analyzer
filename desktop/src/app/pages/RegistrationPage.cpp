@@ -22,6 +22,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QTableWidget>
+#include <QTimer>
 #include <QVBoxLayout>
 
 #include <algorithm>
@@ -201,6 +202,44 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     m_hint->setWordWrap(true);
     layout->addWidget(m_hint);
 
+    // Leagues without a squad list (e.g. Bundesliga): tick who is registered;
+    // Best XI and the overview leave the others out.
+    m_registeredBox = new QGroupBox(tr("Für die Liga registriert"), content);
+    auto *registeredLayout = new QVBoxLayout(m_registeredBox);
+    m_registeredSummary = new QLabel(m_registeredBox);
+    m_registeredSummary->setWordWrap(true);
+    registeredLayout->addWidget(m_registeredSummary);
+    m_registeredTable = new QTableWidget(0, 5, m_registeredBox);
+    m_registeredTable->setHorizontalHeaderLabels(
+        {tr("Registriert"), tr("Name"), tr("Alter"), tr("Position"), tr("Mannschaft")});
+    m_registeredTable->verticalHeader()->setVisible(false);
+    m_registeredTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_registeredTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_registeredTable->setAlternatingRowColors(true);
+    m_registeredTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    m_registeredTable->horizontalHeader()->setStretchLastSection(true);
+    m_registeredTable->setMinimumHeight(420);
+    registeredLayout->addWidget(m_registeredTable);
+    m_registeredBox->setVisible(false);
+    layout->addWidget(m_registeredBox);
+    connect(m_registeredTable, &QTableWidget::itemChanged, this, [this](QTableWidgetItem *item) {
+        if (m_updating || item->column() != 0)
+            return;
+        const QString uid = item->data(Qt::UserRole).toString();
+        const bool registered = item->checkState() == Qt::Checked;
+        // Stored after this signal: saving refreshes the page and rebuilds the table.
+        QTimer::singleShot(0, this, [this, uid, registered] {
+            const Player *player = m_context.store().findByUid(uid);
+            if (!player || player->registration.leagueBlocked == !registered)
+                return;
+            PlayerRegistration r = player->registration;
+            r.leagueBlocked = !registered;
+            if (!m_context.setPlayerRegistration(uid, r))
+                QMessageBox::critical(this, tr("Registrierung"), m_context.database().errorString());
+        });
+    });
+    PlayerActions::attachToTableWidget(m_context, m_registeredTable);
+
     // What changed since the last save (lost / gained exemption).
     m_changesBox = new QFrame(content);
     m_changesBox->setObjectName(QStringLiteral("registrationChanges"));
@@ -370,8 +409,9 @@ void RegistrationPage::refresh()
     if (settings.league != Registration::LeagueRules::None
         && !Registration::restrictsSquad(settings.league)) {
         const QString league = Registration::leagueDisplayName(settings.league);
-        noListNote = tr("%1 hat keine Meldeliste: Bis zu 99 Spieler sind spielberechtigt, ein "
-                        "Vorschlag wäre zwecklos.")
+        noListNote = tr("%1 hat keine Meldeliste: Bis zu 99 Spieler sind spielberechtigt. "
+                        "Nimm unten den Haken bei Spielern raus, die im Spiel nicht registriert "
+                        "sind.")
                          .arg(league);
         if (settings.league == Registration::LeagueRules::Ligue1)
             noListNote += QLatin1Char(' ')
@@ -379,6 +419,10 @@ void RegistrationPage::refresh()
                                "Sie entscheidet sich bei Transfers, nicht bei der Meldung, "
                                "deshalb behalte sie dort im Blick.");
     }
+    m_registeredBox->setVisible(!Registration::restrictsSquad(settings.league)
+                                && !userClub.isEmpty());
+    if (m_registeredBox->isVisibleTo(this))
+        fillRegisteredTable();
     for (QWidget *w : {m_controls, static_cast<QWidget *>(m_keeperBox),
                        static_cast<QWidget *>(m_outfieldBox),
                        static_cast<QWidget *>(m_summaryLabel), static_cast<QWidget *>(m_costLabel),
@@ -473,6 +517,47 @@ void RegistrationPage::refresh()
 
     fillTables();
     updateSelection();
+}
+
+void RegistrationPage::fillRegisteredTable()
+{
+    std::vector<const Player *> players = pool();
+    const QString userClub = m_context.userClub();
+    std::sort(players.begin(), players.end(), [&userClub](const Player *a, const Player *b) {
+        const bool firstA = a->club == userClub, firstB = b->club == userClub;
+        if (firstA != firstB)
+            return firstA;
+        return a->name.localeAwareCompare(b->name) < 0;
+    });
+    m_updating = true;
+    m_registeredTable->setSortingEnabled(false);
+    m_registeredTable->setRowCount(static_cast<int>(players.size()));
+    int registered = 0;
+    QStringList missing;
+    for (int row = 0; row < static_cast<int>(players.size()); ++row) {
+        const Player *p = players[static_cast<size_t>(row)];
+        auto *check = new QTableWidgetItem;
+        check->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+        check->setCheckState(p->registration.leagueBlocked ? Qt::Unchecked : Qt::Checked);
+        check->setData(Qt::UserRole, p->uid);
+        m_registeredTable->setItem(row, 0, check);
+        auto *name = new QTableWidgetItem(p->name);
+        name->setData(Qt::UserRole, p->uid);
+        m_registeredTable->setItem(row, 1, name);
+        m_registeredTable->setItem(row, 2, new NumericItem(QString::number(p->age), p->age));
+        m_registeredTable->setItem(row, 3, new QTableWidgetItem(p->positionRaw));
+        m_registeredTable->setItem(row, 4, new QTableWidgetItem(p->club));
+        if (p->registration.leagueBlocked)
+            missing << p->name;
+        else
+            ++registered;
+    }
+    m_updating = false;
+    QString summary = tr("%1 von %2 Spielern registriert.").arg(registered).arg(players.size());
+    if (!missing.isEmpty())
+        summary += QLatin1Char(' ') + tr("Best XI und Übersicht lassen weg: %1")
+                                          .arg(missing.join(QStringLiteral(", ")));
+    m_registeredSummary->setText(summary);
 }
 
 void RegistrationPage::fillTables()

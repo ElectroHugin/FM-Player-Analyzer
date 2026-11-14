@@ -1,5 +1,6 @@
 #include "ImportRunner.h"
 
+#include "core/RatingsUpdater.h"
 #include "core/Fm27SaveImport.h"
 
 #include "AppContext.h"
@@ -73,7 +74,9 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
             percent = 58;
             break;
         case ImportPipeline::Stage::Dwrs:
-            text = ImportText::tr("DWRS-Bewertungen werden berechnet…");
+            text = RatingsUpdater::savingPhase(done, total)
+                       ? ImportText::tr("DWRS-Bewertungen werden gespeichert…")
+                       : ImportText::tr("DWRS-Bewertungen werden berechnet…");
             percent = scaled(62, 36);
             break;
         case ImportPipeline::Stage::Finalize:

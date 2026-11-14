@@ -1,5 +1,6 @@
 #include "DashboardPage.h"
 #include "core/DwrsDisplay.h"
+#include "core/Registration.h"
 #include "core/ImportHistory.h"
 
 #include "../AppContext.h"
@@ -8,6 +9,8 @@
 #include "../widgets/NumericTableItem.h"
 #include "../widgets/StrengthGridWidget.h"
 #include "PageHelpers.h"
+#include "core/AppConfig.h"
+#include "core/Constants.h"
 #include "core/Database.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
@@ -22,6 +25,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QFrame>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -248,6 +252,7 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
 QWidget *DashboardPage::buildImportSection(QWidget *parent)
 {
     auto *box = new QGroupBox(tr("Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), parent);
+    m_importBox = box;
     auto *layout = new QVBoxLayout(box);
 
     auto *fileRow = new QHBoxLayout;
@@ -276,6 +281,24 @@ QWidget *DashboardPage::buildImportSection(QWidget *parent)
     optionsRow->addWidget(m_autoAssignCheck);
     optionsRow->addStretch(1);
     layout->addLayout(optionsRow);
+
+    // One quiet line: whether the save is followed, or how to start it.
+    m_followStatus = new QLabel(box);
+    m_followStatus->setObjectName(QStringLiteral("kpiCaption"));
+    m_followStatus->setTextFormat(Qt::RichText);
+    m_followStatus->setWordWrap(true);
+    m_followStatus->hide();
+    connect(m_followStatus, &QLabel::linkActivated, this, [this](const QString &) {
+        const QString path = QFileDialog::getOpenFileName(
+            this, tr("Spielstand auswählen"), AppConfig::defaultSavesDir(m_context.fmVersionId()),
+            tr("Spielstände (*.fm);;Alle Dateien (*)"));
+        if (path.isEmpty())
+            return;
+        m_context.config().followSave(path, 0);
+        m_context.notifySettingsChanged();
+        updateImportSource();
+    });
+    layout->addWidget(m_followStatus);
 
     connect(browseButton, &QPushButton::clicked, this, &DashboardPage::chooseImportFile);
     connect(m_importButton, &QPushButton::clicked, this, &DashboardPage::startImport);
@@ -421,8 +444,9 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
         button->setCursor(Qt::PointingHandCursor);
         button->setChecked(i == 0);
         button->setToolTip(i == 0 ? tr("Farbstufen wie überall in der App: Schwach bis Legendär.")
-                                  : tr("Abstand zum Median aller Positionen dieses Kaders: bis 1,5 Punkte "
-                                       "neutral, bis 4 Punkte leicht, darüber kräftig; warm darunter, kühl darüber."));
+                                  : tr("Jeder Starter im Vergleich zur Kadermitte (Median der gezeigten "
+                                       "Starter): grau bis 1,5 Punkte Abstand, darunter orange, darüber "
+                                       "blau, ab 4 Punkten kräftig."));
         m_colorModeGroup->addButton(button, i);
         colorLayout->addWidget(button);
     }
@@ -461,6 +485,13 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     m_gridLegend->setWordWrap(true);
     m_gridLegend->setFixedWidth(300);
     gridColumn->addWidget(m_gridLegend, 0, Qt::AlignHCenter);
+    m_colorLegend = new QLabel(widget);
+    m_colorLegend->setObjectName(QStringLiteral("kpiCaption"));
+    m_colorLegend->setTextFormat(Qt::RichText);
+    m_colorLegend->setAlignment(Qt::AlignHCenter);
+    m_colorLegend->setWordWrap(true);
+    m_colorLegend->setVisible(false);
+    gridColumn->addWidget(m_colorLegend, 0, Qt::AlignHCenter);
     gridColumn->addStretch(1);
     layout->addLayout(gridColumn);
 
@@ -564,10 +595,69 @@ void DashboardPage::applyStrengthColorMode()
                             : StrengthGridWidget::ColorMode::Level;
     m_strengthGrid->setColorMode(mode);
     m_strengthGridOop->setColorMode(mode);
+    updateColorLegend();
+}
+
+void DashboardPage::updateColorLegend()
+{
+    const bool squad = m_strengthGrid->colorMode() == StrengthGridWidget::ColorMode::SquadComparison;
+    const double median = m_strengthGrid->shownMedian();
+    m_colorLegend->setVisible(squad && median > 0.0);
+    if (!m_colorLegend->isVisibleTo(m_colorLegend->parentWidget()))
+        return;
+    // Five swatches from far below to far above the squad median.
+    const QList<QColor> colors = dwrsComparisonColors();
+    const QStringList labels = {tr("weit darunter"), tr("darunter"), tr("Kadermitte"),
+                                tr("darüber"), tr("weit darüber")};
+    QStringList parts;
+    for (int i = 0; i < colors.size() && i < labels.size(); ++i)
+        parts << QStringLiteral("<span style=\"color:%1\">&#9632;</span>&nbsp;%2")
+                     .arg(colors.at(i).name(), labels.at(i).toHtmlEscaped());
+    QString text = parts.join(QStringLiteral(" &nbsp; "));
+    const bool both = m_strengthGridOop->isVisibleTo(m_strengthGridOop->parentWidget());
+    if (!both)
+        text = tr("Kadermitte: %1").arg(formatDwrs(median)).toHtmlEscaped() + QStringLiteral("<br>") + text;
+    m_colorLegend->setFixedWidth(m_gridLegend->width());
+    m_colorLegend->setText(text);
+}
+
+bool DashboardPage::readsSaves()
+{
+    return m_context.hasDatabase()
+           && fmDataVersion(m_context.fmVersionId())
+                  .importFormats.contains(QStringLiteral("fm"));
+}
+
+void DashboardPage::updateImportSource()
+{
+    if (!m_importBox)
+        return;
+    const bool saves = readsSaves();
+    m_importBox->setTitle(saves ? tr("Spielerdaten einlesen (Spielstand .fm, CSV oder HTML)")
+                                : tr("Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"));
+    const AppConfig &config = m_context.config();
+    if (!saves) {
+        m_followStatus->hide();
+    } else if (config.liveSaveEnabled() && !config.liveSavePath().isEmpty()) {
+        m_followStatus->setText(tr("Folgt „%1“ und liest ihn nach jedem Speichern im Spiel neu ein.")
+                                    .arg(QFileInfo(config.liveSavePath()).completeBaseName().toHtmlEscaped()));
+        m_followStatus->show();
+    } else if (config.saveTipDismissed()) {
+        m_followStatus->hide();
+    } else {
+        QString text = tr("Schneller als ein Export: <a href=\"follow\">Spielstand live "
+                          "verfolgen</a>");
+        text.replace(QStringLiteral("<a href=\"follow\">"),
+                     QStringLiteral("<a href=\"follow\" style=\"color:%1; text-decoration:none\">")
+                         .arg(m_theme.accentText().name()));
+        m_followStatus->setText(text);
+        m_followStatus->show();
+    }
 }
 
 void DashboardPage::refresh()
 {
+    updateImportSource();
     applyStrengthColorMode();
     refreshCombos();
     refreshAnalysis();
@@ -686,9 +776,12 @@ void DashboardPage::updateStarterView(const std::vector<const Player *> &clubPla
 {
     // The same starting XI as Best XI without a competition: the whole club
     // without the long-term injured, with the manual places of Best XI.
+    // Without a squad list, players marked "not registered" stay out too.
+    const bool skipUnregistered =
+        !Registration::restrictsSquad(m_context.registrationSettings().league);
     std::vector<const Player *> pool;
     for (const Player *player : clubPlayers) {
-        if (!player->longTermInjured)
+        if (!player->longTermInjured && !(skipUnregistered && player->registration.leagueBlocked))
             pool.push_back(player);
     }
     const Definitions &definitions = m_context.definitions();
@@ -910,8 +1003,9 @@ void DashboardPage::showStarterView()
         tr("„Elf −4,0“: Fällt der Spieler aus, kommt der beste Ersatz (wie in Best XI unter "
            "„Ausfall in der Startelf“), und die Summe der DWRS der ganzen Startelf sinkt um "
            "4,0. „Lücke“: Kein Spieler im Kader füllt den Platz. Grundlage ist der ganze Verein "
-           "ohne Langzeitverletzte und ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus "
-           "Best XI gelten."));
+           "ohne Langzeitverletzte und ohne Spieler, die als nicht registriert markiert sind, "
+           "sonst ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus Best XI gelten."));
+    updateColorLegend();
 }
 
 void DashboardPage::updateKpis(const std::vector<const Player *> &coreSquad)
@@ -1186,7 +1280,8 @@ void DashboardPage::rebuildSuggestions()
 void DashboardPage::chooseImportFile()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("FM-Export oder FM27-Spielstand auswählen"), m_context.htmlExportDir(),
+        this, tr("FM-Export oder FM27-Spielstand auswählen"),
+        readsSaves() ? AppConfig::defaultSavesDir(m_context.fmVersionId()) : m_context.htmlExportDir(),
         tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
     if (path.isEmpty())
         return;
@@ -1240,9 +1335,24 @@ void DashboardPage::importFinished(const ImportPipelineResult &result)
     box.setIcon(warnings.isEmpty() ? QMessageBox::Information : QMessageBox::Warning);
     box.setWindowTitle(tr("Import abgeschlossen"));
     box.setText(summary.join(QLatin1Char('\n')));
+    // A large export means the exporter ran a long list: point at the save.
+    const QString suffix = QFileInfo(m_filePathEdit->text()).suffix().toLower();
+    // Shown once; it only comes back when the user ticks "show again".
+    QCheckBox *showAgain = nullptr;
+    if (readsSaves() && suffix != QLatin1String("fm") && !m_context.config().liveSaveEnabled()
+        && !m_context.config().saveTipDismissed() && result.import.playersImported >= 500) {
+        box.setInformativeText(tr("Tipp: Den Spielstand (.fm) direkt einzulesen geht schneller "
+                                  "und braucht keinen Export."));
+        showAgain = new QCheckBox(tr("Beim nächsten Mal wieder anzeigen"), &box);
+        box.setCheckBox(showAgain);
+    }
     if (!warnings.isEmpty())
         box.setDetailedText(warnings.join(QStringLiteral("\n\n")));
     box.exec();
+    if (showAgain) {
+        m_context.config().setSaveTipDismissed(!showAgain->isChecked());
+        updateImportSource();
+    }
 
     // --- Departure detection for full squad updates. ---
     if (m_pendingSquadUpdate && !m_context.userClub().isEmpty()) {

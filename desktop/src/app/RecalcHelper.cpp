@@ -62,14 +62,15 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                 db, players, *snapshot, validRoles, subset,
                 [dialogGuard](int current, int total) {
                     const int percent = total > 0 ? current * 100 / total : 0;
+                    const bool saving = RatingsUpdater::savingPhase(current, total);
                     QMetaObject::invokeMethod(
                         qApp,
-                        [dialogGuard, percent] {
+                        [dialogGuard, percent, saving] {
                             if (!dialogGuard)
                                 return;
                             dialogGuard->setValue(percent);
-                            // Writing to the database follows the last player.
-                            if (percent >= 100)
+                            // Writing to the database follows the last role.
+                            if (saving)
                                 dialogGuard->setLabelText(QObject::tr("Bewertungen werden gespeichert …"));
                         },
                         Qt::QueuedConnection);

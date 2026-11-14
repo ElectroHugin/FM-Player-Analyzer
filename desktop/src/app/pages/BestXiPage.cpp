@@ -705,6 +705,27 @@ void BestXiPage::rebuild()
         *full = m_context.squadBuilder().calculateSquadForTactic(club, tactic, ratings, true, {},
                                                                  xiLimit);
         if (!restricted) {
+            // A league without a squad list: players marked "not registered"
+            // (Kader context menu) may still not play in it.
+            if (competitionMode != kUefa && competitionMode != kCup && !leagueList) {
+                std::vector<const Player *> registered;
+                QStringList unregistered;
+                for (const Player *player : club) {
+                    if (player->registration.leagueBlocked)
+                        unregistered << player->name;
+                    else
+                        registered.push_back(player);
+                }
+                if (!unregistered.isEmpty()) {
+                    if (note)
+                        *note = tr("Nicht registriert, bleiben außen vor: %1")
+                                    .arg(unregistered.join(QStringLiteral(", ")));
+                    if (pool)
+                        *pool = registered;
+                    return m_context.squadBuilder().calculateSquadForTactic(
+                        registered, tactic, ratings, true, {}, xiLimit);
+                }
+            }
             if (pool)
                 *pool = club;
             return *full;

@@ -430,6 +430,7 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
     out->malformedRows = 0;
     out->knownUids.clear();
     out->naturalPositionsByUid.clear();
+    out->clubIdByName.clear();
     // Only the career's side of the game: a men's career leaves out every
     // women's club and the other way round.
     const bool women = womensCareer(save);
@@ -534,6 +535,8 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
             }
         }
         out->rows.append(std::move(row));
+        if (p.clubUniqueId && !p.clubShortName.isEmpty())
+            out->clubIdByName.insert(p.clubShortName, p.clubUniqueId);
         if (scouted)
             out->knownUids << QString::number(p.uniqueId);
     }

@@ -23,6 +23,10 @@ struct ImportTable {
     // Save-only metadata. Presence means the save supplied the information,
     // including an empty list; CSV/HTML leave existing save information intact.
     QHash<QString, QStringList> naturalPositionsByUid;
+    // Club name as written into the rows -> the club's database Unique ID
+    // (FM27 save). The game may rename clubs between saves (e.g. after a data
+    // update); the import follows the own and the second team by this id.
+    QHash<QString, quint32> clubIdByName;
 };
 
 // Why reading or importing an export failed. The core keeps an English

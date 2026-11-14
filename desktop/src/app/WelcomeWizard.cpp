@@ -5,6 +5,7 @@
 #include "theming/ThemePresets.h"
 #include "core/AppConfig.h"
 #include "core/ColorTemplates.h"
+#include "core/Constants.h"
 #include "core/Database.h"
 #include "core/Registration.h"
 
@@ -12,6 +13,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCompleter>
+#include <QDir>
 #include <QFileDialog>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -275,6 +277,40 @@ QWidget *WelcomeWizard::buildClubPage()
     logoRow->addWidget(m_logoRemoveButton);
     logoRow->addStretch(1);
     form->addRow(tr("Vereinslogo:"), logoRow);
+
+    // Versions that read save games: following the save keeps the analyzer
+    // current without any export (offered here so nobody has to find it).
+    const QString versionId = m_context.fmVersionId();
+    if (fmDataVersion(versionId).importFormats.contains(QStringLiteral("fm"))) {
+        const AppConfig &config = m_context.config();
+        m_followCheck = new QCheckBox(tr("live verfolgen"), page);
+        m_followCheck->setToolTip(tr("Solange der Analyzer offen ist, liest er den Spielstand "
+                                     "nach jedem Speichern im Spiel neu ein, auch nach einem "
+                                     "Autosave. Schneller als ein Export."));
+        m_followEdit = new QLineEdit(page);
+        m_followEdit->setPlaceholderText(tr(".fm-Datei wählen"));
+        m_followEdit->setText(QDir::toNativeSeparators(config.liveSavePath()));
+        m_followCheck->setChecked(config.liveSaveEnabled());
+        auto *browse = new QPushButton(tr("Durchsuchen …"), page);
+        auto *followRow = new QHBoxLayout;
+        followRow->setContentsMargins(0, 0, 0, 0);
+        followRow->addWidget(m_followCheck);
+        followRow->addWidget(m_followEdit, 1);
+        followRow->addWidget(browse);
+        form->addRow(tr("Spielstand im Spiel:"), followRow);
+        connect(browse, &QPushButton::clicked, this, [this, versionId] {
+            QString start = m_followEdit->text().trimmed();
+            if (start.isEmpty())
+                start = AppConfig::defaultSavesDir(versionId);
+            const QString path = QFileDialog::getOpenFileName(
+                this, tr("Spielstand auswählen"), start,
+                tr("Spielstände (*.fm);;Alle Dateien (*)"));
+            if (path.isEmpty())
+                return;
+            m_followEdit->setText(QDir::toNativeSeparators(path));
+            m_followCheck->setChecked(true);
+        });
+    }
     layout->addLayout(form);
     connect(chooseLogo, &QPushButton::clicked, this, &WelcomeWizard::chooseLogo);
     connect(m_logoRemoveButton, &QPushButton::clicked, this, &WelcomeWizard::removeLogo);
@@ -640,6 +676,14 @@ void WelcomeWizard::finish()
              m_uefaCheck->isChecked() ? QStringLiteral("true") : QString());
     }
     save(doneSettingKey(), QStringLiteral("true"));
+    if (ok && m_followCheck) {
+        const QString path = QDir::fromNativeSeparators(m_followEdit->text().trimmed());
+        const bool follow = m_followCheck->isChecked() && !path.isEmpty();
+        if (path != config.liveSavePath() || (follow && !config.liveSaveEnabled()))
+            ok = config.setLiveSaveLastModified(0);
+        if (ok)
+            ok = config.setLiveSavePath(path) && config.setLiveSaveEnabled(follow);
+    }
     if (ok && m_ipShareBox->isVisibleTo(this))
         ok = config.setIpSharePercent(m_ipShareSpin->value());
 

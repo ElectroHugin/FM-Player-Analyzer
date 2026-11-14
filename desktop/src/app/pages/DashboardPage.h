@@ -51,6 +51,9 @@ private:
     QWidget *buildSuggestionSection(QWidget *parent);
 
     void chooseImportFile();
+    // FM27: title, start folder and the one-line "follow the save" status.
+    void updateImportSource();
+    bool readsSaves();
     void startImport();
     void importFinished(const ImportPipelineResult &result);
     void resolveDepartures(const QSet<QString> &affectedUids);
@@ -76,6 +79,8 @@ private:
     QCheckBox *m_squadUpdateCheck = nullptr;
     QCheckBox *m_autoAssignCheck = nullptr;
     QPushButton *m_importButton = nullptr;
+    QGroupBox *m_importBox = nullptr;
+    QLabel *m_followStatus = nullptr;
     bool m_importRunning = false;
     bool m_pendingSquadUpdate = false;
 
@@ -103,6 +108,8 @@ private:
     QLabel *m_gridTitle = nullptr;
     QLabel *m_gridTitleOop = nullptr;
     QLabel *m_gridLegend = nullptr;
+    QLabel *m_colorLegend = nullptr; // squad comparison: what the colours mean
+    void updateColorLegend();
     QWidget *m_phaseSwitch = nullptr;
     QButtonGroup *m_colorModeGroup = nullptr;
     void applyStrengthColorMode();

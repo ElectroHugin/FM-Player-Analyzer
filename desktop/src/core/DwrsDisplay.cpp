@@ -79,18 +79,29 @@ CellStyle dwrsCellStyleFor(double normalizedValue, bool goalkeeper)
     return activeScheme().style(roundDwrs(normalizedValue), goalkeeper);
 }
 
+namespace {
+// Calm diverging scale: warm (below the squad) to cool (above), grey between.
+const QColor kStrongBelow(0xD9, 0x7A, 0x4A), kLightBelow(0xF0, 0xC2, 0x9E);
+const QColor kNeutral(0xD6, 0xD9, 0xDF);
+const QColor kLightAbove(0xA9, 0xCB, 0xE8), kStrongAbove(0x3F, 0x83, 0xC4);
+} // namespace
+
 CellStyle dwrsComparisonStyle(double delta)
 {
-    // Calm diverging scale: warm (below the squad) to cool (above).
-    static const QColor strongBelow(0xD9, 0x7A, 0x4A), lightBelow(0xF0, 0xC2, 0x9E);
-    static const QColor lightAbove(0xA9, 0xCB, 0xE8), strongAbove(0x3F, 0x83, 0xC4);
     const double d = roundDwrs(delta);
     if (std::abs(d) <= 1.5)
         return {};
-    if (d < -4.0) return withReadableText(strongBelow);
-    if (d < 0) return withReadableText(lightBelow);
-    if (d > 4.0) return withReadableText(strongAbove);
-    return withReadableText(lightAbove);
+    if (d < -4.0) return withReadableText(kStrongBelow);
+    if (d < 0) return withReadableText(kLightBelow);
+    if (d > 4.0) return withReadableText(kStrongAbove);
+    return withReadableText(kLightAbove);
 }
+
+QList<QColor> dwrsComparisonColors()
+{
+    return {kStrongBelow, kLightBelow, kNeutral, kLightAbove, kStrongAbove};
+}
+
+CellStyle dwrsComparisonNeutralStyle() { return withReadableText(kNeutral); }
 
 } // namespace fm

@@ -117,6 +117,10 @@ public:
     // start screen (default: off).
     bool autoOpenLastDatabase() const;
     void setAutoOpenLastDatabase(bool enabled);
+    // App-wide: the "read the save instead of an export" tip was shown and
+    // the user did not ask to see it again.
+    bool saveTipDismissed() const;
+    void setSaveTipDismissed(bool dismissed);
 
     // [RecentDatabases] — when each save was last opened (for the start
     // screen). Unknown saves return an invalid QDateTime.
@@ -216,6 +220,11 @@ public:
     QString graphicsDir() const;
     bool setGraphicsDir(const QString &dir);
     static QString defaultGraphicsDir(const QString &fmVersionId);
+    // The game's own save folder ("<Documents>/Sports Interactive/<game>/games").
+    static QString defaultSavesDir(const QString &fmVersionId);
+    // Follow savePath from now on; alreadyReadMs = modification time of the
+    // file just read in (0 = read the newest file of the career right away).
+    bool followSave(const QString &savePath, qint64 alreadyReadMs);
     QString effectiveGraphicsDir(const QString &fmVersionId) const;
 
 private:

@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 
+#include "core/RatingsUpdater.h"
 #include "core/Constants.h"
 
 #include "LiveSaveWatcher.h"
@@ -939,14 +940,15 @@ void MainWindow::startDwrsRecalc()
                 db, players, *snapshot, validRoles, {},
                 [dialogGuard](int current, int total) {
                     const int percent = total > 0 ? current * 100 / total : 0;
+                    const bool saving = RatingsUpdater::savingPhase(current, total);
                     QMetaObject::invokeMethod(
                         qApp,
-                        [dialogGuard, percent] {
+                        [dialogGuard, percent, saving] {
                             if (!dialogGuard)
                                 return;
                             dialogGuard->setValue(percent);
-                            // Writing to the database follows the last player.
-                            if (percent >= 100)
+                            // Writing to the database follows the last role.
+                            if (saving)
                                 dialogGuard->setLabelText(QCoreApplication::translate("MainWindow", "Bewertungen werden gespeichert …"));
                         },
                         Qt::QueuedConnection);
