@@ -4,20 +4,24 @@
 // Exporter's column layout, so the regular import pipeline takes it over.
 //
 // This is the only place where the visibility rules live. With attribute
-// masking on (the default) a player is imported only when the user knows him
-// the way the game shows it:
+// masking on (the default) values show the way the user knows a player:
 //   - players of the user's own club: exact values;
 //   - world reputation of at least kFamousReputation: exact values (the game
 //     shows such players fully without a scout report);
 //   - the user's scouting knowledge (fog_of_war) of at least
 //     kFullKnowledge: exact values;
-//   - knowledge from kPartialKnowledge up: partly as ranges. The game does not
-//     store its ranges; the analyzer draws its own, once per player and
-//     attribute (stable across imports), with the true value at a random place
-//     inside, never in the middle by rule. Fewer ranges the more is known.
+//   - knowledge from kPartialKnowledge up: partly as ranges, fewer and
+//     narrower the more is known;
+//   - lower knowledge (prior knowledge): every attribute as a range of 2-4;
+//   - no scouting at all: every attribute as a range of 4-7, players with a
+//     club only.
+// The game does not store its ranges; the analyzer draws its own, once per
+// player and attribute (stable across imports), with the true value at a
+// random place inside, never in the middle by rule. Rather more players than
+// too few: nobody with a club is left out.
 // Only the career's side of the game is read: a men's career leaves out
 // women's clubs and the other way round (the user's scouting tells which).
-// Everyone else is left out. Hidden values (ability, potential, consistency,
+// Hidden values (ability, potential, consistency,
 // injury proneness, important matches, dirtiness, versatility) are never put
 // into the table, whatever the setting.
 //

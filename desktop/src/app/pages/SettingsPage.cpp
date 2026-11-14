@@ -667,12 +667,10 @@ QWidget *SettingsPage::buildImportPage()
 
     m_attributeMaskingCheck = new QCheckBox(tr("Attribut-Maskierung wie im Spiel"));
     addRow(form, tr("Spielstand einlesen"), m_attributeMaskingCheck);
-    addHint(form, tr("Gilt, wenn du einen FM27-Spielstand (.fm) einliest. Eingeschaltet übernimmt "
-                     "der Analyzer nur Spieler, die du kennst: deinen Kader, Spieler mit sehr "
-                     "hoher Reputation und Spieler aus deinem Scouting. Teilweise bekannte Spieler "
-                     "bekommen Spannen, die der Analyzer selbst bildet; sie können von den "
-                     "Spannen im Spiel abweichen. Ausgeschaltet übernimmt er alle Spieler mit "
-                     "ihren echten Werten. Verdeckte Werte wie das Potenzial liest er nie aus."));
+    addHint(form, tr("Gilt beim Einlesen eines FM27-Spielstands (.fm). Eingeschaltet sind dein "
+                     "Kader, sehr bekannte und gut gescoutete Spieler exakt, alle anderen kommen "
+                     "mit Spannen, die der Analyzer selbst bildet. Ausgeschaltet sind alle Werte "
+                     "exakt. Verdeckte Werte wie das Potenzial liest er nie aus."));
 
     m_liveSaveCheck = new QCheckBox(tr("Spielstand live verfolgen"));
     addRow(form, tr("Live verfolgen"), m_liveSaveCheck);

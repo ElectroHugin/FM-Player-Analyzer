@@ -23,6 +23,7 @@ Test build 2.3.0-test.2:
 
 Added for 2.3.0-test.4:
 
+- FM27 save import with attribute masking: players you have not scouted (enough) are no longer left out. Everyone with a club is read in; prior knowledge shows every attribute as a range of 2-4, no scouting as a range of 4-7. Thanks to the feedback in issue #26.
 - English UI: the default colour preset is called "Club-neutral (default)".
 
 Added for 2.3.0-test.3:
