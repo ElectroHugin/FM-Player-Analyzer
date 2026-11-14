@@ -642,6 +642,8 @@ void DashboardPage::updateImportSource()
         m_followStatus->setText(tr("Folgt „%1“ und liest ihn nach jedem Speichern im Spiel neu ein.")
                                     .arg(QFileInfo(config.liveSavePath()).completeBaseName().toHtmlEscaped()));
         m_followStatus->show();
+    } else if (config.saveTipDismissed()) {
+        m_followStatus->hide();
     } else {
         QString text = tr("Schneller als ein Export: <a href=\"follow\">Spielstand live "
                           "verfolgen</a>");
@@ -1335,13 +1337,22 @@ void DashboardPage::importFinished(const ImportPipelineResult &result)
     box.setText(summary.join(QLatin1Char('\n')));
     // A large export means the exporter ran a long list: point at the save.
     const QString suffix = QFileInfo(m_filePathEdit->text()).suffix().toLower();
+    // Shown once; it only comes back when the user ticks "show again".
+    QCheckBox *showAgain = nullptr;
     if (readsSaves() && suffix != QLatin1String("fm") && !m_context.config().liveSaveEnabled()
-        && result.import.playersImported >= 500)
+        && !m_context.config().saveTipDismissed() && result.import.playersImported >= 500) {
         box.setInformativeText(tr("Tipp: Den Spielstand (.fm) direkt einzulesen geht schneller "
                                   "und braucht keinen Export."));
+        showAgain = new QCheckBox(tr("Beim nächsten Mal wieder anzeigen"), &box);
+        box.setCheckBox(showAgain);
+    }
     if (!warnings.isEmpty())
         box.setDetailedText(warnings.join(QStringLiteral("\n\n")));
     box.exec();
+    if (showAgain) {
+        m_context.config().setSaveTipDismissed(!showAgain->isChecked());
+        updateImportSource();
+    }
 
     // --- Departure detection for full squad updates. ---
     if (m_pendingSquadUpdate && !m_context.userClub().isEmpty()) {

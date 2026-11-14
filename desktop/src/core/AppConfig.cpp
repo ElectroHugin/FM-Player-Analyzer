@@ -646,6 +646,17 @@ void AppConfig::setAutoOpenLastDatabase(bool enabled)
     m_settings->sync();
 }
 
+bool AppConfig::saveTipDismissed() const
+{
+    return m_settings->value(QStringLiteral("Hints/save_tip_dismissed"), false).toBool();
+}
+
+void AppConfig::setSaveTipDismissed(bool dismissed)
+{
+    m_settings->setValue(QStringLiteral("Hints/save_tip_dismissed"), dismissed);
+    m_settings->sync();
+}
+
 namespace {
 // Save names may contain spaces and umlauts; percent-encoding keeps them valid
 // and unambiguous as INI keys on every platform.

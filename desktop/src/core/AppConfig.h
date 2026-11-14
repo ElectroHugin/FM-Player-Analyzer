@@ -117,6 +117,10 @@ public:
     // start screen (default: off).
     bool autoOpenLastDatabase() const;
     void setAutoOpenLastDatabase(bool enabled);
+    // App-wide: the "read the save instead of an export" tip was shown and
+    // the user did not ask to see it again.
+    bool saveTipDismissed() const;
+    void setSaveTipDismissed(bool dismissed);
 
     // [RecentDatabases] — when each save was last opened (for the start
     // screen). Unknown saves return an invalid QDateTime.

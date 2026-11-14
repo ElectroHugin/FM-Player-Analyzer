@@ -1935,13 +1935,13 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="928"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="934"/>
         <source>Mit Ball</source>
         <translation>In possession</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="929"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="935"/>
         <source>Ohne Ball</source>
         <translation>Out of possession</translation>
     </message>
@@ -1977,7 +1977,7 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1208"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1214"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
@@ -2052,109 +2052,109 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
         <translation>Following “%1”: read again after every save in the game.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="646"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="648"/>
         <source>Schneller als ein Export: &lt;a href=&quot;follow&quot;&gt;Spielstand live verfolgen&lt;/a&gt;</source>
         <translation>Faster than an export: &lt;a href=&quot;follow&quot;&gt;follow your save live&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="822"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="828"/>
         <source>mit %1 · ohne %2</source>
         <translation>IP %1 · OOP %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="835"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="841"/>
         <source>Fällt %1 aus:</source>
         <translation>If %1 is unavailable:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="838"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="844"/>
         <source>Kein Spieler im Kader füllt die Lücke, ein Platz bleibt frei.</source>
         <translation>No squad player fills the gap; one place stays empty.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="840"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="846"/>
         <source>Elf %1</source>
         <translation>XI %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="841"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="847"/>
         <source>%1 kommt (%2).</source>
         <translation>%1 comes on (%2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="843"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="849"/>
         <source>%1 rückt um: %2 → %3.</source>
         <translation>%1 moves: %2 → %3.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="845"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="851"/>
         <source>Startelf %1 DWRS-Punkte (Summe aller elf).</source>
         <translation>Starting XI %1 DWRS points (sum of all eleven).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="901"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="946"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="971"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="907"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="952"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="977"/>
         <source>frei</source>
         <translation>free</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="902"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="908"/>
         <source>Für %1 hat der Kader keinen Spieler.</source>
         <translation>The squad has no player for %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="945"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="951"/>
         <source>mit: %1</source>
         <translation>IP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="947"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="953"/>
         <source>%1 mit Ball ist frei.</source>
         <translation>%1 in possession is empty.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="960"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="966"/>
         <source>%1 (mit Ball %2, ohne Ball %3)</source>
         <translation>%1 (in possession %2, out of possession %3)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="970"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="976"/>
         <source>ohne: %1</source>
         <translation>OOP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="972"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="978"/>
         <source>%1 ohne Ball ist frei.</source>
         <translation>%1 out of possession is empty.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="997"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1003"/>
         <source>„Elf −4,0“: Fällt der Spieler aus, kommt der beste Ersatz (wie in Best XI unter „Ausfall in der Startelf“), und die Summe der DWRS der ganzen Startelf sinkt um 4,0. „Lücke“: Kein Spieler im Kader füllt den Platz. Grundlage ist der ganze Verein ohne Langzeitverletzte und ohne Spieler, die als nicht registriert markiert sind, sonst ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus Best XI gelten.</source>
         <translation>“XI −4.0”: if the player is out, the best cover comes on (as in Best XI under “Squad depth: a starter is missing”), and the sum of DWRS of the whole starting XI drops by 4.0. “gap”: no squad player fills the place. Based on the whole club without long-term injured and without players marked as not registered, otherwise without competition rules; manual places from Best XI apply.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1172"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1178"/>
         <source>Dein Kader ist gut aufgestellt. Keine klaren Verstärkungen innerhalb der Filterkriterien gefunden.</source>
         <translation>Your squad is well set up. No clear reinforcements found within the filter criteria.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1193"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1199"/>
         <source>Upgrade für %1</source>
         <translation>Upgrade for %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1204"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1210"/>
         <source>Bewertung</source>
         <translation>Rating</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1204"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1210"/>
         <source>%1 % (dein Bester %2 %)</source>
         <translation>%1 % (your best %2 %)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1207"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1213"/>
         <source>Wert</source>
         <translation>Value</translation>
     </message>
@@ -2184,53 +2184,53 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
         <translation>%1 years</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="701"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="707"/>
         <source>Bitte importiere Spielerdaten und wähle oben deinen Verein, um die Kader-Analyse zu sehen.</source>
         <translation>Please import player data and select your club above to see the squad analysis.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="729"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="754"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="735"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="760"/>
         <source>Für die Taktik &apos;%1&apos; konnte kein Kader gebildet werden — es gibt keine passenden Spieler in deinem Verein.</source>
         <translation>No squad could be built for the tactic &apos;%1&apos; — there are no suitable players in your club.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="837"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="843"/>
         <source>Lücke</source>
         <translation>gap</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="981"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="987"/>
         <source>Groß: DWRS des Starters in seiner Rolle.</source>
         <translation>Large: the starter&apos;s DWRS in his role.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="983"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="989"/>
         <source>Groß: Wert des Starters über beide Aufstellungen (%1 % mit Ball).</source>
         <translation>Large: the starter&apos;s value over both line-ups (%1 % in possession).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="987"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="993"/>
         <source>Klein: so ändert sich die Startelf, wenn er ausfällt. Details zeigt der Tooltip.</source>
         <translation>Small: how the starting XI changes if he is out. The tooltip shows the details.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1044"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1050"/>
         <source>Spieler bei %1 (%2)</source>
         <translation>Players at %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1220"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1226"/>
         <source>Verein: %1&lt;br/&gt;Positionen: %2</source>
         <translation>Club: %1&lt;br/&gt;Positions: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1317"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1323"/>
         <source>Import fehlgeschlagen</source>
         <translation>Import failed</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1318"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1324"/>
         <source>Die Datei konnte nicht importiert werden.
 
 %1
@@ -2243,53 +2243,58 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
 Possible causes: no &apos;UID&apos; column, or not a valid Football Manager export (HTML or CSV).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1330"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1336"/>
         <source>Import abgeschlossen</source>
         <translation>Import complete</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1336"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1344"/>
         <source>Tipp: Den Spielstand (.fm) direkt einzulesen geht schneller und braucht keinen Export.</source>
         <translation>Tip: reading the save (.fm) directly is faster and needs no export.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1390"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1397"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1346"/>
+        <source>Beim nächsten Mal wieder anzeigen</source>
+        <translation>Show again next time</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1405"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1412"/>
         <source>Abgänge</source>
         <translation>Departures</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1398"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1413"/>
         <source>%1 Spieler-Datensätze aktualisiert.</source>
         <translation>%1 player records updated.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1277"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1283"/>
         <source>FM-Export oder FM27-Spielstand auswählen</source>
         <translation>Choose an FM export or FM27 save</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1279"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1285"/>
         <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
         <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1231"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1237"/>
         <source>Klicken für Aktionen: Profil, Shortlist, Vergleich</source>
         <translation>Click for actions: profile, shortlist, comparison</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1237"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1243"/>
         <source>%1 (%2 %)</source>
         <translation>%1 (%2%)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1252"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1258"/>
         <source>Vergleichen mit %1</source>
         <translation>Compare with %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1259"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1265"/>
         <source>Vergleichen mit allen %n</source>
         <translation>
             <numerusform>Compare with both</numerusform>
@@ -2297,12 +2302,12 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1034"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1040"/>
         <source>Ingame-Datum · Saison %1</source>
         <translation>In-game date · season %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1037"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1043"/>
         <source>Stand des zuletzt eingelesenen FM27-Spielstands</source>
         <translation>State of the most recently read FM27 save</translation>
     </message>
