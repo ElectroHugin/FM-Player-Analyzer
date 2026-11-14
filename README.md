@@ -17,11 +17,11 @@ built for.
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078d4)
 ![Football Manager 2024 | 2027](https://img.shields.io/badge/Football%20Manager-2024%20%7C%202027-6f42c1)
 
-**Playing FM27?** Just pick your save file: the analyzer reads it directly
-(read-only) and picks up the new data every time you save in the game.
-Alternatively, the free plugin
-**[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)** turns
-any player list into a CSV file.
+**Playing FM27?** Just pick your save file: the analyzer reads the whole
+database directly (read-only, no export needed) and picks up the new data every
+time you save in the game. Exporting player lists with the free plugin
+**[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)** works
+too, but is slow for long lists.
 
 **🇬🇧 English** · [🇩🇪 Deutsch](README.de.md)
 
@@ -144,9 +144,10 @@ for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
 
 No export, no scrolling through lists: pick the `.fm` file of your career and
 the analyzer reads your squad and every player your scouting knows. Turn on
-**Follow save live** under *Settings → Club* and it reads the newest file on its
-own after every save in the game. **Attribute masking as in the game** (on by
-default) makes sure you only see what your scouts know. Details are in
+**Follow save live** under *Settings → Import* and it reads the newest file on
+its own after every save in the game. **Attribute masking as in the game** (on
+by default) makes sure you only see what your scouts know; switch it off to read
+every player in the database with exact values. Details are in
 [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md) (German).
 
 ### Scout by role, not by reputation
@@ -266,13 +267,17 @@ On first start you create a save in the analyzer and pick the FM version
 
 **3 · Bring in your players**
 
-- **FM27, the quickest way:** pick your save file when importing
+- **FM27 (recommended): read your save.** Choose your save file when importing
   (`Documents\Sports Interactive\Football Manager 27\games\*.fm`). Best use a
-  freshly saved file, not one the game is still writing.
-- **FM27 with exports:** with the
+  freshly saved file, not one the game is still writing. Then turn on
+  *Settings → Import → Follow save live* and you never import by hand again.
+  By default only players you know are read in (*attribute masking as in the
+  game*); switch it off under *Settings → Import* to get the whole database.
+- **FM27 with exports (alternative):** with the
   [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin and
   my views (the installer can put them into your FM27 `views` folder) you press
-  **F9** on a player list and import the CSV file.
+  **F9** on a player list and import the CSV file. Fine for your squad or a
+  shortlist; long lists take a while.
 - **FM24:** export the list as HTML (*right-click → Print/Export → Web page
   (.html)*) with a view that contains the **UID** column, for example the
   [FM24 views by PlayingSquirrel](https://www.mediafire.com/file/ymf6xhw0bk4enjj/FM24_files.zip/file).
@@ -292,10 +297,10 @@ and **Line-up → Tactic Comparison**. With a big scouting pool, **Scouting** sh
 you who you should really be buying.
 
 > **Tips**
-> - In FM27, *Settings → Club → Follow save live* does the importing for you.
+> - In FM27, *Settings → Import → Follow save live* does the importing for you.
 > - With exports: re-import whenever you like, once a month in game time is a good rhythm. The app updates known players and builds their rating history.
 > - When you import your complete squad as an export, tick *"File is a complete squad export of my club"* and the app asks what happened to the players who are gone.
-> - The installer can copy the FM27 example tactics into your FM27 `tactics` folder; later this is under *Settings → Club*.
+> - The installer can copy the FM27 example tactics into your FM27 `tactics` folder; later this is under *Settings → Import*.
 > - Switch between English and German in the **Language** menu.
 
 ---
@@ -375,6 +380,17 @@ attributes of players you have not fully scouted stay ranges. With the FM27
 save, *attribute masking as in the game* takes care of that. Hidden values
 such as potential are never read. If you turn masking off, you see every player
 with exact values. That is your call.
+
+**The F9 export is slow and only handles small lists. Is there another way?**
+Yes, in FM27 read your save file instead: it brings in the whole database in
+one go, no filtering needed. See [Get started](#-get-started-in-5-minutes),
+step 3, and turn on *Settings → Import → Follow save live*.
+
+**Reading my FM27 save only brings in a few hundred players. Why?**
+That's *attribute masking as in the game* (on by default): only players the
+game shows you are read in, i.e. your squad, very well-known players and those
+your scouts know. Switch it off under *Settings → Import* and read the save
+again to get every player with exact values.
 
 **Which Football Manager versions are supported?**
 Football Manager 2024 and Football Manager 2027 (since version 2.0.0, the save
