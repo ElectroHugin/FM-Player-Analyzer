@@ -216,6 +216,11 @@ public:
     QString graphicsDir() const;
     bool setGraphicsDir(const QString &dir);
     static QString defaultGraphicsDir(const QString &fmVersionId);
+    // The game's own save folder ("<Documents>/Sports Interactive/<game>/games").
+    static QString defaultSavesDir(const QString &fmVersionId);
+    // Follow savePath from now on; alreadyReadMs = modification time of the
+    // file just read in (0 = read the newest file of the career right away).
+    bool followSave(const QString &savePath, qint64 alreadyReadMs);
     QString effectiveGraphicsDir(const QString &fmVersionId) const;
 
 private:

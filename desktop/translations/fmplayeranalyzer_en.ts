@@ -4,42 +4,42 @@
 <context>
     <name>DepartureDialog</name>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="116"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="119"/>
         <source>Spieler-Abgänge klären</source>
         <translation>Resolve player departures</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="121"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="124"/>
         <source>Diese Spieler stehen in der Datenbank bei deinem Verein, waren aber nicht in der hochgeladenen Kader-Datei. Standardmäßig gelten alle als gegangen und werden zu Free Agents (FrA) — hake die aus, die geblieben sind, und trage bei den anderen bei Bedarf einen neuen Verein oder &apos;Retired&apos; ein.</source>
         <translation>These players are in the database at your club but were not in the uploaded squad file. By default they all count as departed and become free agents (FrA) — untick the ones who stayed, and enter a new club or &apos;Retired&apos; for the others where needed.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="130"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="133"/>
         <source>Alle als gegangen markieren</source>
         <translation>Mark all as departed</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="141"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="144"/>
         <source>Spieler</source>
         <translation>Player</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="142"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="145"/>
         <source>Gegangen</source>
         <translation>Departed</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="143"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="146"/>
         <source>Neuer Verein / Status</source>
         <translation>New club / status</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="162"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="165"/>
         <source>Neuer Verein eintippen oder Status wählen (FrA = Free Agent, Retired = Karriereende).</source>
         <translation>Type a new club or pick a status (FrA = free agent, Retired = end of career).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="182"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="185"/>
         <source>Abgänge bestätigen</source>
         <translation>Confirm departures</translation>
     </message>
@@ -1838,373 +1838,399 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
 <context>
     <name>fm::DashboardPage</name>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="224"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="227"/>
         <source>Übersicht</source>
         <translation>Overview</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="251"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="254"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="637"/>
         <source>Neue Spielerdaten importieren (FM-Export, HTML oder CSV)</source>
         <translation>Import new player data (FM export, HTML or CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="257"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="261"/>
         <source>Keine Datei ausgewählt…</source>
         <translation>No file selected…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="258"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="262"/>
         <source>Durchsuchen…</source>
         <translation>Browse…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="259"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="263"/>
         <source>Importieren</source>
         <translation>Import</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="269"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="273"/>
         <source>Datei ist ein kompletter Kader-Export meines Vereins (Abgänge erkennen)</source>
         <translation>File is a complete squad export of my club (detect departures)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="271"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="275"/>
         <source>Aktivieren, wenn die Datei NUR Spieler deines Haupt- und Zweitteams enthält. Die App erkennt Spieler, die den Verein verlassen haben, und fragt nach.</source>
         <translation>Enable if the file contains ONLY players from your main and second team. The app detects players who have left the club and asks about them.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="274"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="278"/>
         <source>Neuen/unzugeordneten Spielern automatisch Rollen zuweisen</source>
         <translation>Automatically assign roles to new/unassigned players</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="293"/>
+        <source>Spielstand auswählen</source>
+        <translation>Choose save</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="294"/>
+        <source>Spielstände (*.fm);;Alle Dateien (*)</source>
+        <translation>Saves (*.fm);;All files (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="315"/>
         <source>Kader-Analyse</source>
         <translation>Squad Analysis</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="298"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="320"/>
         <source>Mein Verein:</source>
         <translation>My Club:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="305"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="327"/>
         <source>Analyse-Taktik:</source>
         <translation>Analysis Tactic:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="359"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="381"/>
         <source>Spieler im Kern-Kader</source>
         <translation>Players in core squad</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="360"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="382"/>
         <source>Gesamtwert Kader</source>
         <translation>Total Squad Value</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="361"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="383"/>
         <source>Ø Spielerwert</source>
         <translation>Avg. Player Value</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="362"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="384"/>
         <source>Ø Alter</source>
         <translation>Avg. Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="376"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="398"/>
         <source>Positionsstärke</source>
         <translation>Positional Strength</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="388"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
         <source>Kombiniert</source>
         <translation>Combined</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="388"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="877"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="928"/>
         <source>Mit Ball</source>
         <translation>In possession</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="388"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="878"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="929"/>
         <source>Ohne Ball</source>
         <translation>Out of possession</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="388"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
         <source>Beide</source>
         <translation>Both</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="407"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="429"/>
         <source>Färben nach:</source>
         <translation>Colour by:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="417"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="439"/>
         <source>Niveau</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="417"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="439"/>
         <source>Kadervergleich</source>
         <translation>Squad comparison</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="424"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="446"/>
         <source>Farbstufen wie überall in der App: Schwach bis Legendär.</source>
         <translation>Colour tiers as everywhere in the app: Poor to Legendary.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="481"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="481"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1157"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1208"/>
         <source>Alter</source>
         <translation>Age</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="481"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="482"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
         <source>Persönlichkeit</source>
         <translation>Personality</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="482"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
         <source>Spielzeit</source>
         <translation>Playing Time</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="483"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
         <source>Ø-Note</source>
         <translation>Avg. Rating</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="483"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
         <source>Marktwert</source>
         <translation>Market Value</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="501"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="523"/>
         <source>Transferziele</source>
         <translation>Transfer targets</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="588"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
         <source>weit darunter</source>
         <translation>far below</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="588"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
         <source>darunter</source>
         <translation>below</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="588"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
         <source>Kadermitte</source>
         <translation>squad median</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="589"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
         <source>darüber</source>
         <translation>above</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="589"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
         <source>weit darüber</source>
         <translation>far above</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="597"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="619"/>
         <source>Kadermitte: %1</source>
         <translation>Squad median: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="771"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="636"/>
+        <source>Spielerdaten einlesen (Spielstand .fm, CSV oder HTML)</source>
+        <translation>Read player data (save .fm, CSV or HTML)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="642"/>
+        <source>Folgt „%1“ und liest ihn nach jedem Speichern im Spiel neu ein.</source>
+        <translation>Following “%1”: read again after every save in the game.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="646"/>
+        <source>Schneller als ein Export: &lt;a href=&quot;follow&quot;&gt;Spielstand live verfolgen&lt;/a&gt;</source>
+        <translation>Faster than an export: &lt;a href=&quot;follow&quot;&gt;follow your save live&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="822"/>
         <source>mit %1 · ohne %2</source>
         <translation>IP %1 · OOP %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="784"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="835"/>
         <source>Fällt %1 aus:</source>
         <translation>If %1 is unavailable:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="787"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="838"/>
         <source>Kein Spieler im Kader füllt die Lücke, ein Platz bleibt frei.</source>
         <translation>No squad player fills the gap; one place stays empty.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="789"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="840"/>
         <source>Elf %1</source>
         <translation>XI %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="790"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="841"/>
         <source>%1 kommt (%2).</source>
         <translation>%1 comes on (%2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="792"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="843"/>
         <source>%1 rückt um: %2 → %3.</source>
         <translation>%1 moves: %2 → %3.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="794"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="845"/>
         <source>Startelf %1 DWRS-Punkte (Summe aller elf).</source>
         <translation>Starting XI %1 DWRS points (sum of all eleven).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="850"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="895"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="920"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="901"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="946"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="971"/>
         <source>frei</source>
         <translation>free</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="851"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="902"/>
         <source>Für %1 hat der Kader keinen Spieler.</source>
         <translation>The squad has no player for %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="894"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="945"/>
         <source>mit: %1</source>
         <translation>IP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="896"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="947"/>
         <source>%1 mit Ball ist frei.</source>
         <translation>%1 in possession is empty.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="909"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="960"/>
         <source>%1 (mit Ball %2, ohne Ball %3)</source>
         <translation>%1 (in possession %2, out of possession %3)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="919"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="970"/>
         <source>ohne: %1</source>
         <translation>OOP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="921"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="972"/>
         <source>%1 ohne Ball ist frei.</source>
         <translation>%1 out of possession is empty.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="946"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="997"/>
         <source>„Elf −4,0“: Fällt der Spieler aus, kommt der beste Ersatz (wie in Best XI unter „Ausfall in der Startelf“), und die Summe der DWRS der ganzen Startelf sinkt um 4,0. „Lücke“: Kein Spieler im Kader füllt den Platz. Grundlage ist der ganze Verein ohne Langzeitverletzte und ohne Spieler, die als nicht registriert markiert sind, sonst ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus Best XI gelten.</source>
         <translation>“XI −4.0”: if the player is out, the best cover comes on (as in Best XI under “Squad depth: a starter is missing”), and the sum of DWRS of the whole starting XI drops by 4.0. “gap”: no squad player fills the place. Based on the whole club without long-term injured and without players marked as not registered, otherwise without competition rules; manual places from Best XI apply.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1121"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1172"/>
         <source>Dein Kader ist gut aufgestellt. Keine klaren Verstärkungen innerhalb der Filterkriterien gefunden.</source>
         <translation>Your squad is well set up. No clear reinforcements found within the filter criteria.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1142"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1193"/>
         <source>Upgrade für %1</source>
         <translation>Upgrade for %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1153"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1204"/>
         <source>Bewertung</source>
         <translation>Rating</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1153"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1204"/>
         <source>%1 % (dein Bester %2 %)</source>
         <translation>%1 % (your best %2 %)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1156"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1207"/>
         <source>Wert</source>
         <translation>Value</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="526"/>
         <source>Mögliche Verstärkungen aus deiner Scouting-Datenbank, basierend auf den Rollen der gewählten Taktik.</source>
         <translation>Possible reinforcements from your scouting database, based on the roles of the selected tactic.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="425"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="447"/>
         <source>Jeder Starter im Vergleich zur Kadermitte (Median der gezeigten Starter): grau bis 1,5 Punkte Abstand, darunter orange, darüber blau, ab 4 Punkten kräftig.</source>
         <translation>Each starter compared with the squad median (median of the starters shown): grey within 1.5 points, orange below, blue above, strong from 4 points.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="511"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="533"/>
         <source>Max. Alter:</source>
         <translation>Max. Age:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="520"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="542"/>
         <source>Max. Marktwert:</source>
         <translation>Max. Market Value:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="541"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="563"/>
         <source>%1 Jahre</source>
         <translation>%1 years</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="650"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="701"/>
         <source>Bitte importiere Spielerdaten und wähle oben deinen Verein, um die Kader-Analyse zu sehen.</source>
         <translation>Please import player data and select your club above to see the squad analysis.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="678"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="703"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="729"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="754"/>
         <source>Für die Taktik &apos;%1&apos; konnte kein Kader gebildet werden — es gibt keine passenden Spieler in deinem Verein.</source>
         <translation>No squad could be built for the tactic &apos;%1&apos; — there are no suitable players in your club.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="786"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="837"/>
         <source>Lücke</source>
         <translation>gap</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="930"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="981"/>
         <source>Groß: DWRS des Starters in seiner Rolle.</source>
         <translation>Large: the starter&apos;s DWRS in his role.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="932"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="983"/>
         <source>Groß: Wert des Starters über beide Aufstellungen (%1 % mit Ball).</source>
         <translation>Large: the starter&apos;s value over both line-ups (%1 % in possession).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="936"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="987"/>
         <source>Klein: so ändert sich die Startelf, wenn er ausfällt. Details zeigt der Tooltip.</source>
         <translation>Small: how the starting XI changes if he is out. The tooltip shows the details.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="993"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1044"/>
         <source>Spieler bei %1 (%2)</source>
         <translation>Players at %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1169"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1220"/>
         <source>Verein: %1&lt;br/&gt;Positionen: %2</source>
         <translation>Club: %1&lt;br/&gt;Positions: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1265"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1317"/>
         <source>Import fehlgeschlagen</source>
         <translation>Import failed</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1266"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1318"/>
         <source>Die Datei konnte nicht importiert werden.
 
 %1
@@ -2217,48 +2243,53 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
 Possible causes: no &apos;UID&apos; column, or not a valid Football Manager export (HTML or CSV).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1278"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1330"/>
         <source>Import abgeschlossen</source>
         <translation>Import complete</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1332"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1339"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1336"/>
+        <source>Tipp: Den Spielstand (.fm) direkt einzulesen geht schneller und braucht keinen Export.</source>
+        <translation>Tip: reading the save (.fm) directly is faster and needs no export.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1390"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1397"/>
         <source>Abgänge</source>
         <translation>Departures</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1340"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1398"/>
         <source>%1 Spieler-Datensätze aktualisiert.</source>
         <translation>%1 player records updated.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1226"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1277"/>
         <source>FM-Export oder FM27-Spielstand auswählen</source>
         <translation>Choose an FM export or FM27 save</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1227"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1279"/>
         <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
         <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1180"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1231"/>
         <source>Klicken für Aktionen: Profil, Shortlist, Vergleich</source>
         <translation>Click for actions: profile, shortlist, comparison</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1186"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1237"/>
         <source>%1 (%2 %)</source>
         <translation>%1 (%2%)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1201"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1252"/>
         <source>Vergleichen mit %1</source>
         <translation>Compare with %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1208"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1259"/>
         <source>Vergleichen mit allen %n</source>
         <translation>
             <numerusform>Compare with both</numerusform>
@@ -2266,12 +2297,12 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="983"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1034"/>
         <source>Ingame-Datum · Saison %1</source>
         <translation>In-game date · season %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="986"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1037"/>
         <source>Stand des zuletzt eingelesenen FM27-Spielstands</source>
         <translation>State of the most recently read FM27 save</translation>
     </message>
@@ -2284,22 +2315,22 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
         <translation>Drop an export here</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/DropZone.cpp" line="49"/>
+        <location filename="../src/app/widgets/DropZone.cpp" line="50"/>
         <source>CSV oder HTML aus dem Football Manager – oder klicken, um eine Datei auszuwählen</source>
         <translation>CSV or HTML from Football Manager – or click to choose a file</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/DropZone.cpp" line="53"/>
+        <location filename="../src/app/widgets/DropZone.cpp" line="55"/>
         <source>Klicken, um eine andere Datei zu wählen</source>
         <translation>Click to choose another file</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/DropZone.cpp" line="82"/>
+        <location filename="../src/app/widgets/DropZone.cpp" line="96"/>
         <source>FM-Export oder FM27-Spielstand auswählen</source>
         <translation>Choose an FM export or FM27 save</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/DropZone.cpp" line="83"/>
+        <location filename="../src/app/widgets/DropZone.cpp" line="99"/>
         <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
         <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
@@ -4278,119 +4309,165 @@ The original file is not modified.</translation>
 <context>
     <name>fm::NewSaveWizard</name>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="68"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="75"/>
         <source>Neuer Spielstand</source>
         <translation>New save</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="78"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="85"/>
         <source>Spielstand</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="78"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="85"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="311"/>
         <source>Erster Import</source>
         <translation>First import</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="105"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="112"/>
         <source>Abbrechen</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="106"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="113"/>
         <source>Überspringen</source>
         <translation>Skip</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="107"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="283"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="114"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="300"/>
         <source>Weiter</source>
         <translation>Next</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="136"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="143"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="149"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="156"/>
         <source>Nur für dich zum Wiedererkennen, z. B. Verein und Startjahr.</source>
         <translation>Just for you to recognise it, e.g. club and starting year.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="155"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="162"/>
         <source>Football-Manager-Version</source>
         <translation>Football Manager Version</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="178"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="185"/>
         <source>Import: %1</source>
         <translation>Import: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="198"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="205"/>
         <source>Warum lässt sich die Version später nicht ändern?</source>
         <translation>Why can’t the version be changed later?</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="199"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="206"/>
         <source>Rollen, Bewertungen und Verlauf eines Spielstands beziehen sich auf die Rollen seiner FM-Version. Für einen anderen Football Manager legst du deshalb einen eigenen Spielstand an. Deine bisherigen Spielstände bleiben unverändert.</source>
         <translation>A save’s roles, ratings and history refer to the roles of its FM version. For another Football Manager you therefore create a separate save. Your existing saves stay unchanged.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="215"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="222"/>
         <source>Übernimmt Gewichte, Farben, Analyse-Optionen, Rollen und Taktiken. Verein, Logo, Spieler, Favoriten und den live verfolgten FM27-Spielstand bringt der neue Spielstand selbst mit.</source>
         <translation>Copies weights, colors, analysis options, roles and tactics. Club, logo, players, favorites and the live-tracked FM27 save come from the new save itself.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="241"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="261"/>
+        <source>Spielstand live verfolgen</source>
+        <translation>Follow save live</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="263"/>
+        <source>Solange der Analyzer offen ist, liest er den Spielstand nach jedem Speichern im Spiel neu ein, auch nach einem Autosave.</source>
+        <translation>While the analyzer is open, it reads the save again every time the game saves, autosaves included.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="311"/>
+        <source>Spielstand einlesen</source>
+        <translation>Read save</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="315"/>
+        <source>Spielstand hierher ziehen</source>
+        <translation>Drag your save here</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="316"/>
+        <source>%1-Spielstand (.fm) – oder klicken, um ihn auszuwählen</source>
+        <translation>%1 save (.fm), or click to choose it</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="318"/>
+        <source>Spielstand auswählen</source>
+        <translation>Choose save</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="319"/>
+        <source>Spielstände und Exporte (*.fm *.csv *.html *.htm);;Alle Dateien (*)</source>
+        <translation>Saves and exports (*.fm *.csv *.html *.htm);;All files (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="321"/>
+        <source>Optional. Exporte aus dem FM View Exporter (CSV oder HTML) kannst du ebenfalls hier einlesen.</source>
+        <translation>Optional: exports from FM View Exporter (CSV or HTML) can be read here too.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="324"/>
         <source>Ziehe einen Spieler-Export aus dem Football Manager hierher, zum Beispiel deinen Kader oder eine Scouting-Liste. Weitere Exporte kannst du jederzeit später importieren.</source>
         <translation>Drop a player export from Football Manager here, for example your squad or a scouting list. You can import more exports at any time later.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="253"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="288"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="256"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="305"/>
         <source>Importieren</source>
         <translation>Import</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="257"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="269"/>
         <source>Neuen Spielern automatisch passende Rollen zuweisen</source>
         <translation>Automatically assign suitable roles to new players</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="286"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="303"/>
         <source>Später einrichten</source>
         <translation>Set up later</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="288"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="305"/>
         <source>Fertig</source>
         <translation>Done</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="354"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="313"/>
+        <source>Wähle deine Spielstand-Datei aus Football Manager. Der Analyzer liest sie direkt, auch große Datenbanken schnell.</source>
+        <translation>Choose your save file from Football Manager. The analyzer reads it directly, quickly even for large databases.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="401"/>
         <source>Die Datei konnte nicht importiert werden: %1</source>
         <translation>The file could not be imported: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="140"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="147"/>
         <source>z. B. Mein Verein 2027</source>
         <translation>e.g. My club 2027</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="206"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="213"/>
         <source>Einstellungen</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="210"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="217"/>
         <source>Standardeinstellungen</source>
         <translation>Default settings</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="212"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="219"/>
         <source>Übernehmen von „%1“</source>
         <translation>Copy from “%1”</translation>
     </message>
@@ -9837,18 +9914,18 @@ A backup is created automatically in the “backups” folder first. You can bri
 <context>
     <name>fm::WelcomeWizard</name>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="156"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="663"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="158"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="707"/>
         <source>Willkommen</source>
         <translation>Welcome</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="163"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="165"/>
         <source>Richte deinen Spielstand ein</source>
         <translation>Set up your save</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/WelcomeWizard.cpp" line="167"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="169"/>
         <source>Die ersten Spieler sind da (%n Spieler). Mit ein paar Angaben weiß der Analyzer, welcher Kader deiner ist und wie du spielst. Alles lässt sich später unter Einstellungen ändern, und diesen Assistenten findest du jederzeit unter Hilfe → Willkommens-Assistent.</source>
         <translation>
             <numerusform>The first players are in (%n player). With a few details the Analyzer knows which squad is yours and how you play. Everything can be changed later under Settings, and you can find this assistant at any time under Help → Welcome assistant.</numerusform>
@@ -9856,244 +9933,279 @@ A backup is created automatically in the “backups” folder first. You can bri
         </translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="177"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="179"/>
         <source>Verein</source>
         <translation>Club</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="177"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="179"/>
         <source>Taktik und Kader</source>
         <translation>Tactics and squad</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="177"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="408"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="179"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="444"/>
         <source>Farben</source>
         <translation>Colours</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="205"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="207"/>
         <source>Nicht mehr anzeigen</source>
         <translation>Don&apos;t show again</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="206"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="208"/>
         <source>Schließt den Assistenten für diesen Spielstand. Du kannst ihn über Hilfe → Willkommens-Assistent wieder öffnen.</source>
         <translation>Closes the assistant for this save. You can open it again from Help → Welcome assistant.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="208"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="210"/>
         <source>Zurück</source>
         <translation>Back</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="209"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="583"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="211"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="619"/>
         <source>Weiter</source>
         <translation>Next</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="234"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="236"/>
         <source>Welchen Verein managst du?</source>
         <translation>Which club do you manage?</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="241"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="243"/>
         <source>Übersicht, Best XI, Kaufberatung und Trainingsplan rechnen mit diesem Verein. Oben steht der Verein mit den meisten importierten Spielern.</source>
         <translation>Overview, Best XI, signing advice and training plan work with this club. The club with the most imported players is listed first.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="252"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="254"/>
         <source>voller Vereinsname (für den Header)</source>
         <translation>full club name (for the header)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="254"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="256"/>
         <source>Name des Stadions</source>
         <translation>stadium name</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="261"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="263"/>
         <source>Zweitteam:</source>
         <translation>Second Team:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="262"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="264"/>
         <source>Voller Vereinsname (Anzeige):</source>
         <translation>Full club name (display):</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="263"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="265"/>
         <source>Stadion:</source>
         <translation>Stadium:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="264"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="266"/>
         <source>Vereins-Land (3-Buchstaben-Code):</source>
         <translation>Club country (3-letter code):</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="269"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="271"/>
         <source>Logo wählen (PNG)…</source>
         <translation>Choose logo (PNG)…</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="270"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="272"/>
         <source>Entfernen</source>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="277"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="279"/>
         <source>Vereinslogo:</source>
         <translation>Club logo:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="284"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="286"/>
+        <source>live verfolgen</source>
+        <translation>follow live</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WelcomeWizard.cpp" line="287"/>
+        <source>Solange der Analyzer offen ist, liest er den Spielstand nach jedem Speichern im Spiel neu ein, auch nach einem Autosave. Schneller als ein Export.</source>
+        <translation>While the analyzer is open, it reads the save again every time the game saves, autosaves included. Faster than an export.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WelcomeWizard.cpp" line="294"/>
+        <source>Durchsuchen …</source>
+        <translation>Browse …</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WelcomeWizard.cpp" line="291"/>
+        <source>.fm-Datei wählen</source>
+        <translation>Choose .fm file</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WelcomeWizard.cpp" line="300"/>
+        <source>Spielstand im Spiel:</source>
+        <translation>Game save:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WelcomeWizard.cpp" line="306"/>
+        <source>Spielstand auswählen</source>
+        <translation>Choose save</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WelcomeWizard.cpp" line="307"/>
+        <source>Spielstände (*.fm);;Alle Dateien (*)</source>
+        <translation>Saves (*.fm);;All files (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WelcomeWizard.cpp" line="320"/>
         <source>Wofür brauche ich das?</source>
         <translation>What is this for?</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="285"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="321"/>
         <source>Das Zweitteam (zum Beispiel die zweite Mannschaft oder U23) zählt zum eigenen Kader, etwa für Leihen und die Jugendelf. Vereinsname, Stadion und Logo erscheinen im Kopf des Fensters. Das Vereins-Land steuert den Inland-Filter beim Scouting und die Ausbildungsregeln der Kaderregistrierung. Der Code ist der dreistellige Nationen-Code aus dem Spiel.</source>
         <translation>The second team (for example the reserves or U23) counts as part of your own squad, for loans and the youth XI among others. Club name, stadium and logo appear in the window header. The club country drives the domestic filter in scouting and the trained-at-club rules of squad registration. The code is the three-letter nation code from the game.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="310"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="346"/>
         <source>Lieblings-Taktiken</source>
         <translation>Favourite Tactics</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="329"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="365"/>
         <source>Primäre Taktik:</source>
         <translation>Primary Tactic:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="330"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="366"/>
         <source>Sekundäre Taktik:</source>
         <translation>Secondary Tactic:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="332"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="368"/>
         <source>Werden auf Übersicht, Aufstellung, Kader und Transfers vorausgewählt. Die primäre bestimmt die Rollen auf der Seite Entwicklung. Eigene Taktiken legst du unter Taktiken an.</source>
         <translation>Preselected on Overview, Line-up, Squad and Transfers. The primary one sets the roles on the Development page. You create your own tactics under Tactics.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="342"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="378"/>
         <source>Mit Ball und ohne Ball</source>
         <translation>In and out of possession</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="349"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="385"/>
         <source>Anteil mit Ball:</source>
         <translation>In-possession share:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="352"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="388"/>
         <source>Was bedeutet der Anteil?</source>
         <translation>What does the share mean?</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="353"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="389"/>
         <source>Jede Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Wert eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner Rolle ohne Ball. Bei 50 % zählen beide gleich, bei mehr zählt der Ballbesitz stärker.</source>
         <translation>Every tactic has an in-possession and an out-of-possession line-up. A player&apos;s value is this share of their in-possession role plus the rest of their out-of-possession role. At 50 % both count the same; above that, possession counts more.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="368"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="404"/>
         <source>Kaderregistrierung</source>
         <translation>Squad registration</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="373"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="409"/>
         <source>Standard (keine Beschränkung)</source>
         <translation>Default (no restriction)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="381"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="417"/>
         <source>Champions League / Europa League / Conference League</source>
         <translation>Champions League / Europa League / Conference League</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="385"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="421"/>
         <source>Liga:</source>
         <translation>League:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="386"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="422"/>
         <source>Europapokal:</source>
         <translation>European competition:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="389"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="425"/>
         <source>Was bewirkt das?</source>
         <translation>What does this do?</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="390"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="426"/>
         <source>Sobald ein Wettbewerb eine Meldeliste verlangt, markiert der Analyzer im Land und im Verein ausgebildete Spieler und bietet den Registrierungs-Assistenten an. &apos;Standard&apos; kennt keine Beschränkung, dann sind alle Spieler spielberechtigt.</source>
         <translation>As soon as a competition requires a squad list, the Analyzer marks players trained in the nation and at the club and offers the registration assistant. &apos;Default&apos; has no restriction: every player is eligible.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="415"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="451"/>
         <source>Nacht (dunkel)</source>
         <translation>Night (dark)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="416"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="452"/>
         <source>Tag (hell)</source>
         <translation>Day (light)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="417"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="453"/>
         <source>Vereins-/Farbvorlage:</source>
         <translation>Club / colour preset:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="418"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="454"/>
         <source>Modus:</source>
         <translation>Mode:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="420"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="456"/>
         <source>Die Vorlage färbt Kopfzeile, Knöpfe und Auswahl in den Vereinsfarben. Die Grundfarben bleiben neutral. Feinere Anpassungen findest du unter Einstellungen → Design.</source>
         <translation>The preset colours the header, buttons and selection in the club colours. The base colours stay neutral. Finer adjustments are under Settings → Design.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="432"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="468"/>
         <source>Was es sonst noch gibt</source>
         <translation>What else there is</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="434"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="470"/>
         <source>Weitere Einstellungen</source>
         <translation>More settings</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="435"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="471"/>
         <source>In den Einstellungen findest du außerdem das Nationalteam (schaltet das National-Management frei), Porträts und Wappen aus dem Graphics-Ordner des Spiels und, unter Import, für FM27 das Live-Verfolgen eines Spielstands. Unter DWRS-Gewichte sowie Kader und Analyse passt du an, wie Rollen bewertet und Kader aufgebaut werden.</source>
         <translation>The settings also hold the national team (unlocks national management), portraits and crests from the game&apos;s graphics folder and, under Import, following an FM27 save live. Under DWRS weights and Squad and analysis you adjust how roles are rated and squads are built.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="496"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="532"/>
         <source>Custom</source>
         <translation>Custom</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="499"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="535"/>
         <source>%1 (eigene)</source>
         <translation>%1 (own)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="532"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="568"/>
         <source>Bisherige Farben behalten</source>
         <translation>Keep current colours</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="583"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="619"/>
         <source>Fertig</source>
         <translation>Done</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="664"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="708"/>
         <source>Die Angaben konnten nicht gespeichert werden. Der Spielstand behält seinen bisherigen Stand.
 
 %1</source>
@@ -10102,43 +10214,43 @@ A backup is created automatically in the “backups” folder first. You can bri
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="679"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="723"/>
         <source>Vereinslogo wählen</source>
         <translation>Choose club logo</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="680"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="724"/>
         <source>Bilder (*.png *.jpg *.jpeg *.bmp);;Alle Dateien (*)</source>
         <translation>Images (*.png *.jpg *.jpeg *.bmp);;All files (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="685"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="691"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="703"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="729"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="735"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="747"/>
         <source>Vereinslogo</source>
         <translation>Club logo</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="686"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="730"/>
         <source>Die Datei konnte nicht als Bild geladen werden.</source>
         <translation>The file could not be loaded as an image.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="692"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="736"/>
         <source>Das Logo konnte nicht gespeichert werden.
 %1</source>
         <translation>The logo could not be saved.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="704"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="748"/>
         <source>Das Logo konnte nicht entfernt werden.
 %1</source>
         <translation>The logo could not be removed.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="718"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="762"/>
         <source>(kein Logo)</source>
         <translation>(no logo)</translation>
     </message>

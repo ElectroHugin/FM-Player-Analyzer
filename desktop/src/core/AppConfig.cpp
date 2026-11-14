@@ -1019,6 +1019,20 @@ QString AppConfig::defaultGraphicsDir(const QString &fmVersionId)
     return documents + QStringLiteral("/Sports Interactive/") + game + QStringLiteral("/graphics");
 }
 
+QString AppConfig::defaultSavesDir(const QString &fmVersionId)
+{
+    return QFileInfo(defaultGraphicsDir(fmVersionId)).absolutePath() + QStringLiteral("/games");
+}
+
+bool AppConfig::followSave(const QString &savePath, qint64 alreadyReadMs)
+{
+    Transaction transaction(*this);
+    bool ok = transaction.isActive() && setLiveSavePath(savePath)
+              && setLiveSaveLastModified(alreadyReadMs) && setLiveSaveEnabled(!savePath.isEmpty());
+    QString error;
+    return ok && transaction.commit(&error);
+}
+
 QString AppConfig::effectiveGraphicsDir(const QString &fmVersionId) const
 {
     const QString configured = graphicsDir();

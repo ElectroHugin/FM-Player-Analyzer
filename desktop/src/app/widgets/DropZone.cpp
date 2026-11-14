@@ -45,13 +45,27 @@ DropZone::DropZone(QWidget *parent)
 void DropZone::setFile(const QString &path)
 {
     if (path.isEmpty()) {
-        m_title->setText(tr("Export hierher ziehen"));
-        m_detail->setText(tr("CSV oder HTML aus dem Football Manager – oder klicken, um "
-                             "eine Datei auszuwählen"));
+        m_title->setText(m_promptTitle.isEmpty() ? tr("Export hierher ziehen") : m_promptTitle);
+        m_detail->setText(m_promptDetail.isEmpty()
+                              ? tr("CSV oder HTML aus dem Football Manager – oder klicken, um "
+                                   "eine Datei auszuwählen")
+                              : m_promptDetail);
     } else {
         m_title->setText(QFileInfo(path).fileName());
         m_detail->setText(tr("Klicken, um eine andere Datei zu wählen"));
     }
+}
+
+void DropZone::setPrompt(const QString &title, const QString &detail)
+{
+    m_promptTitle = title;
+    m_promptDetail = detail;
+}
+
+void DropZone::setDialog(const QString &caption, const QString &filter)
+{
+    m_dialogCaption = caption;
+    m_dialogFilter = filter;
 }
 
 bool DropZone::isImportableFile(const QString &path)
@@ -79,8 +93,11 @@ void DropZone::mousePressEvent(QMouseEvent *event)
         return;
     }
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("FM-Export oder FM27-Spielstand auswählen"), m_startDir,
-        tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
+        this, m_dialogCaption.isEmpty() ? tr("FM-Export oder FM27-Spielstand auswählen") : m_dialogCaption,
+        m_startDir,
+        m_dialogFilter.isEmpty()
+            ? tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)")
+            : m_dialogFilter);
     if (!path.isEmpty()) {
         setFile(path);
         emit fileChosen(path);
