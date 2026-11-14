@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Read the FAQ first
+    url: https://github.com/ElectroHugin/FM-Player-Analyzer#-faq
+    about: Many questions (import, masking, supported versions) are answered in the README.
+  - name: Download the latest version
+    url: https://github.com/ElectroHugin/FM-Player-Analyzer/releases/latest
+    about: Maybe the problem is already fixed in a newer version.

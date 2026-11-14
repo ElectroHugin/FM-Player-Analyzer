@@ -1,0 +1,39 @@
+name: League registration rules
+description: Ask for squad registration rules of a league that is not supported yet.
+title: "[League]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The app can check the squad registration rules of some leagues.
+        If yours is missing, the screenshot of the *Squad Selection Rules* screen in FM is all we need.
+  - type: input
+    id: league
+    attributes:
+      label: League and country
+      placeholder: e.g. Eredivisie, Netherlands
+    validations:
+      required: true
+  - type: dropdown
+    id: fm-version
+    attributes:
+      label: Football Manager version
+      options:
+        - FM27
+        - FM24
+    validations:
+      required: true
+  - type: textarea
+    id: rules
+    attributes:
+      label: Screenshot of the rules
+      description: In FM open the competition, then *Rules → Squad Selection Rules*, and drag the screenshot here.
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+    validations:
+      required: false
