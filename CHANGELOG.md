@@ -21,6 +21,10 @@ Test build 2.3.0-test.2:
 - Switching the profile recalculates once and marks it in the history; development does not count it as progress.
 - Player databases migrate to schema 18; 2.2.3 cannot open the upgraded database. A backup is made first.
 
+Added for 2.3.0-test.4:
+
+- English UI: the default colour preset is called "Club-neutral (default)".
+
 Added for 2.3.0-test.3:
 
 - FM27 save import: when the game renames clubs (e.g. after a data update), your club and second team follow automatically instead of showing an empty squad.

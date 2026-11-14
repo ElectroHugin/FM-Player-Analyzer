@@ -780,6 +780,14 @@ Details: %1</translation>
     </message>
 </context>
 <context>
+    <name>ThemePresets</name>
+    <message>
+        <location filename="../src/app/theming/ThemePresets.cpp" line="127"/>
+        <source>Vereinsneutral (Standard)</source>
+        <translation>Club-neutral (default)</translation>
+    </message>
+</context>
+<context>
     <name>TrainingProfileEditor</name>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="44"/>

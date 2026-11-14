@@ -1,5 +1,7 @@
 #include "ThemePresets.h"
 
+#include <QCoreApplication>
+
 #include <algorithm>
 
 namespace fm {
@@ -120,6 +122,9 @@ const QList<ClubTheme> &clubThemes()
         for (ClubTheme &theme : list) {
             if (theme.id != QLatin1String("neutral"))
                 theme.league = leagueOf.value(theme.id, QStringLiteral("Bundesliga"));
+            else // the only preset name that is not a club's own name
+                theme.displayName =
+                    QCoreApplication::translate("ThemePresets", "Vereinsneutral (Standard)");
         }
         // Neutral first (empty league), then league, then club name.
         std::stable_sort(list.begin(), list.end(), [](const ClubTheme &a, const ClubTheme &b) {
