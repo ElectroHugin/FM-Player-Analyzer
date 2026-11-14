@@ -29,6 +29,7 @@ Added for 2.3.0-test.3:
 - Overview, squad comparison: grey for the squad median instead of dark cards, a colour legend and the distance in the tooltip.
 - Settings: opened explanations are no longer cut off.
 - Leagues without a squad list (e.g. Bundesliga): mark a player as "Not registered" in the context menu. Best XI and the Overview then leave him out. Squad Registration lists the squad with a "Registered" tick for these leagues.
+- Large saves: the basis of each rating (profile, game date, attributes) is stored once per player instead of once per role. Saving ratings after an import or recalculation is about twice as fast, the database about two thirds smaller, and the progress dialog shows the saving step instead of sitting at 98 %. Saves from earlier 2.3.0 test builds are converted once when opened.
 
 ## 2.2.3 – 2026-11-09
 

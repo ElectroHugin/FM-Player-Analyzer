@@ -25,9 +25,16 @@ struct Result {
 };
 
 // playersSubset: row indexes into players to restrict to (empty = all).
-// progress(current, total) is invoked per role batch. origin: Recalc for every
+// progress(current, total) runs over the whole job: the role batches fill the
+// first three quarters of the scale, writing the ratings the last quarter
+// (savingPhase() tells the two apart). origin: Recalc for every
 // run that is not part of an import (the rows then re-base the development
 // history instead of counting as change).
+inline bool savingPhase(int current, int total)
+{
+    return total > 0 && qint64(current) * 4 >= qint64(total) * 3;
+}
+
 Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
                          const DwrsEngine &engine, const QStringList &validRoles,
                          const std::vector<int> &playersSubset = {},

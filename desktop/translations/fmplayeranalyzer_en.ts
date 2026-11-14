@@ -75,177 +75,182 @@
 <context>
     <name>ImportRunner</name>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="32"/>
+        <location filename="../src/app/ImportRunner.cpp" line="33"/>
         <source>Import wird vorbereitet…</source>
         <translation>Preparing import…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="60"/>
+        <location filename="../src/app/ImportRunner.cpp" line="61"/>
         <source>Backup wird erstellt…</source>
         <translation>Creating backup…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="64"/>
+        <location filename="../src/app/ImportRunner.cpp" line="65"/>
         <source>Datei wird analysiert…</source>
         <translation>Analyzing file…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="68"/>
+        <location filename="../src/app/ImportRunner.cpp" line="69"/>
         <source>Spieler werden importiert… (%1/%2)</source>
         <translation>Importing players… (%1/%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="72"/>
+        <location filename="../src/app/ImportRunner.cpp" line="73"/>
         <source>Rollen werden automatisch zugewiesen…</source>
         <translation>Assigning roles automatically…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="76"/>
+        <location filename="../src/app/ImportRunner.cpp" line="78"/>
+        <source>DWRS-Bewertungen werden gespeichert…</source>
+        <translation>Saving DWRS ratings…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ImportRunner.cpp" line="79"/>
         <source>DWRS-Bewertungen werden berechnet…</source>
         <translation>Calculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="80"/>
+        <location filename="../src/app/ImportRunner.cpp" line="83"/>
         <source>Ergebnis wird vorbereitet…</source>
         <translation>Preparing results…</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="136"/>
+        <location filename="../src/app/ImportRunner.cpp" line="139"/>
         <source>%1 Spieler importiert (davon %2 neu).</source>
         <translation>%1 players imported (%2 of them new).</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="140"/>
+        <location filename="../src/app/ImportRunner.cpp" line="143"/>
         <source>Komplett-Export: Spieler, die fehlen, altern um einen Export.</source>
         <translation>Full export: players missing from it age by one export.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="142"/>
+        <location filename="../src/app/ImportRunner.cpp" line="145"/>
         <source>Teil-Export: nur die enthaltenen Spieler wurden aufgefrischt, niemand altert.</source>
         <translation>Partial export: only the players it contains were refreshed, nobody ages.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="145"/>
+        <location filename="../src/app/ImportRunner.cpp" line="148"/>
         <source>Jetzt 22, manuelle U21-Einstufung aufgehoben (braucht einen Registrierungsplatz): %1</source>
         <translation>Now 22, manual U21 decision lifted (needs a registration slot): %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="149"/>
+        <location filename="../src/app/ImportRunner.cpp" line="152"/>
         <source>%1 Spielern wurden automatisch Rollen zugewiesen.</source>
         <translation>Roles were assigned automatically to %1 players.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="152"/>
+        <location filename="../src/app/ImportRunner.cpp" line="155"/>
         <source>DWRS: %1 Bewertungen berechnet, %2 geänderte Einträge gespeichert.</source>
         <translation>DWRS: %1 ratings calculated, %2 changed entries saved.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="166"/>
+        <location filename="../src/app/ImportRunner.cpp" line="169"/>
         <source>Backup fehlgeschlagen: %1</source>
         <translation>Backup failed: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="168"/>
+        <location filename="../src/app/ImportRunner.cpp" line="171"/>
         <source>%1 fehlerhafte Zeile(n) übersprungen (Zellenzahl passte nicht zur Kopfzeile). Exportiere die Datei ggf. neu aus FM.</source>
         <translation>%1 malformed row(s) skipped (cell count did not match the header). Re-export the file from FM if needed.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="172"/>
+        <location filename="../src/app/ImportRunner.cpp" line="175"/>
         <source>%1 Zeile(n) ohne UID übersprungen.</source>
         <translation>%1 row(s) without UID skipped.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="175"/>
+        <location filename="../src/app/ImportRunner.cpp" line="178"/>
         <source>Doppelte UIDs in der Datei — nur die letzte Zeile wurde übernommen: %1</source>
         <translation>Duplicate UIDs in the file — only the last row was used: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="180"/>
+        <location filename="../src/app/ImportRunner.cpp" line="183"/>
         <source>Unbekannte Spalten (werden ignoriert): %1</source>
         <translation>Unknown columns (ignored): %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="183"/>
+        <location filename="../src/app/ImportRunner.cpp" line="186"/>
         <source>Fehlende Spalten (diese Werte werden nicht aktualisiert): %1. Nimm sie ggf. in die Exportansicht in FM auf.</source>
         <translation>Missing columns (these values are not updated): %1. Add them to the export view in FM if needed.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="187"/>
+        <location filename="../src/app/ImportRunner.cpp" line="190"/>
         <source>ID/Namens-Konflikt übersprungen: %1. Eine numerische UID entspricht einer bekannten Newgen-ID, aber die Namen unterscheiden sich.</source>
         <translation>ID/name conflict skipped: %1. A numeric UID matches a known newgen ID, but the names differ.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="193"/>
+        <location filename="../src/app/ImportRunner.cpp" line="196"/>
         <source>Name unter bekannter UID geändert: %1. FM hat die ID evtl. an einen neuen Newgen vergeben — zugewiesene Rollen und DWRS-Historie gehören ggf. noch zum alten Spieler.</source>
         <translation>Name changed under a known UID: %1. FM may have reissued the ID to a new newgen — assigned roles and DWRS history may still belong to the old player.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="199"/>
+        <location filename="../src/app/ImportRunner.cpp" line="202"/>
         <source>Automatische Rollen-Zuweisung fehlgeschlagen: %1</source>
         <translation>Automatic role assignment failed: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="202"/>
+        <location filename="../src/app/ImportRunner.cpp" line="205"/>
         <source>Das Bewertungsprofil nutzt Spalten, die in dieser Ansicht fehlen: %1. Die Bewertungen beruhen auf den übrigen Attributen; nimm die Spalten in die Exportansicht in FM auf.</source>
         <translation>The rating profile uses columns that are missing from this view: %1. Ratings are based on the remaining attributes; add the columns to the export view in FM.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="207"/>
+        <location filename="../src/app/ImportRunner.cpp" line="210"/>
         <source>DWRS-Berechnung fehlgeschlagen: %1</source>
         <translation>DWRS calculation failed: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="218"/>
+        <location filename="../src/app/ImportRunner.cpp" line="221"/>
         <source>Datei konnte nicht geöffnet werden: %1</source>
         <translation>File could not be opened: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="220"/>
+        <location filename="../src/app/ImportRunner.cpp" line="223"/>
         <source>Diese FM-Version kann keine %1-Dateien importieren.</source>
         <translation>This FM version cannot import %1 files.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="223"/>
+        <location filename="../src/app/ImportRunner.cpp" line="226"/>
         <source>Kein &lt;table&gt;-Element in der Datei gefunden.</source>
         <translation>No &lt;table&gt; element found in the file.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="225"/>
+        <location filename="../src/app/ImportRunner.cpp" line="228"/>
         <source>Die erste Tabellenzeile enthält keine Spaltenköpfe (&lt;th&gt;).</source>
         <translation>The first table row contains no column headers (&lt;th&gt;).</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="227"/>
+        <location filename="../src/app/ImportRunner.cpp" line="230"/>
         <source>Keine Kopfzeile in der Datei gefunden.</source>
         <translation>No header row found in the file.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="229"/>
+        <location filename="../src/app/ImportRunner.cpp" line="232"/>
         <source>Zu wenige Spalten (%1), erwartet werden mindestens 10.</source>
         <translation>Too few columns (%1), at least 10 are expected.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="232"/>
+        <location filename="../src/app/ImportRunner.cpp" line="235"/>
         <source>Pflichtspalte &apos;%1&apos; nicht gefunden.</source>
         <translation>Required column &apos;%1&apos; not found.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="234"/>
+        <location filename="../src/app/ImportRunner.cpp" line="237"/>
         <source>Keine importierbaren Zeilen gefunden (allen Zeilen fehlte die UID).</source>
         <translation>No importable rows found (every row was missing the UID).</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="236"/>
+        <location filename="../src/app/ImportRunner.cpp" line="239"/>
         <source>Die Datei muss genau EINEN Spieler enthalten, gefunden wurden %1 Zeilen.</source>
         <translation>The file must contain exactly ONE player, but %1 rows were found.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="240"/>
+        <location filename="../src/app/ImportRunner.cpp" line="243"/>
         <source>Zielspieler %1 nicht gefunden.</source>
         <translation>Target player %1 not found.</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="242"/>
+        <location filename="../src/app/ImportRunner.cpp" line="245"/>
         <source>Der Spielstand konnte nicht gelesen werden. Wenn das Spiel gerade speichert, warte kurz und versuche es noch einmal. Nach einem FM-Patch braucht der Analyzer eventuell ein Update.
 
 Details: %1</source>
@@ -254,7 +259,7 @@ Details: %1</source>
 Details: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ImportRunner.cpp" line="156"/>
+        <location filename="../src/app/ImportRunner.cpp" line="159"/>
         <source>Ingame-Datum %1: Verlauf für %2 Spieler erfasst.</source>
         <translation>In-game date %1: history recorded for %2 players.</translation>
     </message>
@@ -262,7 +267,7 @@ Details: %1</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="950"/>
+        <location filename="../src/app/MainWindow.cpp" line="952"/>
         <source>Bewertungen werden gespeichert …</source>
         <translation>Saving ratings …</translation>
     </message>
@@ -634,7 +639,7 @@ Details: %1</translation>
         <translation>Calculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/RecalcHelper.cpp" line="73"/>
+        <location filename="../src/app/RecalcHelper.cpp" line="74"/>
         <source>Bewertungen werden gespeichert …</source>
         <translation>Saving ratings …</translation>
     </message>
@@ -3087,255 +3092,255 @@ You can change the folder later in the settings.</translation>
 <context>
     <name>fm::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="151"/>
+        <location filename="../src/app/MainWindow.cpp" line="152"/>
         <source>Zurück (Alt+←)</source>
         <translation>Back (Alt+←)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="152"/>
+        <location filename="../src/app/MainWindow.cpp" line="153"/>
         <source>Vorwärts (Alt+→)</source>
         <translation>Forward (Alt+→)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="155"/>
+        <location filename="../src/app/MainWindow.cpp" line="156"/>
         <source>Startseite (Alt+Pos1)</source>
         <translation>Home (Alt+Home)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="336"/>
+        <location filename="../src/app/MainWindow.cpp" line="337"/>
         <source>Neuberechnung</source>
         <translation>Recalculation</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="339"/>
+        <location filename="../src/app/MainWindow.cpp" line="340"/>
         <source>DWRS neu berechnet: %1 Bewertungen, %2 geänderte Einträge gespeichert.</source>
         <translation>DWRS recalculated: %1 ratings, %2 changed entries saved.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="501"/>
+        <location filename="../src/app/MainWindow.cpp" line="502"/>
         <source>v%1 · ElectroHugin</source>
         <translation>v%1 · ElectroHugin</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="502"/>
+        <location filename="../src/app/MainWindow.cpp" line="503"/>
         <source>Über %1</source>
         <translation>About %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="584"/>
+        <location filename="../src/app/MainWindow.cpp" line="585"/>
         <source>&amp;Sprache</source>
         <translation>&amp;Language</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="605"/>
+        <location filename="../src/app/MainWindow.cpp" line="606"/>
         <source>&amp;Hilfe</source>
         <translation>&amp;Help</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="607"/>
+        <location filename="../src/app/MainWindow.cpp" line="608"/>
         <source>Über %1 …</source>
         <translation>About %1…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="625"/>
+        <location filename="../src/app/MainWindow.cpp" line="626"/>
         <source>Sprache</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="626"/>
+        <location filename="../src/app/MainWindow.cpp" line="627"/>
         <source>Die Sprache wird nach einem Neustart geändert. Jetzt neu starten?</source>
         <translation>The language will change after a restart. Restart now?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="915"/>
+        <location filename="../src/app/MainWindow.cpp" line="916"/>
         <source>DWRS-Bewertungen werden neu berechnet…</source>
         <translation>Recalculating DWRS ratings…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="449"/>
-        <location filename="../src/app/MainWindow.cpp" line="971"/>
-        <location filename="../src/app/MainWindow.cpp" line="1067"/>
+        <location filename="../src/app/MainWindow.cpp" line="450"/>
+        <location filename="../src/app/MainWindow.cpp" line="973"/>
+        <location filename="../src/app/MainWindow.cpp" line="1069"/>
         <source>Nationalteam</source>
         <translation>National Team</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="178"/>
+        <location filename="../src/app/MainWindow.cpp" line="179"/>
         <source>Spieler, Seiten, Aktionen …    Strg+K</source>
         <translation>Players, pages, actions …    Ctrl+K</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="188"/>
+        <location filename="../src/app/MainWindow.cpp" line="189"/>
         <source>Importieren</source>
         <translation>Import</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="190"/>
+        <location filename="../src/app/MainWindow.cpp" line="191"/>
         <source>FM-Export importieren (Strg+I). Du kannst eine Datei auch einfach ins Fenster ziehen.</source>
         <translation>Import an FM export (Ctrl+I). You can also simply drop a file onto the window.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="227"/>
+        <location filename="../src/app/MainWindow.cpp" line="228"/>
         <source>Später</source>
         <translation>Later</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="374"/>
+        <location filename="../src/app/MainWindow.cpp" line="375"/>
         <source>Neues FM27-Bewertungsprofil</source>
         <translation>New FM27 rating profile</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="375"/>
+        <location filename="../src/app/MainWindow.cpp" line="376"/>
         <source>Für FM27 gibt es ein neues Bewertungsprofil: „DWRS FM27 · harvestgreen22“ (vorläufig).</source>
         <translation>There is a new rating profile for FM27: “DWRS FM27 · harvestgreen22” (provisional).</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="378"/>
+        <location filename="../src/app/MainWindow.cpp" line="379"/>
         <source>Es beruht auf Messungen in FM27-Spielen und unterscheidet Rollen stärker. Die Werte haben eine Nachkommastelle. Beim Wechsel werden alle Bewertungen dieses Spielstands neu berechnet; der Verlauf markiert den Wechsel. Du kannst das Profil jederzeit unter Einstellungen → DWRS-Bewertung ändern.</source>
         <translation>It is based on measurements in FM27 matches and separates roles more clearly. Values have one decimal. Switching recalculates all ratings of this save; the history marks the switch. You can change the profile at any time under Settings → DWRS rating.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="382"/>
+        <location filename="../src/app/MainWindow.cpp" line="383"/>
         <source>Neues Profil verwenden</source>
         <translation>Use new profile</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="383"/>
+        <location filename="../src/app/MainWindow.cpp" line="384"/>
         <source>Bisheriges behalten</source>
         <translation>Keep previous</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="392"/>
+        <location filename="../src/app/MainWindow.cpp" line="393"/>
         <source>Bewertungsprofil</source>
         <translation>Rating profile</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="410"/>
+        <location filename="../src/app/MainWindow.cpp" line="411"/>
         <source>Die DWRS-Berechnung wurde verbessert (Torhüter werden nach allen Torwart-Attributen bewertet). Die Bewertungen dieses Spielstands stammen noch aus der alten Berechnung.</source>
         <translation>The DWRS calculation has been improved (goalkeepers are rated on all goalkeeping attributes). The ratings in this save still come from the old calculation.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="413"/>
+        <location filename="../src/app/MainWindow.cpp" line="414"/>
         <source>Jetzt neu berechnen</source>
         <translation>Recalculate now</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="434"/>
+        <location filename="../src/app/MainWindow.cpp" line="435"/>
         <source>Spielstand wechseln (Strg+O)</source>
         <translation>Switch save (Ctrl+O)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="449"/>
-        <location filename="../src/app/MainWindow.cpp" line="1067"/>
+        <location filename="../src/app/MainWindow.cpp" line="450"/>
+        <location filename="../src/app/MainWindow.cpp" line="1069"/>
         <source>Verein</source>
         <translation>Club</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="491"/>
-        <location filename="../src/app/MainWindow.cpp" line="1097"/>
+        <location filename="../src/app/MainWindow.cpp" line="492"/>
+        <location filename="../src/app/MainWindow.cpp" line="1099"/>
         <source>Tag/Nacht wechseln</source>
         <translation>Toggle day/night</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="569"/>
+        <location filename="../src/app/MainWindow.cpp" line="570"/>
         <source>&amp;Datei</source>
         <translation>&amp;File</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="570"/>
-        <location filename="../src/app/MainWindow.cpp" line="1095"/>
-        <location filename="../src/app/MainWindow.cpp" line="1160"/>
+        <location filename="../src/app/MainWindow.cpp" line="571"/>
+        <location filename="../src/app/MainWindow.cpp" line="1097"/>
+        <location filename="../src/app/MainWindow.cpp" line="1162"/>
         <source>Neuer Spielstand …</source>
         <translation>New save …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="573"/>
-        <location filename="../src/app/MainWindow.cpp" line="1093"/>
+        <location filename="../src/app/MainWindow.cpp" line="574"/>
+        <location filename="../src/app/MainWindow.cpp" line="1095"/>
         <source>Spielstand wechseln …</source>
         <translation>Switch save …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="577"/>
-        <location filename="../src/app/MainWindow.cpp" line="1091"/>
+        <location filename="../src/app/MainWindow.cpp" line="578"/>
+        <location filename="../src/app/MainWindow.cpp" line="1093"/>
         <source>Export importieren …</source>
         <translation>Import export …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="580"/>
+        <location filename="../src/app/MainWindow.cpp" line="581"/>
         <source>Beenden</source>
         <translation>Quit</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="978"/>
+        <location filename="../src/app/MainWindow.cpp" line="980"/>
         <source>FM Dashboard</source>
         <translation>FM Dashboard</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1068"/>
+        <location filename="../src/app/MainWindow.cpp" line="1070"/>
         <source>Seiten</source>
         <translation>Pages</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1088"/>
+        <location filename="../src/app/MainWindow.cpp" line="1090"/>
         <source>Aktionen</source>
         <translation>Actions</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1091"/>
+        <location filename="../src/app/MainWindow.cpp" line="1093"/>
         <source>Strg+I</source>
         <translation>Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1093"/>
+        <location filename="../src/app/MainWindow.cpp" line="1095"/>
         <source>Strg+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1095"/>
+        <location filename="../src/app/MainWindow.cpp" line="1097"/>
         <source>Strg+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1096"/>
+        <location filename="../src/app/MainWindow.cpp" line="1098"/>
         <source>DWRS neu berechnen</source>
         <translation>Recalculate DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1113"/>
+        <location filename="../src/app/MainWindow.cpp" line="1115"/>
         <source>Spieler</source>
         <translation>Players</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1132"/>
+        <location filename="../src/app/MainWindow.cpp" line="1134"/>
         <source>%1 Spieler</source>
         <translation>%1 players</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1144"/>
+        <location filename="../src/app/MainWindow.cpp" line="1146"/>
         <source>Zuletzt verwendet</source>
         <translation>Recently used</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1152"/>
+        <location filename="../src/app/MainWindow.cpp" line="1154"/>
         <source>Spielstand öffnen</source>
         <translation>Open save</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1159"/>
+        <location filename="../src/app/MainWindow.cpp" line="1161"/>
         <source>Alle Spielstände …</source>
         <translation>All saves …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1208"/>
+        <location filename="../src/app/MainWindow.cpp" line="1210"/>
         <source>FM-Export oder FM27-Spielstand auswählen</source>
         <translation>Choose an FM export or FM27 save</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1209"/>
+        <location filename="../src/app/MainWindow.cpp" line="1211"/>
         <source>FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)</source>
         <translation>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="606"/>
+        <location filename="../src/app/MainWindow.cpp" line="607"/>
         <source>Willkommens-Assistent …</source>
         <translation>Welcome assistant …</translation>
     </message>

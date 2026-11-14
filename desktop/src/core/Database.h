@@ -107,8 +107,10 @@ public:
 
     // --- DWRS history ---
     // A Recalc batch also records its timestamps in dwrs_recalcs.
+    // progress(rowsWritten, totalRows) follows the write of a large batch.
     bool appendDwrsRatings(const std::vector<DwrsEntry> &entries,
-                           RatingsOrigin origin = RatingsOrigin::Import, bool recordHistory = true);
+                           RatingsOrigin origin = RatingsOrigin::Import, bool recordHistory = true,
+                           const std::function<void(int, int)> &progress = {});
     LatestRatings latestDwrsRatings();
     // Streams every dwrs_latest row in (player_id, role) order — the table's
     // primary-key order, so SQLite scans without a separate sort. Used to
@@ -209,6 +211,9 @@ private:
     bool migrateToV15();                  // registration stash + snapshot_seen
     bool migrateToV17();                  // remaining visible attribute ranges
     bool migrateToV18();                  // rating provenance (dwrs_provenance, basis_key)
+    bool migrateToV19();                  // rating inputs once per player and batch
+    void compactIfMostlyFree();           // VACUUM when over half the file is free pages
+    bool m_vacuumAfterMigration = false;
     bool migrateToV16();                  // imported natural positions + manual override
     static QStringList createV15Sql();
     // Hands parked 2.2.3 registration fields to the surviving duplicate.
