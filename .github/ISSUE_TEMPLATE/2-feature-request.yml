@@ -1,0 +1,49 @@
+name: Feature request
+description: An idea for a new feature or an improvement.
+title: "[Idea]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing your idea! Short and concrete is perfect.
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      description: Describe the feature or change.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it help you?
+      description: What do you want to find out or do in your game? What is hard today?
+    validations:
+      required: true
+  - type: dropdown
+    id: fm-version
+    attributes:
+      label: Football Manager version
+      description: Which game is this about?
+      options:
+        - FM27
+        - FM24
+        - Both / not version specific
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: You find it under *Help → About*.
+      placeholder: e.g. 2.2.3
+    validations:
+      required: false
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, examples from the game, links to tactics or data.
+    validations:
+      required: false
