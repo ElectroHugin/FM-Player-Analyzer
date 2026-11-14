@@ -17,11 +17,11 @@ für die dein Kader gebaut ist.
 ![Plattform](https://img.shields.io/badge/Plattform-Windows%2010%20%2F%2011-0078d4)
 ![Football Manager 2024 | 2027](https://img.shields.io/badge/Football%20Manager-2024%20%7C%202027-6f42c1)
 
-**Du spielst FM27?** Wähle einfach deine Spielstanddatei: Der Analyzer liest sie
-direkt (nur lesend) und holt sich nach jedem Speichern im Spiel die neuen Daten.
-Alternativ macht das kostenlose Plugin
-**[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)** jede
-Spielerliste zu einer CSV-Datei.
+**Du spielst FM27?** Wähle einfach deine Spielstanddatei: Der Analyzer liest die
+ganze Datenbank direkt (nur lesend, kein Export nötig) und holt sich nach jedem
+Speichern im Spiel die neuen Daten. Listen mit dem kostenlosen Plugin
+**[FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter)** zu
+exportieren geht auch, ist bei langen Listen aber langsam.
 
 [🇬🇧 English](README.md) · **🇩🇪 Deutsch**
 
@@ -152,10 +152,11 @@ for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
 
 Kein Export, kein Scrollen durch Listen: Wähle die `.fm`-Datei deiner Karriere,
 und der Analyzer liest deinen Kader und alle Spieler, die dein Scouting kennt.
-Schalte unter *Einstellungen → Verein* **Spielstand live verfolgen** ein, dann
+Schalte unter *Einstellungen → Import* **Spielstand live verfolgen** ein, dann
 liest er nach jedem Speichern im Spiel die neueste Datei von selbst ein. Die
 **Attribut-Maskierung wie im Spiel** (Standard an) sorgt dafür, dass du nur
-siehst, was dein Scouting weiß. Details stehen in
+siehst, was dein Scouting weiß; schaltest du sie aus, liest der Analyzer alle
+Spieler der Datenbank mit genauen Werten. Details stehen in
 [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
 
 ### Nach Rolle scouten, nicht nach Ruf
@@ -279,13 +280,18 @@ FM-Version (*Football Manager 2027* ist voreingestellt).
 
 **3 · Spieler einlesen**
 
-- **FM27, am schnellsten:** Wähle beim Import deine Spielstanddatei
-  (`Dokumente\Sports Interactive\Football Manager 27\games\*.fm`). Am besten
-  eine gerade gespeicherte Datei, nicht während das Spiel speichert.
-- **FM27 mit Export:** Mit dem Plugin
+- **FM27 (empfohlen): Spielstand einlesen.** Wähle beim Import deine
+  Spielstanddatei (`Dokumente\Sports Interactive\Football Manager 27\games\*.fm`).
+  Am besten eine gerade gespeicherte Datei, nicht während das Spiel speichert.
+  Schalte danach *Einstellungen → Import → Spielstand live verfolgen* ein, dann
+  musst du nie wieder von Hand importieren. Standardmäßig kommen nur Spieler
+  rein, die du kennst (*Attribut-Maskierung wie im Spiel*); schalte sie unter
+  *Einstellungen → Import* aus, wenn du die ganze Datenbank willst.
+- **FM27 mit Export (Alternative):** Mit dem Plugin
   [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) und meinen
   Ansichten (der Installer legt sie auf Wunsch in deinen FM27-Ordner `views`)
-  drückst du in einer Spielerliste **F9** und importierst die CSV-Datei.
+  drückst du in einer Spielerliste **F9** und importierst die CSV-Datei. Gut für
+  Kader oder Shortlist, lange Listen dauern.
 - **FM24:** Exportiere die Liste als HTML (*Rechtsklick → Drucken/Exportieren →
   Webseite (.html)*) mit einer Ansicht, die die Spalte **UID** enthält, zum
   Beispiel die
@@ -306,10 +312,10 @@ Kaufberatung** und **Aufstellung → Taktik-Vergleich**. Mit einem großen
 Scouting-Bestand zeigt dir **Scouting**, wen du wirklich kaufen solltest.
 
 > **Tipps**
-> - In FM27 nimmt dir *Einstellungen → Verein → Spielstand live verfolgen* das Importieren ab.
+> - In FM27 nimmt dir *Einstellungen → Import → Spielstand live verfolgen* das Importieren ab.
 > - Bei Exporten: Importiere neu, so oft du willst, einmal pro Spielmonat ist ein guter Rhythmus. Die App aktualisiert bekannte Spieler und baut ihren Bewertungsverlauf auf.
 > - Wenn du deinen kompletten Kader als Export importierst, hake *„Datei ist ein kompletter Kader-Export meines Vereins"* an. Die App fragt dann, was aus den fehlenden Spielern geworden ist.
-> - Die Beispieltaktiken für FM27 kann der Installer in deinen FM27-Ordner `tactics` kopieren, später geht das unter *Einstellungen → Verein*.
+> - Die Beispieltaktiken für FM27 kann der Installer in deinen FM27-Ordner `tactics` kopieren, später geht das unter *Einstellungen → Import*.
 > - Deutsch oder Englisch stellst du im Menü **Sprache** um.
 
 ---
@@ -391,6 +397,17 @@ Attribute von nicht voll gescouteten Spielern bleiben Bereiche. Beim FM27-
 Spielstand übernimmt die *Attribut-Maskierung wie im Spiel* genau das. Versteckte
 Werte wie das Potenzial liest die App nie. Schaltest du die Maskierung aus,
 siehst du alle Spieler mit genauen Werten. Das ist deine Entscheidung.
+
+**Der F9-Export ist langsam und schafft nur kleine Listen. Geht das anders?**
+Ja, lies in FM27 stattdessen deinen Spielstand ein: Er bringt die ganze
+Datenbank auf einmal, ohne Filtern. Siehe [Schnellstart](#-in-5-minuten-startklar),
+Schritt 3, und schalte *Einstellungen → Import → Spielstand live verfolgen* ein.
+
+**Mein FM27-Spielstand bringt nur ein paar hundert Spieler. Warum?**
+Das ist die *Attribut-Maskierung wie im Spiel* (Standard an): Eingelesen werden
+nur Spieler, die dir das Spiel zeigt, also dein Kader, sehr bekannte Spieler und
+die, die deine Scouts kennen. Schalte sie unter *Einstellungen → Import* aus und
+lies den Spielstand neu ein, dann kommen alle Spieler mit genauen Werten.
 
 **Welche Football-Manager-Versionen werden unterstützt?**
 Football Manager 2024 und Football Manager 2027 (seit Version 2.0.0, die
