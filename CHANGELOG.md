@@ -1,41 +1,36 @@
 # Changelog
 
-## Unreleased
+## 2.3.0 – 2026-11-15
 
-Test build 2.3.0-test.2:
+**DWRS rating profiles**
 
-- DWRS now uses rating profiles. Each save calculates with exactly one profile, shown in Settings → DWRS Rating.
-- New FM27 profile "DWRS FM27 · harvestgreen22", based on harvestgreen22's attribute measurements (thank you!). Provisional: values can change after their re-test with the full game.
-- New FM27 saves use it automatically. Existing saves keep their numbers and ask once whether to switch.
-- FM24 keeps the familiar calculation ("DWRS Classic"). Your own changed weights become a personal profile.
-- Optional role share: part of the rating comes from the role's key and preferable attributes. On by default (33 %) for the FM27 profile, explained in the editor.
+- Each save calculates with exactly one rating profile, shown in Settings → DWRS Rating. Profiles can be edited, saved as new, exported and imported.
+- New FM27 profile "DWRS FM27 · harvestgreen22", based on harvestgreen22's attribute measurements (thank you!). Provisional: values can change after their re-test with the full game. New FM27 saves use it automatically.
+- FM27 goalkeepers get their own weights from our own analysis of FM27 match statistics, plus a 20 % goalkeeper role share.
+- Optional role share: part of the rating comes from the role's key and preferable attributes (33 % in the FM27 profile).
+- FM24 keeps the familiar calculation ("DWRS Classic"). Existing saves keep their numbers and ask once whether to switch; your own changed weights become a personal profile.
 - Missing attributes no longer count as zero: they are left out. Below 70 % known weight there is no rating.
-- Profiles can be edited, saved as new, exported and imported.
-- DWRS shows one decimal for curve profiles; Classic stays whole numbers.
-- FM27 goalkeepers get their own weights from our own analysis of FM27 match statistics (not from harvestgreen22), plus a 20 % goalkeeper role share for the attributes that set a goalkeeper role apart.
-- New settings page "DWRS colouring": the original rainbow stays the default; more colour schemes (e.g. Rarity), own colours, thresholds and soft borders, saved as your own schemes.
-- No web links inside the app; sources are linked in the README.
-- Saving ratings after a recalculation is faster and the progress dialog shows the saving step.
-- DWRS development chart: the hover panel stays open, and the in-game date replaces "−1/−2" on the axis and in the panel.
-- Overview: colour positional strength by level or by comparison with the rest of the squad.
+- Curve profiles show DWRS with one decimal; Classic stays whole numbers.
 - Switching the profile recalculates once and marks it in the history; development does not count it as progress.
-- Player databases migrate to schema 18; 2.2.3 cannot open the upgraded database. A backup is made first.
+- New settings page "DWRS colouring": the original rainbow stays the default; more schemes (e.g. Rarity), own colours, thresholds and soft borders.
 
-Added for 2.3.0-test.4:
+**FM27 save as the main way in**
 
-- FM27 save import with attribute masking: players you have not scouted (enough) are no longer left out. Everyone with a club is read in; prior knowledge shows every attribute as a range of 2-4, no scouting as a range of 4-7. Thanks to the feedback in issue #26.
-- English UI: the default colour preset is called "Club-neutral (default)".
+- New save asks for the save file first (exports stay optional) and can follow it live; the welcome assistant offers following the save; the Overview shows whether the save is followed, and a large export suggests the save once.
+- Attribute masking no longer leaves players out: everyone with a club is read in. Players you have not scouted (enough) show every attribute as a range, 2-4 points with prior knowledge and 4-7 without scouting.
+- When the game renames clubs, your club and second team follow automatically instead of showing an empty squad.
 
-Added for 2.3.0-test.3:
+**More**
 
-- FM27 save import: when the game renames clubs (e.g. after a data update), your club and second team follow automatically instead of showing an empty squad.
-- Training: your own training profile per save. Choose which attributes belong to which band, the age windows, a weight per band, add or remove bands, and import/export the profile as JSON. Today's values are the standard.
+- Training: your own training profile per save (bands, age windows, weights), importable and exportable as JSON.
+- Leagues without a squad list (e.g. Bundesliga): mark a player as "Not registered"; Best XI and the Overview leave him out.
+- Overview: colour positional strength by level or by comparison with the squad; the squad comparison uses grey for the median, a legend and the distance in the tooltip.
+- DWRS development chart: the hover panel stays open, and the in-game date replaces "−1/−2".
 - Personalities: a save only shows and edits the classification of its own FM version.
-- Overview, squad comparison: grey for the squad median instead of dark cards, a colour legend and the distance in the tooltip.
-- Settings: opened explanations are no longer cut off.
-- Leagues without a squad list (e.g. Bundesliga): mark a player as "Not registered" in the context menu. Best XI and the Overview then leave him out. Squad Registration lists the squad with a "Registered" tick for these leagues.
-- FM27: reading the save (.fm) is now the main way in. New save asks for the save file first (exports stay optional) and can follow it live; the welcome assistant offers following the save; the Overview shows one line on whether the save is followed, and a large export suggests the save once (it only returns if you tick "Show again next time").
-- Large saves: the basis of each rating (profile, game date, attributes) is stored once per player instead of once per role. Saving ratings after an import or recalculation is about twice as fast, the database about two thirds smaller, and the progress dialog shows the saving step instead of sitting at 98 %. Saves from earlier 2.3.0 test builds are converted once when opened.
+- Large saves: saving ratings is about twice as fast, the database about two thirds smaller, and the progress dialog shows the saving step instead of sitting at 98 %.
+- No web links inside the app; sources are linked in the README.
+- Fixed: settings explanations were cut off; the default colour preset showed in German in the English UI.
+- Player databases migrate to schema 19; 2.2.3 cannot open the upgraded database. A backup is made first.
 
 ## 2.2.3 – 2026-11-09
 

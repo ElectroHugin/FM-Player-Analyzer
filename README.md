@@ -143,11 +143,12 @@ for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
 ### Your FM27 save, directly and live
 
 No export, no scrolling through lists: pick the `.fm` file of your career and
-the analyzer reads your squad and every player your scouting knows. Turn on
+the analyzer reads your squad and every player in the database. Turn on
 **Follow save live** under *Settings → Import* and it reads the newest file on
 its own after every save in the game. **Attribute masking as in the game** (on
-by default) makes sure you only see what your scouts know; switch it off to read
-every player in the database with exact values. Details are in
+by default) shows exact values only for players you know well; everyone else comes with
+attribute ranges, wider the less your scouts know. Switch it off for exact
+values everywhere. Details are in
 [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md) (German).
 
 ### Scout by role, not by reputation
@@ -271,8 +272,9 @@ On first start you create a save in the analyzer and pick the FM version
   (`Documents\Sports Interactive\Football Manager 27\games\*.fm`). Best use a
   freshly saved file, not one the game is still writing. Then turn on
   *Settings → Import → Follow save live* and you never import by hand again.
-  By default only players you know are read in (*attribute masking as in the
-  game*); switch it off under *Settings → Import* to get the whole database.
+  By default players you don't know well show attribute ranges (*attribute
+  masking as in the game*); switch it off under *Settings → Import* for exact
+  values everywhere.
 - **FM27 with exports (alternative):** with the
   [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin and
   my views (the installer can put them into your FM27 `views` folder) you press
@@ -411,11 +413,12 @@ Yes, in FM27 read your save file instead: it brings in the whole database in
 one go, no filtering needed. See [Get started](#-get-started-in-5-minutes),
 step 3, and turn on *Settings → Import → Follow save live*.
 
-**Reading my FM27 save only brings in a few hundred players. Why?**
-That's *attribute masking as in the game* (on by default): only players the
-game shows you are read in, i.e. your squad, very well-known players and those
-your scouts know. Switch it off under *Settings → Import* and read the save
-again to get every player with exact values.
+**Why do many players from my FM27 save show ranges like 8-12?**
+That's *attribute masking as in the game* (on by default): your squad, very
+well-known and well-scouted players are exact, everyone else gets ranges, wider
+the less your scouts know. Switch it off under *Settings → Import* and read the
+save again for exact values everywhere. (Before 2.3.0, masking left unscouted
+players out completely.)
 
 **Which Football Manager versions are supported?**
 Football Manager 2024 and Football Manager 2027 (since version 2.0.0, the save

@@ -151,12 +151,13 @@ for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
 ### Dein FM27-Spielstand, direkt und live
 
 Kein Export, kein Scrollen durch Listen: Wähle die `.fm`-Datei deiner Karriere,
-und der Analyzer liest deinen Kader und alle Spieler, die dein Scouting kennt.
+und der Analyzer liest deinen Kader und alle Spieler der Datenbank.
 Schalte unter *Einstellungen → Import* **Spielstand live verfolgen** ein, dann
 liest er nach jedem Speichern im Spiel die neueste Datei von selbst ein. Die
-**Attribut-Maskierung wie im Spiel** (Standard an) sorgt dafür, dass du nur
-siehst, was dein Scouting weiß; schaltest du sie aus, liest der Analyzer alle
-Spieler der Datenbank mit genauen Werten. Details stehen in
+**Attribut-Maskierung wie im Spiel** (Standard an) zeigt genaue
+Werte nur für Spieler, die du gut kennst; alle anderen kommen mit Spannen, die
+breiter sind, je weniger deine Scouts wissen. Ausgeschaltet sind alle Werte
+genau. Details stehen in
 [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
 
 ### Nach Rolle scouten, nicht nach Ruf
@@ -284,9 +285,9 @@ FM-Version (*Football Manager 2027* ist voreingestellt).
   Spielstanddatei (`Dokumente\Sports Interactive\Football Manager 27\games\*.fm`).
   Am besten eine gerade gespeicherte Datei, nicht während das Spiel speichert.
   Schalte danach *Einstellungen → Import → Spielstand live verfolgen* ein, dann
-  musst du nie wieder von Hand importieren. Standardmäßig kommen nur Spieler
-  rein, die du kennst (*Attribut-Maskierung wie im Spiel*); schalte sie unter
-  *Einstellungen → Import* aus, wenn du die ganze Datenbank willst.
+  musst du nie wieder von Hand importieren. Standardmäßig zeigen Spieler, die
+  du kaum kennst, Spannen (*Attribut-Maskierung wie im Spiel*); schalte sie unter
+  *Einstellungen → Import* aus, wenn du überall genaue Werte willst.
 - **FM27 mit Export (Alternative):** Mit dem Plugin
   [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) und meinen
   Ansichten (der Installer legt sie auf Wunsch in deinen FM27-Ordner `views`)
@@ -429,11 +430,12 @@ Ja, lies in FM27 stattdessen deinen Spielstand ein: Er bringt die ganze
 Datenbank auf einmal, ohne Filtern. Siehe [Schnellstart](#-in-5-minuten-startklar),
 Schritt 3, und schalte *Einstellungen → Import → Spielstand live verfolgen* ein.
 
-**Mein FM27-Spielstand bringt nur ein paar hundert Spieler. Warum?**
-Das ist die *Attribut-Maskierung wie im Spiel* (Standard an): Eingelesen werden
-nur Spieler, die dir das Spiel zeigt, also dein Kader, sehr bekannte Spieler und
-die, die deine Scouts kennen. Schalte sie unter *Einstellungen → Import* aus und
-lies den Spielstand neu ein, dann kommen alle Spieler mit genauen Werten.
+**Warum zeigen viele Spieler aus meinem FM27-Spielstand Spannen wie 8-12?**
+Das ist die *Attribut-Maskierung wie im Spiel* (Standard an): Dein Kader, sehr
+bekannte und gut gescoutete Spieler sind genau, alle anderen bekommen Spannen,
+die breiter sind, je weniger deine Scouts wissen. Schalte sie unter
+*Einstellungen → Import* aus und lies den Spielstand neu ein, dann sind alle
+Werte genau. (Vor 2.3.0 ließ die Maskierung ungescoutete Spieler ganz weg.)
 
 **Welche Football-Manager-Versionen werden unterstützt?**
 Football Manager 2024 und Football Manager 2027 (seit Version 2.0.0, die
