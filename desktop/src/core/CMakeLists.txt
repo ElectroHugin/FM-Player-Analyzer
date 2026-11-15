@@ -20,6 +20,14 @@ add_library(fmcore STATIC
     Development.cpp
     ImportHistory.h
     ImportHistory.cpp
+    RatingProfileLibrary.h
+    RatingProfileLibrary.cpp
+    RatingSnapshot.h
+    RatingSnapshot.cpp
+    RatingProfile.h
+    RatingProfile.cpp
+    RatingCurve.h
+    RatingCurve.cpp
     DwrsEngine.h
     DwrsEngine.cpp
     Fm27Save.h
@@ -83,7 +91,11 @@ add_library(fmcore STATIC
     TalentEngine.h
     TalentEngine.cpp
     Utils.h
+    DwrsDisplay.h
+    DwrsColorScheme.h
     Utils.cpp
+    DwrsDisplay.cpp
+    DwrsColorScheme.cpp
     ThemeColors.h
     ThemeColors.cpp
     ColorTemplates.h
@@ -127,3 +139,6 @@ else()
     target_link_libraries(fmcore PRIVATE libzstd_static)
     target_include_directories(fmcore PRIVATE ${zstd_SOURCE_DIR}/lib)
 endif()
+target_sources(fmcore PRIVATE ClassicRatingSnapshot.h ClassicRatingSnapshot.cpp)
+target_sources(fmcore PRIVATE BuiltinRatingProfiles.h BuiltinRatingProfiles.cpp)
+target_sources(fmcore PRIVATE RatingSelectionStore.h RatingSelectionStore.cpp)

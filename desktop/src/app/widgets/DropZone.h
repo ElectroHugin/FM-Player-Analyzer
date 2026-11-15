@@ -22,6 +22,9 @@ public:
 
     // Folder the file dialog starts in.
     void setStartDir(const QString &dir) { m_startDir = dir; }
+    // Text shown while no file is chosen, and the file dialog's title/filter.
+    void setPrompt(const QString &title, const QString &detail);
+    void setDialog(const QString &caption, const QString &filter);
     // Shows the chosen file inside the zone (empty = prompt text).
     void setFile(const QString &path);
 
@@ -43,6 +46,7 @@ private:
     void setHovered(bool hovered);
 
     QString m_startDir;
+    QString m_promptTitle, m_promptDetail, m_dialogCaption, m_dialogFilter;
     QLabel *m_title;
     QLabel *m_detail;
 };

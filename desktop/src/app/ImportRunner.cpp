@@ -1,5 +1,6 @@
 #include "ImportRunner.h"
 
+#include "core/RatingsUpdater.h"
 #include "core/Fm27SaveImport.h"
 
 #include "AppContext.h"
@@ -42,7 +43,7 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
     // A save game (.fm) is filtered on the worker by the save's masking option.
     Fm27SaveImport::setAttributeMasking(context.config().attributeMasking());
     const Definitions *definitions = &context.definitions();
-    const DwrsEngine *engine = &context.dwrsEngine();
+    const std::shared_ptr<const RatingSnapshot> snapshot = context.ratingSnapshot();
 
     // Maps pipeline stages to label + percent. Guards against the dialog being
     // destroyed while the worker still posts progress: qApp is a stable context
@@ -73,7 +74,9 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
             percent = 58;
             break;
         case ImportPipeline::Stage::Dwrs:
-            text = ImportText::tr("DWRS-Bewertungen werden berechnet…");
+            text = RatingsUpdater::savingPhase(done, total)
+                       ? ImportText::tr("DWRS-Bewertungen werden gespeichert…")
+                       : ImportText::tr("DWRS-Bewertungen werden berechnet…");
             percent = scaled(62, 36);
             break;
         case ImportPipeline::Stage::Finalize:
@@ -104,16 +107,27 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
                          ImportPipelineResult result = std::move(*holder);
                          watcher->deleteLater();
                          dialog->finish();
-                         if (result.import.success)
+                         if (result.import.success) {
                              context.adoptState(std::move(result.store),
                                                 std::move(result.latestRatings),
                                                 std::move(result.ratings));
+                             // Tell about a missing rated column once per save.
+                             const QString key = QStringLiteral("notified_unrated_columns");
+                             QStringList known = context.database().setting(key).split(
+                                 QLatin1Char(','), Qt::SkipEmptyParts);
+                             QStringList fresh;
+                             for (const QString &column : std::as_const(result.unratedColumns))
+                                 if (!known.contains(column)) fresh << column;
+                             result.unratedColumns = fresh;
+                             if (!fresh.isEmpty())
+                                 context.database().setSetting(key, (known + fresh).join(QLatin1Char(',')));
+                         }
                          if (onDone)
                              onDone(result);
                      });
 
-    const QFuture<void> future = QtConcurrent::run([request, definitions, engine, stage, holder] {
-        *holder = ImportPipeline::run(request, *definitions, *engine, stage);
+    const QFuture<void> future = QtConcurrent::run([request, definitions, snapshot, stage, holder] {
+        *holder = ImportPipeline::run(request, *definitions, *snapshot, stage);
     });
     context.registerBackgroundTask(future);
     watcher->setFuture(future);
@@ -187,6 +201,11 @@ QStringList importWarningLines(const ImportPipelineResult &result)
     if (!result.autoAssignError.isEmpty())
         warnings << ImportText::tr("Automatische Rollen-Zuweisung fehlgeschlagen: %1")
                         .arg(result.autoAssignError);
+    if (!result.unratedColumns.isEmpty())
+        warnings << ImportText::tr("Das Bewertungsprofil nutzt Spalten, die in dieser Ansicht fehlen: %1. "
+                                   "Die Bewertungen beruhen auf den übrigen Attributen; nimm die Spalten "
+                                   "in die Exportansicht in FM auf.")
+                        .arg(result.unratedColumns.join(QStringLiteral(", ")));
     if (result.recalcRan && !result.recalc.success)
         warnings << ImportText::tr("DWRS-Berechnung fehlgeschlagen: %1").arg(result.recalc.error);
     return warnings;

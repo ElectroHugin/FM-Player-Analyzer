@@ -3,6 +3,18 @@
 FM Player Analyzer is licensed under the GNU GPL v3 (see LICENSE). It contains or links the
 following third-party work.
 
+## DWRS rating data
+
+The DWRS rating profiles build on public research. No code or data files are copied; the app
+uses derived weights.
+
+- **DWRS Classic:** florin133, "A not so short guide to meta player attributes"
+  (https://www.reddit.com/r/footballmanagergames/comments/16fuksi/a_not_so_short_guide_to_meta_player_attributes/).
+- **DWRS FM27:** harvestgreen22, FM27 attribute test
+  (https://sortitoutsi.net/content/78219/fm27-attribute-test-tactical-understanding-training-system-preset-tactics-ai-reverse-engineering-engine-for-test).
+  Background in https://github.com/ElectroHugin/FM-Player-Analyzer/issues/17.
+- **FM27 goalkeepers:** our own analysis of FM27 season statistics, not part of harvestgreen22's data.
+
 ## fmsave
 
 The FM27 save reader (`desktop/src/core/Fm27Save*.cpp`) follows the save-file layouts that fmsave

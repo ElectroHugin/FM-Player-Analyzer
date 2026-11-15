@@ -276,16 +276,16 @@ private slots:
     void dwrsCellStyle_endpoints()
     {
         // vmin -> first LUT entry (red end of gist_rainbow: 255, 0, 41).
-        const auto low = fm::dwrsCellStyle(30.0);
+        const auto low = fm::rainbowCellStyle(30.0);
         QCOMPARE(low.background.red(), 255);
         QCOMPARE(low.background.green(), 0);
         // vmax -> last LUT entry (magenta end: 255, 0, 191).
-        const auto high = fm::dwrsCellStyle(95.0);
+        const auto high = fm::rainbowCellStyle(95.0);
         QCOMPARE(high.background.red(), 255);
         QCOMPARE(high.background.blue(), 191);
         // Out-of-range values clamp.
-        QCOMPARE(fm::dwrsCellStyle(120.0).background, high.background);
-        QCOMPARE(fm::dwrsCellStyle(0.0).background, low.background);
+        QCOMPARE(fm::rainbowCellStyle(120.0).background, high.background);
+        QCOMPARE(fm::rainbowCellStyle(0.0).background, low.background);
     }
 };
 

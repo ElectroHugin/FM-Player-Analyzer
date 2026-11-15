@@ -69,6 +69,8 @@ private:
     QLineEdit *m_fullNameEdit = nullptr;
     QLineEdit *m_stadiumEdit = nullptr;
     QLineEdit *m_countryEdit = nullptr;
+    QCheckBox *m_followCheck = nullptr; // FM27: follow the game's save file
+    QLineEdit *m_followEdit = nullptr;
     QLabel *m_logoPreview = nullptr;
     QPushButton *m_logoRemoveButton = nullptr;
 

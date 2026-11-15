@@ -89,12 +89,16 @@ add_executable(fmplayeranalyzer
     widgets/CommandPalette.cpp
     widgets/DropZone.h
     widgets/ColumnChooser.h
+    widgets/DwrsColorSchemeEditor.h
+    widgets/DwrsColorSchemeEditor.cpp
     widgets/ColumnChooser.cpp
     widgets/FlowLayout.h
     widgets/FlowLayout.cpp
     widgets/FootStrengthWidget.h
     widgets/FootStrengthWidget.cpp
     widgets/RolePhaseSwitch.h
+    widgets/TrainingProfileEditor.h
+    widgets/TrainingProfileEditor.cpp
     widgets/RolePhaseSwitch.cpp
     widgets/ClubHeaderBar.h
     widgets/LineIcons.h
@@ -160,3 +164,6 @@ qt_add_resources(fmplayeranalyzer "translations"
     PREFIX "/i18n"
     FILES ${FM_QM_FILE}
 )
+target_sources(fmplayeranalyzer PRIVATE widgets/RatingCurveEditor.h widgets/RatingCurveEditor.cpp)
+target_sources(fmplayeranalyzer PRIVATE widgets/RatingProfileEditor.h widgets/RatingProfileEditor.cpp)
+target_sources(fmplayeranalyzer PRIVATE RatingProfileDefaults.h RatingProfileDefaults.cpp)

@@ -71,6 +71,11 @@ QString AppPaths::colorTemplatesFile() const
     return QDir(dataDir()).filePath(QStringLiteral("color_templates.json"));
 }
 
+QString AppPaths::dwrsColorSchemesFile() const
+{
+    return QDir(dataDir()).filePath(QStringLiteral("dwrs_color_schemes.json"));
+}
+
 QString AppPaths::assetsDir() const
 {
     return QDir(dataDir()).filePath(QStringLiteral("assets"));
@@ -89,6 +94,11 @@ QString AppPaths::definitionsFile(const QString &fmVersionId) const
 QString AppPaths::databaseFile(const QString &dbName) const
 {
     return QDir(databasesDir()).filePath(dbName + QStringLiteral(".db"));
+}
+
+QString AppPaths::ratingLibraryFile() const
+{
+    return QDir(dataDir()).filePath(QStringLiteral("rating_profiles.json"));
 }
 
 bool AppPaths::ensureDataDirInitialized()

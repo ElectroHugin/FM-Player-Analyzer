@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/ColorTemplates.h"
+#include "core/DwrsDisplay.h"
 
 #include <memory>
 
@@ -23,7 +24,11 @@ class QTableWidget;
 
 namespace fm {
 
+class TrainingProfileEditor;
+
 class ThemeManager;
+class RatingProfileEditor;
+class DwrsColorSchemeEditor;
 
 // Central settings page. A section list on the left (grouped: save, data,
 // calculation, program) switches between short pages of cards; one footer
@@ -36,6 +41,7 @@ public:
     SettingsPage(AppContext &context, ThemeManager &theme, QWidget *parent = nullptr);
 
     void refresh() override;
+    bool confirmLeave() override;
 
     // Opens a section by its German title (screenshot tour); false if unknown.
     bool openSettingsSection(const QString &germanTitle);
@@ -51,6 +57,9 @@ private:
     QWidget *buildHistoryPage();
     QWidget *buildGraphicsPage();
     QWidget *buildWeightsPage();
+    RatingProfileEditor *m_ratingProfileEditor = nullptr;
+    QLabel *m_activeRatingLabel = nullptr;
+    void updateActiveRatingProfile();
     QWidget *buildSquadPage();
     QWidget *buildTrainingPage();
     QWidget *buildPersonalityPage();
@@ -95,12 +104,7 @@ private:
     QSpinBox *m_retirementAgeSpin = nullptr;   // Freshness X
     QSpinBox *m_staleUploadsSpin = nullptr;    // Freshness Y
     // Training age windows (peak/locked per group).
-    QSpinBox *m_explosivePeakSpin = nullptr;
-    QSpinBox *m_explosiveLockedSpin = nullptr;
-    QSpinBox *m_strengthPeakSpin = nullptr;
-    QSpinBox *m_strengthLockedSpin = nullptr;
-    QSpinBox *m_technicalPeakSpin = nullptr;
-    QSpinBox *m_technicalLockedSpin = nullptr;
+    TrainingProfileEditor *m_trainingEditor = nullptr;
 
     // Theme tab: preset picker + color buttons per mode+role.
     QComboBox *m_modeCombo = nullptr;
@@ -113,6 +117,13 @@ private:
     QHash<QString, QString> m_pendingColors;
     QString m_pendingPreset;
     QLabel *m_contrastLabel = nullptr;
+    // DWRS colours: scheme picker, own schemes (app-wide) and the editor.
+    QComboBox *m_dwrsSchemeCombo = nullptr;
+    QPushButton *m_dwrsDeleteSchemeButton = nullptr;
+    DwrsColorSchemeEditor *m_dwrsSchemeEditor = nullptr;
+    QList<DwrsColorScheme> m_dwrsCustomSchemes;
+    QWidget *buildDwrsColorPage();
+    void fillDwrsSchemeCombo(const QString &selectId);
 
     void applyPresetToPending(const QString &presetId);
     // Built-in presets and the user's templates, grouped by league; own

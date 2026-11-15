@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDate>
 #include <QList>
 #include <QPair>
 #include <QPointF>
@@ -9,6 +10,7 @@
 
 class QChartView;
 class QGraphicsLineItem;
+class QLabel;
 
 namespace fm {
 
@@ -19,9 +21,10 @@ QList<QColor> chartTracePalette(const ThemeManager &theme);
 
 // DWRS development chart on an evenly spaced snapshot axis: x is the index of
 // an upload snapshot (core/Development), not a date. Tick labels count back
-// from the newest snapshot ("now", "-5", ...). Hovering shows a crosshair with
-// every visible series' value and the upload time; clicking a legend entry
-// hides or shows its series.
+// from the newest snapshot ("now", "-5", ...), or show the snapshot's in-game
+// date when it is known. Hovering shows a crosshair and a panel with every
+// visible series' value that stays while the mouse is over the plot; clicking a
+// legend entry hides or shows its series.
 class LineChartWidget : public QWidget
 {
     Q_OBJECT
@@ -40,11 +43,14 @@ public:
 
     explicit LineChartWidget(ThemeManager &theme, QWidget *parent = nullptr);
 
-    // snapshotLabels: hover text per snapshot index (e.g. its upload time);
-    // its last index is "now". markers: snapshot indexes drawn as dashed
-    // vertical lines (recalculations).
+    // snapshotLabels: hover text per snapshot index (its upload time); its
+    // last index is "now". gameDates: in-game date per snapshot index (invalid
+    // when unknown); a known date replaces the axis label and heads the hover
+    // panel. markers: snapshot indexes drawn as dashed vertical lines
+    // (recalculations).
     void setSeries(QList<Series> series, QStringList snapshotLabels,
-                   ValueMode mode = ValueMode::Percent, QList<int> markers = {});
+                   ValueMode mode = ValueMode::Percent, QList<int> markers = {},
+                   QList<QDate> gameDates = {});
     void clearChart(const QString &message);
     // Title under the snapshot axis (default: uploads before the current state).
     void setAxisTitle(const QString &title);
@@ -56,11 +62,15 @@ private:
     void rebuild();
     void updateHover(const QPoint &viewPos);
     void hideHover();
+    void placeHover(const QPoint &viewPos);
+    QDate gameDate(int index) const;
 
     ThemeManager &m_theme;
     QChartView *m_view = nullptr;
     QList<Series> m_series;
     QStringList m_labels;
+    QList<QDate> m_gameDates;
+    QLabel *m_hoverPanel = nullptr; // child of the view's viewport
     QList<int> m_markers;
     ValueMode m_mode = ValueMode::Percent;
     QString m_emptyMessage;

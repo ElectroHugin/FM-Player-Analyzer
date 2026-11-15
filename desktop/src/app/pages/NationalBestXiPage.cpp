@@ -1,4 +1,5 @@
 #include "NationalBestXiPage.h"
+#include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -214,7 +215,7 @@ void NationalBestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>>
                                   new NumericItem(QString::number(option.age), option.age));
 
             auto *dwrsItem =
-                new NumericItem(QStringLiteral("%1%").arg(qRound(option.rating)), option.rating);
+                new NumericItem(formatDwrsPercent(option.rating), option.rating);
             dwrsItem->setTextAlignment(Qt::AlignCenter);
             const CellStyle style = dwrsCellStyle(option.rating);
             if (style.isValid()) {

@@ -151,12 +151,13 @@ for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
 ### Dein FM27-Spielstand, direkt und live
 
 Kein Export, kein Scrollen durch Listen: Wähle die `.fm`-Datei deiner Karriere,
-und der Analyzer liest deinen Kader und alle Spieler, die dein Scouting kennt.
+und der Analyzer liest deinen Kader und alle Spieler der Datenbank.
 Schalte unter *Einstellungen → Import* **Spielstand live verfolgen** ein, dann
 liest er nach jedem Speichern im Spiel die neueste Datei von selbst ein. Die
-**Attribut-Maskierung wie im Spiel** (Standard an) sorgt dafür, dass du nur
-siehst, was dein Scouting weiß; schaltest du sie aus, liest der Analyzer alle
-Spieler der Datenbank mit genauen Werten. Details stehen in
+**Attribut-Maskierung wie im Spiel** (Standard an) zeigt genaue
+Werte nur für Spieler, die du gut kennst; alle anderen kommen mit Spannen, die
+breiter sind, je weniger deine Scouts wissen. Ausgeschaltet sind alle Werte
+genau. Details stehen in
 [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
 
 ### Nach Rolle scouten, nicht nach Ruf
@@ -284,9 +285,9 @@ FM-Version (*Football Manager 2027* ist voreingestellt).
   Spielstanddatei (`Dokumente\Sports Interactive\Football Manager 27\games\*.fm`).
   Am besten eine gerade gespeicherte Datei, nicht während das Spiel speichert.
   Schalte danach *Einstellungen → Import → Spielstand live verfolgen* ein, dann
-  musst du nie wieder von Hand importieren. Standardmäßig kommen nur Spieler
-  rein, die du kennst (*Attribut-Maskierung wie im Spiel*); schalte sie unter
-  *Einstellungen → Import* aus, wenn du die ganze Datenbank willst.
+  musst du nie wieder von Hand importieren. Standardmäßig zeigen Spieler, die
+  du kaum kennst, Spannen (*Attribut-Maskierung wie im Spiel*); schalte sie unter
+  *Einstellungen → Import* aus, wenn du überall genaue Werte willst.
 - **FM27 mit Export (Alternative):** Mit dem Plugin
   [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) und meinen
   Ansichten (der Installer legt sie auf Wunsch in deinen FM27-Ordner `views`)
@@ -373,11 +374,37 @@ besser voraus als die frühere (Korrelation 0,58 statt 0,43).
 | Preferable | 0,25 | weitere bevorzugte Attribute der Rolle (z. B. Passing, Vision) |
 | Other | 0,2 | Bravery, One vs One, Rushing Out |
 
-Die Stufengewichte, die Multiplikatoren und die Schlüssel- bzw. bevorzugten
-Attribute jeder Rolle lassen sich unter **Einstellungen** ändern. Passe sie an
-deine Spielidee an und starte dort unter **DWRS-Gewichte** die Neuberechnung.
+Diese Rechnung heißt ab 2.3.0 **DWRS Classic** und bleibt für FM24 der Standard.
 
 </details>
+
+**Bewertungsprofile (ab 2.3.0).** Jeder Spielstand rechnet mit genau einem
+Profil, zu sehen unter **Einstellungen → DWRS-Bewertung**. Dort lassen sich
+Profile bearbeiten, als neues Profil speichern, exportieren und importieren;
+„Für diesen Spielstand verwenden“ rechnet einmal neu.
+
+- **DWRS FM27 · harvestgreen22** (Standard für neue FM27-Spielstände): Kurven je
+  Attribut aus dem [FM27-Attributtest von harvestgreen22](https://sortitoutsi.net/content/78219/fm27-attribute-test-tactical-understanding-training-system-preset-tactics-ai-reverse-engineering-engine-for-test), mit einer
+  Nachkommastelle. Vorläufig, bis die Messung mit dem fertigen Spiel wiederholt
+  ist. Hintergrund in [Issue #17](https://github.com/ElectroHugin/FM-Player-Analyzer/issues/17).
+- **Torhüter (FM27-Profil):** Die Gewichte stammen aus unserer eigenen Auswertung
+  der FM27-Saisonstatistik (verhinderte Tore je Schuss aufs Tor), nicht aus den
+  Messungen von harvestgreen22. Am stärksten zählen Reflexe, Antizipation,
+  Fangsicherheit und Stellungsspiel; Fausten, Exzentrik und Herauslaufen sind
+  Neigungen und zählen nicht als Können. Ein Torhüter-Rollenanteil von 20 % nutzt
+  nur die Attribute, in denen sich eine Torhüterrolle von den anderen unterscheidet.
+- **Rollenanteil** (optional, im FM27-Profil 33 %): Ein Teil der Bewertung kommt
+  aus den Schlüssel- und bevorzugten Attributen der Rolle. Ohne ihn wären viele
+  Rollen fast gleich, weil die Messung Attribute allgemein bewertet.
+- **Fehlende Attribute** zählen nicht als 0, sondern fallen heraus. Fehlen mehr
+  als 30 % des Gewichts, gibt es keine Bewertung.
+- **Farben:** unter **Einstellungen → DWRS-Färbung**. „Original“ (die
+  Regenbogen-Skala) bleibt Standard; dazu gibt es weitere Farbprofile wie
+  „Seltenheit“, und du kannst eigene Farben, Schwellen (Feld und Torhüter) und
+  weiche Übergänge wählen und als eigenes Farbprofil speichern.
+
+Bestehende Spielstände behalten ihre Zahlen. Eigene, geänderte Gewichte werden
+zum persönlichen Profil „Meine Gewichte“.
 
 ---
 
@@ -403,11 +430,12 @@ Ja, lies in FM27 stattdessen deinen Spielstand ein: Er bringt die ganze
 Datenbank auf einmal, ohne Filtern. Siehe [Schnellstart](#-in-5-minuten-startklar),
 Schritt 3, und schalte *Einstellungen → Import → Spielstand live verfolgen* ein.
 
-**Mein FM27-Spielstand bringt nur ein paar hundert Spieler. Warum?**
-Das ist die *Attribut-Maskierung wie im Spiel* (Standard an): Eingelesen werden
-nur Spieler, die dir das Spiel zeigt, also dein Kader, sehr bekannte Spieler und
-die, die deine Scouts kennen. Schalte sie unter *Einstellungen → Import* aus und
-lies den Spielstand neu ein, dann kommen alle Spieler mit genauen Werten.
+**Warum zeigen viele Spieler aus meinem FM27-Spielstand Spannen wie 8-12?**
+Das ist die *Attribut-Maskierung wie im Spiel* (Standard an): Dein Kader, sehr
+bekannte und gut gescoutete Spieler sind genau, alle anderen bekommen Spannen,
+die breiter sind, je weniger deine Scouts wissen. Schalte sie unter
+*Einstellungen → Import* aus und lies den Spielstand neu ein, dann sind alle
+Werte genau. (Vor 2.3.0 ließ die Maskierung ungescoutete Spieler ganz weg.)
 
 **Welche Football-Manager-Versionen werden unterstützt?**
 Football Manager 2024 und Football Manager 2027 (seit Version 2.0.0, die

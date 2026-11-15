@@ -2,8 +2,10 @@
 
 #include "Attributes.h"
 #include "DwrsEngine.h"
+#include "RatingSnapshot.h"
 
 #include <QHash>
+#include <QJsonArray>
 #include <QSet>
 
 #include <algorithm>
@@ -120,11 +122,117 @@ double devFactor(Group group, int age, const AgeWindows &windows)
     return 0.0;
 }
 
-Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine &engine,
-                     const AgeWindows &windows)
+double TrainingBand::devFactor(int age) const
+{
+    if (mentoringOnly)
+        return 0.0;
+    if (peakAge >= kLifelongAge)
+        return 1.0;
+    if (lockedAge <= peakAge)
+        return age <= peakAge ? 1.0 : 0.0;
+    if (age <= peakAge)
+        return 1.0;
+    if (age >= lockedAge)
+        return 0.0;
+    return static_cast<double>(lockedAge - age) / static_cast<double>(lockedAge - peakAge);
+}
+
+int TrainingProfile::bandOf(const QString &attrName) const
+{
+    for (int i = 0; i < bands.size(); ++i)
+        if (bands.at(i).attributes.contains(attrName))
+            return i;
+    return -1;
+}
+
+QJsonObject TrainingProfile::toJson() const
+{
+    QJsonArray list;
+    for (const TrainingBand &band : bands) {
+        QJsonObject o;
+        o.insert(QStringLiteral("name"), band.name);
+        o.insert(QStringLiteral("peak_age"), band.peakAge);
+        o.insert(QStringLiteral("locked_age"), band.lockedAge);
+        o.insert(QStringLiteral("weight"), band.weight);
+        if (band.mentoringOnly)
+            o.insert(QStringLiteral("mentoring_only"), true);
+        o.insert(QStringLiteral("attributes"), QJsonArray::fromStringList(band.attributes));
+        list.append(o);
+    }
+    QJsonObject root;
+    root.insert(QStringLiteral("format"), QStringLiteral("fmpa-training-profile"));
+    root.insert(QStringLiteral("version"), 1);
+    root.insert(QStringLiteral("bands"), list);
+    return root;
+}
+
+bool TrainingProfile::fromJson(const QJsonObject &json, TrainingProfile *out, QString *error)
+{
+    const auto fail = [error](const QString &message) {
+        if (error)
+            *error = message;
+        return false;
+    };
+    if (json.value(QStringLiteral("format")).toString() != QLatin1String("fmpa-training-profile"))
+        return fail(QStringLiteral("not a training profile"));
+    const QJsonValue bandsValue = json.value(QStringLiteral("bands"));
+    if (!bandsValue.isArray() || bandsValue.toArray().isEmpty())
+        return fail(QStringLiteral("no bands"));
+    QSet<QString> known;
+    for (const QString &name : attrNames())
+        known.insert(name);
+    QSet<QString> used;
+    TrainingProfile profile;
+    for (const QJsonValue &value : bandsValue.toArray()) {
+        const QJsonObject o = value.toObject();
+        TrainingBand band;
+        band.name = o.value(QStringLiteral("name")).toString().trimmed();
+        if (band.name.isEmpty())
+            return fail(QStringLiteral("band without a name"));
+        band.peakAge = std::clamp(o.value(QStringLiteral("peak_age")).toInt(21), 14, kLifelongAge);
+        band.lockedAge = std::clamp(o.value(QStringLiteral("locked_age")).toInt(band.peakAge), band.peakAge,
+                                    kLifelongAge);
+        band.weight = std::clamp(o.value(QStringLiteral("weight")).toDouble(1.0), 0.0, 5.0);
+        band.mentoringOnly = o.value(QStringLiteral("mentoring_only")).toBool(false);
+        for (const QJsonValue &attr : o.value(QStringLiteral("attributes")).toArray()) {
+            const QString name = attr.toString();
+            if (known.contains(name) && !used.contains(name)) {
+                band.attributes << name;
+                used.insert(name);
+            }
+        }
+        profile.bands.append(band);
+    }
+    *out = profile;
+    return true;
+}
+
+TrainingProfile standardProfile(const AgeWindows &windows)
+{
+    TrainingBand explosive{QStringLiteral("Explosive"), windows.explosivePeak, windows.explosiveLocked};
+    TrainingBand strength{QStringLiteral("Strength"), windows.strengthPeak, windows.strengthLocked};
+    TrainingBand technical{QStringLiteral("Technical"), windows.technicalPeak, windows.technicalLocked};
+    TrainingBand mental{QStringLiteral("Mental"), kLifelongAge, kLifelongAge};
+    TrainingBand character{QStringLiteral("Character"), kLifelongAge, kLifelongAge};
+    character.mentoringOnly = true;
+    for (const QString &name : attrNames()) {
+        switch (groupOf(name)) {
+        case Group::Explosive: explosive.attributes << name; break;
+        case Group::Strength: strength.attributes << name; break;
+        case Group::Technical: technical.attributes << name; break;
+        case Group::Mental: mental.attributes << name; break;
+        case Group::Character: character.attributes << name; break;
+        }
+    }
+    TrainingProfile profile;
+    profile.bands = {explosive, strength, technical, mental, character};
+    return profile;
+}
+
+static Advice adviceFromGains(const Player &player, const QHash<int, double> &perPoint,
+                               const TrainingProfile &profile, bool legacyHeadroom)
 {
     Advice advice;
-    const QHash<int, double> perPoint = engine.attributeDwrsPerPoint(role);
     if (perPoint.isEmpty())
         return advice; // role has no ratable attributes (unknown role)
     advice.valid = true;
@@ -137,19 +245,25 @@ Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine
             continue; // unscouted / missing — cannot advise
 
         const QString name = attrNames()[attrIdx];
+        const int bandIndex = profile.bandOf(name);
+        if (bandIndex < 0)
+            continue; // in no band: not advised
+        const TrainingBand &band = profile.bands.at(bandIndex);
         const Group group = groupOf(name);
-        const double dev = devFactor(group, player.age, windows);
+        const double dev = band.devFactor(player.age);
         const double headroom = std::max(0.0, kAttrCap - value);
 
         Recommendation rec;
         rec.attrIndex = attrIdx;
         rec.attrName = name;
         rec.group = group;
+        rec.band = band.name;
+        rec.lifelong = band.lifelong();
         rec.currentValue = static_cast<int>(std::lround(value));
         rec.dwrsPerPoint = it.value();
         rec.devFactor = dev;
-        rec.mentoringOnly = group == Group::Character;
-        rec.priority = it.value() * dev * headroom;
+        rec.mentoringOnly = band.mentoringOnly;
+        rec.priority = it.value() * dev * band.weight * (legacyHeadroom ? headroom : 1.0);
 
         if (rec.mentoringOnly) {
             // Character attrs never train via focus, but a weak one that matters
@@ -176,6 +290,30 @@ Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine
 
     advice.formLimited = player.averageRating > 0.0 && player.averageRating < 7.0;
     return advice;
+}
+
+Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine &engine,
+                     const TrainingProfile &profile)
+{
+    return adviceFromGains(player, engine.attributeDwrsPerPoint(role), profile, true);
+}
+
+Advice adviseForRole(const Player &player, const QString &role, const RatingSnapshot &snapshot,
+                     const TrainingProfile &profile)
+{
+    return adviceFromGains(player, snapshot.trainingGains(player, role), profile, false);
+}
+
+Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine &engine,
+                     const AgeWindows &windows)
+{
+    return adviseForRole(player, role, engine, standardProfile(windows));
+}
+
+Advice adviseForRole(const Player &player, const QString &role, const RatingSnapshot &snapshot,
+                     const AgeWindows &windows)
+{
+    return adviseForRole(player, role, snapshot, standardProfile(windows));
 }
 
 const std::vector<TrainingFocus> &trainingFocuses()
@@ -261,14 +399,12 @@ const std::vector<TrainingFocus> &trainingFocuses()
     return focuses;
 }
 
-FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
-                                 const DwrsEngine &engine, const AgeWindows &windows)
+static FocusAdvice focusesFromAdvice(const Advice &attrAdvice, bool isGkRole)
 {
     FocusAdvice out;
     // Reuse the per-attribute optimization: each trainable, role-relevant
     // attribute already carries its DWRS-gain priority. A focus is then just the
     // sum of the priorities of the attributes it trains.
-    const Advice attrAdvice = adviseForRole(player, role, engine, windows);
     if (!attrAdvice.valid)
         return out;
     out.valid = true;
@@ -277,24 +413,6 @@ FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
     QHash<QString, const Recommendation *> byName;
     for (const Recommendation &r : attrAdvice.focus)
         byName.insert(r.attrName, &r);
-
-    // Detect a goalkeeper role from its rating attributes: GK roles rate the
-    // GK-only attributes, outfield roles never do. GK training methods (name
-    // starts with "GK") apply only to GK roles and vice versa — without this,
-    // GK methods leak onto outfielders through shared mental attributes
-    // (e.g. GK Reactions -> Anticipation/Concentration).
-    static const QSet<QString> kGkMarkers = {
-        QStringLiteral("Aerial Reach"), QStringLiteral("Reflexes"),
-        QStringLiteral("Command of Area"), QStringLiteral("Handling"),
-        QStringLiteral("One vs One")};
-    bool isGkRole = false;
-    {
-        const QHash<int, double> perPoint = engine.attributeDwrsPerPoint(role);
-        for (auto it = perPoint.constBegin(); it != perPoint.constEnd() && !isGkRole; ++it) {
-            if (kGkMarkers.contains(attrNames()[it.key()]))
-                isGkRole = true;
-        }
-    }
 
     for (const TrainingFocus &f : trainingFocuses()) {
         if (f.rehab)
@@ -314,9 +432,9 @@ FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
             const Recommendation *r = it.value();
             sum += r->priority;
             contribs.push_back({r->priority, attr});
-            if (r->group != Group::Mental)
+            if (!r->lifelong)
                 allMental = false;
-            if (r->group != Group::Mental && r->devFactor < 0.999)
+            if (!r->lifelong && r->devFactor < 0.999)
                 anyLimited = true;
         }
         if (sum <= 0.0)
@@ -344,6 +462,48 @@ FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
                   return a.focus < b.focus;
               });
     return out;
+}
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const DwrsEngine &engine, const AgeWindows &windows)
+{
+    return adviseFocusesForRole(player, role, engine, standardProfile(windows));
+}
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const RatingSnapshot &snapshot, const AgeWindows &windows)
+{
+    return adviseFocusesForRole(player, role, snapshot, standardProfile(windows));
+}
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const DwrsEngine &engine, const TrainingProfile &windows)
+{
+    // Detect a goalkeeper role from its rating attributes: GK roles rate the
+    // GK-only attributes, outfield roles never do. GK training methods (name
+    // starts with "GK") apply only to GK roles and vice versa — without this,
+    // GK methods leak onto outfielders through shared mental attributes
+    // (e.g. GK Reactions -> Anticipation/Concentration).
+    static const QSet<QString> kGkMarkers = {
+        QStringLiteral("Aerial Reach"), QStringLiteral("Reflexes"),
+        QStringLiteral("Command of Area"), QStringLiteral("Handling"),
+        QStringLiteral("One vs One")};
+    bool isGkRole = false;
+    {
+        const QHash<int, double> perPoint = engine.attributeDwrsPerPoint(role);
+        for (auto it = perPoint.constBegin(); it != perPoint.constEnd() && !isGkRole; ++it) {
+            if (kGkMarkers.contains(attrNames()[it.key()]))
+                isGkRole = true;
+        }
+    }
+
+    return focusesFromAdvice(adviseForRole(player, role, engine, windows), isGkRole);
+}
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const RatingSnapshot &snapshot, const TrainingProfile &profile)
+{
+    return focusesFromAdvice(adviseForRole(player, role, snapshot, profile), snapshot.isGoalkeeperRole(role));
 }
 
 } // namespace TrainingAdvice

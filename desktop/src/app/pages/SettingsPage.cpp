@@ -1,4 +1,10 @@
 #include "SettingsPage.h"
+#include "PageHelpers.h"
+#include "../widgets/DwrsColorSchemeEditor.h"
+#include <QUuid>
+#include "../widgets/RatingProfileEditor.h"
+#include "core/DwrsDisplay.h"
+#include "../RatingProfileDefaults.h"
 #include "core/ImportHistory.h"
 
 #include "../AppContext.h"
@@ -26,6 +32,7 @@
 #include <QDoubleSpinBox>
 #include <QFile>
 #include <QFileDialog>
+#include "../widgets/TrainingProfileEditor.h"
 #include <QStandardPaths>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -204,16 +211,31 @@ QWidget *foldableHint(const QString &text)
     toggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toggle->setArrowType(Qt::RightArrow);
     toggle->setCursor(Qt::PointingHandCursor);
-    auto *body = new QLabel(text, box);
+    // The text sits in a row with a stretch: the row hands the label its
+    // capped width, so the height for the wrapped text is computed from the
+    // width it really gets (a capped label straight in the column was asked
+    // for the full card width and could come out one line too short).
+    auto *row = new QWidget(box);
+    auto *rowLayout = new QHBoxLayout(row);
+    rowLayout->setContentsMargins(0, 0, 0, 0);
+    auto *body = new QLabel(text, row);
     body->setObjectName(QStringLiteral("kpiCaption"));
     body->setWordWrap(true);
     body->setMaximumWidth(620);
-    body->hide();
+    rowLayout->addWidget(body, 1);
+    rowLayout->addStretch(0);
+    row->hide();
     layout->addWidget(toggle, 0, Qt::AlignLeft);
-    layout->addWidget(body);
-    QObject::connect(toggle, &QToolButton::toggled, body, [toggle, body](bool on) {
+    layout->addWidget(row);
+    QObject::connect(toggle, &QToolButton::toggled, row, [toggle, row](bool on) {
         toggle->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
-        body->setVisible(on);
+        row->setVisible(on);
+        // Let the card and the scrolled page grow with the opened text.
+        for (QWidget *w = row->parentWidget(); w; w = w->parentWidget()) {
+            if (w->layout())
+                w->layout()->invalidate();
+            w->updateGeometry();
+        }
     });
     return box;
 }
@@ -312,11 +334,12 @@ SettingsPage::SettingsPage(AppContext &context, ThemeManager &theme, QWidget *pa
     addSection(tr("Daten"), tr("Verlauf und Datenfrische"), "Verlauf und Datenfrische",
                buildHistoryPage());
     addSection(tr("Daten"), tr("Porträts und Wappen"), "Porträts und Wappen", buildGraphicsPage());
-    addSection(tr("Berechnung"), tr("DWRS-Gewichte"), "DWRS-Gewichte", buildWeightsPage());
+    addSection(tr("Berechnung"), tr("DWRS-Bewertung"), "DWRS-Gewichte", buildWeightsPage());
     addSection(tr("Berechnung"), tr("Kader und Analyse"), "Kader und Analyse", buildSquadPage());
     addSection(tr("Berechnung"), tr("Persönlichkeiten"), "Persönlichkeiten", buildPersonalityPage());
     addSection(tr("Berechnung"), tr("Training"), "Training", buildTrainingPage());
     addSection(tr("Programm"), tr("Design"), "Design", buildThemePage());
+    addSection(tr("Programm"), tr("DWRS-Färbung"), "DWRS-Färbung", buildDwrsColorPage());
     addSection(tr("Programm"), tr("Spielstände"), "Spielstände", buildDatabasePage());
 
     connect(m_nav, &QListWidget::currentRowChanged, this, [this](int row) {
@@ -644,12 +667,10 @@ QWidget *SettingsPage::buildImportPage()
 
     m_attributeMaskingCheck = new QCheckBox(tr("Attribut-Maskierung wie im Spiel"));
     addRow(form, tr("Spielstand einlesen"), m_attributeMaskingCheck);
-    addHint(form, tr("Gilt, wenn du einen FM27-Spielstand (.fm) einliest. Eingeschaltet übernimmt "
-                     "der Analyzer nur Spieler, die du kennst: deinen Kader, Spieler mit sehr "
-                     "hoher Reputation und Spieler aus deinem Scouting. Teilweise bekannte Spieler "
-                     "bekommen Spannen, die der Analyzer selbst bildet; sie können von den "
-                     "Spannen im Spiel abweichen. Ausgeschaltet übernimmt er alle Spieler mit "
-                     "ihren echten Werten. Verdeckte Werte wie das Potenzial liest er nie aus."));
+    addHint(form, tr("Gilt beim Einlesen eines FM27-Spielstands (.fm). Eingeschaltet sind dein "
+                     "Kader, sehr bekannte und gut gescoutete Spieler exakt, alle anderen kommen "
+                     "mit Spannen, die der Analyzer selbst bildet. Ausgeschaltet sind alle Werte "
+                     "exakt. Verdeckte Werte wie das Potenzial liest er nie aus."));
 
     m_liveSaveCheck = new QCheckBox(tr("Spielstand live verfolgen"));
     addRow(form, tr("Live verfolgen"), m_liveSaveCheck);
@@ -825,11 +846,60 @@ QWidget *SettingsPage::buildGraphicsPage()
 QWidget *SettingsPage::buildWeightsPage()
 {
     QVBoxLayout *cards = nullptr;
-    QWidget *page = makePage(tr("DWRS-Gewichte"),
-                             tr("Wie stark die Attribut-Kategorien in die DWRS-Bewertung "
-                                "eingehen. Geänderte Gewichte berechnen beim Speichern alle "
-                                "Bewertungen neu."),
+    QWidget *page = makePage(tr("DWRS-Bewertung"),
+                             tr("Ein Bewertungsprofil legt fest, wie die Attribute in die "
+                                "DWRS-Bewertung eingehen. Jeder Spielstand rechnet mit genau "
+                                "einem Profil."),
                              &cards);
+
+    QVBoxLayout *activeBody = nullptr;
+    cards->addWidget(makeCard(tr("Profil dieses Spielstands"), QString(), &activeBody));
+    m_activeRatingLabel = new QLabel;
+    m_activeRatingLabel->setObjectName(QStringLiteral("activeRatingProfile"));
+    m_activeRatingLabel->setWordWrap(true);
+    m_activeRatingLabel->setTextFormat(Qt::PlainText);
+    m_activeRatingLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    activeBody->addWidget(m_activeRatingLabel);
+    activeBody->addWidget(foldableHint(
+        tr("Ein Profilwechsel berechnet alle Bewertungen des Spielstands im Hintergrund neu. "
+           "Im Verlauf erscheint der Wechsel als Markierung; über ihn hinweg wird keine "
+           "Entwicklung berechnet. Ältere Bewertungen bleiben unverändert gespeichert.")));
+
+    QVBoxLayout *profileBody = nullptr;
+    cards->addWidget(makeCard(tr("Bewertungsprofile"),
+        tr("Profile als Entwurf bearbeiten, speichern und austauschen."), &profileBody));
+    m_ratingProfileEditor = new RatingProfileEditor(
+        QDir(m_context.paths().dataDir()).filePath(QStringLiteral("rating_profiles.json")),
+        m_context.fmVersionId());
+    m_ratingProfileEditor->setMinimumHeight(600);
+    profileBody->addWidget(m_ratingProfileEditor);
+    QString builtinError;
+    const auto builtins = loadBuiltinRatingProfiles(&builtinError);
+    if (builtins.isEmpty()) {
+        qWarning("DWRS built-in profiles unavailable: %s", qPrintable(builtinError));
+        profileBody->addWidget(caption(tr("Mitgelieferte Profile konnten nicht geladen werden.")));
+    } else m_ratingProfileEditor->installBuiltins(builtins);
+    connect(m_ratingProfileEditor, &RatingProfileEditor::librarySaved, this, [this] {
+        m_context.reloadRatingLibrary();
+    });
+    connect(m_ratingProfileEditor, &RatingProfileEditor::activateRequested, this, [this](const QString &id) {
+        m_context.reloadRatingLibrary();
+        const QString error = m_context.activateRatingProfile(id);
+        if (!error.isEmpty())
+            QMessageBox::warning(this, tr("Bewertungsprofil"), error);
+        updateActiveRatingProfile();
+    });
+    const auto updateCurveTheme = [this] {
+        QPalette palette;
+        palette.setColor(QPalette::Base, m_theme.surface());
+        palette.setColor(QPalette::Text, m_theme.text());
+        auto grid = m_theme.text(); grid.setAlpha(45);
+        palette.setColor(QPalette::Mid, grid);
+        palette.setColor(QPalette::Highlight, m_theme.accentUi());
+        m_ratingProfileEditor->setChartPalette(palette);
+    };
+    connect(&m_theme, &ThemeManager::themeChanged, m_ratingProfileEditor, updateCurveTheme);
+    updateCurveTheme();
 
     const auto makeSpin = [](double max = 20.0) {
         auto *spin = sized(new QDoubleSpinBox, kNumberWidth);
@@ -864,8 +934,16 @@ QWidget *SettingsPage::buildWeightsPage()
     }
     pair->addWidget(gkCard, 1);
     cards->addLayout(pair);
+    // Since 2.3.0 group weights and role factors live in the rating profile
+    // (existing values became "My weights"). The controls stay hidden so the
+    // stored values are kept unchanged.
+    fieldCard->setVisible(false);
+    gkCard->setVisible(false);
+    m_weightsVersionLabel->setVisible(false);
 
-    cards->addWidget(makeCard(tr("Rollen-Multiplikatoren"), QString(), &body));
+    auto *multiplierCard = makeCard(tr("Rollen-Multiplikatoren"), QString(), &body);
+    multiplierCard->setVisible(false);
+    cards->addWidget(multiplierCard);
     form = makeForm(body);
     m_keyMultSpin = makeSpin();
     m_prefMultSpin = makeSpin();
@@ -901,8 +979,8 @@ QWidget *SettingsPage::buildWeightsPage()
     auto *recalcButton = new QPushButton(tr("Alle Bewertungen neu berechnen"));
     body->addLayout(hbox({recalcButton}));
     body->addWidget(foldableHint(
-        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit den "
-           "gespeicherten Gewichten neu. Nicht gespeicherte Änderungen auf dieser Seite "
+        tr("Berechnet die Bewertungen aller Spieler im aktiven Spielstand mit dem Profil "
+           "dieses Spielstands neu. Nicht gespeicherte Änderungen auf dieser Seite "
            "werden dabei nicht berücksichtigt.")));
     connect(recalcButton, &QPushButton::clicked, this, &SettingsPage::recalcRequested);
 
@@ -914,8 +992,8 @@ QWidget *SettingsPage::buildPersonalityPage()
 {
     QVBoxLayout *cards = nullptr;
     QWidget *page = makePage(tr("Persönlichkeiten"),
-        tr("Einstufung für Talent-Score, Analyse und Filter. FM24 und FM27 werden getrennt "
-           "in diesem Spielstand gespeichert. Standard: bisherige FM24-Einstufung."), &cards);
+        tr("Einstufung für Talent-Score, Analyse und Filter, passend zur FM-Version dieses "
+           "Spielstands."), &cards);
     QVBoxLayout *body = nullptr;
     cards->addWidget(makeCard(tr("Persönlichkeiten"), QString(), &body));
     m_personalityTable = new QTableWidget;
@@ -926,13 +1004,15 @@ QWidget *SettingsPage::buildPersonalityPage()
     m_personalityTable->verticalHeader()->hide();
     m_personalityTable->setMinimumHeight(480);
     body->addWidget(m_personalityTable);
-    auto *reset = new QPushButton(tr("FM24-Standard für beide Versionen wiederherstellen"));
+    auto *reset = new QPushButton(tr("Standard wiederherstellen"));
     body->addWidget(reset);
     connect(reset, &QPushButton::clicked, this, [this] {
         for (int row = 0; row < m_personalityTable->rowCount(); ++row) {
             const QString category = personalityDefaults().value(
                 m_personalityTable->item(row, 0)->text(), QStringLiteral("neutral"));
             for (int col = 1; col <= 2; ++col) {
+                if (m_personalityTable->isColumnHidden(col))
+                    continue; // only the save's own FM version
                 auto *combo = qobject_cast<QComboBox *>(m_personalityTable->cellWidget(row, col));
                 combo->setCurrentIndex(combo->findData(category));
             }
@@ -1000,6 +1080,14 @@ void SettingsPage::refreshPersonalities()
             m_personalityTable->setCellWidget(row, col, combo);
         }
     }
+    // A save belongs to one FM version: show and edit only its column (the
+    // other version's stored values stay as they are).
+    const QString version = m_context.fmVersionId();
+    const bool fm24 = version == QLatin1String("fm24"), fm27 = version == QLatin1String("fm27");
+    m_personalityTable->setColumnHidden(1, fm27);
+    m_personalityTable->setColumnHidden(2, fm24);
+    m_personalityTable->horizontalHeaderItem(1)->setText(fm24 ? tr("Einstufung") : QStringLiteral("FM24"));
+    m_personalityTable->horizontalHeaderItem(2)->setText(fm27 ? tr("Einstufung") : QStringLiteral("FM27"));
 }
 
 QWidget *SettingsPage::buildSquadPage()
@@ -1079,57 +1167,20 @@ QWidget *SettingsPage::buildTrainingPage()
 {
     QVBoxLayout *cards = nullptr;
     QWidget *page = makePage(tr("Training"),
-                             tr("Bis zu welchem Alter sich Attributgruppen noch trainieren "
-                                "lassen. Steuert die Trainingsempfehlung."),
+                             tr("Welche Attribute bis zu welchem Alter wie stark trainiert "
+                                "werden. Steuert die Trainingsempfehlung."),
                              &cards);
 
     QVBoxLayout *body = nullptr;
-    cards->addWidget(makeCard(tr("Trainings-Altersfenster"), QString(), &body));
-    auto *grid = new QGridLayout;
-    grid->setContentsMargins(0, 0, 0, 0);
-    grid->setHorizontalSpacing(24);
-    grid->setVerticalSpacing(12);
-    auto *peakHead = caption(tr("Voll trainierbar bis"));
-    auto *lockedHead = caption(tr("Gesperrt ab"));
-    grid->addWidget(peakHead, 0, 1);
-    grid->addWidget(lockedHead, 0, 2);
-    const auto makeAgeSpin = [] {
-        auto *spin = sized(new QSpinBox, kNumberWidth);
-        spin->setRange(15, 40);
-        return spin;
-    };
-    int row = 1;
-    const auto addWindow = [&](const QString &group, const QString &detail, QSpinBox *&peak,
-                               QSpinBox *&locked) {
-        auto *labels = new QVBoxLayout;
-        labels->setSpacing(0);
-        auto *name = new QLabel(group);
-        labels->addWidget(name);
-        if (!detail.isEmpty())
-            labels->addWidget(caption(detail));
-        auto *holder = new QWidget;
-        labels->setContentsMargins(0, 0, 0, 0);
-        holder->setLayout(labels);
-        holder->setMinimumWidth(kLabelWidth);
-        peak = makeAgeSpin();
-        locked = makeAgeSpin();
-        grid->addWidget(holder, row, 0);
-        grid->addWidget(peak, row, 1);
-        grid->addWidget(locked, row, 2);
-        ++row;
-    };
-    addWindow(tr("Explosiv"), tr("Tempo, Antritt, Beweglichkeit"), m_explosivePeakSpin,
-              m_explosiveLockedSpin);
-    addWindow(tr("Kraft"), tr("Kraft, Ausdauer, Sprungkraft, Balance"), m_strengthPeakSpin,
-              m_strengthLockedSpin);
-    addWindow(tr("Technik"), QString(), m_technicalPeakSpin, m_technicalLockedSpin);
-    grid->setColumnStretch(3, 1);
-    body->addLayout(grid);
+    cards->addWidget(makeCard(tr("Trainingsprofil"), QString(), &body));
+    m_trainingEditor = new TrainingProfileEditor;
+    body->addWidget(m_trainingEditor);
     body->addWidget(foldableHint(
-        tr("Bis 'voll trainierbar bis' gilt eine Gruppe als voll trainierbar, danach nimmt die "
-           "Wirkung linear ab bis 'gesperrt ab'. Mentale Attribute gelten immer als "
-           "trainierbar, Charakter-Attribute (Entschlossenheit, Arbeitsrate) nie (nur über "
-           "Mentoring).")));
+        tr("Ein Band fasst Attribute zusammen, die sich gleich entwickeln. Bis „voll trainierbar "
+           "bis“ wirkt Training voll, danach nimmt die Wirkung linear ab bis „gesperrt ab“; „immer“ "
+           "heißt nie gesperrt. Das Gewicht verstärkt oder schwächt ein Band in der Empfehlung. "
+           "Bänder mit „Nur Mentoring“ erscheinen nur als Mentoring-Hinweis. Attribute ohne Band "
+           "werden nicht empfohlen. Das Profil gehört zu diesem Spielstand.")));
 
     finishPage(cards);
     return page;
@@ -1255,6 +1306,130 @@ QWidget *SettingsPage::buildThemePage()
     return page;
 }
 
+QWidget *SettingsPage::buildDwrsColorPage()
+{
+    QVBoxLayout *cards = nullptr;
+    QWidget *page = makePage(tr("DWRS-Färbung"),
+                             tr("Wie Bewertungen in Tabellen, auf dem Spielfeld und im Dashboard "
+                                "eingefärbt werden."), &cards);
+
+    QVBoxLayout *body = nullptr;
+    cards->addWidget(makeCard(tr("Farbprofil"), QString(), &body));
+    QFormLayout *form = makeForm(body);
+    m_dwrsSchemeCombo = sized(new QComboBox, kFieldWidth);
+    addRow(form, tr("Profil"), m_dwrsSchemeCombo);
+    auto *saveScheme = new QPushButton(tr("Als eigenes Profil speichern …"));
+    saveScheme->setToolTip(tr("Eigene Farbprofile stehen in allen Spielständen zur Wahl und "
+                              "bleiben bei Updates erhalten."));
+    m_dwrsDeleteSchemeButton = new QPushButton(tr("Profil löschen"));
+    m_dwrsDeleteSchemeButton->setEnabled(false);
+    form->addRow(QString(), [&] {
+        auto *w = new QWidget;
+        w->setLayout(hbox({saveScheme, m_dwrsDeleteSchemeButton}));
+        return w;
+    }());
+    addHint(form, tr("„Original“ ist der Regenbogen der bisherigen Versionen. „Seltenheit“ färbt in "
+                     "Stufen wie bei Gegenständen in Rollenspielen (Schwach, Gewöhnlich, Gut, Selten, "
+                     "Episch, Legendär). „Farbenblind-freundlich“ bleibt auch bei Rot-Grün-Schwäche "
+                     "unterscheidbar. Änderst du unten eine Farbe oder Grenze, wird daraus "
+                     "„Benutzerdefiniert“; mit „Als eigenes Profil speichern“ bleibt es erhalten. "
+                     "Die Schrift wählt der Analyzer automatisch hell oder dunkel, damit sie auf jeder "
+                     "Farbe gut lesbar bleibt."));
+
+    cards->addWidget(makeCard(tr("Stufen und Farben"),
+                              tr("Ab welchem Wert eine Farbe gilt, getrennt für Feldspieler und Torhüter."),
+                              &body));
+    m_dwrsSchemeEditor = new DwrsColorSchemeEditor;
+    body->addWidget(m_dwrsSchemeEditor);
+    body->addWidget(foldableHint(
+        tr("Ein weicher Übergang mischt die Farben benachbarter Stufen in diesem Abstand um die "
+           "Grenze, so dass etwa 71,5 und 72,5 nicht mehr völlig verschieden aussehen. Stufen ohne "
+           "Füllung werden nie gemischt. Torhüter haben eigene Grenzen, weil ihre Bewertung auf "
+           "einer anderen Grundlage rechnet.")));
+
+    connect(m_dwrsSchemeCombo, &QComboBox::activated, this, [this] {
+        const QString id = m_dwrsSchemeCombo->currentData().toString();
+        if (id == QLatin1String("custom"))
+            return;
+        if (auto builtin = builtinDwrsColorScheme(id)) {
+            m_dwrsSchemeEditor->setScheme(*builtin);
+        } else {
+            for (const auto &scheme : m_dwrsCustomSchemes)
+                if (scheme.id == id)
+                    m_dwrsSchemeEditor->setScheme(scheme);
+        }
+        fillDwrsSchemeCombo(id);
+    });
+    connect(m_dwrsSchemeEditor, &DwrsColorSchemeEditor::edited, this,
+            [this] { fillDwrsSchemeCombo(QStringLiteral("custom")); });
+    connect(saveScheme, &QPushButton::clicked, this, [this] {
+        bool ok = false;
+        const QString current = m_dwrsSchemeEditor->scheme().builtin
+                                    ? tr("%1 (eigen)").arg(m_dwrsSchemeEditor->scheme().name)
+                                    : (m_dwrsSchemeEditor->scheme().id == QLatin1String("custom")
+                                           ? QString() : m_dwrsSchemeEditor->scheme().name);
+        const QString name = QInputDialog::getText(this, tr("Eigenes Farbprofil"), tr("Name:"),
+                                                   QLineEdit::Normal, current, &ok).trimmed();
+        if (!ok || name.isEmpty())
+            return;
+        DwrsColorScheme scheme = m_dwrsSchemeEditor->scheme().editableCopy(QString(), name);
+        scheme.id = QStringLiteral("own-%1").arg(QUuid::createUuid().toString(QUuid::Id128).left(12));
+        bool replaced = false;
+        for (auto &existing : m_dwrsCustomSchemes) {
+            if (existing.name.compare(name, Qt::CaseInsensitive) == 0) {
+                scheme.id = existing.id;
+                existing = scheme;
+                replaced = true;
+            }
+        }
+        if (!replaced)
+            m_dwrsCustomSchemes.append(scheme);
+        QString error;
+        if (!saveDwrsColorSchemes(m_context.paths().dwrsColorSchemesFile(), m_dwrsCustomSchemes, &error)) {
+            QMessageBox::warning(this, tr("Eigenes Farbprofil"),
+                                 tr("Das Farbprofil konnte nicht gespeichert werden: %1").arg(error));
+            return;
+        }
+        m_dwrsSchemeEditor->setScheme(scheme);
+        fillDwrsSchemeCombo(scheme.id);
+    });
+    connect(m_dwrsDeleteSchemeButton, &QPushButton::clicked, this, [this] {
+        const QString id = m_dwrsSchemeCombo->currentData().toString();
+        const auto it = std::find_if(m_dwrsCustomSchemes.begin(), m_dwrsCustomSchemes.end(),
+                                     [&](const DwrsColorScheme &scheme) { return scheme.id == id; });
+        if (it == m_dwrsCustomSchemes.end())
+            return;
+        if (QMessageBox::question(this, tr("Profil löschen"),
+                                  tr("Das Farbprofil „%1“ löschen?").arg(it->name))
+            != QMessageBox::Yes)
+            return;
+        m_dwrsCustomSchemes.erase(it);
+        QString error;
+        saveDwrsColorSchemes(m_context.paths().dwrsColorSchemesFile(), m_dwrsCustomSchemes, &error);
+        m_dwrsSchemeEditor->setScheme(*builtinDwrsColorScheme(originalDwrsColorSchemeId()));
+        fillDwrsSchemeCombo(originalDwrsColorSchemeId());
+    });
+
+    finishPage(cards);
+    return page;
+}
+
+void SettingsPage::fillDwrsSchemeCombo(const QString &selectId)
+{
+    const QSignalBlocker blocker(m_dwrsSchemeCombo);
+    m_dwrsSchemeCombo->clear();
+    for (const auto &scheme : builtinDwrsColorSchemes())
+        m_dwrsSchemeCombo->addItem(scheme.name, scheme.id);
+    if (!m_dwrsCustomSchemes.isEmpty())
+        m_dwrsSchemeCombo->insertSeparator(m_dwrsSchemeCombo->count());
+    for (const auto &scheme : m_dwrsCustomSchemes)
+        m_dwrsSchemeCombo->addItem(scheme.name, scheme.id);
+    if (selectId == QLatin1String("custom"))
+        m_dwrsSchemeCombo->addItem(tr("Benutzerdefiniert"), QStringLiteral("custom"));
+    m_dwrsSchemeCombo->setCurrentIndex(std::max(0, m_dwrsSchemeCombo->findData(selectId)));
+    const QString id = m_dwrsSchemeCombo->currentData().toString();
+    m_dwrsDeleteSchemeButton->setEnabled(id.startsWith(QLatin1String("own-")));
+}
 
 void SettingsPage::updateGraphicsStatus()
 {
@@ -1645,8 +1820,26 @@ QWidget *SettingsPage::buildDatabasePage()
 }
 
 
+void SettingsPage::updateActiveRatingProfile()
+{
+    if (!m_activeRatingLabel)
+        return;
+    const QString id = m_context.activeRatingProfileId();
+    QString text = id.isEmpty() ? tr("Kein Profil aktiv.") : tr("Aktiv: %1").arg(m_context.activeRatingProfileName());
+    m_activeRatingLabel->setText(text);
+    if (m_ratingProfileEditor)
+        m_ratingProfileEditor->setActiveProfile(id);
+}
+
+bool SettingsPage::confirmLeave()
+{
+    return !m_ratingProfileEditor || m_ratingProfileEditor->confirmDiscard();
+}
+
 void SettingsPage::refresh()
 {
+    if (m_ratingProfileEditor) m_ratingProfileEditor->setGame(m_context.fmVersionId());
+    updateActiveRatingProfile();
     refreshPersonalities();
     AppConfig &config = m_context.config();
 
@@ -1789,12 +1982,8 @@ void SettingsPage::refresh()
     m_wrongSideSpin->setValue(config.gapAnalysisSetting(QStringLiteral("wrong_side_penalty")));
     m_retirementAgeSpin->setValue(config.freshnessSetting(QStringLiteral("retirement_age")));
     m_staleUploadsSpin->setValue(config.freshnessSetting(QStringLiteral("stale_after_full_uploads")));
-    m_explosivePeakSpin->setValue(config.trainingSetting(QStringLiteral("explosive_peak_age")));
-    m_explosiveLockedSpin->setValue(config.trainingSetting(QStringLiteral("explosive_locked_age")));
-    m_strengthPeakSpin->setValue(config.trainingSetting(QStringLiteral("strength_peak_age")));
-    m_strengthLockedSpin->setValue(config.trainingSetting(QStringLiteral("strength_locked_age")));
-    m_technicalPeakSpin->setValue(config.trainingSetting(QStringLiteral("technical_peak_age")));
-    m_technicalLockedSpin->setValue(config.trainingSetting(QStringLiteral("technical_locked_age")));
+    m_trainingEditor->setProfile(trainingProfile(m_context),
+                                 TrainingAdvice::standardProfile(trainingWindows(m_context)));
 
     const auto themeSettings = config.themeSettings();
     m_modeCombo->setCurrentIndex(
@@ -1813,6 +2002,10 @@ void SettingsPage::refresh()
     m_watermarkCheck->setChecked(
         themeSettings.value(QStringLiteral("header_crest_watermark"), QStringLiteral("true"))
         != QLatin1String("false"));
+    m_dwrsCustomSchemes = loadDwrsColorSchemes(m_context.paths().dwrsColorSchemesFile(), nullptr);
+    const DwrsColorScheme dwrsScheme = m_context.resolveDwrsColorScheme(themeSettings);
+    m_dwrsSchemeEditor->setScheme(dwrsScheme);
+    fillDwrsSchemeCombo(dwrsScheme.id);
     m_watermarkCheck->setEnabled(m_headerStyleCombo->currentData().toString()
                                  != QLatin1String("solid"));
     m_pendingColors.clear();
@@ -1979,15 +2172,6 @@ void SettingsPage::saveAll()
     config.setGapAnalysisSetting(QStringLiteral("wrong_side_penalty"), m_wrongSideSpin->value());
     config.setFreshnessSetting(QStringLiteral("retirement_age"), m_retirementAgeSpin->value());
     config.setFreshnessSetting(QStringLiteral("stale_after_full_uploads"), m_staleUploadsSpin->value());
-    config.setTrainingSetting(QStringLiteral("explosive_peak_age"), m_explosivePeakSpin->value());
-    config.setTrainingSetting(QStringLiteral("explosive_locked_age"),
-                              m_explosiveLockedSpin->value());
-    config.setTrainingSetting(QStringLiteral("strength_peak_age"), m_strengthPeakSpin->value());
-    config.setTrainingSetting(QStringLiteral("strength_locked_age"),
-                              m_strengthLockedSpin->value());
-    config.setTrainingSetting(QStringLiteral("technical_peak_age"), m_technicalPeakSpin->value());
-    config.setTrainingSetting(QStringLiteral("technical_locked_age"),
-                              m_technicalLockedSpin->value());
 
     auto themeSettings = config.themeSettings();
     themeSettings.insert(QStringLiteral("current_mode"),
@@ -2002,7 +2186,27 @@ void SettingsPage::saveAll()
     themeSettings.insert(QStringLiteral("header_crest_watermark"),
                          m_watermarkCheck->isChecked() ? QStringLiteral("true")
                                                        : QStringLiteral("false"));
+    // The selected scheme, plus a copy of its colours so the save keeps them
+    // if an own scheme is deleted later.
+    const DwrsColorScheme &dwrsScheme = m_dwrsSchemeEditor->scheme();
+    themeSettings.insert(QStringLiteral("dwrs_color_scheme"), dwrsScheme.id);
+    themeSettings.insert(QStringLiteral("dwrs_color_custom"),
+                         QString::fromUtf8(QJsonDocument(dwrsScheme.toJson()).toJson(QJsonDocument::Compact)));
     config.saveThemeSettings(themeSettings);
+    setDwrsColorScheme(dwrsScheme);
+
+    // Training profile: stored only when it differs from the standard.
+    {
+        const TrainingAdvice::TrainingProfile training = m_trainingEditor->profile();
+        ProfileStore trainingStore(db);
+        const bool standard = training == TrainingAdvice::standardProfile(trainingWindows(m_context));
+        clubSettingsOk = clubSettingsOk
+                         && (standard ? trainingStore.removeDocument(ProfileStore::trainingProfileDocument())
+                                      : trainingStore.writeDocument(ProfileStore::trainingProfileDocument(),
+                                                                    QJsonDocument(training.toJson()).toJson(
+                                                                        QJsonDocument::Compact),
+                                                                    false));
+    }
 
     bool personalitiesChanged = false;
     ProfileStore personalityStore(db);

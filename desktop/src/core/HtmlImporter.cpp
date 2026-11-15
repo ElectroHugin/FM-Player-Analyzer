@@ -12,6 +12,8 @@
 
 #include <QDateTime>
 #include <QFileInfo>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QHash>
 #include <QSet>
 
@@ -372,6 +374,77 @@ void HtmlImporter::applyColumn(Player &player, const QString &fullColumnName, co
     }
 }
 
+
+// The game can rename clubs between two saves (a data update renamed 223
+// clubs, "Bayern München" became "FC Bayern"). Own club, second team and the
+// remembered club ids are stored by name, so follow them by the club's game
+// id: rename where the id now carries another name, learn missing ids.
+static bool followClubRenames(Database &db, const QHash<QString, quint32> &clubIdByName)
+{
+    if (clubIdByName.isEmpty())
+        return true;
+    QHash<quint32, QString> nameById;
+    for (auto it = clubIdByName.cbegin(); it != clubIdByName.cend(); ++it)
+        nameById.insert(it.value(), it.key());
+
+    const QString userClubKey = QStringLiteral("user_club");
+    const QString ownIdKey = QStringLiteral("club_fm_id");
+    const QString secondKey = QStringLiteral("second_team_club");
+    const QString idsKey = QStringLiteral("club_fm_ids");
+
+    QJsonObject ids = QJsonDocument::fromJson(db.setting(idsKey).toUtf8()).object();
+    const QJsonObject idsBefore = ids;
+    const auto idOf = [](const QJsonValue &value) { return value.toVariant().toString().toUInt(); };
+
+    // Own club.
+    const QString userClub = db.setting(userClubKey);
+    const quint32 ownId = db.setting(ownIdKey).trimmed().toUInt();
+    if (ownId != 0) {
+        const QString current = nameById.value(ownId);
+        if (!current.isEmpty() && current != userClub && !userClub.isEmpty()
+            && !clubIdByName.contains(userClub)) {
+            if (!db.setSetting(userClubKey, current))
+                return false;
+        }
+    } else if (!userClub.isEmpty() && clubIdByName.contains(userClub)) {
+        if (!db.setSetting(ownIdKey, QString::number(clubIdByName.value(userClub))))
+            return false;
+    }
+
+    // Remembered ids of other clubs (second team, rivals with a crest).
+    const QStringList names = ids.keys();
+    for (const QString &name : names) {
+        const QString current = nameById.value(idOf(ids.value(name)));
+        if (!current.isEmpty() && current != name && !clubIdByName.contains(name)) {
+            const QJsonValue value = ids.take(name);
+            if (!ids.contains(current))
+                ids.insert(current, value);
+        }
+    }
+
+    // Second team: follow its remembered id, learn it on first sight.
+    const QString second = db.setting(secondKey);
+    if (!second.isEmpty()) {
+        if (clubIdByName.contains(second)) {
+            if (!ids.contains(second))
+                ids.insert(second, QString::number(clubIdByName.value(second)));
+        } else {
+            for (auto it = idsBefore.constBegin(); it != idsBefore.constEnd(); ++it) {
+                if (it.key() != second)
+                    continue;
+                const QString current = nameById.value(idOf(it.value()));
+                if (!current.isEmpty() && !db.setSetting(secondKey, current))
+                    return false;
+            }
+        }
+    }
+
+    if (ids != idsBefore
+        && !db.setSetting(idsKey, QString::fromUtf8(QJsonDocument(ids).toJson(QJsonDocument::Compact))))
+        return false;
+    return true;
+}
+
 ImportResult HtmlImporter::importHtml(const QString &html, Database &db,
                                       const std::vector<Player> &existingPlayers,
                                       std::function<void(int, int)> progress,
@@ -548,6 +621,10 @@ ImportResult HtmlImporter::importTable(const ImportTable &table, Database &db,
     // rolls the whole import back instead of leaving a partial one behind.
     ScopedTransaction transaction(db);
     if (!transaction.isActive()) {
+        result.error = db.errorString();
+        return result;
+    }
+    if (!followClubRenames(db, table.clubIdByName)) {
         result.error = db.errorString();
         return result;
     }

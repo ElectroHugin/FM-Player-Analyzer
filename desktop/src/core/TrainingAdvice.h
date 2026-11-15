@@ -2,13 +2,17 @@
 
 #include "Player.h"
 
+#include <QJsonObject>
+#include <QList>
 #include <QString>
+#include <QStringList>
 
 #include <vector>
 
 namespace fm {
 
 class DwrsEngine;
+class RatingSnapshot;
 
 // Training advisor. Frames "what should this player train?" as a DWRS
 // optimization: among the attributes that (a) actually feed the chosen role's
@@ -34,6 +38,40 @@ struct AgeWindows {
     int technicalPeak = 21, technicalLocked = 27;
 };
 
+// --- Training profile (per save, Settings -> Training) -----------------------
+// Bands of attributes that develop alike: an age window, a weight and the
+// attributes in it. The standard profile is the five groups above with the
+// configured age windows. An attribute in no band is never advised.
+inline constexpr int kLifelongAge = 50; // peak age from here on: trainable lifelong
+
+struct TrainingBand {
+    QString name;
+    int peakAge = 21;    // fully trainable up to this age
+    int lockedAge = 27;  // no longer trainable from this age (linear between)
+    double weight = 1.0; // multiplies the band's priority
+    bool mentoringOnly = false; // only via mentoring (character)
+    QStringList attributes;
+
+    bool lifelong() const { return !mentoringOnly && peakAge >= kLifelongAge; }
+    double devFactor(int age) const;
+    bool operator==(const TrainingBand &other) const = default;
+};
+
+struct TrainingProfile {
+    QList<TrainingBand> bands;
+
+    // Index of the band holding the attribute; -1 = in no band.
+    int bandOf(const QString &attrName) const;
+    QJsonObject toJson() const;
+    // Validates names, ages, weights and attributes (each in one band at
+    // most, unknown names dropped). error in English for logs.
+    static bool fromJson(const QJsonObject &json, TrainingProfile *out, QString *error = nullptr);
+    bool operator==(const TrainingProfile &other) const = default;
+};
+
+struct AgeWindows;
+TrainingProfile standardProfile(const AgeWindows &windows);
+
 Group groupOf(const QString &attrName);
 QString groupName(Group group); // German label for the UI
 double devFactor(Group group, int age, const AgeWindows &windows);
@@ -42,10 +80,12 @@ struct Recommendation {
     int attrIndex = -1;
     QString attrName;
     Group group = Group::Technical;
+    QString band;          // band name in the training profile
+    bool lifelong = false; // band trainable at any age
     int currentValue = 0;      // rounded attribute mean
     double dwrsPerPoint = 0.0; // marginal normalized DWRS per +1 for the role
     double devFactor = 0.0;    // 0..1 trainability at this age
-    double priority = 0.0;     // dwrsPerPoint * devFactor * headroom
+    double priority = 0.0;     // Classic: marginal * age * headroom; curves: expected +1 gain * age
     bool mentoringOnly = false;
 };
 
@@ -59,6 +99,15 @@ struct Advice {
 // role must be a valid DWRS role for the player. windows come from AppConfig.
 Advice adviseForRole(const Player &player, const QString &role,
                      const DwrsEngine &engine, const AgeWindows &windows);
+
+// Nonlinear profiles use the expected +1 gain at the current attribute range.
+Advice adviseForRole(const Player &player, const QString &role,
+                     const RatingSnapshot &snapshot, const AgeWindows &windows);
+// The same with a full training profile (what the app uses).
+Advice adviseForRole(const Player &player, const QString &role, const DwrsEngine &engine,
+                     const TrainingProfile &profile);
+Advice adviseForRole(const Player &player, const QString &role, const RatingSnapshot &snapshot,
+                     const TrainingProfile &profile);
 
 // --- Training focuses (the in-game training methods) --------------------------
 // FM does not train single attributes; the player picks a training focus that
@@ -97,6 +146,13 @@ struct FocusAdvice {
 // the given role, honoring age windows and headroom, excluding injury rehab.
 FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
                                  const DwrsEngine &engine, const AgeWindows &windows);
+
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const RatingSnapshot &snapshot, const AgeWindows &windows);
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const DwrsEngine &engine, const TrainingProfile &profile);
+FocusAdvice adviseFocusesForRole(const Player &player, const QString &role,
+                                 const RatingSnapshot &snapshot, const TrainingProfile &profile);
 
 } // namespace TrainingAdvice
 

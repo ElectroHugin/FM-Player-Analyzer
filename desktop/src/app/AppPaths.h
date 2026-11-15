@@ -32,10 +32,14 @@ public:
     QString configFile() const;      // <dataDir>/config.ini
     // The user's own color templates, app-wide: <dataDir>/color_templates.json.
     QString colorTemplatesFile() const;
+    // Own DWRS colour schemes (app-wide, like colour templates).
+    QString dwrsColorSchemesFile() const;
     // Roles/tactics of one FM version: <dataDir>/definitions.json for FM24,
     // <dataDir>/definitions_<id>.json for later releases.
     QString definitionsFile(const QString &fmVersionId) const;
     QString databaseFile(const QString &dbName) const;
+    // Shared rating profile library: <dataDir>/rating_profiles.json
+    QString ratingLibraryFile() const;
 
     // Creates the directory skeleton. Returns false on IO failure.
     bool ensureDataDirInitialized();

@@ -120,3 +120,47 @@ fm_add_test(test_tacticlibrary)
 target_compile_definitions(test_tacticlibrary PRIVATE
     DEFINITIONS_FM27="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json"
     DEFINITIONS_FM24="${CMAKE_SOURCE_DIR}/src/app/resources/definitions.json")
+fm_add_test(test_ratingcurve)
+fm_add_test(test_ratingprofile)
+fm_add_test(test_ratingprofilelibrary)
+fm_add_test(test_classicreference)
+target_compile_definitions(test_classicreference PRIVATE DEFINITIONS_DIR="${CMAKE_SOURCE_DIR}/src/app/resources" CLASSIC_FIXTURE="${CMAKE_CURRENT_SOURCE_DIR}/fixtures/classic-2.2.3.json")
+fm_add_test(test_visibleattributes)
+fm_add_test(test_ratingsnapshot)
+add_executable(test_ratingcurveeditor test_ratingcurveeditor.cpp ${CMAKE_SOURCE_DIR}/src/app/widgets/RatingCurveEditor.cpp)
+target_include_directories(test_ratingcurveeditor PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_ratingcurveeditor PRIVATE fmcore Qt6::Widgets Qt6::Test)
+target_compile_definitions(test_ratingcurveeditor PRIVATE LEGACY_DIR="${LEGACY_DIR}")
+add_test(NAME test_ratingcurveeditor COMMAND test_ratingcurveeditor)
+set_tests_properties(test_ratingcurveeditor PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen" ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>")
+add_executable(test_ratingprofileeditor test_ratingprofileeditor.cpp ${CMAKE_SOURCE_DIR}/src/app/widgets/RatingProfileEditor.cpp ${CMAKE_SOURCE_DIR}/src/app/widgets/RatingCurveEditor.cpp ${CMAKE_SOURCE_DIR}/src/app/widgets/FlowLayout.cpp)
+target_include_directories(test_ratingprofileeditor PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_ratingprofileeditor PRIVATE fmcore Qt6::Widgets Qt6::Test)
+add_test(NAME test_ratingprofileeditor COMMAND test_ratingprofileeditor)
+set_tests_properties(test_ratingprofileeditor PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen" ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>")
+target_sources(test_ratingcurveeditor PRIVATE ${CMAKE_SOURCE_DIR}/src/app/widgets/FlowLayout.cpp)
+target_sources(test_ratingprofileeditor PRIVATE ${CMAKE_SOURCE_DIR}/src/app/theming/ThemeManager.cpp)
+target_compile_definitions(test_ratingprofileeditor PRIVATE EDITOR_QM="${CMAKE_BINARY_DIR}/src/app/fmplayeranalyzer_en.qm")
+fm_add_test(test_builtinratingprofiles)
+target_compile_definitions(test_builtinratingprofiles PRIVATE DEFINITIONS_DIR="${CMAKE_SOURCE_DIR}/src/app/resources" HARVEST_DATA="${CMAKE_SOURCE_DIR}/../docs/dwrs/harvestgreen-comparison.json")
+target_sources(test_profileswitch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/RatingProfileDefaults.cpp)
+fm_add_test(test_ratingselection)
+target_compile_definitions(test_ratingselection PRIVATE FM27_DEFINITIONS="${CMAKE_SOURCE_DIR}/src/app/resources/definitions_fm27.json")
+fm_add_test(test_ratingprovenance)
+
+# Rating profile selection per save through AppContext (temporary data folder).
+add_executable(test_ratingactivation test_ratingactivation.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/AppContext.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/GraphicsLibrary.h
+    ${CMAKE_SOURCE_DIR}/src/app/GraphicsLibrary.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/AppPaths.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/RatingProfileDefaults.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/resources/app.qrc)
+target_include_directories(test_ratingactivation PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_ratingactivation PRIVATE fmcore Qt6::Gui Qt6::Concurrent Qt6::Test)
+add_test(NAME test_ratingactivation COMMAND test_ratingactivation)
+set_tests_properties(test_ratingactivation PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+    ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>"
+)
+fm_add_test(test_dwrsdisplay)

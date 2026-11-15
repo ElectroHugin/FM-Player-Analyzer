@@ -143,11 +143,12 @@ for the Assignment and Transportation Problems*, Journal of the SIAM 5 (1957),
 ### Your FM27 save, directly and live
 
 No export, no scrolling through lists: pick the `.fm` file of your career and
-the analyzer reads your squad and every player your scouting knows. Turn on
+the analyzer reads your squad and every player in the database. Turn on
 **Follow save live** under *Settings → Import* and it reads the newest file on
 its own after every save in the game. **Attribute masking as in the game** (on
-by default) makes sure you only see what your scouts know; switch it off to read
-every player in the database with exact values. Details are in
+by default) shows exact values only for players you know well; everyone else comes with
+attribute ranges, wider the less your scouts know. Switch it off for exact
+values everywhere. Details are in
 [docs/IMPORT-FM27.md](docs/IMPORT-FM27.md) (German).
 
 ### Scout by role, not by reputation
@@ -271,8 +272,9 @@ On first start you create a save in the analyzer and pick the FM version
   (`Documents\Sports Interactive\Football Manager 27\games\*.fm`). Best use a
   freshly saved file, not one the game is still writing. Then turn on
   *Settings → Import → Follow save live* and you never import by hand again.
-  By default only players you know are read in (*attribute masking as in the
-  game*); switch it off under *Settings → Import* to get the whole database.
+  By default players you don't know well show attribute ranges (*attribute
+  masking as in the game*); switch it off under *Settings → Import* for exact
+  values everywhere.
 - **FM27 with exports (alternative):** with the
   [FM View Exporter](https://github.com/ElectroHugin/FM-View-Exporter) plugin and
   my views (the installer can put them into your FM27 `views` folder) you press
@@ -356,11 +358,36 @@ instead of 0.43).
 | Preferable | 0.25 | other preferred attributes of the role (e.g. Passing, Vision) |
 | Other | 0.2 | Bravery, One vs One, Rushing Out |
 
-The tier weights, the multipliers and the key/preferred attributes of every
-role can be changed under **Settings** — tune them to your philosophy and start
-the recalculation under **DWRS Weights**.
+This calculation is called **DWRS Classic** from 2.3.0 on and stays the FM24 default.
 
 </details>
+
+**Rating profiles (from 2.3.0).** Every save calculates with exactly one
+profile, shown under **Settings → DWRS Rating**. Profiles can be edited, saved
+as new, exported and imported; "Use for this save" recalculates once.
+
+- **DWRS FM27 · harvestgreen22** (default for new FM27 saves): per-attribute
+  curves from [harvestgreen22's FM27 attribute test](https://sortitoutsi.net/content/78219/fm27-attribute-test-tactical-understanding-training-system-preset-tactics-ai-reverse-engineering-engine-for-test), shown with one
+  decimal. Provisional until the measurement is repeated with the full game.
+  Background in [issue #17](https://github.com/ElectroHugin/FM-Player-Analyzer/issues/17).
+- **Goalkeepers (FM27 profile):** their weights are our own analysis of FM27
+  season statistics (goals prevented per shot on target), not part of
+  harvestgreen22's measurements. Reflexes, Anticipation, Handling and Positioning
+  count most; Punching, Eccentricity and Rushing Out are tendencies and do not
+  count as skill. A 20 % goalkeeper role share only uses the attributes in which
+  a goalkeeper role differs from the others.
+- **Role share** (optional, 33 % in the FM27 profile): part of the rating comes
+  from the role's key and preferable attributes. Without it many roles would be
+  nearly identical, because the measurement rates attributes in general.
+- **Missing attributes** no longer count as 0; they are left out. If more than
+  30 % of the weight is missing, there is no rating.
+- **Colours:** under **Settings → DWRS colouring**. "Original" (the rainbow
+  scale) stays the default; there are more schemes such as "Rarity", and you can
+  pick your own colours, thresholds (field and goalkeeper) and soft borders and
+  save them as your own scheme.
+
+Existing saves keep their numbers. Your own changed weights become the
+personal profile "My weights".
 
 ---
 
@@ -386,11 +413,12 @@ Yes, in FM27 read your save file instead: it brings in the whole database in
 one go, no filtering needed. See [Get started](#-get-started-in-5-minutes),
 step 3, and turn on *Settings → Import → Follow save live*.
 
-**Reading my FM27 save only brings in a few hundred players. Why?**
-That's *attribute masking as in the game* (on by default): only players the
-game shows you are read in, i.e. your squad, very well-known players and those
-your scouts know. Switch it off under *Settings → Import* and read the save
-again to get every player with exact values.
+**Why do many players from my FM27 save show ranges like 8-12?**
+That's *attribute masking as in the game* (on by default): your squad, very
+well-known and well-scouted players are exact, everyone else gets ranges, wider
+the less your scouts know. Switch it off under *Settings → Import* and read the
+save again for exact values everywhere. (Before 2.3.0, masking left unscouted
+players out completely.)
 
 **Which Football Manager versions are supported?**
 Football Manager 2024 and Football Manager 2027 (since version 2.0.0, the save

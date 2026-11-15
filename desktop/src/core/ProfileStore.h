@@ -49,6 +49,9 @@ public:
     // shows it without the folder (start screen, folder off or moved).
     // The club id it belongs to is the setting "graphics_crest_id".
     static QString graphicsCrestDocument(); // "graphics_crest"
+    // The save's training profile (JSON, TrainingAdvice::TrainingProfile);
+    // missing = the standard profile from the age windows.
+    static QString trainingProfileDocument(); // "training_profile"
 
     // Marker keys in profile_settings (section "Profile").
     static QString formatKey();  // "Profile/format"

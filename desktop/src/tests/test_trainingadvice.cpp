@@ -5,6 +5,7 @@
 #include "core/Player.h"
 #include "core/TrainingAdvice.h"
 
+#include <QJsonArray>
 #include <QTemporaryDir>
 #include <QtTest>
 
@@ -66,6 +67,79 @@ private slots:
                  qPrintable(m_definitions->errorString()));
         m_config = std::make_unique<AppConfig>(m_dir.filePath(QStringLiteral("config.ini")));
         m_engine = std::make_unique<DwrsEngine>(*m_definitions, *m_config);
+    }
+
+    void profileStandardMatchesAgeWindows()
+    {
+        // The standard profile gives exactly the advice of the age windows.
+        const TrainingProfile standard = standardProfile(m_windows);
+        for (int age : {17, 22, 26, 31}) {
+            const Player p = baseOutfielder(age);
+            const Advice a = advise(p, QStringLiteral("WR-S"));
+            const Advice b = adviseForRole(p, QStringLiteral("WR-S"), *m_engine, standard);
+            QCOMPARE(a.focus.size(), b.focus.size());
+            for (size_t i = 0; i < a.focus.size(); ++i) {
+                QCOMPARE(a.focus[i].attrName, b.focus[i].attrName);
+                QCOMPARE(a.focus[i].priority, b.focus[i].priority);
+            }
+            QCOMPARE(a.mentoring.size(), b.mentoring.size());
+            QVERIFY(a.valid && !a.focus.empty());
+        }
+        // Every attribute sits in exactly one band.
+        for (const QString &attr : attrNames())
+            QVERIFY2(standard.bandOf(attr) >= 0, qPrintable(attr));
+    }
+
+    void profileJsonRoundTripAndValidation()
+    {
+        TrainingProfile profile = standardProfile(m_windows);
+        profile.bands[0].weight = 1.5;
+        profile.bands.append({QStringLiteral("Own"), 19, 22, 0.5, false, {}});
+        TrainingProfile back;
+        QVERIFY(TrainingProfile::fromJson(profile.toJson(), &back));
+        QVERIFY(back == profile);
+
+        // Unknown attributes are dropped, duplicates keep the first band,
+        // locked age never below the peak.
+        QJsonObject json = profile.toJson();
+        QJsonArray bands = json.value(QStringLiteral("bands")).toArray();
+        QJsonObject extra;
+        extra.insert(QStringLiteral("name"), QStringLiteral("X"));
+        extra.insert(QStringLiteral("peak_age"), 25);
+        extra.insert(QStringLiteral("locked_age"), 20);
+        extra.insert(QStringLiteral("attributes"),
+                     QJsonArray{QStringLiteral("Pace"), QStringLiteral("Nonsense")});
+        bands.append(extra);
+        json.insert(QStringLiteral("bands"), bands);
+        QVERIFY(TrainingProfile::fromJson(json, &back));
+        QVERIFY(back.bands.last().attributes.isEmpty());
+        QCOMPARE(back.bands.last().lockedAge, 25);
+
+        QVERIFY(!TrainingProfile::fromJson(QJsonObject{}, &back));
+    }
+
+    void profileWeightsAndMissingAttributes()
+    {
+        const Player p = baseOutfielder(18);
+        TrainingProfile profile = standardProfile(m_windows);
+        const int explosive = profile.bandOf(QStringLiteral("Pace"));
+        // Without a band Pace is never advised.
+        const Advice with = adviseForRole(p, QStringLiteral("WR-S"), *m_engine, profile);
+        QVERIFY(std::any_of(with.focus.begin(), with.focus.end(),
+                            [](const Recommendation &r) { return r.attrName == QLatin1String("Pace"); }));
+        const Advice without = adviseForRole(p, QStringLiteral("WR-S"), *m_engine, [&] {
+            TrainingProfile copy = profile;
+            copy.bands[explosive].attributes.removeAll(QStringLiteral("Pace"));
+            return copy;
+        }());
+        for (const Recommendation &r : without.focus)
+            QVERIFY(r.attrName != QLatin1String("Pace"));
+        // A zero weight takes the whole band out of the focus list.
+        profile = standardProfile(m_windows);
+        profile.bands[explosive].weight = 0.0;
+        const Advice zero = adviseForRole(p, QStringLiteral("WR-S"), *m_engine, profile);
+        for (const Recommendation &r : zero.focus)
+            QVERIFY(profile.bandOf(r.attrName) != explosive);
     }
 
     void devFactorWindows()

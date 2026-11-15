@@ -2,6 +2,7 @@
 
 #include "Database.h"
 #include "DwrsEngine.h"
+#include "RatingSnapshot.h"
 #include "PlayerStore.h"
 #include "SquadBuilder.h"
 
@@ -24,9 +25,16 @@ struct Result {
 };
 
 // playersSubset: row indexes into players to restrict to (empty = all).
-// progress(current, total) is invoked per role batch. origin: Recalc for every
+// progress(current, total) runs over the whole job: the role batches fill the
+// first three quarters of the scale, writing the ratings the last quarter
+// (savingPhase() tells the two apart). origin: Recalc for every
 // run that is not part of an import (the rows then re-base the development
 // history instead of counting as change).
+inline bool savingPhase(int current, int total)
+{
+    return total > 0 && qint64(current) * 4 >= qint64(total) * 3;
+}
+
 Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
                          const DwrsEngine &engine, const QStringList &validRoles,
                          const std::vector<int> &playersSubset = {},
@@ -38,6 +46,21 @@ Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
 // keeps the last row of a role that was removed since (history is preserved);
 // without this filter such a frozen rating would still place the player in that
 // role in Best XI, gap analysis, call-ups and transfer suggestions.
+// The same with the active rating profile. Every written row records its
+// calculation basis (profile, revision, visible attributes, game date). The
+// append gate is 1 point for Classic and 0.1 for curve profiles, which keep a
+// decimal. A role the player cannot be rated in (too many unknown attributes)
+// is skipped.
+Result updateDwrsRatings(Database &db, const std::vector<Player> &players,
+                         const RatingSnapshot &snapshot, const QStringList &validRoles,
+                         const std::vector<int> &playersSubset = {},
+                         std::function<void(int, int)> progress = {},
+                         RatingsOrigin origin = RatingsOrigin::Import,
+                         const QDate &gameDate = {});
+
+// Canonical visible-lo-hi-v1 encoding of a player's attributes for provenance.
+QByteArray encodeAttributes(const Player &player);
+
 RoleRatings roleRatingsForAssigned(const PlayerStore &store, const LatestRatings &latest);
 
 // Full load of both caches in ONE pass over dwrs_latest: `latest` gets every

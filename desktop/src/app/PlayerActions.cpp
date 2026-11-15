@@ -195,6 +195,12 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
         addBlocked(ActionText::tr("Nicht registrierbar: %1")
                        .arg(Registration::leagueDisplayName(settings.league)),
                    &PlayerRegistration::leagueBlocked);
+    else // no squad list (e.g. Bundesliga): a player can still be left unregistered
+        addBlocked(ActionText::tr("Nicht registriert: %1")
+                       .arg(Registration::leagueDisplayName(settings.league).isEmpty()
+                                ? ActionText::tr("Liga")
+                                : Registration::leagueDisplayName(settings.league)),
+                   &PlayerRegistration::leagueBlocked);
     if (settings.uefa)
         addBlocked(ActionText::tr("Nicht registrierbar: Europapokal"),
                    &PlayerRegistration::uefaBlocked);
@@ -280,8 +286,25 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
                          });
     }
 
-    if (context.registrationSettings().active())
+    if (context.registrationSettings().active()) {
         addRegistrationMenu(context, parent, menu, *player);
+    } else if (ownPlayer || player->registration.leagueBlocked) {
+        // No squad list to keep (e.g. Bundesliga): a player can still be left
+        // unregistered by mistake; Best XI then leaves him out.
+        auto *unregistered = menu.addAction(ActionText::tr("Nicht registriert"));
+        unregistered->setCheckable(true);
+        unregistered->setChecked(player->registration.leagueBlocked);
+        unregistered->setToolTip(ActionText::tr("Im Spiel nicht für die Liga registriert. Best XI "
+                                                "und Übersicht stellen ihn nicht auf."));
+        PlayerRegistration r = player->registration;
+        r.leagueBlocked = !r.leagueBlocked;
+        QObject::connect(unregistered, &QAction::triggered, parent, [&context, parent, uid, r] {
+            if (!context.setPlayerRegistration(uid, r))
+                QMessageBox::critical(parent, ActionText::tr("Registrierung"),
+                                      context.database().errorString());
+        });
+        menu.setToolTipsVisible(true);
+    }
 
     menu.exec(globalPos);
 }

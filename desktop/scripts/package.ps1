@@ -21,8 +21,11 @@ if (-not (Test-Path $exePath)) { throw "App-Binary nicht gefunden: $exePath" }
 
 # --- 2. Version aus Version.cpp lesen (single source of truth) ---
 $versionSource = Get-Content (Join-Path $desktopDir "src\core\Version.cpp") -Raw
-$version = "0.0.0"
-if ($versionSource -match 'QStringLiteral\("(\d+\.\d+\.\d+)"\)') { $version = $Matches[1] }
+$version = "0.0.0"; $numericVersion = "0.0.0"
+if ($versionSource -match 'QStringLiteral\("((\d+\.\d+\.\d+)(-test\.(\d+))?)"\)') {
+    $version = $Matches[1]
+    $numericVersion = if ($Matches[4]) { "$($Matches[2]).$($Matches[4])" } else { $Matches[2] }
+}
 Write-Host "Paketiere Version $version" -ForegroundColor Cyan
 
 # --- 3. Staging mit windeployqt ---
@@ -75,6 +78,6 @@ if (-not $iscc) {
     exit 0
 }
 Write-Host "Inno Setup: $iscc" -ForegroundColor Cyan
-& $iscc "/DMyAppVersion=$version" (Join-Path $desktopDir "installer\setup.iss")
+& $iscc "/DMyAppVersion=$version" "/DMyAppNumericVersion=$numericVersion" (Join-Path $desktopDir "installer\setup.iss")
 if ($LASTEXITCODE -ne 0) { throw "ISCC fehlgeschlagen." }
 Write-Host "Installer liegt unter installer\output\" -ForegroundColor Green

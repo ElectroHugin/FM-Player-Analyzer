@@ -66,6 +66,11 @@ static const QHash<QString, QString> &fm24AttributeMapping()
         {QStringLiteral("Wor"), QStringLiteral("Work Rate")},
         {QStringLiteral("UID"), QStringLiteral("Unique ID")},
         {QStringLiteral("Cor"), QStringLiteral("Corners")},
+        {QStringLiteral("Nat F"), QStringLiteral("Natural Fitness")},
+        {QStringLiteral("Fre"), QStringLiteral("Free Kick Taking")},
+        {QStringLiteral("L Th"), QStringLiteral("Long Throws")},
+        {QStringLiteral("Pen"), QStringLiteral("Penalty Taking")},
+        {QStringLiteral("Pun"), QStringLiteral("Punching")},
         {QStringLiteral("Club"), QStringLiteral("Club")},
         {QStringLiteral("Agreed Playing Time"), QStringLiteral("Agreed Playing Time")},
         {QStringLiteral("Preferred Foot"), QStringLiteral("Preferred Foot")},
@@ -102,6 +107,11 @@ static const QHash<QString, QString> &fm27AttributeMapping()
         {QStringLiteral("Height"), QStringLiteral("Height")},
         {QStringLiteral("Club"), QStringLiteral("Club")},
         {QStringLiteral("Playing Time"), QStringLiteral("Agreed Playing Time")},
+        {QStringLiteral("Natural Fitness"), QStringLiteral("Natural Fitness")},
+        {QStringLiteral("Free Kick Taking"), QStringLiteral("Free Kick Taking")},
+        {QStringLiteral("Long Throws"), QStringLiteral("Long Throws")},
+        {QStringLiteral("Penalty Taking"), QStringLiteral("Penalty Taking")},
+        {QStringLiteral("Punching"), QStringLiteral("Punching")},
         // Goalkeeping
         {QStringLiteral("Aerial Reach"), QStringLiteral("Aerial Reach")},
         {QStringLiteral("Command Of Area"), QStringLiteral("Command of Area")},
@@ -176,7 +186,7 @@ static const QSet<QString> &fm24IgnoredExportColumns()
 {
     static const QSet<QString> ignored = {
         QStringLiteral("CON"), QStringLiteral("Ability"),
-        QStringLiteral("Position/Role/Duty"), QStringLiteral("Pun")};
+        QStringLiteral("Position/Role/Duty")};
     return ignored;
 }
 
@@ -190,9 +200,6 @@ static const QSet<QString> &fm27IgnoredExportColumns()
         // view; not in the squad's column menu.
         QStringLiteral("Recommendation"),
         QStringLiteral("Best Pos"), QStringLiteral("Best Role"),
-        QStringLiteral("Punching"),
-        QStringLiteral("Natural Fitness"), QStringLiteral("Free Kick Taking"),
-        QStringLiteral("Long Throws"), QStringLiteral("Penalty Taking"),
         QStringLiteral("Home-Grown Status"), QStringLiteral("Media Description"),
         QStringLiteral("Recent Changes (Last 2 Weeks)"), QStringLiteral("Playing Time Happiness"),
         QStringLiteral("ShT"), QStringLiteral("Tck/90"), QStringLiteral("Shot/90"),

@@ -105,6 +105,7 @@ private:
     QHash<QString, LineupRole> m_lineup; // uid -> Best XI role
     QString m_lineupTactic;
     QStringList m_snapshotLabels; // hover text per snapshot
+    QList<QDate> m_snapshotGameDates; // in-game date per snapshot (may be invalid)
     std::vector<Row> m_rows;
     bool m_updating = false;
 };

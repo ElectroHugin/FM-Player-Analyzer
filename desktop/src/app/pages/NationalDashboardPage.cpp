@@ -1,4 +1,5 @@
 #include "NationalDashboardPage.h"
+#include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
 #include "../PlayerActions.h"
@@ -431,8 +432,8 @@ void NationalDashboardPage::rebuildCallUps()
         cardLayout->addWidget(line);
         auto *body = new QLabel(tr("🎯 <b>Bewertung:</b> %1 %% (dein Bester: %2 %%)<br/>"
                                    "🎂 <b>Alter:</b> %3")
-                                    .arg(qRound(suggestion.rating))
-                                    .arg(qRound(suggestion.squadBest))
+                                    .arg(formatDwrs(suggestion.rating))
+                                    .arg(formatDwrs(suggestion.squadBest))
                                     .arg(player->age),
                                 card);
         body->setWordWrap(true);

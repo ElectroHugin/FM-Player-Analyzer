@@ -646,6 +646,17 @@ void AppConfig::setAutoOpenLastDatabase(bool enabled)
     m_settings->sync();
 }
 
+bool AppConfig::saveTipDismissed() const
+{
+    return m_settings->value(QStringLiteral("Hints/save_tip_dismissed"), false).toBool();
+}
+
+void AppConfig::setSaveTipDismissed(bool dismissed)
+{
+    m_settings->setValue(QStringLiteral("Hints/save_tip_dismissed"), dismissed);
+    m_settings->sync();
+}
+
 namespace {
 // Save names may contain spaces and umlauts; percent-encoding keeps them valid
 // and unambiguous as INI keys on every platform.
@@ -1017,6 +1028,20 @@ QString AppConfig::defaultGraphicsDir(const QString &fmVersionId)
     const QString number = fmVersionId.mid(2);
     game += number.toInt() <= 24 ? QStringLiteral("20") + number : number;
     return documents + QStringLiteral("/Sports Interactive/") + game + QStringLiteral("/graphics");
+}
+
+QString AppConfig::defaultSavesDir(const QString &fmVersionId)
+{
+    return QFileInfo(defaultGraphicsDir(fmVersionId)).absolutePath() + QStringLiteral("/games");
+}
+
+bool AppConfig::followSave(const QString &savePath, qint64 alreadyReadMs)
+{
+    Transaction transaction(*this);
+    bool ok = transaction.isActive() && setLiveSavePath(savePath)
+              && setLiveSaveLastModified(alreadyReadMs) && setLiveSaveEnabled(!savePath.isEmpty());
+    QString error;
+    return ok && transaction.commit(&error);
 }
 
 QString AppConfig::effectiveGraphicsDir(const QString &fmVersionId) const

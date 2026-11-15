@@ -7,6 +7,9 @@ name: Testbuild
 # Every push to a release/X.Y.Z branch replaces the GitHub pre-release
 # "testbuild-X.Y.Z" (never marked as latest, separate from the vX.Y.Z tags the
 # Release workflow checks). Other branches (manual run) get run artifacts only.
+# A public test build has the version "X.Y.Z-test.N" in Version.cpp: a manual
+# run on any branch publishes it once as the pre-release "vX.Y.Z-test.N"
+# (never latest, never overwritten; bump N for the next one).
 on:
   workflow_dispatch:
   push:
@@ -72,10 +75,13 @@ jobs:
         shell: pwsh
         run: |
           $src = Get-Content desktop/src/core/Version.cpp -Raw
-          if ($src -notmatch 'appVersion[\s\S]*?QStringLiteral\("(\d+\.\d+\.\d+)"\)') {
+          if ($src -notmatch 'appVersion[\s\S]*?QStringLiteral\("((\d+\.\d+\.\d+)(-test\.(\d+))?)"\)') {
             throw "Version aus Version.cpp konnte nicht gelesen werden."
           }
+          $numeric = if ($matches[4]) { "$($matches[2]).$($matches[4])" } else { $matches[2] }
           "version=$($matches[1])" >> $env:GITHUB_OUTPUT
+          "numeric=$numeric" >> $env:GITHUB_OUTPUT
+          "public=$([bool]$matches[4])".ToLower() >> $env:GITHUB_OUTPUT
 
       - name: Build installer (Inno Setup, as in the release)
         shell: pwsh
@@ -86,7 +92,7 @@ jobs:
           Remove-Item "$staging/TESTBUILD.txt"
           choco install innosetup -y --no-progress
           $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-          & $iscc "/DMyAppVersion=${{ steps.version.outputs.version }}" "desktop\installer\setup.iss"
+          & $iscc "/DMyAppVersion=${{ steps.version.outputs.version }}" "/DMyAppNumericVersion=${{ steps.version.outputs.numeric }}" "desktop\installer\setup.iss"
           if ($LASTEXITCODE -ne 0) { throw "ISCC fehlgeschlagen." }
 
       - name: Upload installer
@@ -103,8 +109,33 @@ jobs:
           path: portable/
           retention-days: 30
 
+      - name: Publish public test build (vX.Y.Z-test.N)
+        if: steps.version.outputs.public == 'true' && github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $tag = "v$version"
+          $PSNativeCommandUseErrorActionPreference = $false
+          gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) { throw "$tag existiert schon. Für einen neuen Testbuild die Nummer in Version.cpp erhöhen." }
+          $zip = "FMPlayerAnalyzer-$version-Windows-portable.zip"
+          Compress-Archive -Path "portable/FMPlayerAnalyzer-Testbuild" -DestinationPath $zip -Force
+          $setup = "desktop/installer/output/FMPlayerAnalyzer-$version-Windows-x64-Setup.exe"
+          $notesFile = "desktop/release-notes/$version.md"
+          $notesArgs = if (Test-Path $notesFile) { @("--notes-file", $notesFile) } else { @("--notes", "Public test build $version. Back up %LOCALAPPDATA%\FM24PlayerAnalyzer before installing.") }
+          gh release create $tag $setup $zip `
+            --repo $env:GITHUB_REPOSITORY `
+            --target $env:GITHUB_SHA `
+            --prerelease --latest=false `
+            --title "Test build $version" `
+            @notesArgs
+          if ($LASTEXITCODE -ne 0) { throw "Testbuild-Release fehlgeschlagen." }
+          exit 0
+
       - name: Publish testbuild pre-release
-        if: startsWith(github.ref, 'refs/heads/release/')
+        if: startsWith(github.ref, 'refs/heads/release/') && steps.version.outputs.public != 'true'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}

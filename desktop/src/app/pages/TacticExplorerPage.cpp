@@ -1,4 +1,5 @@
 #include "TacticExplorerPage.h"
+#include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
 #include "../widgets/CellStyleDelegate.h"
@@ -47,7 +48,7 @@ NumericItem *dwrsItem(double value)
 {
     if (value < 0)
         return new NumericItem(QStringLiteral("–"), -1);
-    auto *item = new NumericItem(QString::number(qRound(value)), value);
+    auto *item = new NumericItem(formatDwrs(value), value);
     const CellStyle style = dwrsCellStyle(value);
     if (style.isValid()) {
         item->setBackground(style.background);
@@ -240,7 +241,7 @@ void TacticExplorerPage::refresh()
             .arg(best.filledSlots)
             .arg(best.totalSlots)
             .arg(best.overallMedian >= 0
-                     ? QStringLiteral("%1%").arg(qRound(best.overallMedian))
+                     ? formatDwrsPercent(best.overallMedian)
                      : QStringLiteral("–")));
 
     // --- Ranking table (kept in explorer order: coverage first, then median).
@@ -309,7 +310,7 @@ void TacticExplorerPage::rebuildDetail()
             .arg(result.filledSlots)
             .arg(result.totalSlots)
             .arg(result.overallMedian >= 0
-                     ? QStringLiteral("%1%").arg(qRound(result.overallMedian))
+                     ? formatDwrsPercent(result.overallMedian)
                      : QStringLiteral("–"))
             .arg(result.avgDepth, 0, 'f', 1));
 

@@ -9,6 +9,7 @@
 #include <QSignalSpy>
 
 #include "AppContext.h"
+#include "RatingProfileDefaults.h"
 #include "core/ProfileStore.h"
 
 using namespace fm;
@@ -62,6 +63,12 @@ class TestProfileSwitch : public QObject
     }
 
 private slots:
+    void bundledRatingProfilesLoad() {
+        QString error; const auto profiles = loadBuiltinRatingProfiles(&error);
+        QVERIFY2(error.isEmpty(), qPrintable(error)); QCOMPARE(profiles.size(), 2);
+        QCOMPARE(profiles[0].attributes.size(), kAttrCount);
+        QVERIFY(profiles[1].attributes.value(QStringLiteral("Natural Fitness")).weight > 0);
+    }
     void initTestCase()
     {
         QStandardPaths::setTestModeEnabled(true);

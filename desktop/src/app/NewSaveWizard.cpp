@@ -3,6 +3,7 @@
 #include "AppContext.h"
 #include "ImportRunner.h"
 #include "SaveLibrary.h"
+#include "core/AppConfig.h"
 #include "core/Constants.h"
 #include "core/Database.h"
 #include "widgets/DropZone.h"
@@ -11,6 +12,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCompleter>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QHash>
 #include <QLabel>
@@ -27,6 +29,11 @@
 namespace fm {
 
 namespace {
+
+bool isSaveFile(const QString &path)
+{
+    return QFileInfo(path).suffix().compare(QLatin1String("fm"), Qt::CaseInsensitive) == 0;
+}
 
 // The club and the other first settings follow in the welcome assistant
 // (WelcomeWizard), which opens once the save holds players.
@@ -237,13 +244,9 @@ QWidget *NewSaveWizard::buildImportPage()
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(10);
 
-    auto *intro = new QLabel(
-        tr("Ziehe einen Spieler-Export aus dem Football Manager hierher, zum Beispiel deinen "
-           "Kader oder eine Scouting-Liste. Weitere Exporte kannst du jederzeit später "
-           "importieren."),
-        page);
-    intro->setWordWrap(true);
-    layout->addWidget(intro);
+    m_importIntro = new QLabel(page);
+    m_importIntro->setWordWrap(true);
+    layout->addWidget(m_importIntro);
 
     m_dropZone = new DropZone(page);
     layout->addWidget(m_dropZone, 1);
@@ -251,7 +254,16 @@ QWidget *NewSaveWizard::buildImportPage()
         m_importFile = path;
         m_importResult->hide();
         m_nextButton->setText(tr("Importieren"));
+        m_followCheck->setVisible(isSaveFile(path));
     });
+
+    // A save game read in here can be followed right away (Settings → Import).
+    m_followCheck = new QCheckBox(tr("Spielstand live verfolgen"), page);
+    m_followCheck->setChecked(true);
+    m_followCheck->setToolTip(tr("Solange der Analyzer offen ist, liest er den Spielstand nach "
+                                 "jedem Speichern im Spiel neu ein, auch nach einem Autosave."));
+    m_followCheck->hide();
+    layout->addWidget(m_followCheck);
 
     m_autoAssignCheck =
         new QCheckBox(tr("Neuen Spielern automatisch passende Rollen zuweisen"), page);
@@ -262,6 +274,11 @@ QWidget *NewSaveWizard::buildImportPage()
     m_importResult->setWordWrap(true);
     m_importResult->hide();
     layout->addWidget(m_importResult);
+
+    m_exportHint = new QLabel(page);
+    m_exportHint->setObjectName(QStringLiteral("kpiCaption"));
+    m_exportHint->setWordWrap(true);
+    layout->addWidget(m_exportHint);
     return page;
 }
 
@@ -282,12 +299,42 @@ void NewSaveWizard::goTo(int step)
         m_skipButton->hide();
         m_nextButton->setText(tr("Weiter"));
         break;
-    case ImportStep:
+    case ImportStep: {
         m_cancelButton->setText(tr("Später einrichten"));
         m_skipButton->hide(); // "Fertig" without a file does the same
         m_nextButton->setText(m_importFile.isEmpty() ? tr("Fertig") : tr("Importieren"));
-        m_dropZone->setStartDir(m_context.htmlExportDir());
+        // A version that reads save games starts there: the save is the
+        // fastest and most complete source; exports stay possible.
+        const QString versionId = m_context.fmVersionId();
+        const bool readsSaves = fmDataVersion(versionId).importFormats.contains(QStringLiteral("fm"));
+        if (m_stepLabels.size() > 3)
+            m_stepLabels.at(3)->setText(readsSaves ? tr("Spielstand einlesen") : tr("Erster Import"));
+        if (readsSaves) {
+            m_importIntro->setText(tr("Wähle deine Spielstand-Datei aus Football Manager. Der "
+                                      "Analyzer liest sie direkt, auch große Datenbanken schnell."));
+            m_dropZone->setPrompt(tr("Spielstand hierher ziehen"),
+                                  tr("%1-Spielstand (.fm) – oder klicken, um ihn auszuwählen")
+                                      .arg(SaveLibrary::shortVersionLabel(versionId)));
+            m_dropZone->setDialog(tr("Spielstand auswählen"),
+                                  tr("Spielstände und Exporte (*.fm *.csv *.html *.htm);;Alle Dateien (*)"));
+            m_dropZone->setStartDir(AppConfig::defaultSavesDir(versionId));
+            m_exportHint->setText(tr("Optional. Exporte aus dem FM View Exporter (CSV oder HTML) "
+                                     "kannst du ebenfalls hier einlesen."));
+        } else {
+            m_importIntro->setText(tr("Ziehe einen Spieler-Export aus dem Football Manager "
+                                      "hierher, zum Beispiel deinen Kader oder eine "
+                                      "Scouting-Liste. Weitere Exporte kannst du jederzeit "
+                                      "später importieren."));
+            m_dropZone->setPrompt({}, {});
+            m_dropZone->setDialog({}, {});
+            m_dropZone->setStartDir(m_context.htmlExportDir());
+            m_exportHint->clear();
+        }
+        m_exportHint->setVisible(readsSaves);
+        m_dropZone->setFile(m_importFile);
+        m_followCheck->setVisible(isSaveFile(m_importFile));
         break;
+    }
     }
 }
 
@@ -358,6 +405,10 @@ void NewSaveWizard::startImport()
                               m_importResult->show();
                               return;
                           }
+                          if (isSaveFile(m_importFile) && m_followCheck->isChecked())
+                              m_context.config().followSave(
+                                  m_importFile,
+                                  QFileInfo(m_importFile).lastModified().toMSecsSinceEpoch());
                           // Done: the welcome assistant picks up with the club.
                           accept();
                       });

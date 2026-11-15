@@ -17,6 +17,7 @@ namespace fm {
 
 class Definitions;
 class DwrsEngine;
+class RatingSnapshot;
 
 // Everything the background import pipeline produces (import + optional
 // auto-assign + DWRS recalculation for the affected players).
@@ -27,6 +28,9 @@ struct ImportPipelineResult {
     QString autoAssignError; // non-fatal
     bool recalcRan = false;
     RatingsUpdater::Result recalc;
+    // Attributes the active rating profile weights but that no imported
+    // player has (a column missing from the export view). Snapshot runs only.
+    QStringList unratedColumns;
 
     // Post-import state, built entirely on the worker so the UI thread only
     // swaps it in (valid when import.success): the player store — same content
@@ -60,6 +64,9 @@ using StageCallback = std::function<void(Stage stage, int done, int total)>;
 // worker). definitions/engine are only read.
 ImportPipelineResult run(const Request &request, const Definitions &definitions,
                          const DwrsEngine &engine, const StageCallback &stage = {});
+// The same with the active rating profile (what the app uses).
+ImportPipelineResult run(const Request &request, const Definitions &definitions,
+                         const RatingSnapshot &snapshot, const StageCallback &stage = {});
 
 } // namespace ImportPipeline
 

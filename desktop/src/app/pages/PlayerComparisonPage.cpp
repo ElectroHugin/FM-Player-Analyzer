@@ -1,4 +1,5 @@
 #include "PlayerComparisonPage.h"
+#include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
 #include "../AppContext.h"
@@ -432,7 +433,7 @@ void PlayerComparisonPage::rebuildComparison()
         QStringList labels;
         for (const auto &[rating, r] : rated)
             labels << (rating >= 0.0 ? QStringLiteral("%1 %2").arg(definitions->roleLabel(r))
-                                           .arg(qRound(rating))
+                                           .arg(formatDwrs(rating))
                                      : definitions->roleLabel(r));
         return labels;
     };

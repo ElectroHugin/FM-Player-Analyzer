@@ -80,12 +80,18 @@ double unit(quint32 uniqueId, int attribute, int salt)
     return double(h >> 11) * (1.0 / 9007199254740992.0);
 }
 
-// Range width (1-5) for one attribute: measured on partly scouted players
-// (1: 13 %, 2: 43 %, 3: 33 %, 4: 10 %, 5: 1 %); a little narrower once the
-// knowledge passes 70.
+// Range width for one attribute. Partly scouted (from kPartialKnowledge):
+// 1-5, measured (1: 13 %, 2: 43 %, 3: 33 %, 4: 10 %, 5: 1 %), a little
+// narrower once the knowledge passes 70. Prior knowledge (below
+// kPartialKnowledge): 2-4, as the game shows it. Not scouted (knowledge < 0):
+// 4-7, as the game shows it.
 int rangeWidth(quint32 uniqueId, int attribute, int knowledge)
 {
     const double u = unit(uniqueId, attribute, 1);
+    if (knowledge < 0)
+        return u < 0.30 ? 4 : u < 0.65 ? 5 : u < 0.90 ? 6 : 7;
+    if (knowledge < kPartialKnowledge)
+        return u < 0.35 ? 2 : u < 0.80 ? 3 : 4;
     int width = u < 0.13 ? 1 : u < 0.56 ? 2 : u < 0.89 ? 3 : u < 0.99 ? 4 : 5;
     if (knowledge >= 70)
         width = std::max(1, width - 1);
@@ -336,6 +342,8 @@ int rangedAttributeCount(int knowledge)
 {
     if (knowledge >= kFullKnowledge)
         return 0;
+    if (knowledge < kPartialKnowledge)
+        return kVisibleCount; // prior knowledge or none: every attribute
     // Measured: 58-62 % -> 18-20 ranges, 66-68 % -> 17-19, 70 % -> 16, 76 % -> 11.
     const double count = 20.0 - std::max(0, knowledge - 60) * 0.55;
     return std::clamp(int(std::lround(count)), 0, 20);
@@ -430,6 +438,7 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
     out->malformedRows = 0;
     out->knownUids.clear();
     out->naturalPositionsByUid.clear();
+    out->clubIdByName.clear();
     // Only the career's side of the game: a men's career leaves out every
     // women's club and the other way round.
     const bool women = womensCareer(save);
@@ -458,7 +467,13 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
                 break;
             case Knowledge::TooLittle:
             case Knowledge::None:
-                continue;
+                // Shown anyway, every attribute as a range (wider without any
+                // scouting): rather more players than too few.
+                if (how == Knowledge::None && p.clubUid == 0)
+                    continue;
+                knowledge = save.knowledgeByPindex.value(p.pindex, -1);
+                ranged = rangedAttributeCount(knowledge);
+                break;
             }
         } else if (p.clubUid == 0) {
             continue; // without masking: every player with a club
@@ -534,6 +549,8 @@ void buildTable(const SaveData &save, const Options &options, ImportTable *out)
             }
         }
         out->rows.append(std::move(row));
+        if (p.clubUniqueId && !p.clubShortName.isEmpty())
+            out->clubIdByName.insert(p.clubShortName, p.clubUniqueId);
         if (scouted)
             out->knownUids << QString::number(p.uniqueId);
     }

@@ -88,6 +88,10 @@ private:
     // Asks for a full recalculation when the active database's ratings were
     // computed with an older DWRS formula (kDwrsSchemeVersion).
     void offerRecalcIfOutdated();
+    // Full recalculation as soon as no other rating job runs.
+    void requestFullRecalc();
+    // One-time question for an existing FM27 save; true when it was asked.
+    bool askRatingProfileDecision();
     void updateDbLabel();
     void fillSaveMenu(QMenu *menu);
     void newSave();
@@ -139,6 +143,7 @@ private:
 
     QFutureWatcher<RatingsUpdater::Result> m_recalcWatcher;
     BusyProgressDialog *m_recalcDialog = nullptr;
+    QString m_recalcBasis; // snapshot cache key the running full recalc uses
 
     QToolButton *m_backButton = nullptr;
     QToolButton *m_forwardButton = nullptr;

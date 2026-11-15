@@ -47,6 +47,11 @@ QString ProfileStore::graphicsCrestDocument()
     return QStringLiteral("graphics_crest");
 }
 
+QString ProfileStore::trainingProfileDocument()
+{
+    return QStringLiteral("training_profile");
+}
+
 QString ProfileStore::nationalFlagDocument()
 {
     return QStringLiteral("national_flag");
