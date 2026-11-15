@@ -1,0 +1,84 @@
+name: Bug report
+description: Something does not work, crashes or shows wrong results.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem!
+        Please check the [open issues](https://github.com/ElectroHugin/FM-Player-Analyzer/issues) first, maybe it is already known.
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: You find it under *Help → About*. Test builds look like `2.3.0-test.3`.
+      placeholder: e.g. 2.2.3
+    validations:
+      required: true
+  - type: dropdown
+    id: fm-version
+    attributes:
+      label: Football Manager version
+      options:
+        - FM27
+        - FM24
+    validations:
+      required: true
+  - type: dropdown
+    id: data-source
+    attributes:
+      label: Where does your data come from?
+      options:
+        - Save file (.fm), read directly
+        - Save file (.fm), "Follow save live"
+        - FM View Exporter (CSV, FM27)
+        - HTML export from FM (web page, FM24)
+        - Not sure / not relevant
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows 11
+        - Windows 10
+        - Linux (AppImage)
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us what you see and what you expected instead.
+      placeholder: When I open Best XI, my left back is missing although ...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we see the problem ourselves?
+      placeholder: |
+        1. Open the save ...
+        2. Go to ...
+        3. Click on ...
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or files
+      description: |
+        Screenshots help a lot. You can drag and drop images here.
+        If an export file is needed, we will ask for it. Please do not upload save files publicly.
+    validations:
+      required: false
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: League, club, size of the database, tactic you use, etc.
+    validations:
+      required: false
