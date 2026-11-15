@@ -287,6 +287,7 @@ private slots:
             names << row.at(column(table, QStringLiteral("Player")));
         QCOMPARE(names, (QStringList{QStringLiteral("Own Player"), QStringLiteral("Famous Player"),
                                      QStringLiteral("Scouted Player"), QStringLiteral("Partly Scouted"),
+                                     QStringLiteral("Barely Known"), QStringLiteral("Unknown Player"),
                                      QStringLiteral("Reserve Player")}));
 
         // No hidden value has a column.
@@ -334,6 +335,27 @@ private slots:
         QCOMPARE(countRanges(table.rows.at(0)), 0);
         QCOMPARE(countRanges(table.rows.at(2)), 0);
         QCOMPARE(countRanges(table.rows.at(3)), Fm27SaveImport::rangedAttributeCount(62));
+        // Prior knowledge and no scouting: every attribute as a range, 2-4
+        // and 4-7 wide, holding the true value.
+        const auto widths = [&](const QStringList &row, int value) {
+            QSet<int> seen;
+            for (int c = 14; c < row.size(); ++c) {
+                const auto m = range.match(row.at(c));
+                if (!m.hasMatch())
+                    return QSet<int>{-1};
+                const int lo = m.captured(1).toInt(), hi = m.captured(2).toInt();
+                if (lo > value || hi < value)
+                    return QSet<int>{-2};
+                seen.insert(hi - lo);
+            }
+            return seen;
+        };
+        for (const int w : widths(table.rows.at(4), 11))
+            QVERIFY2(w >= 2 && w <= 4, qPrintable(QString::number(w)));
+        for (const int w : widths(table.rows.at(5), 9))
+            QVERIFY2(w >= 4 && w <= 7, qPrintable(QString::number(w)));
+        QCOMPARE(Fm27SaveImport::rangedAttributeCount(40), 47);
+        QCOMPARE(Fm27SaveImport::rangedAttributeCount(-1), 47);
         QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Unique ID"))), QStringLiteral("10"));
         QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Nation"))), QStringLiteral("GER"));
         QCOMPARE(table.rows.at(0).at(column(table, QStringLiteral("Height"))), QStringLiteral("180 cm"));

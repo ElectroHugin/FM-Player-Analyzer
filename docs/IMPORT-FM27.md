@@ -30,7 +30,7 @@ die Datei nur, er schreibt nie hinein. Am besten eine gerade gespeicherte Datei 
 nicht während das Spiel speichert.
 
 Was übernommen wird, regelt die Einstellung **Attribut-Maskierung wie im Spiel**
-(Einstellungen → Verein, Kasten „Football-Manager-Version“, je Spielstand, Standard an):
+(Einstellungen → Import, je Spielstand, Standard an):
 
 | Spieler | Maskierung an | Maskierung aus |
 | --- | --- | --- |
@@ -38,12 +38,15 @@ Was übernommen wird, regelt die Einstellung **Attribut-Maskierung wie im Spiel*
 | Weltreputation ab 8.000 | exakte Werte | exakte Werte |
 | eigenes Scouting, Kenntnisgrad ab 78 % | exakte Werte | exakte Werte |
 | eigenes Scouting, 56 bis 77 % | teils Spannen (vom Analyzer gebildet) | exakte Werte |
-| übrige Spieler | nicht übernommen | exakte Werte, alle Spieler mit Verein |
+| Vorkenntnis, unter 56 % | alle Attribute als Spannen (2 bis 4 Punkte) | exakte Werte |
+| nicht gescoutet, mit Verein | alle Attribute als Spannen (4 bis 7 Punkte) | exakte Werte |
+| nicht gescoutet, ohne Verein | nicht übernommen | nicht übernommen |
 
 - Der Kenntnisgrad steht im Spielstand (Abschnitt `fog_of_war`). Die Spannen des Spiels
   stehen nicht darin; der Analyzer würfelt eigene, einmal fest je Spieler und Attribut.
   Der wahre Wert liegt irgendwo darin, nicht nach Regel in der Mitte. Mit mehr
-  Kenntnis werden es weniger und schmalere Spannen.
+  Kenntnis werden es weniger und schmalere Spannen. Lieber mehr Spieler als zu wenig:
+  auch mit Maskierung fehlt niemand mit Verein, nur die Genauigkeit sinkt.
 - Verdeckte Werte (Potenzial, Fähigkeit, Konstanz, Verletzungsanfälligkeit, wichtige
   Spiele, Härte, Vielseitigkeit) liest der Analyzer nie in die Datenbank.
 - Persönlichkeit: eindeutige Namen werden aus den gelesenen Persönlichkeitswerten abgeleitet.
