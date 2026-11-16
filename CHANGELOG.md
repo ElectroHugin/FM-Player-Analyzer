@@ -8,6 +8,10 @@ Test build 2.3.1-test.1:
 - Texts that are not translated yet show in English.
 - Translating the app into more languages is now much easier: see [TRANSLATING.md](desktop/translations/TRANSLATING.md) or open a Translation issue.
 
+Added for 2.3.1-test.2:
+
+- Chinese translation reviewed: football terms as in the Chinese version of the game (e.g. in/out of possession, attributes), clearer explanations.
+
 ## 2.3.0 – 2026-11-15
 
 **DWRS rating profiles**
