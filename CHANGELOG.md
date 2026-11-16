@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+Test build 2.3.1-test.1:
+
+- New interface language: Simplified Chinese (简体中文), contributed by the community. Choose it in the Language menu.
+- Texts that are not translated yet show in English.
+- Translating the app into more languages is now much easier: see [TRANSLATING.md](desktop/translations/TRANSLATING.md) or open a Translation issue.
+
 ## 2.3.0 – 2026-11-15
 
 **DWRS rating profiles**
