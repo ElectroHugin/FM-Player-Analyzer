@@ -260,7 +260,7 @@ Porträts, kann der Analyzer ihn mitnutzen (optional, standardmäßig aus).
 - **Eigene Taktiken** — eingebauter Editor, Neues ist sofort überall verfügbar. Für FM24 kannst du auch eigene Rollen anlegen; für FM27 sind alle Rollen des Spiels schon dabei.
 - **Ein Profil pro Spielstand** — Verein, Taktiken, Farben und Einstellungen gehören zum Spielstand. Wechselst du die Karriere, wechselt alles mit.
 - **Kluger Import** — Newgens behalten über Exporte hinweg ihre Identität, Abgänge werden erkannt, und neue Spieler bekommen ihre Rollen automatisch.
-- **Kleinigkeiten, die zählen** — globale Spielersuche, die „Müller" auch bei „muller" findet, Vor-/Zurück-Navigation, Oberfläche auf Englisch und Deutsch.
+- **Kleinigkeiten, die zählen** — globale Spielersuche, die „Müller" auch bei „muller" findet, Vor-/Zurück-Navigation, Oberfläche auf Englisch, Deutsch und vereinfachtem Chinesisch (chinesische Übersetzung aus der Community).
 
 ---
 
@@ -317,7 +317,7 @@ Scouting-Bestand zeigt dir **Scouting**, wen du wirklich kaufen solltest.
 > - Bei Exporten: Importiere neu, so oft du willst, einmal pro Spielmonat ist ein guter Rhythmus. Die App aktualisiert bekannte Spieler und baut ihren Bewertungsverlauf auf.
 > - Wenn du deinen kompletten Kader als Export importierst, hake *„Datei ist ein kompletter Kader-Export meines Vereins"* an. Die App fragt dann, was aus den fehlenden Spielern geworden ist.
 > - Die Beispieltaktiken für FM27 kann der Installer in deinen FM27-Ordner `tactics` kopieren, später geht das unter *Einstellungen → Import*.
-> - Deutsch oder Englisch stellst du im Menü **Sprache** um.
+> - Deutsch, Englisch oder vereinfachtes Chinesisch stellst du im Menü **Sprache** um.
 
 ---
 

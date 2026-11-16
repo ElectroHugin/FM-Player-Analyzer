@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QList>
 #include <QSettings>
 #include <QString>
 
@@ -53,8 +54,19 @@ public:
 
     // UI language, app-global (host-level). "en" (default) loads the bundled
     // English translation; "de" uses the untranslated German source strings.
+    // Any other code loads fmplayeranalyzer_<code>.qm on top of English, so
+    // strings it does not translate yet fall back to English, not German.
     QString language() const;
     void setLanguage(const QString &language);
+
+    // Languages offered in the menus, in display order. The label is the
+    // endonym, shown the same regardless of the current UI language.
+    struct UiLanguage
+    {
+        QString code;
+        QString label;
+    };
+    static QList<UiLanguage> uiLanguages();
 
 private:
     std::unique_ptr<QSettings> m_settings;

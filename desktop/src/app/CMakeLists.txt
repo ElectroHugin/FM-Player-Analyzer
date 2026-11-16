@@ -146,23 +146,29 @@ target_link_libraries(fmplayeranalyzer PRIVATE
 
 # --- Translations -----------------------------------------------------------
 # The source strings are German; English is shipped as a compiled .qm loaded by
-# default (German = source fallback, no translator). lrelease compiles the
-# hand-maintained .ts at build time and the result is embedded under
-# :/i18n/fmplayeranalyzer_en.qm. Regenerate the .ts after adding tr() strings:
-#   lupdate src -ts translations/fmplayeranalyzer_en.ts -no-obsolete
-set(FM_TS_FILE ${CMAKE_SOURCE_DIR}/translations/fmplayeranalyzer_en.ts)
-set(FM_QM_FILE ${CMAKE_CURRENT_BINARY_DIR}/fmplayeranalyzer_en.qm)
-add_custom_command(
-    OUTPUT ${FM_QM_FILE}
-    COMMAND Qt6::lrelease ${FM_TS_FILE} -qm ${FM_QM_FILE}
-    DEPENDS ${FM_TS_FILE}
-    VERBATIM
-    COMMENT "Compiling translations (lrelease)"
-)
-set_source_files_properties(${FM_QM_FILE} PROPERTIES QT_RESOURCE_ALIAS fmplayeranalyzer_en.qm)
+# default (German = source fallback, no translator). Further languages (e.g.
+# zh_CN) are loaded on top of English. lrelease compiles the hand-maintained
+# .ts files at build time and the results are embedded under
+# :/i18n/fmplayeranalyzer_<lang>.qm. Regenerate the .ts after adding tr() strings:
+#   lupdate src -ts translations/fmplayeranalyzer_en.ts translations/fmplayeranalyzer_zh_CN.ts -no-obsolete
+set(FM_LANGUAGES en zh_CN)
+set(FM_QM_FILES)
+foreach(lang IN LISTS FM_LANGUAGES)
+    set(ts_file ${CMAKE_SOURCE_DIR}/translations/fmplayeranalyzer_${lang}.ts)
+    set(qm_file ${CMAKE_CURRENT_BINARY_DIR}/fmplayeranalyzer_${lang}.qm)
+    add_custom_command(
+        OUTPUT ${qm_file}
+        COMMAND Qt6::lrelease ${ts_file} -qm ${qm_file}
+        DEPENDS ${ts_file}
+        VERBATIM
+        COMMENT "Compiling translation ${lang} (lrelease)"
+    )
+    set_source_files_properties(${qm_file} PROPERTIES QT_RESOURCE_ALIAS fmplayeranalyzer_${lang}.qm)
+    list(APPEND FM_QM_FILES ${qm_file})
+endforeach()
 qt_add_resources(fmplayeranalyzer "translations"
     PREFIX "/i18n"
-    FILES ${FM_QM_FILE}
+    FILES ${FM_QM_FILES}
 )
 target_sources(fmplayeranalyzer PRIVATE widgets/RatingCurveEditor.h widgets/RatingCurveEditor.cpp)
 target_sources(fmplayeranalyzer PRIVATE widgets/RatingProfileEditor.h widgets/RatingProfileEditor.cpp)

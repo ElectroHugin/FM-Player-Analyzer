@@ -587,13 +587,7 @@ void MainWindow::buildMenuBar()
     group->setExclusive(true);
 
     const QString current = m_context.paths().language();
-    struct LangOption {
-        QString code;
-        QString label; // endonym — shown the same regardless of UI language
-    };
-    for (const LangOption &option :
-         {LangOption{QStringLiteral("en"), QStringLiteral("English")},
-          LangOption{QStringLiteral("de"), QStringLiteral("Deutsch")}}) {
+    for (const AppPaths::UiLanguage &option : AppPaths::uiLanguages()) {
         auto *action = languageMenu->addAction(option.label);
         action->setCheckable(true);
         action->setChecked(option.code == current

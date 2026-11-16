@@ -165,4 +165,13 @@ void AppPaths::setLanguage(const QString &language)
     m_settings->sync();
 }
 
+QList<AppPaths::UiLanguage> AppPaths::uiLanguages()
+{
+    return {
+        {QStringLiteral("en"), QStringLiteral("English")},
+        {QStringLiteral("de"), QStringLiteral("Deutsch")},
+        {QStringLiteral("zh_CN"), QStringLiteral("简体中文")},
+    };
+}
+
 } // namespace fm

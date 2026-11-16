@@ -35,15 +35,24 @@ int main(int argc, char *argv[])
     // Language must be installed before any widgets are built (including the
     // first-run dialog and the statically initialized navigation labels).
     // Default English via the bundled .qm; "de" keeps the German source text.
-    QTranslator appTranslator;
-    if (context.paths().language() != QLatin1String("de")
-        && appTranslator.load(QStringLiteral(":/i18n/fmplayeranalyzer_en.qm"))) {
-        QApplication::installTranslator(&appTranslator);
+    // Other languages are installed on top of English: Qt asks the most
+    // recently installed translator first, so untranslated strings stay English.
+    const QString language = context.paths().language();
+    QTranslator englishTranslator;
+    QTranslator languageTranslator;
+    if (language != QLatin1String("de")
+        && englishTranslator.load(QStringLiteral(":/i18n/fmplayeranalyzer_en.qm"))) {
+        QApplication::installTranslator(&englishTranslator);
+    }
+    if (language != QLatin1String("de") && language != QLatin1String("en")
+        && languageTranslator.load(QStringLiteral(":/i18n/fmplayeranalyzer_%1.qm").arg(language))) {
+        QApplication::installTranslator(&languageTranslator);
     }
 
     // DWRS decimals use the separator of the UI language (restart on change).
-    fm::setDwrsLocale(QLocale(context.paths().language() == QLatin1String("de") ? QLocale::German
-                                                                                 : QLocale::English));
+    fm::setDwrsLocale(language == QLatin1String("de")      ? QLocale(QLocale::German)
+                      : language == QLatin1String("zh_CN") ? QLocale(QLocale::Chinese, QLocale::China)
+                                                           : QLocale(QLocale::English));
 
     if (context.paths().isFirstRun()) {
         fm::FirstRunDialog dialog(fm::AppPaths::defaultDataDir());
