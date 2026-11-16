@@ -146,15 +146,19 @@ target_link_libraries(fmplayeranalyzer PRIVATE
 
 # --- Translations -----------------------------------------------------------
 # The source strings are German; English is shipped as a compiled .qm loaded by
-# default (German = source fallback, no translator). Further languages (e.g.
-# zh_CN) are loaded on top of English. lrelease compiles the hand-maintained
-# .ts files at build time and the results are embedded under
-# :/i18n/fmplayeranalyzer_<lang>.qm. Regenerate the .ts after adding tr() strings:
-#   lupdate src -ts translations/fmplayeranalyzer_en.ts translations/fmplayeranalyzer_zh_CN.ts -no-obsolete
-set(FM_LANGUAGES en zh_CN)
+# default (German = source fallback, no translator). Every other
+# translations/fmplayeranalyzer_<lang>.ts is picked up automatically, embedded
+# under :/i18n/fmplayeranalyzer_<lang>.qm and offered in the language menus;
+# it is loaded on top of English. After adding tr() strings, regenerate the
+# English file and bring the other languages in line:
+#   lupdate src -ts translations/fmplayeranalyzer_en.ts -no-obsolete
+#   python translations/translate.py sync
+# See translations/TRANSLATING.md.
+file(GLOB FM_TS_FILES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/translations/fmplayeranalyzer_*.ts)
 set(FM_QM_FILES)
-foreach(lang IN LISTS FM_LANGUAGES)
-    set(ts_file ${CMAKE_SOURCE_DIR}/translations/fmplayeranalyzer_${lang}.ts)
+foreach(ts_file IN LISTS FM_TS_FILES)
+    get_filename_component(ts_name ${ts_file} NAME_WE)
+    string(REPLACE "fmplayeranalyzer_" "" lang ${ts_name})
     set(qm_file ${CMAKE_CURRENT_BINARY_DIR}/fmplayeranalyzer_${lang}.qm)
     add_custom_command(
         OUTPUT ${qm_file}

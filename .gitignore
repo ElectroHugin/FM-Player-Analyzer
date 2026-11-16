@@ -49,3 +49,6 @@ CMakeLists.txt.user*
 aqtinstall.log
 *.log
 .qtcreator/
+
+# Working files of translate.py
+desktop/translations/*.json

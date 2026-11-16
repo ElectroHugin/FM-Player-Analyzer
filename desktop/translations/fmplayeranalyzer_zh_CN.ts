@@ -722,7 +722,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/SaveLibrary.cpp" line="259"/>
         <source>Der Name darf diese Zeichen nicht enthalten: \ / : * ? &quot; &lt; &gt; |</source>
-        <translation>名称不得包含以下字符：\ / : * ? " &lt; &gt; |</translation>
+        <translation>名称不得包含以下字符：\ / : * ? &quot; &lt; &gt; |</translation>
     </message>
     <message>
         <location filename="../src/app/SaveLibrary.cpp" line="262"/>
@@ -2303,7 +2303,9 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message numerus="yes">
         <location filename="../src/app/pages/DashboardPage.cpp" line="1265"/>
         <source>Vergleichen mit allen %n</source>
-        <translation><numerusform>与全部 %n 名球员比较</numerusform></translation>
+        <translation>
+            <numerusform>与全部 %n 名球员比较</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1040"/>
@@ -3654,7 +3656,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="245"/>
         <source>Pool: Spieler mit Nationalität &apos;%1&apos;%2. Der Assistent stellt aus dem gesamten berechtigten Pool den stärksten Kader zusammen und vergleicht ihn mit deinem aktuellen Kader.</source>
-        <translation>人才库：国籍为%1'%2的球员。助手从整个符合条件的人才库中建立最强的阵容，并将其与您当前的阵容进行比较。</translation>
+        <translation>人才库：国籍为%1&apos;%2的球员。助手从整个符合条件的人才库中建立最强的阵容，并将其与您当前的阵容进行比较。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="248"/>
@@ -4163,7 +4165,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="135"/>
         <source>Pool: Spieler mit Nationalität &apos;%1&apos;%2. Doppelklick oder Buttons zum Verschieben; Speichern übernimmt die Auswahl in die Datenbank.</source>
-        <translation>池：国籍为%1'%2的球员。双击或使用按钮移动它们；保存将选择存储在数据库中。</translation>
+        <translation>池：国籍为%1&apos;%2的球员。双击或使用按钮移动它们；保存将选择存储在数据库中。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="137"/>
@@ -4804,7 +4806,7 @@ Ist sie ein Favorit, wird der Favorit zurückgesetzt; gespeicherte Bridges diese
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="761"/>
         <source>Analyzer-Taktik (*.%1)</source>
-        <translation>分析器战术（*.%1）</translation>
+        <translation>分析器战术 (*.%1)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="768"/>
@@ -5297,7 +5299,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="784"/>
         <source>&lt;b style=&apos;font-size:14pt;&apos;&gt;Talent-Score (U%1): %2&lt;/b&gt;&lt;br/&gt;Bester Rollen-DWRS &lt;b&gt;%3%&lt;/b&gt; + Entwicklungs-Spielraum (%1−%4 Jahre) + Mentalität (Ent %5 / Arb %6) + Persönlichkeit (%7).</source>
-        <translation>&lt;b style='font-size:14pt;'&gt;天赋评分（U%1）：%2&lt;/b&gt;&lt;br/&gt;最佳角色 DWRS &lt;b&gt;%3%&lt;/b&gt; + 成长空间（%1−%4 年）+ 心态（Det %5 / Wor %6）+ 性格（%7）。</translation>
+        <translation>&lt;b style=&apos;font-size:14pt;&apos;&gt;天赋评分（U%1）：%2&lt;/b&gt;&lt;br/&gt;最佳角色 DWRS &lt;b&gt;%3%&lt;/b&gt; + 成长空间（%1−%4 年）+ 心态（Det %5 / Wor %6）+ 性格（%7）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="801"/>
@@ -5364,7 +5366,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1098"/>
         <source> (Name in der Datei: &apos;%1&apos;.)</source>
-        <translation> （文件中的名称：'%1'。）</translation>
+        <translation> （文件中的名称：&apos;%1&apos;。）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1114"/>
@@ -5818,7 +5820,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="401"/>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="424"/>
         <source>JSON-Profile (*.json)</source>
-        <translation>JSON评分方案（*.json）</translation>
+        <translation>JSON评分方案 (*.json)</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="411"/>
@@ -6374,7 +6376,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="628"/>
         <source>Im Spiel gemeldet. &apos;%1&apos; ist ohne Platz spielberechtigt.</source>
-        <translation>在游戏中注册。'%1'符合条件，没有名额。</translation>
+        <translation>在游戏中注册。&apos;%1&apos;符合条件，没有名额。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="630"/>
@@ -9044,7 +9046,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1330"/>
         <source>CSV-Dateien (*.csv)</source>
-        <translation>CSV文件（*.csv）</translation>
+        <translation>CSV文件 (*.csv)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="699"/>
@@ -9790,7 +9792,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="299"/>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="320"/>
         <source>Trainingsprofil (*.json)</source>
-        <translation>训练简介（*.json）</translation>
+        <translation>训练方案 (*.json)</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="308"/>

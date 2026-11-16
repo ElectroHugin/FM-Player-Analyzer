@@ -303,7 +303,7 @@ you who you should really be buying.
 > - With exports: re-import whenever you like, once a month in game time is a good rhythm. The app updates known players and builds their rating history.
 > - When you import your complete squad as an export, tick *"File is a complete squad export of my club"* and the app asks what happened to the players who are gone.
 > - The installer can copy the FM27 example tactics into your FM27 `tactics` folder; later this is under *Settings → Import*.
-> - Switch between English, German and Simplified Chinese in the **Language** menu.
+> - Switch between English, German and Simplified Chinese in the **Language** menu. Want the app in your language? See [TRANSLATING.md](desktop/translations/TRANSLATING.md).
 
 ---
 

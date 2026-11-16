@@ -1,0 +1,347 @@
+#!/usr/bin/env python3
+"""Helper for translating FM Player Analyzer into another language.
+
+The app's source strings are German. English (fmplayeranalyzer_en.ts) is the
+reference translation: every other language file has exactly the same
+messages, and anything left untranslated falls back to English in the app.
+
+Only the Python standard library is needed (Python 3.8+).
+
+Commands (run from anywhere):
+
+  translate.py new <lang>
+      Create fmplayeranalyzer_<lang>.ts with every message untranslated.
+      <lang> is a Qt locale code such as fr, es, pt_BR, zh_CN, zh_TW.
+
+  translate.py export <lang> <file.json> [--all]
+      Write the messages that still need a translation to a JSON file, each
+      with the German source, the English reference and the context (the
+      screen or dialog it belongs to). --all exports every message, e.g. to
+      review an existing translation. Hand this file to a translator or an
+      AI agent; it only has to fill in "translation".
+
+  translate.py import <lang> <file.json>
+      Read the filled-in JSON back into fmplayeranalyzer_<lang>.ts. Entries
+      with an empty translation are left as they are.
+
+  translate.py sync [<lang> ...]
+      Bring language files in line with the English file after the app got
+      new or changed texts: new messages are added untranslated, removed ones
+      are dropped, existing translations are kept. Without <lang>: all files.
+
+  translate.py check [<lang> ...]
+      Check translations for problems that break the app: placeholders
+      (%1, %2, %n), HTML tags, file dialog filters, plural forms. Prints how
+      much is translated. Exit code 1 if there are errors. Without <lang>:
+      all files.
+"""
+
+import argparse
+import json
+import re
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+PREFIX = "fmplayeranalyzer_"
+REFERENCE = "en"
+
+# Number of plural forms Qt uses per language (used only for new files and the
+# check). Languages not listed use two forms like English.
+PLURAL_FORMS = {
+    1: {"ja", "ko", "zh", "vi", "th", "id", "ms", "lo", "km", "my", "tr", "fa"},
+    3: {"ru", "uk", "be", "pl", "cs", "sk", "hr", "sr", "bs", "lt", "lv", "ro"},
+    4: {"sl", "ga", "cy", "mt"},
+    6: {"ar"},
+}
+
+
+def plural_count(lang):
+    base = lang.split("_")[0].lower()
+    for count, langs in PLURAL_FORMS.items():
+        if base in langs:
+            return count
+    return 2
+
+
+def ts_path(lang):
+    return HERE / f"{PREFIX}{lang}.ts"
+
+
+def all_languages():
+    return sorted(p.stem[len(PREFIX):] for p in HERE.glob(f"{PREFIX}*.ts")
+                  if p.stem[len(PREFIX):] != REFERENCE)
+
+
+# --- Reading and writing .ts files ------------------------------------------
+
+class Message:
+    def __init__(self, context, source, comment, numerus, locations):
+        self.context = context
+        self.source = source
+        self.comment = comment
+        self.numerus = numerus
+        self.locations = locations  # list of (filename, line)
+        self.translation = ""       # plain message
+        self.forms = []             # numerus message
+        self.unfinished = False
+
+    @property
+    def key(self):
+        return (self.context, self.source, self.comment or "")
+
+    def is_translated(self):
+        if self.numerus:
+            return any(f.strip() for f in self.forms) and not self.unfinished
+        return bool(self.translation.strip()) and not self.unfinished
+
+
+def read_ts(path):
+    root = ET.parse(path).getroot()
+    language = root.get("language", "")
+    messages = []
+    for ctx in root.findall("context"):
+        name = ctx.findtext("name") or ""
+        for m in ctx.findall("message"):
+            comment = m.find("comment")
+            msg = Message(
+                name,
+                m.findtext("source") or "",
+                comment.text if comment is not None else None,
+                m.get("numerus") == "yes",
+                [(loc.get("filename"), loc.get("line")) for loc in m.findall("location")],
+            )
+            tr = m.find("translation")
+            if tr is not None:
+                msg.unfinished = tr.get("type") in ("unfinished", "vanished", "obsolete")
+                if msg.numerus:
+                    msg.forms = [f.text or "" for f in tr.findall("numerusform")]
+                else:
+                    msg.translation = tr.text or ""
+            messages.append(msg)
+    return language, messages
+
+
+def esc(text):
+    return (text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            .replace("'", "&apos;").replace('"', "&quot;"))
+
+
+def write_ts(path, language, messages):
+    """Writes in the same layout as Qt's lupdate, so diffs stay small."""
+    out = ['<?xml version="1.0" encoding="utf-8"?>', "<!DOCTYPE TS>",
+           f'<TS version="2.1" language="{language}">']
+    current = None
+    for msg in messages:
+        if msg.context != current:
+            if current is not None:
+                out.append("</context>")
+            out.append("<context>")
+            out.append(f"    <name>{esc(msg.context)}</name>")
+            current = msg.context
+        out.append('    <message numerus="yes">' if msg.numerus else "    <message>")
+        for filename, line in msg.locations:
+            out.append(f'        <location filename="{esc(filename)}" line="{line}"/>')
+        out.append(f"        <source>{esc(msg.source)}</source>")
+        if msg.comment is not None:
+            out.append(f"        <comment>{esc(msg.comment)}</comment>")
+        attr = ' type="unfinished"' if msg.unfinished else ""
+        if msg.numerus:
+            out.append(f"        <translation{attr}>")
+            for form in msg.forms:
+                out.append(f"            <numerusform>{esc(form)}</numerusform>")
+            out.append("        </translation>")
+        else:
+            out.append(f"        <translation{attr}>{esc(msg.translation)}</translation>")
+        out.append("    </message>")
+    if current is not None:
+        out.append("</context>")
+    out.append("</TS>")
+    Path(path).write_text("\n".join(out) + "\n", encoding="utf-8", newline="\n")
+
+
+def load_reference():
+    return read_ts(ts_path(REFERENCE))[1]
+
+
+def english_of(msg):
+    if msg.numerus:
+        return " | ".join(msg.forms)
+    return msg.translation
+
+
+def aligned(lang, existing):
+    """Messages in reference order, carrying over translations from existing."""
+    by_key = {m.key: m for m in existing}
+    result = []
+    for ref in load_reference():
+        msg = Message(ref.context, ref.source, ref.comment, ref.numerus, ref.locations)
+        old = by_key.get(ref.key)
+        if old is not None and old.numerus == ref.numerus:
+            msg.translation, msg.forms, msg.unfinished = old.translation, old.forms, old.unfinished
+        else:
+            msg.unfinished = True
+            msg.forms = [""] * plural_count(lang) if ref.numerus else []
+        result.append(msg)
+    return result
+
+
+# --- Checks -------------------------------------------------------------------
+
+PLACEHOLDER = re.compile(r"%L?\d+|%n")
+TAG = re.compile(r"</?[a-zA-Z][^>]*>")
+FILTER_PART = re.compile(r"\((\*[^()]*)\)")
+
+
+def problems(msg, lang):
+    """Returns a list of error strings for one translated message."""
+    errors = []
+    texts = msg.forms if msg.numerus else [msg.translation]
+    if msg.numerus:
+        texts = [t for t in texts if t.strip()]
+        if not texts:
+            return errors
+        expected = plural_count(lang)
+        if len(msg.forms) != expected:
+            errors.append(f"has {len(msg.forms)} plural forms, {lang} needs {expected}")
+    elif not msg.translation.strip():
+        return errors
+    source_ph = set(PLACEHOLDER.findall(msg.source))
+    source_tags = sorted(TAG.findall(msg.source))
+    for text in texts:
+        ph = set(PLACEHOLDER.findall(text))
+        wanted = source_ph - {"%n"} if msg.numerus else source_ph
+        if not wanted <= ph or not ph <= source_ph:
+            errors.append(f"placeholders differ: source {sorted(source_ph)}, translation {sorted(ph)}")
+        if sorted(TAG.findall(text)) != source_tags:
+            errors.append("HTML tags differ from the source")
+        if ";;" in msg.source or "(*" in msg.source:
+            if FILTER_PART.findall(text) != FILTER_PART.findall(msg.source) or \
+                    text.count(";;") != msg.source.count(";;"):
+                errors.append("file filter broken: keep '(*.ext *.ext)' and ';;' exactly as in "
+                              "the source, with ASCII brackets and semicolons")
+    return errors
+
+
+def check(langs):
+    reference = {m.key for m in load_reference()}
+    failed = False
+    for lang in langs:
+        language, messages = read_ts(ts_path(lang))
+        keys = {m.key for m in messages}
+        missing = len(reference - keys)
+        extra = len(keys - reference)
+        done = sum(1 for m in messages if m.is_translated())
+        errors = []
+        for m in messages:
+            for e in problems(m, lang):
+                errors.append(f"  [{m.context}] {m.source[:70]!r}: {e}")
+        status = "OK" if not errors else "ERRORS"
+        print(f"{lang}: {done}/{len(reference)} translated, {len(errors)} errors"
+              + (f", {missing} missing and {extra} outdated messages (run: translate.py sync {lang})"
+                 if missing or extra else "") + f" -> {status}")
+        for e in errors:
+            print(e)
+        failed = failed or bool(errors)
+    return 1 if failed else 0
+
+
+# --- Commands -----------------------------------------------------------------
+
+def cmd_new(args):
+    path = ts_path(args.lang)
+    if path.exists():
+        sys.exit(f"{path.name} already exists. Use 'export' to continue it.")
+    write_ts(path, args.lang, aligned(args.lang, []))
+    print(f"Created {path.name} with {len(load_reference())} untranslated messages.")
+
+
+def cmd_export(args):
+    _, messages = read_ts(ts_path(args.lang))
+    messages = aligned(args.lang, messages)
+    entries = [m for m in messages if args.all or not m.is_translated()]
+    ref_by_key = {r.key: r for r in load_reference()}
+    data = {
+        "language": args.lang,
+        "plural_forms": plural_count(args.lang),
+        "instructions": (
+            "Fill in 'translation' for every entry (for plural entries: 'translation_plural', "
+            "one text per plural form). 'german' is the original text, 'english' the reference "
+            "translation. Keep placeholders such as %1, %2 and %n, HTML tags, and file filters like "
+            "'(*.csv *.html);;' exactly. Keep app terms consistent. See TRANSLATING.md."),
+        "entries": [],
+    }
+    for m in entries:
+        ref = ref_by_key[m.key]
+        entry = {
+            "context": m.context,
+            "german": m.source,
+            "english": english_of(ref),
+        }
+        if m.comment:
+            entry["comment"] = m.comment
+        if m.numerus:
+            entry["translation_plural"] = m.forms or [""] * plural_count(args.lang)
+        else:
+            entry["translation"] = m.translation
+        data["entries"].append(entry)
+    Path(args.file).write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Exported {len(data['entries'])} messages to {args.file}.")
+
+
+def cmd_import(args):
+    path = ts_path(args.lang)
+    language, messages = read_ts(path) if path.exists() else (args.lang, [])
+    messages = aligned(args.lang, messages)
+    by_key = {m.key: m for m in messages}
+    data = json.loads(Path(args.file).read_text(encoding="utf-8"))
+    updated = skipped = 0
+    for entry in data.get("entries", []):
+        key = (entry.get("context", ""), entry.get("german", ""), entry.get("comment", ""))
+        msg = by_key.get(key)
+        if msg is None:
+            skipped += 1
+            continue
+        if msg.numerus:
+            forms = [f or "" for f in entry.get("translation_plural") or []]
+            if any(f.strip() for f in forms):
+                msg.forms, msg.unfinished = forms, False
+                updated += 1
+        else:
+            text = entry.get("translation") or ""
+            if text.strip():
+                msg.translation, msg.unfinished = text, False
+                updated += 1
+    write_ts(path, language or args.lang, messages)
+    print(f"Imported {updated} translations into {path.name}"
+          + (f"; {skipped} entries no longer exist in the app and were skipped." if skipped else "."))
+    return check([args.lang])
+
+
+def cmd_sync(args):
+    for lang in args.langs or all_languages():
+        language, messages = read_ts(ts_path(lang))
+        write_ts(ts_path(lang), language or lang, aligned(lang, messages))
+        print(f"Synced {lang}.")
+
+
+def cmd_check(args):
+    return check(args.langs or all_languages())
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = parser.add_subparsers(dest="command", required=True)
+    p = sub.add_parser("new"); p.add_argument("lang"); p.set_defaults(func=cmd_new)
+    p = sub.add_parser("export"); p.add_argument("lang"); p.add_argument("file")
+    p.add_argument("--all", action="store_true"); p.set_defaults(func=cmd_export)
+    p = sub.add_parser("import"); p.add_argument("lang"); p.add_argument("file"); p.set_defaults(func=cmd_import)
+    p = sub.add_parser("sync"); p.add_argument("langs", nargs="*"); p.set_defaults(func=cmd_sync)
+    p = sub.add_parser("check"); p.add_argument("langs", nargs="*"); p.set_defaults(func=cmd_check)
+    args = parser.parse_args()
+    sys.exit(args.func(args) or 0)
+
+
+if __name__ == "__main__":
+    main()

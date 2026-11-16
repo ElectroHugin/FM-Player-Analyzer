@@ -317,7 +317,7 @@ Scouting-Bestand zeigt dir **Scouting**, wen du wirklich kaufen solltest.
 > - Bei Exporten: Importiere neu, so oft du willst, einmal pro Spielmonat ist ein guter Rhythmus. Die App aktualisiert bekannte Spieler und baut ihren Bewertungsverlauf auf.
 > - Wenn du deinen kompletten Kader als Export importierst, hake *„Datei ist ein kompletter Kader-Export meines Vereins"* an. Die App fragt dann, was aus den fehlenden Spielern geworden ist.
 > - Die Beispieltaktiken für FM27 kann der Installer in deinen FM27-Ordner `tactics` kopieren, später geht das unter *Einstellungen → Import*.
-> - Deutsch, Englisch oder vereinfachtes Chinesisch stellst du im Menü **Sprache** um.
+> - Deutsch, Englisch oder vereinfachtes Chinesisch stellst du im Menü **Sprache** um. Du möchtest die App in deiner Sprache? Siehe [TRANSLATING.md](desktop/translations/TRANSLATING.md) (Englisch).
 
 ---
 

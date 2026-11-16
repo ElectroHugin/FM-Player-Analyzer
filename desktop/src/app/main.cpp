@@ -50,9 +50,9 @@ int main(int argc, char *argv[])
     }
 
     // DWRS decimals use the separator of the UI language (restart on change).
-    fm::setDwrsLocale(language == QLatin1String("de")      ? QLocale(QLocale::German)
-                      : language == QLatin1String("zh_CN") ? QLocale(QLocale::Chinese, QLocale::China)
-                                                           : QLocale(QLocale::English));
+    fm::setDwrsLocale(language == QLatin1String("de")   ? QLocale(QLocale::German)
+                      : language == QLatin1String("en") ? QLocale(QLocale::English)
+                                                        : QLocale(language));
 
     if (context.paths().isFirstRun()) {
         fm::FirstRunDialog dialog(fm::AppPaths::defaultDataDir());
