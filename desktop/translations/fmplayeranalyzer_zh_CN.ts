@@ -122,12 +122,12 @@
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="143"/>
         <source>Komplett-Export: Spieler, die fehlen, altern um einen Export.</source>
-        <translation>完整导出：一次导出中缺少该年龄段的球员。</translation>
+        <translation>完整导出：未包含的球员，其数据陈旧程度增加一次导出。</translation>
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="145"/>
         <source>Teil-Export: nur die enthaltenen Spieler wurden aufgefrischt, niemand altert.</source>
-        <translation>部分导出：仅刷新其中包含的球员，无人变老。</translation>
+        <translation>部分导出：仅更新文件中包含的球员，其他球员的数据陈旧程度不变。</translation>
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="148"/>
@@ -177,12 +177,12 @@
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="190"/>
         <source>ID/Namens-Konflikt übersprungen: %1. Eine numerische UID entspricht einer bekannten Newgen-ID, aber die Namen unterscheiden sich.</source>
-        <translation>已跳过ID/名称冲突：%1。一个数字 UID 与一个已知的 newgen ID 相匹配，但名称不同。</translation>
+        <translation>已跳过 ID/姓名冲突：%1。数字 UID 与已知的随机生成球员 ID 匹配，但姓名不同。</translation>
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="196"/>
         <source>Name unter bekannter UID geändert: %1. FM hat die ID evtl. an einen neuen Newgen vergeben — zugewiesene Rollen und DWRS-Historie gehören ggf. noch zum alten Spieler.</source>
-        <translation>已知UID下的名称已更改：%1。FM可能已将ID重新颁发给新的新秀球员——分配的角色和DWRS历史记录可能仍属于旧球员。</translation>
+        <translation>已知 UID 对应的姓名已更改：%1。FM 可能已将该 ID 重新分配给新的随机生成球员——已分配的角色和 DWRS 历史记录可能仍属于原球员。</translation>
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="202"/>
@@ -302,7 +302,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/Navigation.cpp" line="34"/>
         <source>Rollen &amp; Taktiken</source>
-        <translation>角色与战术</translation>
+        <translation>角色 &amp; 战术</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="25"/>
@@ -360,7 +360,7 @@ Details: %1</source>
         <location filename="../src/app/Navigation.cpp" line="61"/>
         <location filename="../src/app/Navigation.cpp" line="82"/>
         <source>Aufstellung</source>
-        <translation>阵容</translation>
+        <translation>首发阵容</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="62"/>
@@ -388,7 +388,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/Navigation.cpp" line="110"/>
         <source>Leihen &amp; Verkäufe</source>
-        <translation>租借和出售</translation>
+        <translation>租借 &amp; 出售</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="97"/>
@@ -403,12 +403,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/Navigation.cpp" line="83"/>
         <source>Startelf &amp; B-Team</source>
-        <translation>首发阵容与 B 队</translation>
+        <translation>首发阵容 &amp; B 队</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="85"/>
         <source>Jugend &amp; Zweitteam</source>
-        <translation>青年队和二队</translation>
+        <translation>青年队 &amp; 二队</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="93"/>
@@ -418,7 +418,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/Navigation.cpp" line="101"/>
         <source>Training &amp; Entwicklung</source>
-        <translation>训练与发展</translation>
+        <translation>训练 &amp; 成长</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="104"/>
@@ -479,12 +479,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="84"/>
         <source>Home-Grown (im Verband ausgebildet)</source>
-        <translation>本土球员（在本协会接受训练）</translation>
+        <translation>本国青训（在本协会接受训练）</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="94"/>
         <source>Club-Grown (im Verein ausgebildet)</source>
-        <translation>俱乐部青训（在俱乐部接受训练）</translation>
+        <translation>本俱乐部青训（在俱乐部接受训练）</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="106"/>
@@ -539,7 +539,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="157"/>
         <source>Zählt laut Spiel als Nicht-EU-Spieler. %1 erlaubt höchstens %2 auf der Meldeliste.</source>
-        <translation>游戏将他视为非欧盟球员。%1允许在球队注册中最多有%2名球员。</translation>
+        <translation>游戏将他视为非欧盟球员。%1 的注册名单最多允许 %2 名非欧盟球员。</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="171"/>
@@ -614,7 +614,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="297"/>
         <source>Im Spiel nicht für die Liga registriert. Best XI und Übersicht stellen ihn nicht auf.</source>
-        <translation>未在比赛中注册参加联赛。最佳阵容和概览中不包括他。</translation>
+        <translation>未在游戏中注册参加联赛。最佳阵容和概览不会安排他出场。</translation>
     </message>
 </context>
 <context>
@@ -674,42 +674,42 @@ Details: %1</source>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="118"/>
         <source>Gute Persönlichkeit: %1</source>
-        <translation>良好个性：%1</translation>
+        <translation>性格良好：%1</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="122"/>
         <source>Herausragend: %1 (%2), Schlüssel für %3</source>
-        <translation>精英 %1（%2），%3 的关键属性</translation>
+        <translation>%1 极佳（%2），是 %3 的关键属性</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="125"/>
         <source>Stark: %1 (%2), Schlüssel für %3</source>
-        <translation>强 %1（%2），%3 的关键属性</translation>
+        <translation>%1 出色（%2），是 %3 的关键属性</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="128"/>
         <source>Herausragend: %1 (%2)</source>
-        <translation>精英 %1（%2）</translation>
+        <translation>%1 极佳（%2）</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="130"/>
         <source>Stark: %1 (%2)</source>
-        <translation>强 %1（%2）</translation>
+        <translation>%1 出色（%2）</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="137"/>
         <source>Schwierige Persönlichkeit: %1</source>
-        <translation>差的个性：%1</translation>
+        <translation>性格不佳：%1</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="141"/>
         <source>Schwach: %1 (%2), Schlüssel für %3</source>
-        <translation>低 %1（%2），%3 的关键属性</translation>
+        <translation>%1 较弱（%2），是 %3 的关键属性</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="143"/>
         <source>Schwach: %1 (%2)</source>
-        <translation>低 %1（%2）</translation>
+        <translation>%1 较弱（%2）</translation>
     </message>
 </context>
 <context>
@@ -856,7 +856,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/AboutDialog.cpp" line="230"/>
         <source>© 2026 ElectroHugin · Freie Software unter der GNU GPL v3&lt;br&gt;Nicht offiziell mit Sports Interactive oder SEGA verbunden.</source>
-        <translation>© 2026 ElectroHugin · GNU GPL v3&lt;br&gt;许可下的自由软件。与Sports Interactive或SEGA无正式关联。</translation>
+        <translation>© 2026 ElectroHugin · 采用 GNU GPL v3 许可的自由软件&lt;br&gt;与 Sports Interactive 或 SEGA 无官方关联。</translation>
     </message>
     <message>
         <location filename="../src/app/AboutDialog.cpp" line="240"/>
@@ -900,7 +900,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/AppContext.cpp" line="525"/>
         <source>Aus den bisherigen Gewichten dieses Spielstands übernommen.</source>
-        <translation>从该存档的上一组权重接管。</translation>
+        <translation>沿用此存档之前的权重。</translation>
     </message>
     <message>
         <location filename="../src/app/AppContext.cpp" line="594"/>
@@ -1156,7 +1156,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="413"/>
         <source>Zum Verwalten dieser Spieler dient Transfers → Leihen &amp; Verkäufe.</source>
-        <translation>在“转会”→“租借和出售”下管理这些球员。</translation>
+        <translation>在“转会 → 租借 &amp; 出售”中管理这些球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="428"/>
@@ -1227,7 +1227,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="153"/>
         <source>Slot</source>
-        <translation>名额</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="154"/>
@@ -1240,7 +1240,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="154"/>
         <source>Alle fit</source>
-        <translation>全部合适</translation>
+        <translation>全部健康</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="155"/>
@@ -1328,7 +1328,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="558"/>
         <source>Startelf und B-Team werden gemeinsam als Zuordnungsproblem berechnet, mit der Ungarischen Methode (englisch: Hungarian algorithm, Kuhn–Munkres): Spieler werden Positionen eins zu eins so zugeordnet, dass die Summe der Bewertungen maximal ist. Keine andere Aufstellung hat eine stärkere Startelf, und unter allen gleich starken bekommst du das stärkste B-Team — vielseitige Spieler stehen dort, wo ihr Fehlen am wenigsten kostet. Grundlage ist der DWRS je Rolle, gewichtet mit Spielzeit und natürlicher Position; Hauptrollen werden eingehalten.</source>
-        <translation>首发阵容和B队一起作为指派问题使用匈牙利算法（Kuhn–Munkres）进行计算：球员被一对一指派到各个位置，以使评分总和最大化。没有其他阵容拥有更强的首发阵容，而在所有同样强大的阵容中，您将获得最强的B队——多面手 球员在缺席代价最小的位置上出场。基于每个角色的DWRS，按上场时间和本位置置加权；主要角色得到尊重。</translation>
+        <translation>首发阵容和 B 队使用匈牙利算法（Kuhn–Munkres）一并求解：将球员与位置一一匹配，使评分总和最大化。没有其他方案能提供更强的首发阵容；在首发实力相同的方案中，再选出最强的 B 队——多面手会被安排到最难由其他人替代的位置。计算以各角色的 DWRS 为基础，按出场时间和球员的自然位置加权，并遵守主要角色设置。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="586"/>
@@ -1359,7 +1359,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="98"/>
         <source>Beschränkt die erste Mannschaft auf die Spieler, die im Wettbewerb spielberechtigt sind: die gespeicherte Meldeliste (Kader → Meldeliste) plus alle, die ohne Platz spielen dürfen. Im Pokal dürfen alle spielen.</source>
-        <translation>将一线队限制为有资格参加比赛的球员：已保存的球队名单（球队 → 球队注册）以及所有无需名额即可出场的球员。在杯赛中，每个人都可以上场。</translation>
+        <translation>一线队仅使用有资格参加该赛事的球员：已保存的注册名单（阵容 → 阵容注册），加上无需占用名额即可参赛的球员。杯赛允许所有球员参赛。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="223"/>
@@ -1405,7 +1405,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="334"/>
         <source>Wer die frei gewordenen Plätze besetzt: der neue Spieler oder ein Mitspieler, der dafür umrückt.</source>
-        <translation>谁来填补空出的位置：上场的球员还是横向移动的队友。</translation>
+        <translation>空出的位置由谁填补：新上场的球员，或为此调整位置的队友。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="337"/>
@@ -1435,12 +1435,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="764"/>
         <source>Ohne Meldeliste stünden davon in Startelf oder B-Team: %1</source>
-        <translation>如果没有球队名单，这些球员将进入首发阵容或B队：%1</translation>
+        <translation>若不受注册名单限制，其中可进入首发阵容或 B 队的球员：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="777"/>
         <source>Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI rechnet mit allen Spielern. Speichere sie unter Kader → Meldeliste.</source>
-        <translation>尚未为此赛事保存报名名单——最佳阵容会使用全部球员。请在“阵容” → “阵容注册”中保存。</translation>
+        <translation>尚未为此赛事保存注册名单 — 最佳阵容会使用全部球员。请在“阵容 → 阵容注册”中保存。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="785"/>
@@ -1460,12 +1460,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="907"/>
         <source>mit: %1</source>
-        <translation>有球：%1</translation>
+        <translation>持球：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="979"/>
         <source>Zweitteam-XI (aus Überschuss des Hauptvereins)</source>
-        <translation>二队阵容（来自主俱乐部盈余）</translation>
+        <translation>二队阵容（从主俱乐部富余球员中选出）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="980"/>
@@ -1485,7 +1485,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1165"/>
         <source>Startelf und B-Team bleiben gleich stark.</source>
-        <translation>首发阵容与 B 队依然保持同等强度。</translation>
+        <translation>首发阵容与 B 队的实力均保持不变。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1168"/>
@@ -1530,7 +1530,7 @@ Details: %1</source>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1029"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1030"/>
         <source>Mit Ball</source>
-        <translation>有球</translation>
+        <translation>持球</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="225"/>
@@ -1543,7 +1543,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1093"/>
         <source>↔ Platz mit Ball ändern (jetzt %1)</source>
-        <translation>↔ 更改有球位置（当前 %1）</translation>
+        <translation>↔ 更改持球位置（当前 %1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1094"/>
@@ -1558,12 +1558,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1102"/>
         <source>Platz · Tausch mit · DWRS-Punkte der Elf</source>
-        <translation>位置 · 与 · XI 的 DWRS 点交换</translation>
+        <translation>位置 · 交换对象 · 首发阵容 DWRS 总分</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1109"/>
         <source>%1 (frei) · %2</source>
-        <translation>%1（免费）· %2</translation>
+        <translation>%1（空缺）· %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1110"/>
@@ -1573,7 +1573,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1122"/>
         <source>↺ %1 wieder dem Analyzer überlassen</source>
-        <translation>↺ 再次将%1留给分析器</translation>
+        <translation>↺ 将 %1 重新交由分析器安排</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1131"/>
@@ -1608,33 +1608,33 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="91"/>
         <source>Aus Best XI: Bridge von %1 (mit Ball %2, ohne Ball %3).</source>
-        <translation>来自最佳阵容：%1 的换位链位置（有球 %2，无球 %3）。</translation>
+        <translation>来自最佳阵容：%1 的换位链位置（持球 %2，无球 %3）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="95"/>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="117"/>
         <source>🔍 Bridge im Scouting suchen (mit Ball %1, ohne Ball %2)</source>
-        <translation>🔍 在球探中搜索换位链（有球时%1，无球时%2）</translation>
+        <translation>🔍 在球探中搜索换位链（持球时%1，无球时%2）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="111"/>
         <source>Aus Best XI: freie Plätze mit Ball %1 und ohne Ball %2.</source>
-        <translation>来自最佳阵容：有球空位 %1，无球空位 %2。</translation>
+        <translation>来自最佳阵容：持球空位 %1，无球空位 %2。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="121"/>
         <source>🔍 Bridge im Scouting suchen – Platz ohne Ball wählen</source>
-        <translation>🔍 在球探中搜索桥牌-选择不有球的地方</translation>
+        <translation>🔍 在球探中搜索换位链 — 选择无球位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="122"/>
         <source>🔍 Bridge im Scouting suchen – Platz mit Ball wählen</source>
-        <translation>🔍 在球探中搜索换位链-选择有球位置</translation>
+        <translation>🔍 在球探中搜索换位链-选择持球位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="132"/>
         <source>Aus Best XI: freier Platz mit Ball %1.</source>
-        <translation>来自最佳阵容：有球空位 %1。</translation>
+        <translation>来自最佳阵容：持球空位 %1。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="133"/>
@@ -1644,7 +1644,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="134"/>
         <source>🔍 Nur mit Ball suchen (%1)</source>
-        <translation>🔍 仅搜索有球角色（%1）</translation>
+        <translation>🔍 仅搜索持球角色（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="135"/>
@@ -1659,12 +1659,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="159"/>
         <source>Fällt ein Spieler der Startelf aus, zeigt die Tabelle den besten geprüften Ersatzplan: Genau ein Spieler kommt dazu, die übrigen dürfen dafür ihre Plätze mit und ohne Ball tauschen. „Wer übernimmt“ nennt, wer die frei gewordenen Plätze besetzt, auch wenn das ein Mitspieler ist, der dafür umrückt. „Volle Bridge“ heißt: Der Neue übernimmt beide Plätze. Von Hand gesetzte Plätze und eine Startelf-Grenze gelten weiter. Weitere Lösungen zeigt der Tooltip.</source>
-        <translation>如果首发球员不可用，表格显示了最佳评估的掩护计划：只有一个球员上场，其他人可以用他们的位置交换控球和控球。“谁覆盖”填补空缺位置的名字，即使那是一个移动的队友。“完整换位链”意味着新来的球员两个都要 位置。手动设置的位置和起始XI限制仍然适用。工具提示显示了更多选项。</translation>
+        <translation>若一名首发球员无法出场，表格会显示已评估方案中最佳的替补方案：只增加一名球员，其他球员可相应调整持球和无球阶段的位置。“谁来顶替”列出填补空位的球员，也可能是换位后的队友。“完整换位链”表示新上场的球员接替两个阶段的位置。手动指定的位置和首发阵容限制仍然有效。悬停提示中可查看更多方案。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="166"/>
         <source>Fällt ein Spieler der Startelf aus, zeigt die Tabelle den besten geprüften Ersatzplan: Genau ein Spieler kommt dazu, die übrigen dürfen dafür ihre Plätze tauschen. „Wer übernimmt“ nennt, wer den frei gewordenen Platz besetzt. Eine Startelf-Grenze gilt weiter. Weitere Lösungen zeigt der Tooltip.</source>
-        <translation>如果一个首发球员不可用，表格会显示最佳评估的掩护计划：只有一个球员上场，其他人可以交换位置。填补空缺位置的“谁掩护”名字。起始XI限制仍然适用。工具提示显示了更多选项。</translation>
+        <translation>若一名首发球员无法出场，表格会显示已评估方案中最佳的替补方案：只增加一名球员，其他球员可相应换位。“谁来顶替”列出填补空位的球员。首发阵容限制仍然有效。悬停提示中可查看更多方案。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="206"/>
@@ -1679,12 +1679,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="177"/>
         <source>mit %1 · ohne %2</source>
-        <translation>有球 %1 · 无球 %2</translation>
+        <translation>持球 %1 · 无球 %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="182"/>
         <source>mit %1 → %2</source>
-        <translation>有球 %1 → %2</translation>
+        <translation>持球 %1 → %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="185"/>
@@ -1709,7 +1709,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="213"/>
         <source>mit %1: %2 · ohne %3: %4</source>
-        <translation>有球 %1：%2 · 无球 %3：%4</translation>
+        <translation>持球 %1：%2 · 无球 %3：%4</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="236"/>
@@ -1744,12 +1744,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="329"/>
         <source>Plätze</source>
-        <translation>名额</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="362"/>
         <source>Mit Ball (IP)</source>
-        <translation>有球（IP）</translation>
+        <translation>持球（IP）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="362"/>
@@ -1759,7 +1759,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="237"/>
         <source>Kombiniert: Startelf und B-Team nebeneinander, die ausgewählte Mannschaft links. Bei wenig Platz erscheint nur die Auswahl. Jeder Spieler steht zwischen seinen beiden Positionen. Beide: mit und ohne Ball für die ausgewählte Mannschaft.</source>
-        <translation>组合：从XI和B队并排开始，被选中的球队在左边。在狭窄的屏幕上只显示被选中的球队。每个球员坐在他的两个位置之间。两者都是：被选中球队的控球和控球。</translation>
+        <translation>综合：首发阵容与 B 队并排显示，所选球队在左侧。空间不足时仅显示所选球队。每名球员显示在其两个阶段的位置之间。两者：显示所选球队的持球和无球阵容。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="301"/>
@@ -1774,7 +1774,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="842"/>
         <source>Die Spielerauswahl berücksichtigt beide Phasen, Spielzeit und natürliche Positionen. Innerhalb des eingestellten DWRS-Spielraums werden dieselben Spieler so zugeordnet, dass zuerst manuelle Seitenwünsche und dann kurze Wege zwischen den Phasen zählen. Fest gesetzte Positionen bleiben erhalten.</source>
-        <translation>球员选择考虑两个阶段，比赛时间和自然位置。在配置的DWRS限额内，相同的球员首先由手动侧偏好分配，然后是阶段之间的短路径。固定位置保持不变。</translation>
+        <translation>选人时会考虑两个阶段、出场时间和自然位置。在设定的 DWRS 浮动范围内，先满足手动设置的左右侧偏好，再尽量缩短球员在两个阶段之间的换位距离。固定的位置保持不变。</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/app/pages/BestXiPage.cpp" line="885"/>
@@ -1787,8 +1787,8 @@ Details: %1</source>
         <location filename="../src/app/pages/BestXiPage.cpp" line="956"/>
         <source>%1 % mit Ball · %2 % ohne Ball. Innerhalb des DWRS-Spielraums gelten zuerst manuelle Seitenpräferenzen, dann kurze Wege. Rechtsklick zum Verschieben.
 DWRS-Änderung durch die Zuordnung: Startelf %3 · B-Team %4. Spielraum je Mannschaft: %5.</source>
-        <translation>%1%拥有·%2%无球。在DWRS允许范围内，手动侧首选项首先出现，然后是短路径。右键单击移动。
-DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translation>
+        <translation>持球 %1 % · 无球 %2 %。在 DWRS 浮动范围内，优先满足手动设置的左右侧偏好，再尽量缩短换位距离。右键点击可移动。
+位置分配带来的 DWRS 变化：首发阵容 %3 · B 队 %4。每队允许的浮动范围：%5。</translation>
     </message>
 </context>
 <context>
@@ -1816,7 +1816,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/widgets/ColumnChooser.cpp" line="132"/>
         <source>Alle Rollen mit Ball (IP)</source>
-        <translation>所有有球角色（IP）</translation>
+        <translation>所有持球角色（IP）</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/ColumnChooser.cpp" line="133"/>
@@ -1829,12 +1829,12 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/widgets/CommandPalette.cpp" line="25"/>
         <source>Spieler, Seite oder Aktion suchen …</source>
-        <translation>搜索球员、页面或动作…</translation>
+        <translation>搜索球员、页面或操作 …</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/CommandPalette.cpp" line="36"/>
         <source>↑↓ auswählen   ·   Enter öffnen   ·   Esc schließen</source>
-        <translation>↑↓选择·输入打开·Esc关闭</translation>
+        <translation>↑↓ 选择   ·   Enter 打开   ·   Esc 关闭</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/CommandPalette.cpp" line="93"/>
@@ -1873,7 +1873,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="273"/>
         <source>Datei ist ein kompletter Kader-Export meines Vereins (Abgänge erkennen)</source>
-        <translation>文件是我俱乐部的完整阵容导出（检测离开）</translation>
+        <translation>文件是我俱乐部的完整阵容导出（识别离队球员）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="275"/>
@@ -1944,7 +1944,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
         <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
         <location filename="../src/app/pages/DashboardPage.cpp" line="934"/>
         <source>Mit Ball</source>
-        <translation>有球</translation>
+        <translation>持球</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
@@ -1975,7 +1975,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="446"/>
         <source>Farbstufen wie überall in der App: Schwach bis Legendär.</source>
-        <translation>应用程序中无处不在的颜色层：从贫穷到传奇。</translation>
+        <translation>颜色分级与应用其他页面一致：从较差到传奇。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
@@ -2056,7 +2056,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="642"/>
         <source>Folgt „%1“ und liest ihn nach jedem Speichern im Spiel neu ein.</source>
-        <translation>遵循“%1”：在游戏中每次保存后再次阅读。</translation>
+        <translation>正在实时跟踪“%1”，每次在游戏中保存后都会重新读取。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="648"/>
@@ -2066,7 +2066,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="828"/>
         <source>mit %1 · ohne %2</source>
-        <translation>有球 %1 · 无球 %2</translation>
+        <translation>持球 %1 · 无球 %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="841"/>
@@ -2076,7 +2076,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="844"/>
         <source>Kein Spieler im Kader füllt die Lücke, ein Platz bleibt frei.</source>
-        <translation>没有队员填补空缺；一个地方是空的。</translation>
+        <translation>阵容中无人能填补空缺，将有一个位置空着。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="846"/>
@@ -2103,7 +2103,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
         <location filename="../src/app/pages/DashboardPage.cpp" line="952"/>
         <location filename="../src/app/pages/DashboardPage.cpp" line="977"/>
         <source>frei</source>
-        <translation>自由</translation>
+        <translation>空缺</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="908"/>
@@ -2113,17 +2113,17 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="951"/>
         <source>mit: %1</source>
-        <translation>有球：%1</translation>
+        <translation>持球：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="953"/>
         <source>%1 mit Ball ist frei.</source>
-        <translation>有球阶段 %1 空缺。</translation>
+        <translation>持球阶段 %1 空缺。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="966"/>
         <source>%1 (mit Ball %2, ohne Ball %3)</source>
-        <translation>%1（拥有%2，无球%3）</translation>
+        <translation>%1（持球 %2，无球 %3）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="976"/>
@@ -2138,7 +2138,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1003"/>
         <source>„Elf −4,0“: Fällt der Spieler aus, kommt der beste Ersatz (wie in Best XI unter „Ausfall in der Startelf“), und die Summe der DWRS der ganzen Startelf sinkt um 4,0. „Lücke“: Kein Spieler im Kader füllt den Platz. Grundlage ist der ganze Verein ohne Langzeitverletzte und ohne Spieler, die als nicht registriert markiert sind, sonst ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus Best XI gelten.</source>
-        <translation>“XI−4.0”：如果球员出局，最好的掩护就会出现（如“阵容深度：首发球员失踪”下的最佳XI），整个首发XI的DWRS总和下降4.0。“差距”：没有球员填补这个位置。基于整个俱乐部没有长期受伤，也没有球员被标记为未注册， 否则没有比赛规则；适用最佳XI的手动位置。</translation>
+        <translation>“首发 −4.0”：若该球员无法出场，最佳替补方案将生效（与最佳阵容中“阵容深度：缺少一名首发队员”一致），全体首发球员的 DWRS 总分下降 4.0。“空缺”：阵容中无人能填补该位置。计算范围为整个俱乐部，排除长期伤员和标记为未注册的球员，不考虑其他赛事规则；遵守在最佳阵容中手动指定的位置。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1178"/>
@@ -2173,7 +2173,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="447"/>
         <source>Jeder Starter im Vergleich zur Kadermitte (Median der gezeigten Starter): grau bis 1,5 Punkte Abstand, darunter orange, darüber blau, ab 4 Punkten kräftig.</source>
-        <translation>每个首发球员与球队中位数（显示首发球员中位数）的比较：灰色在1.5分以内，橙色在下面，蓝色在上面，从4分开始很强。</translation>
+        <translation>将每名首发球员与阵容中位数（所显示首发球员的中位数）比较：差距不超过 1.5 分时为灰色，低于中位数为橙色，高于则为蓝色；差距达到 4 分时使用深色。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="533"/>
@@ -2188,7 +2188,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="563"/>
         <source>%1 Jahre</source>
-        <translation>%1年</translation>
+        <translation>%1 岁</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="707"/>
@@ -2204,22 +2204,22 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="843"/>
         <source>Lücke</source>
-        <translation>缺口</translation>
+        <translation>空缺</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="987"/>
         <source>Groß: DWRS des Starters in seiner Rolle.</source>
-        <translation>大：首发球员的DWRS在他的角色中。</translation>
+        <translation>大字：首发球员在其角色上的 DWRS。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="989"/>
         <source>Groß: Wert des Starters über beide Aufstellungen (%1 % mit Ball).</source>
-        <translation>大：首发球员在两个阵容中的价值（%1%控球）。</translation>
+        <translation>大字：首发球员在两套阵容中的综合评分（持球权重为 %1 %）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="993"/>
         <source>Klein: so ändert sich die Startelf, wenn er ausfällt. Details zeigt der Tooltip.</source>
-        <translation>小：如果首发XI出局，他会如何变化。工具提示显示了详细信息。</translation>
+        <translation>小字：该球员无法出场时，首发阵容评分的变化。悬停提示中可查看详情。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1050"/>
@@ -2328,7 +2328,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/widgets/DropZone.cpp" line="50"/>
         <source>CSV oder HTML aus dem Football Manager – oder klicken, um eine Datei auszuwählen</source>
-        <translation>CSV或Football Manager的HTML-或单击以选择文件</translation>
+        <translation>来自 Football Manager 的 CSV 或 HTML 文件 — 也可点击选择文件</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DropZone.cpp" line="55"/>
@@ -2381,7 +2381,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="101"/>
         <source>aus (harte Grenzen)</source>
-        <translation>关闭（硬边框）</translation>
+        <translation>关闭（明确分界）</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="129"/>
@@ -2397,13 +2397,13 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="147"/>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="194"/>
         <source>Feldspieler ab</source>
-        <translation>外场从</translation>
+        <translation>外场球员起始分</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="148"/>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="194"/>
         <source>Torhüter ab</source>
-        <translation>守门员从</translation>
+        <translation>门将起始分</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="152"/>
@@ -2463,7 +2463,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="224"/>
         <source>Veränderung über die letzten %1 Datenstände (Uploads)</source>
-        <translation>更改上次%1快照（上传）</translation>
+        <translation>最近 %1 次数据快照（上传）之间的变化</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="226"/>
@@ -2529,7 +2529,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="463"/>
         <source>Die Rolle, die der Spieler in Startelf oder B-Team der Lieblingstaktik spielt (Einstellungen)</source>
-        <translation>球员在最喜欢的战术的首发XI或B队中扮演的角色（设置）</translation>
+        <translation>球员在常用战术（设置）的首发阵容或 B 队中担任的角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="466"/>
@@ -2549,7 +2549,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="532"/>
         <source>Bis %1 Jahre, Torhüter bis %2 (Einstellungen → Kader und Analyse)</source>
-        <translation>高达%1年，守门员高达%2（设置→阵容和分析）</translation>
+        <translation>不超过 %1 岁，门将不超过 %2 岁（设置 → 阵容和分析）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="580"/>
@@ -2595,7 +2595,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="595"/>
         <source>Veränderung in Prozentpunkten über den gewählten Zeitraum</source>
-        <translation>所选期间的百分比变化</translation>
+        <translation>所选期间的变化，以百分点计</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="597"/>
@@ -2605,12 +2605,12 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="599"/>
         <source>Platz in der Best XI der Lieblingstaktik (%1)</source>
-        <translation>放置在最喜欢的战术的最佳XI（%1）</translation>
+        <translation>在常用战术（%1）最佳阵容中的位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="616"/>
         <source>Nicht in Startelf oder B-Team: beste Rolle der Taktik</source>
-        <translation>不是在首发XI或B队：战术的最佳角色</translation>
+        <translation>未进入首发阵容或 B 队：采用其在该战术中的最佳角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="619"/>
@@ -2630,12 +2630,12 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="628"/>
         <source>Langzeitverletzt, fehlt in der Best XI: beste Rolle der Taktik</source>
-        <translation>长期受伤，错过最佳XI：战术的最佳角色</translation>
+        <translation>长期受伤，未进入最佳阵容：采用其在该战术中的最佳角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="634"/>
         <source>Noch kein Verlauf in seiner Best-XI-Rolle: Werte der besten Rolle</source>
-        <translation>他的最佳XI角色还没有历史：他最佳角色的价值观</translation>
+        <translation>尚无其最佳阵容角色的历史记录：显示其最佳角色的数值</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="660"/>
@@ -2705,7 +2705,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="759"/>
         <source>Erst ein Datenstand vorhanden – nach dem nächsten Upload siehst du hier die Entwicklung.</source>
-        <translation>到目前为止只有一个快照-下一次上传后，您将在此处看到开发。</translation>
+        <translation>目前只有一次数据快照 — 下次上传后即可在此查看成长情况。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="792"/>
@@ -2725,7 +2725,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="797"/>
         <source>Kader-Trend: Ø Veränderung in Prozentpunkten</source>
-        <translation>阵容趋势：Ø百分比变化</translation>
+        <translation>阵容趋势：平均变化（百分点）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="803"/>
@@ -2740,7 +2740,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="862"/>
         <source>Vergleich als %1</source>
-        <translation>与%1的比较</translation>
+        <translation>担任 %1 角色时的比较</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="864"/>
@@ -2765,7 +2765,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="189"/>
         <source>&lt;b&gt;Datenstände:&lt;/b&gt; Jeder Upload ist ein Datenstand. Uploads, die höchstens %1 Minuten auseinanderliegen (z. B. Kader-, Shortlist- und Gesamtexport derselben Spielwoche), zählen als einer. Die Achse zählt Datenstände statt Tage, denn der Export enthält kein Spieldatum.&lt;br&gt;&lt;b&gt;Δ:&lt;/b&gt; Veränderung des DWRS in Prozentpunkten über den gewählten Zeitraum, in der Rolle der Spalte „Rolle“. Standard ist die Rolle, die der Spieler in der Best XI deiner Lieblingstaktik (Einstellungen) spielt — in Startelf oder B-Team. Wer dort nicht steht, zählt in seiner besten Rolle dieser Taktik. Ein neuer Wert wird nur gespeichert, wenn er sich um mindestens 1 Punkt ändert; dazwischen gilt der letzte Wert weiter.&lt;br&gt;&lt;b&gt;Neuberechnungen&lt;/b&gt; (geänderte Gewichte, Rollen oder Formel) verschieben Werte ohne echte Entwicklung. Sie erscheinen als gestrichelte Linie und werden herausgerechnet: frühere Werte sind auf die heutige Berechnung umgerechnet, Δ zählt nur echte Veränderung. Erfasst ab Version 1.4.14, ältere lassen sich nicht mehr erkennen. Auch neu sichtbare Attribute (gescoutete Spannen werden nach einer Verpflichtung zu exakten Werten) können einen Sprung erzeugen.</source>
-        <translation>&lt;b&gt;快照：&lt;/b&gt;每次上传都是一个快照。间隔不超过 %1 分钟的上传（例如同一比赛周的阵容、候选名单和完整导出）只算一次。横轴按快照数而不是天数统计，因为导出文件不含游戏内日期。&lt;br&gt;&lt;b&gt;Δ：&lt;/b&gt;所选周期内 DWRS 的变化，以百分点计，采用“角色”列中的角色。默认是球员在你最喜欢战术（设置）的最佳阵容中担任的角色——首发阵容或 B 队。未进入该阵容的球员，按其在该战术中的最佳角色计算。新值只有变化至少 1 点时才会保存；两次变化之间沿用上一个值。&lt;br&gt;&lt;b&gt;重新计算&lt;/b&gt;（更改权重、角色或公式）会在没有实际成长的情况下改变数值。这类变化显示为虚线并会被剔除：较早的数值会换算为当前算法，Δ 只计算真实变化。从 1.4.14 版开始记录；更早版本无法再识别。新近可见的属性（例如签约后球探范围变为精确值）也可能造成跳变。</translation>
+        <translation>&lt;b&gt;快照：&lt;/b&gt;每次上传都是一个快照。间隔不超过 %1 分钟的上传（例如同一比赛周的阵容、候选名单和完整导出）只算一次。横轴按快照数而不是天数统计，因为导出文件不含游戏内日期。&lt;br&gt;&lt;b&gt;Δ：&lt;/b&gt;所选周期内 DWRS 的变化，以百分点计，采用“角色”列中的角色。默认是球员在你常用战术（设置）的最佳阵容中担任的角色——首发阵容或 B 队。未进入该阵容的球员，按其在该战术中的最佳角色计算。新值只有变化至少 1 点时才会保存；两次变化之间沿用上一个值。&lt;br&gt;&lt;b&gt;重新计算&lt;/b&gt;（更改权重、角色或公式）会在没有实际成长的情况下改变数值。这类变化显示为虚线并会被剔除：较早的数值会换算为当前算法，Δ 只计算真实变化。从 1.4.14 版开始记录；更早版本无法再识别。新近可见的属性（例如签约后球探范围变为精确值）也可能造成跳变。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="231"/>
@@ -2825,7 +2825,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="104"/>
         <source>Home-Grown (im Verband ausgebildet)</source>
-        <translation>本土球员（在本协会接受训练）</translation>
+        <translation>本国青训（在本协会接受训练）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="106"/>
@@ -2835,12 +2835,12 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="109"/>
         <source>Club-Grown (im Verein ausgebildet)</source>
-        <translation>俱乐部青训（在俱乐部接受训练）</translation>
+        <translation>本俱乐部青训（在俱乐部接受训练）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="111"/>
         <source>Zwischen 15 und 21 mindestens drei Spielzeiten beim eigenen Verein. Zählt automatisch auch als Home-Grown.</source>
-        <translation>15到21岁之间在俱乐部至少有三个赛季。也自动算作本土的。</translation>
+        <translation>15 至 21 岁期间在本俱乐部效力至少三个赛季，也自动计为本国青训球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="113"/>
@@ -2850,7 +2850,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="115"/>
         <source>Zählt laut Spiel als Nicht-EU-Spieler. Nur sichtbar, wenn die gewählte Liga Nicht-EU-Spieler auf der Meldeliste begrenzt.</source>
-        <translation>比赛将他视为非欧盟球员。只有当所选联盟限制非欧盟球员进入球队注册时才会显示出来。</translation>
+        <translation>游戏将他视为非欧盟球员。仅当所选联赛限制注册名单中的非欧盟球员人数时显示。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="121"/>
@@ -2865,7 +2865,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="130"/>
         <source>U21-Spieler brauchen keinen Platz in der Meldeliste. Automatisch: bis 20 ja, ab 22 nein, mit 21 unklar (zählt vorsichtshalber als nicht U21).</source>
-        <translation>U21球员不需要在阵容上有球一席之地。自动：最多20个是，从22个否，到21个不清楚（为了安全起见，不算U21）。</translation>
+        <translation>U21 球员不占注册名额。自动判断：20 岁及以下为“是”，22 岁及以上为“否”，21 岁为“不清楚”（为稳妥起见按非 U21 处理）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="132"/>
@@ -2875,7 +2875,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="135"/>
         <source>LaLiga: EU-Spieler, die am 1. Januar der Saison höchstens 18 sind, brauchen keinen Platz in der Meldeliste. Automatisch nach Alter, Ingame-Datum, Nationalität und Nicht-EU-Markierung; Ja/Nein entscheidet von Hand.</source>
-        <translation>西甲联赛：本赛季1月1日18岁或以下的欧盟球员不需要出现在阵容上。自动从年龄、比赛日期、国籍和非欧盟标志；是/否由手决定。</translation>
+        <translation>西甲：本赛季 1 月 1 日年龄不超过 18 岁的欧盟球员不占注册名额。根据年龄、游戏内日期、国籍和非欧盟标记自动判断；选择“是”或“否”可手动指定。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="138"/>
@@ -2895,7 +2895,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="169"/>
         <source>Die Positionen, auf denen dieser Spieler am effektivsten ist (Bonus in der Kader-Berechnung).</source>
-        <translation>这个球员最有效的位置（队伍计算中的奖金）。</translation>
+        <translation>球员最擅长的位置（计算阵容时获得加成）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="190"/>
@@ -2912,17 +2912,17 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="193"/>
         <source>Links</source>
-        <translation>左脚</translation>
+        <translation>左侧</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="194"/>
         <source>Rechts</source>
-        <translation>右脚</translation>
+        <translation>右侧</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="198"/>
         <source>Bevorzugte Seite:</source>
-        <translation>首选边路：</translation>
+        <translation>首选侧：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="207"/>
@@ -2987,7 +2987,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="196"/>
         <source>Bevorzugte zentrale Seite bei gleichwertigen Zuordnungen, auch bei unterschiedlichen Rollen. Gilt mit und ohne Ball. Der bevorzugte Fuß wird dafür nicht verwendet.</source>
-        <translation>同样合适的任务的首选中央侧，包括不同的角色。适用于拥有和离开拥有。首选脚不用于此。</translation>
+        <translation>位置分配效果相同时优先采用的中路左右侧偏好，不同角色之间也适用。持球和无球阶段均有效，不依据惯用脚判断。</translation>
     </message>
 </context>
 <context>
@@ -3075,7 +3075,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/widgets/Charts.cpp" line="140"/>
         <source>Uploads vor dem aktuellen Stand</source>
-        <translation>在当前状态之前上传</translation>
+        <translation>距当前数据的上传次数</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/Charts.cpp" line="141"/>
@@ -3115,7 +3115,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/widgets/Charts.cpp" line="413"/>
         <source>Neuberechnung: herausgerechnet, frühere Werte sind auf die neue Berechnung umgerechnet.</source>
-        <translation>重新计算：剔除因数，将较早的值转换为新计算。</translation>
+        <translation>重新计算：已排除其影响，较早的数值已按新算法换算。</translation>
     </message>
 </context>
 <context>
@@ -3208,7 +3208,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="179"/>
         <source>Spieler, Seiten, Aktionen …    Strg+K</source>
-        <translation>球员、页面、动作… Ctrl+K</translation>
+        <translation>球员、页面、操作 …    Ctrl+K</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="189"/>
@@ -3398,8 +3398,8 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
         <location filename="../src/app/MigrationWizard.cpp" line="35"/>
         <source>Importiert eine Datenbank der alten Streamlit-Version in das neue Format.
 Die Originaldatei wird dabei nicht verändert.</source>
-        <translation>将数据库从旧Streamlight版本导入新格式。
-原始文件未被修改。</translation>
+        <translation>将旧 Streamlit 版本的数据库导入为新格式。
+原始文件不会被修改。</translation>
     </message>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="44"/>
@@ -3429,7 +3429,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="55"/>
         <source>config.ini, definitions.json, Logo und Flagge aus dem Legacy-Ordner übernehmen</source>
-        <translation>从旧文件夹导入config. ini、定义.json、徽标和标志</translation>
+        <translation>从旧版文件夹导入 config.ini、definitions.json、队徽和旗帜</translation>
     </message>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="71"/>
@@ -3479,7 +3479,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="166"/>
         <source>Fertig: %1 Spieler, %2 Bewertungs-Einträge übernommen (%3 verwaiste übersprungen).</source>
-        <translation>完成：%1球员，%2评分条目导入（%3孤儿跳过）。</translation>
+        <translation>完成：已导入 %1 名球员、%2 条评分记录（跳过 %3 条无对应球员的记录）。</translation>
     </message>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="172"/>
@@ -3557,12 +3557,12 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalBestXiPage.cpp" line="152"/>
         <source>Noch keine Spieler im Nationalkader. Stelle ihn unter Kader → Auswahl zusammen.</source>
-        <translation>国家队还没有球员。把它放在阵容→选择下。</translation>
+        <translation>国家队名单中尚无球员。请在“阵容 → 选择”中组建名单。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalBestXiPage.cpp" line="183"/>
         <source>Keine weiteren Spieler im Kader als Tiefen-Optionen für diese Taktik geeignet.</source>
-        <translation>队里没有其他球员适合这种战术的深度选择。</translation>
+        <translation>阵容中没有其他球员适合作为此战术的替补人选。</translation>
     </message>
 </context>
 <context>
@@ -3656,7 +3656,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="245"/>
         <source>Pool: Spieler mit Nationalität &apos;%1&apos;%2. Der Assistent stellt aus dem gesamten berechtigten Pool den stärksten Kader zusammen und vergleicht ihn mit deinem aktuellen Kader.</source>
-        <translation>人才库：国籍为%1&apos;%2的球员。助手从整个符合条件的人才库中建立最强的阵容，并将其与您当前的阵容进行比较。</translation>
+        <translation>候选池：国籍为“%1”的球员%2。助手从全部符合条件的球员中组建最强阵容，并与当前阵容比较。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="248"/>
@@ -3711,7 +3711,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="238"/>
         <source>⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter Einstellungen → Nationalteam (Name, Länder-Code, Altersgrenze).</source>
-        <translation>⚠️ 请先在设置→国家队（姓名、国家代码、年龄限制）下完全配置您的国家队。</translation>
+        <translation>⚠️ 请先在“设置 → 国家队”中完整配置国家队（名称、国家代码、年龄限制）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="330"/>
@@ -3950,17 +3950,17 @@ Die Originaldatei wird dabei nicht verändert.</source>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="206"/>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="226"/>
         <source>%1 Jahre</source>
-        <translation>%1年</translation>
+        <translation>%1 岁</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="240"/>
         <source>⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter Einstellungen → Nationalteam (Name, Länder-Code, Altersgrenze).</source>
-        <translation>⚠️ 请先在设置→国家队（姓名、国家代码、年龄限制）下完全配置您的国家队。</translation>
+        <translation>⚠️ 请先在“设置 → 国家队”中完整配置国家队（名称、国家代码、年龄限制）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="253"/>
         <source>Noch keine Spieler im Nationalkader. Stelle ihn unter Kader → Auswahl zusammen.</source>
-        <translation>国家队还没有球员。把它放在阵容→选择下。</translation>
+        <translation>国家队名单中尚无球员。请在“阵容 → 选择”中组建名单。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="276"/>
@@ -4009,7 +4009,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="502"/>
         <source>🔁 Nationalkader durch %1 Spieler aus der Datei ersetzt.</source>
-        <translation>🔁 国家队从文件中替换为%1球员。</translation>
+        <translation>🔁 已用文件中的 %1 名球员替换国家队名单。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="510"/>
@@ -4160,12 +4160,12 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="127"/>
         <source>⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter Einstellungen → Nationalteam (Name, Länder-Code, Altersgrenze).</source>
-        <translation>⚠️ 请先在设置→国家队（姓名、国家代码、年龄限制）下完全配置您的国家队。</translation>
+        <translation>⚠️ 请先在“设置 → 国家队”中完整配置国家队（名称、国家代码、年龄限制）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="135"/>
         <source>Pool: Spieler mit Nationalität &apos;%1&apos;%2. Doppelklick oder Buttons zum Verschieben; Speichern übernimmt die Auswahl in die Datenbank.</source>
-        <translation>池：国籍为%1&apos;%2的球员。双击或使用按钮移动它们；保存将选择存储在数据库中。</translation>
+        <translation>候选池：国籍为“%1”的球员%2。双击或使用按钮移动球员；保存后，所选名单将写入数据库。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="137"/>
@@ -4220,7 +4220,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="100"/>
         <source>z. B. &apos;Advanced Playmaker&apos;</source>
-        <translation>例如“前腰组织核心”</translation>
+        <translation>例如“前场组织核心”</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="103"/>
@@ -4255,7 +4255,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="128"/>
         <source>Positionen ankreuzen, auf denen diese Rolle eingesetzt werden kann.</source>
-        <translation>检查可以使用此角色的位置。</translation>
+        <translation>勾选可使用此角色的位置。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="141"/>
@@ -4265,7 +4265,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="144"/>
         <source>&apos;Schlüssel&apos; (S) erhält den höchsten Multiplikator, &apos;Bevorzugt&apos; (B) einen mittleren. Sind beide angekreuzt, gewinnt &apos;Schlüssel&apos;.</source>
-        <translation>“键”（K）获得最高乘数，“首选”（P）获得中等乘数。如果两者都被选中，“键”获胜。</translation>
+        <translation>“关键”（K）属性获得最高倍率，“首选”（P）属性获得中等倍率。若两项均勾选，以“关键”为准。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="170"/>
@@ -4314,7 +4314,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="322"/>
         <source>Rolle &apos;%1&apos; wurde erstellt und ist jetzt überall verfügbar. Weise sie unter Rollen &amp; Taktiken → Rollen zuweisen Spielern zu.</source>
-        <translation>角色“%1”已创建，现在可以在任何地方使用。在角色和战术→分配角色下将其分配给球员。</translation>
+        <translation>角色“%1”已创建，可在整个应用中使用。请在“角色 &amp; 战术 → 分配角色”中将其分配给球员。</translation>
     </message>
 </context>
 <context>
@@ -4354,12 +4354,12 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="143"/>
         <source>Name</source>
-        <translation>姓名</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="156"/>
         <source>Nur für dich zum Wiedererkennen, z. B. Verein und Startjahr.</source>
-        <translation>只是为了让你认识它，例如俱乐部和起始年。</translation>
+        <translation>便于你识别存档，例如俱乐部名称和开始年份。</translation>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="162"/>
@@ -4424,12 +4424,12 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="321"/>
         <source>Optional. Exporte aus dem FM View Exporter (CSV oder HTML) kannst du ebenfalls hier einlesen.</source>
-        <translation>可选：从FM视图导出器（CSV或HTML）的导出也可以在这里阅读。</translation>
+        <translation>可选。也可在此读取 FM View Exporter 导出的 CSV 或 HTML 文件。</translation>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="324"/>
         <source>Ziehe einen Spieler-Export aus dem Football Manager hierher, zum Beispiel deinen Kader oder eine Scouting-Liste. Weitere Exporte kannst du jederzeit später importieren.</source>
-        <translation>在这里删除Football Manager的球员导出，例如你的球队或球探名单。你可以在以后的任何时候导入更多的导出。</translation>
+        <translation>将 Football Manager 导出的球员文件拖到这里，例如阵容或球探名单。之后随时可以导入更多导出文件。</translation>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="256"/>
@@ -4555,7 +4555,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="415"/>
         <source>2a. Aufstellung mit Ball</source>
-        <translation>2a. 有球阵型</translation>
+        <translation>2a. 持球阵型</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="448"/>
@@ -4565,7 +4565,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="460"/>
         <source>mit Ball</source>
-        <translation>有球</translation>
+        <translation>持球</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="460"/>
@@ -4627,7 +4627,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="405"/>
         <source>Eine Taktik hat zwei Aufstellungen: eine mit Ball und eine ohne Ball, jede mit einem Torhüter und zehn Feldspielern. Die Plätze müssen nicht zusammenpassen; der Analyzer verteilt die Spieler später selbst. Klicke auf ein „+“, um dort eine Rolle aufzustellen, oder auf eine Rolle, um sie zu ändern. Mit einer Vorlage aus dem Spiel bist du schneller.</source>
-        <translation>一种战术有两个阵容：一个控球，一个控球，每个阵容都有一名守门员和十名外场球员。位置不必匹配；分析器稍后会自己分配球员。单击“+”可以在那里放置一个角色，或者单击一个角色来更改它。游戏中的模板使它更快。</translation>
+        <translation>每套战术有两套阵容：持球阵容和无球阵容，每套各有一名门将和十名外场球员。两套阵容的位置无需一一对应；分析器稍后会自动分配球员。点击“+”可添加角色，点击已有角色可修改。使用游戏中的模板可更快完成。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="410"/>
@@ -4657,7 +4657,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="94"/>
         <source>Favoriten und gespeicherte Bridges ziehen mit.</source>
-        <translation>常用设置和已保存的换位方案会随之更新。</translation>
+        <translation>收藏设置和已保存的换位链会随之更新。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="96"/>
@@ -4702,7 +4702,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="115"/>
         <source>Taktiken gehören zum geöffneten Spielstand. Änderungen, Löschungen und Importe bleiben bei Updates erhalten; ein Update ergänzt höchstens neue Beispieltaktiken.</source>
-        <translation>战术属于开放存档。编辑、删除和导入在更新后存活；最多更新添加新的示例战术。</translation>
+        <translation>战术属于当前打开的存档。更新后，修改、删除和导入的内容都会保留；更新最多只会添加新的示例战术。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="161"/>
@@ -4865,7 +4865,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="834"/>
         <source>Diese Rollen gibt es hier schon, mit anderen Gewichten oder Positionen; der Spielstand behält seine eigene Fassung: %1</source>
-        <translation>这些角色已经与其他权重或位置一起存在于此处；存档保留自己的版本：%1</translation>
+        <translation>这些角色已存在，但权重或位置不同；存档将保留现有版本：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="841"/>
@@ -4903,7 +4903,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PageHelpers.h" line="89"/>
         <source>Rolle mit Ball</source>
-        <translation>有球角色</translation>
+        <translation>持球角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PageHelpers.h" line="92"/>
@@ -5079,7 +5079,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="322"/>
         <source>Bis zu 5 Spieler ankreuzen, um sie zu vergleichen (%1 verfügbar).</source>
-        <translation>最多检查5个球员以比较它们（%1可用）。</translation>
+        <translation>勾选最多 5 名球员进行比较（可选 %1 名）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="360"/>
@@ -5106,7 +5106,7 @@ Details: %1</source>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="367"/>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="376"/>
         <source>Bevorzugt</source>
-        <translation>偏好</translation>
+        <translation>首选</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="368"/>
@@ -5162,7 +5162,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="447"/>
         <source>Bevorzugter Fuß</source>
-        <translation>首选脚</translation>
+        <translation>惯用脚</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="448"/>
@@ -5279,12 +5279,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="414"/>
         <source>Noch kein Verlauf. Bei jedem Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen Stand: für deinen Kader, das Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting, auf Wunsch für alle Spieler (Einstellungen → Verlauf und Datenfrische).</source>
-        <translation>还没有历史记录。每次读取FM27保存时，分析器都会在游戏中的每个月保持一个状态：对于你的球队、二队、候选名单、国家队和你球探中的球员，或者对于所有球员（如果你选择的话）（设置→历史和数据新鲜度）。</translation>
+        <translation>尚无历史记录。每次读取 FM27 存档时，分析器会按游戏内月份各保留一份数据快照，涵盖你的阵容、二队、候选名单、国家队名单及球探列表中的球员；也可选择记录所有球员（设置 → 历史和数据时效）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="425"/>
         <source>Dieser Spieler hat noch keine bewerteten Rollen. Weise ihm unter Rollen &amp; Taktiken → Rollen zuweisen Rollen zu.</source>
-        <translation>该球员还没有额定角色。在角色和战术→分配角色下为他分配角色。</translation>
+        <translation>该球员尚无已评分的角色。请在“角色 &amp; 战术 → 分配角色”中为他分配角色。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="707"/>
@@ -5294,17 +5294,17 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="761"/>
         <source>Die Bewertung beruht auf den vorhandenen Attributen (%1 % des Rollengewichts). Es fehlen: %2.</source>
-        <translation>评分基于可用属性（%1角色权重的%）。缺少：%2。</translation>
+        <translation>评分基于已有属性（占角色权重的 %1 %）。缺失属性：%2。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="784"/>
         <source>&lt;b style=&apos;font-size:14pt;&apos;&gt;Talent-Score (U%1): %2&lt;/b&gt;&lt;br/&gt;Bester Rollen-DWRS &lt;b&gt;%3%&lt;/b&gt; + Entwicklungs-Spielraum (%1−%4 Jahre) + Mentalität (Ent %5 / Arb %6) + Persönlichkeit (%7).</source>
-        <translation>&lt;b style=&apos;font-size:14pt;&apos;&gt;天赋评分（U%1）：%2&lt;/b&gt;&lt;br/&gt;最佳角色 DWRS &lt;b&gt;%3%&lt;/b&gt; + 成长空间（%1−%4 年）+ 心态（Det %5 / Wor %6）+ 性格（%7）。</translation>
+        <translation>&lt;b style=&apos;font-size:14pt;&apos;&gt;天赋评分（U%1）：%2&lt;/b&gt;&lt;br/&gt;最佳角色 DWRS &lt;b&gt;%3%&lt;/b&gt; + 成长空间（%1−%4 年）+ 心态（意志力 %5 / 工作投入 %6）+ 性格（%7）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="801"/>
         <source>Analyse als %1</source>
-        <translation>分析为%1</translation>
+        <translation>按 %1 角色分析</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="805"/>
@@ -5346,7 +5346,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="871"/>
         <source>Noch keine historischen DWRS-Daten. Importiere über die Zeit weitere Snapshots, um die Entwicklung zu sehen.</source>
-        <translation>还没有历史DWRS数据。随着时间的推移导入更多快照以查看开发情况。</translation>
+        <translation>尚无 DWRS 历史数据。请陆续导入更多数据快照，以查看球员成长情况。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="881"/>
@@ -5356,7 +5356,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="882"/>
         <source>Profilwechsel (Markierung im Diagramm, keine Entwicklung über den Wechsel): %1</source>
-        <translation>档案切换（图表中已标记，跨切换不计入成长）：%1</translation>
+        <translation>评分方案切换（图表中已标记，切换前后的差异不计入成长）：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1096"/>
@@ -5371,7 +5371,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1114"/>
         <source>Keine trainierbare Rolle aus &lt;i&gt;Positionen ∩ Lieblingstaktik&lt;/i&gt;. Lege in den Einstellungen eine Lieblings-Taktik fest.</source>
-        <translation>&lt;i&gt;位置没有可训练的角色😍最喜欢的战术&lt;/i&gt;。在设置中设置最喜欢的战术。</translation>
+        <translation>&lt;i&gt;球员位置 ∩ 常用战术&lt;/i&gt;中没有可训练的角色。请在设置中指定常用战术。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1123"/>
@@ -5416,7 +5416,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="313"/>
         <source>Nur mit Ball (IP)</source>
-        <translation>仅有球（IP）</translation>
+        <translation>仅持球（IP）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="314"/>
@@ -5432,7 +5432,7 @@ Details: %1</source>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="307"/>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1058"/>
         <source>mit Ball</source>
-        <translation>有球</translation>
+        <translation>持球</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="308"/>
@@ -5566,7 +5566,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="644"/>
         <source>%1 Jahre</source>
-        <translation>%1年</translation>
+        <translation>%1 岁</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="674"/>
@@ -5638,7 +5638,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="185"/>
         <source>Beitrag bei Attributwert %1</source>
-        <translation>属性级别的贡献%1</translation>
+        <translation>属性值为 %1 时的贡献</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="201"/>
@@ -5673,7 +5673,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="257"/>
         <source>Beiträge müssen endlich sein und dürfen nicht fallen. Die Änderung wurde nicht übernommen.</source>
-        <translation>捐款必须是有限的，不得减少。没有应用更改。</translation>
+        <translation>贡献值必须为有限数值，且不能随属性值增加而下降。此次更改未应用。</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="270"/>
@@ -5768,7 +5768,7 @@ Details: %1</source>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="81"/>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="83"/>
         <source>Rollenanteil Torhüter</source>
-        <translation>守门员角色强调</translation>
+        <translation>门将角色权重</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="88"/>
@@ -5777,13 +5777,13 @@ Details: %1</source>
 Der Rollenanteil gibt jedem Schlüssel- und bevorzugten Attribut der Rolle zusätzlich ein eigenes, gleichmäßig steigendes Gewicht (Schlüssel 1,5-fach). Der eingestellte Prozentsatz ist der Anteil dieses Rollenteils an der fertigen Bewertung; 0 bis 100 bleibt die Skala. Bei Torhütern stehen in allen Rollen fast dieselben Attribute. Ihr Rollenanteil zählt deshalb nur die Attribute, in denen sich eine Rolle von den anderen Torhüterrollen derselben Phase unterscheidet (Exzentrik nie). Der Prozentsatz gilt für die Rolle mit den meisten Unterschieden, die anderen bekommen anteilig weniger.
 
 Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser voraus als ohne (Zusammenhang 0,207 statt 0,188) und trennt die Rollen deutlicher. Ohne Haken rechnet das Profil nur mit den Grundkurven.</source>
-        <translation>每个角色的基本曲线都是一样的。关键和首选属性的因素只加强已经有权重的属性。例如，在FM27评分方案中，完成、传球或铲球几乎没有任何基本权重，因此球员的角色几乎没有区别。
+        <translation>同一评分方案的基础曲线对所有角色均相同。关键属性和首选属性的系数只会放大已有权重的属性。例如，FM27 方案中射门、传球和抢断的基础权重很低，因此如果不额外调整，同一球员各角色的评分几乎没有差别。
 
-角色分享给 角色的每一个关键和优先属性都有一个额外的、均匀上升的权重（关键1.5倍）。百分比是该角色部分在完成评分中的份额；等级保持0到100。
+角色权重为该角色的每项关键属性和首选属性额外赋予线性增长的权重（关键属性为 1.5 倍）。设定的百分比表示角色部分在最终评分中的占比；评分范围仍为 0 至 100。
 
-守门员角色列出了几乎相同的属性。因此，他们的角色共享只计算角色与角色不同的属性 相同阶段的其他守门员角色（从不偏心）。百分比适用于差异最大的角色；其他人获得的比例较低。
+各门将角色的属性几乎相同，因此门将角色权重只计算该角色与同阶段其他门将角色不同的属性（始终排除神经指数）。该百分比适用于差异最多的角色，其他角色按比例降低。
 
-在测试中，保存33%的FM27评分方案比没有更好地预测平均评分（相关性0.207而不是0.188），并更清楚地分离角色。 没有刻度，评分方案仅使用基本曲线。</translation>
+在测试存档中，将 FM27 方案的角色权重设为 33 %，比不启用时能更好地预测平均评分（相关性为 0.207，而非 0.188），也能更清楚地区分角色。不勾选时，方案仅使用基础曲线。</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="180"/>
@@ -5840,7 +5840,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="434"/>
         <source>Name oder Kennung bereits vorhanden. Bitte einen anderen Namen verwenden.</source>
-        <translation>姓名或ID已存在。请使用不同的名称。</translation>
+        <translation>名称或 ID 已存在。请使用其他名称。</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="436"/>
@@ -5918,7 +5918,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="65"/>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="67"/>
         <source>Faktor bevorzugte Attribute</source>
-        <translation>偏好属性系数</translation>
+        <translation>首选属性系数</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="73"/>
@@ -5939,7 +5939,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="208"/>
         <source>Antritt</source>
-        <translation>加速</translation>
+        <translation>爆发力</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="209"/>
@@ -5974,7 +5974,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="215"/>
         <source>Strafraumbeherrschung</source>
-        <translation>防守区域指挥</translation>
+        <translation>拦截传中</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="216"/>
@@ -6099,7 +6099,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="240"/>
         <source>Kraft</source>
-        <translation>力量</translation>
+        <translation>强壮</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="241"/>
@@ -6119,7 +6119,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="244"/>
         <source>Abwürfe</source>
-        <translation>界外球</translation>
+        <translation>手抛球</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="245"/>
@@ -6134,12 +6134,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="247"/>
         <source>Kommunikation</source>
-        <translation>沟通</translation>
+        <translation>指挥防守</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="248"/>
         <source>Exzentrik</source>
-        <translation>神经质</translation>
+        <translation>神经指数</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="249"/>
@@ -6169,7 +6169,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="269"/>
         <source>Das Classic-Verfahren rechnet unverändert wie 2.2.3 und hat keinen Rollenanteil.</source>
-        <translation>Classic方法的计算与2.2.3完全相同，并且没有强调角色。</translation>
+        <translation>Classic 方法沿用 2.2.3 版的计算方式，不包含角色权重。</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="290"/>
@@ -6179,7 +6179,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="295"/>
         <source> · Aktiv</source>
-        <translation> ·活跃</translation>
+        <translation> · 已启用</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="296"/>
@@ -6244,7 +6244,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
         <source>Ausbildung</source>
-        <translation>训练状态</translation>
+        <translation>青训资格</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
@@ -6264,7 +6264,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="400"/>
         <source>Champions / Europa / Conference League (Liste A)</source>
-        <translation>冠军/欧罗巴/欧协联（名单A）</translation>
+        <translation>冠军联赛/欧联杯/欧会杯（A 名单）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
@@ -6289,7 +6289,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="133"/>
         <source>Setzt die Häkchen auf den Vorschlag des Assistenten.</source>
-        <translation>设置助手提案的刻度。</translation>
+        <translation>按助手建议勾选球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="135"/>
@@ -6299,7 +6299,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="137"/>
         <source>Speichert die angehakten Spieler als gemeldete Liste dieses Wettbewerbs. Best XI nutzt sie, und spätere Änderungen (Transfers, neue Markierungen) werden sichtbar.</source>
-        <translation>将打勾的球员保存为本次比赛的注册列表。最佳XI使用它，以后的更改（转会，新标记）变得可见。</translation>
+        <translation>将勾选的球员保存为此赛事的注册名单。最佳阵容会使用该名单，之后的变化（转会、新标记）也会显示出来。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="251"/>
@@ -6314,7 +6314,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="271"/>
         <source>Setze das Häkchen bei jedem Spieler, den du im Spiel wirklich gemeldet hast, und speichere die Liste — Best XI rechnet dann mit ihr. Vorbelegt ist die Empfehlung, nach dem Speichern deine Liste. Orange markiert: Häkchen und Empfehlung weichen ab. Sortieren: Klick auf einen Spaltenkopf (Standard: Position, vom Tor zum Sturm, rechts vor links).</source>
-        <translation>勾选您实际在游戏中注册的每个球员并保存列表-最佳XI然后使用它。刻度以推荐开始，保存后它们会显示您的列表。橙色：刻度和推荐不同。排序：单击列标题（默认：位置，守门员到前锋，左前右）。</translation>
+        <translation>勾选你已在游戏中实际注册的球员并保存名单，最佳阵容将据此计算。初始勾选采用推荐名单，保存后则显示你自己的名单。橙色表示勾选结果与建议不同。点击列标题可排序（默认按位置，从门将到前锋，右侧在左侧之前）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="418"/>
@@ -6329,17 +6329,17 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="440"/>
         <source>Für %1 sind noch keine Registrierungsregeln hinterlegt. Die Meldeliste steht für diese Version noch nicht zur Verfügung.</source>
-        <translation>还没有为%1存储注册规则。此版本还没有阵容列表。</translation>
+        <translation>尚未配置 %1 的注册规则，此版本暂不提供注册名单功能。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="447"/>
         <source>Hier stellst du die Meldeliste für Liga und Europapokal zusammen. Schalte dazu zuerst die Registrierungsregeln ein: Einstellungen → Meldeliste.</source>
-        <translation>在这里建立你参加联赛和欧洲比赛的阵容列表。首先打开注册规则：设置→阵容注册。</translation>
+        <translation>在此组建联赛和欧洲俱乐部赛事的注册名单。请先在“设置 → 阵容注册”中启用注册规则。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="477"/>
         <source>Pool: Erste Mannschaft + Zweitteam (%1 Spieler, ohne Retired). Rangfolge aus Startelf, B-Team und Kadertiefe von: %2. Markierungen änderst du per Rechtsklick → Registrierung — der Vorschlag rechnet sofort neu.</source>
-        <translation>人才库：一队+二队（%1球员，退役除外）。从首发XI、B队和阵容深度开始排名：%2。通过右键单击更改标记→注册-提案立即重新计算。</translation>
+        <translation>候选池：一线队 + 二队（%1 名球员，不含已退役球员）。优先顺序依据 %2 的首发阵容、B 队和阵容深度。右键点击 → 注册可修改标记，建议名单会立即重新计算。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="481"/>
@@ -6376,7 +6376,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="628"/>
         <source>Im Spiel gemeldet. &apos;%1&apos; ist ohne Platz spielberechtigt.</source>
-        <translation>在游戏中注册。&apos;%1&apos;符合条件，没有名额。</translation>
+        <translation>已在游戏中注册。“%1”无需占用名额即可参赛。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="630"/>
@@ -6396,7 +6396,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="694"/>
         <source>Ohne Platz auf der Meldeliste spielberechtigt.</source>
-        <translation>有资格在阵容名单上没有位置。</translation>
+        <translation>无需占用注册名单名额即可参赛。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="696"/>
@@ -6421,12 +6421,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="844"/>
         <source>&lt;b&gt;Meldeliste:&lt;/b&gt; %1 / %2</source>
-        <translation>&lt;b&gt;报名名单：&lt;/b&gt; %1 / %2</translation>
+        <translation>&lt;b&gt;注册名单：&lt;/b&gt; %1 / %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="846"/>
         <source>Nicht-HG %1 / %2</source>
-        <translation>非本土 %1 / %2</translation>
+        <translation>非本国青训 %1 / %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="848"/>
@@ -6436,7 +6436,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="849"/>
         <source>Club-Grown %1</source>
-        <translation>俱乐部青训 %1</translation>
+        <translation>本俱乐部青训 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="851"/>
@@ -6456,7 +6456,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="870"/>
         <source>Noch keine Meldeliste gespeichert — die Häkchen entsprechen der Empfehlung.</source>
-        <translation>还没有保存阵容名单——刻度与推荐相符。</translation>
+        <translation>尚未保存注册名单 — 当前勾选采用推荐名单。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="872"/>
@@ -6481,12 +6481,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="907"/>
         <source>Kosten der Registrierung (ohne Regeln → mit Meldeliste):</source>
-        <translation>注册费用（无规则→有阵容名单）：</translation>
+        <translation>注册限制带来的实力损失（不考虑规则 → 按注册名单）：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="913"/>
         <source>Keine Lieblingstaktik gesetzt — Rangfolge aus &apos;%1&apos;. Lege sie unter Einstellungen → Verein fest.</source>
-        <translation>没有最喜欢的战术集-来自“%1”的排名。在设置→俱乐部下设置它们。</translation>
+        <translation>尚未设置常用战术 — 当前按“%1”排序。请在“设置 → 俱乐部”中设置。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="932"/>
@@ -6496,22 +6496,22 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="951"/>
         <source>nur Club-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.</source>
-        <translation>只有俱乐部成长的球员才能接受他们，没有更多的了。</translation>
+        <translation>这些名额仅限本俱乐部青训球员使用，但已无其他符合条件的球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="953"/>
         <source>nur Home-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.</source>
-        <translation>只有本土球员可以带他们，没有更多了。</translation>
+        <translation>这些名额仅限本国青训球员使用，但已无其他符合条件的球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="955"/>
         <source>nur EU-Spieler dürften sie belegen, und es gibt keine weiteren.</source>
-        <translation>只有欧盟球员可以拿走它们，而且没有了。</translation>
+        <translation>这些名额仅限欧盟球员使用，但已无其他符合条件的球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="957"/>
         <source>es gibt keine weiteren Spieler im Pool.</source>
-        <translation>池子里已经没有球员了。</translation>
+        <translation>候选池中已无其他球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="958"/>
@@ -6521,7 +6521,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="978"/>
         <source>U21 unklar (Alter 21 oder unbekannt), zählt vorsichtshalber als nicht U21: %1. Per Rechtsklick → Registrierung festlegen.</source>
-        <translation>U21不清楚（21岁或未知），算作不是U21安全：%1。通过右键设置→注册。</translation>
+        <translation>U21 资格不明确（21 岁或年龄未知），为稳妥起见按非 U21 处理：%1。可通过右键点击 → 注册来指定。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="1193"/>
@@ -6541,7 +6541,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="1206"/>
         <source>Die Empfehlung rechnet das schon ein. Wo Häkchen und Empfehlung auseinanderliegen, ist die Empfehlung in der Tabelle orange markiert.</source>
-        <translation>推荐已经考虑到了这一点。如果刻度和推荐不同，推荐在表中标记为橙色。</translation>
+        <translation>建议名单已考虑这一变化。勾选结果与建议不同时，表格中的建议会标为橙色。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="1208"/>
@@ -6596,12 +6596,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="569"/>
         <source>Nicht-HG-Quote voll</source>
-        <translation>非本土名额已满</translation>
+        <translation>非本国青训名额已满</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="571"/>
         <source>nur noch Club-Grown-Plätze frei</source>
-        <translation>只剩俱乐部青训名额</translation>
+        <translation>只剩本俱乐部青训名额</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="583"/>
@@ -6646,12 +6646,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="921"/>
         <source>Zu viele Nicht-Home-Grown gemeldet: %1 (höchstens %2).</source>
-        <translation>太多非本土球员注册：%1（最多%2）。</translation>
+        <translation>注册的非本国青训球员过多：%1（最多 %2）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="925"/>
         <source>Zu viele Spieler ohne Club-Grown gemeldet: %1 (höchstens %2).</source>
-        <translation>太多不是俱乐部成长的球员注册： %1（最多%2）。</translation>
+        <translation>注册的非本俱乐部青训球员过多：%1（最多 %2）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="960"/>
@@ -6661,12 +6661,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="963"/>
         <source>Nur %1 Torhüter gemeldet (gewünscht: %2).</source>
-        <translation>只有%1守门员注册（通缉：%2）。</translation>
+        <translation>仅注册了 %1 名门将（期望：%2）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="972"/>
         <source>U18 EU unklar (Stichtag 1. Januar je nach Geburtstag und Ingame-Datum, keine EU-Nationalität erkannt oder Alter unbekannt), zählt vorsichtshalber als nicht befreit: %1. Per Rechtsklick → Registrierung festlegen.</source>
-        <translation>U18欧盟不清楚（截止日期为1月1日，取决于生日和游戏日期，不承认欧盟国籍，或年龄未知），算作需要一个名额来确保安全： %1。通过右键单击→注册进行设置。</translation>
+        <translation>U18 欧盟资格不明确（1 月 1 日的年龄取决于生日和游戏内日期、未识别到欧盟国籍，或年龄未知），为稳妥起见按需要名额处理：%1。可通过右键点击 → 注册来指定。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="989"/>
@@ -6676,12 +6676,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="1084"/>
         <source>Die Auswahl verletzt die Registrierungsregeln (siehe Warnungen). Trotzdem speichern?</source>
-        <translation>所选内容会破坏注册规则（请参阅警告）。</translation>
+        <translation>所选名单不符合注册规则（见警告）。仍要保存吗？</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="1102"/>
         <source>Die gespeicherte Meldeliste ist bereits aktuell.</source>
-        <translation>保存的阵容列表已经是最新的。</translation>
+        <translation>已保存的注册名单已是最新状态。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="1115"/>
@@ -6701,7 +6701,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="166"/>
         <source>Spieler mit weniger Gehalt dürfen nicht gemeldet werden. 0 = keins.</source>
-        <translation>赚的少的球员可以不注册，0=无。</translation>
+        <translation>工资低于此金额的球员不能注册。0 = 无最低工资要求。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="168"/>
@@ -6721,7 +6721,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="175"/>
         <source>Zeitraum, auf den sich beide Beträge beziehen — so, wie das Spiel sie anzeigt.</source>
-        <translation>正如游戏所显示的那样，这两个金额都指的是时期。</translation>
+        <translation>两项金额对应的周期，与游戏中的显示方式一致。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="176"/>
@@ -6756,7 +6756,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="412"/>
         <source>%1 hat keine Meldeliste: Bis zu 99 Spieler sind spielberechtigt. Nimm unten den Haken bei Spielern raus, die im Spiel nicht registriert sind.</source>
-        <translation>%1没有阵容名单：最多有99名球员符合条件。取消勾选下面未在游戏中注册的球员。</translation>
+        <translation>%1 无需提交注册名单，最多 99 名球员可参赛。请取消勾选下方未在游戏中注册的球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="573"/>
@@ -6807,17 +6807,17 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="936"/>
         <source>Gemeldet, aber unter dem Mindestgehalt von %1: %2 Spieler.</source>
-        <translation>注册虽然低于%1： %2球员的最低工资。</translation>
+        <translation>已注册但工资低于最低要求 %1 的球员：%2 名。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="947"/>
         <source>das Gehaltsbudget reicht für keinen weiteren Spieler (%1 frei).</source>
-        <translation>工资预算不包括另一个球员（%1左）。</translation>
+        <translation>剩余工资预算不足以再注册一名球员（剩余 %1）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="160"/>
         <source>Höchstsumme der Gehälter aller gemeldeten Spieler, wie die Liga sie vorgibt (z. B. LaLiga). Ändert sich der Betrag im Spiel, hier einfach anpassen. Der Vorschlag meldet zuerst die Spieler mit zugesagter Spielzeit (Star, wichtiger Spieler, Stammspieler, Stammtorhüter) und verteilt den Rest so, dass Startelf, B-Team und Kadertiefe möglichst stark bleiben. 0 = kein Limit.</source>
-        <translation>所有注册球员的最高工资总额，由联盟设定（例如西甲联赛）。如果游戏中的金额发生变化，只需在此处进行调整。该提案首先注册了承诺上场时间的球员（明星、重要球员、常规首发、首选守门员），并花费其余时间，以便首发XI、B队和 深度保持尽可能强。0=无限制。</translation>
+        <translation>联赛（如西甲）规定的所有注册球员工资总额上限。若游戏中的金额变化，请在此调整。建议名单优先注册已承诺出场时间的球员（明星球员、重要球员、常规首发、主力门将），再分配剩余预算，使首发阵容、B 队和阵容深度尽可能强。0 = 无限制。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="740"/>
@@ -6972,12 +6972,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RolePhaseSwitch.cpp" line="53"/>
         <source>Mit Ball</source>
-        <translation>有球</translation>
+        <translation>持球</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RolePhaseSwitch.cpp" line="54"/>
         <source>Rollen mit Ball (IP) zeigen</source>
-        <translation>显示有球角色（IP）</translation>
+        <translation>显示持球角色（IP）</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RolePhaseSwitch.cpp" line="57"/>
@@ -7000,7 +7000,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="29"/>
         <source>Keine. Wähle eine Position, eine Rolle oder beides und füge sie hinzu. Mehrere Anforderungen gelten zusammen; die DWRS-Spanne oben gilt für jede Rolle. Eine Bridge-Suche startest du per Rechtsklick auf einen Platz in Best XI.</source>
-        <translation>无。选择一个位置、一个角色或两者并添加它们。几个要求一起适用；上面的DWRS范围适用于每个角色。通过右键单击最佳XI中的某个位置开始换位链搜索。</translation>
+        <translation>无。选择一个位置、一个角色或两者并添加它们。几个要求一起适用；上面的DWRS范围适用于每个角色。通过右键单击最佳阵容中的某个位置开始换位链搜索。</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="42"/>
@@ -7046,7 +7046,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="144"/>
         <source>Bridge: mit Ball %1 + ohne Ball %2</source>
-        <translation>桥：在拥有%1+不在拥有%2</translation>
+        <translation>换位链：持球 %1 + 无球 %2</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="167"/>
@@ -7102,7 +7102,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="775"/>
         <source>Nur sinnvoll, wenn du Grafikpakete (Spielergesichter, Vereinslogos) für Football Manager installiert hast. Der Analyzer liest die Zuordnungen aus den config.xml-Dateien der Pakete und zeigt Porträts über die Spieler-ID und Wappen über die Vereins-ID. Am Graphics-Ordner wird nichts verändert.</source>
-        <translation>仅当您为Football Manager安装了图形包（球员面孔、俱乐部徽标）时才有用。分析器从包的config.xml文件中读取映射，并按球员ID显示头像，按俱乐部ID显示队徽。图形文件夹中没有任何更改。</translation>
+        <translation>仅当您为Football Manager安装了图形包（球员面孔、俱乐部徽标）时才有用。分析器从包的config.xml文件中读取映射，并按球员ID显示头像，按俱乐部ID显示队徽。graphics 文件夹中没有任何更改。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="782"/>
@@ -7117,7 +7117,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="815"/>
         <source>Graphics-Ordner wählen</source>
-        <translation>选择图形文件夹</translation>
+        <translation>选择 graphics 文件夹</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="823"/>
@@ -7162,7 +7162,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="533"/>
         <source>Aktiviert die Home-Grown-/Club-Grown-/U21-Markierungen (Spieler bearbeiten, Rechtsklick → Registrierung) und den Registrierungs-Assistenten, sobald ein Wettbewerb eine Meldeliste verlangt. &apos;Standard&apos; und Ligen mit 99 Plätzen (Bundesliga, Ligue 1, Österreich) kennen keine Beschränkung: dort sind alle Spieler spielberechtigt. Geprüft werden Kadergröße sowie im Land und im Verein ausgebildete Spieler; Grenzen für Ausländer oder Nicht-EU-Spieler prüft der Analyzer nicht. &apos;Standard&apos; gilt für alle Ligen, deren Regeln noch nicht hinterlegt sind. Wie du weitere Ligen anfragst, steht in der README.</source>
-        <translation>一旦比赛需要阵容列表，启用本土/俱乐部/U21标记（编辑球员，右键单击→注册）和注册助手。“默认”和99个名额的联赛（德甲、法甲、奥地利）没有限制：每个球员都可以在那里比赛。检查了球队规模和球员 在国内和俱乐部接受训练；分析器不会检查外国或非欧盟球员的限制。“默认”适用于尚未存储规则的每个联赛。自述文件中描述了如何申请更多联赛。</translation>
+        <translation>当赛事要求提交注册名单时，启用本国青训/本俱乐部青训/U21 标记（编辑球员或右键点击 → 注册）及注册助手。“默认”和拥有 99 个名额的联赛（德甲、法甲、奥地利）不设此类限制，所有球员均可参赛。检查内容包括阵容人数、本国青训和本俱乐部青训球员；分析器不检查外援或非欧盟球员上限。“默认”适用于尚未配置规则的联赛。如何申请添加其他联赛，请参阅 README。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="331"/>
@@ -7319,7 +7319,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="403"/>
         <source>Dein Verein in diesem Spielstand: Name und Logo für den Kopf des Fensters, das Zweitteam und die Lieblings-Taktiken.</source>
-        <translation>此存档中的俱乐部：窗口标题、二队和常用战术所使用的名称与队徽。</translation>
+        <translation>此存档中的俱乐部设置：窗口顶部显示的名称和队徽、二队，以及常用战术。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="413"/>
@@ -7382,7 +7382,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="450"/>
         <source>Die Lieblings-Taktiken werden auf Übersicht, Aufstellung, Kader und Transfers vorausgewählt. Die primäre bestimmt die Rollen auf der Seite Entwicklung.</source>
-        <translation>最喜欢的战术预选在概览、阵容、阵容和转会上。主要的一个在开发页面上设置角色。</translation>
+        <translation>“概览”“首发阵容”“阵容”和“转会”页面会预选常用战术；主战术决定“成长”页面采用的角色。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="462"/>
@@ -7422,12 +7422,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="488"/>
         <source>Erscheint im Kopf des Fensters, solange du das Nationalteam betreust. Wird sofort übernommen.</source>
-        <translation>在您管理国家队时显示在窗口标题中。立即申请。</translation>
+        <translation>管理国家队时显示在窗口标题栏中，立即生效。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="509"/>
         <source>Regeln, nach denen der Registrierungs-Assistent die Meldeliste prüft. Gehaltsbudget und Mindestgehalt stellst du direkt auf der Seite Meldeliste ein.</source>
-        <translation>规则注册助理检查阵容名单。工资预算和最低工资直接在阵容注册页面上设置。</translation>
+        <translation>注册助手据此检查注册名单。工资预算和最低工资可直接在“阵容注册”页面设置。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="515"/>
@@ -7442,7 +7442,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="530"/>
         <source>Europapokal</source>
-        <translation>欧洲杯</translation>
+        <translation>欧洲俱乐部赛事</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="531"/>
@@ -7521,9 +7521,9 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <source>Ansichten: kopiert die mitgelieferten Ansichten (Kader, Spielerdatenbank, Shortlist) in den Ordner &apos;views&apos; von Football Manager 27. Im Spiel lädst du sie dann über das Ansichten-Menü der Liste. Vorhandene Dateien mit demselben Namen werden ersetzt, andere Ansichten bleiben unberührt.
 
 Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Press · 4-2-3-1 und Counter Surge · 3-4-2-1) als Spieldateien in den Ordner &apos;tactics&apos; von Football Manager 27. Im Spiel lädst du sie dann in der Taktik-Ansicht über das Laden einer Taktik. Im Analyzer sind sie schon eingebaut; eigene Taktiken legst du im Taktik-Editor an oder importierst sie.</source>
-        <translation>视图：将捆绑的视图（阵容、球员数据库、候选名单）复制到Football Manager 27的“视图”文件夹中。在游戏中，您可以从列表的视图菜单中加载它们。具有相同名称的现有文件被替换，其他视图保持不变。
+        <translation>视图：将随附视图（阵容、球员数据库、候选名单）复制到 Football Manager 27 的 &apos;views&apos; 文件夹。在游戏中通过列表的视图菜单加载。同名文件会被替换，其他视图不受影响。
 
-示例战术：复制两个捆绑的示例战术（Control Press·4-2-3-1和 反浪涌·3-4-2-1）作为游戏文件进入Football Manager 27的“战术”文件夹。在游戏中，您可以通过加载战术将它们加载到战术视图中。它们已经内置在分析器中；您可以在战术编辑器中创建自己的战术或导入它们。</translation>
+示例战术：将两套随附示例战术（Control Press · 4-2-3-1 和 Counter Surge · 3-4-2-1）作为游戏文件复制到 Football Manager 27 的 &apos;tactics&apos; 文件夹。在游戏的战术页面加载即可。这两套战术已内置于分析器中；你可以在战术编辑器中创建或导入自己的战术。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="669"/>
@@ -7533,7 +7533,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="670"/>
         <source>Gilt beim Einlesen eines FM27-Spielstands (.fm). Eingeschaltet sind dein Kader, sehr bekannte und gut gescoutete Spieler exakt, alle anderen kommen mit Spannen, die der Analyzer selbst bildet. Ausgeschaltet sind alle Werte exakt. Verdeckte Werte wie das Potenzial liest er nie aus.</source>
-        <translation>当您读取FM27存档（.fm）时适用。打开时，您的阵容、非常著名的球员和球探都是精确的；其他人都有分析器自己设定的范围。关闭时，所有值都是精确的。潜在值等隐藏值永远不会被读取。</translation>
+        <translation>读取 FM27 存档（.fm）时适用。启用后，你的阵容、知名度很高的球员及已充分考察的球员显示精确属性值；其他球员显示由分析器生成的数值范围。关闭后，所有属性值均为精确值。分析器从不读取潜力等隐藏数值。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="676"/>
@@ -7548,7 +7548,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="709"/>
         <source>Was der Analyzer über die Zeit speichert und wann Spieler als veraltet gelten.</source>
-        <translation>分析器随着时间的推移和球员计算过时时保留的内容。</translation>
+        <translation>分析器随时间保留哪些数据，以及何时将球员数据视为过时。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="714"/>
@@ -7578,7 +7578,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="743"/>
         <source>Retired ab Alter (X)</source>
-        <translation>超过此年龄视为退役（X）</translation>
+        <translation>退役判定年龄下限（X）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="759"/>
@@ -7588,12 +7588,12 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="766"/>
         <source>Graphics-Ordner</source>
-        <translation>图形文件夹</translation>
+        <translation>graphics 文件夹</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="767"/>
         <source>Porträts und Wappen aus dem Graphics-Ordner verwenden</source>
-        <translation>使用图形文件夹中的头像和队徽</translation>
+        <translation>使用 graphics 文件夹中的头像和队徽</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="785"/>
@@ -7613,7 +7613,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="801"/>
         <source>Die Exporte enthalten keine Vereins-IDs. Trage die ID deines Vereins ein oder wähle sein Wappen im Logo-Paket aus (die Zahl im Dateinamen, z. B. 1234_club.png, ist die ID). Ein selbst gewähltes Vereinslogo (Seite Verein) hat Vorrang.</source>
-        <translation>导出不包含俱乐部ID。输入您的俱乐部ID或在徽标包中选择其徽标（文件名中的数字，例如1234_club. png是ID）。您自己选择的俱乐部徽标（俱乐部页面）优先。</translation>
+        <translation>导出文件不含俱乐部 ID。请输入你俱乐部的 ID，或在队徽包中选择其队徽（文件名中的数字即为 ID，例如 1234_club.png）。在“俱乐部”页面手动选择的队徽优先。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="832"/>
@@ -7684,7 +7684,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1102"/>
         <source>Aufstellung</source>
-        <translation>阵容</translation>
+        <translation>首发阵容</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1113"/>
@@ -7694,7 +7694,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1114"/>
         <source>Anteil mit Ball (ab FM27)</source>
-        <translation>有球份额（FM27+）</translation>
+        <translation>持球权重（FM27+）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1127"/>
@@ -7749,7 +7749,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1179"/>
         <source>Ein Band fasst Attribute zusammen, die sich gleich entwickeln. Bis „voll trainierbar bis“ wirkt Training voll, danach nimmt die Wirkung linear ab bis „gesperrt ab“; „immer“ heißt nie gesperrt. Das Gewicht verstärkt oder schwächt ein Band in der Empfehlung. Bänder mit „Nur Mentoring“ erscheinen nur als Mentoring-Hinweis. Attribute ohne Band werden nicht empfohlen. Das Profil gehört zu diesem Spielstand.</source>
-        <translation>一个区间对发展相似的属性进行分组。直到“完全可训练直到”训练完全起作用，它的效果会线性下降，直到“锁定”；“始终”意味着从未锁定。权重在推荐中加强或削弱一个区间。标有“仅指导”的区间仅显示为指导说明。 不推荐不带带的属性。训练方案属于此存档。</translation>
+        <translation>区间将成长规律相近的属性归为一组。在“完全可训练至”所设年龄之前，训练效果完整；之后线性下降，直到“锁定起始年龄”。“始终”表示不会锁定。权重用于提高或降低该区间在训练建议中的优先级。标记为“仅指导”的区间只会显示指导提示。不属于任何区间的属性不会被推荐。训练方案属于当前存档。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1193"/>
@@ -7827,7 +7827,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1115"/>
         <source>Ab FM27 hat jede Taktik eine Aufstellung mit Ball und eine ohne Ball. Der Wert eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner Rolle ohne Ball. Standard 50 %.</source>
-        <translation>从FM27开始，每种战术都有一个控球和一个控球。球员的价值是这个角色在有球时的份额加上该角色在有球时的其余部分。默认50%。</translation>
+        <translation>从 FM27 起，每套战术都有持球和无球两套阵容。球员的综合评分按此比例计入持球角色评分，其余比例计入无球角色评分。默认值为 50 %。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1147"/>
@@ -7837,7 +7837,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="744"/>
         <source>Ein Import mit mindestens einem Viertel so vielen Spielern wie der letzte Komplett-Export zählt selbst als Komplett-Export. Kleinere Exporte (Kader, Shortlist, Scouting) aktualisieren nur ihre Spieler. Wer in den letzten Y Komplett-Exporten fehlte, gilt als veraltet und wird in Matrizen, Vorschlägen und Pools ausgeblendet – außer Spielern deines Vereins und der Shortlist. Ist er zusätzlich mindestens X Jahre alt, heißt er Retired.</source>
-        <translation>与上一次完全导出相比，球员数量至少为四分之一的导入算作完全导出本身。较小的导出（阵容、候选名单、球探）只会刷新他们自己的球员。任何在最后一次Y完全导出中缺失的人都被视为陈旧，并且被隐藏在矩阵、建议和池中，除了你的俱乐部和 候选名单。如果他们也至少X岁，则显示为已退役。</translation>
+        <translation>导入文件的球员数若达到上次完整导出的四分之一，即视为完整导出。较小的导出（阵容、候选名单、球探）只更新其中的球员。连续最近 Y 次完整导出都未包含的球员，其数据会被视为过时，并从矩阵、建议和候选池中隐藏，但你俱乐部及候选名单中的球员除外。若其年龄还达到 X 岁，则显示为已退役。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="574"/>
@@ -7897,7 +7897,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1223"/>
         <source>Eine Vorlage setzt eine ruhige Anthrazit-Basis und nur die Vereinsfarben als Akzent (Kopfzeile, Buttons, Interaktion). Farben unten lassen sich danach frei anpassen — das schaltet auf &apos;Benutzerdefiniert&apos;.</source>
-        <translation>预设设置一个平静的无烟煤底座，并且只使用俱乐部颜色作为口音（标题、按钮、交互）。然后可以自由调整下面的颜色-切换到“自定义”。</translation>
+        <translation>预设采用沉稳的炭灰色底色，并用俱乐部颜色点缀标题栏、按钮和交互元素。之后可自由调整下方颜色，调整后会切换为“自定义”。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1236"/>
@@ -7917,7 +7917,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1242"/>
         <source>Wappen zusätzlich als dezente Silhouette zeigen</source>
-        <translation>也将纹章显示为微妙的轮廓</translation>
+        <translation>同时以淡色剪影显示队徽</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1244"/>
@@ -7982,7 +7982,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1322"/>
         <source>Eigene Farbprofile stehen in allen Spielständen zur Wahl und bleiben bei Updates erhalten.</source>
-        <translation>在每个存档和存活更新中都有自己的配色方案。</translation>
+        <translation>自定义配色方案可在所有存档中选用，并在更新后保留。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1324"/>
@@ -7993,7 +7993,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1331"/>
         <source>„Original“ ist der Regenbogen der bisherigen Versionen. „Seltenheit“ färbt in Stufen wie bei Gegenständen in Rollenspielen (Schwach, Gewöhnlich, Gut, Selten, Episch, Legendär). „Farbenblind-freundlich“ bleibt auch bei Rot-Grün-Schwäche unterscheidbar. Änderst du unten eine Farbe oder Grenze, wird daraus „Benutzerdefiniert“; mit „Als eigenes Profil speichern“ bleibt es erhalten. Die Schrift wählt der Analyzer automatisch hell oder dunkel, damit sie auf jeder Farbe gut lesbar bleibt.</source>
-        <translation>“原创”是早期版本的彩虹。“稀有”的颜色分层，如角色扮演游戏中的物品（贫穷、普通、不寻常、稀有、史诗、传奇）。“色盲友好”与红绿色盲保持区别。更改下面的颜色或边框会将其转换为“自定义”；“保存为自己的方案”保留它。这 分析器自动选择浅色或深色文本，因此它在每种颜色上都保持可读。</translation>
+        <translation>“原版”采用早期版本的彩虹配色。“稀有度”像角色扮演游戏中的物品一样分级着色（较差、普通、良好、稀有、史诗、传奇）。“色盲友好”让红绿色觉障碍用户也能区分颜色。修改下方颜色或分界值后会切换为“自定义”；使用“另存为自定义方案”可保留设置。分析器会自动选择浅色或深色文字，确保在各种底色上清晰可读。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1339"/>
@@ -8003,7 +8003,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1340"/>
         <source>Ab welchem Wert eine Farbe gilt, getrennt für Feldspieler und Torhüter.</source>
-        <translation>颜色分别适用于外场球员和守门员。</translation>
+        <translation>设置各颜色的起始分值，外场球员和门将分别设置。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1345"/>
@@ -8067,7 +8067,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1668"/>
         <source>Eine Liga sortiert die Vorlage zu den Vereinen dieser Liga. „Custom“ sammelt Vorlagen ohne Liga. Gleicher Name in derselben Liga überschreibt die Vorlage.</source>
-        <translation>联赛向该联赛的俱乐部提交模板。“自定义”收集没有联赛的模板。同一联赛中的相同名称替换模板。</translation>
+        <translation>选择联赛后，模板会归入该联赛的俱乐部分组。“自定义”收纳未指定联赛的模板。同一联赛下使用相同名称会覆盖原模板。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1693"/>
@@ -8175,7 +8175,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="569"/>
         <source>Bestimmt, wie die Spielerattribute aus dem Export gelesen werden, welche Rollen und Taktiken gelten und wie die Attribute gewichtet werden. Die Version wird beim Anlegen eines Spielstands gewählt und steht fest, sobald er Spieler enthält. Unterstützt werden Football Manager 2024 und 2027.</source>
-        <translation>确定如何从导出中读取球员属性、应用哪些角色和战术以及如何加权属性。创建存档时选择该版本，并在包含球员后立即修复。支持Football Manager2024和2027。</translation>
+        <translation>决定如何读取导出文件中的球员属性、采用哪些角色和战术，以及如何为属性加权。创建存档时选择版本；一旦存档中包含球员，版本就会固定。支持 Football Manager 2024 和 2027。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="661"/>
@@ -8236,7 +8236,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
         <location filename="../src/app/pages/SettingsPage.cpp" line="1559"/>
         <source>Die Flagge konnte nicht entfernt werden.
 %1</source>
-        <translation>无法删除该标志。
+        <translation>无法删除旗帜。
 %1</translation>
     </message>
     <message>
@@ -8321,7 +8321,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="681"/>
         <source>Solange der Analyzer offen ist, liest er diesen Spielstand automatisch neu ein, sobald das Spiel ihn gespeichert hat, auch nach einem Autosave. Er nimmt immer die neueste Datei der Karriere, auch die Versionen „(v02)“, „(v03)“. Wenn du im Spiel unter einem neuen Namen speicherst, wähle die neue Datei hier aus.</source>
-        <translation>当分析器打开时，它会在游戏保存后立即再次自动读取此存档，包括自动保存。它总是获取职业生涯的最新文件，包括版本“（v02）”、“（v03）”。如果您在游戏中以新名称保存，请在此处选择新文件。</translation>
+        <translation>分析器打开期间，每次游戏保存后（包括自动保存）都会自动重新读取此存档。它始终读取该生涯的最新文件，包括“(v02)”“(v03)”版本。若在游戏中以新名称保存，请在此选择新文件。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="693"/>
@@ -8341,7 +8341,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="718"/>
         <source>Beim Einlesen eines FM27-Spielstands speichert der Analyzer pro Ingame-Monat einen Stand der Attribute, der Durchschnittsnote, des Marktwerts und des Gehalts, aber nur, wenn sich etwas geändert hat. Ohne Haken gilt das für deinen Kader, das Zweitteam, die Shortlist, den Nationalkader und Spieler aus deinem Scouting. Mit Haken für alle eingelesenen Spieler; die Datenbank wird dadurch deutlich größer. Die aktuelle und die zwei Saisons davor bleiben monatlich, ältere Saisons werden auf ihren Stand am Saisonende verdichtet.</source>
-        <translation>当读取FM27保存时，分析器会在游戏中每个月保留一个属性、平均评分、价值和工资的状态，但仅限于某些情况发生变化时。未勾选，这适用于您的阵容、二队、候选名单、国家队和球探中的球员。勾选，读取的每个球员；数据库 相当大的增长。当前季节和之前的两个季节保持每月一次；旧季节浓缩为季末状态。</translation>
+        <translation>读取 FM27 存档时，分析器按游戏内月份保存属性、平均评分、身价和工资的数据快照，但仅在数据发生变化时记录。未勾选时，记录范围为你的阵容、二队、候选名单、国家队名单和球探列表中的球员；勾选后则记录所有读入的球员，数据库会明显增大。当前赛季和之前两个赛季保留每月记录，更早赛季则合并为赛季末快照。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="731"/>
@@ -8351,19 +8351,19 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1122"/>
         <source>DWRS-Spielraum für kürzere Wege</source>
-        <translation>较短换位链的 DWRS 容差</translation>
+        <translation>缩短换位距离的 DWRS 容差</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1123"/>
         <source>Maximaler Verlust für die gesamte Elf gegenüber der ursprünglichen Zuordnung. Gilt auch für die gewichtete Auswahlbewertung. 0 erlaubt nur Gleichstand. Innerhalb des Spielraums gelten zuerst manuelle Seitenpräferenzen, dann kurze Wege. Die ausgewählten Spieler bleiben dieselben.</source>
-        <translation>与原始分配相比，整个十一个的最大损失。也适用于加权选择分数。0只允许平局。在允许范围内，手动侧偏好首先出现，然后是短路径。选定的球员保持不变。</translation>
+        <translation>相较原始分配方案，整套首发阵容允许损失的最高评分，也适用于加权选人评分。设为 0 时只允许评分相同的方案。在容差范围内，先满足手动设置的左右侧偏好，再尽量缩短换位距离。入选球员保持不变。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="339"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="994"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="998"/>
         <source>Persönlichkeiten</source>
-        <translation>个性</translation>
+        <translation>性格</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1001"/>
@@ -8472,13 +8472,13 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="145"/>
         <source>Für jede Position werden die besten Spieler des gefilterten Markts testweise in den Kader geholt, und Startelf und B-Team werden jedes Mal neu und beweisbar optimal aufgestellt (wie auf &apos;Erste Mannschaft&apos;). &apos;Startelf +&apos; ist, um wie viel die Summe der DWRS-Werte der Startelf dadurch steigt — mit allen Folgen: Rückt ein vielseitiger Spieler dank des Neuen auf eine bessere Position, zählt das mit (Spalte &apos;Folgen&apos;). Eine Position, die nur schwach aussieht, für die der Markt aber niemand Besseren hergibt, landet deshalb nicht oben. &apos;Besser am Markt&apos; zählt, wie viele Spieler des gefilterten Markts in der Rolle besser sind als dein jetziger. Neuzugänge werden ohne vereinbarte Spielzeit gerechnet; Spieler mit &apos;Not for Sale&apos; bleiben außen vor.</source>
-        <translation>对于每一个位置，过滤市场上最好的球员都被加入到试训阵容中，首发XI和B队再次排队，每次都可以证明是最佳的（就像在“一线队”中一样）。“XI+”是首发XI的总DWRS上升的幅度——伴随着每一个连锁效应：如果一个多才多艺的球员移动到一个更好的位置 多亏了新人，这也很重要（“敲门”一栏）。一个仅仅看起来很弱，但市场没有提供更好的位置，因此最终不会领先。“市场上更好”计算过滤市场上有多少球员比你现在的角色更好。签约是在没有达成一致意见的情况下计算的 游戏时间；“非卖品”球员被排除在外。</translation>
+        <translation>针对每个位置，系统会模拟将筛选后市场上的最佳人选加入阵容，并每次重新求出最优首发阵容和 B 队（与“一线队”页面相同）。“首发 +”表示首发阵容 DWRS 总分的提升，包含所有连带影响：例如新援使多面手得以改踢更合适的位置，这部分提升也计入“连带影响”列。因此，某位置即使看起来薄弱，若市场上没有更好的人选，也不会排在最前。“市场上更好的人选”统计筛选结果中该角色评分高于现有球员的人数。计算新援时不计约定出场时间；标记为“非卖品”的球员不参与计算。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="170"/>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="209"/>
         <source>Slot</source>
-        <translation>名额</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="170"/>
@@ -8530,7 +8530,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="174"/>
         <source>Spieler des gefilterten Markts, die in der Rolle besser sind als dein jetziger — von allen, die die Position spielen können.</source>
-        <translation>过滤市场的球员比你现在的角色更好——在所有能扮演这个角色的人中。</translation>
+        <translation>筛选后的市场中，能够胜任该位置且在该角色上优于现有球员的人选。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="186"/>
@@ -8616,12 +8616,12 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="377"/>
         <source>Gefilterter Markt: %1 Spieler, %2 davon als Neuzugang durchgerechnet.</source>
-        <translation>过滤市场：%1球员，%2他们模拟签约。</translation>
+        <translation>筛选后市场共有 %1 名球员，其中 %2 名已进行签约模拟。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="382"/>
         <source>Mit diesen Filtern gibt der Markt niemanden her, der die Startelf verbessert.</source>
-        <translation>有了这些过滤器，市场上没有人能提高起始XI。</translation>
+        <translation>按当前筛选条件，市场上没有能提升首发阵容的人选。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="388"/>
@@ -8656,7 +8656,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="497"/>
         <source>Für %1 (%2) findet sich am gefilterten Markt niemand, der die Startelf verbessert.</source>
-        <translation>对于%1（%2），过滤后的市场没有人提高起始XI。</translation>
+        <translation>针对 %1（%2），筛选后的市场中没有能提升首发阵容的人选。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="500"/>
@@ -8676,7 +8676,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="579"/>
         <source>%1 auffällige Position(en) gefunden — schlechteste zuerst.</source>
-        <translation>%1发现显著位置-最差的第一个。</translation>
+        <translation>发现 %1 个存在问题的位置 — 按最弱优先排列。</translation>
     </message>
 </context>
 <context>
@@ -8756,7 +8756,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="154"/>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="161"/>
         <source>%1 Jahre</source>
-        <translation>%1年</translation>
+        <translation>%1 岁</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="194"/>
@@ -8776,7 +8776,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="256"/>
         <source>Nur ablösefreie Spieler: Marktwert explizit 0 oder kein Verein gesetzt (unabhängig davon, wie der Verein benannt ist). Marktwert-Limit wird dabei ignoriert; nach Rolle/Talent sortierbar.</source>
-        <translation>仅限自由球员：转让价值明确为0或没有俱乐部集（无论俱乐部如何标记）。价值上限被忽略；可按角色/天赋排序。</translation>
+        <translation>仅显示免转会费球员：身价明确为 0，或未设置俱乐部（不受俱乐部名称影响）。此时忽略身价上限，可按角色或天赋排序。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="247"/>
@@ -8821,7 +8821,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="369"/>
         <source>Hebt Spieler hervor, deren Attribut die Schwelle erreicht, z. B. Decisions für einen AM(C) oder Crossing für Außenverteidiger. Jede Schwelle bekommt eine eigene Spalte, „Schwellen“ zählt die erfüllten. Gerechnet wird mit der Mitte der gescouteten Spanne.</source>
-        <translation>突出显示属性达到阈值的球员，例如AM（C）的决定或边后卫的交叉。每个阈值都有自己的列，“阈值”计算满足的值。使用球探考察范围的中间。</translation>
+        <translation>突出显示属性达到阈值的球员，例如前腰 AM(C) 的决断或边后卫的传中。每项阈值单独显示一列，“阈值”列统计满足的项目数。计算采用球探属性范围的中间值。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="381"/>
@@ -9005,12 +9005,12 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="877"/>
         <source>Nur Jugend (bis %1, TW bis %2)</source>
-        <translation>仅限青年（最高%1，GK最高%2）</translation>
+        <translation>仅青年球员（不超过 %1 岁，门将不超过 %2 岁）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1027"/>
         <source>Spieler von %1 &amp; Zweitteam (%2)</source>
-        <translation>%1和二队（%2）的球员</translation>
+        <translation>来自 %1 &amp; 二队的球员（%2）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1029"/>
@@ -9057,7 +9057,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="710"/>
         <source>Mittel der DWRS in den verlangten Rollen; bei einer Bridge gewichtet mit dem Anteil mit Ball aus den Einstellungen, wie in Best XI.</source>
-        <translation>所需角色中的平均DWRS；对于使用设置中的有球份额加权的网桥，如最佳XI。</translation>
+        <translation>所需角色的 DWRS 平均值；换位链则按设置中的持球权重加权，与最佳阵容的计算方式相同。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="731"/>
@@ -9077,12 +9077,12 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="551"/>
         <source>Daten veraltet: seit %1 Komplett-Exporten nicht mehr gesehen.</source>
-        <translation>数据过时：在最后一次%1完整导出中未见。</translation>
+        <translation>数据已过时：最近 %1 次完整导出均未包含该球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="352"/>
         <source>Talent-Score = bester DWRS der angezeigten Rollen + 2 je Jahr unter der Altersgrenze + (Ent + Arb − 20) / 4 + 3 (gute) / − 5 (schlechte Persönlichkeit). Grobe Entwicklungseinschätzung, kein versteckter Potenzialwert. Attributspannen zählen mit ihrem Mittelwert, unbekannte Attribute neutral mit 10. Vergleiche Spieler mit denselben Rollen und Altersgrenzen.</source>
-        <translation>天赋值=显示角色的最佳DWRS+年龄上限以下每年2+（Det+WR−20）/4+3（好）/−5（坏性格）。粗略的发展估计，而不是隐藏的潜在能力。属性范围使用它们的中点；未知属性在10时是中性的。比较具有相同角色和年龄上限的球员。</translation>
+        <translation>天赋评分 = 所显示角色中的最高 DWRS + 低于年龄上限每年加 2 +（意志力 + 工作投入 − 20）/ 4 + 3（性格良好）/ − 5（性格不佳）。这是粗略的成长估计，并非隐藏潜力值。属性范围取中间值；未知属性按中性值 10 计算。请比较采用相同角色和年龄上限的球员。</translation>
     </message>
 </context>
 <context>
@@ -9270,9 +9270,9 @@ Unter welchem Namen soll der Spielstand übernommen werden?</source>
         <source>„%1“ wirklich löschen?
 
 Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort lässt er sich über „Spielstand-Datei öffnen“ zurückholen.</source>
-        <translation>真的删除“%1”？
+        <translation>确定删除“%1”？
 
-首先在“备份”文件夹中自动创建备份。您可以使用“打开存档文件”将其从那里带回来。</translation>
+系统会先在“backups”文件夹中自动创建备份。之后可通过“打开存档文件”从该文件夹恢复。</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="675"/>
@@ -9328,7 +9328,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/StartScreen.cpp" line="166"/>
         <source>FM24-Daten übernehmen …</source>
-        <translation>接管FM24数据…</translation>
+        <translation>导入 FM24 数据 …</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="167"/>
@@ -9398,7 +9398,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/StartScreen.cpp" line="350"/>
         <source>Ein Spielstand gehört zu einer Karriere im Spiel. Er sammelt deine Importe, Rollen, Taktiken und Einstellungen.</source>
-        <translation>存档属于游戏中的一个职业。它保留您的导入、角色、战术和设置。</translation>
+        <translation>每个存档对应一段游戏执教生涯，保存你的导入数据、角色、战术和设置。</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="358"/>
@@ -9408,7 +9408,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/StartScreen.cpp" line="359"/>
         <source>Export oder FM27-Spielstand (.fm) einlesen</source>
-        <translation>读取导出或FM27存档游戏（.fm）</translation>
+        <translation>读取导出文件或 FM27 存档（.fm）</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="161"/>
@@ -9494,7 +9494,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="144"/>
         <source>Slot</source>
-        <translation>名额</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="144"/>
@@ -9519,7 +9519,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="190"/>
         <source>Noch keine Spieler im Nationalkader. Stelle ihn unter Kader → Auswahl zusammen.</source>
-        <translation>国家队还没有球员。把它放在阵容→选择下。</translation>
+        <translation>国家队名单中尚无球员。请在“阵容 → 选择”中组建名单。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="205"/>
@@ -9549,12 +9549,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="336"/>
         <source>⚠️ &lt;b&gt;In der besten Elf leer geblieben&lt;/b&gt; (Spieler existieren, werden aber woanders gebraucht): %1</source>
-        <translation>⚠️ &lt;b&gt;最好的十一个空的&lt;/b&gt;（球员存在，但其他地方需要）：%1</translation>
+        <translation>⚠️ &lt;b&gt;最佳阵容中仍空缺的位置&lt;/b&gt;（有合适球员，但需要安排到其他位置）：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="340"/>
         <source>&lt;b&gt;Nur eine Option (kein Backup):&lt;/b&gt; %1</source>
-        <translation>&lt;b&gt;只有一个选项（无备份）：&lt;/b&gt; %1</translation>
+        <translation>&lt;b&gt;仅一名合适人选（无替补）：&lt;/b&gt; %1</translation>
     </message>
 </context>
 <context>
@@ -9573,7 +9573,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="679"/>
         <source>mit: %1</source>
-        <translation>有球：%1</translation>
+        <translation>持球：%1</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="679"/>
@@ -9583,7 +9583,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="684"/>
         <source>%1 frei mit Ball</source>
-        <translation>有球阶段 %1 空缺</translation>
+        <translation>持球阶段 %1 空缺</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="685"/>
@@ -9593,7 +9593,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="732"/>
         <source>mit %1 · ohne %2</source>
-        <translation>有球 %1 · 无球 %2</translation>
+        <translation>持球 %1 · 无球 %2</translation>
     </message>
 </context>
 <context>
@@ -9656,7 +9656,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TrainingPlanPage.cpp" line="136"/>
         <source>Rolle wählbar aus &lt;i&gt;Positionen ∩ Taktik&lt;/i&gt; (wird gespeichert). Reihenfolge der Methoden = größter DWRS-Gewinn zuerst; Reha-Methoden werden nicht vorgeschlagen. Spaltenkopf klicken sortiert.</source>
-        <translation>可从&lt;i&gt;位置中选择角色😍tactic&lt;/i&gt;（已保存）。方法顺序=首先获得最大DWRS增益；不建议使用修复方法。单击列标题进行排序。</translation>
+        <translation>可从&lt;i&gt;球员位置 ∩ 战术&lt;/i&gt;中选择训练角色（会保存）。训练方法按 DWRS 提升幅度从大到小排列，不推荐康复训练。点击列标题可排序。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TrainingPlanPage.cpp" line="158"/>
@@ -9721,7 +9721,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="89"/>
         <source>Gesperrt ab</source>
-        <translation>锁定自</translation>
+        <translation>锁定起始年龄</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="90"/>
@@ -9766,7 +9766,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="156"/>
         <source>Ganz nach oben: immer trainierbar</source>
-        <translation>顶级数值：始终可训练</translation>
+        <translation>调至最大值：始终可训练</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="228"/>
@@ -9825,12 +9825,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TransfersPage.cpp" line="58"/>
         <source>Leihen &amp; Verkäufe</source>
-        <translation>租借和出售</translation>
+        <translation>租借 &amp; 出售</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TransfersPage.cpp" line="62"/>
         <source>Verwaltet die überzähligen Spieler für die gewählte Taktik — Spieler, die es weder in die Erste Elf noch in B-, Zweit- oder Jugendteam geschafft haben. Häkchen setzen, optional neuen Verein eintragen, dann speichern.</source>
-        <translation>管理所选战术的剩余球员——既没有进入前11名也没有进入B-、第二名或青年队的球员。勾选方框，可选地进入一个新的俱乐部，然后保存。</translation>
+        <translation>管理所选战术的富余球员，即未进入首发阵容、B 队、二队或青年队的球员。勾选相应选项，可按需填写新俱乐部，然后保存。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TransfersPage.cpp" line="71"/>
@@ -9964,7 +9964,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="208"/>
         <source>Schließt den Assistenten für diesen Spielstand. Du kannst ihn über Hilfe → Willkommens-Assistent wieder öffnen.</source>
-        <translation>关闭此存档的助手。您可以从帮助→欢迎助手中再次打开它。</translation>
+        <translation>关闭此存档的向导。可通过“帮助 → 欢迎向导”重新打开。</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="210"/>
@@ -9985,7 +9985,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="243"/>
         <source>Übersicht, Best XI, Kaufberatung und Trainingsplan rechnen mit diesem Verein. Oben steht der Verein mit den meisten importierten Spielern.</source>
-        <translation>概述，最佳XI，签约建议和训练计划与该俱乐部合作。引进球员最多的俱乐部排在第一位。</translation>
+        <translation>概览、最佳阵容、签约顾问和训练计划均以此俱乐部为对象进行计算。导入球员数据最多的俱乐部会排在最前。</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="254"/>
@@ -10075,7 +10075,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="321"/>
         <source>Das Zweitteam (zum Beispiel die zweite Mannschaft oder U23) zählt zum eigenen Kader, etwa für Leihen und die Jugendelf. Vereinsname, Stadion und Logo erscheinen im Kopf des Fensters. Das Vereins-Land steuert den Inland-Filter beim Scouting und die Ausbildungsregeln der Kaderregistrierung. Der Code ist der dreistellige Nationen-Code aus dem Spiel.</source>
-        <translation>二队（例如预备队或U23）算作你自己球队的一部分，包括租借和青年XI等。俱乐部名称、体育场和标志出现在窗口标题中。俱乐部国家推动国内球探过滤器和俱乐部训练的球队注册规则。代码是三个字母的国家 游戏中的代码。</translation>
+        <translation>二队（如预备队或 U23）视为自身阵容的一部分，用于租借和青年阵容等计算。俱乐部名称、球场和队徽显示在窗口标题栏中。俱乐部国家/地区用于球探的本国筛选和阵容注册的青训资格规则。请填写游戏中的三字母国家代码。</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="346"/>
@@ -10095,27 +10095,27 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="368"/>
         <source>Werden auf Übersicht, Aufstellung, Kader und Transfers vorausgewählt. Die primäre bestimmt die Rollen auf der Seite Entwicklung. Eigene Taktiken legst du unter Taktiken an.</source>
-        <translation>在概览、阵容、阵容和转会中预选。主要的在开发页面上设置角色。您可以在战术下创建自己的战术。</translation>
+        <translation>会在“概览”“首发阵容”“阵容”和“转会”页面预选。主战术决定“成长”页面采用的角色。可在“战术”页面创建自己的战术。</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="378"/>
         <source>Mit Ball und ohne Ball</source>
-        <translation>有球与无球</translation>
+        <translation>持球与无球</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="385"/>
         <source>Anteil mit Ball:</source>
-        <translation>有球份额：</translation>
+        <translation>持球权重：</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="388"/>
         <source>Was bedeutet der Anteil?</source>
-        <translation>份额是什么意思？</translation>
+        <translation>权重是什么意思？</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="389"/>
         <source>Jede Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Wert eines Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner Rolle ohne Ball. Bei 50 % zählen beide gleich, bei mehr zählt der Ballbesitz stärker.</source>
-        <translation>每种战术都有控球和控球阵容。一个球员的价值是他们控球角色的份额加上他们控球角色的其余部分。在50%的情况下，两者都一样；在50%以上，控球更重要。</translation>
+        <translation>每套战术都有持球和无球两套阵容。球员的综合评分按此比例计入持球角色评分，其余比例计入无球角色评分。设为 50 % 时两者权重相同；高于 50 % 时持球阶段的权重更高。</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="404"/>
@@ -10150,7 +10150,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="426"/>
         <source>Sobald ein Wettbewerb eine Meldeliste verlangt, markiert der Analyzer im Land und im Verein ausgebildete Spieler und bietet den Registrierungs-Assistenten an. &apos;Standard&apos; kennt keine Beschränkung, dann sind alle Spieler spielberechtigt.</source>
-        <translation>一旦比赛需要阵容，分析器就会标记在国家和俱乐部训练的球员，并提供注册助理。“默认”没有限制：每个球员都有资格。</translation>
+        <translation>赛事要求提交注册名单时，分析器会标记本国青训和本俱乐部青训球员，并提供注册助手。“默认”不设限制，所有球员均可参赛。</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="451"/>
@@ -10175,7 +10175,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="456"/>
         <source>Die Vorlage färbt Kopfzeile, Knöpfe und Auswahl in den Vereinsfarben. Die Grundfarben bleiben neutral. Feinere Anpassungen findest du unter Einstellungen → Design.</source>
-        <translation>预设以俱乐部颜色为标题、按钮和选项着色。基本颜色保持中性。设置→设计下有更精细的调整。</translation>
+        <translation>预设使用俱乐部颜色为标题栏、按钮和选中项着色，底色保持中性。可在“设置 → 外观”中进一步调整。</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="468"/>
@@ -10190,7 +10190,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="471"/>
         <source>In den Einstellungen findest du außerdem das Nationalteam (schaltet das National-Management frei), Porträts und Wappen aus dem Graphics-Ordner des Spiels und, unter Import, für FM27 das Live-Verfolgen eines Spielstands. Unter DWRS-Gewichte sowie Kader und Analyse passt du an, wie Rollen bewertet und Kader aufgebaut werden.</source>
-        <translation>这些设置还包含国家队（解锁国家管理层）、游戏图形文件夹中的头像和队徽，在导入下，实时跟踪FM27存档。在DWRS权重和阵容和分析下，您可以调整角色的评分和阵容的建立方式。</translation>
+        <translation>设置中还可配置国家队（启用国家队管理）、使用游戏 graphics 文件夹中的头像和队徽，以及在“导入”中实时跟踪 FM27 存档。在“DWRS 权重”和“阵容与分析”中可调整角色评分和阵容组建方式。</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="532"/>
