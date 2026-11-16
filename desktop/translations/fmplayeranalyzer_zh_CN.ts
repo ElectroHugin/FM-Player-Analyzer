@@ -347,7 +347,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/Navigation.cpp" line="56"/>
         <source>Nominierungs-Assistent</source>
-        <translation>征召助理</translation>
+        <translation>征召助手</translation>
     </message>
     <message>
         <location filename="../src/app/Navigation.cpp" line="58"/>
@@ -589,12 +589,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="248"/>
         <source>Zum Verkauf anbieten</source>
-        <translation>出售要约</translation>
+        <translation>挂牌出售</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="258"/>
         <source>Zum Verleih anbieten</source>
-        <translation>租赁要约</translation>
+        <translation>挂牌外租</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="266"/>
@@ -651,7 +651,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/widgets/PlayerTableModel.cpp" line="31"/>
         <source>Retired (%1)</source>
-        <translation>已弃用 (%1)</translation>
+        <translation>已退役（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/PlayerTableModel.cpp" line="33"/>
@@ -679,22 +679,22 @@ Details: %1</source>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="122"/>
         <source>Herausragend: %1 (%2), Schlüssel für %3</source>
-        <translation>精英 %1 (%2)，%3 的关键</translation>
+        <translation>精英 %1（%2），%3 的关键属性</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="125"/>
         <source>Stark: %1 (%2), Schlüssel für %3</source>
-        <translation>强力 %1 (%2)，%3 的钥匙</translation>
+        <translation>强 %1（%2），%3 的关键属性</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="128"/>
         <source>Herausragend: %1 (%2)</source>
-        <translation>Elite %1（%2）</translation>
+        <translation>精英 %1（%2）</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="130"/>
         <source>Stark: %1 (%2)</source>
-        <translation>强%1 (%2)</translation>
+        <translation>强 %1（%2）</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="137"/>
@@ -704,12 +704,12 @@ Details: %1</source>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="141"/>
         <source>Schwach: %1 (%2), Schlüssel für %3</source>
-        <translation>低%1 (%2)，对%3至关重要</translation>
+        <translation>低 %1（%2），%3 的关键属性</translation>
     </message>
     <message>
         <location filename="../src/core/RoleAnalysis.cpp" line="143"/>
         <source>Schwach: %1 (%2)</source>
-        <translation>低%1 (%2)</translation>
+        <translation>低 %1（%2）</translation>
     </message>
 </context>
 <context>
@@ -1047,7 +1047,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/AssignRolesPage.cpp" line="337"/>
         <source>%1 Spieler mit ungespeicherten Änderungen</source>
-        <translation>%1有未保存更改的球员</translation>
+        <translation>%1 名球员有未保存的更改</translation>
     </message>
     <message>
         <location filename="../src/app/pages/AssignRolesPage.cpp" line="357"/>
@@ -1245,7 +1245,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="155"/>
         <source>Ohne Verletzte</source>
-        <translation>无人受伤</translation>
+        <translation>不含伤员</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="155"/>
@@ -1272,7 +1272,7 @@ Details: %1</source>
         <location filename="../src/app/pages/BestXiPage.cpp" line="432"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="440"/>
         <source>Beste Rolle</source>
-        <translation>最佳位置</translation>
+        <translation>最佳角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
@@ -1328,12 +1328,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="558"/>
         <source>Startelf und B-Team werden gemeinsam als Zuordnungsproblem berechnet, mit der Ungarischen Methode (englisch: Hungarian algorithm, Kuhn–Munkres): Spieler werden Positionen eins zu eins so zugeordnet, dass die Summe der Bewertungen maximal ist. Keine andere Aufstellung hat eine stärkere Startelf, und unter allen gleich starken bekommst du das stärkste B-Team — vielseitige Spieler stehen dort, wo ihr Fehlen am wenigsten kostet. Grundlage ist der DWRS je Rolle, gewichtet mit Spielzeit und natürlicher Position; Hauptrollen werden eingehalten.</source>
-        <translation>首发阵容和B队一起作为指派问题使用匈牙利算法（Kuhn–Munkres）进行计算：球员被一对一指派到各个位置，以使评分总和最大化。没有其他阵容拥有更强的首发阵容，而在所有同样强大的阵容中，您将获得最强的B队——多面手 球员在缺席代价最小的位置上出场。基于每个角色的DWRS，按上场时间和本职位置加权；主要角色得到尊重。</translation>
+        <translation>首发阵容和B队一起作为指派问题使用匈牙利算法（Kuhn–Munkres）进行计算：球员被一对一指派到各个位置，以使评分总和最大化。没有其他阵容拥有更强的首发阵容，而在所有同样强大的阵容中，您将获得最强的B队——多面手 球员在缺席代价最小的位置上出场。基于每个角色的DWRS，按上场时间和本位置置加权；主要角色得到尊重。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="586"/>
         <source>%1 (Meldeliste)</source>
-        <translation>%1（球队名单）</translation>
+        <translation>%1（注册名单）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="589"/>
@@ -1380,17 +1380,17 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="329"/>
         <source>Kommt</source>
-        <translation>开播时间</translation>
+        <translation>替补登场</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="330"/>
         <source>Spielt dort</source>
-        <translation>播放时间</translation>
+        <translation>出场位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="331"/>
         <source>Wer übernimmt</source>
-        <translation>谁防守</translation>
+        <translation>谁来顶替</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="332"/>
@@ -1543,7 +1543,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1093"/>
         <source>↔ Platz mit Ball ändern (jetzt %1)</source>
-        <translation>↔ 更改控球位置（现在是 %1）</translation>
+        <translation>↔ 更改有球位置（当前 %1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1094"/>
@@ -1608,13 +1608,13 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="91"/>
         <source>Aus Best XI: Bridge von %1 (mit Ball %2, ohne Ball %3).</source>
-        <translation>来自最佳阵容：%1 的桥接位置（有球 %2，无球 %3）。</translation>
+        <translation>来自最佳阵容：%1 的换位链位置（有球 %2，无球 %3）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="95"/>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="117"/>
         <source>🔍 Bridge im Scouting suchen (mit Ball %1, ohne Ball %2)</source>
-        <translation>🔍 在球探中搜索桥梁（有球时%1，非有球时%2）</translation>
+        <translation>🔍 在球探中搜索换位链（有球时%1，无球时%2）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="111"/>
@@ -1629,7 +1629,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="122"/>
         <source>🔍 Bridge im Scouting suchen – Platz mit Ball wählen</source>
-        <translation>🔍 在球探中搜索桥梁-选择拥有的地方</translation>
+        <translation>🔍 在球探中搜索换位链-选择有球位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="132"/>
@@ -1644,22 +1644,22 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="134"/>
         <source>🔍 Nur mit Ball suchen (%1)</source>
-        <translation>🔍 仅在拥有时搜索（%1）</translation>
+        <translation>🔍 仅搜索有球角色（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="135"/>
         <source>🔍 Nur ohne Ball suchen (%1)</source>
-        <translation>🔍 仅从拥有中搜索（%1）</translation>
+        <translation>🔍 仅搜索无球角色（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="143"/>
         <source>Freier Platz %1</source>
-        <translation>免费场所%1</translation>
+        <translation>空位 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="159"/>
         <source>Fällt ein Spieler der Startelf aus, zeigt die Tabelle den besten geprüften Ersatzplan: Genau ein Spieler kommt dazu, die übrigen dürfen dafür ihre Plätze mit und ohne Ball tauschen. „Wer übernimmt“ nennt, wer die frei gewordenen Plätze besetzt, auch wenn das ein Mitspieler ist, der dafür umrückt. „Volle Bridge“ heißt: Der Neue übernimmt beide Plätze. Von Hand gesetzte Plätze und eine Startelf-Grenze gelten weiter. Weitere Lösungen zeigt der Tooltip.</source>
-        <translation>如果首发球员不可用，表格显示了最佳评估的掩护计划：只有一个球员上场，其他人可以用他们的位置交换控球和控球。“谁覆盖”填补空缺位置的名字，即使那是一个移动的队友。“全桥”意味着新来的球员两个都要 位置。手动设置的位置和起始XI限制仍然适用。工具提示显示了更多选项。</translation>
+        <translation>如果首发球员不可用，表格显示了最佳评估的掩护计划：只有一个球员上场，其他人可以用他们的位置交换控球和控球。“谁覆盖”填补空缺位置的名字，即使那是一个移动的队友。“完整换位链”意味着新来的球员两个都要 位置。手动设置的位置和起始XI限制仍然适用。工具提示显示了更多选项。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="166"/>
@@ -1674,7 +1674,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="279"/>
         <source>Keine volle Elf möglich</source>
-        <translation>没有完整的XI可用</translation>
+        <translation>无法组成完整首发</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="177"/>
@@ -1704,7 +1704,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="203"/>
         <source>%1 (kommt)</source>
-        <translation>%1（来吧）</translation>
+        <translation>%1（替补登场）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="213"/>
@@ -1714,12 +1714,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="236"/>
         <source>— niemand passt —</source>
-        <translation>-没有人适合-</translation>
+        <translation>— 无人合适 —</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="243"/>
         <source>%1: %2, Umstellungen: %3, Elf %4</source>
-        <translation>%1：%2，移动：%3，XI %4</translation>
+        <translation>%1：%2，换位：%3，首发 %4</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="248"/>
@@ -1729,12 +1729,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="290"/>
         <source>Platz bleibt frei</source>
-        <translation>这地方一直空着</translation>
+        <translation>位置空缺</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="256"/>
         <source>%1 (volle Bridge)</source>
-        <translation>%1（全桥）</translation>
+        <translation>%1（完整换位链）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="321"/>
@@ -1960,7 +1960,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="429"/>
         <source>Färben nach:</source>
-        <translation>颜色：</translation>
+        <translation>着色依据：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="439"/>
@@ -2001,7 +2001,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
         <source>Spielzeit</source>
-        <translation>播放时间</translation>
+        <translation>出场时间</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
@@ -2026,7 +2026,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
         <source>darunter</source>
-        <translation>下面</translation>
+        <translation>低于</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
@@ -2036,7 +2036,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
         <source>darüber</source>
-        <translation>以上</translation>
+        <translation>高于</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
@@ -2081,17 +2081,17 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="846"/>
         <source>Elf %1</source>
-        <translation>XI %1</translation>
+        <translation>首发 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="847"/>
         <source>%1 kommt (%2).</source>
-        <translation>%1来了（%2）。</translation>
+        <translation>%1 替补登场（%2）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="849"/>
         <source>%1 rückt um: %2 → %3.</source>
-        <translation>%1动作：%2→%3。</translation>
+        <translation>%1 换位：%2 → %3。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="851"/>
@@ -2118,7 +2118,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="953"/>
         <source>%1 mit Ball ist frei.</source>
-        <translation>%1有球是空的。</translation>
+        <translation>有球阶段 %1 空缺。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="966"/>
@@ -2133,7 +2133,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="978"/>
         <source>%1 ohne Ball ist frei.</source>
-        <translation>%1失去有球是空的。</translation>
+        <translation>无球阶段 %1 空缺。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1003"/>
@@ -2148,7 +2148,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1199"/>
         <source>Upgrade für %1</source>
-        <translation>%1升级</translation>
+        <translation>%1 的升级人选</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1210"/>
@@ -2178,12 +2178,12 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="533"/>
         <source>Max. Alter:</source>
-        <translation>最大限度。年龄：</translation>
+        <translation>最大年龄：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="542"/>
         <source>Max. Marktwert:</source>
-        <translation>最大限度。市值：</translation>
+        <translation>最高身价：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="563"/>
@@ -2229,7 +2229,7 @@ DWRS从任务更改：从XI %3·B-Team %4开始。每队津贴：%5。</translat
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1226"/>
         <source>Verein: %1&lt;br/&gt;Positionen: %2</source>
-        <translation>俱乐部：%1&lt;br/&gt;Positions：%2</translation>
+        <translation>俱乐部：%1&lt;br/&gt;位置：%2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1323"/>
@@ -2262,7 +2262,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1346"/>
         <source>Beim nächsten Mal wieder anzeigen</source>
-        <translation>下次再展示</translation>
+        <translation>下次再显示</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1405"/>
@@ -2323,7 +2323,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/widgets/DropZone.cpp" line="48"/>
         <source>Export hierher ziehen</source>
-        <translation>在这里放置一个导出</translation>
+        <translation>将导出文件拖到这里</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DropZone.cpp" line="50"/>
@@ -2361,12 +2361,12 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="74"/>
         <source>Stufe hinzufügen</source>
-        <translation>添加波段</translation>
+        <translation>添加区间</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="75"/>
         <source>Oberste Stufe entfernen</source>
-        <translation>去掉顶部表带</translation>
+        <translation>移除最高区间</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="95"/>
@@ -2386,7 +2386,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="129"/>
         <source>Benutzerdefiniert</source>
-        <translation>定制</translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="146"/>
@@ -2414,7 +2414,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="157"/>
         <source>Farbe Stufe %1</source>
-        <translation>色带%1</translation>
+        <translation>颜色区间 %1</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/DwrsColorSchemeEditor.cpp" line="164"/>
@@ -2433,7 +2433,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="171"/>
         <source>DWRS-Entwicklung</source>
-        <translation>DWRS开发</translation>
+        <translation>DWRS 成长</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="174"/>
@@ -2458,7 +2458,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="223"/>
         <source>Letzte %1</source>
-        <translation>最后%1</translation>
+        <translation>最近 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="224"/>
@@ -2489,7 +2489,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="241"/>
         <source>Auf welche Rolle sich Werte und Δ beziehen</source>
-        <translation>值和Δ所指的作用</translation>
+        <translation>数值和 Δ 所对应的角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="247"/>
@@ -2509,7 +2509,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="319"/>
         <source>Zurück zum Kader-Trend</source>
-        <translation>回到队伍趋势</translation>
+        <translation>返回球队趋势</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="328"/>
@@ -2519,12 +2519,12 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="459"/>
         <source>Rolle in der Best XI</source>
-        <translation>最佳XI中的角色</translation>
+        <translation>最佳阵容中的角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="460"/>
         <source>Rolle in der Best XI (%1)</source>
-        <translation>最佳XI中的角色（%1）</translation>
+        <translation>最佳阵容中的角色（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="463"/>
@@ -2539,7 +2539,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="521"/>
         <source>Noch kein Nationalkader gespeichert.</source>
-        <translation>还没有国家队得救。</translation>
+        <translation>尚未保存国家队名单。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="522"/>
@@ -2564,13 +2564,13 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="580"/>
         <source>Δ letzte %1</source>
-        <translation>Δ最后%1</translation>
+        <translation>Δ 最近 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="580"/>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="581"/>
         <source>Δ gesamt</source>
-        <translation>Δ总计</translation>
+        <translation>Δ 总计</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="581"/>
@@ -2645,12 +2645,12 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="679"/>
         <source>Ø Veränderung in den letzten %1 Uploads</source>
-        <translation>Ø更改上次%1上传</translation>
+        <translation>Ø 最近 %1 次上传的变化</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="680"/>
         <source>Ø Veränderung seit dem ersten Datenstand</source>
-        <translation>Ø自第一个快照以来的变化</translation>
+        <translation>Ø 自第一个快照以来的变化</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="684"/>
@@ -2665,32 +2665,32 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="689"/>
         <source>Größter Sprung</source>
-        <translation>最大的跳跃</translation>
+        <translation>最大进步</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="691"/>
         <source>Größter Rückgang</source>
-        <translation>最大的落差</translation>
+        <translation>最大退步</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="709"/>
         <source>Größter Sprung: %1</source>
-        <translation>最大的跳跃：%1</translation>
+        <translation>最大进步：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="713"/>
         <source>Größter Sprung: niemand hat zugelegt</source>
-        <translation>最大的飞跃：没有人改进</translation>
+        <translation>最大进步：无人进步</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="717"/>
         <source>Größter Rückgang: %1</source>
-        <translation>最大跌幅：%1</translation>
+        <translation>最大退步：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="721"/>
         <source>Größter Rückgang: niemand hat abgebaut</source>
-        <translation>最大跌幅：没有人拒绝</translation>
+        <translation>最大退步：无人退步</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="753"/>
@@ -2710,17 +2710,17 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="792"/>
         <source>Ø alle gezeigten (%1)</source>
-        <translation>Ø全部显示（%1）</translation>
+        <translation>Ø 全部显示（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="794"/>
         <source>Ø Jugend (%1)</source>
-        <translation>Ø青春（%1）</translation>
+        <translation>Ø 青年（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="795"/>
         <source>Ø Etablierte (%1)</source>
-        <translation>Ø成立（%1）</translation>
+        <translation>Ø 成熟球员（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="797"/>
@@ -2745,12 +2745,12 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="864"/>
         <source>Vergleich in der jeweiligen Best-XI-Rolle</source>
-        <translation>每个球员最佳XI角色的比较</translation>
+        <translation>按各球员在最佳阵容中的角色比较</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="865"/>
         <source>Vergleich in der jeweils besten Rolle</source>
-        <translation>比较，每个人都在他最好的角色</translation>
+        <translation>比较，各自按最佳角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="869"/>
@@ -2815,7 +2815,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="92"/>
         <source>Spielzeit (Agreed Playing Time):</source>
-        <translation>播放时间（约定播放时间）：</translation>
+        <translation>出场时间（约定出场时间）：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="100"/>
@@ -2885,12 +2885,12 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="158"/>
         <source>Taktisches Profil</source>
-        <translation>战术剖面</translation>
+        <translation>战术档案</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="161"/>
         <source>Natürliche Positionen:</source>
-        <translation>自然职位：</translation>
+        <translation>自然位置：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="169"/>
@@ -2922,7 +2922,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="198"/>
         <source>Bevorzugte Seite:</source>
-        <translation>首选面：</translation>
+        <translation>首选边路：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="207"/>
@@ -2932,7 +2932,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="245"/>
         <source>— Spieler auswählen —</source>
-        <translation>-选择球员-</translation>
+        <translation>— 选择球员 —</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="303"/>
@@ -2949,7 +2949,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="333"/>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="355"/>
         <source>Automatisch (nein)</source>
-        <translation>自动（无）</translation>
+        <translation>自动（否）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="334"/>
@@ -2995,7 +2995,7 @@ Mögliche Ursachen: keine &apos;UID&apos;-Spalte oder kein gültiger Football-Ma
     <message>
         <location filename="../src/app/FirstRunDialog.cpp" line="19"/>
         <source>%1 — Ersteinrichtung</source>
-        <translation>%1-初始设置</translation>
+        <translation>%1 — 初始设置</translation>
     </message>
     <message>
         <location filename="../src/app/FirstRunDialog.cpp" line="25"/>
@@ -3019,7 +3019,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/FirstRunDialog.cpp" line="48"/>
         <source>Loslegen</source>
-        <translation>开始行动</translation>
+        <translation>开始</translation>
     </message>
     <message>
         <location filename="../src/app/FirstRunDialog.cpp" line="49"/>
@@ -3047,7 +3047,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="31"/>
         <source>Ziemlich stark</source>
-        <translation>相当强壮</translation>
+        <translation>较强</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="32"/>
@@ -3100,7 +3100,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/widgets/Charts.cpp" line="282"/>
         <source>Ingame-Datum</source>
-        <translation>游戏内约会</translation>
+        <translation>游戏内日期</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/Charts.cpp" line="392"/>
@@ -3161,7 +3161,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="502"/>
         <source>v%1 · ElectroHugin</source>
-        <translation>v%1·电湖金</translation>
+        <translation>v%1 · ElectroHugin</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="503"/>
@@ -3248,7 +3248,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="384"/>
         <source>Bisheriges behalten</source>
-        <translation>保留以前的</translation>
+        <translation>保留原方案</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="393"/>
@@ -3280,7 +3280,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
         <location filename="../src/app/MainWindow.cpp" line="492"/>
         <location filename="../src/app/MainWindow.cpp" line="1099"/>
         <source>Tag/Nacht wechseln</source>
-        <translation>切换白天/晚上</translation>
+        <translation>切换白天/夜间</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="570"/>
@@ -3319,12 +3319,12 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="1070"/>
         <source>Seiten</source>
-        <translation>页数</translation>
+        <translation>页面</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="1090"/>
         <source>Aktionen</source>
-        <translation>行动</translation>
+        <translation>操作</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="1093"/>
@@ -3354,7 +3354,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="1134"/>
         <source>%1 Spieler</source>
-        <translation>%1球员</translation>
+        <translation>%1 名球员</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="1146"/>
@@ -3384,7 +3384,7 @@ Du kannst den Ordner später in den Einstellungen ändern.</source>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="607"/>
         <source>Willkommens-Assistent …</source>
-        <translation>欢迎助手…</translation>
+        <translation>欢迎向导…</translation>
     </message>
 </context>
 <context>
@@ -3404,7 +3404,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="44"/>
         <source>Pfad zur alten .db-Datei…</source>
-        <translation>旧. db文件的路径…</translation>
+        <translation>旧 .db 文件的路径…</translation>
     </message>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="45"/>
@@ -3414,7 +3414,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="48"/>
         <source>Legacy-Datenbank:</source>
-        <translation>遗留数据库：</translation>
+        <translation>旧数据库：</translation>
     </message>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="51"/>
@@ -3444,7 +3444,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="89"/>
         <source>Legacy-Datenbank wählen</source>
-        <translation>选择遗留数据库</translation>
+        <translation>选择旧数据库</translation>
     </message>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="90"/>
@@ -3454,7 +3454,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="103"/>
         <source>Bitte eine vorhandene .db-Datei wählen.</source>
-        <translation>请选择现有的. db文件。</translation>
+        <translation>请选择现有的 .db 文件。</translation>
     </message>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="107"/>
@@ -3570,7 +3570,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="63"/>
         <source>Nominierungs-Assistent</source>
-        <translation>征召助理</translation>
+        <translation>征召助手</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="71"/>
@@ -3580,7 +3580,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="73"/>
         <source>Gespeicherten Nationalkader verwenden</source>
-        <translation>使用保存的国家队</translation>
+        <translation>使用已保存的国家队名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="80"/>
@@ -3610,38 +3610,38 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="118"/>
         <source>3. Verletzt / nicht verfügbar (für diesen Durchlauf)</source>
-        <translation>3.受伤/不可用（本次跑步）</translation>
+        <translation>3. 受伤/不可用（仅本次）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="122"/>
         <source>Pool nach Name durchsuchen…</source>
-        <translation>按名称搜索池…</translation>
+        <translation>按姓名搜索候选池…</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="143"/>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="322"/>
         <source>%1 Spieler als nicht verfügbar markiert.</source>
-        <translation>%1球员标记为不可用。</translation>
+        <translation>%1 名球员标记为不可用。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="150"/>
         <source>Nominierung berechnen</source>
-        <translation>计算调用</translation>
+        <translation>计算征召名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="166"/>
         <source>✅ Einladen</source>
-        <translation>✅ 叫起来</translation>
+        <translation>✅ 征召</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="172"/>
         <source>❌ Ausladen</source>
-        <translation>❌ 滴</translation>
+        <translation>❌ 落选</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="183"/>
         <source>Empfohlenen Kader übernehmen</source>
-        <translation>申请推荐阵容</translation>
+        <translation>采用推荐名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="206"/>
@@ -3666,7 +3666,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="261"/>
         <source>Hochgeladener Kader: %1 Spieler.</source>
-        <translation>上传阵容：%1球员。</translation>
+        <translation>已上传名单：%1 名球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="262"/>
@@ -3676,7 +3676,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="265"/>
         <source>Gespeicherter Nationalkader: %1 Spieler.</source>
-        <translation>得救国家队：%1球员。</translation>
+        <translation>已保存的国家队名单：%1 名球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="329"/>
@@ -3701,7 +3701,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="338"/>
         <source>Kader-Datei konnte nicht gelesen werden: %1</source>
-        <translation>无法读取Squad文件：%1</translation>
+        <translation>无法读取名单文件：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="74"/>
@@ -3756,12 +3756,12 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="446"/>
         <source>Kein berechtigter, verfügbarer Spieler im Pool. Prüfe Nationalität/Altersgrenze und die Verletzten-Markierungen.</source>
-        <translation>泳池中没有符合条件的可用球员。检查国籍/年龄限制和受伤标记。</translation>
+        <translation>候选池中没有符合条件的可用球员。检查国籍/年龄限制和受伤标记。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="467"/>
         <source>(nur %1 Torhüter im Pool verfügbar)</source>
-        <translation>（泳池内只有%1守门员）</translation>
+        <translation>（候选池内只有%1守门员）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="470"/>
@@ -3836,7 +3836,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalCallupPage.cpp" line="553"/>
         <source>%1 Spieler im Nationalkader gespeichert.</source>
-        <translation>%1球员被保存在国家队。</translation>
+        <translation>%1 名球员已保存到国家队名单。</translation>
     </message>
 </context>
 <context>
@@ -3894,7 +3894,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="135"/>
         <source>Spieler im Kader</source>
-        <translation>队里的球员</translation>
+        <translation>名单中的球员</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="136"/>
@@ -3944,7 +3944,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="180"/>
         <source>Max. Alter:</source>
-        <translation>最大限度。年龄：</translation>
+        <translation>最大年龄：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="206"/>
@@ -3965,7 +3965,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="276"/>
         <source>Aktueller %1-Kader</source>
-        <translation>目前%1阵容</translation>
+        <translation>当前 %1 名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="407"/>
@@ -3975,7 +3975,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="426"/>
         <source>Upgrade für &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation>升级&lt;b&gt;%1&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; 的升级人选</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="433"/>
@@ -3985,7 +3985,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="441"/>
         <source>Verein: %1&lt;br/&gt;Positionen: %2</source>
-        <translation>俱乐部：%1&lt;br/&gt;Positions：%2</translation>
+        <translation>俱乐部：%1&lt;br/&gt;位置：%2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="483"/>
@@ -4042,12 +4042,12 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="52"/>
         <source>Extra-Details (Fuß, Größe)</source>
-        <translation>额外细节（英尺、高度）</translation>
+        <translation>更多信息（惯用脚、身高）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="53"/>
         <source>Retired/veraltete ausblenden</source>
-        <translation>隐藏已退役/陈旧</translation>
+        <translation>隐藏已退役/过时</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="55"/>
@@ -4062,7 +4062,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="68"/>
         <source>Berechtigter Pool (nicht nominiert)</source>
-        <translation>合格池（未调用）</translation>
+        <translation>合格候选池（未征召）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="88"/>
@@ -4122,7 +4122,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="242"/>
         <source>Berechtigter Pool — nicht nominiert (%1)</source>
-        <translation>合格池-未调用（%1）</translation>
+        <translation>合格候选池 — 未征召（%1）</translation>
     </message>
 </context>
 <context>
@@ -4155,7 +4155,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="92"/>
         <source>Nationalkader speichern</source>
-        <translation>拯救国家队</translation>
+        <translation>保存国家队名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="127"/>
@@ -4175,12 +4175,12 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="170"/>
         <source>Aktueller Kader (%1 Spieler)%2</source>
-        <translation>当前阵容（%1球员）%2</translation>
+        <translation>当前名单（%1 名球员）%2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="172"/>
         <source> — ungespeichert</source>
-        <translation> 未保存</translation>
+        <translation> — 未保存</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="203"/>
@@ -4191,7 +4191,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="208"/>
         <source>%1 Spieler im Nationalkader gespeichert.</source>
-        <translation>%1球员被保存在国家队。</translation>
+        <translation>%1 名球员已保存到国家队名单。</translation>
     </message>
 </context>
 <context>
@@ -4220,7 +4220,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="100"/>
         <source>z. B. &apos;Advanced Playmaker&apos;</source>
-        <translation>例如“高级球员”</translation>
+        <translation>例如“前腰组织核心”</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="103"/>
@@ -4250,7 +4250,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="125"/>
         <source>2. Positions-Zuordnung</source>
-        <translation>2.职位分配</translation>
+        <translation>2. 位置分配</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="128"/>
@@ -4260,7 +4260,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="141"/>
         <source>3. Schlüssel- und bevorzugte Attribute</source>
-        <translation>3.关键和首选属性</translation>
+        <translation>3. 关键属性和首选属性</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="144"/>
@@ -4299,7 +4299,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="245"/>
         <source>Bitte gib einen Rollennamen an und wähle mindestens eine Position.</source>
-        <translation>请输入角色名称并选择至少一个职位。</translation>
+        <translation>请输入角色名称并选择至少一个位置。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="252"/>
@@ -4364,7 +4364,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="162"/>
         <source>Football-Manager-Version</source>
-        <translation>Football Manager版</translation>
+        <translation>Football Manager 版本</translation>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="185"/>
@@ -4465,7 +4465,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="147"/>
         <source>z. B. Mein Verein 2027</source>
-        <translation>例如我的俱乐部2027</translation>
+        <translation>例如 我的俱乐部 2027</translation>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="213"/>
@@ -4490,7 +4490,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="596"/>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="597"/>
         <source>Neue Taktik erstellen</source>
-        <translation>创造新战术</translation>
+        <translation>创建新战术</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="129"/>
@@ -4500,12 +4500,12 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="131"/>
         <source>Formations-Name:</source>
-        <translation>单位名称：</translation>
+        <translation>阵型名称：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="133"/>
         <source>z. B. &apos;Mein Gegenpressing&apos;</source>
-        <translation>例如“我的Gegenpress”</translation>
+        <translation>例如“我的高位逼抢”</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="136"/>
@@ -4515,7 +4515,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="182"/>
         <source>Vorlage aus dem Spiel:</source>
-        <translation>游戏模板：</translation>
+        <translation>游戏中的模板：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="186"/>
@@ -4530,22 +4530,22 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="413"/>
         <source>2b. Aufstellung ohne Ball</source>
-        <translation>2b出队</translation>
+        <translation>2b. 无球阵型</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="414"/>
         <source>2. Formation gestalten</source>
-        <translation>2.设计形成</translation>
+        <translation>2. 设计阵型</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="304"/>
         <source>— Unbesetzt —</source>
-        <translation>-未填充-</translation>
+        <translation>— 未填 —</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="452"/>
         <source>&lt;b&gt;Vollständiger Taktik-Name:&lt;/b&gt; &lt;code&gt;%1&lt;/code&gt;</source>
-        <translation>&lt;b&gt;全战术名称：&lt;/b&gt;&lt;code&gt;%1&lt;/code&gt;</translation>
+        <translation>&lt;b&gt;战术全名：&lt;/b&gt;&lt;code&gt;%1&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="447"/>
@@ -4555,7 +4555,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="415"/>
         <source>2a. Aufstellung mit Ball</source>
-        <translation>2a.有球的排队</translation>
+        <translation>2a. 有球阵型</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="448"/>
@@ -4570,7 +4570,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="460"/>
         <source>ohne Ball</source>
-        <translation>失去所有权</translation>
+        <translation>无球</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="470"/>
@@ -4622,7 +4622,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="251"/>
         <source>✕ Platz leeren</source>
-        <translation>清除地方</translation>
+        <translation>✕ 清空位置</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="405"/>
@@ -4657,7 +4657,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="94"/>
         <source>Favoriten und gespeicherte Bridges ziehen mit.</source>
-        <translation>宠儿和保存的桥梁紧随其后。</translation>
+        <translation>常用设置和已保存的换位方案会随之更新。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="96"/>
@@ -4763,7 +4763,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="702"/>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="712"/>
         <source>Taktik duplizieren</source>
-        <translation>重复战术</translation>
+        <translation>复制战术</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="695"/>
@@ -4794,7 +4794,7 @@ Die Originaldatei wird dabei nicht verändert.</source>
 Ist sie ein Favorit, wird der Favorit zurückgesetzt; gespeicherte Bridges dieser Taktik werden entfernt. Updates stellen sie nicht wieder her. Wer sie später braucht, exportiert sie vorher.</source>
         <translation>从此存档中删除战术“%1”？
 
-如果它是收藏夹，则重置收藏夹；此战术的已保存桥梁将被删除。更新不会恢复它。如果您以后可能需要它，请先导出它。</translation>
+如果它是收藏夹，则重置收藏夹；此战术的已保存换位链将被删除。更新不会恢复它。如果您以后可能需要它，请先导出它。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="758"/>
@@ -4885,7 +4885,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="850"/>
         <source>Name der importierten Taktik:</source>
-        <translation>引进战术名称：</translation>
+        <translation>导入战术的名称：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="868"/>
@@ -4903,12 +4903,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PageHelpers.h" line="89"/>
         <source>Rolle mit Ball</source>
-        <translation>有球作用</translation>
+        <translation>有球角色</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PageHelpers.h" line="92"/>
         <source>Rolle ohne Ball</source>
-        <translation>角色脱离有球</translation>
+        <translation>无球角色</translation>
     </message>
 </context>
 <context>
@@ -4921,7 +4921,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="30"/>
         <source>🟢 Gut</source>
-        <translation>🟢 好。</translation>
+        <translation>🟢 良好</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="31"/>
@@ -4942,7 +4942,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="72"/>
         <source>Bestimmte (%1)</source>
-        <translation>特定（%1）</translation>
+        <translation>指定（%1）</translation>
     </message>
 </context>
 <context>
@@ -4994,22 +4994,22 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="57"/>
         <source>Paraden</source>
-        <translation>射击停止</translation>
+        <translation>扑救</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="60"/>
         <source>Luftkontrolle</source>
-        <translation>空中控制</translation>
+        <translation>制空</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="63"/>
         <source>Abschlag/Abwurf</source>
-        <translation>分布</translation>
+        <translation>出球</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="66"/>
         <source>Mitspielen</source>
-        <translation>扫地</translation>
+        <translation>清道夫</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="106"/>
@@ -5049,12 +5049,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="129"/>
         <source>Bis zu 5 Spieler ankreuzen, um sie zu vergleichen.</source>
-        <translation>最多检查5名球员进行比较。</translation>
+        <translation>勾选最多 5 名球员进行比较。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="140"/>
         <source>Spielbereiche</source>
-        <translation>游戏区域</translation>
+        <translation>活动区域</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="146"/>
@@ -5084,7 +5084,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="360"/>
         <source>Höchste Prio</source>
-        <translation>最高Prio</translation>
+        <translation>最高优先级</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="362"/>
@@ -5094,7 +5094,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="364"/>
         <source>Mittlere Prio</source>
-        <translation>中号Prio</translation>
+        <translation>中优先级</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="366"/>
@@ -5111,7 +5111,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="368"/>
         <source>Torwart Meta-Attribut-Profil</source>
-        <translation>门将元属性简介</translation>
+        <translation>门将属性元档案</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="370"/>
@@ -5131,7 +5131,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="377"/>
         <source>Feldspieler Meta-Attribut-Profil</source>
-        <translation>非门将属性元档案</translation>
+        <translation>外场球员属性元档案</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="442"/>
@@ -5177,7 +5177,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="450"/>
         <source>Spielzeit</source>
-        <translation>播放时间</translation>
+        <translation>出场时间</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="451"/>
@@ -5187,7 +5187,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="456"/>
         <source>+%1 weitere</source>
-        <translation>+%1更多</translation>
+        <translation>另有 %1 个</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="460"/>
@@ -5229,12 +5229,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="332"/>
         <source>🌱 Talent-Projektion</source>
-        <translation>🌱 人才投射</translation>
+        <translation>🌱 天赋预测</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="339"/>
         <source>🎯 Trainingsempfehlung</source>
-        <translation>🎯 训练推荐</translation>
+        <translation>🎯 训练建议</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="342"/>
@@ -5249,7 +5249,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="388"/>
         <source>DWRS-Entwicklung</source>
-        <translation>DWRS开发</translation>
+        <translation>DWRS 成长</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="393"/>
@@ -5386,7 +5386,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1135"/>
         <source>mental, lebenslang trainierbar</source>
-        <translation>精神上的，可训练的终身的</translation>
+        <translation>精神属性，终身可训练</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1137"/>
@@ -5396,7 +5396,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1139"/>
         <source>noch voll trainierbar</source>
-        <translation>仍然完全可以训练</translation>
+        <translation>仍可完全训练</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1147"/>
@@ -5406,7 +5406,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="285"/>
         <source>Rollen (beste zuerst)</source>
-        <translation>角色（最佳优先）</translation>
+        <translation>角色（最佳在前）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="312"/>
@@ -5426,7 +5426,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="315"/>
         <source>Welche Rollen als Kacheln gezeigt werden.</source>
-        <translation>哪些角色显示为磁贴。</translation>
+        <translation>哪些角色以卡片显示。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="307"/>
@@ -5438,12 +5438,12 @@ Details: %1</source>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="308"/>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1056"/>
         <source>ohne Ball</source>
-        <translation>失去所有权</translation>
+        <translation>无球</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1051"/>
         <source>Rahmen = Rolle in „%1“:</source>
-        <translation>大纲=“%1”中的角色：</translation>
+        <translation>描边 = “%1”中的角色：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="138"/>
@@ -5488,7 +5488,7 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="406"/>
         <source>Ingame-Datum</source>
-        <translation>游戏内约会</translation>
+        <translation>游戏内日期</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="199"/>
@@ -5511,17 +5511,17 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
         <source>Veränderte Attribute</source>
-        <translation>更改属性</translation>
+        <translation>变化的属性</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="961"/>
         <source>Saison %1 (Ende)</source>
-        <translation>季节%1（结束）</translation>
+        <translation>赛季 %1（结束）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="984"/>
         <source>erster Stand</source>
-        <translation>第一状态</translation>
+        <translation>初始状态</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="112"/>
@@ -5581,23 +5581,23 @@ Details: %1</source>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="701"/>
         <source>Daten aktuell</source>
-        <translation>数据电流</translation>
+        <translation>数据为最新</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="924"/>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="932"/>
         <source>%1 seit %2</source>
-        <translation>%1自%2</translation>
+        <translation>%1，自 %2 起</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="928"/>
         <source>vorher %1</source>
-        <translation>以前%1</translation>
+        <translation>此前 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="936"/>
         <source>Ingame-Stand %1</source>
-        <translation>游戏内状态%1</translation>
+        <translation>游戏内状态 %1</translation>
     </message>
 </context>
 <context>
@@ -5613,12 +5613,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="161"/>
         <source>Gesamtgewicht</source>
-        <translation>总重量</translation>
+        <translation>总权重</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="168"/>
         <source>Gesamtbeitrag</source>
-        <translation>捐款总额</translation>
+        <translation>总贡献</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="168"/>
@@ -5648,12 +5648,12 @@ Details: %1</source>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="202"/>
         <source>Plateau ab</source>
-        <translation>高原从</translation>
+        <translation>平台起点</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="204"/>
         <source>Beginn des Plateaus</source>
-        <translation>高原启动</translation>
+        <translation>平台起点</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingCurveEditor.cpp" line="205"/>
@@ -5718,7 +5718,7 @@ Details: %1</source>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="360"/>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="372"/>
         <source>Profilname</source>
-        <translation>简介名称</translation>
+        <translation>方案名称</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="128"/>
@@ -5750,7 +5750,7 @@ Details: %1</source>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="142"/>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="180"/>
         <source>Entwurf verwerfen</source>
-        <translation>弃稿</translation>
+        <translation>放弃草稿</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="118"/>
@@ -5794,12 +5794,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="188"/>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="294"/>
         <source> · Angepasst</source>
-        <translation> ·定制</translation>
+        <translation> · 已自定义</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="372"/>
         <source>Neues Profil</source>
-        <translation>新简介</translation>
+        <translation>新方案</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="385"/>
@@ -5814,7 +5814,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="401"/>
         <source>Profil importieren</source>
-        <translation>导入简介</translation>
+        <translation>导入方案</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="401"/>
@@ -6189,17 +6189,17 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="311"/>
         <source>Untersucht – angepasste Messkurve</source>
-        <translation>调查-拟合测量曲线</translation>
+        <translation>已研究 – 拟合测量曲线</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="312"/>
         <source>Als Rauschen eingestuft – im Editor bearbeitbar</source>
-        <translation>分类为噪声-可编辑</translation>
+        <translation>归为噪声 – 可编辑</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="313"/>
         <source>Nicht untersucht – im Editor bearbeitbar</source>
-        <translation>未调查-可编辑</translation>
+        <translation>未研究 – 可编辑</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="314"/>
@@ -6244,7 +6244,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
         <source>Ausbildung</source>
-        <translation>训练现状</translation>
+        <translation>训练状态</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
@@ -6279,7 +6279,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="132"/>
         <source>Empfehlung übernehmen</source>
-        <translation>应用推荐</translation>
+        <translation>采用建议</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="121"/>
@@ -6294,7 +6294,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="135"/>
         <source>Meldeliste speichern</source>
-        <translation>保存阵容列表</translation>
+        <translation>保存注册名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="137"/>
@@ -6349,12 +6349,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="556"/>
         <source>%1 von %2 Spielern registriert.</source>
-        <translation>%1的%2球员注册。</translation>
+        <translation>已注册 %1/%2 名球员。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="558"/>
         <source>Best XI und Übersicht lassen weg: %1</source>
-        <translation>最佳XI和概述遗漏：%1</translation>
+        <translation>最佳阵容和概览中排除：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="577"/>
@@ -6371,7 +6371,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <location filename="../src/app/pages/RegistrationPage.cpp" line="692"/>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="1177"/>
         <source>Liste B</source>
-        <translation>名单B</translation>
+        <translation>B 名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="628"/>
@@ -6411,12 +6411,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="732"/>
         <source>⚠️ nicht mehr Liste B – braucht einen Platz</source>
-        <translation>⚠️ 不再列出B-需要一个名额</translation>
+        <translation>⚠️ 不再属于 B 名单 – 需要名额</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="735"/>
         <source>jetzt Liste B</source>
-        <translation>现在列表B</translation>
+        <translation>现属 B 名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="844"/>
@@ -6426,27 +6426,27 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="846"/>
         <source>Nicht-HG %1 / %2</source>
-        <translation>非HG %1/%2</translation>
+        <translation>非本土 %1 / %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="848"/>
         <source>Home-Grown %1</source>
-        <translation>国产%1</translation>
+        <translation>本国青训 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="849"/>
         <source>Club-Grown %1</source>
-        <translation>俱乐部成长%1</translation>
+        <translation>俱乐部青训 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="851"/>
         <source>Torhüter %1 (min. %2)</source>
-        <translation>守门员%1（分钟%2）</translation>
+        <translation>门将 %1（至少 %2）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="854"/>
         <source>Nicht-EU %1 / %2</source>
-        <translation>非欧盟%1/%2</translation>
+        <translation>非欧盟 %1 / %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="862"/>
@@ -6461,17 +6461,17 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="872"/>
         <source>Noch keine Meldeliste gespeichert.</source>
-        <translation>还没有保存阵容名单。</translation>
+        <translation>尚未保存注册名单。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="874"/>
         <source>Entspricht der gespeicherten Meldeliste.</source>
-        <translation>匹配保存的阵容列表。</translation>
+        <translation>与已保存的注册名单一致。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="900"/>
         <source>%1: Ø Startelf-DWRS %2 → %3 (%4)</source>
-        <translation>%1：平均。启动XI DWRS %2→%3（%4）</translation>
+        <translation>%1：首发平均 DWRS %2 → %3（%4）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="904"/>
@@ -6516,7 +6516,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="958"/>
         <source>%1 Plätze bleiben frei: %2</source>
-        <translation>%1位置保持空：%2</translation>
+        <translation>%1 个名额空缺：%2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="978"/>
@@ -6596,17 +6596,17 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="569"/>
         <source>Nicht-HG-Quote voll</source>
-        <translation>非汞配额已满</translation>
+        <translation>非本土名额已满</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="571"/>
         <source>nur noch Club-Grown-Plätze frei</source>
-        <translation>只剩下俱乐部的地方了</translation>
+        <translation>只剩俱乐部青训名额</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="583"/>
         <source>Liste voll</source>
-        <translation>列表已满</translation>
+        <translation>名单已满</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="673"/>
@@ -6616,12 +6616,12 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="675"/>
         <source>🆓 Liste B</source>
-        <translation>🆓 名单B</translation>
+        <translation>🆓 B 名单</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="679"/>
         <source>❌ Nicht melden</source>
-        <translation>❌ 离开</translation>
+        <translation>❌ 不报名</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="876"/>
@@ -6656,7 +6656,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="960"/>
         <source>%1 Plätze sind noch frei.</source>
-        <translation>%1名额仍然免费。</translation>
+        <translation>还有 %1 个空余名额。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="963"/>
@@ -6686,7 +6686,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="1115"/>
         <source>Meldeliste gespeichert (%1 Spieler).</source>
-        <translation>阵容列表已保存（%1球员）。</translation>
+        <translation>注册名单已保存（%1 名球员）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="159"/>
@@ -6736,7 +6736,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="207"/>
         <source>Für die Liga registriert</source>
-        <translation>注册了联赛</translation>
+        <translation>已在联赛注册</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="214"/>
@@ -6772,17 +6772,17 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="733"/>
         <source>⚠️ kein %1 mehr – braucht einen Platz</source>
-        <translation>⚠️ 不再%1-需要名额</translation>
+        <translation>⚠️ 不再属于 %1 – 需要名额</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="735"/>
         <source>jetzt %1</source>
-        <translation>现在%1</translation>
+        <translation>现属 %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="737"/>
         <source>%1 unklar</source>
-        <translation>%1不清楚</translation>
+        <translation>%1 不明确</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="857"/>
@@ -6822,7 +6822,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RegistrationPage.cpp" line="740"/>
         <source>Spielzeit zugesagt</source>
-        <translation>承诺的播放时间</translation>
+        <translation>已承诺出场时间</translation>
     </message>
 </context>
 <context>
@@ -6921,7 +6921,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="67"/>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="300"/>
         <source>Gescoutete Spieler</source>
-        <translation>球探球员</translation>
+        <translation>球探考察的球员</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="93"/>
@@ -6937,7 +6937,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="304"/>
         <source>Stärken und Schwächen als %1</source>
-        <translation>%1的优势和劣势</translation>
+        <translation>作为 %1 的优势和劣势</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="345"/>
@@ -7000,7 +7000,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="29"/>
         <source>Keine. Wähle eine Position, eine Rolle oder beides und füge sie hinzu. Mehrere Anforderungen gelten zusammen; die DWRS-Spanne oben gilt für jede Rolle. Eine Bridge-Suche startest du per Rechtsklick auf einen Platz in Best XI.</source>
-        <translation>无。选择一个职位、一个角色或两者并添加它们。几个要求一起适用；上面的DWRS范围适用于每个角色。通过右键单击最佳XI中的某个位置开始桥接搜索。</translation>
+        <translation>无。选择一个位置、一个角色或两者并添加它们。几个要求一起适用；上面的DWRS范围适用于每个角色。通过右键单击最佳XI中的某个位置开始换位链搜索。</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="42"/>
@@ -7051,7 +7051,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="167"/>
         <source>Anforderung entfernen</source>
-        <translation>删除需求</translation>
+        <translation>移除条件</translation>
     </message>
 </context>
 <context>
@@ -7086,7 +7086,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <location filename="../src/app/pages/SettingsPage.cpp" line="555"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="2069"/>
         <source>Football-Manager-Version</source>
-        <translation>FM 版本</translation>
+        <translation>Football Manager 版本</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="561"/>
@@ -7209,7 +7209,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1479"/>
         <source>Vereinslogo wählen</source>
-        <translation>选择俱乐部队徽</translation>
+        <translation>选择俱乐部标志</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1480"/>
@@ -7223,7 +7223,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <location filename="../src/app/pages/SettingsPage.cpp" line="1495"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1507"/>
         <source>Vereinslogo</source>
-        <translation>俱乐部队徽</translation>
+        <translation>俱乐部标志</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="209"/>
@@ -7324,7 +7324,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="413"/>
         <source>Wie er im Kopf erscheinen soll</source>
-        <translation>因为它应该出现在标题中</translation>
+        <translation>在标题栏中显示的名称</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="418"/>
@@ -7371,13 +7371,13 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
         <location filename="../src/app/pages/SettingsPage.cpp" line="448"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="482"/>
         <source>Primäre Taktik</source>
-        <translation>初级战术</translation>
+        <translation>主战术</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="449"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="483"/>
         <source>Sekundäre Taktik</source>
-        <translation>次级战术</translation>
+        <translation>副战术</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="450"/>
@@ -7447,7 +7447,7 @@ Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser vor
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="531"/>
         <source>Mindestens Torhüter</source>
-        <translation>最低门将</translation>
+        <translation>最少门将数</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="551"/>
@@ -7568,17 +7568,17 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="736"/>
         <source>Datenfrische</source>
-        <translation>数据新鲜度</translation>
+        <translation>数据时效</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="742"/>
         <source>Veraltet nach verpassten Komplett-Exporten (Y)</source>
-        <translation>连续多个完整导出中缺失后标记为过时（Y）</translation>
+        <translation>缺席完整导出次数达到后标记为过时（Y）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="743"/>
         <source>Retired ab Alter (X)</source>
-        <translation>退役（X）</translation>
+        <translation>超过此年龄视为退役（X）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="759"/>
@@ -7643,12 +7643,12 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="953"/>
         <source>Spielzeit-Gewichte</source>
-        <translation>播放时间权重</translation>
+        <translation>出场时间权重</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="954"/>
         <source>Gewicht je zugesagter Spielzeit (Agreed Playing Time).</source>
-        <translation>每个约定播放时间的权重。</translation>
+        <translation>每种约定出场时间的权重。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="979"/>
@@ -7679,7 +7679,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1097"/>
         <source>Schwellenwerte für Aufstellung, Jugend, Leihen und die Gap-Analyse.</source>
-        <translation>阵容、年轻人、贷款和差距分析的门槛。</translation>
+        <translation>阵容、青年、租借和差距分析的门槛。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1102"/>
@@ -7689,7 +7689,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1113"/>
         <source>Bonus natürliche Position</source>
-        <translation>自然职位奖金</translation>
+        <translation>自然位置加成</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1114"/>
@@ -7699,52 +7699,52 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1127"/>
         <source>Max. Rollen pro Depth-Spieler</source>
-        <translation>最大限度。每个深度球员的角色</translation>
+        <translation>每名替补球员的最多角色数</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1129"/>
         <source>Jugend und Leihen</source>
-        <translation>青春与贷款</translation>
+        <translation>青年与租借</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1141"/>
         <source>Jugend: Feldspieler bis Alter</source>
-        <translation>青年：年龄以下的外场球员</translation>
+        <translation>青年：外场球员年龄上限</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1142"/>
         <source>Jugend: Torhüter bis Alter</source>
-        <translation>青年：年龄以下的守门员</translation>
+        <translation>青年：门将年龄上限</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1143"/>
         <source>Min. Talent-Score für Leihe</source>
-        <translation>最低贷款人才评分</translation>
+        <translation>外租的最低天赋评分</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1144"/>
         <source>Mindestalter für Leihe</source>
-        <translation>最低贷款年龄</translation>
+        <translation>外租的最低年龄</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1145"/>
         <source>Jugendelf-Leihe erst über Alter</source>
-        <translation>青年XI贷款仅限年龄以上</translation>
+        <translation>青年队球员仅在超过此年龄时外租</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1158"/>
         <source>Displacement-Schwelle</source>
-        <translation>位移阈值</translation>
+        <translation>替换阈值</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1159"/>
         <source>Dropoff-Schwelle</source>
-        <translation>下降阈值</translation>
+        <translation>落差阈值</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1160"/>
         <source>Falsche-Seite-Malus</source>
-        <translation>错误的一方处罚</translation>
+        <translation>非惯用边惩罚</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1179"/>
@@ -7872,17 +7872,17 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1205"/>
         <source>Nacht (dunkel)</source>
-        <translation>夜晚（黑暗）</translation>
+        <translation>夜间（深色）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1206"/>
         <source>Tag (hell)</source>
-        <translation>日（光）</translation>
+        <translation>白天（浅色）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1209"/>
         <source>Als eigene Vorlage speichern …</source>
-        <translation>另存为自己的模板…</translation>
+        <translation>另存为自定义模板…</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1211"/>
@@ -7977,7 +7977,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1321"/>
         <source>Als eigenes Profil speichern …</source>
-        <translation>另存为自己的计划…</translation>
+        <translation>另存为自定义方案…</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1322"/>
@@ -8013,13 +8013,13 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1368"/>
         <source>%1 (eigen)</source>
-        <translation>%1（自己的）</translation>
+        <translation>%1（自定义）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1371"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1389"/>
         <source>Eigenes Farbprofil</source>
-        <translation>自己的配色方案</translation>
+        <translation>自定义配色方案</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1390"/>
@@ -8034,19 +8034,19 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1428"/>
         <source>Benutzerdefiniert</source>
-        <translation>定制</translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1591"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1646"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1689"/>
         <source>Custom</source>
-        <translation>定制</translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1594"/>
         <source>%1 (eigene)</source>
-        <translation>%1（自己的）</translation>
+        <translation>%1（自定义）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1622"/>
@@ -8056,13 +8056,13 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1639"/>
         <source>Eigene Farbvorlage speichern</source>
-        <translation>保存自己的颜色模板</translation>
+        <translation>保存自定义颜色模板</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1371"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1666"/>
         <source>Name:</source>
-        <translation>姓名：</translation>
+        <translation>名称：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1668"/>
@@ -8106,7 +8106,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1761"/>
         <source>Wechseln</source>
-        <translation>开关</translation>
+        <translation>切换</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1773"/>
@@ -8159,13 +8159,13 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
         <location filename="../src/app/pages/SettingsPage.cpp" line="1268"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="2040"/>
         <source>Nacht</source>
-        <translation>夜晚</translation>
+        <translation>夜间</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1269"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="2040"/>
         <source>Tag</source>
-        <translation>日</translation>
+        <translation>白天</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="2266"/>
@@ -8180,7 +8180,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="661"/>
         <source>FM27-Ansichten</source>
-        <translation>FM27次浏览</translation>
+        <translation>FM27 视图</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="614"/>
@@ -8262,7 +8262,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1816"/>
         <source>Änderbar über bootstrap.ini.</source>
-        <translation>可以在bootstrap. ini中更改。</translation>
+        <translation>可在 bootstrap.ini 中更改。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1828"/>
@@ -8272,7 +8272,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1828"/>
         <source>Aktiv: %1</source>
-        <translation>活跃：%1</translation>
+        <translation>启用：%1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="2027"/>
@@ -8287,7 +8287,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="2045"/>
         <source>Kontrast Text/Hintergrund in Ordnung</source>
-        <translation>文本/背景对比度OK</translation>
+        <translation>文字/背景对比度合格</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="2244"/>
@@ -8306,7 +8306,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="668"/>
         <source>Attribut-Maskierung wie im Spiel</source>
-        <translation>游戏中的属性掩蔽</translation>
+        <translation>与游戏相同的属性遮蔽</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="675"/>
@@ -8351,7 +8351,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1122"/>
         <source>DWRS-Spielraum für kürzere Wege</source>
-        <translation>较短路径的DWRS余量</translation>
+        <translation>较短换位链的 DWRS 容差</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1123"/>
@@ -8412,7 +8412,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="86"/>
         <source>⛔ Unbesetzt</source>
-        <translation>⛔ 未填充</translation>
+        <translation>⛔ 未填</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="88"/>
@@ -8427,12 +8427,12 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="92"/>
         <source>⚠️ Offensichtlich</source>
-        <translation>⚠️ 明显的</translation>
+        <translation>⚠️ 明显</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="119"/>
         <source>Budget (Marktwert bis):</source>
-        <translation>预算（市值最高）：</translation>
+        <translation>预算（身价上限）：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="124"/>
@@ -8442,7 +8442,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="125"/>
         <source>Höchster Marktwert eines Kandidaten (untere Grenze der Spanne, wie FM sie exportiert). 0 = nur ablösefreie Spieler.</source>
-        <translation>候选人的最高身价（FM导出时范围的低端）。0=仅免费传输。</translation>
+        <translation>候选人的最高身价（FM导出时范围的低端）。0=仅自由转会。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="128"/>
@@ -8525,7 +8525,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
         <source>Besser am Markt</source>
-        <translation>市场上更好</translation>
+        <translation>市场上更好的人选</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="174"/>
@@ -8641,12 +8641,12 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="439"/>
         <source>niemand Besseres</source>
-        <translation>没人比你更棒了</translation>
+        <translation>没有更好的人选</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="459"/>
         <source>%1 von %2</source>
-        <translation>%1的%2</translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="474"/>
@@ -8719,17 +8719,17 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="331"/>
         <source>Max. Alter:</source>
-        <translation>最大限度。年龄：</translation>
+        <translation>最大年龄：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="339"/>
         <source>Min. Ent + Arb:</source>
-        <translation>分钟。Det+Wor：</translation>
+        <translation>最低 意志+投入：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="347"/>
         <source>Nur gute Persönlichkeiten</source>
-        <translation>只有好的性格</translation>
+        <translation>仅限良好性格</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="364"/>
@@ -8750,7 +8750,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="395"/>
         <source>Gescoutete Spieler</source>
-        <translation>球探球员</translation>
+        <translation>球探考察的球员</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="154"/>
@@ -8801,7 +8801,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="251"/>
         <source>Nach Nationalität einschränken (unabhängig vom Talent-Filter): eigenes Land, Ausländer oder eine bestimmte Nation — hilfreich für Registrierungsregeln.</source>
-        <translation>受国籍限制（独立于人才过滤器）：您自己的国家、外国人或特定国家-对注册规则有用。</translation>
+        <translation>受国籍限制（独立于天赋筛选）：您自己的国家、外国人或特定国家-对注册规则有用。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="271"/>
@@ -8816,7 +8816,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="293"/>
         <source>Max. Wert:</source>
-        <translation>最大限度。价值：</translation>
+        <translation>最高身价：</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="369"/>
@@ -8841,7 +8841,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="420"/>
         <source>Erste Mannschaft</source>
-        <translation>一队</translation>
+        <translation>一线队</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="422"/>
@@ -8969,13 +8969,13 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="867"/>
         <source>Inland (Land fehlt in Einstellungen)</source>
-        <translation>国内（设置中缺少国家/地区）</translation>
+        <translation>本国（设置中缺少国家）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="857"/>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="868"/>
         <source>Inland (%1)</source>
-        <translation>国产（%1）</translation>
+        <translation>本国（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="134"/>
@@ -8990,7 +8990,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="260"/>
         <source>Retired/veraltete ausblenden</source>
-        <translation>隐藏已退役/陈旧</translation>
+        <translation>隐藏已退役/过时</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="262"/>
@@ -9000,7 +9000,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="311"/>
         <source>Talent-Filter</source>
-        <translation>人才筛选</translation>
+        <translation>天赋筛选</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="877"/>
@@ -9031,12 +9031,12 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1162"/>
         <source>Free Agents (%1)</source>
-        <translation>自由代理（%1）</translation>
+        <translation>自由球员（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1163"/>
         <source>Gescoutete Spieler (%1)</source>
-        <translation>球探球员（%1）</translation>
+        <translation>球探考察的球员（%1）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1225"/>
@@ -9052,7 +9052,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="699"/>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1181"/>
         <source>⌀ Anforderungen</source>
-        <translation>要求</translation>
+        <translation>⌀ 条件</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="710"/>
@@ -9067,7 +9067,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1044"/>
         <source>Anforderungen (Wert)</source>
-        <translation>要求（价值）</translation>
+        <translation>条件（数值）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="460"/>
@@ -9157,7 +9157,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/StartScreen.cpp" line="427"/>
         <source>%1 Spieler</source>
-        <translation>%1球员</translation>
+        <translation>%1 名球员</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="429"/>
@@ -9167,7 +9167,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/StartScreen.cpp" line="453"/>
         <source>Weitere Aktionen</source>
-        <translation>更多动作</translation>
+        <translation>更多操作</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="543"/>
@@ -9191,7 +9191,7 @@ Beispieltaktiken: kopiert die beiden mitgelieferten Beispieltaktiken (Control Pr
     <message>
         <location filename="../src/app/StartScreen.cpp" line="559"/>
         <source>Duplizieren …</source>
-        <translation>重复…</translation>
+        <translation>复制…</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="560"/>
@@ -9287,7 +9287,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/StartScreen.cpp" line="63"/>
         <source>vor %1 Std.</source>
-        <translation>%1 h前</translation>
+        <translation>%1 小时前</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="66"/>
@@ -9302,12 +9302,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/StartScreen.cpp" line="70"/>
         <source>vor %1 Wochen</source>
-        <translation>%1几周前</translation>
+        <translation>%1 周前</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="71"/>
         <source>am %1</source>
-        <translation>关于%1</translation>
+        <translation>于 %1</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="120"/>
@@ -9333,12 +9333,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/StartScreen.cpp" line="167"/>
         <source>Alte Streamlit-Version (Migration)</source>
-        <translation>旧Streamlight版本（迁移）</translation>
+        <translation>旧版 Streamlit（迁移）</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="206"/>
         <source>Tag/Nacht wechseln</source>
-        <translation>切换白天/晚上</translation>
+        <translation>切换白天/夜间</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="210"/>
@@ -9353,12 +9353,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/StartScreen.cpp" line="230"/>
         <source>Nacht</source>
-        <translation>夜晚</translation>
+        <translation>夜间</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="230"/>
         <source>Tag</source>
-        <translation>日</translation>
+        <translation>白天</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="298"/>
@@ -9413,7 +9413,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/StartScreen.cpp" line="161"/>
         <source>FM-Version und erster Import</source>
-        <translation>FM版和首次导入</translation>
+        <translation>FM 版本和首次导入</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="360"/>
@@ -9431,7 +9431,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/StrengthGridWidget.cpp" line="327"/>
         <source>%1 zur Kadermitte (%2)</source>
-        <translation>%1到队中位数（%2）</translation>
+        <translation>与阵容中位数相差 %1（%2）</translation>
     </message>
 </context>
 <context>
@@ -9484,7 +9484,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="124"/>
         <source>Taktik im Detail</source>
-        <translation>细节战术</translation>
+        <translation>战术详情</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="128"/>
@@ -9529,7 +9529,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="226"/>
         <source>Pool: %1 Spieler (%2).</source>
-        <translation>池：%1球员（%2）。</translation>
+        <translation>候选池：%1 名球员（%2）。</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TacticExplorerPage.cpp" line="239"/>
@@ -9583,12 +9583,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="684"/>
         <source>%1 frei mit Ball</source>
-        <translation>%1空有球</translation>
+        <translation>有球阶段 %1 空缺</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="685"/>
         <source>%1 frei ohne Ball</source>
-        <translation>%1空出有球</translation>
+        <translation>无球阶段 %1 空缺</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="732"/>
@@ -9621,7 +9621,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TrainingPlanPage.cpp" line="66"/>
         <source>Erste Mannschaft</source>
-        <translation>一队</translation>
+        <translation>一线队</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TrainingPlanPage.cpp" line="71"/>
@@ -9671,7 +9671,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TrainingPlanPage.cpp" line="232"/>
         <source>keine Rolle in dieser Taktik</source>
-        <translation>在这个战术中没有任何作用</translation>
+        <translation>该战术中无此角色</translation>
     </message>
 </context>
 <context>
@@ -9716,12 +9716,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="89"/>
         <source>Voll trainierbar bis</source>
-        <translation>完全可训练，直到</translation>
+        <translation>完全可训练至</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="89"/>
         <source>Gesperrt ab</source>
-        <translation>锁定从</translation>
+        <translation>锁定自</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="90"/>
@@ -9736,12 +9736,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="100"/>
         <source>Band hinzufügen</source>
-        <translation>添加波段</translation>
+        <translation>添加区间</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="101"/>
         <source>Band entfernen</source>
-        <translation>去掉区间</translation>
+        <translation>移除区间</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="114"/>
@@ -9766,7 +9766,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="156"/>
         <source>Ganz nach oben: immer trainierbar</source>
-        <translation>顶级价值：始终可训练</translation>
+        <translation>顶级数值：始终可训练</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="228"/>
@@ -9786,7 +9786,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="298"/>
         <source>Trainingsprofil importieren</source>
-        <translation>导入训练简介</translation>
+        <translation>导入训练方案</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="299"/>
@@ -9802,7 +9802,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="313"/>
         <source>Importiert. Mit „Speichern“ übernehmen.</source>
-        <translation>已导入。使用“保存”申请。</translation>
+        <translation>已导入。点击“保存”后生效。</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="318"/>
@@ -9840,12 +9840,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/pages/TransfersPage.cpp" line="78"/>
         <source>Zum Verleihen (vielversprechende Talente)</source>
-        <translation>租借（有前途的人才）</translation>
+        <translation>外租（有潜力的新秀）</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TransfersPage.cpp" line="81"/>
         <source>Zum Verkauf / zur Freigabe</source>
-        <translation>出售/发行</translation>
+        <translation>出售/解约</translation>
     </message>
     <message>
         <location filename="../src/app/pages/TransfersPage.cpp" line="100"/>
@@ -9959,7 +9959,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="207"/>
         <source>Nicht mehr anzeigen</source>
-        <translation>不要再显示了</translation>
+        <translation>不再显示</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="208"/>
@@ -9980,7 +9980,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="236"/>
         <source>Welchen Verein managst du?</source>
-        <translation>你管理哪个俱乐部？</translation>
+        <translation>您执教哪家俱乐部？</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="243"/>
@@ -9990,7 +9990,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="254"/>
         <source>voller Vereinsname (für den Header)</source>
-        <translation>俱乐部全名（用于标题）</translation>
+        <translation>俱乐部全名（用于标题栏）</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="256"/>
@@ -10000,7 +10000,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="263"/>
         <source>Zweitteam:</source>
-        <translation>第二队：</translation>
+        <translation>二队：</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="264"/>
@@ -10020,7 +10020,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="271"/>
         <source>Logo wählen (PNG)…</source>
-        <translation>选择徽标（PNG）…</translation>
+        <translation>选择标志（PNG）…</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="272"/>
@@ -10050,7 +10050,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="291"/>
         <source>.fm-Datei wählen</source>
-        <translation>选择. fm文件</translation>
+        <translation>选择 .fm 文件</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="300"/>
@@ -10080,7 +10080,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="346"/>
         <source>Lieblings-Taktiken</source>
-        <translation>最喜欢的战术</translation>
+        <translation>常用战术</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="365"/>
@@ -10100,7 +10100,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="378"/>
         <source>Mit Ball und ohne Ball</source>
-        <translation>进出财产</translation>
+        <translation>有球与无球</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="385"/>
@@ -10140,7 +10140,7 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="422"/>
         <source>Europapokal:</source>
-        <translation>欧洲竞争：</translation>
+        <translation>欧战：</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="425"/>
@@ -10155,12 +10155,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="451"/>
         <source>Nacht (dunkel)</source>
-        <translation>夜晚（黑暗）</translation>
+        <translation>夜间（深色）</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="452"/>
         <source>Tag (hell)</source>
-        <translation>日（光）</translation>
+        <translation>白天（浅色）</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="453"/>
@@ -10195,12 +10195,12 @@ Vorher wird automatisch ein Backup im Ordner „backups“ angelegt. Von dort l�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="532"/>
         <source>Custom</source>
-        <translation>定制</translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="535"/>
         <source>%1 (eigene)</source>
-        <translation>%1（自己的）</translation>
+        <translation>%1（自定义）</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="568"/>
