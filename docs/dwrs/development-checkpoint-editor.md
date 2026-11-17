@@ -71,17 +71,6 @@ German and switch day/night modes. Verify the existing group/role/playing-time
 controls and recalculation are still present. Saving a profile does not activate
 it for player ratings in this checkpoint.
 
-## Kurzanleitung für diesen Entwicklungsstand
-
-Nur mit einem temporären Datenverzeichnis prüfen. Unter Einstellungen →
-DWRS-Bewertung ein persönliches Profil erstellen, ein Attribut bearbeiten und
-das Profil speichern. Ungespeicherte Änderungen über „Entwurf verwerfen“
-zurücknehmen. Fallende Kurven müssen abgelehnt werden. JSON-Export und -Import
-unter einem neuen Namen prüfen. Deutsch/Englisch sowie helles/dunkles Theme
-testen. Die bisherigen Gewichte, Rollenfaktoren, Spielzeitgewichte und die
-Neuberechnung bleiben erreichbar. Ein gespeichertes Profil wird in diesem
-Entwicklungsstand noch nicht für die Spielerbewertung aktiviert.
-
 Numeric input presentation: the user requested at most two decimal places, with
 redundant trailing zeros hidden. Original imported/internal precision is retained
 until the user actually edits a value; merely focusing an input never rounds the
