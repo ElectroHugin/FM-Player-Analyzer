@@ -1070,7 +1070,8 @@ void PlayerProfilePage::runManualUpdate()
 
     ImportTable table;
     ImportError error;
-    if (!readImportTable(filePath, m_context.fmVersionId(), &table, &error)) {
+    if (!readImportTable(filePath, m_context.fmVersionId(), &table, &error, {},
+                         m_context.gameLanguage())) {
         QMessageBox::critical(this, tr("Update Player"), importErrorText(error));
         return;
     }

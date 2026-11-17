@@ -194,6 +194,13 @@ public:
     // Configured folder if set and existing, otherwise defaultHtmlExportDir().
     QString effectiveHtmlExportDir(const QString &fmVersionId) const;
 
+    // Language the game runs in, which the FM View Exporter writes headers and
+    // values in; independent of the app's UI language. "auto" (default) = tell
+    // it from the export's column headers, otherwise a code from
+    // GameLanguage::codes(). Per save (profile).
+    QString gameLanguage() const;
+    bool setGameLanguage(const QString &code);
+
     // [Import] attribute_masking — FM27 save games: show only what the user's
     // scouting knows (ranges for partly known players), like the game's own
     // attribute masking. Per save, on by default. Off = real values of every

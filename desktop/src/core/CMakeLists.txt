@@ -47,6 +47,10 @@ add_library(fmcore STATIC
     GraphicsIndex.cpp
     HtmlImporter.h
     HtmlImporter.cpp
+    GameLanguage.h
+    GameLanguage.cpp
+    GameLanguageData.h
+    GameLanguageData.cpp
     ImportSchema.h
     ImportSchema.cpp
     ImportTable.h
