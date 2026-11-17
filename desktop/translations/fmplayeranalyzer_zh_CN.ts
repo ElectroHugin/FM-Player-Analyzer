@@ -267,7 +267,7 @@ Details: %1</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="946"/>
+        <location filename="../src/app/MainWindow.cpp" line="954"/>
         <source>Saving ratings …</source>
         <translation>正在保存评分……</translation>
     </message>
@@ -620,14 +620,14 @@ Details: %1</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/app/main.cpp" line="70"/>
+        <location filename="../src/app/main.cpp" line="71"/>
         <source>Startup failed:
 %1</source>
         <translation>启动失败：
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="93"/>
+        <location filename="../src/app/main.cpp" line="94"/>
         <source>The last used save “%1” could not be opened:
 %2</source>
         <translation>无法打开上次使用的存档“%1”：
@@ -2993,12 +2993,12 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
 <context>
     <name>fm::FirstRunDialog</name>
     <message>
-        <location filename="../src/app/FirstRunDialog.cpp" line="19"/>
+        <location filename="../src/app/FirstRunDialog.cpp" line="20"/>
         <source>%1 — Initial setup</source>
         <translation>%1 — 初始设置</translation>
     </message>
     <message>
-        <location filename="../src/app/FirstRunDialog.cpp" line="25"/>
+        <location filename="../src/app/FirstRunDialog.cpp" line="26"/>
         <source>Welcome! Choose the folder where the Analyzer stores its data
 (databases, settings, role definitions, backups).
 You can change the folder later in the settings.</source>
@@ -3007,22 +3007,32 @@ You can change the folder later in the settings.</source>
 您可以稍后在设置中更改文件夹。</translation>
     </message>
     <message>
-        <location filename="../src/app/FirstRunDialog.cpp" line="34"/>
+        <location filename="../src/app/FirstRunDialog.cpp" line="35"/>
         <source>Browse…</source>
         <translation>浏览…</translation>
     </message>
     <message>
-        <location filename="../src/app/FirstRunDialog.cpp" line="41"/>
+        <location filename="../src/app/FirstRunDialog.cpp" line="42"/>
         <source>Choose data folder</source>
         <translation>选择数据文件夹</translation>
     </message>
     <message>
         <location filename="../src/app/FirstRunDialog.cpp" line="48"/>
+        <source>Check for new versions at startup</source>
+        <translation>启动时检查新版本</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FirstRunDialog.cpp" line="51"/>
+        <source>Only asks GitHub for the latest version number. No data about you or your saves is sent, and nothing is installed automatically. Can be changed later under Settings → Saves.</source>
+        <translation>仅向 GitHub 查询最新版本号。不会发送任何关于你或你的存档的数据，也不会自动安装任何内容。之后可在“设置 → 存档”中更改。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FirstRunDialog.cpp" line="61"/>
         <source>Get Started</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="../src/app/FirstRunDialog.cpp" line="49"/>
+        <location filename="../src/app/FirstRunDialog.cpp" line="62"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
@@ -3134,255 +3144,270 @@ You can change the folder later in the settings.</source>
 <context>
     <name>fm::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="152"/>
+        <location filename="../src/app/MainWindow.cpp" line="154"/>
         <source>Back (Alt+←)</source>
         <translation>返回（Alt+←）</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="153"/>
+        <location filename="../src/app/MainWindow.cpp" line="155"/>
         <source>Forward (Alt+→)</source>
         <translation>前进（Alt+→）</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="156"/>
+        <location filename="../src/app/MainWindow.cpp" line="158"/>
         <source>Home (Alt+Home)</source>
         <translation>首页（Alt+Home）</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="179"/>
+        <location filename="../src/app/MainWindow.cpp" line="181"/>
         <source>Players, pages, actions …    Ctrl+K</source>
         <translation>球员、页面、操作 …    Ctrl+K</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="189"/>
+        <location filename="../src/app/MainWindow.cpp" line="191"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="191"/>
+        <location filename="../src/app/MainWindow.cpp" line="193"/>
         <source>Import an FM export (Ctrl+I). You can also simply drop a file onto the window.</source>
         <translation>导入FM导出（Ctrl+I）。您也可以简单地将文件拖放到窗口上。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="228"/>
+        <location filename="../src/app/MainWindow.cpp" line="230"/>
         <source>Later</source>
         <translation>稍后</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="337"/>
+        <location filename="../src/app/MainWindow.cpp" line="345"/>
         <source>Recalculation</source>
         <translation>重新计算</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="340"/>
+        <location filename="../src/app/MainWindow.cpp" line="348"/>
         <source>DWRS recalculated: %1 ratings, %2 changed entries saved.</source>
         <translation>DWRS重新计算：%1评分，%2保存更改的条目。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="375"/>
+        <location filename="../src/app/MainWindow.cpp" line="383"/>
         <source>New FM27 rating profile</source>
         <translation>新的 FM27 评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="376"/>
+        <location filename="../src/app/MainWindow.cpp" line="384"/>
         <source>There is a new rating profile for FM27: “DWRS FM27 · harvestgreen22” (provisional).</source>
         <translation>FM27 有新的评分方案：“DWRS FM27 · harvestgreen22”（暂定）。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="379"/>
+        <location filename="../src/app/MainWindow.cpp" line="387"/>
         <source>It is based on measurements in FM27 matches and separates roles more clearly. Values have one decimal. Switching recalculates all ratings of this save; the history marks the switch. You can change the profile at any time under Settings → DWRS rating.</source>
         <translation>它基于 FM27 比赛中的测量数据，能更清晰地区分不同角色。数值保留一位小数。切换后会重新计算此存档的所有评分；历史记录会标记这次切换。你可以随时在设置 → DWRS 评分中更改评分方案。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="383"/>
+        <location filename="../src/app/MainWindow.cpp" line="391"/>
         <source>Use new profile</source>
         <translation>使用新评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="384"/>
+        <location filename="../src/app/MainWindow.cpp" line="392"/>
         <source>Keep previous</source>
         <translation>保留原方案</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="393"/>
+        <location filename="../src/app/MainWindow.cpp" line="401"/>
         <source>Rating profile</source>
         <translation>评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="411"/>
+        <location filename="../src/app/MainWindow.cpp" line="419"/>
         <source>The DWRS calculation has been improved (goalkeepers are rated on all goalkeeping attributes). The ratings in this save still come from the old calculation.</source>
         <translation>DWRS计算得到了改进（守门员在所有守门员属性上被评分）。这个存档中的评分仍然来自旧的计算。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="414"/>
+        <location filename="../src/app/MainWindow.cpp" line="422"/>
         <source>Recalculate now</source>
         <translation>现在重新计算</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="435"/>
+        <location filename="../src/app/MainWindow.cpp" line="443"/>
         <source>Switch save (Ctrl+O)</source>
         <translation>切换存档（Ctrl+O）</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="450"/>
-        <location filename="../src/app/MainWindow.cpp" line="1063"/>
+        <location filename="../src/app/MainWindow.cpp" line="458"/>
+        <location filename="../src/app/MainWindow.cpp" line="1124"/>
         <source>Club</source>
         <translation>俱乐部</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="450"/>
-        <location filename="../src/app/MainWindow.cpp" line="967"/>
-        <location filename="../src/app/MainWindow.cpp" line="1063"/>
+        <location filename="../src/app/MainWindow.cpp" line="458"/>
+        <location filename="../src/app/MainWindow.cpp" line="975"/>
+        <location filename="../src/app/MainWindow.cpp" line="1124"/>
         <source>National Team</source>
         <translation>国家队</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="492"/>
-        <location filename="../src/app/MainWindow.cpp" line="1093"/>
+        <location filename="../src/app/MainWindow.cpp" line="500"/>
+        <location filename="../src/app/MainWindow.cpp" line="1154"/>
         <source>Toggle day/night</source>
         <translation>切换白天/夜间</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="502"/>
+        <location filename="../src/app/MainWindow.cpp" line="510"/>
         <source>v%1 · ElectroHugin</source>
         <translation>v%1 · ElectroHugin</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="503"/>
+        <location filename="../src/app/MainWindow.cpp" line="511"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="570"/>
+        <location filename="../src/app/MainWindow.cpp" line="578"/>
         <source>&amp;File</source>
         <translation>&amp;文件</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="571"/>
-        <location filename="../src/app/MainWindow.cpp" line="1091"/>
-        <location filename="../src/app/MainWindow.cpp" line="1156"/>
+        <location filename="../src/app/MainWindow.cpp" line="579"/>
+        <location filename="../src/app/MainWindow.cpp" line="1152"/>
+        <location filename="../src/app/MainWindow.cpp" line="1217"/>
         <source>New save …</source>
         <translation>新的存档…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="574"/>
-        <location filename="../src/app/MainWindow.cpp" line="1089"/>
+        <location filename="../src/app/MainWindow.cpp" line="582"/>
+        <location filename="../src/app/MainWindow.cpp" line="1150"/>
         <source>Switch save …</source>
         <translation>切换存档…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="578"/>
-        <location filename="../src/app/MainWindow.cpp" line="1087"/>
+        <location filename="../src/app/MainWindow.cpp" line="586"/>
+        <location filename="../src/app/MainWindow.cpp" line="1148"/>
         <source>Import export …</source>
         <translation>导入导出文件…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="581"/>
+        <location filename="../src/app/MainWindow.cpp" line="589"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="585"/>
+        <location filename="../src/app/MainWindow.cpp" line="593"/>
         <source>&amp;Language</source>
         <translation>&amp;语言</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="600"/>
+        <location filename="../src/app/MainWindow.cpp" line="608"/>
         <source>&amp;Help</source>
         <translation>&amp;帮助</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="601"/>
+        <location filename="../src/app/MainWindow.cpp" line="609"/>
         <source>Welcome assistant …</source>
         <translation>欢迎向导…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="602"/>
+        <location filename="../src/app/MainWindow.cpp" line="610"/>
         <source>About %1…</source>
         <translation>关于%1…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="620"/>
+        <location filename="../src/app/MainWindow.cpp" line="628"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="621"/>
+        <location filename="../src/app/MainWindow.cpp" line="629"/>
         <source>The language will change after a restart. Restart now?</source>
         <translation>重启后语言会改变。现在重新启动？</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="910"/>
+        <location filename="../src/app/MainWindow.cpp" line="918"/>
         <source>Recalculating DWRS ratings…</source>
         <translation>重新计算DWRS评分…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="974"/>
+        <location filename="../src/app/MainWindow.cpp" line="982"/>
         <source>FM Dashboard</source>
         <translation>FM 仪表板</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1064"/>
+        <location filename="../src/app/MainWindow.cpp" line="1072"/>
+        <source>Test version %1 is available.</source>
+        <translation>测试版 %1 已发布。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1073"/>
+        <source>Version %1 is available.</source>
+        <translation>版本 %1 已发布。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1074"/>
+        <source>What&apos;s new</source>
+        <translation>更新内容</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1125"/>
         <source>Pages</source>
         <translation>页面</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1084"/>
+        <location filename="../src/app/MainWindow.cpp" line="1145"/>
         <source>Actions</source>
         <translation>操作</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1087"/>
+        <location filename="../src/app/MainWindow.cpp" line="1148"/>
         <source>Ctrl+I</source>
         <translation>Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1089"/>
+        <location filename="../src/app/MainWindow.cpp" line="1150"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1091"/>
+        <location filename="../src/app/MainWindow.cpp" line="1152"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1092"/>
+        <location filename="../src/app/MainWindow.cpp" line="1153"/>
         <source>Recalculate DWRS</source>
         <translation>重新计算DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1109"/>
+        <location filename="../src/app/MainWindow.cpp" line="1170"/>
         <source>Players</source>
         <translation>球员</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1128"/>
+        <location filename="../src/app/MainWindow.cpp" line="1189"/>
         <source>%1 players</source>
         <translation>%1 名球员</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1140"/>
+        <location filename="../src/app/MainWindow.cpp" line="1201"/>
         <source>Recently used</source>
         <translation>最近使用过</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1148"/>
+        <location filename="../src/app/MainWindow.cpp" line="1209"/>
         <source>Open save</source>
         <translation>打开存档</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1155"/>
+        <location filename="../src/app/MainWindow.cpp" line="1216"/>
         <source>All saves …</source>
         <translation>所有存档…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1204"/>
+        <location filename="../src/app/MainWindow.cpp" line="1265"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>选择FM导出或FM27存档</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1205"/>
+        <location filename="../src/app/MainWindow.cpp" line="1266"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>FM导出和FM27存档 (*.html *.htm *.csv *.fm);;所有文件 (*)</translation>
     </message>
@@ -7060,396 +7085,396 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
 <context>
     <name>fm::SettingsPage</name>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="209"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="212"/>
         <source>Explanation</source>
         <translation>说明</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="316"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2235"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2259"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="319"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2317"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2341"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="330"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="331"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="332"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="333"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="334"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="335"/>
         <source>Save</source>
         <comment>save game</comment>
         <translation>存档</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="330"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="401"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="407"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="333"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="404"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="410"/>
         <source>Club</source>
         <translation>俱乐部</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="331"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="459"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="464"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="334"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="462"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="467"/>
         <source>National Team</source>
         <translation>国家队</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="332"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="506"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="335"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="509"/>
         <source>Squad Registration</source>
         <translation>阵容注册</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="333"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="334"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="336"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="339"/>
         <source>Data</source>
         <translation>数据</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="333"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="548"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1780"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="336"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="551"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1783"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="334"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="705"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="708"/>
         <source>History and data freshness</source>
         <translation>历史与数据时效</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="336"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="754"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="339"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="757"/>
         <source>Portraits and crests</source>
         <translation>头像与队徽</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="338"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="339"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="340"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="342"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="343"/>
         <source>Calculation</source>
         <translation>计算</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="844"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="340"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="847"/>
         <source>DWRS Rating</source>
         <translation>DWRS评分</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="338"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1089"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1092"/>
         <source>Squad and analysis</source>
         <translation>阵容与分析</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="339"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="987"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="991"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="342"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="990"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="994"/>
         <source>Personalities</source>
         <translation>性格</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="340"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1162"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="343"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1165"/>
         <source>Training</source>
         <translation>训练</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="342"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="343"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="344"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="345"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="346"/>
         <source>Program</source>
         <translation>程序</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1185"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="344"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1188"/>
         <source>Appearance</source>
         <translation>外观</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="342"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1306"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="345"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1309"/>
         <source>DWRS colours</source>
         <translation>DWRS颜色</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="343"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1746"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="346"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1749"/>
         <source>Saves</source>
         <translation>存档</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="361"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="364"/>
         <source>Discard</source>
         <translation>丢弃</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="362"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="365"/>
         <source>Resets all unsaved changes on this page.</source>
         <translation>重置此页面上所有未保存的更改。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="363"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="366"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="402"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="405"/>
         <source>Your club in this save: name and logo for the window header, the second team and the favorite tactics.</source>
         <translation>此存档中的俱乐部设置：窗口顶部显示的名称和队徽、二队，以及常用战术。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="412"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="415"/>
         <source>As it should appear in the header</source>
         <translation>在标题栏中显示的名称</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="417"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="420"/>
         <source>My club</source>
         <translation>我的俱乐部</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="418"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="421"/>
         <source>Second team</source>
         <translation>二队</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="419"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="422"/>
         <source>Full club name</source>
         <translation>俱乐部全名</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="420"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="423"/>
         <source>Stadium</source>
         <translation>球场</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="421"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="424"/>
         <source>Club country</source>
         <translation>俱乐部国家/地区</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="422"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="425"/>
         <source>My club and second team come from the imported players. The second team (for example the reserves or U23) counts as part of your own squad, for loans and the youth XI, for instance. Club name and stadium appear in the window header. The club country is the three-letter nation code from the game; it drives the domestic filter in scouting.</source>
         <translation>我的俱乐部和二队来自导入的球员。二队（例如预备队或 U23）会视为你自身阵容的一部分，例如用于租借和青年阵容。俱乐部名称和球场会显示在窗口标题中。俱乐部国家/地区是游戏中的三字母国家代码，用于球探中的本国筛选。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="429"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1479"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1488"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1500"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="432"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1482"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1491"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1503"/>
         <source>Club logo</source>
         <translation>俱乐部标志</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="430"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="433"/>
         <source>Shown in the window header and on the start screen. Applied immediately.</source>
         <translation>显示在窗口标题和开始界面中，立即生效。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="437"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="493"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="440"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="496"/>
         <source>Choose image …</source>
         <translation>选择图像…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="438"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="494"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="441"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="497"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="443"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="446"/>
         <source>Favourite Tactics</source>
         <translation>常用战术</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="447"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="480"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="450"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="483"/>
         <source>Primary tactic</source>
         <translation>主战术</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="448"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="481"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="451"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="484"/>
         <source>Secondary tactic</source>
         <translation>副战术</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="449"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="452"/>
         <source>The favorite tactics are preselected on Overview, Lineup, Squad and Transfers. The primary one sets the roles on the Development page.</source>
         <translation>“概览”“首发阵容”“阵容”和“转会”页面会预选常用战术；主战术决定“成长”页面采用的角色。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="460"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="463"/>
         <source>Entering a team name turns on national team management.</source>
         <translation>输入球队名称会开启国家队管理。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="467"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="470"/>
         <source>e.g. National team U21</source>
         <translation>例如国家队U21</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="474"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="477"/>
         <source>99 = no age limit (senior national team); e.g. 21 for U21.</source>
         <translation>99 表示无年龄限制（成年国家队）；例如 U21 为 21。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="477"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="480"/>
         <source>Team name</source>
         <translation>球队名称</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="478"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="481"/>
         <source>Country code</source>
         <translation>国家代码</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="479"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="482"/>
         <source>Age limit</source>
         <translation>年龄限制</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="479"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="482"/>
         <source>99 = none</source>
         <translation>99=无</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="485"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="488"/>
         <source>Flag</source>
         <translation>旗帜</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="486"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="489"/>
         <source>Shown in the window header while you manage the national team. Applied immediately.</source>
         <translation>管理国家队时显示在窗口标题栏中，立即生效。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="507"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="510"/>
         <source>Rules the registration assistant checks the squad list against. Wage budget and minimum wage are set directly on the Squad Registration page.</source>
         <translation>注册助手据此检查注册名单。工资预算和最低工资可直接在“阵容注册”页面设置。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="513"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="516"/>
         <source>No registration rules are available for this Football Manager version.</source>
         <translation>此Football Manager版本没有注册规则。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="517"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="520"/>
         <source>Registration rules</source>
         <translation>注册规则</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="522"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="525"/>
         <source>Champions League / Europa League / Conference League</source>
         <translation>欧洲冠军联赛 / 欧联杯 / 欧协联</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="526"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="529"/>
         <source>No rule requires it, but registering fewer than two goalkeepers is risky.</source>
         <translation>没有规则强制要求，但只注册少于两名门将会有风险。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="527"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="530"/>
         <source>League</source>
         <translation>联赛</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="528"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="531"/>
         <source>European cups</source>
         <translation>欧洲俱乐部赛事</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="529"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="532"/>
         <source>Minimum goalkeepers</source>
         <translation>最少门将数</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="531"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="534"/>
         <source>Enables the home-grown / club-grown / U21 markings (edit player, right-click → Registration) and the registration assistant as soon as a competition requires a squad list. &apos;Default&apos; and leagues with 99 places (Bundesliga, Ligue 1, Austria) have no restriction: every player may play there. Checked are squad size and players trained in the country and at the club; the analyzer does not check limits for foreign or non-EU players. &apos;Default&apos; applies to every league whose rules are not stored yet. How to request more leagues is described in the README.</source>
         <translation>当赛事要求提交注册名单时，启用本国青训/本俱乐部青训/U21 标记（编辑球员或右键点击 → 注册）及注册助手。“默认”和拥有 99 个名额的联赛（德甲、法甲、奥地利）不设此类限制，所有球员均可参赛。检查内容包括阵容人数、本国青训和本俱乐部青训球员；分析器不检查外援或非欧盟球员上限。“默认”适用于尚未配置规则的联赛。如何申请添加其他联赛，请参阅 README。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="549"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="552"/>
         <source>Where player data comes from and how it is read.</source>
         <translation>球员数据来自哪里以及如何读取。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="553"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2061"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="556"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2143"/>
         <source>Football Manager Version</source>
         <translation>Football Manager 版本</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="559"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="562"/>
         <source>%1 (not yet supported)</source>
         <translation>%1（尚不支持）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="566"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="569"/>
         <source>Version of this save</source>
         <translation>此存档的版本</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="567"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="570"/>
         <source>Determines how the player attributes are read from the export, which roles and tactics apply and how the attributes are weighted. The version is chosen when a save is created and is fixed as soon as it contains players. Football Manager 2024 and 2027 are supported.</source>
         <translation>决定如何读取导出文件中的球员属性、采用哪些角色和战术，以及如何为属性加权。创建存档时选择版本；一旦存档中包含球员，版本就会固定。支持 Football Manager 2024 和 2027。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="572"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="575"/>
         <source>HTML/CSV export</source>
         <translation>HTML/CSV导出</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="575"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="677"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="777"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="578"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="680"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="780"/>
         <source>Browse …</source>
         <translation>浏览…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="576"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="579"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="577"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="580"/>
         <source>Open folder in the file manager</source>
         <translation>在文件管理器中打开文件夹</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="578"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="581"/>
         <source>Default folder</source>
         <translation>默认文件夹</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="579"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="582"/>
         <source>Start folder of the file dialog when uploading HTML and CSV exports. Empty = automatic: the game folder of the Football Manager version under &apos;Sports Interactive&apos; in the current user&apos;s Documents folder (if it exists).</source>
         <translation>上传HTML和CSV导出时启动文件对话框的文件夹。空=自动：当前用户文档文件夹中“Sports Interactive”下Football Manager版本的游戏文件夹（如果存在）。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="593"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="596"/>
         <source>Choose default folder for HTML/CSV import</source>
         <translation>为HTML/CSV导入选择默认文件夹</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="611"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="614"/>
         <source>The folder %1 could not be created.</source>
         <translation>无法创建文件夹%1。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="628"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="631"/>
         <source>No file could be copied to %1.</source>
         <translation>无法将任何文件复制到%1。</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/SettingsPage.cpp" line="633"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="636"/>
         <source>%n files copied to %1:
 %2</source>
         <translation>
@@ -7458,32 +7483,32 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="638"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="641"/>
         <source>Football Manager 27</source>
         <translation>Football Manager 27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="639"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="642"/>
         <source>FM27 has no export of its own. The analyzer reads lists through the bundled views or reads the save directly.</source>
         <translation>FM27没有自己的导出。分析器通过捆绑的视图读取列表或直接读取存档。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="643"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="646"/>
         <source>Install views</source>
         <translation>安装视图</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="644"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="647"/>
         <source>Install sample tactics</source>
         <translation>安装示例战术</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="645"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="648"/>
         <source>Game files</source>
         <translation>游戏文件</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="647"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="650"/>
         <source>Views: copies the bundled views (squad, player database, shortlist) into the &apos;views&apos; folder of Football Manager 27. In the game you load them from the list&apos;s views menu. Existing files with the same name are replaced, other views stay untouched.
 
 Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 and Counter Surge · 3-4-2-1) as game files into the &apos;tactics&apos; folder of Football Manager 27. In the game you load them in the tactics view via loading a tactic. They are already built into the analyzer; you create your own tactics in the tactic editor or import them.</source>
@@ -7492,785 +7517,785 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 示例战术：将两套随附示例战术（Control Press · 4-2-3-1 和 Counter Surge · 3-4-2-1）作为游戏文件复制到 Football Manager 27 的 &apos;tactics&apos; 文件夹。在游戏的战术页面加载即可。这两套战术已内置于分析器中；你可以在战术编辑器中创建或导入自己的战术。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="659"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="662"/>
         <source>FM27 views</source>
         <translation>FM27 视图</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="663"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="666"/>
         <source>FM27 tactics</source>
         <translation>FM27战术</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="666"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="669"/>
         <source>Attribute masking as in the game</source>
         <translation>与游戏相同的属性遮蔽</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="667"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="670"/>
         <source>Reading a save</source>
         <translation>读取存档</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="668"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="671"/>
         <source>Applies when you read an FM27 save (.fm). When on, your squad, very well-known players and well-scouted players are exact; everyone else comes with ranges the analyzer makes itself. When off, all values are exact. Hidden values such as potential are never read.</source>
         <translation>读取 FM27 存档（.fm）时适用。启用后，你的阵容、知名度很高的球员及已充分考察的球员显示精确属性值；其他球员显示由分析器生成的数值范围。关闭后，所有属性值均为精确值。分析器从不读取潜力等隐藏数值。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="673"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="676"/>
         <source>Follow save live</source>
         <translation>实时跟踪存档</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="674"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="677"/>
         <source>Follow live</source>
         <translation>实时跟踪</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="676"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="679"/>
         <source>Choose an FM27 save (.fm)</source>
         <translation>选择FM27存档（.fm）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="678"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="681"/>
         <source>Save file</source>
         <translation>存档文件</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="679"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="682"/>
         <source>While the Analyzer is open, it reads this save again automatically as soon as the game has saved it, autosaves included. It always takes the newest file of the career, including the versions “(v02)”, “(v03)”. If you save under a new name in the game, choose the new file here.</source>
         <translation>分析器打开期间，每次游戏保存后（包括自动保存）都会自动重新读取此存档。它始终读取该生涯的最新文件，包括“(v02)”“(v03)”版本。若在游戏中以新名称保存，请在此选择新文件。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="690"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="693"/>
         <source>Choose FM27 save</source>
         <translation>选择FM27存档</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="691"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="694"/>
         <source>FM27 saves (*.fm);;All files (*)</source>
         <translation>FM27存档 (*.fm);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="706"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="709"/>
         <source>What the analyzer keeps over time and when players count as outdated.</source>
         <translation>分析器随时间保留哪些数据，以及何时将球员数据视为过时。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="711"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="714"/>
         <source>Player history</source>
         <translation>球员历史</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="713"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="716"/>
         <source>Keep history for all players</source>
         <translation>为所有球员保留历史</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="714"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="717"/>
         <source>Scope</source>
         <translation>范围</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="715"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="718"/>
         <source>When an FM27 save is read in, the analyzer keeps one state per in-game month of the attributes, average rating, value and wage, but only when something changed. Unticked, this applies to your squad, the second team, the shortlist, the national squad and players from your scouting. Ticked, to every player read in; the database grows considerably. The current season and the two before it stay monthly; older seasons are condensed to their end-of-season state.</source>
         <translation>读取 FM27 存档时，分析器按游戏内月份保存属性、平均评分、身价和工资的数据快照，但仅在数据发生变化时记录。未勾选时，记录范围为你的阵容、二队、候选名单、国家队名单和球探列表中的球员；勾选后则记录所有读入的球员，数据库会明显增大。当前赛季和之前两个赛季保留每月记录，更早赛季则合并为赛季末快照。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="726"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="729"/>
         <source>Season start</source>
         <translation>赛季开始</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="727"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="730"/>
         <source>From this day on the history counts a new season, for example for the season shown on the overview and when condensing old seasons. 1 July fits most European leagues; for leagues that play in the calendar year, use 1 January.</source>
         <translation>从这一天开始，历史计算一个新的赛季，例如概述中显示的赛季和浓缩旧赛季时。7月1日适合大多数欧洲联赛；对于在自然年比赛的联赛，使用1月1日。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="732"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="735"/>
         <source>Data freshness</source>
         <translation>数据时效</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="738"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="741"/>
         <source>Outdated after missed full exports (Y)</source>
         <translation>缺席完整导出次数达到后标记为过时（Y）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="739"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="742"/>
         <source>Retired from age (X)</source>
         <translation>退役判定年龄下限（X）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="740"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="743"/>
         <source>An import with at least a quarter as many players as the last full export counts as a full export itself. Smaller exports (squad, shortlist, scouting) only refresh their own players. Anyone missing from the last Y full exports counts as stale and is hidden from matrices, suggestions and pools, except players of your club and the shortlist. If they are also at least X years old, they are shown as Retired.</source>
         <translation>导入文件的球员数若达到上次完整导出的四分之一，即视为完整导出。较小的导出（阵容、候选名单、球探）只更新其中的球员。连续最近 Y 次完整导出都未包含的球员，其数据会被视为过时，并从矩阵、建议和候选池中隐藏，但你俱乐部及候选名单中的球员除外。若其年龄还达到 X 岁，则显示为已退役。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="755"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="758"/>
         <source>Optional: player faces and club logos from installed graphics packs. Without this setting nothing changes.</source>
         <translation>可选：已安装图形包中的球员面孔和俱乐部徽标。如果没有此设置，什么都不会改变。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="762"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="765"/>
         <source>Graphics folder</source>
         <translation>graphics 文件夹</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="763"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="766"/>
         <source>Use portraits and crests from the graphics folder</source>
         <translation>使用 graphics 文件夹中的头像和队徽</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="771"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="774"/>
         <source>Only useful if you have installed graphics packs (player faces, club logos) for Football Manager. The analyzer reads the mappings from the packs&apos; config.xml files and shows portraits by player ID and crests by club ID. Nothing in the graphics folder is changed.</source>
         <translation>仅当您为Football Manager安装了图形包（球员面孔、俱乐部徽标）时才有用。分析器从包的config.xml文件中读取映射，并按球员ID显示头像，按俱乐部ID显示队徽。graphics 文件夹中没有任何更改。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="778"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="781"/>
         <source>Rescan</source>
         <translation>重新扫描</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="779"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="782"/>
         <source>Reads the folder again, e.g. after installing a new graphics pack.</source>
         <translation>再次读取文件夹，例如安装新的图形包后。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="781"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="784"/>
         <source>Folder</source>
         <translation>文件夹</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="794"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="797"/>
         <source>Choose crest …</source>
         <translation>选择队徽…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="795"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="798"/>
         <source>Club ID of my club</source>
         <translation>我俱乐部的俱乐部ID</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="797"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="800"/>
         <source>Exports contain no club IDs. Enter your club&apos;s ID or pick its crest in the logo pack (the number in the file name, e.g. 1234_club.png, is the ID). A club logo you chose yourself (Club page) takes precedence.</source>
         <translation>导出文件不含俱乐部 ID。请输入你俱乐部的 ID，或在队徽包中选择其队徽（文件名中的数字即为 ID，例如 1234_club.png）。在“俱乐部”页面手动选择的队徽优先。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="810"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="813"/>
         <source>Choose graphics folder</source>
         <translation>选择 graphics 文件夹</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="818"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="821"/>
         <source>Choose your club&apos;s crest</source>
         <translation>选择俱乐部队徽</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="819"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="822"/>
         <source>Images (*.png *.jpg *.jpeg);;All files (*)</source>
         <translation>图像 (*.png *.jpg *.jpeg);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="826"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="829"/>
         <source>Club ID</source>
         <translation>俱乐部 ID</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="827"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="830"/>
         <source>The file name contains no club ID. Please enter the ID by hand or choose the image as club logo on the Club page.</source>
         <translation>文件名不包含俱乐部ID。请手动输入ID或在俱乐部页面上选择图像作为俱乐部徽标。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="845"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="848"/>
         <source>A rating profile defines how attributes enter the DWRS rating. Each save uses exactly one profile.</source>
         <translation>评分方案定义属性如何计入 DWRS 评分。每个存档只使用一个评分方案。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="850"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="853"/>
         <source>This save&apos;s profile</source>
         <translation>此存档的评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="858"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="861"/>
         <source>Switching the profile recalculates all ratings of the save in the background. The history shows the switch as a marker; no development is calculated across it. Older ratings stay stored unchanged.</source>
         <translation>切换评分方案会在后台重新计算此存档的所有评分。历史记录会以标记显示这次切换，跨切换不计入成长。旧评分保持不变。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="863"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="866"/>
         <source>Rating profiles</source>
         <translation>评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="864"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="867"/>
         <source>Edit drafts, save and exchange profiles.</source>
         <translation>编辑草稿、保存和交换评分方案。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="874"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="877"/>
         <source>The built-in profiles could not be loaded.</source>
         <translation>无法加载内置评分方案。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="883"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="886"/>
         <source>Rating profile</source>
         <translation>评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="913"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="916"/>
         <source>Outfield players</source>
         <translation>外场球员</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="922"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="925"/>
         <source>Goalkeepers</source>
         <translation>门将</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="938"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="941"/>
         <source>Role Multipliers</source>
         <translation>角色乘数</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="944"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="947"/>
         <source>Key attributes</source>
         <translation>关键属性</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="945"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="948"/>
         <source>Preferred attributes</source>
         <translation>首选属性</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="947"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="950"/>
         <source>Playing time weights</source>
         <translation>出场时间权重</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="948"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="951"/>
         <source>Weight per agreed playing time.</source>
         <translation>每种约定出场时间的权重。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="972"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="975"/>
         <source>Recalculation</source>
         <translation>重新计算</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="973"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="976"/>
         <source>Recalculate all ratings</source>
         <translation>重新计算所有评分</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="976"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="979"/>
         <source>Recalculates the ratings of all players in the active save with this save&apos;s profile. Unsaved changes on this page are not taken into account.</source>
         <translation>使用此存档的评分方案重新计算当前存档中所有球员的评分。此页面上未保存的更改不会计入。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="988"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="991"/>
         <source>Classification for talent score, analysis and filters, for this save&apos;s FM version.</source>
         <translation>天赋评分、分析和过滤器的分类，为这个存档的FM 版本。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="994"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="997"/>
         <source>Personality</source>
         <translation>性格</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1000"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1003"/>
         <source>Restore standard</source>
         <translation>恢复标准</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1068"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1071"/>
         <source>Good</source>
         <translation>良好</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1069"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1072"/>
         <source>Neutral</source>
         <translation>中立</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1070"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1073"/>
         <source>Bad</source>
         <translation>糟糕</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1082"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1083"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1085"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1086"/>
         <source>Classification</source>
         <translation>分类</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1090"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1093"/>
         <source>Thresholds for lineup, youth, loans and the gap analysis.</source>
         <translation>阵容、青年、租借和差距分析的门槛。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1095"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1098"/>
         <source>Lineup</source>
         <translation>首发阵容</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1106"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1109"/>
         <source>Natural position bonus</source>
         <translation>自然位置加成</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1107"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1110"/>
         <source>In-possession share (FM27+)</source>
         <translation>持球权重（FM27+）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1108"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1111"/>
         <source>From FM27 every tactic has one line-up in possession and one out of possession. A player&apos;s value is this share of the role in possession plus the rest of the role out of possession. Default 50 %.</source>
         <translation>从 FM27 起，每套战术都有持球和无球两套阵容。球员的综合评分按此比例计入持球角色评分，其余比例计入无球角色评分。默认值为 50 %。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1115"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1118"/>
         <source>DWRS allowance for shorter paths</source>
         <translation>缩短换位距离的 DWRS 容差</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1116"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1119"/>
         <source>Maximum loss for the whole eleven compared with the original assignment. Also applies to the weighted selection score. 0 allows ties only. Within the allowance, manual side preferences come first, then short paths. The selected players stay the same.</source>
         <translation>相较原始分配方案，整套首发阵容允许损失的最高评分，也适用于加权选人评分。设为 0 时只允许评分相同的方案。在容差范围内，先满足手动设置的左右侧偏好，再尽量缩短换位距离。入选球员保持不变。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1120"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1123"/>
         <source>Max. roles per depth player</source>
         <translation>每名替补球员的最多角色数</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1122"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1125"/>
         <source>Youth and loans</source>
         <translation>青年与租借</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1134"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1137"/>
         <source>Youth: outfield players up to age</source>
         <translation>青年：外场球员年龄上限</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1135"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1138"/>
         <source>Youth: goalkeepers up to age</source>
         <translation>青年：门将年龄上限</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1136"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1139"/>
         <source>Min. talent score for loan</source>
         <translation>外租的最低天赋评分</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1137"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1140"/>
         <source>Minimum age for loan</source>
         <translation>外租的最低年龄</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1138"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1141"/>
         <source>Youth XI loan only above age</source>
         <translation>青年队球员仅在超过此年龄时外租</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1140"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1143"/>
         <source>Gap Analysis</source>
         <translation>差距分析</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1151"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1154"/>
         <source>Displacement threshold</source>
         <translation>替换阈值</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1152"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1155"/>
         <source>Dropoff threshold</source>
         <translation>落差阈值</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1153"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1156"/>
         <source>Wrong side penalty</source>
         <translation>非惯用边惩罚</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1163"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1166"/>
         <source>Which attributes train up to which age and how strongly. Drives the training recommendation.</source>
         <translation>哪些属性训练到哪个年龄以及强度如何。推动训练推荐。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1168"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1171"/>
         <source>Training profile</source>
         <translation>训练方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1172"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1175"/>
         <source>A band groups attributes that develop alike. Up to “fully trainable until” training works fully, then its effect drops linearly until “locked from”; “always” means never locked. The weight strengthens or weakens a band in the recommendation. Bands marked “Mentoring only” only appear as a mentoring note. Attributes without a band are not recommended. The profile belongs to this save.</source>
         <translation>区间将成长规律相近的属性归为一组。在“完全可训练至”所设年龄之前，训练效果完整；之后线性下降，直到“锁定起始年龄”。“始终”表示不会锁定。权重用于提高或降低该区间在训练建议中的优先级。标记为“仅指导”的区间只会显示指导提示。不属于任何区间的属性不会被推荐。训练方案属于当前存档。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1186"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1189"/>
         <source>Colors and club header of this save.</source>
         <translation>此存档的颜色与俱乐部标题栏。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1190"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1193"/>
         <source>Colour Scheme</source>
         <translation>配色方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1198"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1201"/>
         <source>Night (dark)</source>
         <translation>夜间（深色）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1199"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1202"/>
         <source>Day (light)</source>
         <translation>白天（浅色）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1200"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1203"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1201"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1204"/>
         <source>Template</source>
         <translation>模板</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1202"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1205"/>
         <source>Save as own template …</source>
         <translation>另存为自定义模板…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1204"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1207"/>
         <source>Saves the colors below (day and night) as your own template. Own templates are available in every save and are kept across updates.</source>
         <translation>将下面的颜色（白天和夜间）保存为自定义模板。自定义模板可在所有存档中选用，并在更新后保留。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1206"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1209"/>
         <source>Delete template</source>
         <translation>删除模板</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1216"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1219"/>
         <source>A preset sets a calm anthracite base and uses only the club colours as accents (header, buttons, interaction). Colours below can then be freely adjusted — that switches to &apos;Custom&apos;.</source>
         <translation>预设采用沉稳的炭灰色底色，并用俱乐部颜色点缀标题栏、按钮和交互元素。之后可自由调整下方颜色，调整后会切换为“自定义”。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1229"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1232"/>
         <source>Club header</source>
         <translation>俱乐部标题栏</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1232"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1235"/>
         <source>Club colors with crest</source>
         <translation>带队徽的俱乐部颜色</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1233"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1236"/>
         <source>Single color (&quot;Header&quot; color)</source>
         <translation>单色（“标题”颜色）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1234"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1237"/>
         <source>Style</source>
         <translation>风格</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1235"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1238"/>
         <source>Also show the crest as a subtle silhouette</source>
         <translation>同时以淡色剪影显示队徽</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1237"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1240"/>
         <source>The club header uses the &quot;Primary&quot; color as its surface and &quot;Interaction&quot; as a narrow stripe. If the colors are too light or too bright, the Analyzer darkens the surface just enough to keep name and stadium readable.</source>
         <translation>俱乐部标题栏使用“主色”作为底色，“交互色”作为细条纹。如果颜色太浅或太亮，分析器会略微压暗底色，确保名称和球场仍然清晰可读。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1247"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1250"/>
         <source>Colors</source>
         <translation>颜色</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1248"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1251"/>
         <source>Click a color to open the color picker.</source>
         <translation>单击一种颜色以打开颜色选择器。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1250"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1253"/>
         <source>Background</source>
         <translation>背景</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1251"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1254"/>
         <source>Panel / Cards</source>
         <translation>面板/卡片</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1252"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1255"/>
         <source>Sidebar</source>
         <translation>边栏</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1253"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1256"/>
         <source>Header</source>
         <translation>表头</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1254"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1257"/>
         <source>Primary / Buttons</source>
         <translation>主要/按钮</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1255"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1258"/>
         <source>Interaction (tabs, sliders)</source>
         <translation>交互（选项卡、滑块）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1256"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1259"/>
         <source>Text</source>
         <translation>文字</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1262"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2032"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1265"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2114"/>
         <source>Night</source>
         <translation>夜间</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1263"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2032"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1266"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2114"/>
         <source>Day</source>
         <translation>白天</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1280"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1283"/>
         <source>Choose colour</source>
         <translation>选择颜色</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1307"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1310"/>
         <source>How ratings are coloured in tables, on the pitch and on the dashboard.</source>
         <translation>评分在表格、球场和仪表板上是如何着色的。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1311"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1314"/>
         <source>Colour scheme</source>
         <translation>配色方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1314"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1317"/>
         <source>Scheme</source>
         <translation>方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1315"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1318"/>
         <source>Save as own scheme …</source>
         <translation>另存为自定义方案…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1316"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1319"/>
         <source>Own colour schemes are available in every save and survive updates.</source>
         <translation>自定义配色方案可在所有存档中选用，并在更新后保留。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1318"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1395"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1321"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1398"/>
         <source>Delete scheme</source>
         <translation>删除方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1325"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1328"/>
         <source>&quot;Original&quot; is the rainbow of earlier versions. &quot;Rarity&quot; colours in tiers like items in role-playing games (Poor, Common, Uncommon, Rare, Epic, Legendary). &quot;Colour-blind friendly&quot; stays distinguishable with red-green colour blindness. Changing a colour or border below turns it into &quot;Custom&quot;; &quot;Save as own scheme&quot; keeps it. The Analyzer picks light or dark text automatically so it stays readable on every colour.</source>
         <translation>“原版”采用早期版本的彩虹配色。“稀有度”像角色扮演游戏中的物品一样分级着色（较差、普通、良好、稀有、史诗、传奇）。“色盲友好”让红绿色觉障碍用户也能区分颜色。修改下方颜色或分界值后会切换为“自定义”；使用“另存为自定义方案”可保留设置。分析器会自动选择浅色或深色文字，确保在各种底色上清晰可读。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1332"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1335"/>
         <source>Bands and colours</source>
         <translation>区间和颜色</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1333"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1336"/>
         <source>From which value a colour applies, separately for outfield players and goalkeepers.</source>
         <translation>设置各颜色的起始分值，外场球员和门将分别设置。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1338"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1341"/>
         <source>A soft transition mixes the colours of neighbouring bands within this distance of the border, so that 71.5 and 72.5 no longer look completely different. Bands without fill are never mixed. Goalkeepers have their own borders because their rating uses a different basis.</source>
         <translation>一个柔和的过渡混合了边界距离内相邻区间的颜色，这样71.5和72.5看起来就不再完全不同了。没有填充的区间永远不会混合。守门员有自己的边界，因为他们的评分使用不同的基础。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1361"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1364"/>
         <source>%1 (own)</source>
         <translation>%1（自定义）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1364"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1382"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1367"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1385"/>
         <source>Own colour scheme</source>
         <translation>自定义配色方案</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1364"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1659"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1367"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1662"/>
         <source>Name:</source>
         <translation>名称：</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1383"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1386"/>
         <source>The colour scheme could not be saved: %1</source>
         <translation>无法保存配色方案：%1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1396"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1399"/>
         <source>Delete the colour scheme &quot;%1&quot;?</source>
         <translation>删除配色方案“%1”？</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1421"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1424"/>
         <source>Custom</source>
         <translation>自定义</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1437"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1440"/>
         <source>Will be read when you save.</source>
         <translation>保存时会读取。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1441"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1444"/>
         <source>Folder not found or without graphics packs (config.xml): %1</source>
         <translation>未找到文件夹或其中没有图形包（config.xml）：%1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1445"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1448"/>
         <source>Reading graphics packs…</source>
         <translation>正在读取图形包…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1449"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1452"/>
         <source>%1 portraits and %2 club crests found.</source>
         <translation>找到 %1 个头像和 %2 个俱乐部队徽。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1452"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1455"/>
         <source>No portraits or crests found. Are the packs with their config.xml in this folder?</source>
         <translation>未找到头像或队徽。包含 config.xml 的图形包是否在此文件夹中？</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1465"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1468"/>
         <source>There is no crest for this club ID in the folder.</source>
         <translation>文件夹中没有此俱乐部 ID 的队徽。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1472"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1475"/>
         <source>Choose club logo</source>
         <translation>选择俱乐部标志</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1473"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1525"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1476"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1528"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp);;All files (*)</source>
         <translation>图像 (*.png *.jpg *.jpeg *.bmp);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1480"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1532"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1483"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1535"/>
         <source>The file could not be loaded as an image.</source>
         <translation>该文件无法作为图像加载。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1489"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1492"/>
         <source>The logo could not be saved.
 %1</source>
         <translation>无法保存徽标。
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1501"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1504"/>
         <source>The logo could not be removed.
 %1</source>
         <translation>徽标无法删除。
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1515"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1518"/>
         <source>(no logo)</source>
         <translation>（无标志）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1524"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1527"/>
         <source>Choose national flag</source>
         <translation>选择国旗</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1531"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1539"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1551"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1534"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1542"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1554"/>
         <source>National flag</source>
         <translation>国旗</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1540"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1543"/>
         <source>The flag could not be saved.
 %1</source>
         <translation>无法保存旗帜。
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1552"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1555"/>
         <source>The flag could not be removed.
 %1</source>
         <translation>无法删除旗帜。
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1566"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1569"/>
         <source>(no flag)</source>
         <translation>（无旗帜）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1584"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1639"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1682"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1587"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1642"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1685"/>
         <source>Custom</source>
         <comment>league</comment>
         <translation>自定义</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1587"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1590"/>
         <source>%1 (own)</source>
         <comment>league</comment>
         <translation>%1（自定义）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1615"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1618"/>
         <source>Custom (not saved)</source>
         <translation>自定义（未保存）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1632"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1635"/>
         <source>Save own color template</source>
         <translation>保存自定义颜色模板</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1660"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1663"/>
         <source>League:</source>
         <translation>联赛：</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1661"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1664"/>
         <source>A league files the template with the clubs of that league. &quot;Custom&quot; collects templates without a league. The same name in the same league replaces the template.</source>
         <translation>选择联赛后，模板会归入该联赛的俱乐部分组。“自定义”收纳未指定联赛的模板。同一联赛下使用相同名称会覆盖原模板。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1686"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1709"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1689"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1712"/>
         <source>Color template</source>
         <translation>颜色模板</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1687"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1690"/>
         <source>The template could not be saved.
 
 %1</source>
@@ -8279,17 +8304,17 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1702"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1705"/>
         <source>Delete color template</source>
         <translation>删除颜色模板</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1703"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1706"/>
         <source>Delete your template &quot;%1&quot;? Saves that use it keep their colors.</source>
         <translation>删除您的模板“%1”？使用它的存档保留其颜色。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1710"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1713"/>
         <source>The template could not be deleted.
 
 %1</source>
@@ -8298,108 +8323,168 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1747"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1750"/>
         <source>Switch, create or take over saves. These actions apply immediately.</source>
         <translation>切换、创建或接管存档。这些操作立即应用。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1752"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1755"/>
         <source>Active save</source>
         <translation>当前存档</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1754"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1757"/>
         <source>Switch</source>
         <translation>切换</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1763"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1786"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1766"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1789"/>
         <source>Database</source>
         <translation>数据库</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1766"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1769"/>
         <source>New save …</source>
         <translation>新的存档…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1767"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1770"/>
         <source>Import legacy database …</source>
         <translation>导入遗留数据库…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1781"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1784"/>
         <source>Activate imported database &apos;%1&apos; now?</source>
         <translation>现在激活导入的数据库“%1”？</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1791"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1794"/>
         <source>Startup</source>
         <translation>启动</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1793"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1796"/>
         <source>Always open the last used save at startup</source>
         <translation>始终在启动时打开上次使用的存档</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1799"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1802"/>
         <source>Unticked, the start screen with your saves appears at startup. Ticked, you can still bring it up by holding Shift while the app starts.</source>
         <translation>取消勾选，您的存档的开始屏幕会在启动时出现。勾选后，您仍然可以在应用程序启动时按住Shift将其调出。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1803"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1806"/>
+        <source>Updates</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1807"/>
+        <source>Check for new versions at startup</source>
+        <translation>启动时检查新版本</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1808"/>
+        <source>Include test versions</source>
+        <translation>包括测试版</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1810"/>
+        <source>Test versions come before a release, for trying out new features. They can still contain errors.</source>
+        <translation>测试版在正式发布前推出，用于试用新功能，可能仍有错误。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1818"/>
+        <source>Check now</source>
+        <translation>立即检查</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1831"/>
+        <source>The check only asks GitHub for the latest version number and its release notes. No data about you, your saves or your players is sent. A new version is shown as a hint with its changes and a download button that opens the release page; nothing is installed automatically. Without the check the app makes no connection to the internet.</source>
+        <translation>检查时仅向 GitHub 查询最新版本号及其更新说明。不会发送任何关于你、你的存档或球员的数据。新版本会以提示形式显示，附带更新内容和一个打开发布页面的下载按钮；不会自动安装任何内容。不开启检查时，本应用不会连接互联网。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1837"/>
         <source>Data folder</source>
         <translation>数据文件夹</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1808"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1842"/>
         <source>Can be changed in bootstrap.ini.</source>
         <translation>可在 bootstrap.ini 中更改。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1820"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1853"/>
+        <source>Version %1 · last checked %2</source>
+        <translation>版本 %1 · 上次检查 %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1855"/>
+        <source>Version %1</source>
+        <translation>版本 %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1868"/>
+        <source>Version %1 is available.</source>
+        <translation>版本 %1 已发布。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1875"/>
+        <source>You are using the latest version (%1).</source>
+        <translation>你使用的是最新版本（%1）。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1879"/>
+        <source>GitHub could not be reached. Please try again later.</source>
+        <translation>无法连接 GitHub，请稍后再试。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1885"/>
+        <source>Checking …</source>
+        <translation>正在检查…</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1894"/>
         <source>No profile active.</source>
         <translation>没有启用评分方案。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1820"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1894"/>
         <source>Active: %1</source>
         <translation>启用：%1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1845"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1919"/>
         <source>The save contains players. Please create a new save for a different version.</source>
         <translation>存档包含球员。请为不同的版本创建一个新的存档。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1915"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1989"/>
         <source>Default (no restriction)</source>
         <translation>默认（无限制）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1948"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2022"/>
         <source>Weights for %1 saves.</source>
         <translation>%1存档的权重。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2019"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2101"/>
         <source>Applies to the save “%1”</source>
         <translation>适用于存档“%1”</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2031"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2113"/>
         <source>%1: text/background contrast only %2:1 (WCAG recommends at least 4.5:1)</source>
         <translation>%1：仅文本/背景对比度%2： 1（网页内容无障碍指南建议至少4.5:1）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2037"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2119"/>
         <source>Text/background contrast OK</source>
         <translation>文字/背景对比度合格</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2236"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2318"/>
         <source>The settings could not be saved. The save keeps its previous state.
 
 %1</source>
@@ -8408,7 +8493,7 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2259"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2341"/>
         <source>Settings saved.</source>
         <translation>已保存设置。</translation>
     </message>
@@ -9924,6 +10009,89 @@ A backup is created automatically in the “backups” folder first. You can bri
         <location filename="../src/app/pages/TransfersPage.cpp" line="309"/>
         <source>%1 player records saved.</source>
         <translation>已保存 %1 条球员记录。</translation>
+    </message>
+</context>
+<context>
+    <name>fm::UpdateDialog</name>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="21"/>
+        <source>Update available</source>
+        <translation>有可用更新</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="29"/>
+        <source>Test version %1 is available</source>
+        <translation>测试版 %1 已发布</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="30"/>
+        <source>Version %1 is available</source>
+        <translation>版本 %1 已发布</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="34"/>
+        <source>You are using version %1.</source>
+        <translation>你当前使用的是版本 %1。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="38"/>
+        <source>What&apos;s new</source>
+        <translation>更新内容</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="44"/>
+        <source>No release notes for this version.</source>
+        <translation>此版本没有更新说明。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="49"/>
+        <source>The download opens the release page in your browser. Install the new version as usual; your saves and settings stay as they are.</source>
+        <translation>下载会在浏览器中打开发布页面。请照常安装新版本；你的存档和设置会保持不变。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="58"/>
+        <source>Skip this version</source>
+        <translation>跳过此版本</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="59"/>
+        <source>No notice at startup for this version. A newer one is shown again.</source>
+        <translation>启动时不再提示此版本。有更新的版本时会再次提示。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="60"/>
+        <source>Later</source>
+        <translation>稍后</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="61"/>
+        <source>Download</source>
+        <translation>下载</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="87"/>
+        <source>Check for updates?</source>
+        <translation>检查更新？</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="89"/>
+        <source>Should %1 check for new versions at startup?</source>
+        <translation>是否让 %1 在启动时检查新版本？</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="91"/>
+        <source>It only asks GitHub for the latest version number. No data about you, your saves or your players is sent, and nothing is installed automatically. You can change this at any time under Settings → Saves.</source>
+        <translation>仅向 GitHub 查询最新版本号。不会发送任何关于你、你的存档或球员的数据，也不会自动安装任何内容。你可以随时在“设置 → 存档”中更改。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="94"/>
+        <source>Check for updates</source>
+        <translation>检查更新</translation>
+    </message>
+    <message>
+        <location filename="../src/app/UpdateDialog.cpp" line="95"/>
+        <source>Don&apos;t check</source>
+        <translation>不检查</translation>
     </message>
 </context>
 <context>

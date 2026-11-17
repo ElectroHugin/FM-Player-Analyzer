@@ -12,6 +12,12 @@ Added for 2.3.1-test.2:
 
 - Chinese translation reviewed: football terms as in the Chinese version of the game (e.g. in/out of possession, attributes), clearer explanations.
 
+Added for the next test build:
+
+- Optional update check, off by default: the app asks once whether it may look for new versions at startup. It only asks GitHub for the latest version number and sends no data about you or your saves.
+- A new version shows as a hint with its changes and a download button that opens the release page. Nothing is installed automatically; a version can be skipped.
+- Settings → Saves → Updates: switch the check on or off, include test versions, or check now.
+
 ## 2.3.0 – 2026-11-15
 
 **DWRS rating profiles**

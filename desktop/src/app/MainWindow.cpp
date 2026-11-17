@@ -14,6 +14,8 @@
 #include "WelcomeWizard.h"
 #include "SaveLibrary.h"
 #include "StartScreen.h"
+#include "UpdateChecker.h"
+#include "UpdateDialog.h"
 #include "widgets/DropZone.h"
 #include "widgets/TacticPitchWidget.h"
 #include "pages/AssignRolesPage.h"
@@ -267,6 +269,12 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     m_welcomeTimer.setInterval(600);
     connect(&m_welcomeTimer, &QTimer::timeout, this, &MainWindow::maybeShowWelcome);
     QTimer::singleShot(0, this, &MainWindow::maybeShowWelcome);
+
+    // After the welcome assistant had its turn: never in the same moment.
+    m_updateTimer.setSingleShot(true);
+    m_updateTimer.setInterval(2500);
+    connect(&m_updateTimer, &QTimer::timeout, this, &MainWindow::runStartupUpdateStep);
+    m_updateTimer.start();
 
     connect(&m_context.graphics(), &GraphicsLibrary::stateChanged, this, [this] {
         for (TacticPitchWidget *pitch : findChildren<TacticPitchWidget *>())
@@ -1014,6 +1022,59 @@ void MainWindow::showNotice(const QString &text, const QString &actionLabel,
     m_noticeAction->setVisible(!actionLabel.isEmpty());
     m_noticeCallback = std::move(action);
     m_noticeBar->show();
+}
+
+void MainWindow::runStartupUpdateStep()
+{
+    if (ScreenshotTour::requested())
+        return;
+    // Wait until nothing else asks the user something.
+    if (m_welcomeOpen || m_welcomeTimer.isActive() || QApplication::activeModalWidget()
+        || !isVisible()) {
+        m_updateTimer.start();
+        return;
+    }
+    if (m_pendingUpdate) {
+        showUpdateNotice();
+        return;
+    }
+    AppPaths &paths = m_context.paths();
+    if (!paths.updateQuestionAnswered())
+        UpdateDialog::askForConsent(paths, this);
+    if (!paths.updateCheckEnabled() || m_updateChecker)
+        return; // off (the app stays offline), or already checked this session
+
+    m_updateChecker = new UpdateChecker(paths, this);
+    connect(m_updateChecker, &UpdateChecker::finished, this,
+            [this](const UpdateChecker::Result &result) {
+                // At startup only a newer version is worth a word; no network or
+                // an up-to-date app stay silent.
+                if (result.outcome != UpdateChecker::Outcome::NewVersion
+                    || result.release.version == m_context.paths().skippedUpdateVersion())
+                    return;
+                m_pendingUpdate = result.release;
+                showUpdateNotice();
+            });
+    m_updateChecker->check();
+}
+
+void MainWindow::showUpdateNotice()
+{
+    if (!m_pendingUpdate)
+        return;
+    // The hint bar holds one hint; another one (e.g. outdated ratings) first.
+    if (m_noticeBar->isVisible() || QApplication::activeModalWidget()) {
+        m_updateTimer.start();
+        return;
+    }
+    const ReleaseInfo release = *m_pendingUpdate;
+    m_pendingUpdate.reset();
+    showNotice(release.preRelease ? tr("Test version %1 is available.").arg(release.version)
+                                  : tr("Version %1 is available.").arg(release.version),
+               tr("What's new"), [this, release] {
+                   UpdateDialog dialog(release, m_context.paths(), this);
+                   dialog.exec();
+               });
 }
 
 void MainWindow::showToast(const QString &text)

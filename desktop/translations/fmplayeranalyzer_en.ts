@@ -26,7 +26,7 @@
 <context>
     <name>fm::SettingsPage</name>
     <message numerus="yes">
-        <location filename="../src/app/pages/SettingsPage.cpp" line="633"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="636"/>
         <source>%n files copied to %1:
 %2</source>
         <translation>

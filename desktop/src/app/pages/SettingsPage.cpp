@@ -10,6 +10,9 @@
 #include "../AppContext.h"
 #include "../MigrationWizard.h"
 #include "../NewSaveWizard.h"
+#include "../UpdateChecker.h"
+#include "../UpdateDialog.h"
+#include "core/Version.h"
 #include "../theming/ThemeManager.h"
 #include "../theming/ThemePresets.h"
 #include "core/Constants.h"
@@ -347,7 +350,7 @@ SettingsPage::SettingsPage(AppContext &context, ThemeManager &theme, QWidget *pa
         if (page.isValid())
             m_stack->setCurrentIndex(page.toInt());
     });
-    m_nav->setCurrentRow(m_sectionRows.value(QStringLiteral("Verein")));
+    m_nav->setCurrentRow(m_sectionRows.value(QStringLiteral("club")));
 
     // Footer: what the save button affects, discard and save.
     auto *footer = new QFrame(this);
@@ -1800,6 +1803,37 @@ QWidget *SettingsPage::buildDatabasePage()
            "can still bring it up by holding Shift while the app starts.")));
     m_autoOpenCheck = autoOpen;
 
+    cards->addWidget(makeCard(tr("Updates"), QString(), &body));
+    m_updateCheckBox = new QCheckBox(tr("Check for new versions at startup"));
+    m_updateTestBuildsBox = new QCheckBox(tr("Include test versions"));
+    m_updateTestBuildsBox->setToolTip(
+        tr("Test versions come before a release, for trying out new features. They can "
+           "still contain errors."));
+    connect(m_updateCheckBox, &QCheckBox::toggled, this,
+            [this](bool on) { m_context.paths().setUpdateCheckEnabled(on); });
+    connect(m_updateTestBuildsBox, &QCheckBox::toggled, this,
+            [this](bool on) { m_context.paths().setUpdateIncludesTestBuilds(on); });
+    body->addWidget(m_updateCheckBox);
+    body->addWidget(m_updateTestBuildsBox);
+    m_updateNowButton = new QPushButton(tr("Check now"));
+    m_updateStatus = caption(QString());
+    m_updateStatus->setWordWrap(true);
+    {
+        auto *row = new QHBoxLayout;
+        row->setContentsMargins(0, 0, 0, 0);
+        row->setSpacing(12);
+        row->addWidget(m_updateNowButton);
+        row->addWidget(m_updateStatus, 1);
+        body->addLayout(row);
+    }
+    connect(m_updateNowButton, &QPushButton::clicked, this, &SettingsPage::checkForUpdatesNow);
+    body->addWidget(foldableHint(
+        tr("The check only asks GitHub for the latest version number and its release notes. "
+           "No data about you, your saves or your players is sent. A new version is shown "
+           "as a hint with its changes and a download button that opens the release page; "
+           "nothing is installed automatically. Without the check the app makes no "
+           "connection to the internet.")));
+
     cards->addWidget(makeCard(tr("Data folder"), QString(), &body));
     auto *pathInfo = new QLabel(QDir::toNativeSeparators(m_context.paths().dataDir()));
     pathInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -1811,6 +1845,46 @@ QWidget *SettingsPage::buildDatabasePage()
     return page;
 }
 
+
+void SettingsPage::showLastUpdateCheck()
+{
+    const QDateTime last = m_context.paths().lastUpdateCheck();
+    m_updateStatus->setText(
+        last.isValid() ? tr("Version %1 · last checked %2")
+                             .arg(appVersion(), QLocale().toString(last, QLocale::ShortFormat))
+                       : tr("Version %1").arg(appVersion()));
+}
+
+void SettingsPage::checkForUpdatesNow()
+{
+    if (!m_updateChecker) {
+        m_updateChecker = new UpdateChecker(m_context.paths(), this);
+        connect(m_updateChecker, &UpdateChecker::finished, this,
+                [this](const UpdateChecker::Result &result) {
+                    m_updateNowButton->setEnabled(true);
+                    switch (result.outcome) {
+                    case UpdateChecker::Outcome::NewVersion: {
+                        m_updateStatus->setText(
+                            tr("Version %1 is available.").arg(result.release.version));
+                        UpdateDialog dialog(result.release, m_context.paths(), this);
+                        dialog.exec();
+                        break;
+                    }
+                    case UpdateChecker::Outcome::UpToDate:
+                        m_updateStatus->setText(
+                            tr("You are using the latest version (%1).").arg(appVersion()));
+                        break;
+                    case UpdateChecker::Outcome::Failed:
+                        m_updateStatus->setText(
+                            tr("GitHub could not be reached. Please try again later."));
+                        break;
+                    }
+                });
+    }
+    m_updateNowButton->setEnabled(false);
+    m_updateStatus->setText(tr("Checking …"));
+    m_updateChecker->check();
+}
 
 void SettingsPage::updateActiveRatingProfile()
 {
@@ -2013,6 +2087,14 @@ void SettingsPage::refresh()
         QSignalBlocker blocker(m_autoOpenCheck);
         m_autoOpenCheck->setChecked(m_context.config().autoOpenLastDatabase());
     }
+    {
+        QSignalBlocker blockUpdates(m_updateCheckBox);
+        QSignalBlocker blockTestBuilds(m_updateTestBuildsBox);
+        m_updateCheckBox->setChecked(m_context.paths().updateCheckEnabled());
+        m_updateTestBuildsBox->setChecked(m_context.paths().updateIncludesTestBuilds());
+    }
+    if (!m_updateChecker || !m_updateChecker->isRunning())
+        showLastUpdateCheck();
     m_dbCombo->clear();
     m_dbCombo->addItems(m_context.availableDatabases());
     m_dbCombo->setCurrentText(m_context.currentDbName());

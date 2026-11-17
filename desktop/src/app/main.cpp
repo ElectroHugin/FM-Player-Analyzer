@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
         if (dialog.exec() != QDialog::Accepted)
             return 0;
         context.paths().setDataDir(dialog.chosenDataDir());
+        context.paths().setUpdateCheckEnabled(dialog.updateCheckChosen());
     }
 
     // --smoke (build verification) must never block on a dialog: it opens

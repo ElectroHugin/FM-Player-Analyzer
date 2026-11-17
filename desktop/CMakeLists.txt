@@ -13,7 +13,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Sql Widgets Charts Concurrent Test LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Sql Widgets Charts Concurrent Network Test LinguistTools)
 
 enable_testing()
 
