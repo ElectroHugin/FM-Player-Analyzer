@@ -176,8 +176,8 @@
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="192"/>
-        <source>The column headers are in %1, but the game language of this save is set to %2. The export was read as %1. Set the game language to %1 or to Automatic in Settings → Club.</source>
-        <translation>Die Spaltenköpfe sind auf %1, die Spielsprache dieses Spielstands steht aber auf %2. Der Export wurde als %1 gelesen. Stelle die Spielsprache unter Einstellungen → Verein auf %1 oder auf Automatisch.</translation>
+        <source>The column headers are in %1, but the game language of this save is set to %2. The export was read as %1. Set the game language to %1 or to Automatic in Settings → Import.</source>
+        <translation>Die Spaltenköpfe sind auf %1, die Spielsprache dieses Spielstands steht aber auf %2. Der Export wurde als %1 gelesen. Stelle die Spielsprache unter Einstellungen → Import auf %1 oder auf Automatisch.</translation>
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="198"/>

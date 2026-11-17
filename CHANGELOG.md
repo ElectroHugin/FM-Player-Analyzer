@@ -12,6 +12,12 @@ Added for 2.3.1-test.2:
 
 - Chinese translation reviewed: football terms as in the Chinese version of the game (e.g. in/out of possession, attributes), clearer explanations.
 
+Next:
+
+- New interface languages: French, Italian and Russian. Choose them in the Language menu. Made with an AI tool and not yet reviewed by native speakers; corrections are welcome as a Translation issue.
+- Game terms (attributes, positions, foot strength, personalities, playing time and more) now follow the official texts of each language version of the game, also in German and Chinese.
+- HTML/CSV exports are read in every supported game language (English, German, French, Italian, Simplified Chinese, Russian). The language is recognised from the column headers; it can also be set under Settings → Import.
+
 ## 2.3.0 – 2026-11-15
 
 **DWRS rating profiles**

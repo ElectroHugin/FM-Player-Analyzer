@@ -191,7 +191,7 @@ QStringList importWarningLines(const ImportPipelineResult &result)
         && configured != QLatin1String(GameLanguage::kAuto) && configured != detected)
         warnings << ImportText::tr("The column headers are in %1, but the game language of this "
                                    "save is set to %2. The export was read as %1. Set the game "
-                                   "language to %1 or to Automatic in Settings → Club.")
+                                   "language to %1 or to Automatic in Settings → Import.")
                         .arg(GameLanguage::nativeName(detected),
                              GameLanguage::nativeName(configured));
     if (!result.import.unknownColumns.isEmpty())

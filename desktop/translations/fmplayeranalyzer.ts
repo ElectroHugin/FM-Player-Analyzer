@@ -176,7 +176,7 @@
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="192"/>
-        <source>The column headers are in %1, but the game language of this save is set to %2. The export was read as %1. Set the game language to %1 or to Automatic in Settings → Club.</source>
+        <source>The column headers are in %1, but the game language of this save is set to %2. The export was read as %1. Set the game language to %1 or to Automatic in Settings → Import.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

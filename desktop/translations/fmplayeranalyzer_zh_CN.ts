@@ -176,8 +176,8 @@
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="192"/>
-        <source>The column headers are in %1, but the game language of this save is set to %2. The export was read as %1. Set the game language to %1 or to Automatic in Settings → Club.</source>
-        <translation>列标题为 %1，但此存档的游戏语言设置为 %2。导出文件已按 %1 读取。请在“设置 → 俱乐部”中将游戏语言设为 %1 或“自动”。</translation>
+        <source>The column headers are in %1, but the game language of this save is set to %2. The export was read as %1. Set the game language to %1 or to Automatic in Settings → Import.</source>
+        <translation>列标题为 %1，但此存档的游戏语言设置为 %2。导出文件已按 %1 读取。请在“设置 → 导入”中将游戏语言设为 %1 或“自动”。</translation>
     </message>
     <message>
         <location filename="../src/app/ImportRunner.cpp" line="198"/>
