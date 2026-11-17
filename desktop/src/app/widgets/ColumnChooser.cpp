@@ -42,9 +42,9 @@ ColumnChooser::ColumnChooser(AppContext &context, QTableView *view, PlayerTableM
 
 QPushButton *ColumnChooser::createButton(QWidget *parent)
 {
-    auto *button = new QPushButton(tr("Spalten…"), parent);
-    button->setToolTip(tr("Spalten ein- oder ausblenden. Auch per Rechtsklick auf die "
-                          "Kopfzeile der Tabelle."));
+    auto *button = new QPushButton(tr("Columns…"), parent);
+    button->setToolTip(tr("Show or hide columns. Also by right-clicking the table "
+                          "header."));
     connect(button, &QPushButton::clicked, this, [this, button] {
         showMenu(button->mapToGlobal(QPoint(0, button->height())));
     });
@@ -100,9 +100,9 @@ void ColumnChooser::showMenu(const QPoint &globalPos)
             oopRoles << header;
     }
 
-    QAction *showAll = menu.addAction(tr("Alle Spalten zeigen"));
+    QAction *showAll = menu.addAction(tr("Show all columns"));
     connect(showAll, &QAction::triggered, this, [this] { storeHidden({}); });
-    QAction *reset = menu.addAction(tr("Standard wiederherstellen"));
+    QAction *reset = menu.addAction(tr("Restore default"));
     connect(reset, &QAction::triggered, this, [this] {
         m_context.database().removeSetting(QStringLiteral("table_columns/") + m_key);
         apply();
@@ -129,8 +129,8 @@ void ColumnChooser::showMenu(const QPoint &globalPos)
     };
     if (!ipRoles.isEmpty() || !oopRoles.isEmpty()) {
         menu.addSeparator();
-        addPhaseToggle(tr("Alle Rollen mit Ball (IP)"), ipRoles);
-        addPhaseToggle(tr("Alle Rollen ohne Ball (OOP)"), oopRoles);
+        addPhaseToggle(tr("All in-possession roles (IP)"), ipRoles);
+        addPhaseToggle(tr("All out-of-possession roles (OOP)"), oopRoles);
     }
 
     menu.addSeparator();

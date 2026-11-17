@@ -83,13 +83,13 @@ void fitHeightToRows(QTableWidget *table)
 QString gapTypeLabel(const Gap &gap)
 {
     if (gap.playerName == QLatin1String("—") || gap.playerName == QLatin1String("-"))
-        return SigningAdvisorTab::tr("⛔ Unbesetzt");
+        return SigningAdvisorTab::tr("⛔ Unfilled");
     if (gap.isDisplacement && gap.isDropoff)
-        return SigningAdvisorTab::tr("🕳️⚠️ Versteckt + Offensichtlich");
+        return SigningAdvisorTab::tr("🕳️⚠️ Hidden + Obvious");
     if (gap.isDisplacement)
-        return SigningAdvisorTab::tr("🕳️ Versteckt");
+        return SigningAdvisorTab::tr("🕳️ Hidden");
     if (gap.isDropoff)
-        return SigningAdvisorTab::tr("⚠️ Offensichtlich");
+        return SigningAdvisorTab::tr("⚠️ Obvious");
     return QString();
 }
 
@@ -116,41 +116,41 @@ SigningAdvisorTab::SigningAdvisorTab(AppContext &context, QWidget *parent)
 
     // --- Market filters ---
     auto *filterRow = new QHBoxLayout;
-    filterRow->addWidget(new QLabel(tr("Budget (Marktwert bis):"), this));
+    filterRow->addWidget(new QLabel(tr("Budget (market value up to):"), this));
     m_budgetSpin = new QDoubleSpinBox(this);
     m_budgetSpin->setRange(0.0, 2000.0);
     m_budgetSpin->setDecimals(1);
     m_budgetSpin->setSingleStep(5.0);
-    m_budgetSpin->setSuffix(tr(" Mio."));
-    m_budgetSpin->setToolTip(tr("Höchster Marktwert eines Kandidaten (untere Grenze der Spanne, "
-                                "wie FM sie exportiert). 0 = nur ablösefreie Spieler."));
+    m_budgetSpin->setSuffix(tr(" M"));
+    m_budgetSpin->setToolTip(tr("Highest market value of a candidate (lower end of the range as "
+                                "FM exports it). 0 = free transfers only."));
     filterRow->addWidget(m_budgetSpin);
-    m_noLimitCheck = new QCheckBox(tr("Kein Limit"), this);
+    m_noLimitCheck = new QCheckBox(tr("No limit"), this);
     filterRow->addWidget(m_noLimitCheck);
     filterRow->addSpacing(16);
-    filterRow->addWidget(new QLabel(tr("Höchstalter:"), this));
+    filterRow->addWidget(new QLabel(tr("Max age:"), this));
     m_maxAgeSpin = new QSpinBox(this);
     m_maxAgeSpin->setRange(15, 45);
     filterRow->addWidget(m_maxAgeSpin);
     filterRow->addSpacing(16);
-    m_shortlistOnlyCheck = new QCheckBox(tr("Nur Shortlist"), this);
+    m_shortlistOnlyCheck = new QCheckBox(tr("Shortlist only"), this);
     filterRow->addWidget(m_shortlistOnlyCheck);
     filterRow->addStretch(1);
-    m_hintToggle = makeToggle(this, tr("Wie wird gerechnet?"),
-                              tr("Erklärung ein- oder ausblenden"));
+    m_hintToggle = makeToggle(this, tr("How is this calculated?"),
+                              tr("Show or hide the explanation"));
     filterRow->addWidget(m_hintToggle);
     layout->addLayout(filterRow);
 
     m_hint = new QLabel(
-        tr("Für jede Position werden die besten Spieler des gefilterten Markts testweise in den "
-           "Kader geholt, und Startelf und B-Team werden jedes Mal neu und beweisbar optimal "
-           "aufgestellt (wie auf 'Erste Mannschaft'). 'Startelf +' ist, um wie viel die Summe "
-           "der DWRS-Werte der Startelf dadurch steigt — mit allen Folgen: Rückt ein vielseitiger "
-           "Spieler dank des Neuen auf eine bessere Position, zählt das mit (Spalte 'Folgen'). "
-           "Eine Position, die nur schwach aussieht, für die der Markt aber niemand Besseren "
-           "hergibt, landet deshalb nicht oben. 'Besser am Markt' zählt, wie viele Spieler des "
-           "gefilterten Markts in der Rolle besser sind als dein jetziger. Neuzugänge werden ohne "
-           "vereinbarte Spielzeit gerechnet; Spieler mit 'Not for Sale' bleiben außen vor."),
+        tr("For every position the best players of the filtered market are added to the squad on "
+           "trial, and the starting XI and B-team are lined up again, provably optimally, each "
+           "time (as on 'First team'). 'XI +' is how much the starting XI's total DWRS rises — "
+           "with every knock-on effect: if a versatile player moves to a better position thanks "
+           "to the newcomer, that counts too (column 'Knock-on'). A position that merely looks "
+           "weak, but for which the market offers nobody better, therefore does not end up on "
+           "top. 'Better on market' counts how many players of the filtered market are better in "
+           "the role than your current one. Signings are calculated without an agreed playing "
+           "time; 'Not for Sale' players are left out."),
         this);
     m_hint->setWordWrap(true);
     m_hint->setObjectName(QStringLiteral("kpiCaption"));
@@ -167,12 +167,12 @@ SigningAdvisorTab::SigningAdvisorTab(AppContext &context, QWidget *parent)
     layout->addWidget(m_summary);
 
     // --- One row per XI slot, biggest gain first ---
-    m_needsTable = makeTable(this, {tr("Slot"), tr("Rolle"), tr("Aktuell"), tr("DWRS"),
-                                    tr("Startelf +"), tr("Bester Kauf"), tr("DWRS"),
-                                    tr("Marktwert"), tr("B-Team +"), tr("Besser am Markt")});
+    m_needsTable = makeTable(this, {tr("Slot"), tr("Role"), tr("Current"), tr("DWRS"),
+                                    tr("XI +"), tr("Best signing"), tr("DWRS"),
+                                    tr("Market Value"), tr("B-team +"), tr("Better on market")});
     m_needsTable->horizontalHeaderItem(9)->setToolTip(
-        tr("Spieler des gefilterten Markts, die in der Rolle besser sind als dein jetziger — "
-           "von allen, die die Position spielen können."));
+        tr("Players of the filtered market who are better in the role than your current one "
+           "— out of all who can play the position."));
     layout->addWidget(m_needsTable);
     // Current player and best signing each carry their own uid.
     PlayerActions::attachToTableWidget(m_context, m_needsTable, -1);
@@ -183,19 +183,19 @@ SigningAdvisorTab::SigningAdvisorTab(AppContext &context, QWidget *parent)
     m_optionsTitle = new QLabel(this);
     m_optionsTitle->setObjectName(QStringLiteral("sectionTitle"));
     layout->addWidget(m_optionsTitle);
-    m_optionsTable = makeTable(this, {tr("Name"), tr("Alter"), tr("Verein"), tr("Position"),
-                                      tr("DWRS"), tr("Marktwert"), tr("Gehalt"),
-                                      tr("Persönlichkeit"), tr("Startelf +"), tr("B-Team +"),
-                                      tr("Folgen")});
+    m_optionsTable = makeTable(this, {tr("Name"), tr("Age"), tr("Club"), tr("Position"),
+                                      tr("DWRS"), tr("Market Value"), tr("Wage"),
+                                      tr("Personality"), tr("XI +"), tr("B-team +"),
+                                      tr("Knock-on")});
     m_optionsTable->setSortingEnabled(true);
     layout->addWidget(m_optionsTable);
     PlayerActions::attachToTableWidget(m_context, m_optionsTable);
 
     // --- Legacy gap analysis, collapsed ---
-    m_gapToggle = makeToggle(this, tr("Gap-Analyse: Auffälligkeiten der Aufstellung"),
-                             tr("Startelf-Spieler deutlich unter dem Team-Median "
-                                "(offensichtlich) oder nicht auf ihrer besten Position bzw. "
-                                "Seite (versteckt) — ohne Blick auf den Markt."));
+    m_gapToggle = makeToggle(this, tr("Gap analysis: line-up anomalies"),
+                             tr("Starters clearly below the team median (obvious) or not in "
+                                "their best position or on their side (hidden) — without "
+                                "looking at the market."));
     layout->addWidget(m_gapToggle, 0, Qt::AlignLeft);
     m_gapBody = new QWidget(this);
     m_gapBody->setVisible(false);
@@ -206,10 +206,10 @@ SigningAdvisorTab::SigningAdvisorTab(AppContext &context, QWidget *parent)
         m_gapCaption->setObjectName(QStringLiteral("kpiCaption"));
         m_gapCaption->setWordWrap(true);
         gapLayout->addWidget(m_gapCaption);
-        const QStringList headers{tr("Slot"),  tr("Rolle"),     tr("Spieler"), tr("DWRS"),
-                                  tr("Typ"),   tr("Gap-Score"), tr("Warum")};
+        const QStringList headers{tr("Slot"),  tr("Role"),     tr("Player"), tr("DWRS"),
+                                  tr("Type"),   tr("Gap Score"), tr("Why")};
         for (auto [status, table, title] :
-             {std::tuple{&m_xiGapStatus, &m_xiGapTable, tr("Startelf")},
+             {std::tuple{&m_xiGapStatus, &m_xiGapTable, tr("Starting XI")},
               std::tuple{&m_bGapStatus, &m_bGapTable, tr("B-Team")}}) {
             auto *label = new QLabel(title, m_gapBody);
             label->setObjectName(QStringLiteral("sectionTitle"));
@@ -346,7 +346,7 @@ void SigningAdvisorTab::recompute()
 
     if (m_tactic.isEmpty() || m_squad.empty()) {
         m_analysis = SigningAnalysis();
-        m_summary->setText(tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."));
+        m_summary->setText(tr("Please choose your club first (Overview or Settings)."));
         m_needsTable->setRowCount(0);
         m_optionsTable->setRowCount(0);
         m_optionsTitle->clear();
@@ -374,18 +374,18 @@ void SigningAdvisorTab::fillNeeds()
     const std::vector<SlotNeed> &needs = m_analysis.needs;
 
     // --- Summary: the biggest lever and the next ones ---
-    QString summary = tr("Gefilterter Markt: %1 Spieler, %2 davon als Neuzugang durchgerechnet.")
+    QString summary = tr("Filtered market: %1 players, %2 of them simulated as a signing.")
                           .arg(m_analysis.marketSize)
                           .arg(m_analysis.simulated);
     if (needs.empty() || needs.front().bestGain() <= 0.0) {
         summary += QStringLiteral("<br>")
-                   + tr("Mit diesen Filtern gibt der Markt niemanden her, der die Startelf "
-                        "verbessert.");
+                   + tr("With these filters the market offers nobody who improves the "
+                        "starting XI.");
     } else {
         const SlotNeed &top = needs.front();
         const SigningOption &best = top.options.front();
         summary += QStringLiteral("<br>")
-                   + tr("Größter Hebel: <b>%1 · %2</b> — %3 (%4, %5) bringt der Startelf %6 DWRS.")
+                   + tr("Biggest lever: <b>%1 · %2</b> — %3 (%4, %5) adds %6 DWRS to the starting XI.")
                          .arg(top.slot, roleNames.value(top.role, top.role).toHtmlEscaped(),
                               best.player->name.toHtmlEscaped(),
                               best.player->club.toHtmlEscaped(),
@@ -397,7 +397,7 @@ void SigningAdvisorTab::fillNeeds()
                 next << QStringLiteral("%1 (%2)").arg(needs[i].slot, gainText(needs[i].bestGain()));
         }
         if (!next.isEmpty())
-            summary += QLatin1Char(' ') + tr("Danach: %1.").arg(next.join(QStringLiteral(", ")));
+            summary += QLatin1Char(' ') + tr("Then: %1.").arg(next.join(QStringLiteral(", ")));
     }
     m_summary->setText(summary);
 
@@ -428,7 +428,7 @@ void SigningAdvisorTab::fillNeeds()
         m_needsTable->setItem(row, 0, slotItem);
         m_needsTable->setItem(row, 1, new QTableWidgetItem(roleNames.value(need.role, need.role)));
         auto *currentItem = new QTableWidgetItem(need.current.isFilled() ? need.current.name
-                                                                        : tr("— unbesetzt —"));
+                                                                        : tr("— unfilled —"));
         currentItem->setData(Qt::UserRole, need.current.playerUid);
         m_needsTable->setItem(row, 2, currentItem);
         m_needsTable->setItem(row, 3, dwrsItem(need.currentRating, need.current.isFilled()));
@@ -436,7 +436,7 @@ void SigningAdvisorTab::fillNeeds()
         if (need.options.empty()) {
             auto *none = new NumericItem(QStringLiteral("–"), 0.0);
             m_needsTable->setItem(row, 4, none);
-            m_needsTable->setItem(row, 5, new QTableWidgetItem(tr("niemand Besseres")));
+            m_needsTable->setItem(row, 5, new QTableWidgetItem(tr("nobody better")));
             m_needsTable->setItem(row, 6, new QTableWidgetItem());
             m_needsTable->setItem(row, 7, new QTableWidgetItem());
             m_needsTable->setItem(row, 8, new QTableWidgetItem());
@@ -456,7 +456,7 @@ void SigningAdvisorTab::fillNeeds()
                                                           best.bTeamGain));
         }
         m_needsTable->setItem(row, 9,
-                              new NumericItem(tr("%1 von %2").arg(need.marketBetter)
+                              new NumericItem(tr("%1 of %2").arg(need.marketBetter)
                                                   .arg(need.marketCount),
                                               need.marketBetter));
         ++row;
@@ -471,7 +471,7 @@ QString SigningAdvisorTab::moveText(const SquadMove &move) const
 {
     const auto place = [](const QString &slot, bool bTeam) {
         if (slot.isEmpty())
-            return tr("Kader");
+            return tr("Squad");
         return bTeam ? tr("B-Team") : slot;
     };
     return QStringLiteral("%1: %2 → %3")
@@ -494,10 +494,10 @@ void SigningAdvisorTab::showOptions()
     const SlotNeed &need = m_analysis.needs[static_cast<size_t>(index)];
     const auto roleNames = m_context.definitions().roleDisplayMap();
     m_optionsTitle->setText(need.options.empty()
-                                ? tr("Für %1 (%2) findet sich am gefilterten Markt niemand, der "
-                                     "die Startelf verbessert.")
+                                ? tr("For %1 (%2) the filtered market has nobody who improves "
+                                     "the starting XI.")
                                       .arg(need.slot, roleNames.value(need.role, need.role))
-                                : tr("Kaufoptionen für %1 (%2)")
+                                : tr("Signing options for %1 (%2)")
                                       .arg(need.slot, roleNames.value(need.role, need.role)));
     m_optionsTable->setVisible(!need.options.empty());
 
@@ -550,8 +550,8 @@ void SigningAdvisorTab::fillGapTables(const SquadResult &squad)
     const double dropoff = config.gapAnalysisSetting(QStringLiteral("dropoff_threshold"));
     const double wrongSide = config.gapAnalysisSetting(QStringLiteral("wrong_side_penalty"));
     m_gapCaption->setText(
-        tr("Schwellen — Versteckt: %1 · Offensichtlich: %2 · Falsche-Seite-Malus: %3 "
-           "(anpassbar unter Einstellungen → Kader und Analyse)")
+        tr("Thresholds — Hidden: %1 · Obvious: %2 · Wrong-side penalty: %3 "
+           "(adjustable under Settings → Squad and analysis)")
             .arg(displacement, 0, 'f', 1)
             .arg(dropoff, 0, 'f', 1)
             .arg(wrongSide, 0, 'f', 1));
@@ -574,10 +574,9 @@ void SigningAdvisorTab::fillGapTables(const SquadResult &squad)
         table->clearContents();
         table->setRowCount(static_cast<int>(gaps.size()));
         table->setVisible(!gaps.empty());
-        status->setText(gaps.empty() ? tr("✅ Keine nennenswerten Lücken mit den aktuellen "
-                                          "Schwellenwerten gefunden.")
-                                     : tr("%1 auffällige Position(en) gefunden — schlechteste "
-                                          "zuerst.")
+        status->setText(gaps.empty() ? tr("✅ No significant gaps found with the current "
+                                          "thresholds.")
+                                     : tr("%1 notable position(s) found — worst first.")
                                            .arg(gaps.size()));
         double maxScore = 0.0;
         for (const Gap &gap : gaps)

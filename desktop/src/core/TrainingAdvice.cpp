@@ -83,15 +83,15 @@ QString groupName(Group group)
 {
     switch (group) {
     case Group::Explosive:
-        return QStringLiteral("Explosivität");
+        return QStringLiteral("Explosiveness");
     case Group::Strength:
-        return QStringLiteral("Kraft/Physis");
+        return QStringLiteral("Strength");
     case Group::Technical:
-        return QStringLiteral("Technik");
+        return QStringLiteral("Technique");
     case Group::Mental:
         return QStringLiteral("Mental");
     case Group::Character:
-        return QStringLiteral("Charakter");
+        return QStringLiteral("Character");
     }
     return QString();
 }

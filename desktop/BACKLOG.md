@@ -93,7 +93,7 @@ Kurzfassung der Umsetzung:
 Neue Funde aus einer vollständigen Durchsicht von Core + Save-/Reload-/Worker-
 Pfaden der App. Nummerierung setzt die Review-Liste fort. Empfohlene
 Reihenfolge: ~~#23~~ → ~~#28~~ → ~~#24/#25 (+#33)~~ → ~~#30~~ → ~~#26/#27~~ → ~~#31/#32~~ (+ ~~#22~~). ~~#38~~ → ~~#11~~ → ~~#34~~ → ~~#35~~ → ~~#36~~ → ~~#37~~.
-Feature-Ideen stehen getrennt in [IDEEN.md](IDEEN.md).
+Feature-Ideen stehen getrennt in [IDEAS.md](IDEAS.md).
 
 ## 🔴 Funktionale Bugs
 

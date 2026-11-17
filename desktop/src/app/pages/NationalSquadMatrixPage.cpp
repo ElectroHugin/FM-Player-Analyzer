@@ -41,19 +41,19 @@ NationalSquadMatrixPage::NationalSquadMatrixPage(AppContext &context, QWidget *p
     scroll->setWidget(content);
 
     auto *heading = new QLabel(
-        QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nationale Squad Matrix")), content);
+        QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("National Squad Matrix")), content);
     layout->addWidget(heading);
 
     auto *optionsRow = new QHBoxLayout;
-    optionsRow->addWidget(new QLabel(tr("Taktik:"), content));
+    optionsRow->addWidget(new QLabel(tr("Tactic:"), content));
     m_tacticCombo = new QComboBox(content);
     m_tacticCombo->setMinimumWidth(240);
     optionsRow->addWidget(m_tacticCombo);
-    m_extraDetailsCheck = new QCheckBox(tr("Extra-Details (Fuß, Größe)"), content);
-    m_hideRetiredCheck = new QCheckBox(tr("Retired/veraltete ausblenden"), content);
+    m_extraDetailsCheck = new QCheckBox(tr("Extra details (foot, height)"), content);
+    m_hideRetiredCheck = new QCheckBox(tr("Hide retired/stale"), content);
     m_hideRetiredCheck->setToolTip(
-        tr("Blendet Spieler aus, deren Verein auf 'Retired' steht oder die in den "
-           "letzten Komplett-Exporten fehlten (außer eigenem Verein und Shortlist)."));
+        tr("Hides players whose club is set to 'Retired' or who were missing from "
+           "the latest full exports (except your own club and the shortlist)."));
     m_hideRetiredCheck->setChecked(true);
     optionsRow->addWidget(m_extraDetailsCheck);
     optionsRow->addWidget(m_hideRetiredCheck);
@@ -63,9 +63,9 @@ NationalSquadMatrixPage::NationalSquadMatrixPage(AppContext &context, QWidget *p
     m_personalityFilter = new PersonalityFilterWidget(m_context.definitions(), content);
     layout->addWidget(m_personalityFilter);
 
-    buildSection(&m_squadSection, tr("Aktueller Kader"), content);
+    buildSection(&m_squadSection, tr("Current Squad"), content);
     layout->addWidget(m_squadSection.box);
-    buildSection(&m_poolSection, tr("Berechtigter Pool (nicht nominiert)"), content);
+    buildSection(&m_poolSection, tr("Eligible Pool (not called up)"), content);
     layout->addWidget(m_poolSection.box);
     layout->addStretch(1);
 
@@ -85,7 +85,7 @@ void NationalSquadMatrixPage::buildSection(Section *section, const QString &titl
     section->box = new QGroupBox(title, parent);
     auto *layout = new QVBoxLayout(section->box);
     section->search = new QLineEdit(section->box);
-    section->search->setPlaceholderText(tr("Nach Name suchen…"));
+    section->search->setPlaceholderText(tr("Search by name…"));
     section->search->setClearButtonEnabled(true);
     layout->addWidget(section->search);
     section->model = new PlayerTableModel(this);
@@ -123,11 +123,11 @@ QList<PlayerColumn> NationalSquadMatrixPage::buildColumns() const
     QList<PlayerColumn> columns;
     columns.append({tr("Name"), [](const Player &p) { return p.name; },
                     [](const Player &p) { return getLastName(p.name); }, nullptr, {}});
-    columns.append({tr("Alter"), [](const Player &p) { return p.age; }, nullptr, nullptr,
+    columns.append({tr("Age"), [](const Player &p) { return p.age; }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});
     columns.append(
         {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}});
-    columns.append({tr("Persönlichkeit"), [](const Player &p) { return p.personality; },
+    columns.append({tr("Personality"), [](const Player &p) { return p.personality; },
                     nullptr,
                     [definitions](const Player &p) {
                         return personalityCellStyle(
@@ -135,13 +135,13 @@ QList<PlayerColumn> NationalSquadMatrixPage::buildColumns() const
                     },
                     {}});
     columns.append(
-        {tr("Verein"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}});
+        {tr("Club"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}});
     if (extraDetails) {
-        columns.append({tr("Linker Fuß"), [](const Player &p) { return p.leftFoot; }, nullptr,
+        columns.append({tr("Left Foot"), [](const Player &p) { return p.leftFoot; }, nullptr,
                         nullptr, {}});
-        columns.append({tr("Rechter Fuß"), [](const Player &p) { return p.rightFoot; },
+        columns.append({tr("Right Foot"), [](const Player &p) { return p.rightFoot; },
                         nullptr, nullptr, {}});
-        columns.append({tr("Größe"), [](const Player &p) { return p.heightRaw; },
+        columns.append({tr("Height"), [](const Player &p) { return p.heightRaw; },
                         [](const Player &p) { return p.heightCm; }, nullptr,
                         Qt::AlignRight | Qt::AlignVCenter});
     }
@@ -182,7 +182,7 @@ void NationalSquadMatrixPage::refresh()
     const QString previous = m_tacticCombo->currentData().toString();
     const bool hadSelection = m_tacticCombo->count() > 0;
     m_tacticCombo->clear();
-    m_tacticCombo->addItem(tr("Alle Rollen"), QString());
+    m_tacticCombo->addItem(tr("All Roles"), QString());
     for (const QString &tactic : favoritesFirstTactics(m_context, true))
         m_tacticCombo->addItem(tactic, tactic);
     if (hadSelection && !previous.isEmpty()) {
@@ -233,13 +233,13 @@ void NationalSquadMatrixPage::rebuild()
     std::sort(squad.begin(), squad.end(), byName);
     std::sort(pool.begin(), pool.end(), byName);
 
-    m_squadSection.box->setTitle(tr("Aktueller Kader (%1)").arg(squad.size()));
+    m_squadSection.box->setTitle(tr("Current Squad (%1)").arg(squad.size()));
     m_squadSection.model->setColumns(buildColumns());
     m_squadSection.model->setRows(std::move(squad));
     fitColumnsCompact(m_squadSection.table);
 
     m_poolSection.box->setTitle(
-        tr("Berechtigter Pool — nicht nominiert (%1)").arg(pool.size()));
+        tr("Eligible Pool — not called up (%1)").arg(pool.size()));
     m_poolSection.model->setColumns(buildColumns());
     m_poolSection.model->setRows(std::move(pool));
     fitColumnsCompact(m_poolSection.table);

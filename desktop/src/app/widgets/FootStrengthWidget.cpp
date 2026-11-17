@@ -25,12 +25,12 @@ FootStrengthWidget::FootStrengthWidget(QWidget *parent)
 QString FootStrengthWidget::levelName(int level)
 {
     switch (level) {
-    case 1: return tr("Sehr schwach");
-    case 2: return tr("Schwach");
-    case 3: return tr("Ordentlich");
-    case 4: return tr("Ziemlich stark");
-    case 5: return tr("Stark");
-    case 6: return tr("Sehr stark");
+    case 1: return tr("Very Weak");
+    case 2: return tr("Weak");
+    case 3: return tr("Reasonable");
+    case 4: return tr("Fairly Strong");
+    case 5: return tr("Strong");
+    case 6: return tr("Very Strong");
     default: return {};
     }
 }
@@ -54,8 +54,8 @@ void FootStrengthWidget::rebuild()
         foot.valueText = foot.level > 0 ? levelName(foot.level) : raw;
         m_feet.append(foot);
     };
-    add(tr("Linker Fuß"), m_leftRaw);
-    add(tr("Rechter Fuß"), m_rightRaw);
+    add(tr("Left Foot"), m_leftRaw);
+    add(tr("Right Foot"), m_rightRaw);
     setVisible(!m_feet.isEmpty());
     updateGeometry();
     update();

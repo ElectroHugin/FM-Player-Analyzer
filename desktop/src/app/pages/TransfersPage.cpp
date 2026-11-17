@@ -55,30 +55,30 @@ TransfersPage::TransfersPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading = new QLabel(
-        QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Leihen & Verkäufe")), content);
+        QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Loans & Sales")), content);
     layout->addWidget(heading);
 
     m_hint = new QLabel(
-        tr("Verwaltet die überzähligen Spieler für die gewählte Taktik — Spieler, die es "
-           "weder in die Erste Elf noch in B-, Zweit- oder Jugendteam geschafft haben. "
-           "Häkchen setzen, optional neuen Verein eintragen, dann speichern."),
+        tr("Manages the surplus players for the selected tactic — players who made "
+           "neither the first eleven nor the B-, second- or youth team. Tick the boxes, "
+           "optionally enter a new club, then save."),
         content);
     m_hint->setWordWrap(true);
     m_hint->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(m_hint);
 
     auto *tacticRow = new QHBoxLayout;
-    tacticRow->addWidget(new QLabel(tr("Taktik:"), content));
+    tacticRow->addWidget(new QLabel(tr("Tactic:"), content));
     m_tacticCombo = new QComboBox(content);
     m_tacticCombo->setMinimumWidth(260);
     tacticRow->addWidget(m_tacticCombo);
     tacticRow->addStretch(1);
     layout->addLayout(tacticRow);
 
-    buildSectionUi(&m_loanSection, tr("Zum Verleihen (vielversprechende Talente)"), true,
+    buildSectionUi(&m_loanSection, tr("To loan out (promising talents)"), true,
                    content);
     layout->addWidget(m_loanSection.box);
-    buildSectionUi(&m_sellSection, tr("Zum Verkauf / zur Freigabe"), false, content);
+    buildSectionUi(&m_sellSection, tr("For sale / release"), false, content);
     layout->addWidget(m_sellSection.box);
     layout->addStretch(1);
 
@@ -97,10 +97,10 @@ void TransfersPage::buildSectionUi(Section *section, const QString &title, bool 
     auto *layout = new QVBoxLayout(section->box);
 
     section->table = new QTableWidget(section->box);
-    QStringList headers{tr("Name"), tr("Alter"), tr("Bester DWRS (Rolle)")};
+    QStringList headers{tr("Name"), tr("Age"), tr("Best DWRS (Role)")};
     if (youth)
-        headers << tr("Ent") << tr("Arb");
-    headers << tr("Transfer") << tr("Leihe") << tr("Neuer Verein");
+        headers << tr("Det") << tr("Wor");
+    headers << tr("Transfer") << tr("Loan") << tr("New Club");
     section->table->setColumnCount(headers.size());
     section->table->setHorizontalHeaderLabels(headers);
     section->table->verticalHeader()->setVisible(false);
@@ -114,7 +114,7 @@ void TransfersPage::buildSectionUi(Section *section, const QString &title, bool 
 
     auto *buttonRow = new QHBoxLayout;
     buttonRow->addStretch(1);
-    auto *saveButton = new QPushButton(tr("Alle Änderungen dieser Liste speichern"),
+    auto *saveButton = new QPushButton(tr("Save all changes in this list"),
                                        section->box);
     buttonRow->addWidget(saveButton);
     layout->addLayout(buttonRow);
@@ -148,7 +148,7 @@ void TransfersPage::rebuild()
     if (userClub.isEmpty() || tactic.isEmpty()) {
         m_loanSection.box->setVisible(false);
         m_sellSection.box->setVisible(false);
-        m_hint->setText(tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."));
+        m_hint->setText(tr("Please choose your club first (Overview or Settings)."));
         return;
     }
     m_loanSection.box->setVisible(true);
@@ -293,7 +293,7 @@ void TransfersPage::saveSection(const Section &section)
     }
 
     if (batch.empty()) {
-        QMessageBox::information(this, tr("Transfers"), tr("Keine Änderungen zum Speichern."));
+        QMessageBox::information(this, tr("Transfers"), tr("No changes to save."));
         return;
     }
     if (!m_context.database().upsertPlayers(batch)) {
@@ -306,7 +306,7 @@ void TransfersPage::saveSection(const Section &section)
         ids << player.id;
     m_context.refreshPlayers(ids);
     QMessageBox::information(this, tr("Transfers"),
-                             tr("%1 Spieler-Datensätze gespeichert.").arg(count));
+                             tr("%1 player records saved.").arg(count));
 }
 
 } // namespace fm

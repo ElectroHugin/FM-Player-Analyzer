@@ -147,7 +147,7 @@ void StrengthGridWidget::paintEvent(QPaintEvent *)
     }
     if (m_layout.isEmpty()) {
         painter.setPen(Qt::white);
-        painter.drawText(pitch, Qt::AlignCenter, tr("Keine Daten"));
+        painter.drawText(pitch, Qt::AlignCenter, tr("No data"));
         return;
     }
 
@@ -324,7 +324,7 @@ bool StrengthGridWidget::event(QEvent *event)
             QString text = marker.tooltip;
             if (m_colorMode == ColorMode::SquadComparison && !marker.uid.isEmpty()) {
                 const double median = shownMedian();
-                text = tr("%1 zur Kadermitte (%2)")
+                text = tr("%1 to the squad median (%2)")
                            .arg(formatDwrsDelta(marker.value - median), formatDwrs(median))
                        + QLatin1Char('\n') + text;
             }

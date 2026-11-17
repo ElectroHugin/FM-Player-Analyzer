@@ -86,10 +86,10 @@ inline QString roleHeaderToolTip(const Definitions &definitions, const QString &
     const QString phase = definitions.rolePhase(role);
     if (phase == QLatin1String("ip"))
         text += QStringLiteral("\n")
-                + QCoreApplication::translate("fm::PageHelpers", "Rolle mit Ball");
+                + QCoreApplication::translate("fm::PageHelpers", "Role in possession");
     else if (phase == QLatin1String("oop"))
         text += QStringLiteral("\n")
-                + QCoreApplication::translate("fm::PageHelpers", "Rolle ohne Ball");
+                + QCoreApplication::translate("fm::PageHelpers", "Role out of possession");
     return text;
 }
 

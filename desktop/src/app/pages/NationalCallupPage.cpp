@@ -60,7 +60,7 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nominierungs-Assistent")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Call-up Assistant")), content);
     layout->addWidget(heading);
 
     m_hint = new QLabel(content);
@@ -68,16 +68,16 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
     layout->addWidget(m_hint);
 
     // --- Step 1: current-squad baseline ---
-    auto *baselineBox = new QGroupBox(tr("1. Aktueller Kader"), content);
+    auto *baselineBox = new QGroupBox(tr("1. Current squad"), content);
     auto *baselineLayout = new QVBoxLayout(baselineBox);
-    m_savedRadio = new QRadioButton(tr("Gespeicherten Nationalkader verwenden"), baselineBox);
-    m_uploadRadio = new QRadioButton(tr("Kader aus FM-Export (HTML oder CSV) hochladen"), baselineBox);
+    m_savedRadio = new QRadioButton(tr("Use saved national squad"), baselineBox);
+    m_uploadRadio = new QRadioButton(tr("Upload squad from FM export (HTML or CSV)"), baselineBox);
     m_savedRadio->setChecked(true);
     auto *group = new QButtonGroup(this);
     group->addButton(m_savedRadio);
     group->addButton(m_uploadRadio);
     auto *uploadRow = new QHBoxLayout;
-    m_uploadButton = new QPushButton(tr("Kader-Datei wählen…"), baselineBox);
+    m_uploadButton = new QPushButton(tr("Choose squad file…"), baselineBox);
     m_baselineLabel = new QLabel(baselineBox);
     m_baselineLabel->setObjectName(QStringLiteral("kpiCaption"));
     uploadRow->addWidget(m_uploadButton);
@@ -94,7 +94,7 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
     });
 
     // --- Step 2: parameters ---
-    auto *paramBox = new QGroupBox(tr("2. Parameter"), content);
+    auto *paramBox = new QGroupBox(tr("2. Parameters"), content);
     auto *paramLayout = new QHBoxLayout(paramBox);
     m_totalSpin = new QSpinBox(paramBox);
     m_totalSpin->setRange(11, 40);
@@ -104,22 +104,22 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
     m_gkSpin->setValue(3);
     m_tacticCombo = new QComboBox(paramBox);
     m_tacticCombo->setMinimumWidth(240);
-    paramLayout->addWidget(new QLabel(tr("Kadergröße gesamt:"), paramBox));
+    paramLayout->addWidget(new QLabel(tr("Total squad size:"), paramBox));
     paramLayout->addWidget(m_totalSpin);
     paramLayout->addSpacing(16);
-    paramLayout->addWidget(new QLabel(tr("davon Torhüter:"), paramBox));
+    paramLayout->addWidget(new QLabel(tr("of which goalkeepers:"), paramBox));
     paramLayout->addWidget(m_gkSpin);
     paramLayout->addSpacing(16);
-    paramLayout->addWidget(new QLabel(tr("Taktik:"), paramBox));
+    paramLayout->addWidget(new QLabel(tr("Tactic:"), paramBox));
     paramLayout->addWidget(m_tacticCombo, 1);
     layout->addWidget(paramBox);
 
     // --- Step 3: injured / unavailable ---
-    auto *injuredBox = new QGroupBox(tr("3. Verletzt / nicht verfügbar (für diesen Durchlauf)"),
+    auto *injuredBox = new QGroupBox(tr("3. Injured / unavailable (for this run)"),
                                      content);
     auto *injuredLayout = new QVBoxLayout(injuredBox);
     m_injuredSearch = new QLineEdit(injuredBox);
-    m_injuredSearch->setPlaceholderText(tr("Pool nach Name durchsuchen…"));
+    m_injuredSearch->setPlaceholderText(tr("Search pool by name…"));
     m_injuredSearch->setClearButtonEnabled(true);
     m_injuredList = new QListWidget(injuredBox);
     m_injuredList->setMaximumHeight(200);
@@ -140,14 +140,14 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
             m_injuredUids.insert(uid);
         else
             m_injuredUids.remove(uid);
-        m_injuredCountLabel->setText(tr("%1 Spieler als nicht verfügbar markiert.")
+        m_injuredCountLabel->setText(tr("%1 players marked as unavailable.")
                                          .arg(m_injuredUids.size()));
     });
 
     // --- Compute ---
     auto *computeRow = new QHBoxLayout;
     computeRow->addStretch(1);
-    m_computeButton = new QPushButton(tr("Nominierung berechnen"), content);
+    m_computeButton = new QPushButton(tr("Compute call-up"), content);
     m_computeButton->setDefault(true);
     computeRow->addWidget(m_computeButton);
     layout->addLayout(computeRow);
@@ -163,13 +163,13 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
 
     auto *listsRow = new QHBoxLayout;
     auto *inviteColumn = new QVBoxLayout;
-    auto *inviteTitle = new QLabel(tr("✅ Einladen"), m_resultsBox);
+    auto *inviteTitle = new QLabel(tr("✅ Call up"), m_resultsBox);
     inviteTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_inviteList = new QListWidget(m_resultsBox);
     inviteColumn->addWidget(inviteTitle);
     inviteColumn->addWidget(m_inviteList, 1);
     auto *dropColumn = new QVBoxLayout;
-    auto *dropTitle = new QLabel(tr("❌ Ausladen"), m_resultsBox);
+    auto *dropTitle = new QLabel(tr("❌ Drop"), m_resultsBox);
     dropTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_dropList = new QListWidget(m_resultsBox);
     dropColumn->addWidget(dropTitle);
@@ -180,7 +180,7 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
 
     auto *applyRow = new QHBoxLayout;
     applyRow->addStretch(1);
-    m_applyButton = new QPushButton(tr("Empfohlenen Kader übernehmen"), m_resultsBox);
+    m_applyButton = new QPushButton(tr("Apply recommended squad"), m_resultsBox);
     applyRow->addWidget(m_applyButton);
     resultsLayout->addLayout(applyRow);
     connect(m_applyButton, &QPushButton::clicked, this,
@@ -203,8 +203,8 @@ NationalCallupPage::NationalCallupPage(AppContext &context, QWidget *parent)
                     if (name.isEmpty())
                         return;
                     QMenu menu(this);
-                    QAction *copyName = menu.addAction(tr("Namen kopieren"));
-                    QAction *openProfile = menu.addAction(tr("Profil öffnen"));
+                    QAction *copyName = menu.addAction(tr("Copy name"));
+                    QAction *openProfile = menu.addAction(tr("Open profile"));
                     QAction *chosen = menu.exec(list->viewport()->mapToGlobal(pos));
                     if (chosen == copyName)
                         QApplication::clipboard()->setText(name);
@@ -235,17 +235,17 @@ void NationalCallupPage::refresh()
 
     if (!configured) {
         m_hint->setText(
-            tr("⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter "
-               "Einstellungen → Nationalteam (Name, Länder-Code, Altersgrenze)."));
+            tr("⚠️ Please fully configure your national team first under "
+               "Settings → National team (name, country code, age limit)."));
         m_computeButton->setEnabled(false);
         showResults(false);
         return;
     }
     m_computeButton->setEnabled(true);
-    m_hint->setText(tr("Pool: Spieler mit Nationalität '%1'%2. Der Assistent stellt aus dem "
-                       "gesamten berechtigten Pool den stärksten Kader zusammen und vergleicht "
-                       "ihn mit deinem aktuellen Kader.")
-                        .arg(code, ageLimit < 99 ? tr(" bis Alter %1").arg(ageLimit)
+    m_hint->setText(tr("Pool: players with nationality '%1'%2. The assistant builds the "
+                       "strongest possible squad from the whole eligible pool and compares it "
+                       "with your current squad.")
+                        .arg(code, ageLimit < 99 ? tr(" up to age %1").arg(ageLimit)
                                                  : QString()));
 
     // Tactic list (national favorites first).
@@ -258,11 +258,11 @@ void NationalCallupPage::refresh()
     // Baseline label.
     if (m_uploadRadio->isChecked()) {
         m_baselineLabel->setText(m_haveUpload
-                                     ? tr("Hochgeladener Kader: %1 Spieler.").arg(m_uploadedUids.size())
-                                     : tr("Noch keine Kader-Datei geladen."));
+                                     ? tr("Uploaded squad: %1 players.").arg(m_uploadedUids.size())
+                                     : tr("No squad file loaded yet."));
     } else {
         m_baselineLabel->setText(
-            tr("Gespeicherter Nationalkader: %1 Spieler.").arg(nationalSquadUids(m_context).size()));
+            tr("Saved national squad: %1 players.").arg(nationalSquadUids(m_context).size()));
     }
 
     rebuildInjuredList();
@@ -319,23 +319,23 @@ void NationalCallupPage::rebuildInjuredList()
         item->setCheckState(m_injuredUids.contains(player->uid) ? Qt::Checked : Qt::Unchecked);
     }
     m_injuredCountLabel->setText(
-        tr("%1 Spieler als nicht verfügbar markiert.").arg(m_injuredUids.size()));
+        tr("%1 players marked as unavailable.").arg(m_injuredUids.size()));
     m_updatingInjured = false;
 }
 
 void NationalCallupPage::uploadSquad()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("Nationalkader-Export wählen"), m_context.htmlExportDir(),
-        tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
+        this, tr("Choose national-squad export"), m_context.htmlExportDir(),
+        tr("FM exports (*.html *.htm *.csv);;All files (*)"));
     if (path.isEmpty())
         return;
 
     ImportTable table;
     ImportError error;
     if (!readImportTable(path, m_context.fmVersionId(), &table, &error)) {
-        QMessageBox::critical(this, tr("Nominierung"),
-                              tr("Kader-Datei konnte nicht gelesen werden: %1")
+        QMessageBox::critical(this, tr("Call-up"),
+                              tr("Squad file could not be read: %1")
                                   .arg(importErrorText(error)));
         return;
     }
@@ -344,8 +344,8 @@ void NationalCallupPage::uploadSquad()
     const int uidCol = table.headers.indexOf(required.at(0));
     const int nameCol = table.headers.indexOf(required.at(1));
     if (uidCol < 0 && nameCol < 0) {
-        QMessageBox::critical(this, tr("Nominierung"),
-                              tr("Die Datei enthält weder eine '%1'- noch eine '%2'-Spalte.")
+        QMessageBox::critical(this, tr("Call-up"),
+                              tr("The file contains neither a '%1' nor a '%2' column.")
                                   .arg(required.at(0), required.at(1)));
         return;
     }
@@ -395,23 +395,23 @@ void NationalCallupPage::uploadSquad()
     }
 
     if (matched.isEmpty()) {
-        QMessageBox::warning(this, tr("Nominierung"),
-                             tr("Kein Spieler aus der Datei konnte der Datenbank zugeordnet "
-                                "werden. Enthält der Export eine UID-Spalte?"));
+        QMessageBox::warning(this, tr("Call-up"),
+                             tr("No player from the file could be matched to the database. "
+                                "Does the export include a UID column?"));
         return;
     }
 
     m_uploadedUids = matched;
     m_haveUpload = true;
-    QString message = tr("%1 Spieler aus der Datei als aktueller Kader übernommen.")
+    QString message = tr("%1 players from the file taken as the current squad.")
                           .arg(matched.size());
     if (!unmatched.isEmpty()) {
         message += QStringLiteral("\n\n")
-                   + tr("%1 nicht zugeordnet: %2")
+                   + tr("%1 not matched: %2")
                          .arg(unmatched.size())
                          .arg(unmatched.mid(0, 10).join(QStringLiteral(", ")));
     }
-    QMessageBox::information(this, tr("Nominierung"), message);
+    QMessageBox::information(this, tr("Call-up"), message);
     refresh();
 }
 
@@ -419,21 +419,21 @@ void NationalCallupPage::compute()
 {
     const QString tactic = m_tacticCombo->currentText();
     if (tactic.isEmpty()) {
-        QMessageBox::warning(this, tr("Nominierung"), tr("Keine Taktik ausgewählt."));
+        QMessageBox::warning(this, tr("Call-up"), tr("No tactic selected."));
         return;
     }
     if (m_uploadRadio->isChecked() && !m_haveUpload) {
-        QMessageBox::warning(this, tr("Nominierung"),
-                             tr("Bitte zuerst eine Kader-Datei hochladen oder auf den "
-                                "gespeicherten Kader umschalten."));
+        QMessageBox::warning(this, tr("Call-up"),
+                             tr("Please upload a squad file first or switch to the "
+                                "saved squad."));
         return;
     }
 
     const int total = m_totalSpin->value();
     const int gks = m_gkSpin->value();
     if (gks >= total) {
-        QMessageBox::warning(this, tr("Nominierung"),
-                             tr("Die Torhüter-Zahl muss kleiner als die Kadergröße sein."));
+        QMessageBox::warning(this, tr("Call-up"),
+                             tr("The number of goalkeepers must be smaller than the squad size."));
         return;
     }
 
@@ -442,9 +442,9 @@ void NationalCallupPage::compute()
 
     const auto pool = eligiblePool(true); // injured excluded
     if (pool.empty()) {
-        QMessageBox::warning(this, tr("Nominierung"),
-                             tr("Kein berechtigter, verfügbarer Spieler im Pool. Prüfe "
-                                "Nationalität/Altersgrenze und die Verletzten-Markierungen."));
+        QMessageBox::warning(this, tr("Call-up"),
+                             tr("No eligible, available player in the pool. Check "
+                                "nationality/age limit and the injured markings."));
         return;
     }
     const auto baseline = currentSquad();
@@ -464,11 +464,11 @@ void NationalCallupPage::compute()
     QString gkNote;
     if (rec.goalkeepersRecommended < gks) {
         gkNote = QStringLiteral(" ")
-                 + tr("(nur %1 Torhüter im Pool verfügbar)").arg(rec.goalkeepersRecommended);
+                 + tr("(only %1 goalkeepers available in the pool)").arg(rec.goalkeepersRecommended);
     }
     m_summaryLabel->setText(
-        tr("<b>Empfohlener Kader:</b> %1 Spieler (%2 Torhüter%3) — Taktik %4.<br>"
-           "<b>%5</b> einladen, <b>%6</b> ausladen.")
+        tr("<b>Recommended squad:</b> %1 players (%2 goalkeepers%3) — tactic "
+           "%4.<br><b>%5</b> to call up, <b>%6</b> to drop.")
             .arg(rec.recommended.size())
             .arg(rec.goalkeepersRecommended)
             .arg(gkNote, tactic.toHtmlEscaped())
@@ -478,10 +478,10 @@ void NationalCallupPage::compute()
     // Invite list, best first, with the reason (starting XI / B-team / depth).
     const auto tierLabel = [](const QString &tier) {
         if (tier == QLatin1String("A"))
-            return tr("Startelf");
+            return tr("Starting XI");
         if (tier == QLatin1String("B"))
             return tr("B-Team");
-        return tr("Kadertiefe");
+        return tr("Squad depth");
     };
     m_inviteList->clear();
     for (const Player *p : rec.invites) {
@@ -495,7 +495,7 @@ void NationalCallupPage::compute()
         item->setData(Qt::UserRole + 1, p->name); // bare name for copying
     }
     if (rec.invites.empty())
-        new QListWidgetItem(tr("Keine — der aktuelle Kader ist bereits optimal."), m_inviteList);
+        new QListWidgetItem(tr("None — the current squad is already optimal."), m_inviteList);
 
     // Drop list with a reason: injured, ineligible/absent from pool, or surplus.
     const PlayerStatus::FreshnessContext freshness = m_context.freshnessContext();
@@ -508,20 +508,20 @@ void NationalCallupPage::compute()
         if (PlayerStatus::isRetired(*p, freshness))
             reason = tr("Retired");
         else if (PlayerStatus::isInactive(*p, freshness))
-            reason = tr("veraltet");
+            reason = tr("stale");
         else if (m_injuredUids.contains(p->uid))
-            reason = tr("verletzt/gesperrt");
+            reason = tr("injured/blocked");
         else if (!eligibleUids.contains(p->uid))
-            reason = tr("nicht verfügbar/berechtigt");
+            reason = tr("unavailable/ineligible");
         else
-            reason = tr("überzählig");
+            reason = tr("surplus");
         auto *item = new QListWidgetItem(
             tr("%1  ·  %2").arg(playerLine(*p), reason), m_dropList);
         item->setData(Qt::UserRole, p->uid);
         item->setData(Qt::UserRole + 1, p->name); // bare name for copying
     }
     if (rec.drops.empty())
-        new QListWidgetItem(tr("Keine — kein aktueller Spieler muss weichen."), m_dropList);
+        new QListWidgetItem(tr("None — no current player needs to make way."), m_dropList);
 
     m_applyButton->setEnabled(!m_recommendedUids.isEmpty());
     showResults(true);
@@ -532,9 +532,9 @@ void NationalCallupPage::applyRecommendation()
     if (m_recommendedUids.isEmpty())
         return;
     if (QMessageBox::question(
-            this, tr("Nominierung"),
-            tr("Den empfohlenen Kader (%1 Spieler) als Nationalkader speichern? "
-               "Der bisherige Nationalkader wird ersetzt.")
+            this, tr("Call-up"),
+            tr("Save the recommended squad (%1 players) as the national squad? "
+               "The previous national squad will be replaced.")
                 .arg(m_recommendedUids.size()))
         != QMessageBox::Yes) {
         return;
@@ -546,11 +546,11 @@ void NationalCallupPage::applyRecommendation()
             ids << player->id;
     }
     if (!m_context.setNationalSquad(ids)) {
-        QMessageBox::critical(this, tr("Nominierung"), m_context.database().errorString());
+        QMessageBox::critical(this, tr("Call-up"), m_context.database().errorString());
         return;
     }
-    QMessageBox::information(this, tr("Nominierung"),
-                             tr("%1 Spieler im Nationalkader gespeichert.").arg(ids.size()));
+    QMessageBox::information(this, tr("Call-up"),
+                             tr("%1 players saved in the national squad.").arg(ids.size()));
     // Baseline is now the applied squad, so re-running shows no pending changes.
     m_savedRadio->setChecked(true);
     refresh();

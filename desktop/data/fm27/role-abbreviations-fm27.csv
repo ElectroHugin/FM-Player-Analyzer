@@ -1,0 +1,80 @@
+Phase;Role;Abbreviation-Suggestion;Abbreviation-In-Game;Positions
+in possession;Ball-Playing Goalkeeper;BPGK;BGK;GK
+in possession;Goalkeeper;GK;GK;GK
+in possession;No-Nonsense Goalkeeper;NNGK;NGK;GK
+in possession;Advanced Centre-Back;ACB;ACB;D (C)
+in possession;Ball-Playing Centre-Back;BPCB;BCB;D (C)
+in possession;Centre-Back;CB;CB;D (C)
+in possession;No-Nonsense Centre-Back;NNCB;NCB;D (C)
+in possession;Overlapping Centre-Back;OCB;OCB;D (C)
+in possession;Wide Centre-Back;WCB;WCB;D (C)
+in possession;Full-Back;FB;FB;D (L)|D (R)
+in possession;Inside Full-Back;IFB;IFB;D (L)|D (R)
+in possession;Inside Wing-Back;IWB;IWB;D (L)|D (R)|WB (L)|WB (R)
+in possession;Playmaking Wing-Back;PWB;PWB;D (L)|D (R)|WB (L)|WB (R)
+in possession;Wing-Back;WB;WB;D (L)|D (R)|WB (L)|WB (R)
+in possession;Advanced Wing-Back;AWB;AWB;WB (L)|WB (R)
+in possession;Box-To-Box Midfielder;BBM;BBM;DM
+in possession;Box-To-Box Playmaker;BBP;BBP;DM
+in possession;Deep-Lying Playmaker;DLP;DLP;DM
+in possession;Defensive Midfielder;DM;DM;DM
+in possession;Half Back;HB;HB;DM
+in possession;Advanced Playmaker;AP;AP;M (C)|AM (C)
+in possession;Attacking Midfielder;AM;AM;M (C)|AM (C)
+in possession;Central Midfielder;CM;CM;M (C)
+in possession;Channel Midfielder;CHM;CHM;M (C)|AM (C)
+in possession;Midfield Playmaker;MP;MPM;M (C)
+in possession;Wide Central Midfielder;WCM;WCM;M (C)
+in possession;Inside Winger;IW;IW;M (L)|M (R)|AM (L)|AM (R)
+in possession;Playmaking Winger;PW;PW;M (L)|M (R)|AM (L)|AM (R)
+in possession;Wide Midfielder;WM;WM;M (L)|M (R)
+in possession;Winger;W;W;M (L)|M (R)|AM (L)|AM (R)
+in possession;Free Role;FR;FR;AM (C)
+in possession;Second Striker;SS;SS;AM (C)
+in possession;Inside Forward;IF;IF;AM (L)|AM (R)
+in possession;Wide Forward;WF;WFD;AM (L)|AM (R)
+in possession;Centre Forward;CF;CFD;ST (C)
+in possession;Channel Forward;CHF;CHF;ST (C)
+in possession;Deep-Lying Forward;DLF;DLF;ST (C)
+in possession;False Nine;F9;F9;ST (C)
+in possession;Poacher;P;P;ST (C)
+in possession;Target Forward;TF;TF;ST (C)
+out of possession;Goalkeeper;GK;GK;GK
+out of possession;Line-Holding Goalkeeper;LHGK;LHK;GK
+out of possession;Sweeper Keeper;SK;SK;GK
+out of possession;Centre-Back;CB;CB;D (C)
+out of possession;Covering Centre-Back;CCB;CCB;D (C)
+out of possession;Covering Wide Centre-Back;CWCB;CWD;D (C)
+out of possession;Stopping Centre-Back;SCB;SCB;D (C)
+out of possession;Stopping Wide Centre-Back;SWCB;SWD;D (C)
+out of possession;Wide Centre-Back;WCB;WCB;D (C)
+out of possession;Full-Back;FB;FB;D (L)|D (R)
+out of possession;Holding Full-Back;HFB;HFB;D (L)|D (R)
+out of possession;Pressing Full-Back;PFB;PFB;D (L)|D (R)
+out of possession;Holding Wing-Back;HWB;HWB;WB (L)|WB (R)
+out of possession;Pressing Wing-Back;PWB;PWB;WB (L)|WB (R)
+out of possession;Wing-Back;WB;WB;WB (L)|WB (R)
+out of possession;Defensive Midfielder;DM;DM;DM
+out of possession;Dropping Defensive Midfielder;DDM;DDM;DM
+out of possession;Pressing Defensive Midfielder;PDM;PDM;DM
+out of possession;Screening Defensive Midfielder;SDM;SDM;DM
+out of possession;Wide Covering Defensive Midfielder;WCDM;WDM;DM
+out of possession;Central Midfielder;CM;CM;M (C)
+out of possession;Pressing Central Midfielder;PCM;PCM;M (C)
+out of possession;Screening Central Midfielder;SCM;SCM;M (C)
+out of possession;Wide Covering Central Midfielder;WCCM;WCM;M (C)
+out of possession;Tracking Wide Midfielder;TWM;TWM;M (L)|M (R)
+out of possession;Wide Midfielder;WM;WMF;M (L)|M (R)
+out of possession;Wide Outlet Wide Midfielder;WOWM;OWM;M (L)|M (R)
+out of possession;Attacking Midfielder;AM;AM;AM (C)
+out of possession;Central Outlet Attacking Midfielder;COAM;OAM;AM (C)
+out of possession;Splitting Outlet Attacking Midfielder;SOAM;SAM;AM (C)
+out of possession;Tracking Attacking Midfielder;TAM;TAM;AM (C)
+out of possession;Inside Outlet Winger;IOW;IOW;AM (L)|AM (R)
+out of possession;Tracking Winger;TW;TW;AM (L)|AM (R)
+out of possession;Wide Outlet Winger;WOW;WOW;AM (L)|AM (R)
+out of possession;Winger;W;W;AM (L)|AM (R)
+out of possession;Central Outlet Centre Forward;COCF;OCF;ST (C)
+out of possession;Centre Forward;CF;CFD;ST (C)
+out of possession;Splitting Outlet Centre Forward;SOCF;SCF;ST (C)
+out of possession;Tracking Centre Forward;TCF;TCF;ST (C)

@@ -33,19 +33,19 @@ using CategoryList = QList<QPair<QString, QStringList>>;
 CategoryList outfieldGameplayAreas()
 {
     return {
-        {PlayerComparisonPage::tr("Tempo"),
+        {PlayerComparisonPage::tr("Pace"),
          {QStringLiteral("Acceleration"), QStringLiteral("Pace")}},
-        {PlayerComparisonPage::tr("Abschluss"),
+        {PlayerComparisonPage::tr("Finishing"),
          {QStringLiteral("Finishing"), QStringLiteral("Long Shots")}},
-        {PlayerComparisonPage::tr("Passspiel"),
+        {PlayerComparisonPage::tr("Passing"),
          {QStringLiteral("Passing"), QStringLiteral("Crossing"), QStringLiteral("Vision")}},
         {PlayerComparisonPage::tr("Dribbling"),
          {QStringLiteral("Dribbling"), QStringLiteral("First Touch"), QStringLiteral("Flair")}},
-        {PlayerComparisonPage::tr("Verteidigung"),
+        {PlayerComparisonPage::tr("Defending"),
          {QStringLiteral("Tackling"), QStringLiteral("Marking"), QStringLiteral("Positioning")}},
-        {PlayerComparisonPage::tr("Physis"),
+        {PlayerComparisonPage::tr("Physique"),
          {QStringLiteral("Strength"), QStringLiteral("Stamina"), QStringLiteral("Balance")}},
-        {PlayerComparisonPage::tr("Mentalität"),
+        {PlayerComparisonPage::tr("Mentality"),
          {QStringLiteral("Work Rate"), QStringLiteral("Determination"),
           QStringLiteral("Teamwork"), QStringLiteral("Decisions")}},
     };
@@ -54,19 +54,19 @@ CategoryList outfieldGameplayAreas()
 CategoryList gkGameplayAreas()
 {
     return {
-        {PlayerComparisonPage::tr("Paraden"),
+        {PlayerComparisonPage::tr("Shot stopping"),
          {QStringLiteral("Reflexes"), QStringLiteral("One vs One"), QStringLiteral("Handling"),
           QStringLiteral("Agility")}},
-        {PlayerComparisonPage::tr("Luftkontrolle"),
+        {PlayerComparisonPage::tr("Aerial control"),
          {QStringLiteral("Aerial Reach"), QStringLiteral("Command of Area"),
           QStringLiteral("Jumping Reach")}},
-        {PlayerComparisonPage::tr("Abschlag/Abwurf"),
+        {PlayerComparisonPage::tr("Distribution"),
          {QStringLiteral("Kicking"), QStringLiteral("Throwing"), QStringLiteral("Passing"),
           QStringLiteral("Vision")}},
-        {PlayerComparisonPage::tr("Mitspielen"),
+        {PlayerComparisonPage::tr("Sweeping"),
          {QStringLiteral("Rushing Out (Tendency)"), QStringLiteral("Acceleration"),
           QStringLiteral("Pace")}},
-        {PlayerComparisonPage::tr("Mentalität"),
+        {PlayerComparisonPage::tr("Mentality"),
          {QStringLiteral("Composure"), QStringLiteral("Concentration"),
           QStringLiteral("Decisions"), QStringLiteral("Anticipation")}},
     };
@@ -103,30 +103,30 @@ PlayerComparisonPage::PlayerComparisonPage(AppContext &context, ThemeManager &th
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Spieler-Vergleich")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Player Comparison")), content);
     layout->addWidget(heading);
 
     // --- Filter row ---
     auto *filterRow = new QHBoxLayout;
-    filterRow->addWidget(new QLabel(tr("Taktik:"), content));
+    filterRow->addWidget(new QLabel(tr("Tactic:"), content));
     m_tacticCombo = new QComboBox(content);
     m_tacticCombo->setMinimumWidth(200);
     filterRow->addWidget(m_tacticCombo);
-    filterRow->addWidget(new QLabel(tr("Rolle:"), content));
+    filterRow->addWidget(new QLabel(tr("Role:"), content));
     m_roleCombo = new QComboBox(content);
     m_roleCombo->setMinimumWidth(260);
     filterRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_roleCombo, m_roleCombo->parentWidget()));
     filterRow->addWidget(m_roleCombo);
     filterRow->addWidget(new QLabel(tr("Pool:"), content));
     m_poolCombo = new QComboBox(content);
-    m_poolCombo->addItem(tr("Mein Verein"), QStringLiteral("club"));
-    m_poolCombo->addItem(tr("Nationalkader"), QStringLiteral("national"));
-    m_poolCombo->addItem(tr("Alle Spieler"), QStringLiteral("all"));
+    m_poolCombo->addItem(tr("My Club"), QStringLiteral("club"));
+    m_poolCombo->addItem(tr("National Squad"), QStringLiteral("national"));
+    m_poolCombo->addItem(tr("All Players"), QStringLiteral("all"));
     filterRow->addWidget(m_poolCombo);
     filterRow->addStretch(1);
     layout->addLayout(filterRow);
 
-    m_hint = new QLabel(tr("Bis zu 5 Spieler ankreuzen, um sie zu vergleichen."), content);
+    m_hint = new QLabel(tr("Check up to 5 players to compare them."), content);
     m_hint->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(m_hint);
 
@@ -137,13 +137,13 @@ PlayerComparisonPage::PlayerComparisonPage(AppContext &context, ThemeManager &th
     // --- Radar charts ---
     auto *chartsRow = new QHBoxLayout;
     auto *leftColumn = new QVBoxLayout;
-    m_gameplayTitle = new QLabel(tr("Spielbereiche"), content);
+    m_gameplayTitle = new QLabel(tr("Playing Areas"), content);
     m_gameplayTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_gameplayChart = new RadarChartWidget(m_theme, content);
     leftColumn->addWidget(m_gameplayTitle);
     leftColumn->addWidget(m_gameplayChart);
     auto *rightColumn = new QVBoxLayout;
-    m_metaTitle = new QLabel(tr("Meta-Attribut-Profil"), content);
+    m_metaTitle = new QLabel(tr("Meta Attribute Profile"), content);
     m_metaTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_metaChart = new RadarChartWidget(m_theme, content);
     rightColumn->addWidget(m_metaTitle);
@@ -153,7 +153,7 @@ PlayerComparisonPage::PlayerComparisonPage(AppContext &context, ThemeManager &th
     layout->addLayout(chartsRow);
 
     // --- Detailed attribute table ---
-    auto *tableTitle = new QLabel(tr("Detaillierter Attribut-Vergleich"), content);
+    auto *tableTitle = new QLabel(tr("Detailed Attribute Comparison"), content);
     tableTitle->setObjectName(QStringLiteral("sectionTitle"));
     layout->addWidget(tableTitle);
     m_detailTable = new QTableWidget(content);
@@ -213,7 +213,7 @@ void PlayerComparisonPage::refresh()
     QStringList tactics = m_context.definitions().tacticNames();
     std::sort(tactics.begin(), tactics.end());
     m_tacticCombo->clear();
-    m_tacticCombo->addItem(tr("Alle Rollen"), QString());
+    m_tacticCombo->addItem(tr("All Roles"), QString());
     for (const QString &tactic : tactics)
         m_tacticCombo->addItem(tactic, tactic);
     if (hadSelection && !previous.isEmpty()) {
@@ -318,8 +318,8 @@ void PlayerComparisonPage::rebuildPlayerList()
         item->setCheckState(checked.contains(player->uid) ? Qt::Checked : Qt::Unchecked);
     }
     m_hint->setText(pool.empty()
-                        ? tr("Keine Spieler mit dieser Rolle im gewählten Pool gefunden.")
-                        : tr("Bis zu 5 Spieler ankreuzen, um sie zu vergleichen (%1 verfügbar).")
+                        ? tr("No players with this role found in the selected pool.")
+                        : tr("Check up to 5 players to compare them (%1 available).")
                               .arg(pool.size()));
     m_updating = false;
     rebuildComparison();
@@ -357,24 +357,24 @@ void PlayerComparisonPage::rebuildComparison()
     CategoryList gameplay = isGk ? gkGameplayAreas() : outfieldGameplayAreas();
     CategoryList meta;
     if (isGk) {
-        meta = {{tr("Höchste Prio"),
+        meta = {{tr("Highest Prio"),
                  attrsInCategory(gkTiers, QStringLiteral("Top Importance"))},
-                {tr("Hohe Prio"),
+                {tr("High Prio"),
                  attrsInCategory(gkTiers, QStringLiteral("High Importance"))},
-                {tr("Mittlere Prio"),
+                {tr("Medium Prio"),
                  attrsInCategory(gkTiers, QStringLiteral("Medium Importance"))},
-                {tr("Schlüssel"), weights.key},
-                {tr("Bevorzugt"), weights.preferable}};
-        m_metaTitle->setText(tr("Torwart Meta-Attribut-Profil"));
+                {tr("Key"), weights.key},
+                {tr("Preferred"), weights.preferable}};
+        m_metaTitle->setText(tr("Goalkeeper Meta Attribute Profile"));
     } else {
-        meta = {{tr("Extrem wichtig"),
+        meta = {{tr("Extremely important"),
                  attrsInCategory(fieldTiers, QStringLiteral("Extremely Important"))},
-                {tr("Wichtig"),
+                {tr("Important"),
                  attrsInCategory(fieldTiers, QStringLiteral("Important"))},
-                {tr("Gut"), attrsInCategory(fieldTiers, QStringLiteral("Good"))},
-                {tr("Schlüssel"), weights.key},
-                {tr("Bevorzugt"), weights.preferable}};
-        m_metaTitle->setText(tr("Feldspieler Meta-Attribut-Profil"));
+                {tr("Good"), attrsInCategory(fieldTiers, QStringLiteral("Good"))},
+                {tr("Key"), weights.key},
+                {tr("Preferred"), weights.preferable}};
+        m_metaTitle->setText(tr("Outfield Meta Attribute Profile"));
     }
 
     const auto averageFor = [](const Player &player, const QStringList &attrs) {
@@ -439,25 +439,25 @@ void PlayerComparisonPage::rebuildComparison()
     };
     constexpr int kShownRoles = 4;
     const QList<InfoRow> infoRows = {
-        {tr("Alter"), [](const Player &p) { return QString::number(p.age); }},
-        {tr("Verein"), [](const Player &p) { return p.club; }},
+        {tr("Age"), [](const Player &p) { return QString::number(p.age); }},
+        {tr("Club"), [](const Player &p) { return p.club; }},
         {tr("Position"), [](const Player &p) { return p.positionRaw; }},
-        {tr("Persönlichkeit"), [](const Player &p) { return p.personality; }},
-        {tr("Größe"), [](const Player &p) { return p.heightRaw; }},
-        {tr("Bevorzugter Fuß"), [](const Player &p) { return p.preferredFoot; }},
-        {tr("Gehalt"), [](const Player &p) { return p.wageRaw; }},
-        {tr("Marktwert"), [](const Player &p) { return p.transferValueRaw; }},
-        {tr("Spielzeit"), [](const Player &p) { return p.agreedPlayingTime; }},
-        {tr("Beste Rollen (DWRS)"),
+        {tr("Personality"), [](const Player &p) { return p.personality; }},
+        {tr("Height"), [](const Player &p) { return p.heightRaw; }},
+        {tr("Preferred Foot"), [](const Player &p) { return p.preferredFoot; }},
+        {tr("Wage"), [](const Player &p) { return p.wageRaw; }},
+        {tr("Market Value"), [](const Player &p) { return p.transferValueRaw; }},
+        {tr("Playing Time"), [](const Player &p) { return p.agreedPlayingTime; }},
+        {tr("Best roles (DWRS)"),
          [rolesByRating](const Player &p) {
              const QStringList labels = rolesByRating(p);
              QString text = labels.mid(0, kShownRoles).join(QStringLiteral(", "));
              if (labels.size() > kShownRoles)
-                 text += QStringLiteral(" ") + tr("+%1 weitere").arg(labels.size() - kShownRoles);
+                 text += QStringLiteral(" ") + tr("+%1 more").arg(labels.size() - kShownRoles);
              return text;
          },
          [rolesByRating](const Player &p) {
-             return tr("Alle zugewiesenen Rollen:") + QStringLiteral("\n")
+             return tr("All assigned roles:") + QStringLiteral("\n")
                     + rolesByRating(p).join(QStringLiteral("\n"));
          }},
     };
@@ -472,7 +472,7 @@ void PlayerComparisonPage::rebuildComparison()
             auto *item = new QTableWidgetItem(info.value(*player));
             if (info.toolTip)
                 item->setToolTip(info.toolTip(*player));
-            if (info.label == tr("Persönlichkeit")) {
+            if (info.label == tr("Personality")) {
                 const CellStyle style = personalityCellStyle(
                     definitions->personalityCategory(player->personality));
                 if (style.isValid()) {

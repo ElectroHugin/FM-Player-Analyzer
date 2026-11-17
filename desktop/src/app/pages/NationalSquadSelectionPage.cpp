@@ -42,7 +42,7 @@ NationalSquadSelectionPage::NationalSquadSelectionPage(AppContext &context, QWid
     layout->setSpacing(10);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nationalkader-Auswahl")), this);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("National Squad Selection")), this);
     layout->addWidget(heading);
 
     m_hint = new QLabel(this);
@@ -53,10 +53,10 @@ NationalSquadSelectionPage::NationalSquadSelectionPage(AppContext &context, QWid
 
     // --- Left: available pool ---
     auto *leftColumn = new QVBoxLayout;
-    auto *availableTitle = new QLabel(tr("Verfügbarer Spieler-Pool"), this);
+    auto *availableTitle = new QLabel(tr("Available Player Pool"), this);
     availableTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_searchEdit = new QLineEdit(this);
-    m_searchEdit->setPlaceholderText(tr("Verfügbare Spieler nach Name durchsuchen…"));
+    m_searchEdit->setPlaceholderText(tr("Search available players by name…"));
     m_searchEdit->setClearButtonEnabled(true);
     m_availableList = new QListWidget(this);
     m_availableList->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -68,8 +68,8 @@ NationalSquadSelectionPage::NationalSquadSelectionPage(AppContext &context, QWid
     // --- Middle: move buttons ---
     auto *buttonColumn = new QVBoxLayout;
     buttonColumn->addStretch(1);
-    auto *addButton = new QPushButton(tr("Hinzufügen →"), this);
-    auto *removeButton = new QPushButton(tr("← Entfernen"), this);
+    auto *addButton = new QPushButton(tr("Add →"), this);
+    auto *removeButton = new QPushButton(tr("← Remove"), this);
     buttonColumn->addWidget(addButton);
     buttonColumn->addWidget(removeButton);
     buttonColumn->addStretch(1);
@@ -89,7 +89,7 @@ NationalSquadSelectionPage::NationalSquadSelectionPage(AppContext &context, QWid
 
     auto *saveRow = new QHBoxLayout;
     saveRow->addStretch(1);
-    m_saveButton = new QPushButton(tr("Nationalkader speichern"), this);
+    m_saveButton = new QPushButton(tr("Save National Squad"), this);
     m_saveButton->setDefault(true);
     saveRow->addWidget(m_saveButton);
     layout->addLayout(saveRow);
@@ -124,17 +124,17 @@ void NationalSquadSelectionPage::rebuildLists()
 
     if (name.isEmpty() || code.isEmpty() || ageLimit <= 0) {
         m_hint->setText(
-            tr("⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter "
-               "Einstellungen → Nationalteam (Name, Länder-Code, Altersgrenze)."));
+            tr("⚠️ Please fully configure your national team first under "
+               "Settings → National team (name, country code, age limit)."));
         m_availableList->clear();
         m_squadList->clear();
         m_saveButton->setEnabled(false);
         return;
     }
     m_saveButton->setEnabled(true);
-    m_hint->setText(tr("Pool: Spieler mit Nationalität '%1'%2. Doppelklick oder Buttons zum "
-                       "Verschieben; Speichern übernimmt die Auswahl in die Datenbank.")
-                        .arg(code, ageLimit < 99 ? tr(" bis Alter %1").arg(ageLimit)
+    m_hint->setText(tr("Pool: players with nationality '%1'%2. Double-click or use the "
+                       "buttons to move them; saving stores the selection in the database.")
+                        .arg(code, ageLimit < 99 ? tr(" up to age %1").arg(ageLimit)
                                                  : QString()));
 
     const QString query = foldForSearch(m_searchEdit->text().trimmed());
@@ -167,9 +167,9 @@ void NationalSquadSelectionPage::rebuildLists()
     for (const Player *player : squad)
         playerItem(*player, m_squadList);
 
-    m_squadTitle->setText(tr("Aktueller Kader (%1 Spieler)%2")
+    m_squadTitle->setText(tr("Current Squad (%1 players)%2")
                               .arg(m_selection.size())
-                              .arg(m_dirty ? tr(" — ungespeichert") : QString()));
+                              .arg(m_dirty ? tr(" — unsaved") : QString()));
 }
 
 void NationalSquadSelectionPage::moveSelected(QListWidget *from, bool adding)
@@ -200,12 +200,12 @@ void NationalSquadSelectionPage::save()
     m_dirty = false;
     if (!m_context.setNationalSquad(ids)) {
         m_dirty = true;
-        QMessageBox::critical(this, tr("Nationalkader"), m_context.database().errorString());
+        QMessageBox::critical(this, tr("National Squad"), m_context.database().errorString());
         return;
     }
     const int count = static_cast<int>(ids.size());
-    QMessageBox::information(this, tr("Nationalkader"),
-                             tr("%1 Spieler im Nationalkader gespeichert.").arg(count));
+    QMessageBox::information(this, tr("National Squad"),
+                             tr("%1 players saved in the national squad.").arg(count));
 }
 
 } // namespace fm

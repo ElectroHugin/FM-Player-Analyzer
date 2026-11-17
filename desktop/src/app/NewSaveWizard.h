@@ -15,7 +15,7 @@ namespace fm {
 class AppContext;
 class DropZone;
 
-// "Neuer Spielstand" in two steps: name + FM version (creates and opens the
+// "New save" in two steps: name + FM version (creates and opens the
 // save) and a first import (optional). The club and the other first settings
 // follow in the WelcomeWizard once the save holds players. Once step 1 is done the new save stays open even if the rest is
 // skipped; accepted() then means "a new save is open".

@@ -21,7 +21,7 @@ class ThemeManager;
 
 // Start screen: pick a recent save, create a new one or bring one in. Shown
 // at launch (unless "always open the last save" is set) and from the main
-// window via "Spielstand wechseln". accept() means the chosen save is open.
+// window via "Switch save". accept() means the chosen save is open.
 class StartScreen : public QDialog
 {
     Q_OBJECT

@@ -24,16 +24,16 @@ PlayerColumn makeFreshnessColumn(int currentCounter, int retirementAge,
                                  int staleAfterUploads, const QString &userClub)
 {
     PlayerColumn column;
-    column.header = QObject::tr("Frische");
+    column.header = QObject::tr("Freshness");
     column.value = [=](const Player &p) -> QVariant {
         const int missed = Freshness::uploadsSinceSeen(p, currentCounter);
         if (Freshness::isRetired(p, currentCounter, retirementAge, staleAfterUploads, userClub))
             return QObject::tr("Retired (%1)").arg(missed);
         if (Freshness::isStale(p, currentCounter, staleAfterUploads))
-            return QObject::tr("veraltet (%1)").arg(missed);
+            return QObject::tr("stale (%1)").arg(missed);
         if (missed > 0)
-            return QObject::tr("vor %1").arg(missed);
-        return currentCounter > 0 ? QObject::tr("aktuell") : QString();
+            return QObject::tr("%1 ago").arg(missed);
+        return currentCounter > 0 ? QObject::tr("current") : QString();
     };
     // Sort by uploads-missed (numeric), so the stalest players group together.
     column.sortValue = [=](const Player &p) {

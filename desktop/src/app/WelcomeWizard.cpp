@@ -155,28 +155,28 @@ WelcomeWizard::WelcomeWizard(AppContext &context, ThemeManager &theme, QWidget *
     , m_templates(std::make_unique<ColorTemplateStore>(context.paths().colorTemplatesFile()))
 {
     m_templates->load();
-    setWindowTitle(tr("Willkommen"));
+    setWindowTitle(tr("Welcome"));
     setMinimumSize(720, 560);
 
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(28, 22, 28, 18);
     layout->setSpacing(16);
 
-    auto *title = new QLabel(tr("Richte deinen Spielstand ein"), this);
+    auto *title = new QLabel(tr("Set up your save"), this);
     title->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(title);
     layout->addWidget(caption(
-        tr("Die ersten Spieler sind da (%n Spieler). Mit ein paar Angaben weiß der Analyzer, "
-           "welcher Kader deiner ist und wie du spielst. Alles lässt sich später unter "
-           "Einstellungen ändern, und diesen Assistenten findest du jederzeit unter "
-           "Hilfe → Willkommens-Assistent.",
+        tr("The first players are in (%n players). With a few details the Analyzer knows "
+           "which squad is yours and how you play. Everything can be changed later under "
+           "Settings, and you can find this assistant at any time under Help → Welcome "
+           "assistant.",
            nullptr, m_context.store().size()),
         this));
 
     // Step indicator (same look as the new-save assistant).
     auto *steps = new QHBoxLayout;
     steps->setSpacing(10);
-    const QStringList stepNames = {tr("Verein"), tr("Taktik und Kader"), tr("Farben")};
+    const QStringList stepNames = {tr("Club"), tr("Tactics and squad"), tr("Colours")};
     for (int i = 0; i < stepNames.size(); ++i) {
         if (i > 0) {
             auto *line = new QFrame(this);
@@ -204,11 +204,11 @@ WelcomeWizard::WelcomeWizard(AppContext &context, ThemeManager &theme, QWidget *
     layout->addWidget(m_pages, 1);
 
     auto *footer = new QHBoxLayout;
-    m_skipButton = new QPushButton(tr("Nicht mehr anzeigen"), this);
-    m_skipButton->setToolTip(tr("Schließt den Assistenten für diesen Spielstand. Du kannst ihn "
-                                "über Hilfe → Willkommens-Assistent wieder öffnen."));
-    m_backButton = new QPushButton(tr("Zurück"), this);
-    m_nextButton = new QPushButton(tr("Weiter"), this);
+    m_skipButton = new QPushButton(tr("Don't show again"), this);
+    m_skipButton->setToolTip(tr("Closes the assistant for this save. You can open it again "
+                                "from Help → Welcome assistant."));
+    m_backButton = new QPushButton(tr("Back"), this);
+    m_nextButton = new QPushButton(tr("Next"), this);
     m_nextButton->setDefault(true);
     footer->addWidget(m_skipButton);
     footer->addStretch(1);
@@ -233,16 +233,16 @@ QWidget *WelcomeWizard::buildClubPage()
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(8);
 
-    layout->addWidget(sectionTitle(tr("Welchen Verein managst du?"), page));
+    layout->addWidget(sectionTitle(tr("Which club do you manage?"), page));
     m_clubCombo = new QComboBox(page);
     m_clubCombo->setEditable(true);
     m_clubCombo->setInsertPolicy(QComboBox::NoInsert);
     m_clubCombo->completer()->setFilterMode(Qt::MatchContains);
     m_clubCombo->completer()->setCompletionMode(QCompleter::PopupCompletion);
     layout->addWidget(m_clubCombo);
-    layout->addWidget(caption(tr("Übersicht, Best XI, Kaufberatung und Trainingsplan rechnen mit "
-                                 "diesem Verein. Oben steht der Verein mit den meisten "
-                                 "importierten Spielern."),
+    layout->addWidget(caption(tr("Overview, Best XI, signing advice and training plan work with "
+                                 "this club. The club with the most imported players is listed "
+                                 "first."),
                               page));
     layout->addSpacing(8);
 
@@ -251,60 +251,60 @@ QWidget *WelcomeWizard::buildClubPage()
     form->setVerticalSpacing(8);
     m_secondClubCombo = new QComboBox(page);
     m_fullNameEdit = new QLineEdit(page);
-    m_fullNameEdit->setPlaceholderText(tr("voller Vereinsname (für den Header)"));
+    m_fullNameEdit->setPlaceholderText(tr("full club name (for the header)"));
     m_stadiumEdit = new QLineEdit(page);
-    m_stadiumEdit->setPlaceholderText(tr("Name des Stadions"));
+    m_stadiumEdit->setPlaceholderText(tr("stadium name"));
     m_countryEdit = new QLineEdit(page);
     m_countryEdit->setMaxLength(3);
     m_countryEdit->setMaximumWidth(80);
     m_countryEdit->setPlaceholderText(QStringLiteral("ABC"));
     m_countryEdit->setValidator(new QRegularExpressionValidator(
         QRegularExpression(QStringLiteral("[A-Za-z]{0,3}")), m_countryEdit));
-    form->addRow(tr("Zweitteam:"), m_secondClubCombo);
-    form->addRow(tr("Voller Vereinsname (Anzeige):"), m_fullNameEdit);
-    form->addRow(tr("Stadion:"), m_stadiumEdit);
-    form->addRow(tr("Vereins-Land (3-Buchstaben-Code):"), m_countryEdit);
+    form->addRow(tr("Second Team:"), m_secondClubCombo);
+    form->addRow(tr("Full club name (display):"), m_fullNameEdit);
+    form->addRow(tr("Stadium:"), m_stadiumEdit);
+    form->addRow(tr("Club country (3-letter code):"), m_countryEdit);
 
     m_logoPreview = new QLabel(page);
     m_logoPreview->setFixedSize(120, 48);
     m_logoPreview->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    auto *chooseLogo = new QPushButton(tr("Logo wählen (PNG)…"), page);
-    m_logoRemoveButton = new QPushButton(tr("Entfernen"), page);
+    auto *chooseLogo = new QPushButton(tr("Choose logo (PNG)…"), page);
+    m_logoRemoveButton = new QPushButton(tr("Remove"), page);
     auto *logoRow = new QHBoxLayout;
     logoRow->setContentsMargins(0, 0, 0, 0);
     logoRow->addWidget(m_logoPreview);
     logoRow->addWidget(chooseLogo);
     logoRow->addWidget(m_logoRemoveButton);
     logoRow->addStretch(1);
-    form->addRow(tr("Vereinslogo:"), logoRow);
+    form->addRow(tr("Club logo:"), logoRow);
 
     // Versions that read save games: following the save keeps the analyzer
     // current without any export (offered here so nobody has to find it).
     const QString versionId = m_context.fmVersionId();
     if (fmDataVersion(versionId).importFormats.contains(QStringLiteral("fm"))) {
         const AppConfig &config = m_context.config();
-        m_followCheck = new QCheckBox(tr("live verfolgen"), page);
-        m_followCheck->setToolTip(tr("Solange der Analyzer offen ist, liest er den Spielstand "
-                                     "nach jedem Speichern im Spiel neu ein, auch nach einem "
-                                     "Autosave. Schneller als ein Export."));
+        m_followCheck = new QCheckBox(tr("follow live"), page);
+        m_followCheck->setToolTip(tr("While the analyzer is open, it reads the save again "
+                                     "every time the game saves, autosaves included. Faster "
+                                     "than an export."));
         m_followEdit = new QLineEdit(page);
-        m_followEdit->setPlaceholderText(tr(".fm-Datei wählen"));
+        m_followEdit->setPlaceholderText(tr("Choose .fm file"));
         m_followEdit->setText(QDir::toNativeSeparators(config.liveSavePath()));
         m_followCheck->setChecked(config.liveSaveEnabled());
-        auto *browse = new QPushButton(tr("Durchsuchen …"), page);
+        auto *browse = new QPushButton(tr("Browse …"), page);
         auto *followRow = new QHBoxLayout;
         followRow->setContentsMargins(0, 0, 0, 0);
         followRow->addWidget(m_followCheck);
         followRow->addWidget(m_followEdit, 1);
         followRow->addWidget(browse);
-        form->addRow(tr("Spielstand im Spiel:"), followRow);
+        form->addRow(tr("Game save:"), followRow);
         connect(browse, &QPushButton::clicked, this, [this, versionId] {
             QString start = m_followEdit->text().trimmed();
             if (start.isEmpty())
                 start = AppConfig::defaultSavesDir(versionId);
             const QString path = QFileDialog::getOpenFileName(
-                this, tr("Spielstand auswählen"), start,
-                tr("Spielstände (*.fm);;Alle Dateien (*)"));
+                this, tr("Choose save"), start,
+                tr("Saves (*.fm);;All files (*)"));
             if (path.isEmpty())
                 return;
             m_followEdit->setText(QDir::toNativeSeparators(path));
@@ -317,12 +317,12 @@ QWidget *WelcomeWizard::buildClubPage()
 
     layout->addSpacing(4);
     layout->addWidget(foldableHint(
-        tr("Wofür brauche ich das?"),
-        tr("Das Zweitteam (zum Beispiel die zweite Mannschaft oder U23) zählt zum eigenen "
-           "Kader, etwa für Leihen und die Jugendelf. Vereinsname, Stadion und Logo erscheinen "
-           "im Kopf des Fensters. Das Vereins-Land steuert den Inland-Filter beim Scouting und "
-           "die Ausbildungsregeln der Kaderregistrierung. Der Code ist der dreistellige "
-           "Nationen-Code aus dem Spiel."),
+        tr("What is this for?"),
+        tr("The second team (for example the reserves or U23) counts as part of your own "
+           "squad, for loans and the youth XI among others. Club name, stadium and logo appear "
+           "in the window header. The club country drives the domestic filter in scouting and "
+           "the trained-at-club rules of squad registration. The code is the three-letter "
+           "nation code from the game."),
         page));
     layout->addStretch(1);
 
@@ -343,7 +343,7 @@ QWidget *WelcomeWizard::buildPlayPage()
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(8);
 
-    layout->addWidget(sectionTitle(tr("Lieblings-Taktiken"), page));
+    layout->addWidget(sectionTitle(tr("Favourite Tactics"), page));
     auto *tacticForm = new QFormLayout;
     tacticForm->setHorizontalSpacing(16);
     m_tactic1Combo = new QComboBox(page);
@@ -362,12 +362,12 @@ QWidget *WelcomeWizard::buildPlayPage()
     fill(m_tactic2Combo, m_context.database().setting(QStringLiteral("favorite_tactic_2")));
     if (m_tactic1Combo->currentText().isEmpty() && !tactics.isEmpty())
         m_tactic1Combo->setCurrentText(tactics.first());
-    tacticForm->addRow(tr("Primäre Taktik:"), m_tactic1Combo);
-    tacticForm->addRow(tr("Sekundäre Taktik:"), m_tactic2Combo);
+    tacticForm->addRow(tr("Primary Tactic:"), m_tactic1Combo);
+    tacticForm->addRow(tr("Secondary Tactic:"), m_tactic2Combo);
     layout->addLayout(tacticForm);
-    layout->addWidget(caption(tr("Werden auf Übersicht, Aufstellung, Kader und Transfers "
-                                 "vorausgewählt. Die primäre bestimmt die Rollen auf der Seite "
-                                 "Entwicklung. Eigene Taktiken legst du unter Taktiken an."),
+    layout->addWidget(caption(tr("Preselected on Overview, Line-up, Squad and Transfers. The "
+                                 "primary one sets the roles on the Development page. You "
+                                 "create your own tactics under Tactics."),
                               page));
 
     // Two line-ups per tactic (FM27): weight of the in-possession role.
@@ -375,20 +375,21 @@ QWidget *WelcomeWizard::buildPlayPage()
     auto *ipLayout = new QVBoxLayout(m_ipShareBox);
     ipLayout->setContentsMargins(0, 12, 0, 0);
     ipLayout->setSpacing(8);
-    ipLayout->addWidget(sectionTitle(tr("Mit Ball und ohne Ball"), m_ipShareBox));
+    ipLayout->addWidget(sectionTitle(tr("In and out of possession"), m_ipShareBox));
     auto *ipForm = new QFormLayout;
     ipForm->setHorizontalSpacing(16);
     m_ipShareSpin = new QSpinBox(m_ipShareBox);
     m_ipShareSpin->setRange(0, 100);
     m_ipShareSpin->setSuffix(QStringLiteral(" %"));
     m_ipShareSpin->setValue(m_context.config().ipSharePercent());
-    ipForm->addRow(tr("Anteil mit Ball:"), m_ipShareSpin);
+    ipForm->addRow(tr("In-possession share:"), m_ipShareSpin);
     ipLayout->addLayout(ipForm);
     ipLayout->addWidget(foldableHint(
-        tr("Was bedeutet der Anteil?"),
-        tr("Jede Taktik hat eine Aufstellung mit Ball und eine ohne Ball. Der Wert eines "
-           "Spielers ist dieser Anteil seiner Rolle mit Ball plus der Rest seiner Rolle ohne "
-           "Ball. Bei 50 % zählen beide gleich, bei mehr zählt der Ballbesitz stärker."),
+        tr("What does the share mean?"),
+        tr("Every tactic has an in-possession and an out-of-possession line-up. A player's "
+           "value is this share of their in-possession role plus the rest of their "
+           "out-of-possession role. At 50 % both count the same; above that, possession "
+           "counts more."),
         m_ipShareBox));
     m_ipShareBox->setVisible(!m_context.definitions().twoPhaseTactics().isEmpty());
     layout->addWidget(m_ipShareBox);
@@ -401,12 +402,12 @@ QWidget *WelcomeWizard::buildPlayPage()
     auto *regLayout = new QVBoxLayout(m_registrationBox);
     regLayout->setContentsMargins(0, 12, 0, 0);
     regLayout->setSpacing(8);
-    regLayout->addWidget(sectionTitle(tr("Kaderregistrierung"), m_registrationBox));
+    regLayout->addWidget(sectionTitle(tr("Squad registration"), m_registrationBox));
     auto *regForm = new QFormLayout;
     regForm->setHorizontalSpacing(16);
     m_leagueCombo = new QComboBox(m_registrationBox);
     m_leagueCombo->setMinimumWidth(260);
-    m_leagueCombo->addItem(tr("Standard (keine Beschränkung)"),
+    m_leagueCombo->addItem(tr("Default (no restriction)"),
                            Registration::leagueRulesKey(Registration::LeagueRules::None));
     for (const Registration::LeagueRules league : leagues)
         m_leagueCombo->addItem(Registration::leagueDisplayName(league),
@@ -418,14 +419,14 @@ QWidget *WelcomeWizard::buildPlayPage()
                                 m_registrationBox);
     m_uefaCheck->setEnabled(uefaAvailable);
     m_uefaCheck->setChecked(registration.uefa);
-    regForm->addRow(tr("Liga:"), m_leagueCombo);
-    regForm->addRow(tr("Europapokal:"), m_uefaCheck);
+    regForm->addRow(tr("League:"), m_leagueCombo);
+    regForm->addRow(tr("European competition:"), m_uefaCheck);
     regLayout->addLayout(regForm);
     regLayout->addWidget(foldableHint(
-        tr("Was bewirkt das?"),
-        tr("Sobald ein Wettbewerb eine Meldeliste verlangt, markiert der Analyzer im Land und "
-           "im Verein ausgebildete Spieler und bietet den Registrierungs-Assistenten an. "
-           "'Standard' kennt keine Beschränkung, dann sind alle Spieler spielberechtigt."),
+        tr("What does this do?"),
+        tr("As soon as a competition requires a squad list, the Analyzer marks players "
+           "trained in the nation and at the club and offers the registration assistant. "
+           "'Default' has no restriction: every player is eligible."),
         m_registrationBox));
     m_registrationBox->setVisible(!leagues.isEmpty() || uefaAvailable);
     layout->addWidget(m_registrationBox);
@@ -441,21 +442,21 @@ QWidget *WelcomeWizard::buildLookPage()
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(8);
 
-    layout->addWidget(sectionTitle(tr("Farben"), page));
+    layout->addWidget(sectionTitle(tr("Colours"), page));
     auto *form = new QFormLayout;
     form->setHorizontalSpacing(16);
     m_presetCombo = new QComboBox(page);
     m_presetCombo->setMinimumWidth(280);
     m_presetCombo->setMaxVisibleItems(20);
     m_modeCombo = new QComboBox(page);
-    m_modeCombo->addItem(tr("Nacht (dunkel)"), QStringLiteral("night"));
-    m_modeCombo->addItem(tr("Tag (hell)"), QStringLiteral("day"));
-    form->addRow(tr("Vereins-/Farbvorlage:"), m_presetCombo);
-    form->addRow(tr("Modus:"), m_modeCombo);
+    m_modeCombo->addItem(tr("Night (dark)"), QStringLiteral("night"));
+    m_modeCombo->addItem(tr("Day (light)"), QStringLiteral("day"));
+    form->addRow(tr("Club / colour preset:"), m_presetCombo);
+    form->addRow(tr("Mode:"), m_modeCombo);
     layout->addLayout(form);
-    layout->addWidget(caption(tr("Die Vorlage färbt Kopfzeile, Knöpfe und Auswahl in den "
-                                 "Vereinsfarben. Die Grundfarben bleiben neutral. Feinere "
-                                 "Anpassungen findest du unter Einstellungen → Design."),
+    layout->addWidget(caption(tr("The preset colours the header, buttons and selection in "
+                                 "the club colours. The base colours stay neutral. Finer "
+                                 "adjustments are under Settings → Design."),
                               page));
 
     fillPresets();
@@ -465,13 +466,13 @@ QWidget *WelcomeWizard::buildLookPage()
     connect(m_presetCombo, &QComboBox::activated, this, [this] { m_presetTouched = true; });
 
     layout->addSpacing(16);
-    layout->addWidget(sectionTitle(tr("Was es sonst noch gibt"), page));
+    layout->addWidget(sectionTitle(tr("What else there is"), page));
     layout->addWidget(foldableHint(
-        tr("Weitere Einstellungen"),
-        tr("In den Einstellungen findest du außerdem das Nationalteam (schaltet das "
-           "National-Management frei), Porträts und Wappen aus dem Graphics-Ordner des Spiels "
-           "und, unter Import, für FM27 das Live-Verfolgen eines Spielstands. Unter DWRS-Gewichte "
-           "sowie Kader und Analyse passt du an, wie Rollen bewertet und Kader aufgebaut werden."),
+        tr("More settings"),
+        tr("The settings also hold the national team (unlocks national management), portraits and "
+           "crests from the game's graphics folder and, under Import, following an FM27 save "
+           "live. Under DWRS weights and Squad and analysis you adjust how roles are rated and "
+           "squads are built."),
         page));
     layout->addStretch(1);
     return page;
@@ -532,7 +533,7 @@ void WelcomeWizard::fillPresets()
     const QString customLeague = tr("Custom");
     for (const ColorTemplate &own : m_templates->templates())
         entries.append({own.league.isEmpty() ? customLeague : own.league,
-                        tr("%1 (eigene)").arg(own.name), own.id});
+                        tr("%1 (own)").arg(own.name), own.id});
     // Neutral first (empty league), leagues alphabetically, own ones last.
     std::stable_sort(entries.begin(), entries.end(), [&](const Entry &a, const Entry &b) {
         const auto rank = [&](const Entry &e) {
@@ -565,7 +566,7 @@ void WelcomeWizard::fillPresets()
     if (index >= 0) {
         m_presetCombo->setCurrentIndex(index);
     } else {
-        m_presetCombo->addItem(tr("Bisherige Farben behalten"), QStringLiteral("custom"));
+        m_presetCombo->addItem(tr("Keep current colours"), QStringLiteral("custom"));
         m_presetCombo->setCurrentIndex(m_presetCombo->count() - 1);
     }
     suggestPresetForClub();
@@ -616,7 +617,7 @@ void WelcomeWizard::goTo(int step)
         label->style()->polish(label);
     }
     m_backButton->setVisible(step > ClubStep);
-    m_nextButton->setText(step == StepCount - 1 ? tr("Fertig") : tr("Weiter"));
+    m_nextButton->setText(step == StepCount - 1 ? tr("Done") : tr("Next"));
     if (isVisible())
         QTimer::singleShot(0, this, [this] { growWindowToFit(this); });
 }
@@ -704,9 +705,10 @@ void WelcomeWizard::finish()
     QString error = ok ? QString() : db.errorString();
     if (!ok || !transaction.commit(&error)) {
         QMessageBox::critical(
-            this, tr("Willkommen"),
-            tr("Die Angaben konnten nicht gespeichert werden. Der Spielstand behält seinen "
-               "bisherigen Stand.\n\n%1")
+            this, tr("Welcome"),
+            tr("The details could not be saved. The save keeps its previous state.\n"
+               "\n"
+               "%1")
                 .arg(error.isEmpty() ? config.lastError() : error));
         return;
     }
@@ -720,20 +722,20 @@ void WelcomeWizard::finish()
 void WelcomeWizard::chooseLogo()
 {
     const QString source = QFileDialog::getOpenFileName(
-        this, tr("Vereinslogo wählen"), QString(),
-        tr("Bilder (*.png *.jpg *.jpeg *.bmp);;Alle Dateien (*)"));
+        this, tr("Choose club logo"), QString(),
+        tr("Images (*.png *.jpg *.jpeg *.bmp);;All files (*)"));
     if (source.isEmpty())
         return;
     QPixmap pixmap;
     if (!pixmap.load(source)) {
-        QMessageBox::warning(this, tr("Vereinslogo"),
-                             tr("Die Datei konnte nicht als Bild geladen werden."));
+        QMessageBox::warning(this, tr("Club logo"),
+                             tr("The file could not be loaded as an image."));
         return;
     }
     QString error;
     if (!m_context.setProfileImage(AppContext::ProfileImage::ClubLogo, pngBytes(pixmap), &error)) {
-        QMessageBox::warning(this, tr("Vereinslogo"),
-                             tr("Das Logo konnte nicht gespeichert werden.\n%1").arg(error));
+        QMessageBox::warning(this, tr("Club logo"),
+                             tr("The logo could not be saved.\n%1").arg(error));
         return;
     }
     updateLogoPreview();
@@ -744,8 +746,8 @@ void WelcomeWizard::removeLogo()
 {
     QString error;
     if (!m_context.setProfileImage(AppContext::ProfileImage::ClubLogo, {}, &error))
-        QMessageBox::warning(this, tr("Vereinslogo"),
-                             tr("Das Logo konnte nicht entfernt werden.\n%1").arg(error));
+        QMessageBox::warning(this, tr("Club logo"),
+                             tr("The logo could not be removed.\n%1").arg(error));
     updateLogoPreview();
     m_context.notifySettingsChanged();
 }
@@ -759,7 +761,7 @@ void WelcomeWizard::updateLogoPreview()
         m_logoRemoveButton->setEnabled(true);
     } else {
         m_logoPreview->setPixmap(QPixmap());
-        m_logoPreview->setText(tr("(kein Logo)"));
+        m_logoPreview->setText(tr("(no logo)"));
         m_logoPreview->setObjectName(QStringLiteral("kpiCaption"));
         m_logoRemoveButton->setEnabled(false);
     }

@@ -82,32 +82,32 @@ NewRolePage::NewRolePage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Neue Rolle erstellen")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Create New Role")), content);
     layout->addWidget(heading);
     auto *info = new QLabel(
-        tr("Definiere eine neue Feldspieler-Rolle. Das Kürzel wird beim Tippen automatisch "
-           "erzeugt. Nach dem Erstellen ist die Rolle überall in der App verfügbar."),
+        tr("Define a new outfield role. The abbreviation is generated automatically as you "
+           "type. Once created, the role is available everywhere in the app."),
         content);
     info->setWordWrap(true);
     info->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(info);
 
     // --- 1. Basic info ---
-    auto *basicBox = new QGroupBox(tr("1. Grunddaten"), content);
+    auto *basicBox = new QGroupBox(tr("1. Basic data"), content);
     auto *basicRow = new QHBoxLayout(basicBox);
-    basicRow->addWidget(new QLabel(tr("Voller Rollenname:"), basicBox));
+    basicRow->addWidget(new QLabel(tr("Full role name:"), basicBox));
     m_nameEdit = new QLineEdit(basicBox);
-    m_nameEdit->setPlaceholderText(tr("z. B. 'Advanced Playmaker'"));
+    m_nameEdit->setPlaceholderText(tr("e.g. 'Advanced Playmaker'"));
     m_nameEdit->setMinimumWidth(240);
     basicRow->addWidget(m_nameEdit, 1);
-    basicRow->addWidget(new QLabel(tr("Kategorie:"), basicBox));
+    basicRow->addWidget(new QLabel(tr("Category:"), basicBox));
     m_categoryCombo = new QComboBox(basicBox);
     // JSON keys stay English (definitions.json schema).
-    m_categoryCombo->addItem(tr("Verteidigung"), QStringLiteral("Defense"));
-    m_categoryCombo->addItem(tr("Mittelfeld"), QStringLiteral("Midfield"));
-    m_categoryCombo->addItem(tr("Angriff"), QStringLiteral("Attack"));
+    m_categoryCombo->addItem(tr("Defence"), QStringLiteral("Defense"));
+    m_categoryCombo->addItem(tr("Midfield"), QStringLiteral("Midfield"));
+    m_categoryCombo->addItem(tr("Attack"), QStringLiteral("Attack"));
     basicRow->addWidget(m_categoryCombo);
-    basicRow->addWidget(new QLabel(tr("Aufgabe:"), basicBox));
+    basicRow->addWidget(new QLabel(tr("Duty:"), basicBox));
     m_dutyCombo = new QComboBox(basicBox);
     for (const QString &duty : {QStringLiteral("Defend"), QStringLiteral("Support"),
                                 QStringLiteral("Attack"), QStringLiteral("Automatic"),
@@ -122,10 +122,10 @@ NewRolePage::NewRolePage(AppContext &context, QWidget *parent)
     connect(m_dutyCombo, &QComboBox::currentIndexChanged, this, &NewRolePage::updateShortName);
 
     // --- 2. Position mapping ---
-    auto *positionBox = new QGroupBox(tr("2. Positions-Zuordnung"), content);
+    auto *positionBox = new QGroupBox(tr("2. Position assignment"), content);
     auto *positionLayout = new QVBoxLayout(positionBox);
     auto *positionHint = new QLabel(
-        tr("Positionen ankreuzen, auf denen diese Rolle eingesetzt werden kann."),
+        tr("Check the positions where this role can be used."),
         positionBox);
     positionHint->setObjectName(QStringLiteral("kpiCaption"));
     positionLayout->addWidget(positionHint);
@@ -138,11 +138,11 @@ NewRolePage::NewRolePage(AppContext &context, QWidget *parent)
     layout->addWidget(positionBox);
 
     // --- 3. Attributes ---
-    auto *attrBox = new QGroupBox(tr("3. Schlüssel- und bevorzugte Attribute"), content);
+    auto *attrBox = new QGroupBox(tr("3. Key and preferred attributes"), content);
     auto *attrLayout = new QVBoxLayout(attrBox);
     auto *attrHint = new QLabel(
-        tr("'Schlüssel' (S) erhält den höchsten Multiplikator, 'Bevorzugt' (B) einen "
-           "mittleren. Sind beide angekreuzt, gewinnt 'Schlüssel'."),
+        tr("'Key' (K) gets the highest multiplier, 'Preferred' (P) a medium one. If "
+           "both are checked, 'Key' wins."),
         attrBox);
     attrHint->setWordWrap(true);
     attrHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -167,15 +167,15 @@ NewRolePage::NewRolePage(AppContext &context, QWidget *parent)
         }
         columnsRow->addWidget(group, 1);
     };
-    makeColumn(tr("Technisch"), technicalAttrs());
+    makeColumn(tr("Technical"), technicalAttrs());
     makeColumn(tr("Mental"), mentalAttrs());
-    makeColumn(tr("Physisch"), physicalAttrs());
+    makeColumn(tr("Physical"), physicalAttrs());
     attrLayout->addLayout(columnsRow);
     layout->addWidget(attrBox);
 
     auto *buttonRow = new QHBoxLayout;
     buttonRow->addStretch(1);
-    m_createButton = new QPushButton(tr("Neue Rolle erstellen"), content);
+    m_createButton = new QPushButton(tr("Create New Role"), content);
     m_createButton->setDefault(true);
     buttonRow->addWidget(m_createButton);
     layout->addLayout(buttonRow);
@@ -226,7 +226,7 @@ void NewRolePage::updateShortName()
 {
     const QString name = shortName();
     m_shortNameLabel->setText(
-        tr("<b>Erzeugtes Kürzel:</b> <code>%1</code> (dient als eindeutige ID)")
+        tr("<b>Generated abbreviation:</b> <code>%1</code> (serves as a unique ID)")
             .arg(name.isEmpty() ? QStringLiteral("…") : name));
 }
 
@@ -241,16 +241,16 @@ void NewRolePage::createRole()
     }
 
     if (name.isEmpty() || positions.isEmpty()) {
-        QMessageBox::warning(this, tr("Neue Rolle"),
-                             tr("Bitte gib einen Rollennamen an und wähle mindestens eine "
-                                "Position."));
+        QMessageBox::warning(this, tr("New Role"),
+                             tr("Please enter a role name and select at least one "
+                                "position."));
         return;
     }
     if (m_context.definitions().validRoles().contains(abbr)
         || m_context.definitions().rolesWithWeights().contains(abbr)) {
-        QMessageBox::warning(this, tr("Neue Rolle"),
-                             tr("Das Kürzel '%1' existiert bereits. Bitte wähle einen "
-                                "anderen Rollennamen oder eine andere Aufgabe.")
+        QMessageBox::warning(this, tr("New Role"),
+                             tr("The abbreviation '%1' already exists. Please choose "
+                                "a different role name or duty.")
                                  .arg(abbr));
         return;
     }
@@ -304,23 +304,23 @@ void NewRolePage::createRole()
 
     m_context.definitions().setRoot(root);
     if (!m_context.definitions().save()) {
-        QMessageBox::critical(this, tr("Neue Rolle"),
+        QMessageBox::critical(this, tr("New Role"),
                               m_context.definitions().errorString());
         return;
     }
     // Re-read from disk and refresh the engines/pages.
     if (!m_context.reloadConfigAndDefinitions()) {
-        QMessageBox::warning(this, tr("Neue Rolle"),
-                             tr("Die Rolle wurde gespeichert, aber die Definitionen konnten "
-                                "nicht neu geladen werden: %1")
+        QMessageBox::warning(this, tr("New Role"),
+                             tr("The role was saved, but the definitions could not be "
+                                "reloaded: %1")
                                  .arg(m_context.definitions().errorString()));
         return;
     }
 
     QMessageBox::information(
-        this, tr("Neue Rolle"),
-        tr("Rolle '%1' wurde erstellt und ist jetzt überall verfügbar. Weise sie unter "
-           "Rollen & Taktiken → Rollen zuweisen Spielern zu.")
+        this, tr("New Role"),
+        tr("Role '%1' was created and is now available everywhere. Assign it to "
+           "players under Roles & Tactics → Assign Roles.")
             .arg(displayName));
     resetForm();
 }

@@ -88,7 +88,7 @@ QString AboutDialog::systemInfo()
 AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(tr("Über %1").arg(appName()));
+    setWindowTitle(tr("About %1").arg(appName()));
 
     const QColor fg = theme.text();
     QColor muted = fg;
@@ -139,14 +139,14 @@ AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
     layout->addSpacing(8);
 
     auto *tagline = new QLabel(
-        tr("Rollenbewertung, Best XI, Kaufberatung und Talentanalyse für die "
-           "Football-Manager-Reihe."),
+        tr("Role ratings, Best XI, signing advice and talent analysis for "
+           "the Football Manager series."),
         this);
     tagline->setAlignment(Qt::AlignCenter);
     wrap(tagline);
     layout->addWidget(tagline);
 
-    auto *author = new QLabel(tr("Entwickelt von <b>ElectroHugin</b>"), this);
+    auto *author = new QLabel(tr("Developed by <b>ElectroHugin</b>"), this);
     author->setAlignment(Qt::AlignCenter);
     layout->addWidget(author);
     layout->addSpacing(12);
@@ -159,8 +159,8 @@ AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
     layout->addWidget(supportTitle);
 
     auto *issueText = new QLabel(
-        tr("Fehler gefunden oder eine Idee? Bitte öffne ein Issue auf GitHub. So bleibt "
-           "alles an einem Ort, und andere finden die Antwort später auch."),
+        tr("Found a bug or have an idea? Please open an issue on GitHub. That keeps "
+           "everything in one place, and others can find the answer later too."),
         this);
     wrap(issueText);
     layout->addWidget(issueText);
@@ -175,7 +175,7 @@ AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
 
     auto *issueToggle = new QToolButton(this);
     issueToggle->setObjectName(QStringLiteral("aboutToggle"));
-    issueToggle->setText(tr("Was gehört in ein Issue?"));
+    issueToggle->setText(tr("What belongs in an issue?"));
     issueToggle->setCheckable(true);
     issueToggle->setArrowType(Qt::RightArrow);
     issueToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -183,10 +183,10 @@ AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
     layout->addWidget(issueToggle, 0, Qt::AlignLeft);
 
     auto *issueHelp = new QLabel(
-        tr("• App-Version und Betriebssystem (Knopf „Systeminfo kopieren“ unten)<br>"
-           "• Football-Manager-Version und welcher Export (Kader, Shortlist, Suche)<br>"
-           "• Was du getan hast, was passiert ist und was du erwartet hättest<br>"
-           "• Wenn möglich ein Screenshot oder die betroffene Exportdatei"),
+        tr("• App version and operating system (“Copy system info” button below)<br>• "
+           "Football Manager version and which export (squad, shortlist, search)<br>• "
+           "What you did, what happened and what you expected<br>• If possible, a "
+           "screenshot or the affected export file"),
         this);
     wrap(issueHelp);
     issueHelp->setVisible(false);
@@ -197,7 +197,7 @@ AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
     });
     layout->addSpacing(8);
 
-    auto *mailText = new QLabel(tr("Für alles andere per E-Mail:"), this);
+    auto *mailText = new QLabel(tr("For everything else, by e-mail:"), this);
     wrap(mailText);
     layout->addWidget(mailText);
 
@@ -209,14 +209,14 @@ AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
     QFont mailFont = font();
     mailFont.setPointSizeF(mailFont.pointSizeF() * 1.1);
     mailImage->setPixmap(textImage(supportAddress(), mailFont, fg, devicePixelRatioF()));
-    mailImage->setAccessibleName(tr("E-Mail-Adresse (als Bild)"));
+    mailImage->setAccessibleName(tr("E-mail address (as an image)"));
     chipLayout->addWidget(mailImage);
     chipLayout->addStretch(1);
     layout->addWidget(mailChip);
 
     auto *mailHint = new QLabel(
-        tr("Die Adresse ist absichtlich ein Bild, damit Spam-Bots sie nicht auslesen "
-           "können. Bitte von Hand abtippen."),
+        tr("The address is an image on purpose so spam bots can’t read it. Please "
+           "type it in by hand."),
         this);
     mailHint->setObjectName(QStringLiteral("aboutSmall"));
     wrap(mailHint);
@@ -227,8 +227,9 @@ AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
 
     // --- Legal ---
     auto *legal = new QLabel(
-        tr("© 2026 ElectroHugin · Freie Software unter der GNU GPL v3<br>"
-           "Nicht offiziell mit Sports Interactive oder SEGA verbunden."),
+        tr("© 2026 ElectroHugin · Free software under the GNU GPL "
+           "v3<br>Not officially affiliated with Sports Interactive or "
+           "SEGA."),
         this);
     legal->setObjectName(QStringLiteral("aboutSmall"));
     legal->setAlignment(Qt::AlignCenter);
@@ -237,17 +238,17 @@ AboutDialog::AboutDialog(const ThemeManager &theme, QWidget *parent)
     layout->addSpacing(8);
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Close, this);
-    buttons->button(QDialogButtonBox::Close)->setText(tr("Schließen"));
+    buttons->button(QDialogButtonBox::Close)->setText(tr("Close"));
     buttons->button(QDialogButtonBox::Close)->setDefault(true);
     auto *copyInfo =
-        buttons->addButton(tr("Systeminfo kopieren"), QDialogButtonBox::ActionRole);
-    copyInfo->setToolTip(tr("Version, Qt und Betriebssystem für ein Issue in die "
-                            "Zwischenablage kopieren"));
+        buttons->addButton(tr("Copy system info"), QDialogButtonBox::ActionRole);
+    copyInfo->setToolTip(tr("Copy version, Qt and operating system to the "
+                            "clipboard for an issue"));
     connect(copyInfo, &QPushButton::clicked, this, [copyInfo] {
         QApplication::clipboard()->setText(systemInfo());
-        copyInfo->setText(tr("Kopiert ✓"));
+        copyInfo->setText(tr("Copied ✓"));
         QTimer::singleShot(1800, copyInfo, [copyInfo] {
-            copyInfo->setText(tr("Systeminfo kopieren"));
+            copyInfo->setText(tr("Copy system info"));
         });
     });
     connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);

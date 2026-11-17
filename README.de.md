@@ -450,7 +450,7 @@ Wähle *Standard (keine Beschränkung)*. Für FM24 ist die Premier League
 hinterlegt, für FM27 elf Ligen (Bundesliga, Premier League, LaLiga, Serie A,
 Ligue 1, Liga Portugal, Super League Schweiz, Bundesliga Österreich, Russian
 Premier Liga, Ukrainian Premier League, Süper Lig, Details in
-[docs/REGISTRIERUNG-FM27.md](docs/REGISTRIERUNG-FM27.md)). Die UEFA-Liste
+[docs/REGISTRATION-FM27.md](docs/REGISTRATION-FM27.md)). Die UEFA-Liste
 funktioniert mit jeder Liga. Geprüft werden Kadergröße sowie im Land und im
 Verein ausgebildete Spieler, nicht aber Grenzen für Ausländer oder
 Nicht-EU-Spieler.
@@ -512,7 +512,7 @@ cd desktop
 ```
 
 Details in [`desktop/README.md`](desktop/README.md). Ideen und technischer
-Backlog stehen in [`desktop/IDEEN.md`](desktop/IDEEN.md) und
+Backlog stehen in [`desktop/IDEAS.md`](desktop/IDEAS.md) und
 [`desktop/BACKLOG.md`](desktop/BACKLOG.md).
 
 </details>

@@ -149,11 +149,11 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         return button;
     };
     m_backButton =
-        makeNavButton(QStringLiteral("arrow-left"), tr("Zurück (Alt+←)"), &MainWindow::goBack);
-    m_forwardButton = makeNavButton(QStringLiteral("arrow-right"), tr("Vorwärts (Alt+→)"),
+        makeNavButton(QStringLiteral("arrow-left"), tr("Back (Alt+←)"), &MainWindow::goBack);
+    m_forwardButton = makeNavButton(QStringLiteral("arrow-right"), tr("Forward (Alt+→)"),
                                     &MainWindow::goForward);
     m_homeButton =
-        makeNavButton(QStringLiteral("home"), tr("Startseite (Alt+Pos1)"), &MainWindow::goHome);
+        makeNavButton(QStringLiteral("home"), tr("Home (Alt+Home)"), &MainWindow::goHome);
     const auto tintNavButtons = [this] {
         QColor color = m_theme.text();
         color.setAlphaF(0.80);
@@ -176,7 +176,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     // Ctrl+K: search players, pages and actions in one field.
     m_paletteButton = new QPushButton(headerBar);
     m_paletteButton->setObjectName(QStringLiteral("paletteButton"));
-    m_paletteButton->setText(tr("Spieler, Seiten, Aktionen …    Strg+K"));
+    m_paletteButton->setText(tr("Players, pages, actions …    Ctrl+K"));
     m_paletteButton->setCursor(Qt::PointingHandCursor);
     m_paletteButton->setFocusPolicy(Qt::NoFocus);
     connect(m_paletteButton, &QPushButton::clicked, this, &MainWindow::openPalette);
@@ -186,10 +186,10 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     auto *findShortcut = new QShortcut(QKeySequence::Find, this);
     connect(findShortcut, &QShortcut::activated, this, &MainWindow::openPalette);
 
-    m_importButton = new QPushButton(tr("Importieren"), headerBar);
+    m_importButton = new QPushButton(tr("Import"), headerBar);
     m_importButton->setObjectName(QStringLiteral("headerPrimary"));
-    m_importButton->setToolTip(tr("FM-Export importieren (Strg+I). Du kannst eine Datei auch "
-                                  "einfach ins Fenster ziehen."));
+    m_importButton->setToolTip(tr("Import an FM export (Ctrl+I). You can also simply drop a "
+                                  "file onto the window."));
     m_importButton->setCursor(Qt::PointingHandCursor);
     m_importButton->setFocusPolicy(Qt::NoFocus);
     connect(m_importButton, &QPushButton::clicked, this, [this] { importExport({}); });
@@ -225,7 +225,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
     m_noticeText = new QLabel(m_noticeBar);
     m_noticeText->setWordWrap(true);
     noticeLayout->addWidget(m_noticeText, 1);
-    m_noticeLater = new QPushButton(tr("Später"), m_noticeBar);
+    m_noticeLater = new QPushButton(tr("Later"), m_noticeBar);
     m_noticeAction = new QPushButton(m_noticeBar);
     m_noticeAction->setObjectName(QStringLiteral("headerPrimary"));
     noticeLayout->addWidget(m_noticeLater);
@@ -286,7 +286,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
         updateHeader();
         m_searchModelDirty = true;
         m_noticeBar->hide(); // hints belong to the previous save
-        // Another FM version may offer other pages ("Neue Rolle" only where
+        // Another FM version may offer other pages ("New Role" only where
         // roles can be added). Rebuilding the menu navigates to its first
         // page, which refreshes that page already.
         const int navigationsBefore = m_navigationCount;
@@ -334,10 +334,10 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
             m_recalcDialog = nullptr;
         }
         if (!result.success) {
-            QMessageBox::critical(this, tr("Neuberechnung"), result.error);
+            QMessageBox::critical(this, tr("Recalculation"), result.error);
             return;
         }
-        showToast(tr("DWRS neu berechnet: %1 Bewertungen, %2 geänderte Einträge gespeichert.")
+        showToast(tr("DWRS recalculated: %1 ratings, %2 changed entries saved.")
                       .arg(result.computed)
                       .arg(result.inserted));
         // Every stored rating now follows the current formula.
@@ -372,16 +372,16 @@ bool MainWindow::askRatingProfileDecision()
         return false;
     QMessageBox box(this);
     box.setIcon(QMessageBox::Question);
-    box.setWindowTitle(tr("Neues FM27-Bewertungsprofil"));
-    box.setText(tr("Für FM27 gibt es ein neues Bewertungsprofil: „DWRS FM27 · harvestgreen22“ "
-                   "(vorläufig)."));
+    box.setWindowTitle(tr("New FM27 rating profile"));
+    box.setText(tr("There is a new rating profile for FM27: “DWRS FM27 · harvestgreen22” "
+                   "(provisional)."));
     box.setInformativeText(
-        tr("Es beruht auf Messungen in FM27-Spielen und unterscheidet Rollen stärker. "
-           "Die Werte haben eine Nachkommastelle. Beim Wechsel werden alle Bewertungen "
-           "dieses Spielstands neu berechnet; der Verlauf markiert den Wechsel. "
-           "Du kannst das Profil jederzeit unter Einstellungen → DWRS-Bewertung ändern."));
-    auto *useNew = box.addButton(tr("Neues Profil verwenden"), QMessageBox::AcceptRole);
-    box.addButton(tr("Bisheriges behalten"), QMessageBox::RejectRole);
+        tr("It is based on measurements in FM27 matches and separates roles more "
+           "clearly. Values have one decimal. Switching recalculates all ratings of "
+           "this save; the history marks the switch. You can change the profile at any "
+           "time under Settings → DWRS rating."));
+    auto *useNew = box.addButton(tr("Use new profile"), QMessageBox::AcceptRole);
+    box.addButton(tr("Keep previous"), QMessageBox::RejectRole);
     box.setDefaultButton(useNew);
     box.exec();
     QString error;
@@ -390,7 +390,7 @@ bool MainWindow::askRatingProfileDecision()
     else
         error = m_context.keepPreviousRatingProfile();
     if (!error.isEmpty())
-        QMessageBox::warning(this, tr("Bewertungsprofil"), error);
+        QMessageBox::warning(this, tr("Rating profile"), error);
     return true;
 }
 
@@ -408,10 +408,10 @@ void MainWindow::offerRecalcIfOutdated()
         db.setSetting(QStringLiteral("dwrs_scheme"), QString::number(kDwrsSchemeVersion));
         return;
     }
-    showNotice(tr("Die DWRS-Berechnung wurde verbessert (Torhüter werden nach allen "
-                  "Torwart-Attributen bewertet). Die Bewertungen dieses Spielstands stammen "
-                  "noch aus der alten Berechnung."),
-               tr("Jetzt neu berechnen"), [this] { startDwrsRecalc(); });
+    showNotice(tr("The DWRS calculation has been improved (goalkeepers are rated on all "
+                  "goalkeeping attributes). The ratings in this save still come from the "
+                  "old calculation."),
+               tr("Recalculate now"), [this] { startDwrsRecalc(); });
 }
 
 void MainWindow::buildSidebar()
@@ -432,7 +432,7 @@ void MainWindow::buildSidebar()
     m_saveSwitcher->setPopupMode(QToolButton::InstantPopup);
     m_saveSwitcher->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_saveSwitcher->setCursor(Qt::PointingHandCursor);
-    m_saveSwitcher->setToolTip(tr("Spielstand wechseln (Strg+O)"));
+    m_saveSwitcher->setToolTip(tr("Switch save (Ctrl+O)"));
     auto *saveMenu = new QMenu(m_saveSwitcher);
     connect(saveMenu, &QMenu::aboutToShow, this, [this, saveMenu] { fillSaveMenu(saveMenu); });
     m_saveSwitcher->setMenu(saveMenu);
@@ -447,7 +447,7 @@ void MainWindow::buildSidebar()
     segLayout->setSpacing(3);
     m_modeGroup = new QButtonGroup(this);
     m_modeGroup->setExclusive(true);
-    for (const auto &[id, label] : {std::pair{0, tr("Verein")}, std::pair{1, tr("Nationalteam")}}) {
+    for (const auto &[id, label] : {std::pair{0, tr("Club")}, std::pair{1, tr("National Team")}}) {
         auto *button = new QPushButton(label, segmented);
         button->setObjectName(QStringLiteral("segmentButton"));
         button->setCheckable(true);
@@ -489,7 +489,7 @@ void MainWindow::buildSidebar()
     foot->setSpacing(4);
     auto *themeButton = new QToolButton(sidebar);
     themeButton->setObjectName(QStringLiteral("sidebarIconButton"));
-    themeButton->setToolTip(tr("Tag/Nacht wechseln"));
+    themeButton->setToolTip(tr("Toggle day/night"));
     themeButton->setCursor(Qt::PointingHandCursor);
     themeButton->setFocusPolicy(Qt::NoFocus);
     themeButton->setIconSize(QSize(18, 18));
@@ -500,7 +500,7 @@ void MainWindow::buildSidebar()
     auto *credit = new QToolButton(sidebar);
     credit->setObjectName(QStringLiteral("creditButton"));
     credit->setText(tr("v%1 · ElectroHugin").arg(appVersion()));
-    credit->setToolTip(tr("Über %1").arg(appName()));
+    credit->setToolTip(tr("About %1").arg(appName()));
     credit->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     credit->setIconSize(QSize(16, 16));
     credit->setCursor(Qt::PointingHandCursor);
@@ -564,25 +564,25 @@ void MainWindow::rebuildMenu(bool selectFirst)
 
 void MainWindow::buildMenuBar()
 {
-    // Language selection ("optional im Menü auf Deutsch") and Help → About.
+    // Language selection (German available in the menu) and Help → About.
     // Switching is restart-based: the whole UI (including statically initialized
     // navigation labels) is built once with the translator already installed.
-    auto *fileMenu = menuBar()->addMenu(tr("&Datei"));
-    auto *newSaveAction = fileMenu->addAction(tr("Neuer Spielstand …"), this, &MainWindow::newSave);
+    auto *fileMenu = menuBar()->addMenu(tr("&File"));
+    auto *newSaveAction = fileMenu->addAction(tr("New save …"), this, &MainWindow::newSave);
     newSaveAction->setShortcut(QKeySequence::New);
     auto *switchAction =
-        fileMenu->addAction(tr("Spielstand wechseln …"), this, &MainWindow::switchSave);
+        fileMenu->addAction(tr("Switch save …"), this, &MainWindow::switchSave);
     switchAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
     fileMenu->addSeparator();
     auto *importAction =
-        fileMenu->addAction(tr("Export importieren …"), this, [this] { importExport({}); });
+        fileMenu->addAction(tr("Import export …"), this, [this] { importExport({}); });
     importAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
     fileMenu->addSeparator();
-    auto *quitAction = fileMenu->addAction(tr("Beenden"), this, &QWidget::close);
+    auto *quitAction = fileMenu->addAction(tr("Quit"), this, &QWidget::close);
     quitAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
 
-    auto *languageMenu = menuBar()->addMenu(tr("&Sprache"));
+    auto *languageMenu = menuBar()->addMenu(tr("&Language"));
     auto *group = new QActionGroup(this);
     group->setExclusive(true);
 
@@ -597,9 +597,9 @@ void MainWindow::buildMenuBar()
                 [this, code = option.code] { changeLanguage(code); });
     }
 
-    auto *helpMenu = menuBar()->addMenu(tr("&Hilfe"));
-    helpMenu->addAction(tr("Willkommens-Assistent …"), this, &MainWindow::showWelcome);
-    auto *about = helpMenu->addAction(tr("Über %1 …").arg(appName()));
+    auto *helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu->addAction(tr("Welcome assistant …"), this, &MainWindow::showWelcome);
+    auto *about = helpMenu->addAction(tr("About %1…").arg(appName()));
     about->setMenuRole(QAction::AboutRole);
     connect(about, &QAction::triggered, this, &MainWindow::showAbout);
 }
@@ -617,8 +617,8 @@ void MainWindow::changeLanguage(const QString &language)
     m_context.paths().setLanguage(language);
 
     const auto answer = QMessageBox::question(
-        this, tr("Sprache"),
-        tr("Die Sprache wird nach einem Neustart geändert. Jetzt neu starten?"),
+        this, tr("Language"),
+        tr("The language will change after a restart. Restart now?"),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
     if (answer != QMessageBox::Yes)
         return;
@@ -907,7 +907,7 @@ void MainWindow::startDwrsRecalc()
     if (m_recalcWatcher.isRunning() || m_context.hasRunningBackgroundTask())
         return;
 
-    m_recalcDialog = new BusyProgressDialog(tr("DWRS-Bewertungen werden neu berechnet…"), this);
+    m_recalcDialog = new BusyProgressDialog(tr("Recalculating DWRS ratings…"), this);
 
     // Snapshot everything the worker needs; it opens its own DB connection.
     const QString dbFile = m_context.database().filePath();
@@ -943,7 +943,7 @@ void MainWindow::startDwrsRecalc()
                             dialogGuard->setValue(percent);
                             // Writing to the database follows the last role.
                             if (saving)
-                                dialogGuard->setLabelText(QCoreApplication::translate("MainWindow", "Bewertungen werden gespeichert …"));
+                                dialogGuard->setLabelText(QCoreApplication::translate("MainWindow", "Saving ratings …"));
                         },
                         Qt::QueuedConnection);
                 },
@@ -964,7 +964,7 @@ void MainWindow::updateHeader()
     QString subtitle;
     if (m_context.nationalUiMode()) {
         const QString name = m_context.nationalTeamName();
-        title = name.isEmpty() ? tr("Nationalteam") : name;
+        title = name.isEmpty() ? tr("National Team") : name;
         subtitle = m_context.nationalTeamCode();
     } else {
         const QString fullName =
@@ -1060,8 +1060,8 @@ void MainWindow::openPalette()
                         group.tabs.size() > 1 ? tab.label : group.label;
                     QString detail = group.tabs.size() > 1 ? group.label : QString();
                     if (national != m_context.nationalUiMode())
-                        detail = national ? tr("Nationalteam") : tr("Verein");
-                    entries.append({tr("Seiten"),
+                        detail = national ? tr("National Team") : tr("Club");
+                    entries.append({tr("Pages"),
                                     LineIcons::icon(LineIcons::forGroup(group.id), color, 18, dpr),
                                     title, detail,
                                     foldForSearch(title + QLatin1Char(' ') + group.label + QLatin1Char(' ')
@@ -1081,16 +1081,16 @@ void MainWindow::openPalette()
     }
     const auto action = [&](const QString &icon, const QString &title, const QString &shortcut,
                             std::function<void()> run) {
-        entries.append({tr("Aktionen"), LineIcons::icon(icon, color, 18, dpr), title, shortcut,
+        entries.append({tr("Actions"), LineIcons::icon(icon, color, 18, dpr), title, shortcut,
                         foldForSearch(title), std::move(run)});
     };
-    action(QStringLiteral("upload"), tr("Export importieren …"), tr("Strg+I"),
+    action(QStringLiteral("upload"), tr("Import export …"), tr("Ctrl+I"),
            [this] { importExport({}); });
-    action(QStringLiteral("folder"), tr("Spielstand wechseln …"), tr("Strg+O"),
+    action(QStringLiteral("folder"), tr("Switch save …"), tr("Ctrl+O"),
            [this] { switchSave(); });
-    action(QStringLiteral("plus"), tr("Neuer Spielstand …"), tr("Strg+N"), [this] { newSave(); });
-    action(QStringLiteral("trend"), tr("DWRS neu berechnen"), {}, [this] { startDwrsRecalc(); });
-    action(QStringLiteral("moon"), tr("Tag/Nacht wechseln"), {}, [this] { m_theme.toggle(); });
+    action(QStringLiteral("plus"), tr("New save …"), tr("Ctrl+N"), [this] { newSave(); });
+    action(QStringLiteral("trend"), tr("Recalculate DWRS"), {}, [this] { startDwrsRecalc(); });
+    action(QStringLiteral("moon"), tr("Toggle day/night"), {}, [this] { m_theme.toggle(); });
     m_palette->setEntries(std::move(entries));
 
     m_palette->setPlayerSearch([this, color, dpr](const QString &query) {
@@ -1106,7 +1106,7 @@ void MainWindow::openPalette()
                 if (prefix != prefixPass || (!prefix && !m_searchKeys.at(i).contains(query)))
                     continue;
                 const Player &player = players.at(static_cast<size_t>(i));
-                found.append({tr("Spieler"), icon, player.name,
+                found.append({tr("Players"), icon, player.name,
                               QStringLiteral("%1 · %2").arg(player.club, player.positionRaw), {},
                               [this, uid = player.uid] {
                                   m_context.setPendingProfileUid(uid);
@@ -1125,7 +1125,7 @@ void MainWindow::updateDbLabel()
     m_saveSwitcher->setIcon(QIcon(SaveLibrary::crest(save, 32, devicePixelRatioF())));
     m_saveSwitcher->setText(QStringLiteral("%1\n%2 · %3")
                                 .arg(save.name, SaveLibrary::shortVersionLabel(save.fmVersionId),
-                                     tr("%1 Spieler").arg(QLocale().toString(save.playerCount))));
+                                     tr("%1 players").arg(QLocale().toString(save.playerCount))));
 }
 
 void MainWindow::fillSaveMenu(QMenu *menu)
@@ -1137,7 +1137,7 @@ void MainWindow::fillSaveMenu(QMenu *menu)
         if (save.name == m_context.currentDbName())
             continue;
         if (shown == 0)
-            menu->addSection(tr("Zuletzt verwendet"));
+            menu->addSection(tr("Recently used"));
         QAction *action = menu->addAction(
             QIcon(SaveLibrary::crest(save, 20, devicePixelRatioF())),
             QStringLiteral("%1  ·  %2").arg(save.name,
@@ -1145,15 +1145,15 @@ void MainWindow::fillSaveMenu(QMenu *menu)
         connect(action, &QAction::triggered, this, [this, name = save.name] {
             QString error;
             if (!m_context.openDatabase(name, &error))
-                QMessageBox::critical(this, tr("Spielstand öffnen"), error);
+                QMessageBox::critical(this, tr("Open save"), error);
         });
         if (++shown == 5)
             break;
     }
     if (shown > 0)
         menu->addSeparator();
-    menu->addAction(tr("Alle Spielstände …"), this, &MainWindow::switchSave);
-    menu->addAction(tr("Neuer Spielstand …"), this, &MainWindow::newSave);
+    menu->addAction(tr("All saves …"), this, &MainWindow::switchSave);
+    menu->addAction(tr("New save …"), this, &MainWindow::newSave);
 }
 
 void MainWindow::newSave()
@@ -1201,8 +1201,8 @@ void MainWindow::importExport(QString filePath)
 {
     if (filePath.isEmpty()) {
         filePath = QFileDialog::getOpenFileName(
-            this, tr("FM-Export oder FM27-Spielstand auswählen"), m_context.htmlExportDir(),
-            tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
+            this, tr("Choose an FM export or FM27 save"), m_context.htmlExportDir(),
+            tr("FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)"));
         if (filePath.isEmpty())
             return;
     }

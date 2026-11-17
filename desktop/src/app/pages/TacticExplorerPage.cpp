@@ -75,14 +75,14 @@ TacticExplorerPage::TacticExplorerPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Taktik-Vergleich")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Tactic Comparison")), content);
     layout->addWidget(heading);
 
     auto *info = new QLabel(
-        tr("Bewertet deinen Kader gegen JEDE Taktik, um die beste Passung zu finden — "
-           "besonders nützlich bei der Übernahme eines unbekannten Teams. Sortiert wird "
-           "zuerst nach Abdeckung (wie viele Positionen du besetzen kannst), dann nach "
-           "Stärke (Median-DWRS der besten Elf, nur über besetzte Slots gemessen)."),
+        tr("Rates your squad against EVERY tactic to find the best fit — especially "
+           "useful when taking over an unknown team. Sorted first by coverage (how many "
+           "positions you can fill), then by strength (median DWRS of the best eleven, "
+           "measured only over filled slots)."),
         content);
     info->setWordWrap(true);
     info->setObjectName(QStringLiteral("kpiCaption"));
@@ -95,7 +95,7 @@ TacticExplorerPage::TacticExplorerPage(AppContext &context, QWidget *parent)
     layout->addWidget(m_bestLabel);
 
     m_rankTable = new QTableWidget(content);
-    QStringList headers{tr("Taktik"), tr("XI"), tr("Leer"), tr("Dünn"), tr("Median"), tr("Ø")};
+    QStringList headers{tr("Tactic"), tr("XI"), tr("Empty"), tr("Thin"), tr("Median"), tr("Avg.")};
     const PitchGeometry &geometry = pitchGeometry(m_context.fmVersionId());
     for (const QString &stratum : stratumOrderList(geometry))
         headers << stratumShort(geometry, stratum);
@@ -109,9 +109,8 @@ TacticExplorerPage::TacticExplorerPage(AppContext &context, QWidget *parent)
     CellStyleDelegate::install(m_rankTable);
     layout->addWidget(m_rankTable);
     auto *legend = new QLabel(
-        tr("GK/DEF/DM/MID/AM/ST = Median-DWRS je Mannschaftsteil. Leer = Slots, die die "
-           "beste Elf nicht besetzen konnte · Dünn = nur ein geeigneter Spieler (kein "
-           "Backup)."),
+        tr("GK/DEF/DM/MID/AM/ST = median DWRS per team part. Empty = slots the best "
+           "eleven could not fill · Thin = only one suitable player (no backup)."),
         content);
     legend->setWordWrap(true);
     legend->setObjectName(QStringLiteral("kpiCaption"));
@@ -121,11 +120,11 @@ TacticExplorerPage::TacticExplorerPage(AppContext &context, QWidget *parent)
     divider->setFrameShape(QFrame::HLine);
     layout->addWidget(divider);
 
-    auto *detailTitle = new QLabel(tr("Taktik im Detail"), content);
+    auto *detailTitle = new QLabel(tr("Tactic in Detail"), content);
     detailTitle->setObjectName(QStringLiteral("sectionTitle"));
     layout->addWidget(detailTitle);
     auto *detailRow = new QHBoxLayout;
-    detailRow->addWidget(new QLabel(tr("Taktik:"), content));
+    detailRow->addWidget(new QLabel(tr("Tactic:"), content));
     m_detailCombo = new QComboBox(content);
     m_detailCombo->setMinimumWidth(260);
     detailRow->addWidget(m_detailCombo);
@@ -141,7 +140,7 @@ TacticExplorerPage::TacticExplorerPage(AppContext &context, QWidget *parent)
     m_depthTable = new QTableWidget(content);
     m_depthTable->setColumnCount(3);
     m_depthTable->setHorizontalHeaderLabels(
-        {tr("Slot"), tr("Rolle"), tr("Geeignete Spieler")});
+        {tr("Slot"), tr("Role"), tr("Suitable Players")});
     m_depthTable->verticalHeader()->setVisible(false);
     m_depthTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_depthTable->setAlternatingRowColors(true);
@@ -183,12 +182,12 @@ void TacticExplorerPage::refresh()
                 pool.push_back(&player);
         }
         poolLabel = m_context.nationalTeamName().isEmpty()
-                        ? tr("Nationalkader")
-                        : tr("%1-Kader").arg(m_context.nationalTeamName());
+                        ? tr("National Squad")
+                        : tr("%1 squad").arg(m_context.nationalTeamName());
         if (pool.empty()) {
             m_poolCaption->setText(
-                tr("Noch keine Spieler im Nationalkader. Stelle ihn unter "
-                   "Kader → Auswahl zusammen."));
+                tr("No players in the national squad yet. Put it together "
+                   "under Squad → Selection."));
             m_bestLabel->clear();
             m_rankTable->setRowCount(0);
             m_detailCombo->clear();
@@ -202,7 +201,7 @@ void TacticExplorerPage::refresh()
         const QString secondClub = m_context.secondTeamClub();
         if (userClub.isEmpty()) {
             m_poolCaption->setText(
-                tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."));
+                tr("Please choose your club first (Overview or Settings)."));
             m_bestLabel->clear();
             m_rankTable->setRowCount(0);
             m_detailCombo->clear();
@@ -223,7 +222,7 @@ void TacticExplorerPage::refresh()
 
     m_results = m_context.tacticExplorer().analyzeAllTactics(pool, m_context.ratings(), {},
                                                              applyApt);
-    m_poolCaption->setText(tr("Pool: %1 Spieler (%2).").arg(pool.size()).arg(poolLabel));
+    m_poolCaption->setText(tr("Pool: %1 players (%2).").arg(pool.size()).arg(poolLabel));
 
     if (m_results.empty()) {
         m_bestLabel->clear();
@@ -236,7 +235,7 @@ void TacticExplorerPage::refresh()
 
     const TacticMetrics &best = m_results.front();
     m_bestLabel->setText(
-        tr("🏆 <b>Beste Passung: %1</b> — besetzt %2/%3 Positionen, Median-DWRS %4.")
+        tr("🏆 <b>Best fit: %1</b> — fills %2/%3 positions, median DWRS %4.")
             .arg(best.tactic.toHtmlEscaped())
             .arg(best.filledSlots)
             .arg(best.totalSlots)
@@ -305,8 +304,8 @@ void TacticExplorerPage::rebuildDetail()
     const auto roleNames = m_context.definitions().roleDisplayMap();
 
     m_detailMetrics->setText(
-        tr("<b>Besetzte Positionen:</b> %1/%2 &nbsp;·&nbsp; <b>Median-DWRS:</b> %3 "
-           "&nbsp;·&nbsp; <b>Ø Optionen pro Slot:</b> %4")
+        tr("<b>Filled positions:</b> %1/%2 &nbsp;·&nbsp; <b>Median DWRS:</b> %3 "
+           "&nbsp;·&nbsp; <b>Avg. options per slot:</b> %4")
             .arg(result.filledSlots)
             .arg(result.totalSlots)
             .arg(result.overallMedian >= 0
@@ -324,8 +323,8 @@ void TacticExplorerPage::rebuildDetail()
     };
     QStringList warnings;
     if (!result.uncoverableSlots.isEmpty())
-        warnings << tr("⛔ <b>Gar kein geeigneter Spieler</b> für: %1 — für diese Formation "
-                       "fehlen dir Spielertypen.")
+        warnings << tr("⛔ <b>No suitable player at all</b> for: %1 — you lack player types "
+                       "for this formation.")
                         .arg(slotList(result.uncoverableSlots));
     QStringList onlyXiEmpty;
     for (const QString &slot : result.emptySlots) {
@@ -333,11 +332,11 @@ void TacticExplorerPage::rebuildDetail()
             onlyXiEmpty << slot;
     }
     if (!onlyXiEmpty.isEmpty())
-        warnings << tr("⚠️ <b>In der besten Elf leer geblieben</b> (Spieler existieren, "
-                       "werden aber woanders gebraucht): %1")
+        warnings << tr("⚠️ <b>Left empty in the best eleven</b> (players exist but are "
+                       "needed elsewhere): %1")
                         .arg(slotList(onlyXiEmpty));
     if (!result.thinSlots.isEmpty())
-        warnings << tr("<b>Nur eine Option (kein Backup):</b> %1")
+        warnings << tr("<b>Only one option (no backup):</b> %1")
                         .arg(slotList(result.thinSlots));
     m_detailWarnings->setText(warnings.join(QStringLiteral("<br/>")));
 

@@ -65,7 +65,7 @@ public:
         setFocusPolicy(Qt::StrongFocus);
         setMinimumSize(280, 240);
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        setAccessibleName(QCoreApplication::translate("fm::RatingCurveEditor", "Beitragskurve"));
+        setAccessibleName(QCoreApplication::translate("fm::RatingCurveEditor", "Contribution curve"));
     }
 protected:
     QRectF plot() const { return QRectF(48, 20, width() - 68, height() - 64); }
@@ -158,19 +158,19 @@ RatingCurveEditor::RatingCurveEditor(QWidget *parent) : QWidget(parent)
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0); layout->setSpacing(12);
     auto *toolbar = new QHBoxLayout;
-    auto *weightLabel = new QLabel(tr("Gesamtgewicht"));
+    auto *weightLabel = new QLabel(tr("Total weight"));
     m_weight = new ContributionSpinBox;
     m_weight->setFixedWidth(120); m_weight->setObjectName(QStringLiteral("curveWeight"));
     m_weight->setRange(0, std::numeric_limits<double>::max()); m_weight->setDecimals(2); m_weight->setKeyboardTracking(false);
     weightLabel->setBuddy(m_weight);
     toolbar->addWidget(weightLabel); toolbar->addWidget(m_weight);
     m_mode = new QComboBox;
-    m_mode->addItems({tr("Gesamtbeitrag"), tr("Zuwachs je Attributpunkt")});
-    m_mode->setAccessibleName(tr("Kurvendarstellung"));
+    m_mode->addItems({tr("Total contribution"), tr("Increment per attribute point")});
+    m_mode->setAccessibleName(tr("Curve display"));
     toolbar->addWidget(m_mode); toolbar->addStretch(); layout->addLayout(toolbar);
     auto *body = new QHBoxLayout; body->setSpacing(16);
     m_canvas = new CurveCanvas(this);
-    m_canvas->setToolTip(tr("Links/Rechts wählt einen Punkt. Oben/Unten ändert seinen Beitrag."));
+    m_canvas->setToolTip(tr("Left/Right selects a point. Up/Down changes its contribution."));
     body->addWidget(m_canvas, 3);
     auto *scroll = new QScrollArea;
     scroll->setWidgetResizable(true); scroll->setMinimumWidth(180); scroll->setMaximumWidth(240);
@@ -182,7 +182,7 @@ RatingCurveEditor::RatingCurveEditor(QWidget *parent) : QWidget(parent)
         auto *spin = new ContributionSpinBox;
         spin->setFixedWidth(120); spin->setObjectName(QStringLiteral("curvePoint%1").arg(i + 1));
         spin->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max()); spin->setDecimals(2); spin->setKeyboardTracking(false);
-        spin->setAccessibleName(tr("Beitrag bei Attributwert %1").arg(i + 1));
+        spin->setAccessibleName(tr("Contribution at attribute level %1").arg(i + 1));
         label->setBuddy(spin); m_points[i] = spin;
         grid->addWidget(label, i, 0); grid->addWidget(spin, i, 1);
         connect(spin, &QDoubleSpinBox::valueChanged, this, [spin] { spin->setProperty("userEdited", true); });
@@ -199,12 +199,12 @@ RatingCurveEditor::RatingCurveEditor(QWidget *parent) : QWidget(parent)
     scroll->setWidget(numbers); body->addWidget(scroll, 1); layout->addLayout(body, 1);
     auto *actions = new FlowLayout;
     auto *linear = new QPushButton(tr("Linear"));
-    auto *plateau = new QPushButton(tr("Plateau ab"));
+    auto *plateau = new QPushButton(tr("Plateau from"));
     m_plateau = new QSpinBox; m_plateau->setRange(2, 20); m_plateau->setValue(18);
-    m_plateau->setAccessibleName(tr("Beginn des Plateaus"));
-    auto *reset = new QPushButton(tr("Zurücksetzen"));
-    m_undoButton = new QPushButton(tr("Rückgängig")); m_undoButton->setShortcut(QKeySequence::Undo);
-    m_redoButton = new QPushButton(tr("Wiederholen")); m_redoButton->setShortcut(QKeySequence::Redo);
+    m_plateau->setAccessibleName(tr("Plateau start"));
+    auto *reset = new QPushButton(tr("Reset"));
+    m_undoButton = new QPushButton(tr("Undo")); m_undoButton->setShortcut(QKeySequence::Undo);
+    m_redoButton = new QPushButton(tr("Redo")); m_redoButton->setShortcut(QKeySequence::Redo);
     for (auto *button : {linear, plateau}) actions->addWidget(button);
     actions->addWidget(m_plateau); actions->addWidget(reset);
     actions->addWidget(m_undoButton); actions->addWidget(m_redoButton); layout->addLayout(actions);
@@ -254,7 +254,7 @@ void RatingCurveEditor::redo() {
     if (m_redo.empty()) return;
     m_undo.push_back(m_curve); m_curve = m_redo.back(); m_redo.pop_back(); refresh(); emit curveChanged();
 }
-void RatingCurveEditor::showInvalid() { m_status->setText(tr("Beiträge müssen endlich sein und dürfen nicht fallen. Die Änderung wurde nicht übernommen.")); }
+void RatingCurveEditor::showInvalid() { m_status->setText(tr("Contributions must be finite and must not decrease. The change was not applied.")); }
 void RatingCurveEditor::refresh()
 {
     const QSignalBlocker block(m_weight); m_weight->setValue(m_curve.weight); m_weight->setProperty("userEdited", false);
@@ -267,6 +267,6 @@ void RatingCurveEditor::refresh()
     }
     m_canvas->curve = m_curve; m_canvas->increments = increments; m_canvas->update();
     m_undoButton->setEnabled(!m_undo.empty()); m_redoButton->setEnabled(!m_redo.empty());
-    m_status->setText(tr("Gewicht bestimmt die gesamte Bedeutung. Die Kurve verteilt den Beitrag auf die Attributstufen."));
+    m_status->setText(tr("Weight sets the overall importance. The curve distributes the contribution across attribute levels."));
 }
 } // namespace fm

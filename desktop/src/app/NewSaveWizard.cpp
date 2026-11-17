@@ -72,7 +72,7 @@ NewSaveWizard::NewSaveWizard(AppContext &context, QWidget *parent)
     : QDialog(parent)
     , m_context(context)
 {
-    setWindowTitle(tr("Neuer Spielstand"));
+    setWindowTitle(tr("New save"));
     setMinimumSize(720, 500);
 
     auto *layout = new QVBoxLayout(this);
@@ -82,7 +82,7 @@ NewSaveWizard::NewSaveWizard(AppContext &context, QWidget *parent)
     // Step indicator.
     auto *steps = new QHBoxLayout;
     steps->setSpacing(10);
-    const QStringList stepNames = {tr("Spielstand"), tr("Erster Import")};
+    const QStringList stepNames = {tr("Save"), tr("First import")};
     for (int i = 0; i < stepNames.size(); ++i) {
         if (i > 0) {
             auto *line = new QFrame(this);
@@ -109,9 +109,9 @@ NewSaveWizard::NewSaveWizard(AppContext &context, QWidget *parent)
     layout->addWidget(m_pages, 1);
 
     auto *footer = new QHBoxLayout;
-    m_cancelButton = new QPushButton(tr("Abbrechen"), this);
-    m_skipButton = new QPushButton(tr("Überspringen"), this);
-    m_nextButton = new QPushButton(tr("Weiter"), this);
+    m_cancelButton = new QPushButton(tr("Cancel"), this);
+    m_skipButton = new QPushButton(tr("Skip"), this);
+    m_nextButton = new QPushButton(tr("Next"), this);
     m_nextButton->setDefault(true);
     footer->addWidget(m_cancelButton);
     footer->addStretch(1);
@@ -144,7 +144,7 @@ QWidget *NewSaveWizard::buildNamePage()
     nameLabel->setObjectName(QStringLiteral("fieldLabel"));
     layout->addWidget(nameLabel);
     m_nameEdit = new QLineEdit(page);
-    m_nameEdit->setPlaceholderText(tr("z. B. Mein Verein 2027"));
+    m_nameEdit->setPlaceholderText(tr("e.g. My club 2027"));
     m_nameEdit->setMaxLength(80);
     layout->addWidget(m_nameEdit);
     m_nameError = new QLabel(page);
@@ -153,13 +153,13 @@ QWidget *NewSaveWizard::buildNamePage()
     m_nameError->hide();
     layout->addWidget(m_nameError);
     auto *nameHint =
-        new QLabel(tr("Nur für dich zum Wiedererkennen, z. B. Verein und Startjahr."), page);
+        new QLabel(tr("Just for you to recognise it, e.g. club and starting year."), page);
     nameHint->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(nameHint);
     connect(m_nameEdit, &QLineEdit::textEdited, m_nameError, &QLabel::hide);
 
     layout->addSpacing(14);
-    auto *versionLabel = new QLabel(tr("Football-Manager-Version"), page);
+    auto *versionLabel = new QLabel(tr("Football Manager Version"), page);
     versionLabel->setObjectName(QStringLiteral("fieldLabel"));
     layout->addWidget(versionLabel);
 
@@ -202,26 +202,25 @@ QWidget *NewSaveWizard::buildNamePage()
 
     layout->addSpacing(6);
     layout->addWidget(foldableHint(
-        tr("Warum lässt sich die Version später nicht ändern?"),
-        tr("Rollen, Bewertungen und Verlauf eines Spielstands beziehen sich auf die Rollen "
-           "seiner FM-Version. Für einen anderen Football Manager legst du deshalb einen "
-           "eigenen Spielstand an. Deine bisherigen Spielstände bleiben unverändert."),
+        tr("Why can’t the version be changed later?"),
+        tr("A save’s roles, ratings and history refer to the roles of its FM version. For "
+           "another Football Manager you therefore create a separate save. Your existing "
+           "saves stay unchanged."),
         page));
 
     // Each save has its own profile; a new one starts clean or as a copy.
     layout->addSpacing(14);
-    auto *profileLabel = new QLabel(tr("Einstellungen"), page);
+    auto *profileLabel = new QLabel(tr("Settings"), page);
     profileLabel->setObjectName(QStringLiteral("fieldLabel"));
     layout->addWidget(profileLabel);
     m_profileSourceCombo = new QComboBox(page);
-    m_profileSourceCombo->addItem(tr("Standardeinstellungen"), QString());
+    m_profileSourceCombo->addItem(tr("Default settings"), QString());
     for (const QString &save : m_context.availableDatabases())
-        m_profileSourceCombo->addItem(tr("Übernehmen von „%1“").arg(save), save);
+        m_profileSourceCombo->addItem(tr("Copy from “%1”").arg(save), save);
     layout->addWidget(m_profileSourceCombo);
     auto *profileHint = new QLabel(
-        tr("Übernimmt Gewichte, Farben, Analyse-Optionen, Rollen und Taktiken. Verein, "
-           "Logo, Spieler, Favoriten und den live verfolgten FM27-Spielstand bringt der neue "
-           "Spielstand selbst mit."),
+        tr("Copies weights, colors, analysis options, roles and tactics. Club, logo, "
+           "players, favorites and the live-tracked FM27 save come from the new save itself."),
         page);
     profileHint->setObjectName(QStringLiteral("kpiCaption"));
     profileHint->setWordWrap(true);
@@ -253,20 +252,20 @@ QWidget *NewSaveWizard::buildImportPage()
     connect(m_dropZone, &DropZone::fileChosen, this, [this](const QString &path) {
         m_importFile = path;
         m_importResult->hide();
-        m_nextButton->setText(tr("Importieren"));
+        m_nextButton->setText(tr("Import"));
         m_followCheck->setVisible(isSaveFile(path));
     });
 
     // A save game read in here can be followed right away (Settings → Import).
-    m_followCheck = new QCheckBox(tr("Spielstand live verfolgen"), page);
+    m_followCheck = new QCheckBox(tr("Follow save live"), page);
     m_followCheck->setChecked(true);
-    m_followCheck->setToolTip(tr("Solange der Analyzer offen ist, liest er den Spielstand nach "
-                                 "jedem Speichern im Spiel neu ein, auch nach einem Autosave."));
+    m_followCheck->setToolTip(tr("While the analyzer is open, it reads the save again every "
+                                 "time the game saves, autosaves included."));
     m_followCheck->hide();
     layout->addWidget(m_followCheck);
 
     m_autoAssignCheck =
-        new QCheckBox(tr("Neuen Spielern automatisch passende Rollen zuweisen"), page);
+        new QCheckBox(tr("Automatically assign suitable roles to new players"), page);
     m_autoAssignCheck->setChecked(true);
     layout->addWidget(m_autoAssignCheck);
 
@@ -297,34 +296,33 @@ void NewSaveWizard::goTo(int step)
     switch (step) {
     case NameStep:
         m_skipButton->hide();
-        m_nextButton->setText(tr("Weiter"));
+        m_nextButton->setText(tr("Next"));
         break;
     case ImportStep: {
-        m_cancelButton->setText(tr("Später einrichten"));
+        m_cancelButton->setText(tr("Set up later"));
         m_skipButton->hide(); // "Fertig" without a file does the same
-        m_nextButton->setText(m_importFile.isEmpty() ? tr("Fertig") : tr("Importieren"));
+        m_nextButton->setText(m_importFile.isEmpty() ? tr("Done") : tr("Import"));
         // A version that reads save games starts there: the save is the
         // fastest and most complete source; exports stay possible.
         const QString versionId = m_context.fmVersionId();
         const bool readsSaves = fmDataVersion(versionId).importFormats.contains(QStringLiteral("fm"));
         if (m_stepLabels.size() > 3)
-            m_stepLabels.at(3)->setText(readsSaves ? tr("Spielstand einlesen") : tr("Erster Import"));
+            m_stepLabels.at(3)->setText(readsSaves ? tr("Read save") : tr("First import"));
         if (readsSaves) {
-            m_importIntro->setText(tr("Wähle deine Spielstand-Datei aus Football Manager. Der "
-                                      "Analyzer liest sie direkt, auch große Datenbanken schnell."));
-            m_dropZone->setPrompt(tr("Spielstand hierher ziehen"),
-                                  tr("%1-Spielstand (.fm) – oder klicken, um ihn auszuwählen")
+            m_importIntro->setText(tr("Choose your save file from Football Manager. The analyzer "
+                                      "reads it directly, quickly even for large databases."));
+            m_dropZone->setPrompt(tr("Drag your save here"),
+                                  tr("%1 save (.fm), or click to choose it")
                                       .arg(SaveLibrary::shortVersionLabel(versionId)));
-            m_dropZone->setDialog(tr("Spielstand auswählen"),
-                                  tr("Spielstände und Exporte (*.fm *.csv *.html *.htm);;Alle Dateien (*)"));
+            m_dropZone->setDialog(tr("Choose save"),
+                                  tr("Saves and exports (*.fm *.csv *.html *.htm);;All files (*)"));
             m_dropZone->setStartDir(AppConfig::defaultSavesDir(versionId));
-            m_exportHint->setText(tr("Optional. Exporte aus dem FM View Exporter (CSV oder HTML) "
-                                     "kannst du ebenfalls hier einlesen."));
+            m_exportHint->setText(tr("Optional: exports from FM View Exporter (CSV or HTML) can "
+                                     "be read here too."));
         } else {
-            m_importIntro->setText(tr("Ziehe einen Spieler-Export aus dem Football Manager "
-                                      "hierher, zum Beispiel deinen Kader oder eine "
-                                      "Scouting-Liste. Weitere Exporte kannst du jederzeit "
-                                      "später importieren."));
+            m_importIntro->setText(tr("Drop a player export from Football Manager here, "
+                                      "for example your squad or a scouting list. You can "
+                                      "import more exports at any time later."));
             m_dropZone->setPrompt({}, {});
             m_dropZone->setDialog({}, {});
             m_dropZone->setStartDir(m_context.htmlExportDir());
@@ -398,7 +396,7 @@ void NewSaveWizard::startImport()
                           if (!result.import.success) {
                               m_importResult->setObjectName(QStringLiteral("errorText"));
                               m_importResult->setText(
-                                  tr("Die Datei konnte nicht importiert werden: %1")
+                                  tr("The file could not be imported: %1")
                                       .arg(importErrorText(result.import)));
                               m_importResult->style()->unpolish(m_importResult);
                               m_importResult->style()->polish(m_importResult);

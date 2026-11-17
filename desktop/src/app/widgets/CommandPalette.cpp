@@ -22,7 +22,7 @@ CommandPalette::CommandPalette(QWidget *parent)
 
     m_input = new QLineEdit(this);
     m_input->setObjectName(QStringLiteral("paletteInput"));
-    m_input->setPlaceholderText(tr("Spieler, Seite oder Aktion suchen …"));
+    m_input->setPlaceholderText(tr("Search players, pages or actions …"));
     m_input->installEventFilter(this);
     layout->addWidget(m_input);
 
@@ -33,7 +33,7 @@ CommandPalette::CommandPalette(QWidget *parent)
     m_list->setFocusPolicy(Qt::NoFocus);
     layout->addWidget(m_list);
 
-    m_hint = new QLabel(tr("↑↓ auswählen   ·   Enter öffnen   ·   Esc schließen"), this);
+    m_hint = new QLabel(tr("↑↓ select   ·   Enter open   ·   Esc close"), this);
     m_hint->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(m_hint);
 
@@ -90,7 +90,7 @@ void CommandPalette::rebuild()
         m_shown.append(entry);
     }
     if (matches.isEmpty()) {
-        auto *none = new QListWidgetItem(tr("Nichts gefunden"), m_list);
+        auto *none = new QListWidgetItem(tr("Nothing found"), m_list);
         none->setFlags(Qt::NoItemFlags);
         m_shown.append(Entry{});
     }

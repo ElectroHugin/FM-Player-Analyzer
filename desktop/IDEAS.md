@@ -61,7 +61,7 @@ FM27. Abgestimmt am 2026-10-10.
      Trennzeichens, Spaltenschema pro Version (`core/ImportSchema`) und ein
      Hinweis auf fehlende Spalten neben den unbekannten.
   3. **Konzept zwei Rollen pro Slot:** Das Konzept steht in
-     [KONZEPT_ZWEI_ROLLEN.md](KONZEPT_ZWEI_ROLLEN.md) (Datenformat, Bewertung,
+     [CONCEPT_TWO_ROLES.md](CONCEPT_TWO_ROLES.md) (Datenformat, Bewertung,
      Auswirkungen, Reihenfolge). Gebaut wird, sobald die FM27-Rollenliste
      feststeht.
   4. **Zum Release:** ✅ Import (Profil `fm27`, Spaltenschema für die Dateien

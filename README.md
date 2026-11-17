@@ -149,7 +149,7 @@ its own after every save in the game. **Attribute masking as in the game** (on
 by default) shows exact values only for players you know well; everyone else comes with
 attribute ranges, wider the less your scouts know. Switch it off for exact
 values everywhere. Details are in
-[docs/IMPORT-FM27.md](docs/IMPORT-FM27.md) (German).
+[docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
 
 ### Scout by role, not by reputation
 
@@ -433,7 +433,7 @@ Choose *Default (no restriction)*. For FM24 the Premier League is modelled; for
 FM27 eleven leagues are (Bundesliga, Premier League, LaLiga, Serie A, Ligue 1,
 Liga Portugal, Swiss Super League, Austrian Bundesliga, Russian Premier Liga,
 Ukrainian Premier League, Süper Lig, details in
-[docs/REGISTRIERUNG-FM27.md](docs/REGISTRIERUNG-FM27.md)). The UEFA list works
+[docs/REGISTRATION-FM27.md](docs/REGISTRATION-FM27.md)). The UEFA list works
 with any league. Checked are squad size and players trained in the country and
 at the club; limits for foreign or non-EU players are not.
 
@@ -493,8 +493,8 @@ cd desktop
 ```
 
 See [`desktop/README.md`](desktop/README.md) for details. Ideas and the
-technical backlog live in [`desktop/IDEEN.md`](desktop/IDEEN.md) and
-[`desktop/BACKLOG.md`](desktop/BACKLOG.md) (German).
+technical backlog live in [`desktop/IDEAS.md`](desktop/IDEAS.md) and
+[`desktop/BACKLOG.md`](desktop/BACKLOG.md).
 
 </details>
 

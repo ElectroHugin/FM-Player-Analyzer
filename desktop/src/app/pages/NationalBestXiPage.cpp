@@ -40,11 +40,11 @@ NationalBestXiPage::NationalBestXiPage(AppContext &context, ThemeManager &theme,
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nationale Best XI")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("National Best XI")), content);
     layout->addWidget(heading);
 
     auto *tacticRow = new QHBoxLayout;
-    tacticRow->addWidget(new QLabel(tr("Taktik:"), content));
+    tacticRow->addWidget(new QLabel(tr("Tactic:"), content));
     m_tacticCombo = new QComboBox(content);
     m_tacticCombo->setMinimumWidth(260);
     tacticRow->addWidget(m_tacticCombo);
@@ -61,8 +61,8 @@ NationalBestXiPage::NationalBestXiPage(AppContext &context, ThemeManager &theme,
     contentLayout->setContentsMargins(0, 0, 0, 0);
 
     auto *aptHint = new QLabel(
-        tr("Die Spielzeit-Gewichtung (Agreed Playing Time) bleibt hier außen vor — sie "
-           "gehört zum Verein und darf die Nationalelf-Auswahl nicht verzerren."),
+        tr("The playing time weighting (Agreed Playing Time) is left out here — it "
+           "belongs to the club and must not distort the national team selection."),
         m_content);
     aptHint->setWordWrap(true);
     aptHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -70,7 +70,7 @@ NationalBestXiPage::NationalBestXiPage(AppContext &context, ThemeManager &theme,
 
     auto *pitchRow = new QHBoxLayout;
     auto *xiColumn = new QVBoxLayout;
-    auto *xiTitle = new QLabel(tr("Startelf"), m_content);
+    auto *xiTitle = new QLabel(tr("Starting XI"), m_content);
     xiTitle->setObjectName(QStringLiteral("sectionTitle"));
     xiTitle->setAlignment(Qt::AlignHCenter);
     m_xiPitch = new TacticPitchWidget(m_theme, m_content);
@@ -87,7 +87,7 @@ NationalBestXiPage::NationalBestXiPage(AppContext &context, ThemeManager &theme,
     pitchRow->addLayout(bColumn, 1);
     contentLayout->addLayout(pitchRow);
 
-    m_depthBox = new QGroupBox(tr("Weitere Kader-Tiefe"), m_content);
+    m_depthBox = new QGroupBox(tr("Additional squad depth"), m_content);
     auto *depthLayout = new QVBoxLayout(m_depthBox);
     m_depthEmpty = new QLabel(m_depthBox);
     m_depthEmpty->setWordWrap(true);
@@ -96,7 +96,7 @@ NationalBestXiPage::NationalBestXiPage(AppContext &context, ThemeManager &theme,
     m_depthTable = new QTableWidget(m_depthBox);
     m_depthTable->setColumnCount(4);
     m_depthTable->setHorizontalHeaderLabels(
-        {tr("Rolle"), tr("Name"), tr("Alter"), tr("DWRS")});
+        {tr("Role"), tr("Name"), tr("Age"), tr("DWRS")});
     m_depthTable->verticalHeader()->setVisible(false);
     m_depthTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_depthTable->setAlternatingRowColors(true);
@@ -149,8 +149,8 @@ void NationalBestXiPage::rebuild()
     }
     const QString tactic = m_tacticCombo->currentText();
     if (squadPlayers.empty() || tactic.isEmpty()) {
-        m_hint->setText(tr("Noch keine Spieler im Nationalkader. Stelle ihn unter "
-                           "Kader → Auswahl zusammen."));
+        m_hint->setText(tr("No players in the national squad yet. Put it together "
+                           "under Squad → Selection."));
         m_hint->show();
         m_content->hide();
         return;
@@ -180,8 +180,8 @@ void NationalBestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>>
     const auto roleNames = m_context.definitions().roleDisplayMap();
 
     if (options.isEmpty()) {
-        m_depthEmpty->setText(tr("Keine weiteren Spieler im Kader als Tiefen-Optionen für "
-                                 "diese Taktik geeignet."));
+        m_depthEmpty->setText(tr("No further players in the squad suitable as depth "
+                                 "options for this tactic."));
         m_depthEmpty->setVisible(true);
         m_depthTable->setVisible(false);
         m_depthTable->setRowCount(0);

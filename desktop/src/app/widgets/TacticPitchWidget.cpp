@@ -274,7 +274,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     }
     if (!m_editor && m_layout.isEmpty() && !m_positions.contains(QStringLiteral("GK"))) {
         painter.setPen(textColor);
-        painter.drawText(pitch, Qt::AlignCenter, tr("Keine Daten"));
+        painter.drawText(pitch, Qt::AlignCenter, tr("No data"));
         return;
     }
 
@@ -485,7 +485,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
                          barColor);
         line.translate(0, lineH);
         painter.setPen(textColor);
-        drawFittedName(painter, line, cell.isFilled() ? cell.name : tr("unbesetzt"), nameFont);
+        drawFittedName(painter, line, cell.isFilled() ? cell.name : tr("empty"), nameFont);
         const QString lastLine = !subtext.isEmpty() ? subtext : (m_showApt ? apt : QString());
         if (!lastLine.isEmpty()) {
             line.translate(0, lineH);
@@ -538,7 +538,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
     m_combinedUids.clear();
     if (m_combinedCards.isEmpty() && m_ipLineUp.isEmpty()) {
         painter.setPen(textColor);
-        painter.drawText(field, Qt::AlignCenter, tr("Keine Daten"));
+        painter.drawText(field, Qt::AlignCenter, tr("No data"));
         return;
     }
 
@@ -676,13 +676,13 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
             const QString role = stripPhase((b.ipPhase ? m_ipLineUp : m_oopLineUp).value(b.slot));
             painter.drawText(header, Qt::AlignCenter,
                              painter.fontMetrics().elidedText(
-                                 b.ipPhase ? tr("mit: %1").arg(role) : tr("ohne: %1").arg(role),
+                                 b.ipPhase ? tr("IP: %1").arg(role) : tr("OOP: %1").arg(role),
                                  Qt::ElideRight, static_cast<int>(header.width() - 4)));
             painter.setFont(smallFont);
             painter.drawText(QRectF(body.left(), body.top() + lineH * 0.5, body.width(), lineH * 2),
                              Qt::AlignHCenter | Qt::AlignTop | Qt::TextWordWrap,
-                             b.ipPhase ? tr("%1 frei mit Ball").arg(b.slot)
-                                       : tr("%1 frei ohne Ball").arg(b.slot));
+                             b.ipPhase ? tr("%1 empty in possession").arg(b.slot)
+                                       : tr("%1 empty out of possession").arg(b.slot));
             continue;
         }
         const CombinedCard &card = *b.card;
@@ -729,7 +729,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         painter.setFont(smallFont);
         painter.drawText(line, Qt::AlignHCenter | Qt::AlignVCenter,
                          painter.fontMetrics().elidedText(
-                             tr("mit %1 · ohne %2")
+                             tr("IP %1 · OOP %2")
                                  .arg(formatDwrs(card.ipRating), formatDwrs(card.oopRating)),
                              Qt::ElideRight, static_cast<int>(line.width())));
         painter.setPen(QPen(cardBorder, 1));

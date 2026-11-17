@@ -252,19 +252,19 @@ QString validateName(AppContext &context, const QString &rawName)
 {
     const QString name = rawName.trimmed();
     if (name.isEmpty())
-        return SaveText::tr("Bitte einen Namen eingeben.");
+        return SaveText::tr("Please enter a name.");
     static const QString forbidden = QStringLiteral("\\/:*?\"<>|");
     for (const QChar c : name) {
         if (forbidden.contains(c) || c.unicode() < 32)
-            return SaveText::tr("Der Name darf diese Zeichen nicht enthalten: \\ / : * ? \" < > |");
+            return SaveText::tr("The name must not contain these characters: \\ / : * ? \" < > |");
     }
     if (name.startsWith(QLatin1Char('.')) || name.endsWith(QLatin1Char('.')))
-        return SaveText::tr("Der Name darf nicht mit einem Punkt beginnen oder enden.");
+        return SaveText::tr("The name must not start or end with a dot.");
     if (name.size() > 80)
-        return SaveText::tr("Der Name ist zu lang (höchstens 80 Zeichen).");
+        return SaveText::tr("The name is too long (80 characters at most).");
     for (const QString &existing : context.availableDatabases()) {
         if (existing.compare(name, Qt::CaseInsensitive) == 0)
-            return SaveText::tr("Ein Spielstand mit diesem Namen existiert bereits.");
+            return SaveText::tr("A save with this name already exists.");
     }
     return {};
 }
@@ -274,8 +274,8 @@ bool rename(AppContext &context, const QString &oldName, const QString &newName,
 {
     if (isOpenSave(context, oldName)) {
         if (errorOut)
-            *errorOut = SaveText::tr("Der geöffnete Spielstand kann nicht umbenannt werden. "
-                           "Öffne vorher einen anderen.");
+            *errorOut = SaveText::tr("The open save cannot be renamed. Open another one "
+                           "first.");
         return false;
     }
     const QString error = validateName(context, newName);
@@ -289,7 +289,7 @@ bool rename(AppContext &context, const QString &oldName, const QString &newName,
     for (int i = 0; i < from.size(); ++i) {
         if (QFile::exists(from.at(i)) && !QFile::rename(from.at(i), to.at(i))) {
             if (errorOut)
-                *errorOut = SaveText::tr("Die Datei %1 konnte nicht umbenannt werden.")
+                *errorOut = SaveText::tr("The file %1 could not be renamed.")
                                 .arg(QDir::toNativeSeparators(from.at(i)));
             return false;
         }
@@ -313,7 +313,7 @@ bool duplicate(AppContext &context, const QString &name, const QString &newName,
                                          context.paths().databaseFile(newName.trimmed()),
                                          &dbError);
     if (!ok && errorOut)
-        *errorOut = SaveText::tr("Der Spielstand konnte nicht kopiert werden: %1").arg(dbError);
+        *errorOut = SaveText::tr("The save could not be copied: %1").arg(dbError);
     return ok;
 }
 
@@ -321,23 +321,25 @@ bool remove(AppContext &context, const QString &name, QString *errorOut)
 {
     if (isOpenSave(context, name)) {
         if (errorOut)
-            *errorOut = SaveText::tr("Der geöffnete Spielstand kann nicht gelöscht werden. "
-                           "Öffne vorher einen anderen.");
+            *errorOut = SaveText::tr("The open save cannot be deleted. Open another one "
+                           "first.");
         return false;
     }
     const QString path = context.paths().databaseFile(name);
     QString backupError;
     if (!Database::createBackup(path, context.paths().backupsDir(), &backupError)) {
         if (errorOut)
-            *errorOut = SaveText::tr("Vor dem Löschen konnte kein Backup angelegt werden, deshalb "
-                           "wurde nichts gelöscht.\n\n%1")
+            *errorOut = SaveText::tr("No backup could be created before deleting, so nothing was "
+                           "deleted.\n"
+                           "\n"
+                           "%1")
                             .arg(backupError);
         return false;
     }
     for (const QString &file : sidecars(path)) {
         if (QFile::exists(file) && !QFile::remove(file)) {
             if (errorOut)
-                *errorOut = SaveText::tr("Die Datei %1 konnte nicht gelöscht werden.")
+                *errorOut = SaveText::tr("The file %1 could not be deleted.")
                                 .arg(QDir::toNativeSeparators(file));
             return false;
         }
@@ -363,7 +365,7 @@ bool importFile(AppContext &context, const QString &sourcePath, const QString &n
     if (!Database::snapshotTo(sourcePath, context.paths().databaseFile(newName.trimmed()),
                               &dbError)) {
         if (errorOut)
-            *errorOut = SaveText::tr("Die Datei konnte nicht in den Datenordner kopiert werden: %1")
+            *errorOut = SaveText::tr("The file could not be copied into the data folder: %1")
                             .arg(dbError);
         return false;
     }

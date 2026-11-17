@@ -40,16 +40,16 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Spieler bearbeiten")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Edit Player")), content);
     layout->addWidget(heading);
 
     // --- Selection: club players (with completeness markers) or global search.
     auto *selectRow = new QHBoxLayout;
     auto *clubColumn = new QVBoxLayout;
-    auto *clubTitle = new QLabel(tr("Spieler meines Vereins"), content);
+    auto *clubTitle = new QLabel(tr("Players from my club"), content);
     clubTitle->setObjectName(QStringLiteral("sectionTitle"));
     auto *markerHint = new QLabel(
-        tr("Markierungen für fehlende Daten: 🎯 Primärrolle, 📄 Spielzeit, 📍 natürliche Positionen"),
+        tr("Markers for missing data: 🎯 primary role, 📄 playing time, 📍 natural positions"),
         content);
     markerHint->setObjectName(QStringLiteral("kpiCaption"));
     m_clubPlayerCombo = new QComboBox(content);
@@ -60,10 +60,10 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     selectRow->addLayout(clubColumn, 1);
 
     auto *searchColumn = new QVBoxLayout;
-    auto *searchTitle = new QLabel(tr("Oder: alle Spieler durchsuchen"), content);
+    auto *searchTitle = new QLabel(tr("Or: search all players"), content);
     searchTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_searchEdit = new QLineEdit(content);
-    m_searchEdit->setPlaceholderText(tr("Nach Name suchen…"));
+    m_searchEdit->setPlaceholderText(tr("Search by name…"));
     m_searchEdit->setClearButtonEnabled(true);
     m_searchResultCombo = new QComboBox(content);
     m_searchResultCombo->setMinimumWidth(320);
@@ -82,14 +82,14 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     auto *editorLayout = new QHBoxLayout(m_editorBox);
 
     auto *adminColumn = new QVBoxLayout;
-    auto *adminTitle = new QLabel(tr("Verwaltung"), m_editorBox);
+    auto *adminTitle = new QLabel(tr("Management"), m_editorBox);
     adminTitle->setObjectName(QStringLiteral("sectionTitle"));
     adminColumn->addWidget(adminTitle);
     auto *adminForm = new QFormLayout;
     m_clubEdit = new QLineEdit(m_editorBox);
-    adminForm->addRow(tr("Verein:"), m_clubEdit);
+    adminForm->addRow(tr("Club:"), m_clubEdit);
     m_aptCombo = new QComboBox(m_editorBox);
-    m_aptLabel = new QLabel(tr("Spielzeit (Agreed Playing Time):"), m_editorBox);
+    m_aptLabel = new QLabel(tr("Playing Time (Agreed Playing Time):"), m_editorBox);
     adminForm->addRow(m_aptLabel, m_aptCombo);
     adminColumn->addLayout(adminForm);
 
@@ -97,44 +97,44 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     m_registrationBox = new QWidget(m_editorBox);
     auto *registrationLayout = new QVBoxLayout(m_registrationBox);
     registrationLayout->setContentsMargins(0, 8, 0, 0);
-    auto *registrationTitle = new QLabel(tr("Registrierung"), m_registrationBox);
+    auto *registrationTitle = new QLabel(tr("Registration"), m_registrationBox);
     registrationTitle->setObjectName(QStringLiteral("sectionTitle"));
     registrationLayout->addWidget(registrationTitle);
     m_homeGrownCheck =
-        new QCheckBox(tr("Home-Grown (im Verband ausgebildet)"), m_registrationBox);
+        new QCheckBox(tr("Home-grown (trained in the association)"), m_registrationBox);
     m_homeGrownCheck->setToolTip(
-        tr("Vor dem 21. Geburtstag mindestens drei Spielzeiten bei Vereinen des Verbands "
-           "(z. B. England/Wales) registriert."));
+        tr("Registered with clubs of the association (e.g. England/Wales) for at least "
+           "three seasons before turning 21."));
     m_clubTrainedCheck =
-        new QCheckBox(tr("Club-Grown (im Verein ausgebildet)"), m_registrationBox);
+        new QCheckBox(tr("Club-grown (trained at the club)"), m_registrationBox);
     m_clubTrainedCheck->setToolTip(
-        tr("Zwischen 15 und 21 mindestens drei Spielzeiten beim eigenen Verein. "
-           "Zählt automatisch auch als Home-Grown."));
-    m_nonEuCheck = new QCheckBox(tr("Nicht-EU-Spieler"), m_registrationBox);
+        tr("At least three seasons at the club itself between 15 and 21. "
+           "Automatically counts as home-grown too."));
+    m_nonEuCheck = new QCheckBox(tr("Non-EU player"), m_registrationBox);
     m_nonEuCheck->setToolTip(
-        tr("Zählt laut Spiel als Nicht-EU-Spieler. Nur sichtbar, wenn die gewählte Liga "
-           "Nicht-EU-Spieler auf der Meldeliste begrenzt."));
+        tr("The game counts him as a non-EU player. Only shown when the chosen league "
+           "limits non-EU players in the squad registration."));
     registrationLayout->addWidget(m_homeGrownCheck);
     registrationLayout->addWidget(m_clubTrainedCheck);
     registrationLayout->addWidget(m_nonEuCheck);
     m_minWageExemptCheck =
-        new QCheckBox(tr("Mindestgehalt gilt nicht (z. B. Leihe)"), m_registrationBox);
+        new QCheckBox(tr("Minimum wage does not apply (e.g. loan)"), m_registrationBox);
     m_minWageExemptCheck->setToolTip(
-        tr("Im Spiel registrierbar, obwohl das Gehalt unter dem Mindestgehalt liegt, z. B. "
-           "bei einer Leihe mit Gehaltsanteil. Fürs Gehaltsbudget zählt weiter das Gehalt "
-           "aus dem Export."));
+        tr("Can be registered in the game although the wage is below the minimum wage, "
+           "e.g. a loan where your club pays only part of it. The wage budget still uses "
+           "the wage from the export."));
     registrationLayout->addWidget(m_minWageExemptCheck);
     auto *u21Form = new QFormLayout;
     m_u21Combo = new QComboBox(m_registrationBox);
     m_u21Combo->setToolTip(
-        tr("U21-Spieler brauchen keinen Platz in der Meldeliste. Automatisch: bis 20 ja, "
-           "ab 22 nein, mit 21 unklar (zählt vorsichtshalber als nicht U21)."));
+        tr("U21 players need no place on the squad list. Automatic: up to 20 yes, from "
+           "22 no, at 21 unclear (counted as not U21 to be safe)."));
     u21Form->addRow(tr("U21:"), m_u21Combo);
     m_youthCombo = new QComboBox(m_registrationBox);
     m_youthCombo->setToolTip(
-        tr("LaLiga: EU-Spieler, die am 1. Januar der Saison höchstens 18 sind, brauchen "
-           "keinen Platz in der Meldeliste. Automatisch nach Alter, Ingame-Datum, Nationalität "
-           "und Nicht-EU-Markierung; Ja/Nein entscheidet von Hand."));
+        tr("LaLiga: EU players aged 18 or younger on 1 January of the season need no slot on "
+           "the squad list. Automatic from age, in-game date, nationality and the non-EU mark; "
+           "Yes/No decides by hand."));
     u21Form->addRow(tr("U18 EU:"), m_youthCombo);
     m_youthForm = u21Form;
     registrationLayout->addLayout(u21Form);
@@ -155,19 +155,19 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     m_tacticalColumn = new QWidget(m_editorBox);
     auto *tacticalLayout = new QVBoxLayout(m_tacticalColumn);
     tacticalLayout->setContentsMargins(0, 0, 0, 0);
-    auto *tacticalTitle = new QLabel(tr("Taktisches Profil"), m_tacticalColumn);
+    auto *tacticalTitle = new QLabel(tr("Tactical Profile"), m_tacticalColumn);
     tacticalTitle->setObjectName(QStringLiteral("sectionTitle"));
     tacticalLayout->addWidget(tacticalTitle);
-    tacticalLayout->addWidget(new QLabel(tr("Natürliche Positionen:"), m_tacticalColumn));
-    m_manualNaturalPositions = new QCheckBox(tr("Natürliche Positionen manuell festlegen"), m_tacticalColumn);
-    m_manualNaturalPositions->setToolTip(tr("Ohne Häkchen gelten die natürlichen Positionen aus dem Spielstand. "
-                                           "Manuelle Angaben haben Vorrang und bleiben bei Importen erhalten."));
+    tacticalLayout->addWidget(new QLabel(tr("Natural Positions:"), m_tacticalColumn));
+    m_manualNaturalPositions = new QCheckBox(tr("Set natural positions manually"), m_tacticalColumn);
+    m_manualNaturalPositions->setToolTip(tr("When unchecked, natural positions come from the save. Manual "
+                                           "settings take priority and are kept during imports."));
     tacticalLayout->addWidget(m_manualNaturalPositions);
     m_naturalPositionsList = new QListWidget(m_tacticalColumn);
     m_naturalPositionsList->setMaximumHeight(120);
     m_naturalPositionsList->setToolTip(
-        tr("Die Positionen, auf denen dieser Spieler am effektivsten ist "
-           "(Bonus in der Kader-Berechnung)."));
+        tr("The positions where this player is most effective (bonus in "
+           "the squad calculation)."));
     tacticalLayout->addWidget(m_naturalPositionsList);
     connect(m_manualNaturalPositions, &QCheckBox::toggled, this, [this](bool manual) {
         m_naturalPositionsList->setEnabled(manual);
@@ -187,15 +187,15 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
     primaryRoleRow->addWidget(
         new RolePhaseSwitch(m_context.definitions(), m_primaryRoleCombo, m_tacticalColumn));
     primaryRoleRow->addWidget(m_primaryRoleCombo, 1);
-    tacticalForm->addRow(tr("Primärrolle:"), primaryRoleRow);
+    tacticalForm->addRow(tr("Primary Role:"), primaryRoleRow);
     m_preferredSideCombo = new QComboBox(m_tacticalColumn);
-    m_preferredSideCombo->addItem(tr("Keine"), QString());
-    m_preferredSideCombo->addItem(tr("Links"), QStringLiteral("Left"));
-    m_preferredSideCombo->addItem(tr("Rechts"), QStringLiteral("Right"));
+    m_preferredSideCombo->addItem(tr("None"), QString());
+    m_preferredSideCombo->addItem(tr("Left"), QStringLiteral("Left"));
+    m_preferredSideCombo->addItem(tr("Right"), QStringLiteral("Right"));
     m_preferredSideCombo->setToolTip(
-        tr("Bevorzugte zentrale Seite bei gleichwertigen Zuordnungen, auch bei unterschiedlichen Rollen. "
-           "Gilt mit und ohne Ball. Der bevorzugte Fuß wird dafür nicht verwendet."));
-    tacticalForm->addRow(tr("Bevorzugte Seite:"), m_preferredSideCombo);
+        tr("Preferred central side for equally suitable assignments, including different roles. Applies "
+           "in and out of possession. Preferred foot is not used for this."));
+    tacticalForm->addRow(tr("Preferred Side:"), m_preferredSideCombo);
     tacticalLayout->addLayout(tacticalForm);
     tacticalLayout->addStretch(1);
     editorLayout->addWidget(m_tacticalColumn, 1);
@@ -204,7 +204,7 @@ EditPlayerPage::EditPlayerPage(AppContext &context, QWidget *parent)
 
     auto *saveRow = new QHBoxLayout;
     saveRow->addStretch(1);
-    m_saveButton = new QPushButton(tr("Änderungen speichern"), content);
+    m_saveButton = new QPushButton(tr("Save Changes"), content);
     m_saveButton->setDefault(true);
     saveRow->addWidget(m_saveButton);
     layout->addLayout(saveRow);
@@ -242,7 +242,7 @@ void EditPlayerPage::rebuildClubCombo()
 {
     m_updating = true;
     m_clubPlayerCombo->clear();
-    m_clubPlayerCombo->addItem(tr("— Spieler auswählen —"), QString());
+    m_clubPlayerCombo->addItem(tr("— Select player —"), QString());
 
     const QString userClub = m_context.userClub();
     std::vector<const Player *> players;
@@ -300,7 +300,7 @@ void EditPlayerPage::showEditor()
         return;
 
     m_updating = true;
-    m_editorBox->setTitle(tr("Bearbeite: %1 (%2)").arg(player->name, player->club));
+    m_editorBox->setTitle(tr("Editing: %1 (%2)").arg(player->name, player->club));
     m_clubEdit->setText(player->club);
 
     const bool isClubPlayer = !m_context.userClub().isEmpty()
@@ -311,7 +311,7 @@ void EditPlayerPage::showEditor()
     const QStringList aptOptions = isGk ? gkAptOptions() : fieldPlayerAptOptions();
     m_aptCombo->clear();
     for (const QString &option : aptOptions)
-        m_aptCombo->addItem(option == QLatin1String("None") ? tr("Keine") : option,
+        m_aptCombo->addItem(option == QLatin1String("None") ? tr("None") : option,
                             option == QLatin1String("None") ? QString() : option);
     const int aptIndex = m_aptCombo->findData(player->agreedPlayingTime);
     m_aptCombo->setCurrentIndex(aptIndex >= 0 ? aptIndex : 0);
@@ -328,13 +328,13 @@ void EditPlayerPage::showEditor()
     m_nonEuCheck->setChecked(player->registration.nonEu);
     const Registration::U21Status autoU21 = Registration::u21StatusByAge(player->age);
     m_u21Combo->clear();
-    m_u21Combo->addItem(autoU21 == Registration::U21Status::Yes ? tr("Automatisch (ja)")
+    m_u21Combo->addItem(autoU21 == Registration::U21Status::Yes ? tr("Automatic (yes)")
                         : autoU21 == Registration::U21Status::No
-                            ? tr("Automatisch (nein)")
-                            : tr("Automatisch (unklar)"),
+                            ? tr("Automatic (no)")
+                            : tr("Automatic (unclear)"),
                         static_cast<int>(PlayerRegistration::U21::Auto));
-    m_u21Combo->addItem(tr("Ja"), static_cast<int>(PlayerRegistration::U21::Yes));
-    m_u21Combo->addItem(tr("Nein"), static_cast<int>(PlayerRegistration::U21::No));
+    m_u21Combo->addItem(tr("Yes"), static_cast<int>(PlayerRegistration::U21::Yes));
+    m_u21Combo->addItem(tr("No"), static_cast<int>(PlayerRegistration::U21::No));
     m_u21Combo->setCurrentIndex(
         std::max(0, m_u21Combo->findData(static_cast<int>(player->registration.u21))));
     // U21 matters where the league exempts U21 players and for UEFA list B.
@@ -350,13 +350,13 @@ void EditPlayerPage::showEditor()
     const Registration::U21Status autoU18 =
         Registration::u18EuStatus(autoPlayer, registrationSettings.gameDate);
     m_youthCombo->clear();
-    m_youthCombo->addItem(autoU18 == Registration::U21Status::Yes ? tr("Automatisch (ja)")
+    m_youthCombo->addItem(autoU18 == Registration::U21Status::Yes ? tr("Automatic (yes)")
                           : autoU18 == Registration::U21Status::No
-                              ? tr("Automatisch (nein)")
-                              : tr("Automatisch (unklar)"),
+                              ? tr("Automatic (no)")
+                              : tr("Automatic (unclear)"),
                           static_cast<int>(PlayerRegistration::U21::Auto));
-    m_youthCombo->addItem(tr("Ja"), static_cast<int>(PlayerRegistration::U21::Yes));
-    m_youthCombo->addItem(tr("Nein"), static_cast<int>(PlayerRegistration::U21::No));
+    m_youthCombo->addItem(tr("Yes"), static_cast<int>(PlayerRegistration::U21::Yes));
+    m_youthCombo->addItem(tr("No"), static_cast<int>(PlayerRegistration::U21::No));
     m_youthCombo->setCurrentIndex(
         std::max(0, m_youthCombo->findData(static_cast<int>(player->registration.youth))));
     m_minWageExemptCheck->setVisible(Registration::hasWageRules(registrationSettings.league));
@@ -381,7 +381,7 @@ void EditPlayerPage::showEditor()
 
         const auto roleNames = m_context.definitions().roleDisplayMap();
         m_primaryRoleCombo->clear();
-        m_primaryRoleCombo->addItem(tr("Keine"), QString());
+        m_primaryRoleCombo->addItem(tr("None"), QString());
         QStringList roles = player->assignedRoles;
         std::sort(roles.begin(), roles.end());
         for (const QString &role : roles)
@@ -448,13 +448,13 @@ void EditPlayerPage::save()
     if (!transaction.isActive() || !db.upsertPlayers(batch)
         || !db.setRegistrations({{batch.front().id, updated.registration}})
         || !transaction.commit()) {
-        QMessageBox::critical(this, tr("Spieler bearbeiten"), db.errorString());
+        QMessageBox::critical(this, tr("Edit Player"), db.errorString());
         return;
     }
     const QString name = updated.name;
     m_context.refreshPlayers({batch.front().id});
-    QMessageBox::information(this, tr("Spieler bearbeiten"),
-                             tr("Änderungen für %1 gespeichert.").arg(name));
+    QMessageBox::information(this, tr("Edit Player"),
+                             tr("Changes for %1 saved.").arg(name));
 }
 
 } // namespace fm

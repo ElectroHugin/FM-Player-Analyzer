@@ -52,10 +52,10 @@ public:
     QByteArray windowGeometry() const;
     void setWindowGeometry(const QByteArray &geometry);
 
-    // UI language, app-global (host-level). "en" (default) loads the bundled
-    // English translation; "de" uses the untranslated German source strings.
-    // Any other code loads fmplayeranalyzer_<code>.qm on top of English, so
-    // strings it does not translate yet fall back to English, not German.
+    // UI language, app-global (host-level). "en" (default) uses the English
+    // source strings. Any other code loads fmplayeranalyzer_<code>.qm on top
+    // of the English plural forms, so strings it does not translate yet stay
+    // English.
     QString language() const;
     void setLanguage(const QString &language);
 

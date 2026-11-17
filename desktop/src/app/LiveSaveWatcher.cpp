@@ -101,14 +101,14 @@ void LiveSaveWatcher::startImport(const QString &path, qint64 modifiedMs)
                 ++m_failures;
                 m_candidatePath.clear();
                 if (m_failures >= kMaxFailures && m_toast)
-                    m_toast(tr("Spielstand „%1“ konnte nicht eingelesen werden: %2")
+                    m_toast(tr("Could not read save “%1”: %2")
                                 .arg(name, importErrorText(result.import)));
                 return;
             }
             m_failures = 0;
             m_context.config().setLiveSaveLastModified(modifiedMs);
             if (m_toast)
-                m_toast(tr("Spielstand „%1“ eingelesen (%2): %3 Spieler aktualisiert.")
+                m_toast(tr("Read save “%1” (%2): %3 players updated.")
                             .arg(name,
                                  QLocale().toString(QDateTime::fromMSecsSinceEpoch(modifiedMs),
                                                     QLocale::ShortFormat))

@@ -128,7 +128,7 @@ bool AppPaths::ensureDefinitionsFile(const QString &fmVersionId)
             return true;
         QDir().mkpath(backupsDir());
         const QString backup = QDir(backupsDir()).filePath(
-            QFileInfo(target).completeBaseName() + QStringLiteral("_vor_update_")
+            QFileInfo(target).completeBaseName() + QStringLiteral("_before_update_")
             + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_HHmmss"))
             + QStringLiteral(".json"));
         QFile::copy(target, backup);
@@ -170,16 +170,16 @@ QList<AppPaths::UiLanguage> AppPaths::uiLanguages()
 {
     QList<UiLanguage> languages{
         {QStringLiteral("en"), QStringLiteral("English")},
-        {QStringLiteral("de"), QStringLiteral("Deutsch")},
     };
-    // Every other bundled translation (:/i18n/fmplayeranalyzer_<code>.qm),
-    // labelled with its own name for the language.
+    // Every bundled translation (:/i18n/fmplayeranalyzer_<code>.qm), labelled
+    // with its own name for the language. The English file only holds plural
+    // forms; English itself is the source language.
     const QString prefix = QStringLiteral("fmplayeranalyzer_");
     const QStringList files = QDir(QStringLiteral(":/i18n"))
                                   .entryList({prefix + QStringLiteral("*.qm")}, QDir::Files, QDir::Name);
     for (const QString &file : files) {
         const QString code = file.mid(prefix.size()).chopped(3);
-        if (code == QLatin1String("en") || code == QLatin1String("de"))
+        if (code == QLatin1String("en"))
             continue;
         QString label = QLocale(code).nativeLanguageName();
         if (label.isEmpty())

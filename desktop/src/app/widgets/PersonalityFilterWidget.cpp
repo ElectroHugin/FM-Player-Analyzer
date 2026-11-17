@@ -18,7 +18,7 @@ PersonalityFilterWidget::PersonalityFilterWidget(const Definitions &definitions,
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(6);
 
-    layout->addWidget(new QLabel(tr("Persönlichkeit:"), this));
+    layout->addWidget(new QLabel(tr("Personality:"), this));
 
     const auto makeToggle = [this, layout](const QString &text) {
         auto *button = new QPushButton(text, this);
@@ -27,12 +27,12 @@ PersonalityFilterWidget::PersonalityFilterWidget(const Definitions &definitions,
         connect(button, &QPushButton::toggled, this, &PersonalityFilterWidget::filterChanged);
         return button;
     };
-    m_goodButton = makeToggle(tr("🟢 Gut"));
+    m_goodButton = makeToggle(tr("🟢 Good"));
     m_neutralButton = makeToggle(tr("🟡 Neutral"));
-    m_badButton = makeToggle(tr("🔴 Schlecht"));
+    m_badButton = makeToggle(tr("🔴 Bad"));
 
     m_specificButton = new QToolButton(this);
-    m_specificButton->setText(tr("Bestimmte…"));
+    m_specificButton->setText(tr("Specific…"));
     m_specificButton->setPopupMode(QToolButton::InstantPopup);
     m_specificMenu = new QMenu(this);
     m_specificButton->setMenu(m_specificMenu);
@@ -68,8 +68,8 @@ void PersonalityFilterWidget::rebuildSpecificMenu()
             else
                 m_specificChecked.remove(personality);
             m_specificButton->setText(m_specificChecked.isEmpty()
-                                          ? tr("Bestimmte…")
-                                          : tr("Bestimmte (%1)").arg(m_specificChecked.size()));
+                                          ? tr("Specific…")
+                                          : tr("Specific (%1)").arg(m_specificChecked.size()));
             emit filterChanged();
         });
     }

@@ -1,36 +1,36 @@
-# Spielstandprofile (ab 2.1.0)
+# Save profiles (from 2.1.0)
 
-Jeder Spielstand hat ein eigenes, vollständiges Profil. Zwei Spielstände
-teilen keine Einstellung mehr, und alles, was einen Spielstand ausmacht, steckt
-in seiner `.db`-Datei. Duplizieren, Umbenennen, Sicherungen und der Import
-einer fremden Datenbank nehmen das Profil deshalb automatisch mit.
+Every save has its own complete profile. Two saves no longer share any setting,
+and everything that makes up a save lives in its `.db` file. Duplicating,
+renaming, backups and importing another database therefore take the profile
+along automatically.
 
-## Was gehört wohin
+## What goes where
 
-| Inhalt | Ort | Zugriff im Code |
+| Content | Location | Access in code |
 |---|---|---|
-| Bewertungsgewichte (alle FM-Versionen), Rollen-Multiplikatoren, APT-Gewichte | Profil, `profile_settings` | `context.config()` |
-| Analyse-Optionen: Altersgrenzen, Auswahlbonus, Anteil mit Ball, Kaderplanung, Lückenanalyse, Aktualität, Trainingsfenster | Profil, `profile_settings` | `context.config()` |
-| Gesamtes Farbschema (7 Rollen je Modus), Hell-/Dunkelmodus, Farbvorlage | Profil, `profile_settings` (`ThemeSettings/…`) | `config().themeSettings()`, `ThemeManager` |
-| Ordner für FM-Exporte | Profil, `profile_settings` (`Import/…`) | `config().htmlExportDir()` |
-| Eigene Rollen, Taktiken (pro FM-Version) | Profil, `profile_documents` `definitions_<version>` | `context.definitions()`, Speichern mit `context.saveDefinitions()` |
-| Vereinslogo, National-Flagge | Profil, `profile_documents` `club_logo` / `national_flag` (PNG) | `context.profileImage()` / `setProfileImage()` |
-| Kopie des Wappens aus dem Graphics-Ordner | Profil, `profile_documents` `graphics_crest` (Bilddatei wie im Ordner) + Setting `graphics_crest_id` (Vereins-ID) | `context.ownClubCrestData()`; erneuert von `refreshCachedCrest()` nach Öffnen, Import und Index-Laden. Eigenes Logo hat Vorrang; bei Vereinswechsel wird die Kopie verworfen bzw. ersetzt |
-| Trainingsprofil (Bänder, Altersfenster, Gewichte, Attribute) | Profil, `profile_documents` `training_profile` (JSON, Format `fmpa-training-profile`); fehlt es, gilt der Standard aus `[Training]` | `trainingProfile(context)` in `PageHelpers.h`; Einstellungen → Training speichert nur Abweichungen vom Standard |
-| Verein, zweite Mannschaft, Land, Stadion, Favoriten-Taktiken, Nationalteam, Meldelisten-Regeln, Bridges, Seitenzustände (Filter, Budget …) | Spielstand, Tabelle `settings` (unverändert seit 1.x) | `context.database().setting()` |
-| Vereinskopf: Darstellung (`header_style` = `gradient`/`solid`), Wappen-Silhouette (`header_crest_watermark`) | Profil, `profile_settings` (`ThemeSettings/…`) | `ThemeManager::headerStyle()`, `crestWatermark()` |
-| Eigene Farbvorlagen | App-weit, `<Datenordner>/color_templates.json` | `ColorTemplateStore` (core) |
-| Sprache, Fenstergröße, Datenordner | App-weit, `bootstrap.ini` | `context.paths()` |
-| Zuletzt geöffneter Spielstand, „immer letzten öffnen“, Liste der zuletzt geöffneten | App-weit, `config.ini` | `config().dbName()` usw. |
-| Aussehen des Startbildschirms | App-weit, `config.ini` `[StartTheme]` (Kopie des zuletzt geöffneten Profils) | automatisch |
+| Rating weights (all FM versions), role multipliers, APT weights | profile, `profile_settings` | `context.config()` |
+| Analysis options: age limits, selection bonus, in-possession share, squad planning, gap analysis, freshness, training window | profile, `profile_settings` | `context.config()` |
+| Whole colour scheme (7 roles per mode), light/dark mode, colour template | profile, `profile_settings` (`ThemeSettings/…`) | `config().themeSettings()`, `ThemeManager` |
+| Folder for FM exports | profile, `profile_settings` (`Import/…`) | `config().htmlExportDir()` |
+| Own roles, tactics (per FM version) | profile, `profile_documents` `definitions_<version>` | `context.definitions()`, saving with `context.saveDefinitions()` |
+| Club logo, national flag | profile, `profile_documents` `club_logo` / `national_flag` (PNG) | `context.profileImage()` / `setProfileImage()` |
+| Copy of the crest from the graphics folder | profile, `profile_documents` `graphics_crest` (image file as in the folder) + setting `graphics_crest_id` (club id) | `context.ownClubCrestData()`; renewed by `refreshCachedCrest()` after opening, import and index loading. An own logo takes precedence; on a club change the copy is dropped or replaced |
+| Training profile (bands, age windows, weights, attributes) | profile, `profile_documents` `training_profile` (JSON, format `fmpa-training-profile`); if missing, the default from `[Training]` applies | `trainingProfile(context)` in `PageHelpers.h`; Settings → Training stores only differences from the default |
+| Club, second team, country, stadium, favourite tactics, national team, registration list rules, bridges, page state (filters, budget …) | save, table `settings` (unchanged since 1.x) | `context.database().setting()` |
+| Club header: style (`header_style` = `gradient`/`solid`), crest silhouette (`header_crest_watermark`) | profile, `profile_settings` (`ThemeSettings/…`) | `ThemeManager::headerStyle()`, `crestWatermark()` |
+| Own colour templates | app-wide, `<data folder>/color_templates.json` | `ColorTemplateStore` (core) |
+| Language, window size, data folder | app-wide, `bootstrap.ini` | `context.paths()` |
+| Last opened save, "always open the last one", list of recently opened | app-wide, `config.ini` | `config().dbName()` etc. |
+| Look of the start screen | app-wide, `config.ini` `[StartTheme]` (copy of the last opened profile) | automatic |
 
-Ohne geöffneten Spielstand (Startbildschirm, Kommandozeilen-Werkzeuge, Tests)
-lesen und schreiben alle Profil-Schlüssel wie bis 2.0.4 `config.ini`.
+Without an open save (start screen, command-line tools, tests) all profile keys
+read and write `config.ini` as up to 2.0.4.
 
-## Speicherformat
+## Storage format
 
-Zwei Tabellen in der Spielstand-Datei, angelegt beim ersten Öffnen mit 2.1.0
-(`CREATE TABLE IF NOT EXISTS`, kein Versionssprung des Datenbankschemas):
+Two tables in the save file, created on first opening with 2.1.0
+(`CREATE TABLE IF NOT EXISTS`, no version step of the database schema):
 
 ```sql
 profile_settings  (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID
@@ -38,135 +38,125 @@ profile_documents (name TEXT PRIMARY KEY, encoding INTEGER, size INTEGER,
                    data BLOB, updated_at TEXT)
 ```
 
-* `profile_settings` hält flache Paare `Abschnitt/schlüssel` mit denselben
-  Namen wie `config.ini`. Damit wandern Werte 1:1, und die Getter/Setter von
-  `AppConfig` sind unverändert. Marker: `Profile/format` (aktuell 1),
-  `Profile/seed` (`config.ini`, `defaults` oder `copy:<Spielstand>`),
-  `Profile/created_at`.
-* `profile_documents` hält größere Inhalte, die nur bei Bedarf gelesen werden.
-  JSON wird mit zlib gepackt (`encoding` 1), Bilder bleiben wie sie sind (0).
+* `profile_settings` holds flat `section/key` pairs with the same names as
+  `config.ini`. Values move 1:1, and the getters/setters of `AppConfig` are
+  unchanged. Markers: `Profile/format` (currently 1), `Profile/seed`
+  (`config.ini`, `defaults` or `copy:<save>`), `Profile/created_at`.
+* `profile_documents` holds larger content that is read only when needed. JSON
+  is compressed with zlib (`encoding` 1), images stay as they are (0).
 
-### Warum so (nach Messung)
+### Why this way (after measuring)
 
-* **Zeilen statt eines JSON-Blocks für Einstellungen:** Das ganze Profil
-  (77 Werte, 2,3 KB) lädt in einer Abfrage in unter 3 ms. Zeilen erlauben
-  gezieltes Schreiben: Ein Hell/Dunkel-Wechsel schreibt genau eine Zeile,
-  unveränderte Werte werden gar nicht geschrieben (Test
-  `unchangedValuesAreNotWritten`). Ein Block müsste bei jeder Änderung ganz
-  neu geschrieben werden.
-* **Rollen/Taktiken gepackt:** 54 KB JSON werden zu 4 KB.
-* **Im Spielstand statt in einer Nebendatei:** Eine Datei bleibt eine Einheit
-  (Sicherung, Kopie, Import), und eine SQLite-Transaktion macht das Speichern
-  atomar. Das Profil kostet je Spielstand 16 KB, bei einem großen Spielstand
-  von 280 MB also unter 0,01 %.
+* **Rows instead of one JSON block for settings:** the whole profile (77
+  values, 2.3 KB) loads in one query in under 3 ms. Rows allow targeted
+  writing: a light/dark switch writes exactly one row, unchanged values are not
+  written at all (test `unchangedValuesAreNotWritten`). A block would have to be
+  rewritten completely on every change.
+* **Roles/tactics compressed:** 54 KB of JSON become 4 KB.
+* **In the save instead of a side file:** one file stays one unit (backup, copy,
+  import), and a SQLite transaction makes saving atomic. The profile costs
+  16 KB per save, under 0.01 % of a large 280 MB save.
 
-## Messungen
+## Measurements
 
-Werkzeug: `fmprofilebench <definitions.json> [--repeat N]` (erzeugt
-künstliche Spielstände in einem Temp-Ordner, fasst nichts Echtes an).
-Linux, Release-Build, Median aus 5 Läufen, 4.11.2026.
+Tool: `fmprofilebench <definitions.json> [--repeat N]` (creates artificial
+saves in a temp folder, touches nothing real). Linux, release build, median of
+5 runs, 4 Nov 2026.
 
-| Messung | klein (500 Spieler) | groß (35.000 Spieler) |
+| Measurement | small (500 players) | large (35,000 players) |
 |---|---|---|
-| Spielstand-Datei | 4,0 MB | 277 MB |
-| Mehrgröße durch das Profil | 16 KB | 16 KB |
-| Umstellung (Profil einmalig anlegen) | 5 ms | 2 ms |
-| Profil bereit (Farben, Gewichte, Rollen) | 3 ms | 3 ms |
-| Öffnen komplett, 2.0.4 | 29 ms | 2,9 s |
-| Öffnen komplett, 2.1.0 | 20 ms | 2,1 s |
-| Wechsel groß → klein, 2.0.4 / 2.1.0 | – | 2,8 s / 2,7 s |
-| Speichern-Knopf (alle Einstellungen), 2.0.4 | 91 ms | 91 ms |
-| Speichern-Knopf, 2.1.0 (eine Transaktion) | 3 ms | 2,5 ms |
-| Hell/Dunkel umschalten, 2.0.4 / 2.1.0 | 1,5 ms / 1,7 ms | 1,5 ms / 1,9 ms |
-| Erneuter Voll-Import aller Spieler, ohne / mit Profil | – | 10,0 s / 9,6 s |
+| Save file | 4.0 MB | 277 MB |
+| Extra size from the profile | 16 KB | 16 KB |
+| Migration (create profile once) | 5 ms | 2 ms |
+| Profile ready (colours, weights, roles) | 3 ms | 3 ms |
+| Full open, 2.0.4 | 29 ms | 2.9 s |
+| Full open, 2.1.0 | 20 ms | 2.1 s |
+| Switch large → small, 2.0.4 / 2.1.0 | – | 2.8 s / 2.7 s |
+| Save button (all settings), 2.0.4 | 91 ms | 91 ms |
+| Save button, 2.1.0 (one transaction) | 3 ms | 2.5 ms |
+| Toggle light/dark, 2.0.4 / 2.1.0 | 1.5 ms / 1.7 ms | 1.5 ms / 1.9 ms |
+| Repeated full import of all players, without / with profile | – | 10.0 s / 9.6 s |
 
-Ergebnis: Das Profil macht Öffnen, Wechsel und Importe nicht langsamer (die
-Unterschiede liegen in der Messschwankung). Der Speichern-Knopf ist rund 30-mal
-schneller, weil er nicht mehr nach jedem einzelnen Wert `config.ini`
-synchronisiert, sondern eine Transaktion schreibt. Beim Öffnen großer Spielstände kostet fast die ganze
-Zeit das Laden der Spieler und Bewertungen (35.000 Spieler, 420.000
-Bewertungen). Das Profil wird deshalb zuerst geladen und mit
-`AppContext::profileChanged` gemeldet, bevor die Spieler kommen. Wer das
-Öffnen großer Spielstände weiter beschleunigen will, muss beim Laden der
-Spieler ansetzen (eigenes Paket).
+Result: the profile does not make opening, switching or imports slower (the
+differences are within measurement noise). The save button is about 30 times
+faster because it no longer syncs `config.ini` after every single value but
+writes one transaction. When opening large saves, almost all the time goes into
+loading players and ratings (35,000 players, 420,000 ratings). The profile is
+therefore loaded first and announced with `AppContext::profileChanged` before
+the players arrive. Speeding up the opening of large saves further means
+working on player loading (separate package).
 
-## Umstellung von 2.0.4
+## Migration from 2.0.4
 
-* **Bestehender Spielstand** (Datei existiert, noch kein Profil): Beim ersten
-  Öffnen übernimmt er die Einstellungen, die bis 2.0.4 alle Spielstände
-  geteilt haben: alle Profil-Abschnitte aus `config.ini`, die gemeinsame
-  `definitions*.json` der FM-Version (eigene Rollen und Taktiken) und das
-  Logo/die Flagge aus `assets/` (`club_logo_path`, `national_flag_path`).
-  Danach ist er unabhängig.
-* **Neuer Spielstand:** startet mit den Standardwerten, wahlweise als Kopie
-  des Profils eines anderen Spielstands (Assistent „Neuer Spielstand“,
-  Feld „Einstellungen“). Kopiert werden Gewichte, Farben, Optionen, Rollen,
-  Taktiken und Logo, nicht Verein, Spieler und Favoriten. Ein Quell-Spielstand
-  ohne Profil (noch nie mit 2.1.0 geöffnet) wird dabei nicht verändert.
-* `config.ini` behält ihre Abschnitte aus 2.0.x unverändert als Quelle für
-  noch nicht geöffnete Spielstände, ebenso die alten `definitions*.json`
-  und Logo-Dateien. Ein Zurück auf 2.0.4 bleibt damit möglich (2.0.4 ignoriert
-  die neuen Tabellen).
-* Neuere mitgelieferte Rollen-Daten (`data_revision`) werden je Spielstand
-  beim Öffnen eingespielt (`Definitions::applyShippedUpdate`, eigene Taktiken
-  bleiben). Der Stand davor landet als
-  `backups/<Spielstand>_definitions_<version>_vor_update_<Zeit>.json`.
+* **Existing save** (file exists, no profile yet): on first opening it takes
+  over the settings all saves shared up to 2.0.4: every profile section from
+  `config.ini`, the shared `definitions*.json` of the FM version (own roles and
+  tactics) and the logo/flag from `assets/` (`club_logo_path`,
+  `national_flag_path`). After that it is independent.
+* **New save:** starts with the defaults, optionally as a copy of another
+  save's profile ("New save" assistant, field "Settings"). Weights, colours,
+  options, roles, tactics and logo are copied, not club, players and favourites.
+  A source save without a profile (never opened with 2.1.0) is not changed.
+* `config.ini` keeps its 2.0.x sections unchanged as the source for saves not
+  opened yet, as do the old `definitions*.json` and logo files. Going back to
+  2.0.4 therefore stays possible (2.0.4 ignores the new tables).
+* Newer shipped role data (`data_revision`) is applied per save on opening
+  (`Definitions::applyShippedUpdate`, own tactics stay). The previous state is
+  kept as `backups/<save>_definitions_<version>_before_update_<time>.json`.
 
-## Speichern und Laden
+## Saving and loading
 
-* **Speichern-Knopf der Einstellungen:** `AppConfig::Transaction` öffnet eine
-  Transaktion auf dem Spielstand. Vereins-Einstellungen (`database().setSetting`)
-  und Profil-Werte laufen darin zusammen und werden mit `commit()` gemeinsam
-  geschrieben. Scheitert irgendein Schritt, wird alles zurückgerollt, auch im
-  Speicher. Die Seite zeigt dann eine Fehlermeldung und lädt den gespeicherten
-  Stand neu. Ein halb gespeichertes Profil gibt es nicht (Test
+* **Save button of the settings:** `AppConfig::Transaction` opens a transaction
+  on the save. Club settings (`database().setSetting`) and profile values run
+  inside it together and are written together with `commit()`. If any step
+  fails, everything is rolled back, in memory too. The page then shows an error
+  and reloads the stored state. A half-saved profile does not exist (test
   `failedSaveWritesNothing`).
-* **Einzelne Setter** (z. B. Hell/Dunkel in der Kopfzeile) schreiben sofort und
-  nur bei echter Änderung. Sie geben `false` zurück, Details in
-  `config().lastError()`.
-* **Laden:** `AppContext::openDatabase()` hängt das Profil des Spielstands an,
-  lädt Rollen/Taktiken und meldet `profileChanged()` (Farben und Modus werden
-  über `ThemeManager::reload()` neu angewendet), dann die Spieler. Scheitert
-  das Profil, bleibt der bisherige Spielstand mit seinem Profil aktiv.
-* **Abnahme:** `test_profileswitch` legt einen Datenordner wie 2.0.4 an
-  (getunte `config.ini`, eigene Taktik, Logo-Datei), öffnet ihn, legt einen
-  zweiten Spielstand mit anderen Gewichten, Farben, Taktiken an, wechselt
-  A → B → A → B, startet neu und prüft dasselbe noch einmal.
+* **Single setters** (e.g. light/dark in the header) write immediately and only
+  on a real change. They return `false`, details in `config().lastError()`.
+* **Loading:** `AppContext::openDatabase()` attaches the save's profile, loads
+  roles/tactics and emits `profileChanged()` (colours and mode are reapplied via
+  `ThemeManager::reload()`), then the players. If the profile fails, the
+  previous save stays active with its profile.
+* **Acceptance:** `test_profileswitch` creates a data folder like 2.0.4 (tuned
+  `config.ini`, own tactic, logo file), opens it, creates a second save with
+  other weights, colours and tactics, switches A → B → A → B, restarts and
+  checks the same again.
 
-## Für spätere Pakete
+## For later packages
 
-* **Neue Einstellung, die zum Spielstand gehört:** Abschnitt in
-  `isProfileSection()` (AppConfig.cpp) eintragen und den Standardwert in
-  `profileDefaults()`. App-weite Einstellungen bleiben außerhalb der Liste.
-* **Taktiken pro Spielstand (umgesetzt in 2.1.0):** `core/TacticLibrary`
-  bearbeitet das Dokument `definitions_<version>`. Neben den Taktiken stehen
-  `edited_tactics` (vom Nutzer gespeichert, ein Update behält seine Fassung),
-  `deleted_tactics` (gelöscht oder umbenannt, ein Update holt sie nicht zurück)
-  und `custom_roles` (eigene oder importierte Rollen, überleben Updates).
-  Mitgelieferte Daten können eine Vorlage umbenennen (`renamed_tactics`
-  {alt: neu}); unveränderte Kopien werden dann umbenannt und Favoriten
-  (`favorite_tactic_1/2`, `national_fav_tactic_1/2`) sowie `bridges/<Taktik>`
-  ziehen mit (`TacticLibrary::renameTacticReferences`).
-* **Taktik-Austauschformat `.fmpatactic`:** JSON mit `format`
-  („fm-player-analyzer-tactic“), `format_version` (aktuell 1), `app_version`,
-  `fm_version`, `tactic` (`name`, `ip`/`oop` bzw. `lineup`, `layout`) und
-  `roles` (Name, Kategorie, Phase, Positionen, Key/Preferable jeder benutzten
-  Rolle). Beim Import fehlende Rollen werden aus der Datei angelegt; andere
-  FM-Version, neueres Format, kaputte Datei oder unbeschriebene Rollen werden
-  abgelehnt (`TacticLibrary::checkImport`). Neue Felder: `format_version`
-  hochzählen und ältere Dateien weiter lesen.
-* **Eigene Farbvorlagen (umgesetzt):** app-weit in
-  `<Datenordner>/color_templates.json` (`ColorTemplateStore`, atomar per
-  `QSaveFile` geschrieben, Installer und Updates fassen den Datenordner nicht
-  an). Jede Vorlage hält alle 14 Farben, einen Namen und optional eine Liga
-  (leer = „Custom“). Die Id `user:<uuid>` steht als `ThemeSettings/theme_preset`
-  im Profil. Anwenden setzt die Farben auf der Design-Seite, der
-  Speichern-Knopf schreibt sie über die `AppConfig::Transaction` ins Profil.
-  Löschen einer Vorlage lässt Spielstände, die sie nutzen, unverändert.
-* **Vereinskopf (umgesetzt):** `ClubHeaderBar` zeichnet den Block in den
-  Vereinsfarben; Farben und Kontrast kommen aus `clubHeaderPalette()`
-  (`core/ThemeColors`). Das Wappen holt der Kopf ausschließlich über
-  `AppContext::headerCrest()`. Weitere Quellen (z. B. der FM-Graphics-Ordner)
-  docken dort an, ohne den Kopf zu ändern.
-* **Formatänderungen:** `Profile/format` hochzählen und die Umstellung in
-  `AppConfig::attachProfile` ergänzen.
+* **New setting that belongs to the save:** add the section to
+  `isProfileSection()` (AppConfig.cpp) and the default to `profileDefaults()`.
+  App-wide settings stay outside the list.
+* **Tactics per save (done in 2.1.0):** `core/TacticLibrary` edits the
+  document `definitions_<version>`. Next to the tactics are `edited_tactics`
+  (saved by the user, an update keeps their version), `deleted_tactics`
+  (deleted or renamed, an update does not bring them back) and `custom_roles`
+  (own or imported roles, survive updates). Shipped data can rename a template
+  (`renamed_tactics` {old: new}); unchanged copies are then renamed, and
+  favourites (`favorite_tactic_1/2`, `national_fav_tactic_1/2`) as well as
+  `bridges/<tactic>` follow (`TacticLibrary::renameTacticReferences`).
+* **Tactic exchange format `.fmpatactic`:** JSON with `format`
+  ("fm-player-analyzer-tactic"), `format_version` (currently 1), `app_version`,
+  `fm_version`, `tactic` (`name`, `ip`/`oop` or `lineup`, `layout`) and `roles`
+  (name, category, phase, positions, key/preferable of every role used). Roles
+  missing on import are created from the file; another FM version, a newer
+  format, a broken file or undescribed roles are rejected
+  (`TacticLibrary::checkImport`). New fields: increase `format_version` and keep
+  reading older files.
+* **Own colour templates (done):** app-wide in
+  `<data folder>/color_templates.json` (`ColorTemplateStore`, written
+  atomically via `QSaveFile`; installer and updates do not touch the data
+  folder). Each template holds all 14 colours, a name and optionally a league
+  (empty = "Custom"). The id `user:<uuid>` is stored as
+  `ThemeSettings/theme_preset` in the profile. Applying sets the colours on the
+  appearance page; the save button writes them to the profile via the
+  `AppConfig::Transaction`. Deleting a template leaves saves that use it
+  unchanged.
+* **Club header (done):** `ClubHeaderBar` draws the block in the club colours;
+  colours and contrast come from `clubHeaderPalette()` (`core/ThemeColors`). The
+  header gets the crest exclusively via `AppContext::headerCrest()`. Further
+  sources (e.g. the FM graphics folder) plug in there without changing the
+  header.
+* **Format changes:** increase `Profile/format` and add the migration to
+  `AppConfig::attachProfile`.
