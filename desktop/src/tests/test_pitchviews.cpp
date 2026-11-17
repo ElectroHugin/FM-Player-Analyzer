@@ -145,6 +145,7 @@ private slots:
         back.ipRating = 70;
         back.oopRating = 60;
         back.value = 65;
+        back.oopOffPosition = true; // drawn hatched, no other effect here
         TacticPitchWidget::CombinedCard keeper = back;
         keeper.uid = QStringLiteral("keeper");
         keeper.ipSlot = keeper.oopSlot = QStringLiteral("GK");
@@ -165,17 +166,17 @@ private slots:
         QCOMPARE(menu.count(), 1);
         QCOMPARE(menu.takeFirst().at(0).toString(), QStringLiteral("back"));
 
-        // The striker place is free in both line-ups: two markers of their
-        // own, keyed by phase, at the striker slot (no guessed pairing).
-        // Both sit on the same spot and are spread sideways: click left of it.
+        // The striker place is free in both line-ups: one marker, keyed by
+        // the line-up with the ball, covers the slot on both sides.
         const QPointF stAnchor =
             slotAnchors(QStringLiteral("fm24"), ipLayout).value(QStringLiteral("STC"));
-        const QPoint st = onField(pitch, stAnchor - QPointF(0.06, 0), 8).toPoint();
-        QContextMenuEvent onFree(QContextMenuEvent::Mouse, st, pitch.mapToGlobal(st));
-        QApplication::sendEvent(&pitch, &onFree);
-        QCOMPARE(empty.count(), 1);
-        const QString key = empty.takeFirst().at(0).toString();
-        QCOMPARE(key, QStringLiteral("ip:STC")); // with ball first, so on the left
+        for (const double dx : {-0.06, 0.06}) {
+            const QPoint st = onField(pitch, stAnchor + QPointF(dx, 0), 8).toPoint();
+            QContextMenuEvent onFree(QContextMenuEvent::Mouse, st, pitch.mapToGlobal(st));
+            QApplication::sendEvent(&pitch, &onFree);
+            QCOMPARE(empty.count(), 1);
+            QCOMPARE(empty.takeFirst().at(0).toString(), QStringLiteral("ip:STC"));
+        }
     }
 
     void overviewMarkersRouteClicks()

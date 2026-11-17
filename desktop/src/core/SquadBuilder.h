@@ -7,12 +7,14 @@
 #include <QString>
 #include <QStringList>
 
+#include <memory>
 #include <vector>
 
 namespace fm {
 
 class AppConfig;
 class Definitions;
+class RatingSnapshot;
 
 // Normalized DWRS per role per player uid (numeric 0-100), the C++ mirror of
 // legacy master_role_ratings.
@@ -32,6 +34,9 @@ struct XiCell {
     QString name = QStringLiteral("-");
     double rating = 0.0; // whole percent (legacy truncates to int for display)
     QString apt;
+    // FM27 two-phase line-ups: the player lacks the position of this slot
+    // and plays it as a stand-in (rated with the off-position factor).
+    bool offPosition = false;
     bool isFilled() const { return !playerUid.isEmpty(); }
 };
 
@@ -141,6 +146,13 @@ public:
     // Rebuild cached config values after settings change.
     void reloadConfig();
 
+    // Rates roles a player has not been assigned (FM27 stand-ins on a slot
+    // outside his positions). Without a snapshot such slots stay closed.
+    void setRatingSnapshot(std::shared_ptr<const RatingSnapshot> snapshot)
+    {
+        m_ratingSnapshot = std::move(snapshot);
+    }
+
     // Starting XI and B-team for a tactic, chosen together so that — strictly
     // in this order — the most XI slots are filled, the XI total score is
     // maximal, then the most B-team slots are filled and the B-team total is
@@ -158,8 +170,11 @@ public:
     // slot so that — strictly in this order — the most players are placed and
     // the summed value is maximal; value = ipShare * score(ip role) +
     // (1 - ipShare) * score(oop role), score = DWRS x playing-time weight x
-    // natural-position bonus. A player needs the position for both slots.
-    // Exact (minimum-cost flow). The B-team is then chosen the same way from
+    // natural-position bonus. A slot without the player's position is
+    // allowed as a stand-in: the score is multiplied by the off-position
+    // factor (AppConfig::offPositionFactor) and the rating comes from the
+    // rating snapshot when the role is not assigned. Goalkeeper slots stay
+    // strict both ways. Exact (minimum-cost flow). The B-team is then chosen the same way from
     // the remaining players. For each selected team, refine its assignment
     // within bridgeTolerance (raw and weighted totals): manual central sides
     // first, then minimum total distance between phases. The roster is fixed.
@@ -240,7 +255,9 @@ private:
     int m_outfielderCap = 20;
     int m_goalkeeperCap = 25;
     double m_naturalPosMultiplier = 1.0;
+    double m_offPositionFactor = 0.0;
     QHash<QString, double> m_aptWeights; // display name -> weight
+    std::shared_ptr<const RatingSnapshot> m_ratingSnapshot;
 };
 
 } // namespace fm

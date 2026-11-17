@@ -4,6 +4,7 @@
 #include "Assignment.h"
 #include "BridgeAssignment.h"
 #include "PitchGeometry.h"
+#include "RatingSnapshot.h"
 #include "MinCostFlow.h"
 #include "Constants.h"
 #include "Definitions.h"
@@ -77,6 +78,7 @@ void SquadBuilder::reloadConfig()
     m_outfielderCap = m_config.ageThreshold(QStringLiteral("outfielder"));
     m_goalkeeperCap = m_config.ageThreshold(QStringLiteral("goalkeeper"));
     m_naturalPosMultiplier = m_config.selectionBonus(QStringLiteral("natural_position"));
+    m_offPositionFactor = m_config.offPositionFactor();
 
     m_aptWeights.clear();
     for (const QString &apt : fieldPlayerAptOptions())
@@ -643,6 +645,7 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
         double rating = 0.0; // DWRS of the slot's role
         double score = 0.0;  // rating x playing-time weight x natural bonus
         QString apt;
+        bool offPosition = false; // stand-in without the slot's position
     };
     // Game positions per slot, built once per call (not per player).
     QHash<QString, QStringList> allowedBySlot;
@@ -654,31 +657,61 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
                                                : slotToGamePositions.value(slot));
         }
     }
+    // Ratings of roles the player has not been assigned, once per call.
+    QHash<QPair<QString, QString>, double> computed;
+    const auto ratingOf = [&](const Player &player, const QString &role) {
+        const double stored = ratings.value(role).value(player.uid, 0.0);
+        if (stored > 0.0 || !m_ratingSnapshot)
+            return stored;
+        const QPair<QString, QString> key{player.uid, role};
+        const auto it = computed.constFind(key);
+        if (it != computed.cend())
+            return it.value();
+        double value = 0.0;
+        if (m_ratingSnapshot->hasRole(role)) {
+            const CurveScore score = m_ratingSnapshot->evaluate(player, role);
+            if (score.normalized)
+                value = *score.normalized;
+        }
+        computed.insert(key, value);
+        return value;
+    };
     // Score of `player` in `slot` (role from `lineUp`), or nothing if ineligible.
+    // A slot outside the player's positions is a stand-in: the off-position
+    // factor lowers its score (0 = closed). Goalkeepers stay in goal and
+    // nobody else goes there.
     const auto option = [&](const Player &player, const QString &slot,
                             const QHash<QString, QString> &lineUp,
                             const QString &phase) -> std::optional<Option> {
         const QSet<QString> &own = parsedPositions[player.uid];
         const QStringList &allowed = allowedBySlot[slot];
-        if (std::none_of(allowed.cbegin(), allowed.cend(),
-                         [&](const QString &position) { return own.contains(position); }))
-            return std::nullopt;
+        const bool fits = std::any_of(allowed.cbegin(), allowed.cend(),
+                                      [&](const QString &position) { return own.contains(position); });
+        if (!fits) {
+            const bool goalkeeper = slot == QLatin1String("GK")
+                                    || own.contains(QStringLiteral("GK")) || own.isEmpty();
+            if (goalkeeper || m_offPositionFactor <= 0.0)
+                return std::nullopt;
+        }
         const QString role = lineUp.value(slot);
         if (pinnedOut(player, role, phase))
             return std::nullopt;
-        const double rating = ratings.value(role).value(player.uid, 0.0);
+        const double rating = ratingOf(player, role);
         if (rating <= 0.0)
             return std::nullopt;
         Option o;
         o.rating = rating;
+        o.offPosition = !fits;
         o.apt = player.agreedPlayingTime.isEmpty() ? QStringLiteral("None")
                                                    : player.agreedPlayingTime;
         const double aptWeight = applyAptWeight ? m_aptWeights.value(o.apt, 1.0) : 1.0;
-        double naturalBonus = 1.0;
-        for (const QString &np : player.effectiveNaturalPositions()) {
-            if (allowed.contains(np)) {
-                naturalBonus = m_naturalPosMultiplier;
-                break;
+        double naturalBonus = fits ? 1.0 : m_offPositionFactor;
+        if (fits) {
+            for (const QString &np : player.effectiveNaturalPositions()) {
+                if (allowed.contains(np)) {
+                    naturalBonus = m_naturalPosMultiplier;
+                    break;
+                }
             }
         }
         o.score = rating * aptWeight * naturalBonus;
@@ -889,13 +922,18 @@ TwoPhaseSquadResult SquadBuilder::calculateTwoPhaseSquad(const std::vector<const
                 c.name = player.name;
                 c.rating = std::trunc(o.rating);
                 c.apt = o.apt;
+                c.offPosition = o.offPosition;
                 return c;
             };
             ipTeam.insert(ipSlots[ipK], cell(ipO));
             oopTeam.insert(oopSlots[oopJ], cell(oopO));
             result.slotsOfUid.insert(player.uid, {ipSlots[ipK], oopSlots[oopJ]});
+            // A stand-in counts with the off-position factor.
+            const auto shown = [&](const Option &o) {
+                return o.offPosition ? o.rating * m_offPositionFactor : o.rating;
+            };
             result.valueOfUid.insert(player.uid,
-                                     ipShare * ipO.rating + (1.0 - ipShare) * oopO.rating);
+                                     ipShare * shown(ipO) + (1.0 - ipShare) * shown(oopO));
             taken.insert(player.uid);
         }
         for (const QString &slot : ipSlots) {
