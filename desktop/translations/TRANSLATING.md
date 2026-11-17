@@ -90,9 +90,23 @@ file filters and plural forms. The other rules are up to you:
 
 ## Terms
 
-Use the words of Football Manager in your language. For roles, positions,
-attributes and duties, take the names from the game itself so players
-recognise them. Keep these as they are:
+**Game terms are fixed, not free to translate.** Whatever the game itself
+shows (attributes, roles, positions, personalities, foot strength, playing
+time, media handling, column headers) must be written exactly as Football
+Manager writes it in your language, letter for letter. Players compare the
+app with the game, so a synonym, even a good one, is a mistake here.
+
+The official terms are in
+[`desktop/data/fm27/glossary-fm27.csv`](../data/fm27/glossary-fm27.csv):
+one row per term, with the English text and the game's own text in German,
+French, Italian, Simplified Chinese and Russian. They were read from the game
+(FM27), not translated by hand. Use them as they are. For a language that is
+not in the glossary yet, take the terms from the game in that language; if
+you are unsure about one, say so in your issue or pull request rather than
+guessing.
+
+Everything else (buttons, hints, explanations) is yours to translate freely,
+in a short and friendly tone. Keep these as they are:
 
 | Term | Meaning |
 | --- | --- |
@@ -121,6 +135,8 @@ AI tools translate the JSON well if you give them the context. Tips:
   it to fill in only `translation` / `translation_plural`.
 - Work in batches of a few hundred entries and keep the same chat, so the
   terms stay consistent. Ask it to keep a short glossary of the terms it chose.
+- Give it the glossary too (`desktop/data/fm27/glossary-fm27.csv`) and tell
+  it that game terms must be copied from there exactly.
 - Point it to the term table above: "save", "weights" and "crest" are
   frequent mistakes. `context` (the screen a text belongs to) helps with
   short labels.
@@ -137,8 +153,9 @@ A prompt you can start from:
 > the English `source` text into &lt;language&gt;, using `context` (the screen
 > it belongs to) for meaning. Write the result into
 > `translation` (or one text per plural form into `translation_plural`). Use
-> the official Football Manager terms in &lt;language&gt; for roles,
-> positions and attributes. Follow the rules in TRANSLATING.md exactly:
+> the official Football Manager terms in &lt;language&gt; exactly as they
+> appear in the attached glossary-fm27.csv for roles, positions, attributes
+> and every other game term; never translate those freely. Follow the rules in TRANSLATING.md exactly:
 > keep placeholders (%1, %n), HTML tags, `&` shortcuts and file filters, and
 > keep the listed names untranslated. Keep the tone short and friendly, like
 > the English text. Return the complete JSON, changing nothing but the
