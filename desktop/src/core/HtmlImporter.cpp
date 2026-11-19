@@ -878,16 +878,19 @@ ImportResult HtmlImporter::importFile(const QString &filePath, Database &db,
                                       const QString &fmVersionId,
                                       const std::function<void(int, int)> &parseProgress,
                                       std::vector<Player> *updatedPlayers,
-                                      const QDate &gameDate)
+                                      const QDate &gameDate, const QString &gameLanguage)
 {
     ImportTable table;
     ImportError readError;
-    if (!readImportTable(filePath, fmVersionId, &table, &readError, parseProgress))
+    if (!readImportTable(filePath, fmVersionId, &table, &readError, parseProgress, gameLanguage))
         return failedImport(readError);
     if (!table.gameDate.isValid())
         table.gameDate = gameDate;
-    return importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers,
-                       QFileInfo(filePath).fileName(), importFormatForFile(filePath));
+    ImportResult result = importTable(table, db, existingPlayers, progress, fmVersionId, updatedPlayers,
+                                      QFileInfo(filePath).fileName(), importFormatForFile(filePath));
+    result.gameLanguage = table.gameLanguage;
+    result.detectedGameLanguage = table.detectedGameLanguage;
+    return result;
 }
 
 QString HtmlImporter::forceUpdateSinglePlayer(const QString &html, Database &db,

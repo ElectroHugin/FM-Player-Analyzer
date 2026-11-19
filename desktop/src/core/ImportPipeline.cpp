@@ -25,6 +25,7 @@ ImportPipelineResult runWith(const Request &request, const Definitions &definiti
             stage(s, done, total);
     };
     ImportPipelineResult result;
+    result.configuredGameLanguage = request.gameLanguage;
 
     if (!request.backupsDir.isEmpty()) {
         report(Stage::Backup, 0, 0);
@@ -47,7 +48,8 @@ ImportPipelineResult runWith(const Request &request, const Definitions &definiti
         request.filePath, db, players,
         [&report](int done, int total) { report(Stage::Import, done, total); },
         request.fmVersionId,
-        [&report](int done, int total) { report(Stage::Parse, done, total); }, &players);
+        [&report](int done, int total) { report(Stage::Parse, done, total); }, &players, {},
+        request.gameLanguage);
     if (!result.import.success)
         return result;
 

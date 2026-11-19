@@ -27,6 +27,11 @@ struct ImportTable {
     // (FM27 save). The game may rename clubs between saves (e.g. after a data
     // update); the import follows the own and the second team by this id.
     QHash<QString, quint32> clubIdByName;
+    // Game language of an export (see GameLanguage): the one the file was read
+    // in, and the one its column headers showed (empty = they did not tell).
+    // The table itself is already in English.
+    QString gameLanguage;
+    QString detectedGameLanguage;
 };
 
 // Why reading or importing an export failed. The core keeps an English
@@ -57,9 +62,12 @@ struct ImportError {
 // (".csv" -> CsvReader, ".fm" -> FM27 save via Fm27SaveImport, anything else
 // -> HTML). Fails with UnsupportedFormat if
 // the FM version's profile does not list that format. progress(done, total)
-// is forwarded to the HTML parser.
+// is forwarded to the HTML parser. gameLanguage: the save's game-language
+// setting ("auto", empty or a code from GameLanguage::codes()); an HTML or
+// CSV export in another game language is turned into English.
 bool readImportTable(const QString &filePath, const QString &fmVersionId, ImportTable *out,
-                     ImportError *error, const std::function<void(int, int)> &progress = {});
+                     ImportError *error, const std::function<void(int, int)> &progress = {},
+                     const QString &gameLanguage = QString());
 
 // Export format of a file by extension: "csv", "fm" (save game) or "html".
 QString importFormatForFile(const QString &filePath);

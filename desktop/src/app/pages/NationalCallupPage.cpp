@@ -333,7 +333,8 @@ void NationalCallupPage::uploadSquad()
 
     ImportTable table;
     ImportError error;
-    if (!readImportTable(path, m_context.fmVersionId(), &table, &error)) {
+    if (!readImportTable(path, m_context.fmVersionId(), &table, &error, {},
+                         m_context.gameLanguage())) {
         QMessageBox::critical(this, tr("Call-up"),
                               tr("Squad file could not be read: %1")
                                   .arg(importErrorText(error)));

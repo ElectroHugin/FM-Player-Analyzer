@@ -5,6 +5,7 @@
 #include "../widgets/RatingProfileEditor.h"
 #include "core/DwrsDisplay.h"
 #include "../RatingProfileDefaults.h"
+#include "core/GameLanguage.h"
 #include "core/ImportHistory.h"
 
 #include "../AppContext.h"
@@ -582,6 +583,18 @@ QWidget *SettingsPage::buildImportPage()
     addHint(form, tr("Start folder of the file dialog when uploading HTML and CSV exports. Empty = "
                      "automatic: the game folder of the Football Manager version under 'Sports "
                      "Interactive' in the current user's Documents folder (if it exists)."));
+
+    m_gameLanguageCombo = sized(new QComboBox, kFieldWidth);
+    m_gameLanguageCombo->addItem(tr("Automatic (from the column headers)"),
+                                 QString::fromLatin1(GameLanguage::kAuto));
+    for (const QString &code : GameLanguage::codes())
+        m_gameLanguageCombo->addItem(GameLanguage::nativeName(code), code);
+    addRow(form, tr("Game language"), m_gameLanguageCombo);
+    addHint(form, tr("The language Football Manager runs in. The game writes column headers and "
+                     "values such as positions or foot strength in this language. It can differ "
+                     "from the language of the analyzer. Automatic recognises the language by the "
+                     "column headers; if the headers don't tell, English is assumed. Saves (.fm) "
+                     "don't depend on the language."));
 
     // The effective folder right now: the (possibly unsaved) edit content when
     // it points to an existing folder, otherwise the automatic default.
@@ -1926,6 +1939,10 @@ void SettingsPage::refresh()
     m_graphicsBody->setVisible(config.graphicsEnabled());
     m_attributeMaskingCheck->setChecked(config.attributeMasking());
     {
+        const int index = m_gameLanguageCombo->findData(config.gameLanguage());
+        m_gameLanguageCombo->setCurrentIndex(index < 0 ? 0 : index);
+    }
+    {
         const ImportHistory::SeasonStart start = ImportHistory::seasonStartOf(m_context.database());
         m_seasonStartEdit->setDate(QDate(2001, start.month, start.day));
     }
@@ -2161,6 +2178,7 @@ void SettingsPage::saveAll()
     config.setHtmlExportDir(m_importDirEdit->text().trimmed());
     config.setGraphicsEnabled(m_graphicsCheck->isChecked());
     config.setAttributeMasking(m_attributeMaskingCheck->isChecked());
+    config.setGameLanguage(m_gameLanguageCombo->currentData().toString());
     {
         // A different save (or masking switched) is read in afresh.
         const QString livePath = QDir::fromNativeSeparators(m_liveSaveEdit->text().trimmed());

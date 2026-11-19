@@ -12,8 +12,11 @@ Added for 2.3.1-test.2:
 
 - Chinese translation reviewed: football terms as in the Chinese version of the game (e.g. in/out of possession, attributes), clearer explanations.
 
-Added for the next test build:
+Next:
 
+- New interface languages: French, Italian, Spanish and Russian. Choose them in the Language menu. Made with an AI tool and not yet reviewed by native speakers; corrections are welcome as a Translation issue.
+- Game terms (attributes, positions, foot strength, personalities, playing time and more) now follow the official texts of each language version of the game, also in German and Chinese.
+- HTML/CSV exports are read in every supported game language (English, German, French, Italian, Simplified Chinese, Russian). The language is recognised from the column headers; it can also be set under Settings → Import.
 - Optional update check, off by default: the app asks once whether it may look for new versions at startup. It only asks GitHub for the latest version number and sends no data about you or your saves.
 - A new version shows as a hint with its changes and a download button that opens the release page. Nothing is installed automatically; a version can be skipped.
 - Settings → Saves → Updates: switch the check on or off, include test versions, or check now.

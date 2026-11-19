@@ -156,6 +156,7 @@ private:
     QComboBox *m_fmVersionCombo = nullptr;
     QLabel *m_weightsVersionLabel = nullptr;
     QLineEdit *m_importDirEdit = nullptr; // app-wide (config.ini), not per save
+    QComboBox *m_gameLanguageCombo = nullptr; // per save: language of HTML/CSV exports
     QComboBox *m_userClubCombo = nullptr;
     QComboBox *m_secondClubCombo = nullptr;
     QLineEdit *m_clubCountryEdit = nullptr;

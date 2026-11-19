@@ -2,6 +2,7 @@
 
 #include "core/RatingsUpdater.h"
 #include "core/Fm27SaveImport.h"
+#include "core/GameLanguage.h"
 
 #include "AppContext.h"
 #include "widgets/BusyProgressDialog.h"
@@ -40,6 +41,7 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
     request.backupsDir = context.paths().backupsDir();
     request.autoAssign = autoAssign;
     request.fmVersionId = context.fmVersionId();
+    request.gameLanguage = context.gameLanguage();
     // A save game (.fm) is filtered on the worker by the save's masking option.
     Fm27SaveImport::setAttributeMasking(context.config().attributeMasking());
     const Definitions *definitions = &context.definitions();
@@ -155,6 +157,10 @@ QStringList importSummaryLines(const ImportPipelineResult &result)
         summary << ImportText::tr("DWRS: %1 ratings calculated, %2 changed entries saved.")
                        .arg(result.recalc.computed)
                        .arg(result.recalc.inserted);
+    if (!result.import.gameLanguage.isEmpty()
+        && result.import.gameLanguage != QLatin1String("en"))
+        summary << ImportText::tr("Export read in the game language %1.")
+                       .arg(GameLanguage::nativeName(result.import.gameLanguage));
     if (result.import.gameDate.isValid())
         summary << ImportText::tr("In-game date %1: history recorded for %2 players.")
                        .arg(QLocale().toString(result.import.gameDate, QLocale::ShortFormat))
@@ -179,6 +185,15 @@ QStringList importWarningLines(const ImportPipelineResult &result)
                              "used: %1")
                         .arg(result.import.duplicateUidNames.mid(0, 10)
                                  .join(QStringLiteral(", ")));
+    const QString configured = result.configuredGameLanguage;
+    const QString detected = result.import.detectedGameLanguage;
+    if (!detected.isEmpty() && !configured.isEmpty()
+        && configured != QLatin1String(GameLanguage::kAuto) && configured != detected)
+        warnings << ImportText::tr("The column headers are in %1, but the game language of this "
+                                   "save is set to %2. The export was read as %1. Set the game "
+                                   "language to %1 or to Automatic in Settings → Import.")
+                        .arg(GameLanguage::nativeName(detected),
+                             GameLanguage::nativeName(configured));
     if (!result.import.unknownColumns.isEmpty())
         warnings << ImportText::tr("Unknown columns (ignored): %1")
                         .arg(result.import.unknownColumns.join(QStringLiteral(", ")));
