@@ -4,12 +4,12 @@
 
 #define MyAppName "FM Player Analyzer"
 #ifndef MyAppVersion
-  #define MyAppVersion "2.3.1-test.2"
+  #define MyAppVersion "2.3.2-test.1"
 #endif
 ; Windows version fields take numbers only: a test build "X.Y.Z-test.N"
 ; becomes X.Y.Z.N, a release X.Y.Z stays X.Y.Z.
 #ifndef MyAppNumericVersion
-  #define MyAppNumericVersion "2.3.1.2"
+  #define MyAppNumericVersion "2.3.2.1"
 #endif
 #define MyAppExeName "fmplayeranalyzer.exe"
 

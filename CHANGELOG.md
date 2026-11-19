@@ -12,6 +12,10 @@ Added for 2.3.1-test.2:
 
 - Chinese translation reviewed: football terms as in the Chinese version of the game (e.g. in/out of possession, attributes), clearer explanations.
 
+## 2.3.1 – 2026-11-20
+
+- FM27 saves from game version 27.1 can be read again (the club table moved with the patch). Saves from 27.0 work as before.
+
 ## 2.3.0 – 2026-11-15
 
 **DWRS rating profiles**
