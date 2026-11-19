@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <iterator>
 #include <optional>
 #include <vector>
 
@@ -43,7 +44,8 @@ constexpr quint32 kMaxNameBytes = 255;
 constexpr qint64 kStopGapBytes = 64 * 1024;
 constexpr int kRecordHeaderBytes = kLongNameOffset + 4;
 
-// Counted club table (fmsave ClubTableLayout, FM27 27.0.0).
+// Counted club table (fmsave ClubTableLayout, FM27 27.0.0; 27.1.0 adds five
+// bytes to the last block of a club's full finance record).
 constexpr int kTableHeaderBytes = 5;
 constexpr quint32 kTableCountMax = 200000;
 constexpr uint8_t kOrdinaryVariant = 0;
@@ -59,12 +61,30 @@ struct Step {
     int entryBytes;
 };
 const Step kAfterNames[] = {{0, 8}, {1, 4}};
-const Step kFullFinance[] = {{0, 66},
-                             {0, 235}, {1, 8}, {1, 8},
-                             {0, 235}, {1, 8}, {1, 8},
-                             {0, 235}, {1, 8}, {1, 8},
-                             {0, 235}, {1, 8}, {1, 8},
-                             {0, 67}, {1, 230}, {4, 49}, {0, 71}, {1, 19}, {0, 67}};
+const Step kFullFinance27_0[] = {{0, 66},
+                                 {0, 235}, {1, 8}, {1, 8},
+                                 {0, 235}, {1, 8}, {1, 8},
+                                 {0, 235}, {1, 8}, {1, 8},
+                                 {0, 235}, {1, 8}, {1, 8},
+                                 {0, 67}, {1, 230}, {4, 49}, {0, 71}, {1, 19}, {0, 67}};
+const Step kFullFinance27_1[] = {{0, 66},
+                                 {0, 235}, {1, 8}, {1, 8},
+                                 {0, 235}, {1, 8}, {1, 8},
+                                 {0, 235}, {1, 8}, {1, 8},
+                                 {0, 235}, {1, 8}, {1, 8},
+                                 {0, 67}, {1, 230}, {4, 49}, {0, 71}, {1, 19}, {0, 72}};
+
+// The club table layouts of the known builds. The reader tries them in turn;
+// a wrong one fails the per-row ordinal and Unique ID checks long before it
+// could frame the whole table.
+struct TableLayout {
+    const Step *fullFinance;
+    size_t fullFinanceSteps;
+};
+const TableLayout kTableLayouts[] = {
+    {kFullFinance27_0, std::size(kFullFinance27_0)},
+    {kFullFinance27_1, std::size(kFullFinance27_1)},
+};
 const Step kAfterFinance[] = {{1, 25}, {1, 12}, {0, 9}, {1, 4}, {1, 4},
                               {2, 4}, {2, 4}, {2, 4}, {1, 16}, {2, 28}};
 
@@ -79,28 +99,34 @@ constexpr int kTeamCountMax = 8;
 constexpr quint32 kTeamIdMax = 3000000;
 constexpr int kAffiliateCountMax = 8;
 
-template <size_t N>
-std::optional<qint64> walkSteps(const QByteArray &d, qint64 position, const Step (&steps)[N])
+std::optional<qint64> walkSteps(const QByteArray &d, qint64 position, const Step *steps, size_t count)
 {
     const qint64 n = d.size();
-    for (const Step &step : steps) {
-        quint64 count = 1;
+    for (size_t i = 0; i < count; ++i) {
+        const Step &step = steps[i];
+        quint64 entries = 1;
         if (step.countBytes) {
             if (position + step.countBytes > n)
                 return std::nullopt;
             const char *p = d.constData() + position;
-            count = step.countBytes == 1 ? quint64(uint8_t(*p))
-                    : step.countBytes == 2 ? quint64(u16(p))
-                                           : quint64(u32(p));
+            entries = step.countBytes == 1 ? quint64(uint8_t(*p))
+                      : step.countBytes == 2 ? quint64(u16(p))
+                                             : quint64(u32(p));
             position += step.countBytes;
-            if (count > kMaxEntries)
+            if (entries > kMaxEntries)
                 return std::nullopt;
         }
-        position += qint64(count) * step.entryBytes;
+        position += qint64(entries) * step.entryBytes;
         if (position > n)
             return std::nullopt;
     }
     return position;
+}
+
+template <size_t N>
+std::optional<qint64> walkSteps(const QByteArray &d, qint64 position, const Step (&steps)[N])
+{
+    return walkSteps(d, position, steps, N);
 }
 
 struct TableRow {
@@ -110,7 +136,7 @@ struct TableRow {
     qint64 teamCountsStart;
 };
 
-std::optional<TableRow> clubTableRecord(const QByteArray &d, qint64 body)
+std::optional<TableRow> clubTableRecord(const QByteArray &d, qint64 body, const TableLayout &layout)
 {
     const qint64 n = d.size();
     if (body < 0 || body >= n)
@@ -138,7 +164,7 @@ std::optional<TableRow> clubTableRecord(const QByteArray &d, qint64 body)
     if (finance == 0) {
         cursor += kBaseFinanceBytes;
     } else if (finance == 1) {
-        next = walkSteps(d, cursor, kFullFinance);
+        next = walkSteps(d, cursor, layout.fullFinance, layout.fullFinanceSteps);
         if (!next)
             return std::nullopt;
         cursor = *next;
@@ -154,7 +180,8 @@ std::optional<TableRow> clubTableRecord(const QByteArray &d, qint64 body)
     return TableRow{body, *next, u32(d.constData() + *next + 4), teamCountsStart};
 }
 
-std::optional<std::vector<TableRow>> walkClubTable(const QByteArray &d, qint64 header)
+std::optional<std::vector<TableRow>> walkClubTable(const QByteArray &d, qint64 header,
+                                                   const TableLayout &layout)
 {
     if (header < 0 || header + kTableHeaderBytes > d.size())
         return std::nullopt;
@@ -166,7 +193,7 @@ std::optional<std::vector<TableRow>> walkClubTable(const QByteArray &d, qint64 h
     rows.reserve(count);
     QSet<quint32> seen;
     for (quint32 ordinal = 0; ordinal < count; ++ordinal) {
-        const auto row = clubTableRecord(d, cursor);
+        const auto row = clubTableRecord(d, cursor, layout);
         if (!row)
             return std::nullopt;
         const quint32 stored = u32(d.constData() + row->footerStart);
@@ -349,42 +376,51 @@ bool readClubTeams(const QByteArray &d, ClubTeams *out, QString *error)
     const qint64 prefixEnd = scanned.empty() ? d.size()
                                              : scanned.front().start + kAnchorOffset + kAnchor.size();
     const int anchorDistance = kAnchorOffset - kZeroByteOffset;
-    QSet<qint64> headers;
-    qsizetype hit = d.indexOf(kAnchor, 0);
-    while (hit >= 0 && hit + kAnchor.size() <= prefixEnd) {
-        for (int extra : {0, kExtendedPrefixBytes}) {
-            const qint64 body = hit - anchorDistance - extra;
-            const qint64 head = body - kTableHeaderBytes;
-            if (head < 0 || d[head + 4] != 0)
-                continue;
-            const uint8_t variant = extra ? kExtendedVariant : kOrdinaryVariant;
-            if (uint8_t(d[body]) != variant)
-                continue;
-            const auto row = clubTableRecord(d, body);
-            if (!row)
-                continue;
-            const quint32 count = u32(d.constData() + head);
-            const bool plausible = count >= 1 && count <= kTableCountMax;
-            const bool closesAtFirst = !scanned.empty() && row->footerStart == scanned.front().start;
-            if ((plausible || closesAtFirst) && row->uniqueId != 0 && row->uniqueId != kMissing)
-                headers.insert(head);
+    const auto findTables = [&](const TableLayout &layout) {
+        QSet<qint64> headers;
+        qsizetype hit = d.indexOf(kAnchor, 0);
+        while (hit >= 0 && hit + kAnchor.size() <= prefixEnd) {
+            for (int extra : {0, kExtendedPrefixBytes}) {
+                const qint64 body = hit - anchorDistance - extra;
+                const qint64 head = body - kTableHeaderBytes;
+                if (head < 0 || d[head + 4] != 0)
+                    continue;
+                const uint8_t variant = extra ? kExtendedVariant : kOrdinaryVariant;
+                if (uint8_t(d[body]) != variant)
+                    continue;
+                const auto row = clubTableRecord(d, body, layout);
+                if (!row)
+                    continue;
+                const quint32 count = u32(d.constData() + head);
+                const bool plausible = count >= 1 && count <= kTableCountMax;
+                const bool closesAtFirst = !scanned.empty() && row->footerStart == scanned.front().start;
+                if ((plausible || closesAtFirst) && row->uniqueId != 0 && row->uniqueId != kMissing)
+                    headers.insert(head);
+            }
+            hit = d.indexOf(kAnchor, hit + 1);
         }
-        hit = d.indexOf(kAnchor, hit + 1);
-    }
-    QList<qint64> sortedHeaders(headers.cbegin(), headers.cend());
-    std::sort(sortedHeaders.begin(), sortedHeaders.end());
+        QList<qint64> sortedHeaders(headers.cbegin(), headers.cend());
+        std::sort(sortedHeaders.begin(), sortedHeaders.end());
+        std::vector<std::vector<TableRow>> tables;
+        for (qint64 head : sortedHeaders) {
+            auto rows = walkClubTable(d, head, layout);
+            if (!rows)
+                continue;
+            const qint64 tableEnd = rows->back().footerStart + 12;
+            const qint64 first = rows->front().bodyStart;
+            if (std::all_of(scanned.begin(), scanned.end(), [&](const Record &r) {
+                    const qint64 zero = r.start + kZeroByteOffset;
+                    return first <= zero && zero < tableEnd;
+                }))
+                tables.push_back(std::move(*rows));
+        }
+        return tables;
+    };
     std::vector<std::vector<TableRow>> tables;
-    for (qint64 head : sortedHeaders) {
-        auto rows = walkClubTable(d, head);
-        if (!rows)
-            continue;
-        const qint64 tableEnd = rows->back().footerStart + 12;
-        const qint64 first = rows->front().bodyStart;
-        if (std::all_of(scanned.begin(), scanned.end(), [&](const Record &r) {
-                const qint64 zero = r.start + kZeroByteOffset;
-                return first <= zero && zero < tableEnd;
-            }))
-            tables.push_back(std::move(*rows));
+    for (const TableLayout &layout : kTableLayouts) {
+        tables = findTables(layout);
+        if (tables.size() == 1)
+            break;
     }
     if (tables.size() != 1)
         return fail(QStringLiteral("the club table was not found or is ambiguous"));
