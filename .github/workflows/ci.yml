@@ -35,6 +35,11 @@ jobs:
           python -m pip install --disable-pip-version-check ninja
           ninja --version
 
+      # Catches translations that would break the app (placeholders, HTML
+      # tags, file dialog filters, plural forms).
+      - name: Check translations
+        run: python desktop/translations/translate.py check
+
       - name: Configure
         run: cmake -S desktop -B build -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$env:QT_ROOT_DIR"
 

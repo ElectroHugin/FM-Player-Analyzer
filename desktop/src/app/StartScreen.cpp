@@ -186,9 +186,7 @@ QWidget *StartScreen::buildHero()
     auto *languageMenu = new QMenu(language);
     auto *group = new QActionGroup(languageMenu);
     const QString current = m_context.paths().language();
-    for (const auto &[code, label] :
-         {std::pair{QStringLiteral("en"), QStringLiteral("English")},
-          std::pair{QStringLiteral("de"), QStringLiteral("Deutsch")}}) {
+    for (const auto &[code, label] : AppPaths::uiLanguages()) {
         auto *action = languageMenu->addAction(label);
         action->setCheckable(true);
         const bool active =

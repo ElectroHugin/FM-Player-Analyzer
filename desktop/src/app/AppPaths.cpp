@@ -9,6 +9,7 @@
 #include <QJsonObject>
 
 #include <QDir>
+#include <QLocale>
 #include <QFile>
 #include <QStandardPaths>
 
@@ -163,6 +164,30 @@ void AppPaths::setLanguage(const QString &language)
 {
     m_settings->setValue(QStringLiteral("language"), language);
     m_settings->sync();
+}
+
+QList<AppPaths::UiLanguage> AppPaths::uiLanguages()
+{
+    QList<UiLanguage> languages{
+        {QStringLiteral("en"), QStringLiteral("English")},
+        {QStringLiteral("de"), QStringLiteral("Deutsch")},
+    };
+    // Every other bundled translation (:/i18n/fmplayeranalyzer_<code>.qm),
+    // labelled with its own name for the language.
+    const QString prefix = QStringLiteral("fmplayeranalyzer_");
+    const QStringList files = QDir(QStringLiteral(":/i18n"))
+                                  .entryList({prefix + QStringLiteral("*.qm")}, QDir::Files, QDir::Name);
+    for (const QString &file : files) {
+        const QString code = file.mid(prefix.size()).chopped(3);
+        if (code == QLatin1String("en") || code == QLatin1String("de"))
+            continue;
+        QString label = QLocale(code).nativeLanguageName();
+        if (label.isEmpty())
+            label = code;
+        label[0] = label[0].toUpper();
+        languages.append({code, label});
+    }
+    return languages;
 }
 
 } // namespace fm

@@ -146,23 +146,33 @@ target_link_libraries(fmplayeranalyzer PRIVATE
 
 # --- Translations -----------------------------------------------------------
 # The source strings are German; English is shipped as a compiled .qm loaded by
-# default (German = source fallback, no translator). lrelease compiles the
-# hand-maintained .ts at build time and the result is embedded under
-# :/i18n/fmplayeranalyzer_en.qm. Regenerate the .ts after adding tr() strings:
+# default (German = source fallback, no translator). Every other
+# translations/fmplayeranalyzer_<lang>.ts is picked up automatically, embedded
+# under :/i18n/fmplayeranalyzer_<lang>.qm and offered in the language menus;
+# it is loaded on top of English. After adding tr() strings, regenerate the
+# English file and bring the other languages in line:
 #   lupdate src -ts translations/fmplayeranalyzer_en.ts -no-obsolete
-set(FM_TS_FILE ${CMAKE_SOURCE_DIR}/translations/fmplayeranalyzer_en.ts)
-set(FM_QM_FILE ${CMAKE_CURRENT_BINARY_DIR}/fmplayeranalyzer_en.qm)
-add_custom_command(
-    OUTPUT ${FM_QM_FILE}
-    COMMAND Qt6::lrelease ${FM_TS_FILE} -qm ${FM_QM_FILE}
-    DEPENDS ${FM_TS_FILE}
-    VERBATIM
-    COMMENT "Compiling translations (lrelease)"
-)
-set_source_files_properties(${FM_QM_FILE} PROPERTIES QT_RESOURCE_ALIAS fmplayeranalyzer_en.qm)
+#   python translations/translate.py sync
+# See translations/TRANSLATING.md.
+file(GLOB FM_TS_FILES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/translations/fmplayeranalyzer_*.ts)
+set(FM_QM_FILES)
+foreach(ts_file IN LISTS FM_TS_FILES)
+    get_filename_component(ts_name ${ts_file} NAME_WE)
+    string(REPLACE "fmplayeranalyzer_" "" lang ${ts_name})
+    set(qm_file ${CMAKE_CURRENT_BINARY_DIR}/fmplayeranalyzer_${lang}.qm)
+    add_custom_command(
+        OUTPUT ${qm_file}
+        COMMAND Qt6::lrelease ${ts_file} -qm ${qm_file}
+        DEPENDS ${ts_file}
+        VERBATIM
+        COMMENT "Compiling translation ${lang} (lrelease)"
+    )
+    set_source_files_properties(${qm_file} PROPERTIES QT_RESOURCE_ALIAS fmplayeranalyzer_${lang}.qm)
+    list(APPEND FM_QM_FILES ${qm_file})
+endforeach()
 qt_add_resources(fmplayeranalyzer "translations"
     PREFIX "/i18n"
-    FILES ${FM_QM_FILE}
+    FILES ${FM_QM_FILES}
 )
 target_sources(fmplayeranalyzer PRIVATE widgets/RatingCurveEditor.h widgets/RatingCurveEditor.cpp)
 target_sources(fmplayeranalyzer PRIVATE widgets/RatingProfileEditor.h widgets/RatingProfileEditor.cpp)

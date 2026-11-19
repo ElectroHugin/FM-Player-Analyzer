@@ -1,0 +1,59 @@
+name: Translation
+description: Fix a text, improve a language or contribute a new one.
+title: "[Translation]: "
+labels: ["translation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping to translate FM Player Analyzer!
+
+        - **Found a wrong or clumsy text?** Tell us where it is and what it should say. A screenshot helps.
+        - **Want to translate?** The guide [TRANSLATING.md](https://github.com/ElectroHugin/FM-Player-Analyzer/blob/main/desktop/translations/TRANSLATING.md) explains the files, a small helper script, the rules that keep the app working, and how to get good results with an AI tool. Partial translations are welcome: anything not translated yet shows in English.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is it about?
+      options:
+        - A wrong or unclear text
+        - Improving an existing language
+        - A new language
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      description: Name and, if you know it, the code (e.g. French / fr, Brazilian Portuguese / pt_BR).
+      placeholder: e.g. Simplified Chinese / zh_CN
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: |
+        For a text: where in the app, the current text and your suggestion.
+        For a translation: what you translated or changed. Attach the `.ts` file (zip it if GitHub refuses the file type), or open a pull request.
+    validations:
+      required: true
+  - type: dropdown
+    id: how
+    attributes:
+      label: How was it made?
+      description: Both are welcome. It helps us know what to test.
+      options:
+        - By hand
+        - With an AI tool, reviewed by a native speaker
+        - With an AI tool, not reviewed yet
+        - Not applicable (text report)
+    validations:
+      required: false
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: You find it under *Help → About*.
+      placeholder: e.g. 2.3.0
+    validations:
+      required: false
