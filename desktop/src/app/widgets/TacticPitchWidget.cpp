@@ -110,6 +110,13 @@ void TacticPitchWidget::setColorRowSource(ColorRowSource source)
     colorRowSource() = std::move(source);
 }
 
+// Light hatching over a role header: the player stands in on a slot
+// outside his positions (FM27 two-phase line-ups).
+static QBrush offPositionBrush()
+{
+    return QBrush(QColor(255, 255, 255, 90), Qt::BDiagPattern);
+}
+
 QColor TacticPitchWidget::roleHeaderColor(const QString &role, int fallbackRow)
 {
     static const QColor colors[] = {
@@ -458,6 +465,8 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.save();
         painter.setClipPath(path, Qt::IntersectClip);
         painter.fillRect(header, roleHeaderColor(m_positions.value(slot), row));
+        if (cell.offPosition)
+            painter.fillRect(header, offPositionBrush());
         painter.restore();
         painter.setPen(Qt::white);
         painter.setFont(headerFont);
@@ -569,6 +578,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         const CombinedCard *card = nullptr;
         bool ipPhase = false; // free place: its line-up
         QString slot;
+        bool bothPhases = false; // free place: the same slot is free in both
     };
     QList<Box> boxes;
     QSet<QString> usedIp, usedOop;
@@ -589,8 +599,16 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         for (auto it = lineUp.cbegin(); it != lineUp.cend(); ++it) {
             if (used.contains(it.key()) || !anchors.contains(it.key()))
                 continue;
+            // The same slot free in both line-ups: one marker, not two.
+            const bool both = m_ipLineUp.contains(it.key()) && m_oopLineUp.contains(it.key())
+                              && !usedIp.contains(it.key()) && !usedOop.contains(it.key())
+                              && ipAnchors.contains(it.key()) && oopAnchors.contains(it.key());
+            if (both && !ip)
+                continue;
             boxes.append({(ip ? QStringLiteral("ip:") : QStringLiteral("oop:")) + it.key(),
-                          anchors.value(it.key()), nullptr, ip, it.key()});
+                          both ? combinedAnchor(ipAnchors.value(it.key()), oopAnchors.value(it.key()))
+                               : anchors.value(it.key()),
+                          nullptr, ip, it.key(), both});
         }
     }
     const double cardW = 0.188;
@@ -641,6 +659,8 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
 
     // Links first, so cards cover them.
     for (qsizetype i = 0; i < boxes.size(); ++i) {
+        if (!boxes.at(i).card)
+            continue; // free places carry no link: nobody stands anywhere else
         const QPointF from = toField(boxes.at(i).anchor);
         const QPointF to = toField(placed.at(i));
         if (QLineF(from, to).length() < 3.0)
@@ -674,15 +694,20 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
             painter.setPen(Qt::white);
             painter.setFont(headerFont);
             const QString role = stripPhase((b.ipPhase ? m_ipLineUp : m_oopLineUp).value(b.slot));
+            const QString headerLabel =
+                b.bothPhases ? QStringLiteral("%1 · %2").arg(
+                                   role, stripPhase(m_oopLineUp.value(b.slot)))
+                : b.ipPhase  ? tr("mit: %1").arg(role)
+                             : tr("ohne: %1").arg(role);
             painter.drawText(header, Qt::AlignCenter,
                              painter.fontMetrics().elidedText(
-                                 b.ipPhase ? tr("mit: %1").arg(role) : tr("ohne: %1").arg(role),
-                                 Qt::ElideRight, static_cast<int>(header.width() - 4)));
+                                 headerLabel, Qt::ElideRight, static_cast<int>(header.width() - 4)));
             painter.setFont(smallFont);
             painter.drawText(QRectF(body.left(), body.top() + lineH * 0.5, body.width(), lineH * 2),
                              Qt::AlignHCenter | Qt::AlignTop | Qt::TextWordWrap,
-                             b.ipPhase ? tr("%1 frei mit Ball").arg(b.slot)
-                                       : tr("%1 frei ohne Ball").arg(b.slot));
+                             b.bothPhases ? tr("%1 frei: kein Spieler übrig").arg(b.slot)
+                             : b.ipPhase  ? tr("%1 frei mit Ball").arg(b.slot)
+                                          : tr("%1 frei ohne Ball").arg(b.slot));
             continue;
         }
         const CombinedCard &card = *b.card;
@@ -699,6 +724,10 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         painter.setClipPath(path, Qt::IntersectClip);
         painter.fillRect(ipHeader, ipColor);
         painter.fillRect(oopHeader, oopColor);
+        if (card.ipOffPosition)
+            painter.fillRect(ipHeader, offPositionBrush());
+        if (card.oopOffPosition)
+            painter.fillRect(oopHeader, offPositionBrush());
         painter.restore();
         painter.setPen(Qt::white);
         painter.setFont(headerFont);

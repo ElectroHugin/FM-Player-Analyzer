@@ -94,6 +94,7 @@ private:
     QDoubleSpinBox *m_naturalPosSpin = nullptr;
     QSpinBox *m_ipShareSpin = nullptr; // FM26+: share of the in-possession role
     QDoubleSpinBox *m_bridgeToleranceSpin = nullptr;
+    QDoubleSpinBox *m_offPositionSpin = nullptr;
     QSpinBox *m_maxDepthRolesSpin = nullptr;
     QSpinBox *m_minLoanTalentSpin = nullptr;
     QSpinBox *m_minLoanAgeSpin = nullptr;

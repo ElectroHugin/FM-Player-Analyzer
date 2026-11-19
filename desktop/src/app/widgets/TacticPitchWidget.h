@@ -52,6 +52,8 @@ public:
         double ipRating = 0.0;  // DWRS of the role with ball
         double oopRating = 0.0; // ... and without
         double value = 0.0;     // weighted value over both line-ups
+        bool ipOffPosition = false;  // stand-in outside his positions
+        bool oopOffPosition = false;
     };
     void setCombinedTeam(const QList<CombinedCard> &cards, const QHash<QString, QString> &ipLineUp,
                          const QHash<QString, QStringList> &ipLayout,

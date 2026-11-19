@@ -1124,6 +1124,15 @@ QWidget *SettingsPage::buildSquadPage()
                      "Gilt auch für die gewichtete Auswahlbewertung. 0 erlaubt nur Gleichstand. "
                      "Innerhalb des Spielraums gelten zuerst manuelle Seitenpräferenzen, dann kurze Wege. "
                      "Die ausgewählten Spieler bleiben dieselben."));
+    m_offPositionSpin = sized(new QDoubleSpinBox, kNumberWidth);
+    m_offPositionSpin->setRange(0.0, 1.0);
+    m_offPositionSpin->setDecimals(2);
+    m_offPositionSpin->setSingleStep(0.05);
+    addRow(form, tr("Faktor fremde Position (ab FM27)"), m_offPositionSpin);
+    addHint(form, tr("Fehlt einem Spieler die Position für einen Platz, kann er dort trotzdem "
+                     "aushelfen, damit kein Platz leer bleibt. Sein Wert auf diesem Platz wird mit "
+                     "diesem Faktor multipliziert. 0 schaltet das ab. Torhüter bleiben im Tor. "
+                     "Standard 0,80."));
     addRow(form, tr("Max. Rollen pro Depth-Spieler"), m_maxDepthRolesSpin);
 
     cards->addWidget(makeCard(tr("Jugend und Leihen"), QString(), &body));
@@ -1969,6 +1978,7 @@ void SettingsPage::refresh()
     m_naturalPosSpin->setValue(config.selectionBonus(QStringLiteral("natural_position")));
     m_ipShareSpin->setValue(config.ipSharePercent());
     m_bridgeToleranceSpin->setValue(config.bridgeTolerance());
+    m_offPositionSpin->setValue(config.offPositionFactor());
     m_maxDepthRolesSpin->setValue(
         config.squadManagementSetting(QStringLiteral("max_roles_per_depth_player")));
     m_minLoanTalentSpin->setValue(
@@ -2159,6 +2169,7 @@ void SettingsPage::saveAll()
     config.setSelectionBonus(QStringLiteral("natural_position"), m_naturalPosSpin->value());
     config.setIpSharePercent(m_ipShareSpin->value());
     config.setBridgeTolerance(m_bridgeToleranceSpin->value());
+    config.setOffPositionFactor(m_offPositionSpin->value());
     config.setSquadManagementSetting(QStringLiteral("max_roles_per_depth_player"),
                                      m_maxDepthRolesSpin->value());
     config.setSquadManagementSetting(QStringLiteral("min_loan_talent_score"),
