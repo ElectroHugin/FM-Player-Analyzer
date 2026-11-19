@@ -18,6 +18,10 @@ Added for the next test build:
 - Players are also rated for roles they have not been assigned when the line-up needs them.
 - Combined view: a place that is free with and without the ball shows as one box, and free places no longer draw connecting lines.
 
+## 2.3.1 – 2026-11-20
+
+- FM27 saves from game version 27.1 can be read again (the club table moved with the patch). Saves from 27.0 work as before.
+
 ## 2.3.0 – 2026-11-15
 
 **DWRS rating profiles**
