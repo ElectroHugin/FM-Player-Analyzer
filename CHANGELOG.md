@@ -2,21 +2,15 @@
 
 ## Unreleased
 
-Test build 2.3.1-test.1:
-
-- New interface language: Simplified Chinese (简体中文), contributed by the community. Choose it in the Language menu.
+- New interface languages: Simplified Chinese (简体中文, contributed by the community), French, Italian, Spanish and Russian. Choose them in the Language menu. French, Italian, Spanish and Russian were made with an AI tool and are not yet reviewed by native speakers; corrections are welcome as a Translation issue.
 - Texts that are not translated yet show in English.
 - Translating the app into more languages is now much easier: see [TRANSLATING.md](desktop/translations/TRANSLATING.md) or open a Translation issue.
-
-Added for 2.3.1-test.2:
-
-- Chinese translation reviewed: football terms as in the Chinese version of the game (e.g. in/out of possession, attributes), clearer explanations.
-
-Next:
-
-- New interface languages: French, Italian, Spanish and Russian. Choose them in the Language menu. Made with an AI tool and not yet reviewed by native speakers; corrections are welcome as a Translation issue.
-- Game terms (attributes, positions, foot strength, personalities, playing time and more) now follow the official texts of each language version of the game, also in German and Chinese.
+- Game terms (attributes, positions, foot strength, personalities, playing time and more) now follow the official texts of each language version of the game.
 - HTML/CSV exports are read in every supported game language (English, German, French, Italian, Simplified Chinese, Russian). The language is recognised from the column headers; it can also be set under Settings → Import.
+
+## 2.3.1 – 2026-11-20
+
+- FM27 saves from game version 27.1 can be read again (the club table moved with the patch). Saves from 27.0 work as before.
 
 ## 2.3.0 – 2026-11-15
 
