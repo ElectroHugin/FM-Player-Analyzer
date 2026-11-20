@@ -1,4 +1,5 @@
 #include "DashboardPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "core/Registration.h"
 #include "core/ImportHistory.h"
@@ -86,8 +87,8 @@ void installClickMenu(QWidget *card, std::function<void(const QPoint &)> open)
 
 QString formatMillions(double value)
 {
-    return QStringLiteral("%1 Mio. €")
-        .arg(QLocale().toString(value / 1'000'000.0, 'f', 2));
+    // value in the display currency
+    return Currency::formatMillions(value, 2);
 }
 
 // One "player has left" resolution row. destination = new club, or the status
@@ -541,8 +542,8 @@ QWidget *DashboardPage::buildSuggestionSection(QWidget *parent)
     filterRow->addSpacing(20);
     filterRow->addWidget(new QLabel(tr("Max. Market Value:"), box));
     m_valueSlider = new QSlider(Qt::Horizontal, box);
-    m_valueSlider->setRange(0, 400); // 0.5 Mio € steps -> 0..200 Mio €
-    m_valueSlider->setValue(20);     // 10 Mio €
+    m_valueSlider->setRange(0, 400); // steps of Currency::sliderStep(), 0..200M in euros
+    m_valueSlider->setValue(20);     // 10M in euros
     m_valueLabel = new QLabel(box);
     m_valueLabel->setMinimumWidth(110);
     filterRow->addWidget(m_valueSlider, 1);
@@ -561,7 +562,7 @@ QWidget *DashboardPage::buildSuggestionSection(QWidget *parent)
 
     const auto updateLabels = [this] {
         m_ageLabel->setText(tr("%1 years").arg(m_ageSlider->value()));
-        m_valueLabel->setText(formatMillions(maxValueFilter()));
+        m_valueLabel->setText(formatMillions(m_valueSlider->value() * Currency::sliderStep()));
     };
     updateLabels();
     connect(m_ageSlider, &QSlider::valueChanged, this, [this, updateLabels] {
@@ -582,7 +583,7 @@ QString DashboardPage::selectedTactic() const
 
 double DashboardPage::maxValueFilter() const
 {
-    return m_valueSlider->value() * 500'000.0;
+    return Currency::fromDisplay(m_valueSlider->value() * Currency::sliderStep());
 }
 
 void DashboardPage::applyStrengthColorMode()
@@ -1019,8 +1020,8 @@ void DashboardPage::updateKpis(const std::vector<const Player *> &coreSquad)
     const double avgAge = ageCount > 0 ? static_cast<double>(ageSum) / ageCount : 0.0;
 
     m_kpiPlayers->setText(QString::number(coreSquad.size()));
-    m_kpiTotalValue->setText(formatMillions(totalValue));
-    m_kpiAvgValue->setText(formatMillions(avgValue));
+    m_kpiTotalValue->setText(formatMillions(Currency::toDisplay(totalValue)));
+    m_kpiAvgValue->setText(formatMillions(Currency::toDisplay(avgValue)));
     m_kpiAvgAge->setText(QLocale().toString(avgAge, 'f', 1));
     {
         // Where the data stands in the game: the newest save game read in.
@@ -1073,7 +1074,7 @@ void DashboardPage::updateClubTable(const std::vector<const Player *> &clubPlaye
                                 : QStringLiteral("–"),
                             player->averageRating));
         m_clubTable->setItem(row, 6,
-                             new NumericItem(player->transferValueRaw, player->transferValue));
+                             new NumericItem(Currency::displayText(player->transferValueRaw), player->transferValue));
         ++row;
     }
     m_clubTable->setSortingEnabled(true);
@@ -1204,7 +1205,7 @@ void DashboardPage::rebuildSuggestions()
             {tr("Rating"), tr("%1 % (your best %2 %)")
                                   .arg(formatDwrs(suggestion.rating))
                                   .arg(formatDwrs(suggestion.myBest))},
-            {tr("Value"), player->transferValueRaw},
+            {tr("Value"), Currency::displayText(player->transferValueRaw)},
             {tr("Age"), QString::number(player->age)},
         };
         for (int row = 0; row < rows.size(); ++row) {

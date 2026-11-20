@@ -1,4 +1,5 @@
 #include "RegistrationPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
@@ -453,13 +454,14 @@ void RegistrationPage::refresh()
     const Registration::Competition comp = competition();
     m_pool = pool();
     m_tactics = rankingTactics(&m_tacticFallback);
-    m_currency.clear();
+    // Currency of the imported wages; amounts are shown in the display currency.
+    m_currency = QStringLiteral("EUR");
     for (const Player *p : m_pool) {
-        for (const QChar c : {QChar(0x20AC), QChar(0x00A3), QChar(u'$')})
-            if (p->wageRaw.contains(c))
-                m_currency = c;
-        if (!m_currency.isEmpty())
+        const QString code = Currency::ofText(p->wageRaw, QString());
+        if (!code.isEmpty()) {
+            m_currency = code;
             break;
+        }
     }
     loadWageFields();
     m_wageRow->setVisible(comp == Registration::Competition::League
@@ -723,7 +725,7 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         }
         table->setItem(row, ColDwrs, dwrsItem);
         table->setItem(row, ColWage,
-                       new NumericItem(p.wageRaw, wageToWeekly(p.wageRaw)));
+                       new NumericItem(Currency::displayText(p.wageRaw), wageToWeekly(p.wageRaw)));
         QStringList notes;
         if (!entry.note.isEmpty())
             notes << entry.note;
@@ -1009,9 +1011,12 @@ void RegistrationPage::loadWageFields()
     m_wagePeriodCombo->setCurrentIndex(std::max(
         0, m_wagePeriodCombo->findData(Registration::wagePeriodKey(Registration::wagePeriodFromKey(
                db.setting(QStringLiteral("registration_wage_period")))))));
-    m_wageBudgetSpin->setValue(db.setting(QStringLiteral("registration_wage_budget")).toDouble());
-    m_minWageSpin->setValue(db.setting(QStringLiteral("registration_min_wage")).toDouble());
-    const QString prefix = m_currency.isEmpty() ? QString() : m_currency + QLatin1Char(' ');
+    // Stored in the currency of the wages, entered in the display currency.
+    m_wageBudgetSpin->setValue(std::round(Currency::toDisplay(
+        db.setting(QStringLiteral("registration_wage_budget")).toDouble(), m_currency)));
+    m_minWageSpin->setValue(std::round(Currency::toDisplay(
+        db.setting(QStringLiteral("registration_min_wage")).toDouble(), m_currency)));
+    const QString prefix = Currency::symbol() + QLatin1Char(' ');
     m_wageBudgetSpin->setPrefix(prefix);
     m_minWageSpin->setPrefix(prefix);
 }
@@ -1019,8 +1024,10 @@ void RegistrationPage::loadWageFields()
 void RegistrationPage::saveWageFields()
 {
     Database &db = m_context.database();
-    const auto amount = [](const QDoubleSpinBox *spin) {
-        return spin->value() > 0.0 ? QString::number(spin->value(), 'f', 0) : QString();
+    const auto amount = [this](const QDoubleSpinBox *spin) {
+        return spin->value() > 0.0
+                   ? QString::number(Currency::fromDisplay(spin->value(), m_currency), 'f', 0)
+                   : QString();
     };
     db.setSetting(QStringLiteral("registration_wage_budget"), amount(m_wageBudgetSpin));
     db.setSetting(QStringLiteral("registration_min_wage"), amount(m_minWageSpin));
@@ -1034,23 +1041,6 @@ QString RegistrationPage::moneyText(double weekly) const
     const Registration::WagePeriod period =
         Registration::wagePeriodFromKey(m_wagePeriodCombo->currentData().toString());
     const double value = weekly * Registration::weeksPer(period);
-    const auto trimmed = [](double v, int decimals) {
-        QString t = QString::number(v, 'f', decimals);
-        if (t.contains(QLatin1Char('.'))) {
-            while (t.endsWith(QLatin1Char('0')))
-                t.chop(1);
-            if (t.endsWith(QLatin1Char('.')))
-                t.chop(1);
-        }
-        return t;
-    };
-    QString number;
-    if (value >= 1e6)
-        number = trimmed(value / 1e6, 2) + QStringLiteral("M");
-    else if (value >= 1e3)
-        number = trimmed(value / 1e3, 1) + QStringLiteral("K");
-    else
-        number = QString::number(qRound(value));
     QString unit;
     switch (period) {
     case Registration::WagePeriod::Week:
@@ -1063,7 +1053,7 @@ QString RegistrationPage::moneyText(double weekly) const
         unit = QStringLiteral(" p/a");
         break;
     }
-    return m_currency + number + unit;
+    return Currency::format(Currency::toDisplay(value, m_currency)) + unit;
 }
 
 void RegistrationPage::saveList()

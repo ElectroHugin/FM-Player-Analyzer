@@ -60,6 +60,11 @@ public:
     QString language() const;
     void setLanguage(const QString &language);
 
+    // Display currency code (Currency::codes()), app-global. Empty means the
+    // one that suits the UI language.
+    QString currency() const;
+    void setCurrency(const QString &code);
+
     // Languages offered in the menus, in display order. The label is the
     // endonym, shown the same regardless of the current UI language.
     struct UiLanguage

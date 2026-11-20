@@ -4,42 +4,42 @@
 <context>
     <name>DepartureDialog</name>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="120"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="121"/>
         <source>Resolve player departures</source>
         <translation>Gestisci le partenze dei giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="125"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="126"/>
         <source>These players are in the database at your club but were not in the uploaded squad file. By default they all count as departed and become free agents (FrA) — untick the ones who stayed, and enter a new club or &apos;Retired&apos; for the others where needed.</source>
         <translation>Questi giocatori sono nel database del tuo club ma non erano nel file della rosa caricato. Per impostazione predefinita contano tutti come partiti e diventano svincolati (FrA). Togli la spunta a chi è rimasto e, se serve, inserisci un nuovo club o &apos;Retired&apos; per gli altri.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="133"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="134"/>
         <source>Mark all as departed</source>
         <translation>Segna tutti come partiti</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="144"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="145"/>
         <source>Player</source>
         <translation>Giocatore</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="145"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="146"/>
         <source>Departed</source>
         <translation>Partito</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="146"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="147"/>
         <source>New club / status</source>
         <translation>Nuovo club / stato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="165"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="166"/>
         <source>Type a new club or pick a status (FrA = free agent, Retired = end of career).</source>
         <translation>Inserisci un nuovo club o scegli uno stato (FrA = svincolato, Retired = fine carriera).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="185"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="186"/>
         <source>Confirm departures</source>
         <translation>Conferma le partenze</translation>
     </message>
@@ -277,7 +277,7 @@ Dettagli: %1</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="955"/>
+        <location filename="../src/app/MainWindow.cpp" line="992"/>
         <source>Saving ratings …</source>
         <translation>Salvataggio delle valutazioni…</translation>
     </message>
@@ -630,14 +630,14 @@ Dettagli: %1</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/app/main.cpp" line="76"/>
+        <location filename="../src/app/main.cpp" line="80"/>
         <source>Startup failed:
 %1</source>
         <translation>Avvio non riuscito:
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="99"/>
+        <location filename="../src/app/main.cpp" line="103"/>
         <source>The last used save “%1” could not be opened:
 %2</source>
         <translation>Non è stato possibile aprire l&apos;ultimo salvataggio usato “%1”:
@@ -1854,422 +1854,455 @@ Variazione DWRS rispetto all&apos;assegnazione: titolari %3 · squadra B %4. Mar
     </message>
 </context>
 <context>
+    <name>fm::Currency</name>
+    <message>
+        <location filename="../src/core/Currency.cpp" line="85"/>
+        <source>British pound</source>
+        <translation>Sterlina britannica</translation>
+    </message>
+    <message>
+        <location filename="../src/core/Currency.cpp" line="86"/>
+        <source>US dollar</source>
+        <translation>Dollaro statunitense</translation>
+    </message>
+    <message>
+        <location filename="../src/core/Currency.cpp" line="87"/>
+        <source>Euro</source>
+        <translation>Euro</translation>
+    </message>
+    <message>
+        <location filename="../src/core/Currency.cpp" line="88"/>
+        <source>Swiss franc</source>
+        <translation>Franco svizzero</translation>
+    </message>
+    <message>
+        <location filename="../src/core/Currency.cpp" line="89"/>
+        <source>Chinese yuan</source>
+        <translation>Yuan cinese</translation>
+    </message>
+    <message>
+        <location filename="../src/core/Currency.cpp" line="90"/>
+        <source>Russian ruble</source>
+        <translation>Rublo russo</translation>
+    </message>
+</context>
+<context>
     <name>fm::DashboardPage</name>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="227"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="228"/>
         <source>Overview</source>
         <translation>Panoramica</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="254"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="637"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="255"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="638"/>
         <source>Import new player data (FM export, HTML or CSV)</source>
         <translation>Importa nuovi dati dei giocatori (esportazione FM, HTML o CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="261"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="262"/>
         <source>No file selected…</source>
         <translation>Nessun file selezionato…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="262"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="263"/>
         <source>Browse…</source>
         <translation>Sfoglia…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="263"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="264"/>
         <source>Import</source>
         <translation>Importa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="273"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="274"/>
         <source>File is a complete squad export of my club (detect departures)</source>
         <translation>Il file è un&apos;esportazione completa della rosa del mio club (rileva le partenze)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="275"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="276"/>
         <source>Enable if the file contains ONLY players from your main and second team. The app detects players who have left the club and asks about them.</source>
         <translation>Attiva se il file contiene SOLO giocatori della tua prima e seconda squadra. L&apos;app rileva i giocatori che hanno lasciato il club e ti chiede cosa fare.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="278"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="279"/>
         <source>Automatically assign roles to new/unassigned players</source>
         <translation>Assegna automaticamente i ruoli ai giocatori nuovi o senza ruolo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="293"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1279"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="294"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1280"/>
         <source>Choose save</source>
         <translation>Scegli salvataggio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="294"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="295"/>
         <source>Saves (*.fm);;All files (*)</source>
         <translation>Salvataggi (*.fm);;Tutti i file (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="315"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="316"/>
         <source>Squad Analysis</source>
         <translation>Analisi della rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="320"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="321"/>
         <source>My Club:</source>
         <translation>Il mio club:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="327"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="328"/>
         <source>Analysis Tactic:</source>
         <translation>Tattica di analisi:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="381"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="382"/>
         <source>Players in core squad</source>
         <translation>Giocatori della rosa principale</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="382"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="383"/>
         <source>Total Squad Value</source>
         <translation>Valore totale della rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="383"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="384"/>
         <source>Avg. Player Value</source>
         <translation>Valore medio per giocatore</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="384"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="385"/>
         <source>Avg. Age</source>
         <translation>Età media</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="398"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="399"/>
         <source>Positional Strength</source>
         <translation>Forza per posizione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="411"/>
         <source>Combined</source>
         <translation>Combinato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="928"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="411"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="929"/>
         <source>In possession</source>
         <translation>In possesso</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="929"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="411"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="930"/>
         <source>Out of possession</source>
         <translation>Non in possesso</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="411"/>
         <source>Both</source>
         <translation>Entrambi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="429"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="430"/>
         <source>Colour by:</source>
         <translation>Colore per:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="439"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="440"/>
         <source>Level</source>
         <translation>Livello</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="439"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="440"/>
         <source>Squad comparison</source>
         <translation>Confronto con la rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="446"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="447"/>
         <source>Colour tiers as everywhere in the app: Poor to Legendary.</source>
         <translation>Fasce di colore come ovunque nell&apos;app: da Scarso a Leggendario.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="447"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="448"/>
         <source>Each starter compared with the squad median (median of the starters shown): grey within 1.5 points, orange below, blue above, strong from 4 points.</source>
         <translation>Ogni titolare confrontato con la mediana della rosa (mediana dei titolari mostrati): grigio entro 1,5 punti, arancione sotto, blu sopra, marcato da 4 punti.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1208"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1209"/>
         <source>Age</source>
         <translation>Età</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
         <source>Position</source>
         <translation>Posizione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
         <source>Personality</source>
         <translation>Personalità</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
         <source>Playing Time</source>
         <translation>Minutaggio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="506"/>
         <source>Avg. Rating</source>
         <translation>Valutazione media</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="506"/>
         <source>Market Value</source>
         <translation>Valore di mercato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="523"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="524"/>
         <source>Transfer targets</source>
         <translation>Obiettivi di mercato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="526"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="527"/>
         <source>Possible reinforcements from your scouting database, based on the roles of the selected tactic.</source>
         <translation>Possibili rinforzi dal tuo database osservatori, in base ai ruoli della tattica scelta.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="533"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="534"/>
         <source>Max. Age:</source>
         <translation>Età max.:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="542"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="543"/>
         <source>Max. Market Value:</source>
         <translation>Valore di mercato max.:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="563"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="564"/>
         <source>%1 years</source>
         <translation>%1 anni</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
         <source>far below</source>
         <translation>molto sotto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
         <source>below</source>
         <translation>sotto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
         <source>squad median</source>
         <translation>mediana della rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="612"/>
         <source>above</source>
         <translation>sopra</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="612"/>
         <source>far above</source>
         <translation>molto sopra</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="619"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="620"/>
         <source>Squad median: %1</source>
         <translation>Mediana della rosa: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="636"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="637"/>
         <source>Read player data (save game)</source>
         <translation>Leggi i dati dei giocatori (salvataggio)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="648"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="649"/>
         <source>Tip: &lt;a href=&quot;follow&quot;&gt;follow your save live&lt;/a&gt;, it is read again after every save in the game.</source>
         <translation>Suggerimento: &lt;a href=&quot;follow&quot;&gt;segui il salvataggio dal vivo&lt;/a&gt;, viene riletto dopo ogni salvataggio nel gioco.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="642"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="643"/>
         <source>Following “%1”: read again after every save in the game.</source>
         <translation>Segui “%1”: viene riletto dopo ogni salvataggio nel gioco.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="707"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="708"/>
         <source>Please import player data and select your club above to see the squad analysis.</source>
         <translation>Importa i dati dei giocatori e scegli il tuo club qui sopra per vedere l&apos;analisi della rosa.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="735"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="760"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="736"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="761"/>
         <source>No squad could be built for the tactic &apos;%1&apos; — there are no suitable players in your club.</source>
         <translation>Impossibile formare una rosa per la tattica &apos;%1&apos;: nel tuo club non ci sono giocatori adatti.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="828"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="829"/>
         <source>IP %1 · OOP %2</source>
         <translation>IP %1 · NP %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="841"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="842"/>
         <source>If %1 is unavailable:</source>
         <translation>Se %1 non è disponibile:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="843"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="844"/>
         <source>gap</source>
         <translation>buco</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="844"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="845"/>
         <source>No squad player fills the gap; one place stays empty.</source>
         <translation>Nessun giocatore della rosa copre il buco; un posto resta vuoto.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="846"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="847"/>
         <source>XI %1</source>
         <translation>XI %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="847"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="848"/>
         <source>%1 comes on (%2).</source>
         <translation>%1 entra (%2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="849"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="850"/>
         <source>%1 moves: %2 → %3.</source>
         <translation>%1 si sposta: %2 → %3.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="851"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="852"/>
         <source>Starting XI %1 DWRS points (sum of all eleven).</source>
         <translation>Formazione titolare %1 punti DWRS (somma degli undici).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="901"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="946"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="971"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="902"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="947"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="972"/>
         <source>free</source>
         <translation>libero</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="902"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="903"/>
         <source>The squad has no player for %1.</source>
         <translation>La rosa non ha giocatori per %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="945"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="946"/>
         <source>IP: %1</source>
         <translation>IP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="947"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="948"/>
         <source>%1 in possession is empty.</source>
         <translation>%1 in possesso è vuoto.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="960"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="961"/>
         <source>%1 (in possession %2, out of possession %3)</source>
         <translation>%1 (in possesso %2, non in possesso %3)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="970"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="971"/>
         <source>OOP: %1</source>
         <translation>NP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="972"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="973"/>
         <source>%1 out of possession is empty.</source>
         <translation>%1 non in possesso è vuoto.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="981"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="982"/>
         <source>Large: the starter&apos;s DWRS in his role.</source>
         <translation>Grande: il DWRS del titolare nel suo ruolo.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="983"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="984"/>
         <source>Large: the starter&apos;s value over both line-ups (%1 % in possession).</source>
         <translation>Grande: il valore del titolare su entrambe le formazioni (%1 % in possesso).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="987"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="988"/>
         <source>Small: how the starting XI changes if he is out. The tooltip shows the details.</source>
         <translation>Piccolo: come cambia la formazione titolare se manca. Il tooltip mostra i dettagli.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="997"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="998"/>
         <source>“XI −4.0”: if the player is out, the best cover comes on (as in Best XI under “Squad depth: a starter is missing”), and the sum of DWRS of the whole starting XI drops by 4.0. “gap”: no squad player fills the place. Based on the whole club without long-term injured and without players marked as not registered, otherwise without competition rules; manual places from Best XI apply.</source>
         <translation>“XI −4.0”: se il giocatore manca, entra la miglior copertura (come nel Migliore XI in “Profondità della rosa: manca un titolare”) e la somma dei DWRS dell&apos;intera formazione titolare scende di 4,0. “buco”: nessun giocatore della rosa copre il posto. Basato sull&apos;intero club senza infortunati a lungo termine e senza giocatori segnati come non registrati, per il resto senza regole di competizione; valgono i posti manuali del Migliore XI.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1034"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1035"/>
         <source>In-game date · season %1</source>
         <translation>Data di gioco · stagione %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1037"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1038"/>
         <source>State of the most recently read FM27 save</source>
         <translation>Stato dell&apos;ultimo salvataggio FM27 letto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1044"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1045"/>
         <source>Players at %1 (%2)</source>
         <translation>Giocatori per %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1172"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1173"/>
         <source>Your squad is well set up. No clear reinforcements found within the filter criteria.</source>
         <translation>La tua rosa è ben costruita. Nessun rinforzo evidente trovato con i criteri del filtro.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1193"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1194"/>
         <source>Upgrade for %1</source>
         <translation>Miglioramento per %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1204"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1205"/>
         <source>Rating</source>
         <translation>Valutazione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1204"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1205"/>
         <source>%1 % (your best %2 %)</source>
         <translation>%1 % (il tuo migliore %2 %)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1207"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1208"/>
         <source>Value</source>
         <translation>Valore</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1220"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1221"/>
         <source>Club: %1&lt;br/&gt;Positions: %2</source>
         <translation>Club: %1&lt;br/&gt;Posizioni: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1231"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1232"/>
         <source>Click for actions: profile, shortlist, comparison</source>
         <translation>Clicca per le azioni: profilo, lista obiettivi, confronto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1237"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1238"/>
         <source>%1 (%2%)</source>
         <translation>%1 (%2%)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1252"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1253"/>
         <source>Compare with %1</source>
         <translation>Confronta con %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1259"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1260"/>
         <source>Compare with all %n</source>
         <translation>
             <numerusform>Confronta con %n giocatore</numerusform>
@@ -2277,27 +2310,27 @@ Variazione DWRS rispetto all&apos;assegnazione: titolari %3 · squadra B %4. Mar
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1280"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1281"/>
         <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
         <translation>Salvataggi (*.fm);;Elenchi di giocatori (*.csv *.html *.htm);;Tutti i file (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1282"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1283"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>Scegli un&apos;esportazione FM o un salvataggio FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1283"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1284"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>Esportazioni FM e salvataggi FM27 (*.html *.htm *.csv *.fm);;Tutti i file (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1321"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1322"/>
         <source>Import failed</source>
         <translation>Importazione non riuscita</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1322"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1323"/>
         <source>The file could not be imported.
 
 %1
@@ -2310,28 +2343,28 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
 Cause possibili: manca la colonna &apos;UID&apos; oppure non è un&apos;esportazione di Football Manager valida (HTML o CSV).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1337"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1338"/>
         <source>Import complete</source>
         <translation>Importazione completata</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1345"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1346"/>
         <source>Tip: reading the save (.fm) directly is faster and needs no export.</source>
         <translation>Suggerimento: leggere direttamente il salvataggio (.fm) è più veloce e non richiede esportazioni.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1347"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1348"/>
         <source>Show again next time</source>
         <translation>Mostra di nuovo la prossima volta</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1406"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1413"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1407"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1414"/>
         <source>Departures</source>
         <translation>Partenze</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1414"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1415"/>
         <source>%1 player records updated.</source>
         <translation>%1 schede giocatore aggiornate.</translation>
     </message>
@@ -3175,280 +3208,296 @@ Potrai cambiare la cartella più tardi nelle impostazioni.</translation>
 <context>
     <name>fm::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="155"/>
+        <location filename="../src/app/MainWindow.cpp" line="156"/>
         <source>Back (Alt+←)</source>
         <translation>Indietro (Alt+←)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="156"/>
+        <location filename="../src/app/MainWindow.cpp" line="157"/>
         <source>Forward (Alt+→)</source>
         <translation>Avanti (Alt+→)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="159"/>
+        <location filename="../src/app/MainWindow.cpp" line="160"/>
         <source>Home (Alt+Home)</source>
         <translation>Home (Alt+Home)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="182"/>
+        <location filename="../src/app/MainWindow.cpp" line="183"/>
         <source>Players, pages, actions …    Ctrl+K</source>
         <translation>Giocatori, pagine, azioni…    Ctrl+K</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="192"/>
+        <location filename="../src/app/MainWindow.cpp" line="193"/>
         <source>Import</source>
         <translation>Importa</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="231"/>
+        <location filename="../src/app/MainWindow.cpp" line="232"/>
         <source>Later</source>
         <translation>Più tardi</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="346"/>
+        <location filename="../src/app/MainWindow.cpp" line="347"/>
         <source>Recalculation</source>
         <translation>Ricalcolo</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="349"/>
+        <location filename="../src/app/MainWindow.cpp" line="350"/>
         <source>DWRS recalculated: %1 ratings, %2 changed entries saved.</source>
         <translation>DWRS ricalcolato: %1 valutazioni, %2 voci modificate salvate.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="384"/>
+        <location filename="../src/app/MainWindow.cpp" line="385"/>
         <source>New FM27 rating profile</source>
         <translation>Nuovo profilo di valutazione FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="385"/>
+        <location filename="../src/app/MainWindow.cpp" line="386"/>
         <source>There is a new rating profile for FM27: “DWRS FM27 · harvestgreen22” (provisional).</source>
         <translation>C&apos;è un nuovo profilo di valutazione per FM27: “DWRS FM27 · harvestgreen22” (provvisorio).</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="388"/>
+        <location filename="../src/app/MainWindow.cpp" line="389"/>
         <source>It is based on measurements in FM27 matches and separates roles more clearly. Values have one decimal. Switching recalculates all ratings of this save; the history marks the switch. You can change the profile at any time under Settings → DWRS rating.</source>
         <translation>Si basa su misurazioni in partite di FM27 e distingue più chiaramente i ruoli. I valori hanno un decimale. Il passaggio ricalcola tutte le valutazioni di questo salvataggio; lo storico segna il cambio. Puoi cambiare profilo in qualsiasi momento in Impostazioni → Valutazione DWRS.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="392"/>
+        <location filename="../src/app/MainWindow.cpp" line="393"/>
         <source>Use new profile</source>
         <translation>Usa il nuovo profilo</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="393"/>
+        <location filename="../src/app/MainWindow.cpp" line="394"/>
         <source>Keep previous</source>
         <translation>Mantieni il precedente</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="402"/>
+        <location filename="../src/app/MainWindow.cpp" line="403"/>
         <source>Rating profile</source>
         <translation>Profilo di valutazione</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="420"/>
+        <location filename="../src/app/MainWindow.cpp" line="421"/>
         <source>The DWRS calculation has been improved (goalkeepers are rated on all goalkeeping attributes). The ratings in this save still come from the old calculation.</source>
         <translation>Il calcolo DWRS è stato migliorato (i portieri sono valutati su tutti gli attributi da portiere). Le valutazioni di questo salvataggio provengono ancora dal vecchio calcolo.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="423"/>
+        <location filename="../src/app/MainWindow.cpp" line="424"/>
         <source>Recalculate now</source>
         <translation>Ricalcola ora</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="444"/>
+        <location filename="../src/app/MainWindow.cpp" line="445"/>
         <source>Switch save (Ctrl+O)</source>
         <translation>Cambia salvataggio (Ctrl+O)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="459"/>
-        <location filename="../src/app/MainWindow.cpp" line="1125"/>
+        <location filename="../src/app/MainWindow.cpp" line="460"/>
+        <location filename="../src/app/MainWindow.cpp" line="1162"/>
         <source>Club</source>
         <translation>Club</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="459"/>
-        <location filename="../src/app/MainWindow.cpp" line="976"/>
-        <location filename="../src/app/MainWindow.cpp" line="1125"/>
+        <location filename="../src/app/MainWindow.cpp" line="460"/>
+        <location filename="../src/app/MainWindow.cpp" line="1013"/>
+        <location filename="../src/app/MainWindow.cpp" line="1162"/>
         <source>National Team</source>
         <translation>Nazionale</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="501"/>
-        <location filename="../src/app/MainWindow.cpp" line="1155"/>
+        <location filename="../src/app/MainWindow.cpp" line="502"/>
+        <location filename="../src/app/MainWindow.cpp" line="1192"/>
         <source>Toggle day/night</source>
         <translation>Alterna giorno/notte</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="511"/>
+        <location filename="../src/app/MainWindow.cpp" line="512"/>
         <source>v%1 · ElectroHugin</source>
         <translation>v%1 · ElectroHugin</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="512"/>
+        <location filename="../src/app/MainWindow.cpp" line="513"/>
         <source>About %1</source>
         <translation>Informazioni su %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="579"/>
+        <location filename="../src/app/MainWindow.cpp" line="580"/>
         <source>&amp;File</source>
         <translation>&amp;File</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="580"/>
-        <location filename="../src/app/MainWindow.cpp" line="1153"/>
-        <location filename="../src/app/MainWindow.cpp" line="1218"/>
+        <location filename="../src/app/MainWindow.cpp" line="581"/>
+        <location filename="../src/app/MainWindow.cpp" line="1190"/>
+        <location filename="../src/app/MainWindow.cpp" line="1255"/>
         <source>New save …</source>
         <translation>Nuovo salvataggio…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="583"/>
-        <location filename="../src/app/MainWindow.cpp" line="1151"/>
+        <location filename="../src/app/MainWindow.cpp" line="584"/>
+        <location filename="../src/app/MainWindow.cpp" line="1188"/>
         <source>Switch save …</source>
         <translation>Cambia salvataggio…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="194"/>
+        <location filename="../src/app/MainWindow.cpp" line="195"/>
         <source>Read player data (Ctrl+I). You can also simply drop a file onto the window.</source>
         <translation>Leggi i dati dei giocatori (Ctrl+I). Puoi anche trascinare un file sulla finestra.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="587"/>
-        <location filename="../src/app/MainWindow.cpp" line="1149"/>
+        <location filename="../src/app/MainWindow.cpp" line="588"/>
+        <location filename="../src/app/MainWindow.cpp" line="1186"/>
         <source>Import player data …</source>
         <translation>Leggi i dati dei giocatori …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="590"/>
+        <location filename="../src/app/MainWindow.cpp" line="591"/>
         <source>Quit</source>
         <translation>Esci</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="594"/>
+        <location filename="../src/app/MainWindow.cpp" line="595"/>
         <source>&amp;Language</source>
         <translation>&amp;Lingua</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="609"/>
+        <location filename="../src/app/MainWindow.cpp" line="612"/>
+        <location filename="../src/app/MainWindow.cpp" line="668"/>
+        <source>Currency</source>
+        <translation>Valuta</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="617"/>
+        <source>Matching the language: %1</source>
+        <translation>In base alla lingua: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="631"/>
         <source>&amp;Help</source>
         <translation>&amp;Aiuto</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="610"/>
+        <location filename="../src/app/MainWindow.cpp" line="632"/>
         <source>Welcome assistant …</source>
         <translation>Assistente di benvenuto…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="611"/>
+        <location filename="../src/app/MainWindow.cpp" line="633"/>
         <source>About %1…</source>
         <translation>Informazioni su %1…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="629"/>
+        <location filename="../src/app/MainWindow.cpp" line="651"/>
         <source>Language</source>
         <translation>Lingua</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="630"/>
+        <location filename="../src/app/MainWindow.cpp" line="652"/>
         <source>The language will change after a restart. Restart now?</source>
         <translation>La lingua cambierà dopo un riavvio. Riavviare ora?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="919"/>
+        <location filename="../src/app/MainWindow.cpp" line="669"/>
+        <source>Amounts are shown in the new currency after a restart. Restart now?</source>
+        <translation>Gli importi saranno mostrati nella nuova valuta dopo un riavvio. Riavviare ora?</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="956"/>
         <source>Recalculating DWRS ratings…</source>
         <translation>Ricalcolo delle valutazioni DWRS…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="983"/>
+        <location filename="../src/app/MainWindow.cpp" line="1020"/>
         <source>FM Dashboard</source>
         <translation>Dashboard FM</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1073"/>
+        <location filename="../src/app/MainWindow.cpp" line="1110"/>
         <source>Test version %1 is available.</source>
         <translation>La versione di test %1 è disponibile.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1074"/>
+        <location filename="../src/app/MainWindow.cpp" line="1111"/>
         <source>Version %1 is available.</source>
         <translation>La versione %1 è disponibile.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1075"/>
+        <location filename="../src/app/MainWindow.cpp" line="1112"/>
         <source>What&apos;s new</source>
         <translation>Novità</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1126"/>
+        <location filename="../src/app/MainWindow.cpp" line="1163"/>
         <source>Pages</source>
         <translation>Pagine</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1146"/>
+        <location filename="../src/app/MainWindow.cpp" line="1183"/>
         <source>Actions</source>
         <translation>Azioni</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1149"/>
+        <location filename="../src/app/MainWindow.cpp" line="1186"/>
         <source>Ctrl+I</source>
         <translation>Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1151"/>
+        <location filename="../src/app/MainWindow.cpp" line="1188"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1153"/>
+        <location filename="../src/app/MainWindow.cpp" line="1190"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1154"/>
+        <location filename="../src/app/MainWindow.cpp" line="1191"/>
         <source>Recalculate DWRS</source>
         <translation>Ricalcola DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1171"/>
+        <location filename="../src/app/MainWindow.cpp" line="1208"/>
         <source>Players</source>
         <translation>Giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1190"/>
+        <location filename="../src/app/MainWindow.cpp" line="1227"/>
         <source>%1 players</source>
         <translation>%1 giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1202"/>
+        <location filename="../src/app/MainWindow.cpp" line="1239"/>
         <source>Recently used</source>
         <translation>Usati di recente</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1210"/>
+        <location filename="../src/app/MainWindow.cpp" line="1247"/>
         <source>Open save</source>
         <translation>Apri salvataggio</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1217"/>
+        <location filename="../src/app/MainWindow.cpp" line="1254"/>
         <source>All saves …</source>
         <translation>Tutti i salvataggi…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1270"/>
+        <location filename="../src/app/MainWindow.cpp" line="1307"/>
         <source>Choose save</source>
         <translation>Scegli salvataggio</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1271"/>
+        <location filename="../src/app/MainWindow.cpp" line="1308"/>
         <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
         <translation>Salvataggi (*.fm);;Elenchi di giocatori (*.csv *.html *.htm);;Tutti i file (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1273"/>
+        <location filename="../src/app/MainWindow.cpp" line="1310"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>Scegli un&apos;esportazione FM o un salvataggio FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1274"/>
+        <location filename="../src/app/MainWindow.cpp" line="1311"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>Esportazioni FM e salvataggi FM27 (*.html *.htm *.csv *.fm);;Tutti i file (*)</translation>
     </message>
@@ -5017,241 +5066,241 @@ Dettagli: %1</translation>
 <context>
     <name>fm::PlayerComparisonPage</name>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="37"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="38"/>
         <source>Pace</source>
         <translation>Velocità</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="39"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="40"/>
         <source>Finishing</source>
         <translation>Finalizzazione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="41"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="42"/>
         <source>Passing</source>
         <translation>Passaggi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="43"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="44"/>
         <source>Dribbling</source>
         <translation>Dribbling</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="45"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="46"/>
         <source>Defending</source>
         <translation>Difesa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="47"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="48"/>
         <source>Physique</source>
         <translation>Fisico</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="49"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="70"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="50"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="71"/>
         <source>Mentality</source>
         <translation>Mentalità</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="58"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="59"/>
         <source>Shot stopping</source>
         <translation>Parate</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="61"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="62"/>
         <source>Aerial control</source>
         <translation>Gioco aereo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="64"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="65"/>
         <source>Distribution</source>
         <translation>Distribuzione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="67"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="68"/>
         <source>Sweeping</source>
         <translation>Uscite da libero</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="107"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="108"/>
         <source>Player Comparison</source>
         <translation>Confronto giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="112"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="113"/>
         <source>Tactic:</source>
         <translation>Tattica:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="116"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="117"/>
         <source>Role:</source>
         <translation>Ruolo:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="121"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="122"/>
         <source>Pool:</source>
         <translation>Bacino:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="123"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="124"/>
         <source>My Club</source>
         <translation>Il mio club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="124"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="125"/>
         <source>National Squad</source>
         <translation>Nazionale</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="125"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="126"/>
         <source>All Players</source>
         <translation>Tutti i giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="130"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="131"/>
         <source>Check up to 5 players to compare them.</source>
         <translation>Seleziona fino a 5 giocatori per confrontarli.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="141"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="142"/>
         <source>Playing Areas</source>
         <translation>Zone di gioco</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="147"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="148"/>
         <source>Meta Attribute Profile</source>
         <translation>Profilo dei meta-attributi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="157"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="158"/>
         <source>Detailed Attribute Comparison</source>
         <translation>Confronto dettagliato degli attributi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="217"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="218"/>
         <source>All Roles</source>
         <translation>Tutti i ruoli</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="322"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="323"/>
         <source>No players with this role found in the selected pool.</source>
         <translation>Nessun giocatore con questo ruolo nel bacino scelto.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="323"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="324"/>
         <source>Check up to 5 players to compare them (%1 available).</source>
         <translation>Seleziona fino a 5 giocatori per confrontarli (%1 disponibili).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="361"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="362"/>
         <source>Highest Prio</source>
         <translation>Priorità massima</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="363"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="364"/>
         <source>High Prio</source>
         <translation>Priorità alta</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="365"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="366"/>
         <source>Medium Prio</source>
         <translation>Priorità media</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="367"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="376"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="368"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="377"/>
         <source>Key</source>
         <translation>Chiave</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="368"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="377"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="369"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="378"/>
         <source>Preferred</source>
         <translation>Preferibile</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="369"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="370"/>
         <source>Goalkeeper Meta Attribute Profile</source>
         <translation>Profilo dei meta-attributi del portiere</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="371"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="372"/>
         <source>Extremely important</source>
         <translation>Estremamente importante</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="373"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="374"/>
         <source>Important</source>
         <translation>Importante</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="375"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="376"/>
         <source>Good</source>
         <translation>Buono</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="378"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="379"/>
         <source>Outfield Meta Attribute Profile</source>
         <translation>Profilo dei meta-attributi dei giocatori di movimento</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="443"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="444"/>
         <source>Age</source>
         <translation>Età</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="444"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="445"/>
         <source>Club</source>
         <translation>Società</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="445"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="446"/>
         <source>Position</source>
         <translation>Posizione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="446"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="476"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="447"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="477"/>
         <source>Personality</source>
         <translation>Personalità</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="447"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="448"/>
         <source>Height</source>
         <translation>Altezza</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="448"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="449"/>
         <source>Preferred Foot</source>
         <translation>Piede preferito</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="449"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="450"/>
         <source>Wage</source>
         <translation>Stipendio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="450"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="451"/>
         <source>Market Value</source>
         <translation>Valore di mercato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="451"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="452"/>
         <source>Playing Time</source>
         <translation>Minutaggio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="452"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="453"/>
         <source>Best roles (DWRS)</source>
         <translation>Ruoli migliori (DWRS)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="457"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="458"/>
         <source>+%1 more</source>
         <translation>+%1 in più</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="461"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="462"/>
         <source>All assigned roles:</source>
         <translation>Tutti i ruoli assegnati:</translation>
     </message>
@@ -5259,404 +5308,404 @@ Dettagli: %1</translation>
 <context>
     <name>fm::PlayerProfilePage</name>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="101"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="102"/>
         <source>Player Profile</source>
         <translation>Profilo giocatore</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="113"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="114"/>
         <source>My club</source>
         <translation>Il mio club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="114"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="115"/>
         <source>Second team</source>
         <translation>Squadra B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="115"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="116"/>
         <source>Scouted</source>
         <translation>Osservati</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="116"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="117"/>
         <source>National squad</source>
         <translation>Nazionale</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="117"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="118"/>
         <source>All players</source>
         <translation>Tutti i giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="126"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="127"/>
         <source>Search players</source>
         <translation>Cerca giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="139"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="140"/>
         <source>Squad</source>
         <translation>Rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="140"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="141"/>
         <source>Pick a player from the list, sorted by team part</source>
         <translation>Scegli un giocatore dall&apos;elenco, ordinato per reparto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="200"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="201"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="408"/>
         <source>Market Value</source>
         <translation>Valore di mercato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="200"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="201"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="408"/>
         <source>Wage</source>
         <translation>Stipendio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="200"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="201"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="408"/>
         <source>Avg. Rating</source>
         <translation>Valutazione media</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="230"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="231"/>
         <source>Update this player from an export file (HTML or CSV)</source>
         <translation>Aggiorna questo giocatore da un file di esportazione (HTML o CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="241"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="242"/>
         <source>Upload an FM export that contains ONLY this player. The data is written directly onto this profile — even if the UID in the file differs (e.g. a missing &apos;r-&apos; prefix). Assigned roles, primary role and transfer/loan settings are preserved.</source>
         <translation>Carica un&apos;esportazione di FM che contiene SOLO questo giocatore. I dati vengono scritti direttamente su questo profilo — anche se l&apos;UID nel file è diverso (es. manca il prefisso &apos;r-&apos;). Ruoli assegnati, ruolo principale e impostazioni di trasferimento/prestito vengono mantenuti.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="252"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="253"/>
         <source>No file selected…</source>
         <translation>Nessun file selezionato…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="253"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="254"/>
         <source>Browse…</source>
         <translation>Sfoglia…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="259"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1076"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1083"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1095"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1101"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="260"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1077"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1084"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1096"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1102"/>
         <source>Update Player</source>
         <translation>Aggiorna giocatore</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="267"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="268"/>
         <source>Select FM export (HTML or CSV)</source>
         <translation>Scegli un&apos;esportazione FM (HTML o CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="268"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="269"/>
         <source>FM exports (*.html *.htm *.csv);;All files (*)</source>
         <translation>Esportazioni FM (*.html *.htm *.csv);;Tutti i file (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="286"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="287"/>
         <source>Roles (best first)</source>
         <translation>Ruoli (migliori prima)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="308"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1059"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="309"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1060"/>
         <source>in possession</source>
         <translation>in possesso</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="309"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1057"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="310"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1058"/>
         <source>out of possession</source>
         <translation>non in possesso</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="313"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="314"/>
         <source>All Roles</source>
         <translation>Tutti i ruoli</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="314"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="315"/>
         <source>In possession only (IP)</source>
         <translation>Solo in possesso (IP)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="315"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="316"/>
         <source>Out of possession only (OOP)</source>
         <translation>Solo non in possesso (NP)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="316"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="317"/>
         <source>Which roles are shown as tiles.</source>
         <translation>Quali ruoli vengono mostrati come riquadri.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="333"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="334"/>
         <source>🌱 Talent Projection</source>
         <translation>🌱 Proiezione del talento</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="340"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="341"/>
         <source>🎯 Training Recommendation</source>
         <translation>🎯 Consiglio di allenamento</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="343"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="344"/>
         <source>Role:</source>
         <translation>Ruolo:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="376"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="377"/>
         <source>Attribute Overview</source>
         <translation>Panoramica degli attributi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="389"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="390"/>
         <source>DWRS Development</source>
         <translation>Andamento DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="394"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="395"/>
         <source>Stored changes before the current value</source>
         <translation>Modifiche salvate prima del valore attuale</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="402"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="403"/>
         <source>History by in-game date</source>
         <translation>Cronologia per data di gioco</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="408"/>
         <source>In-game date</source>
         <translation>Data di gioco</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="408"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="409"/>
         <source>Changed attributes</source>
         <translation>Attributi modificati</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="415"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="416"/>
         <source>No history yet. Each time an FM27 save is read in, the analyzer keeps one state per in-game month: for your squad, the second team, the shortlist, the national squad and players from your scouting, or for all players if you choose (Settings → History and data freshness).</source>
         <translation>Nessuna cronologia ancora. Ogni volta che legge un salvataggio FM27, l&apos;analyzer conserva uno stato per mese di gioco: per la tua rosa, la squadra B, la lista obiettivi, la nazionale e i giocatori dei tuoi osservatori, oppure per tutti i giocatori se lo scegli (Impostazioni → Cronologia e aggiornamento dei dati).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="426"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="427"/>
         <source>This player has no rated roles yet. Assign roles to him under Roles &amp; Tactics → Assign Roles.</source>
         <translation>Questo giocatore non ha ancora ruoli valutati. Assegnagli dei ruoli in Ruoli e tattiche → Assegna ruoli.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="519"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="520"/>
         <source>Goalkeepers</source>
         <translation>Portieri</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="519"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="520"/>
         <source>Defence</source>
         <translation>Difesa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="519"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="520"/>
         <source>Midfield</source>
         <translation>Centrocampo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="520"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="521"/>
         <source>Attack</source>
         <translation>Attacco</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="568"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="569"/>
         <source>No players in this selection</source>
         <translation>Nessun giocatore in questa selezione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="627"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="628"/>
         <source>No player selected</source>
         <translation>Nessun giocatore selezionato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="645"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="646"/>
         <source>%1 years</source>
         <translation>%1 anni</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="675"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="676"/>
         <source>Primary role %1</source>
         <translation>Ruolo principale %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="694"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="695"/>
         <source>Retired (missed full exports: %1)</source>
         <translation>Retired (esportazioni complete mancate: %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="697"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="698"/>
         <source>Data outdated (missed full exports: %1)</source>
         <translation>Dati non aggiornati (esportazioni complete mancate: %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="700"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="701"/>
         <source>missed full exports: %1</source>
         <translation>esportazioni complete mancate: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="702"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="703"/>
         <source>Data current</source>
         <translation>Dati aggiornati</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="708"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="709"/>
         <source>Yes, this file is definitely an update for %1.</source>
         <translation>Sì, questo file è sicuramente un aggiornamento per %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="762"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="763"/>
         <source>The rating is based on the available attributes (%1 % of the role weight). Missing: %2.</source>
         <translation>La valutazione si basa sugli attributi disponibili (%1 % del peso del ruolo). Mancanti: %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="785"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="786"/>
         <source>&lt;b style=&apos;font-size:14pt;&apos;&gt;Talent score (U%1): %2&lt;/b&gt;&lt;br/&gt;Best role DWRS &lt;b&gt;%3%&lt;/b&gt; + development headroom (%1−%4 years) + mentality (Det %5 / Wor %6) + personality (%7).</source>
         <translation>&lt;b style=&apos;font-size:14pt;&apos;&gt;Punteggio talento (U%1): %2&lt;/b&gt;&lt;br/&gt;DWRS del ruolo migliore &lt;b&gt;%3%&lt;/b&gt; + margine di crescita (%1−%4 anni) + mentalità (Det %5 / Imp %6) + personalità (%7).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="802"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="803"/>
         <source>Analysis as %1</source>
         <translation>Analisi come %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="806"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="813"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="807"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="814"/>
         <source>Strengths</source>
         <translation>Punti di forza</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="813"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="814"/>
         <source>No outstanding strengths.</source>
         <translation>Nessun punto di forza spiccato.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="815"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="822"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="816"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="823"/>
         <source>Weaknesses</source>
         <translation>Punti deboli</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="822"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="823"/>
         <source>No notable weaknesses.</source>
         <translation>Nessun punto debole rilevante.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="841"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="842"/>
         <source>Key Attributes</source>
         <translation>Attributi chiave</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="842"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="843"/>
         <source>Preferred Attributes</source>
         <translation>Attributi preferibili</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="843"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="844"/>
         <source>No attribute definitions for this role.</source>
         <translation>Nessuna definizione di attributi per questo ruolo.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="872"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="873"/>
         <source>No historical DWRS data yet. Import more snapshots over time to see the development.</source>
         <translation>Nessun dato DWRS storico ancora. Importa altri stati nel tempo per vedere l&apos;andamento.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="882"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="883"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="883"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="884"/>
         <source>Profile switches (marked in the chart, no development across a switch): %1</source>
         <translation>Cambi di profilo (segnati nel grafico, nessun andamento attraverso un cambio): %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="925"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="933"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="926"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="934"/>
         <source>%1 since %2</source>
         <translation>%1 da %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="929"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="930"/>
         <source>previously %1</source>
         <translation>prima %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="937"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="938"/>
         <source>In-game state %1</source>
         <translation>Stato di gioco %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="962"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="963"/>
         <source>Season %1 (end)</source>
         <translation>Stagione %1 (fine)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="985"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="986"/>
         <source>first state</source>
         <translation>primo stato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1052"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1053"/>
         <source>Outline = role in “%1”:</source>
         <translation>Contorno = ruolo in “%1”:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1098"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1099"/>
         <source>✅ %1 was updated from the file.</source>
         <translation>✅ %1 è stato aggiornato dal file.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1100"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1101"/>
         <source> (Name in the file: &apos;%1&apos;.)</source>
         <translation> (Nome nel file: &apos;%1&apos;.)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1116"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1117"/>
         <source>No trainable role from &lt;i&gt;positions ∩ favorite tactic&lt;/i&gt;. Set a favorite tactic in the settings.</source>
         <translation>Nessun ruolo allenabile da &lt;i&gt;posizioni ∩ tattica preferita&lt;/i&gt;. Imposta una tattica preferita nelle impostazioni.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1125"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1126"/>
         <source>There is currently no useful training method for this role (attributes already high or locked by age).</source>
         <translation>Al momento non c&apos;è un metodo di allenamento utile per questo ruolo (attributi già alti o bloccati dall&apos;età).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1131"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1132"/>
         <source>Training methods in this order:</source>
         <translation>Metodi di allenamento in questo ordine:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1137"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1138"/>
         <source>mental, trainable lifelong</source>
         <translation>mentale, allenabile per tutta la vita</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1139"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1140"/>
         <source>limited by age</source>
         <translation>limitato dall&apos;età</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1141"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1142"/>
         <source>still fully trainable</source>
         <translation>ancora pienamente allenabile</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1149"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1150"/>
         <source>⚠ Average rating below 7.0 — currently develops only slowly.</source>
         <translation>⚠ Valutazione media sotto 7,0 — al momento cresce solo lentamente.</translation>
     </message>
@@ -6273,618 +6322,618 @@ Sul salvataggio di prova il profilo FM27 con 33 % prevede la valutazione media m
 <context>
     <name>fm::RegistrationPage</name>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="122"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="123"/>
         <source>Squad Registration</source>
         <translation>Lista giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="128"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="129"/>
         <source>Competition:</source>
         <translation>Competizione:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="133"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="134"/>
         <source>Apply recommendation</source>
         <translation>Applica il consiglio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="134"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="135"/>
         <source>Sets the ticks to the assistant&apos;s proposal.</source>
         <translation>Imposta le spunte sulla proposta dell&apos;assistente.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="136"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="137"/>
         <source>Save squad list</source>
         <translation>Salva lista</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="138"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="139"/>
         <source>Saves the ticked players as this competition&apos;s registered list. Best XI uses it, and later changes (transfers, new markers) become visible.</source>
         <translation>Salva i giocatori spuntati come lista registrata di questa competizione. Il Migliore XI la usa e le modifiche successive (trasferimenti, nuovi contrassegni) diventano visibili.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="160"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="161"/>
         <source>no limit</source>
         <translation>nessun limite</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="161"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="162"/>
         <source>Maximum total wages of all registered players, as set by the league (e.g. LaLiga). If the amount changes in the game, just adjust it here. The proposal registers the players with promised playing time first (star, important player, regular starter, first-choice goalkeeper) and spends the rest so that the starting XI, B team and depth stay as strong as possible. 0 = no limit.</source>
         <translation>Monte ingaggi massimo di tutti i giocatori registrati, stabilito dalla lega (es. LaLiga). Se l&apos;importo cambia nel gioco, aggiornalo qui. La proposta registra prima i giocatori con minutaggio promesso (stella, giocatore importante, titolare fisso, portiere titolare) e usa il resto in modo che formazione titolare, squadra B e profondità restino il più forti possibile. 0 = nessun limite.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="167"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="168"/>
         <source>none</source>
         <translation>nessuno</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="167"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="168"/>
         <source>Players earning less may not be registered. 0 = none.</source>
         <translation>I giocatori che guadagnano meno non possono essere registrati. 0 = nessuno.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="169"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="170"/>
         <source>per week</source>
         <translation>a settimana</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="171"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="172"/>
         <source>per month</source>
         <translation>al mese</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="173"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="174"/>
         <source>per year</source>
         <translation>all&apos;anno</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="176"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="177"/>
         <source>Period both amounts refer to, as the game shows them.</source>
         <translation>Periodo a cui si riferiscono entrambi gli importi, come li mostra il gioco.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="177"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="178"/>
         <source>Wage budget:</source>
         <translation>Budget ingaggi:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="180"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="181"/>
         <source>Minimum wage:</source>
         <translation>Ingaggio minimo:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="208"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="209"/>
         <source>Registered for the league</source>
         <translation>Registrato per la lega</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="216"/>
         <source>Registered</source>
         <translation>Registrato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="216"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="216"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
         <source>Age</source>
         <translation>Età</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="216"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
         <source>Position</source>
         <translation>Posizione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="216"/>
         <source>Team</source>
         <translation>Squadra</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="239"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1082"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1100"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1105"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1113"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="240"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1072"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1090"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1095"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1103"/>
         <source>Registration</source>
         <translation>Registrazione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="252"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="253"/>
         <source>Got it</source>
         <translation>Ho capito</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="254"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="255"/>
         <source>Takes the current state as the new reference without saving the list.</source>
         <translation>Prende lo stato attuale come nuovo riferimento senza salvare la lista.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="272"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="273"/>
         <source>Tick every player you have actually registered in the game and save the list — Best XI then works with it. The ticks start as the recommendation, after saving they show your list. Orange: tick and recommendation differ. Sort: click a column header (default: position, goalkeeper to striker, right before left).</source>
         <translation>Spunta ogni giocatore che hai davvero registrato nel gioco e salva la lista — il Migliore XI la userà. Le spunte partono dal consiglio, dopo il salvataggio mostrano la tua lista. Arancione: spunta e consiglio differiscono. Ordinamento: clicca un&apos;intestazione di colonna (predefinito: posizione, dal portiere alla punta, destra prima di sinistra).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
         <source>Registered</source>
         <comment>registration list</comment>
         <translation>Registrato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
         <source>Recommendation</source>
         <translation>Raccomandazione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
         <source>Training status</source>
         <translation>Status di formazione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="287"/>
         <source>Need</source>
         <translation>Fabbisogno</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="287"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="287"/>
         <source>Wage</source>
         <translation>Stipendio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="287"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="288"/>
         <source>Note</source>
         <translation>Nota</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="400"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="401"/>
         <source>Champions / Europa / Conference League (List A)</source>
         <translation>Champions / Europa / Conference League (lista A)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="412"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="413"/>
         <source>%1 has no squad list: up to 99 players are eligible. Untick the players below who are not registered in the game.</source>
         <translation>%1 non ha una lista giocatori: possono giocare fino a 99 giocatori. Togli la spunta qui sotto ai giocatori che non sono registrati nel gioco.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="417"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="418"/>
         <source>The only limit is at most 4 non-EU players in the squad. That is decided by transfers, not by registration, so keep an eye on it there.</source>
         <translation>L&apos;unico limite è al massimo 4 giocatori extra-UE nella rosa. Questo si decide con i trasferimenti, non con la registrazione, quindi tienilo d&apos;occhio lì.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="435"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="436"/>
         <source>Please choose your club first (Overview or Settings).</source>
         <translation>Prima scegli il tuo club (Panoramica o Impostazioni).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="439"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="440"/>
         <source>No registration rules are stored for %1 yet. The squad list is not available for this version yet.</source>
         <translation>Per %1 non sono ancora salvate regole di registrazione. La lista giocatori non è ancora disponibile per questa versione.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="446"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="447"/>
         <source>Build your squad list for league and European competitions here. First switch on the registration rules: Settings → Squad Registration.</source>
         <translation>Prepara qui la lista giocatori per il campionato e le coppe europee. Prima attiva le regole di registrazione: Impostazioni → Lista giocatori.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="476"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="478"/>
         <source>Pool: first team + second team (%1 players, retired excluded). Ranking from starting XI, B-team and squad depth of: %2. Change markers via right-click → Registration — the proposal recalculates immediately.</source>
         <translation>Bacino: prima squadra + squadra B (%1 giocatori, ritirati esclusi). Classifica da formazione titolare, squadra B e profondità di: %2. Cambia i contrassegni con clic destro → Registrazione — la proposta si ricalcola subito.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="480"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="482"/>
         <source>no tactic available</source>
         <translation>nessuna tattica disponibile</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="555"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="557"/>
         <source>%1 of %2 players registered.</source>
         <translation>%1 di %2 giocatori registrati.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="557"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="559"/>
         <source>Best XI and Overview leave out: %1</source>
         <translation>Migliore XI e Panoramica escludono: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="568"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="570"/>
         <source>Non-HG quota full</source>
         <translation>Quota non del vivaio piena</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="570"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="572"/>
         <source>only club-grown places left</source>
         <translation>restano solo posti per cresciuti nel club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="572"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="742"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="574"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="744"/>
         <source>below minimum wage</source>
         <translation>sotto l&apos;ingaggio minimo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="574"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="576"/>
         <source>over the wage budget</source>
         <translation>oltre il budget ingaggi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="576"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="578"/>
         <source>non-EU places full</source>
         <translation>posti extra-UE pieni</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="578"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="580"/>
         <source>marked as cannot be registered</source>
         <translation>segnato come non registrabile</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="582"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="584"/>
         <source>List full</source>
         <translation>Lista piena</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="624"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="691"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1176"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="626"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="693"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1166"/>
         <source>List B</source>
         <translation>Lista B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="627"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="629"/>
         <source>Registered in the game. &apos;%1&apos; is eligible without a slot.</source>
         <translation>Registrato nel gioco. &apos;%1&apos; può giocare senza posto.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="629"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="631"/>
         <source>Goalkeepers (%1)</source>
         <translation>Portieri (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="630"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="632"/>
         <source>Outfield players (%1)</source>
         <translation>Giocatori di movimento (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="642"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="644"/>
         <source>Club-grown</source>
         <translation>Cresciuto nel club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="645"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="647"/>
         <source>Home-grown</source>
         <translation>Cresciuto nel vivaio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="648"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="650"/>
         <source>Non-HG</source>
         <translation>Non del vivaio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="652"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="654"/>
         <source>Non-EU</source>
         <translation>Extra-UE</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="658"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="660"/>
         <source>Starting XI</source>
         <translation>Formazione titolare</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="660"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="662"/>
         <source>B-team</source>
         <translation>Squadra B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="662"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="664"/>
         <source>Squad depth</source>
         <translation>Profondità della rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="666"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="668"/>
         <source>Reserve</source>
         <translation>Riserva</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="672"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="674"/>
         <source>✅ Register</source>
         <translation>✅ Registra</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="674"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="676"/>
         <source>🆓 List B</source>
         <translation>🆓 Lista B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="678"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="680"/>
         <source>❌ Leave out</source>
         <translation>❌ Escludi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="693"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="695"/>
         <source>Eligible without a slot on the squad list.</source>
         <translation>Può giocare senza posto nella lista giocatori.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="695"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="697"/>
         <source>blocked</source>
         <translation>bloccato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="697"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="699"/>
         <source>Marked as cannot be registered. Undo via right-click → Registration.</source>
         <translation>Segnato come non registrabile. Annulla con clic destro → Registrazione.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="731"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="733"/>
         <source>⚠️ no longer list B – needs a slot</source>
         <translation>⚠️ non più lista B – serve un posto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="732"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="734"/>
         <source>⚠️ no longer %1 – needs a slot</source>
         <translation>⚠️ non più %1 – serve un posto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="734"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="736"/>
         <source>now list B</source>
         <translation>ora lista B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="734"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="736"/>
         <source>now %1</source>
         <translation>ora %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="736"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="738"/>
         <source>%1 unclear</source>
         <translation>%1 incerto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="739"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="741"/>
         <source>playing time promised</source>
         <translation>minutaggio promesso</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="843"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="845"/>
         <source>&lt;b&gt;Squad list:&lt;/b&gt; %1 / %2</source>
         <translation>&lt;b&gt;Lista giocatori:&lt;/b&gt; %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="845"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="847"/>
         <source>Non-HG %1 / %2</source>
         <translation>Non del vivaio %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="847"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="849"/>
         <source>Home-grown %1</source>
         <translation>Cresciuti nel vivaio %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="848"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="850"/>
         <source>Club-grown %1</source>
         <translation>Cresciuti nel club %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="850"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="852"/>
         <source>Goalkeepers %1 (min. %2)</source>
         <translation>Portieri %1 (min. %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="853"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="855"/>
         <source>Non-EU %1 / %2</source>
         <translation>Extra-UE %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="856"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="858"/>
         <source>Wages %1 / %2</source>
         <translation>Ingaggi %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="860"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="862"/>
         <source>Wages %1</source>
         <translation>Ingaggi %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="861"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="863"/>
         <source>&lt;b&gt;List B&lt;/b&gt; (no place needed): %1 players</source>
         <translation>&lt;b&gt;Lista B&lt;/b&gt; (nessun posto necessario): %1 giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="862"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="864"/>
         <source>&lt;b&gt;%1&lt;/b&gt; (no place needed): %2 players</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; (nessun posto necessario): %2 giocatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="869"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="871"/>
         <source>No squad list saved yet — the ticks match the recommendation.</source>
         <translation>Nessuna lista salvata ancora — le spunte corrispondono al consiglio.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="871"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="873"/>
         <source>No squad list saved yet.</source>
         <translation>Nessuna lista salvata ancora.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="873"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="875"/>
         <source>Matches the saved squad list.</source>
         <translation>Corrisponde alla lista salvata.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="875"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="877"/>
         <source>Unsaved changes compared with the saved list: &lt;b&gt;%1&lt;/b&gt; newly registered, &lt;b&gt;%2&lt;/b&gt; deregistered.</source>
         <translation>Modifiche non salvate rispetto alla lista salvata: &lt;b&gt;%1&lt;/b&gt; nuovi registrati, &lt;b&gt;%2&lt;/b&gt; rimossi.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="884"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="886"/>
         <source>Recommended but not registered: %1</source>
         <translation>Consigliati ma non registrati: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="886"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="888"/>
         <source>Registered but not recommended: %1</source>
         <translation>Registrati ma non consigliati: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="899"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="901"/>
         <source>%1: avg. starting XI DWRS %2 → %3 (%4)</source>
         <translation>%1: DWRS medio della formazione titolare %2 → %3 (%4)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="903"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="905"/>
         <source>no loss</source>
         <translation>nessuna perdita</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="906"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="908"/>
         <source>Cost of registration (without rules → with squad list):</source>
         <translation>Costo della registrazione (senza regole → con lista giocatori):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="912"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="914"/>
         <source>No favorite tactic set — ranking from &apos;%1&apos;. Set them under Settings → Club.</source>
         <translation>Nessuna tattica preferita impostata — classifica da &apos;%1&apos;. Impostale in Impostazioni → Club.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="916"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="918"/>
         <source>Too many players registered: %1 (at most %2).</source>
         <translation>Troppi giocatori registrati: %1 (al massimo %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="920"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="922"/>
         <source>Too many non-home-grown players registered: %1 (at most %2).</source>
         <translation>Troppi giocatori non del vivaio registrati: %1 (al massimo %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="924"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="926"/>
         <source>Too many players who are not club-grown registered: %1 (at most %2).</source>
         <translation>Troppi giocatori non cresciuti nel club registrati: %1 (al massimo %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="928"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="930"/>
         <source>Wage budget exceeded: %1 (at most %2).</source>
         <translation>Budget ingaggi superato: %1 (al massimo %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="931"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="933"/>
         <source>Too many non-EU players registered: %1 (at most %2).</source>
         <translation>Troppi giocatori extra-UE registrati: %1 (al massimo %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="935"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="937"/>
         <source>Registered although below the minimum wage of %1: %2 players.</source>
         <translation>Registrati nonostante siano sotto l&apos;ingaggio minimo di %1: %2 giocatori.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="946"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="948"/>
         <source>the wage budget does not cover another player (%1 left).</source>
         <translation>il budget ingaggi non copre un altro giocatore (restano %1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="950"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="952"/>
         <source>only club-grown players may take them, and there are no more.</source>
         <translation>possono occuparli solo giocatori cresciuti nel club, e non ce ne sono più.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="952"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="954"/>
         <source>only home-grown players may take them, and there are no more.</source>
         <translation>possono occuparli solo giocatori cresciuti nel vivaio, e non ce ne sono più.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="954"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="956"/>
         <source>only EU players could take them, and there are no more.</source>
         <translation>potrebbero occuparli solo giocatori UE, e non ce ne sono più.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="956"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="958"/>
         <source>there are no more players in the pool.</source>
         <translation>non ci sono più giocatori nel bacino.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="957"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="959"/>
         <source>%1 places stay empty: %2</source>
         <translation>%1 posti restano vuoti: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="959"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="961"/>
         <source>%1 places are still free.</source>
         <translation>%1 posti sono ancora liberi.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="962"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="964"/>
         <source>Only %1 goalkeepers registered (wanted: %2).</source>
         <translation>Solo %1 portieri registrati (richiesti: %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="971"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="973"/>
         <source>U18 EU unclear (cut-off 1 January depending on birthday and in-game date, no EU nationality recognised, or age unknown), counts as needing a slot to be safe: %1. Set it via right-click → Registration.</source>
         <translation>U18 UE incerto (scadenza 1° gennaio a seconda del compleanno e della data di gioco, nessuna nazionalità UE riconosciuta o età sconosciuta), conta per sicurezza come bisognoso di posto: %1. Impostalo con clic destro → Registrazione.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="977"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="979"/>
         <source>U21 unclear (age 21 or unknown), counted as not U21 to be safe: %1. Set it via right-click → Registration.</source>
         <translation>U21 incerto (21 anni o età sconosciuta), conteggiato per sicurezza come non U21: %1. Impostalo con clic destro → Registrazione.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="988"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="990"/>
         <source>Still on the saved list but no longer needs a slot or has left the squad — removed on saving: %1</source>
         <translation>Ancora nella lista salvata ma non serve più un posto o ha lasciato la rosa — rimosso al salvataggio: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1083"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1073"/>
         <source>The selection breaks the registration rules (see warnings). Save anyway?</source>
         <translation>La selezione viola le regole di registrazione (vedi avvisi). Salvare comunque?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1101"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1091"/>
         <source>The saved squad list is already up to date.</source>
         <translation>La lista salvata è già aggiornata.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1114"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1104"/>
         <source>Squad list saved (%1 players).</source>
         <translation>Lista salvata (%1 giocatori).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1192"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1182"/>
         <source>&lt;b&gt;Needs a slot now&lt;/b&gt; (no longer %1): %2</source>
         <translation>&lt;b&gt;Ora serve un posto&lt;/b&gt; (non più %1): %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1195"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1185"/>
         <source>Not eligible without a tick: register and drop someone else instead, or leave out on purpose.</source>
         <translation>Non può giocare senza spunta: registralo e togline un altro, oppure escludilo di proposito.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1199"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1189"/>
         <source>&lt;b&gt;Now eligible without a slot&lt;/b&gt; (%1): %2 — this frees up slots.</source>
         <translation>&lt;b&gt;Ora può giocare senza posto&lt;/b&gt; (%1): %2 — questo libera posti.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1205"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1195"/>
         <source>The recommendation already accounts for this. Where tick and recommendation differ, the recommendation is marked orange in the table.</source>
         <translation>Il consiglio ne tiene già conto. Dove spunta e consiglio differiscono, il consiglio è segnato in arancione nella tabella.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1208"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1198"/>
         <source>🔔 &lt;b&gt;Changed since the last save&lt;/b&gt;</source>
         <translation>🔔 &lt;b&gt;Cambiato dall&apos;ultimo salvataggio&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1231"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1221"/>
         <source>Registered, but not recommended</source>
         <translation>Registrato, ma non consigliato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1232"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1222"/>
         <source>Recommended, but not registered</source>
         <translation>Consigliato, ma non registrato</translation>
     </message>
@@ -6892,141 +6941,141 @@ Sul salvataggio di prova il profilo FM27 con 33 % prevede la valutazione media m
 <context>
     <name>fm::RoleAnalysisPage</name>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="48"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="162"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="49"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="163"/>
         <source>Role Coverage</source>
         <translation>Copertura dei ruoli</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="52"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="53"/>
         <source>Role:</source>
         <translation>Ruolo:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="64"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="92"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="298"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="65"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="93"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="299"/>
         <source>My Club</source>
         <translation>Il mio club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="66"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="93"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="300"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="67"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="94"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="301"/>
         <source>Second Team</source>
         <translation>Squadra B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="68"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="301"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="69"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="302"/>
         <source>Scouted Players</source>
         <translation>Giocatori osservati</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="94"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="95"/>
         <source>Scouted</source>
         <translation>Osservati</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="162"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="163"/>
         <source>Scouting by Role</source>
         <translation>Osservatori per ruolo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="239"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="240"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="241"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="242"/>
         <source>Age</source>
         <translation>Età</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="243"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="244"/>
         <source>Position</source>
         <translation>Posizione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="244"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="245"/>
         <source>Personality</source>
         <translation>Personalità</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="249"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="250"/>
         <source>Left Foot</source>
         <translation>Piede sinistro</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="250"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="251"/>
         <source>Right Foot</source>
         <translation>Piede destro</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="251"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="252"/>
         <source>Height</source>
         <translation>Altezza</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="254"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="255"/>
         <source>Club</source>
         <translation>Società</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="255"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="256"/>
         <source>Market Value</source>
         <translation>Valore di mercato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="258"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="259"/>
         <source>DWRS (absolute)</source>
         <translation>DWRS (assoluto)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="264"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="265"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="295"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="296"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="298"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="300"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="299"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="301"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="305"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="306"/>
         <source>Strengths and weaknesses as %1</source>
         <translation>Punti di forza e debolezze come %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="346"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="347"/>
         <source>No players with this role in the selected pool.</source>
         <translation>Nessun giocatore con questo ruolo nel bacino scelto.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="354"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="357"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="355"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="358"/>
         <source>Strengths</source>
         <translation>Punti di forza</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="357"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="358"/>
         <source>No outstanding strengths for this role.</source>
         <translation>Nessun punto di forza spiccato per questo ruolo.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="364"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="367"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="365"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="368"/>
         <source>Weaknesses</source>
         <translation>Punti deboli</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="367"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="368"/>
         <source>No notable weaknesses for this role.</source>
         <translation>Nessun punto debole rilevante per questo ruolo.</translation>
     </message>
@@ -8554,271 +8603,271 @@ Tattiche di esempio: copia le due tattiche di esempio incluse (Control Press · 
 <context>
     <name>fm::SigningAdvisorTab</name>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="87"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="88"/>
         <source>⛔ Unfilled</source>
         <translation>⛔ Non occupato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="89"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="90"/>
         <source>🕳️⚠️ Hidden + Obvious</source>
         <translation>🕳️⚠️ Nascosto + Evidente</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="91"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="92"/>
         <source>🕳️ Hidden</source>
         <translation>🕳️ Nascosto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="93"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="94"/>
         <source>⚠️ Obvious</source>
         <translation>⚠️ Evidente</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="120"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="121"/>
         <source>Budget (market value up to):</source>
         <translation>Budget (valore di mercato fino a):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="125"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="126"/>
         <source> M</source>
         <translation> M</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="126"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="127"/>
         <source>Highest market value of a candidate (lower end of the range as FM exports it). 0 = free transfers only.</source>
         <translation>Valore di mercato più alto di un candidato (estremo inferiore dell&apos;intervallo come lo esporta FM). 0 = solo svincolati.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="129"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="130"/>
         <source>No limit</source>
         <translation>Nessun limite</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="132"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="133"/>
         <source>Max age:</source>
         <translation>Età max.:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="137"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="138"/>
         <source>Shortlist only</source>
         <translation>Solo lista obiettivi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="140"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="141"/>
         <source>How is this calculated?</source>
         <translation>Come viene calcolato?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="141"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="142"/>
         <source>Show or hide the explanation</source>
         <translation>Mostra o nascondi la spiegazione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="146"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="147"/>
         <source>For every position the best players of the filtered market are added to the squad on trial, and the starting XI and B-team are lined up again, provably optimally, each time (as on &apos;First team&apos;). &apos;XI +&apos; is how much the starting XI&apos;s total DWRS rises — with every knock-on effect: if a versatile player moves to a better position thanks to the newcomer, that counts too (column &apos;Knock-on&apos;). A position that merely looks weak, but for which the market offers nobody better, therefore does not end up on top. &apos;Better on market&apos; counts how many players of the filtered market are better in the role than your current one. Signings are calculated without an agreed playing time; &apos;Not for Sale&apos; players are left out.</source>
         <translation>Per ogni posizione i migliori giocatori del mercato filtrato vengono aggiunti alla rosa in prova, e ogni volta formazione titolare e squadra B vengono rischierate in modo dimostrabilmente ottimale (come in &apos;Prima squadra&apos;). &apos;XI +&apos; indica di quanto sale il DWRS totale della formazione titolare — con ogni effetto a catena: se un giocatore versatile passa a una posizione migliore grazie al nuovo arrivo, conta anche quello (colonna &apos;Effetto a catena&apos;). Una posizione che sembra solo debole, ma per cui il mercato non offre nessuno di meglio, quindi non finisce in cima. &apos;Migliori sul mercato&apos; conta quanti giocatori del mercato filtrato sono migliori nel ruolo del tuo attuale. Gli acquisti sono calcolati senza minutaggio concordato; i giocatori &apos;Incedibile&apos; sono esclusi.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
         <source>Slot</source>
         <translation>Posto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
         <source>Role</source>
         <translation>Ruolo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
         <source>Current</source>
         <translation>Attuale</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="190"/>
         <source>XI +</source>
         <translation>XI +</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
         <source>Best signing</source>
         <translation>Miglior acquisto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="174"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
         <source>Market Value</source>
         <translation>Valore di mercato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="174"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="190"/>
         <source>B-team +</source>
         <translation>Squadra B +</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="174"/>
         <source>Better on market</source>
         <translation>Migliori sul mercato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="175"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="176"/>
         <source>Players of the filtered market who are better in the role than your current one — out of all who can play the position.</source>
         <translation>Giocatori del mercato filtrato migliori nel ruolo del tuo attuale — tra tutti quelli che possono giocare nella posizione.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
         <source>Age</source>
         <translation>Età</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
         <source>Club</source>
         <translation>Società</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
         <source>Position</source>
         <translation>Posizione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
         <source>Wage</source>
         <translation>Stipendio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="190"/>
         <source>Personality</source>
         <translation>Personalità</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="190"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="191"/>
         <source>Knock-on</source>
         <translation>Effetto a catena</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="196"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="197"/>
         <source>Gap analysis: line-up anomalies</source>
         <translation>Analisi delle lacune: anomalie della formazione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="197"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="198"/>
         <source>Starters clearly below the team median (obvious) or not in their best position or on their side (hidden) — without looking at the market.</source>
         <translation>Titolari nettamente sotto la mediana della squadra (evidente) o non nella loro posizione migliore o sul loro lato (nascosto) — senza guardare il mercato.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
         <source>Player</source>
         <translation>Giocatore</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="212"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="212"/>
         <source>Gap Score</source>
         <translation>Punteggio lacuna</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="212"/>
         <source>Why</source>
         <translation>Perché</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="213"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="214"/>
         <source>Starting XI</source>
         <translation>Formazione titolare</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="214"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="476"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="215"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="477"/>
         <source>B-Team</source>
         <translation>Squadra B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="350"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="351"/>
         <source>Please choose your club first (Overview or Settings).</source>
         <translation>Prima scegli il tuo club (Panoramica o Impostazioni).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="378"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="379"/>
         <source>Filtered market: %1 players, %2 of them simulated as a signing.</source>
         <translation>Mercato filtrato: %1 giocatori, di cui %2 simulati come acquisto.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="383"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="384"/>
         <source>With these filters the market offers nobody who improves the starting XI.</source>
         <translation>Con questi filtri il mercato non offre nessuno che migliori la formazione titolare.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="389"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="390"/>
         <source>Biggest lever: &lt;b&gt;%1 · %2&lt;/b&gt; — %3 (%4, %5) adds %6 DWRS to the starting XI.</source>
         <translation>Leva più grande: &lt;b&gt;%1 · %2&lt;/b&gt; — %3 (%4, %5) aggiunge %6 DWRS alla formazione titolare.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="401"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="402"/>
         <source>Then: %1.</source>
         <translation>Poi: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="432"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="433"/>
         <source>— unfilled —</source>
         <translation>— non occupato —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="440"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="441"/>
         <source>nobody better</source>
         <translation>nessuno migliore</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="460"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="461"/>
         <source>%1 of %2</source>
         <translation>%1 di %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="475"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="476"/>
         <source>Squad</source>
         <translation>Rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="498"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="499"/>
         <source>For %1 (%2) the filtered market has nobody who improves the starting XI.</source>
         <translation>Per %1 (%2) il mercato filtrato non ha nessuno che migliori la formazione titolare.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="501"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="502"/>
         <source>Signing options for %1 (%2)</source>
         <translation>Opzioni di acquisto per %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="554"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="555"/>
         <source>Thresholds — Hidden: %1 · Obvious: %2 · Wrong-side penalty: %3 (adjustable under Settings → Squad and analysis)</source>
         <translation>Soglie — Nascosto: %1 · Evidente: %2 · Penalità lato sbagliato: %3 (regolabili in Impostazioni → Rosa e analisi)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="578"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="579"/>
         <source>✅ No significant gaps found with the current thresholds.</source>
         <translation>✅ Nessuna lacuna importante trovata con le soglie attuali.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="580"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="581"/>
         <source>%1 notable position(s) found — worst first.</source>
         <translation>%1 posizione/i rilevante/i trovata/e — prima la peggiore.</translation>
     </message>
@@ -8826,405 +8875,405 @@ Tattiche di esempio: copia le due tattiche di esempio incluse (Control Press · 
 <context>
     <name>fm::SquadMatrixPage</name>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="119"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="120"/>
         <source>Squad Matrix</source>
         <translation>Matrice della rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="125"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="126"/>
         <source>Tactic:</source>
         <translation>Tattica:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="129"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="130"/>
         <source>Extra details</source>
         <translation>Dettagli extra</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="135"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="136"/>
         <source>Scouting</source>
         <translation>Osservatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="136"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="137"/>
         <source>My Squad</source>
         <translation>La mia rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="155"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="162"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="156"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="163"/>
         <source>%1 years</source>
         <translation>%1 anni</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="195"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="196"/>
         <source>No limit</source>
         <translation>Nessun limite</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="228"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="229"/>
         <source>Squad Matrix – Scouting</source>
         <translation>Matrice della rosa – Osservatori</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="228"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="229"/>
         <source>Squad Matrix – My Squad</source>
         <translation>Matrice della rosa – La mia rosa</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="240"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="241"/>
         <source>Filter/Sorting:</source>
         <translation>Filtro/Ordinamento:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="244"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="245"/>
         <source>Sort and filter by a role. A “Δ” column then shows how far the player is above or below the best player of your first team.</source>
         <translation>Ordina e filtra per un ruolo. Una colonna “Δ” mostra poi quanto il giocatore è sopra o sotto il miglior giocatore della tua prima squadra.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="248"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="249"/>
         <source>Nation:</source>
         <translation>Nazione:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="252"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="253"/>
         <source>Restrict by nationality (independent of the talent filter): your own country, foreigners or a specific nation — useful for registration rules.</source>
         <translation>Limita per nazionalità (indipendente dal filtro talento): il tuo paese, gli stranieri o una nazione specifica — utile per le regole di registrazione.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="255"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="256"/>
         <source>Free agents only</source>
         <translation>Solo svincolati</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="257"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="258"/>
         <source>Free agents only: transfer value explicitly 0 or no club set (regardless of how the club is labelled). The value cap is ignored; sortable by role/talent.</source>
         <translation>Solo svincolati: valore di trasferimento esplicitamente 0 o nessun club impostato (comunque sia etichettato il club). Il tetto di valore viene ignorato; ordinabile per ruolo/talento.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="261"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="262"/>
         <source>Hide retired/stale</source>
         <translation>Nascondi ritirati/non aggiornati</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="263"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="264"/>
         <source>Hides players whose club is set to &apos;Retired&apos; or who were missing from the latest full exports (except your own club and the shortlist).</source>
         <translation>Nasconde i giocatori il cui club è &apos;Retired&apos; o che mancavano nelle ultime esportazioni complete (tranne il tuo club e la lista obiettivi).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="272"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="273"/>
         <source>DWRS:</source>
         <translation>DWRS:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="283"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="284"/>
         <source>Age:</source>
         <translation>Età:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="294"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="295"/>
         <source>Max. Value:</source>
         <translation>Valore max.:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="312"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="313"/>
         <source>Talent Filter</source>
         <translation>Filtro talento</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="317"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="318"/>
         <source>Nationality:</source>
         <translation>Nazionalità:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="325"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="326"/>
         <source>Domestic</source>
         <translation>Nazionale</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="326"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="327"/>
         <source>Foreign</source>
         <translation>Straniero</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="327"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="328"/>
         <source>Any</source>
         <translation>Qualsiasi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="332"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="333"/>
         <source>Max. Age:</source>
         <translation>Età max.:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="340"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="341"/>
         <source>Min. Det + Wor:</source>
         <translation>Det + Imp min.:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="348"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="349"/>
         <source>Only good personalities</source>
         <translation>Solo personalità buone</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="353"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="354"/>
         <source>Talent Score = best DWRS of the displayed roles + 2 per year below the age cap + (Det + WR − 20) / 4 + 3 (good) / − 5 (bad personality). A rough development estimate, not hidden potential ability. Attribute ranges use their midpoint; unknown attributes are neutral at 10. Compare players with the same roles and age caps.</source>
         <translation>Punteggio talento = miglior DWRS dei ruoli mostrati + 2 per ogni anno sotto il limite di età + (Det + Imp − 20) / 4 + 3 (buona) / − 5 (cattiva personalità). Una stima approssimativa dello sviluppo, non il potenziale nascosto. Gli intervalli di attributi usano il valore medio; gli attributi sconosciuti sono neutri a 10. Confronta giocatori con gli stessi ruoli e limiti di età.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="365"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="366"/>
         <source>Attribute thresholds</source>
         <translation>Soglie degli attributi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="370"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="371"/>
         <source>Highlights players whose attribute reaches the threshold, e.g. Decisions for an AM(C) or Crossing for full-backs. Each threshold gets its own column, “Thresholds” counts the ones met. Uses the middle of the scouted range.</source>
         <translation>Evidenzia i giocatori il cui attributo raggiunge la soglia, es. Decisioni per un T (C) o Cross per i terzini. Ogni soglia ha la sua colonna, “Soglie” conta quelle raggiunte. Usa il centro dell&apos;intervallo osservato.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="381"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="382"/>
         <source>+ Attribute</source>
         <translation>+ Attributo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="389"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="390"/>
         <source>Only show players who meet all thresholds</source>
         <translation>Mostra solo i giocatori che raggiungono tutte le soglie</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="395"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="396"/>
         <source>Scouted Players</source>
         <translation>Giocatori osservati</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="412"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="413"/>
         <source>Show:</source>
         <translation>Mostra:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="420"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="421"/>
         <source>First team</source>
         <translation>Prima squadra</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="421"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="422"/>
         <source>Second Team</source>
         <translation>Squadra B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="422"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="423"/>
         <source>Both</source>
         <translation>Entrambe</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="427"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="428"/>
         <source>Only players up to the youth age limits from the settings (outfield players and goalkeepers separately).</source>
         <translation>Solo giocatori entro i limiti di età giovanili delle impostazioni (giocatori di movimento e portieri separatamente).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="433"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1022"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="434"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1023"/>
         <source>My Club</source>
         <translation>Il mio club</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="446"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="447"/>
         <source>Search by name…</source>
         <translation>Cerca per nome…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="448"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1328"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1335"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="449"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1329"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1336"/>
         <source>Export CSV</source>
         <translation>Esporta CSV</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="460"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="461"/>
         <source>Freshness</source>
         <translation>Aggiornamento</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="520"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="521"/>
         <source>★</source>
         <translation>★</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="528"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="543"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1039"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="529"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="544"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1040"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="551"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="552"/>
         <source>Data outdated: not seen in the last %1 full exports.</source>
         <translation>Dati non aggiornati: non visto nelle ultime %1 esportazioni complete.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="558"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="559"/>
         <source>Age</source>
         <translation>Età</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="561"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1042"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1183"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="562"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1043"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1184"/>
         <source>Talent</source>
         <translation>Talento</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="575"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="576"/>
         <source>Position</source>
         <translation>Posizione</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="577"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="578"/>
         <source>Personality</source>
         <translation>Personalità</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="587"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="588"/>
         <source>Club</source>
         <translation>Società</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="588"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="608"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="589"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="609"/>
         <source>Market Value</source>
         <translation>Valore di mercato</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="597"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="598"/>
         <source>Wage</source>
         <translation>Stipendio</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="600"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="601"/>
         <source>Left Foot</source>
         <translation>Piede sinistro</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="602"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="603"/>
         <source>Right Foot</source>
         <translation>Piede destro</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="604"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="605"/>
         <source>Height</source>
         <translation>Altezza</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="628"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="629"/>
         <source>Det</source>
         <translation>Det</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="629"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="630"/>
         <source>Wor</source>
         <translation>Imp</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="647"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="648"/>
         <source>Thresholds</source>
         <translation>Soglie</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="699"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1181"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="700"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1182"/>
         <source>⌀ Requirements</source>
         <translation>⌀ Requisiti</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="710"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="711"/>
         <source>Mean DWRS in the required roles; for a bridge weighted with the in-possession share from the settings, as in Best XI.</source>
         <translation>DWRS medio nei ruoli richiesti; per un ponte pesato con la quota in possesso delle impostazioni, come nel Migliore XI.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="715"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="758"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="716"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="759"/>
         <source>Δ %1 (%2)</source>
         <translation>Δ %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="731"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="732"/>
         <source>Difference to the value of the player the search was started for.</source>
         <translation>Differenza rispetto al valore del giocatore per cui è stata avviata la ricerca.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="819"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="820"/>
         <source>All Roles</source>
         <translation>Tutti i ruoli</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="855"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="856"/>
         <source>All</source>
         <translation>Tutti</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="857"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="868"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="858"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="869"/>
         <source>Domestic (%1)</source>
         <translation>Nazionali (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="858"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="859"/>
         <source>Foreigners</source>
         <translation>Stranieri</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="867"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="868"/>
         <source>Domestic (country missing in settings)</source>
         <translation>Nazionali (paese mancante nelle impostazioni)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="877"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="878"/>
         <source>Youth only (up to %1, GK up to %2)</source>
         <translation>Solo giovani (fino a %1, Por fino a %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1025"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1026"/>
         <source>Players from %1 (Second Team, %2)</source>
         <translation>Giocatori di %1 (squadra B, %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1027"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1028"/>
         <source>Players from %1 &amp; Second Team (%2)</source>
         <translation>Giocatori di %1 e squadra B (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1029"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1030"/>
         <source>Players from %1 (%2)</source>
         <translation>Giocatori di %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1040"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1320"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1041"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1321"/>
         <source>Shortlist</source>
         <translation>Lista obiettivi</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1044"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1045"/>
         <source>Requirements (value)</source>
         <translation>Requisiti (valore)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1162"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1163"/>
         <source>Free Agents (%1)</source>
         <translation>Svincolati (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1163"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1164"/>
         <source>Scouted Players (%1)</source>
         <translation>Giocatori osservati (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1225"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1226"/>
         <source>Remove threshold</source>
         <translation>Rimuovi soglia</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1330"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1331"/>
         <source>CSV files (*.csv)</source>
         <translation>File CSV (*.csv)</translation>
     </message>

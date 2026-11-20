@@ -15,7 +15,7 @@
 <context>
     <name>fm::DashboardPage</name>
     <message numerus="yes">
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1259"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1260"/>
         <source>Compare with all %n</source>
         <translation>
             <numerusform>Compare with both</numerusform>

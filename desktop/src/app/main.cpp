@@ -7,6 +7,7 @@
 #include <QTranslator>
 
 #include "AppContext.h"
+#include "core/Currency.h"
 #include "core/Definitions.h"
 #include "core/DwrsDisplay.h"
 #include "FirstRunDialog.h"
@@ -52,6 +53,9 @@ int main(int argc, char *argv[])
     // FM27 role names and abbreviations follow the UI language (the game's
     // own wording); the game language of a save only matters for imports.
     fm::Definitions::setDisplayLanguage(language);
+    // Money is shown in the chosen currency, by default the one of the UI language.
+    const QString currency = context.paths().currency();
+    fm::Currency::setDisplay(currency.isEmpty() ? fm::Currency::defaultFor(language) : currency);
 
     // DWRS decimals use the separator of the UI language (restart on change).
     fm::setDwrsLocale(language == QLatin1String("de")   ? QLocale(QLocale::German)

@@ -1,4 +1,5 @@
 #include "SigningAdvisorTab.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 
 #include "PageHelpers.h"
@@ -390,7 +391,7 @@ void SigningAdvisorTab::fillNeeds()
                          .arg(top.slot, roleNames.value(top.role, top.role).toHtmlEscaped(),
                               best.player->name.toHtmlEscaped(),
                               best.player->club.toHtmlEscaped(),
-                              best.player->transferValueRaw.toHtmlEscaped(),
+                              Currency::displayText(best.player->transferValueRaw).toHtmlEscaped(),
                               gainText(best.xiGain));
         QStringList next;
         for (size_t i = 1; i < needs.size() && next.size() < 3; ++i) {
@@ -451,7 +452,7 @@ void SigningAdvisorTab::fillNeeds()
             bestItem->setData(Qt::UserRole, best.player->uid);
             m_needsTable->setItem(row, 5, bestItem);
             m_needsTable->setItem(row, 6, dwrsItem(best.rating, true));
-            m_needsTable->setItem(row, 7, new NumericItem(best.player->transferValueRaw,
+            m_needsTable->setItem(row, 7, new NumericItem(Currency::displayText(best.player->transferValueRaw),
                                                           best.player->transferValue));
             m_needsTable->setItem(row, 8, new NumericItem(gainText(best.bTeamGain),
                                                           best.bTeamGain));
@@ -521,8 +522,8 @@ void SigningAdvisorTab::showOptions()
             dwrs->setForeground(style.text);
         }
         m_optionsTable->setItem(r, column++, dwrs);
-        m_optionsTable->setItem(r, column++, new NumericItem(p.transferValueRaw, p.transferValue));
-        m_optionsTable->setItem(r, column++, new QTableWidgetItem(p.wageRaw));
+        m_optionsTable->setItem(r, column++, new NumericItem(Currency::displayText(p.transferValueRaw), p.transferValue));
+        m_optionsTable->setItem(r, column++, new QTableWidgetItem(Currency::displayText(p.wageRaw)));
         m_optionsTable->setItem(r, column++, new QTableWidgetItem(GameTerms::text(QStringLiteral("personality"), p.personality)));
         auto *gain = new NumericItem(gainText(option.xiGain), option.xiGain);
         gain->setBackground(gainColor(option.xiGain, need.options.front().xiGain));
