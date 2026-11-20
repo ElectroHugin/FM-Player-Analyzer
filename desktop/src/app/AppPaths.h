@@ -88,6 +88,15 @@ public:
     QDateTime lastUpdateCheck() const;
     void setLastUpdateCheck(const QDateTime &when);
 
+    // "What's new" after an update: the version that last started (empty
+    // before 2.3.2 or on a fresh install) and whether its changes are shown
+    // once at the first start of a newer version (on by default; the dialog
+    // has "Don't show again").
+    QString lastStartedVersion() const;
+    void setLastStartedVersion(const QString &version);
+    bool showWhatsNew() const;
+    void setShowWhatsNew(bool show);
+
 private:
     std::unique_ptr<QSettings> m_settings;
 };

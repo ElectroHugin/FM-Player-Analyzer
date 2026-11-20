@@ -181,3 +181,18 @@ python translations/translate.py check
 New texts then show in English in the other languages until a translator
 fills them in (`export` lists exactly those). Write new texts in English, with
 the game's own English terms.
+
+### Changelog in the app
+
+After an update the app shows the new entries of `CHANGELOG.md` once, in the
+interface language ("What's new"); the update hint shows them for a newer
+release too. The translations are `desktop/changelog/CHANGELOG.<lang>.md`
+(same `<lang>` codes as the `.ts` files). Only the newest sections need a
+translation; a version missing there shows in English.
+
+- Keep the headings exactly as in `CHANGELOG.md` (`## Unreleased`,
+  `## 2.3.2 – 2026-11-21`): the app finds a version by its heading.
+- When a release renames `## Unreleased` to `## X.Y.Z – date`, rename it in
+  every translation in the same commit.
+- A new language needs its file added to `src/app/resources/app.qrc`.
+

@@ -14,6 +14,7 @@
 - Optional update check, off by default: the app asks once whether it may look for new versions at startup. It only asks GitHub for the latest version number and sends no data about you or your saves.
 - A new version shows as a hint with its changes and a download button that opens the release page. Nothing is installed automatically; a version can be skipped.
 - Settings → Saves → Updates: switch the check on or off, include test versions, or check now.
+- After an update the app shows what's new once, in the interface language. "Don't show again" switches this off (also under Settings → Saves → Updates); Help → What's new shows it at any time. The update hint shows the changes of the new version in the interface language too.
 - FM27 Best XI: a player can stand in on a slot outside his positions in one of the two line-ups, so slots no longer stay empty just because nobody has both positions. His value there is lowered (factor 0.80, Settings → Squad and analysis); the role is shown hatched.
 - Players are also rated for roles they have not been assigned when the line-up needs them.
 - Combined view: a place that is free with and without the ball shows as one box, and free places no longer draw connecting lines.

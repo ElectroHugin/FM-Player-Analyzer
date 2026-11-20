@@ -126,6 +126,7 @@ private:
 
     AppContext &m_context;
     ThemeManager &m_theme;
+    bool m_whatsNewChecked = false; // the start-up "What's new" ran this session
 
     QListWidget *m_menu = nullptr;
     QButtonGroup *m_modeGroup = nullptr; // 0 = club, 1 = national

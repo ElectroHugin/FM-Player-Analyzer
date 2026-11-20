@@ -99,4 +99,70 @@ std::optional<ReleaseInfo> newestReleaseAfter(const QByteArray &releasesJson,
     return best;
 }
 
+QString changelogNotes(const QString &changelog, const QString &fromVersion,
+                       const QString &toVersion)
+{
+    const std::optional<AppVersion> to = AppVersion::parse(toVersion);
+    if (!to)
+        return {};
+    const std::optional<AppVersion> from = AppVersion::parse(fromVersion);
+    AppVersion toBase = *to;
+    toBase.preRelease.clear();
+    toBase.preReleaseNumber = 0;
+
+    static const QRegularExpression versionHeading(
+        QStringLiteral(R"(^##\s+v?(\d+\.\d+(?:\.\d+)?)\b)"));
+    static const QRegularExpression unreleasedHeading(
+        QStringLiteral(R"(^##\s+Unreleased\b)"), QRegularExpression::CaseInsensitiveOption);
+
+    struct Section
+    {
+        QString heading;
+        QStringList lines;
+    };
+    QList<Section> picked;
+    bool collecting = false;
+    const QStringList lines = changelog.split(QLatin1Char('\n'));
+    for (const QString &raw : lines) {
+        QString line = raw;
+        if (line.endsWith(QLatin1Char('\r')))
+            line.chop(1);
+        if (line.startsWith(QLatin1String("## ")) || line == QLatin1String("##")) {
+            collecting = false;
+            bool take = false;
+            if (unreleasedHeading.match(line).hasMatch()) {
+                take = to->isPreRelease();
+            } else if (const QRegularExpressionMatch m = versionHeading.match(line); m.hasMatch()) {
+                const std::optional<AppVersion> section = AppVersion::parse(m.captured(1));
+                if (section) {
+                    if (!from)
+                        take = compareVersions(*section, toBase) == 0 && !to->isPreRelease();
+                    else
+                        take = compareVersions(*section, *from) > 0
+                               && compareVersions(*section, *to) <= 0;
+                }
+            }
+            if (take) {
+                picked.append({line.mid(3).trimmed(), {}});
+                collecting = true;
+            }
+            continue;
+        }
+        if (line.startsWith(QLatin1String("# ")))
+            collecting = false; // the file title
+        else if (collecting)
+            picked.last().lines.append(line);
+    }
+
+    QStringList parts;
+    for (const Section &section : picked) {
+        const QString body = section.lines.join(QLatin1Char('\n')).trimmed();
+        if (body.isEmpty())
+            continue;
+        parts.append(picked.size() > 1 ? QStringLiteral("### %1\n\n%2").arg(section.heading, body)
+                                       : body);
+    }
+    return parts.join(QStringLiteral("\n\n"));
+}
+
 } // namespace fm

@@ -1,4 +1,14 @@
 <RCC>
+    <!-- "What's new" after an update: the changelog and its translations. -->
+    <qresource prefix="/changelog">
+        <file alias="CHANGELOG.md">../../../../CHANGELOG.md</file>
+        <file alias="CHANGELOG.de.md">../../../changelog/CHANGELOG.de.md</file>
+        <file alias="CHANGELOG.es.md">../../../changelog/CHANGELOG.es.md</file>
+        <file alias="CHANGELOG.fr.md">../../../changelog/CHANGELOG.fr.md</file>
+        <file alias="CHANGELOG.it.md">../../../changelog/CHANGELOG.it.md</file>
+        <file alias="CHANGELOG.ru.md">../../../changelog/CHANGELOG.ru.md</file>
+        <file alias="CHANGELOG.zh_CN.md">../../../changelog/CHANGELOG.zh_CN.md</file>
+    </qresource>
     <qresource prefix="/defaults">
         <file>definitions.json</file>
         <file alias="harvestgreen-comparison.json">../../../../docs/dwrs/harvestgreen-comparison.json</file>

@@ -277,7 +277,7 @@ Details: %1</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="992"/>
+        <location filename="../src/app/MainWindow.cpp" line="999"/>
         <source>Saving ratings …</source>
         <translation>正在保存评分……</translation>
     </message>
@@ -630,14 +630,14 @@ Details: %1</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/app/main.cpp" line="80"/>
+        <location filename="../src/app/main.cpp" line="82"/>
         <source>Startup failed:
 %1</source>
         <translation>启动失败：
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="103"/>
+        <location filename="../src/app/main.cpp" line="105"/>
         <source>The last used save “%1” could not be opened:
 %2</source>
         <translation>无法打开上次使用的存档“%1”：
@@ -3211,296 +3211,301 @@ You can change the folder later in the settings.</source>
 <context>
     <name>fm::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="156"/>
+        <location filename="../src/app/MainWindow.cpp" line="157"/>
         <source>Back (Alt+←)</source>
         <translation>返回（Alt+←）</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="157"/>
+        <location filename="../src/app/MainWindow.cpp" line="158"/>
         <source>Forward (Alt+→)</source>
         <translation>前进（Alt+→）</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="160"/>
+        <location filename="../src/app/MainWindow.cpp" line="161"/>
         <source>Home (Alt+Home)</source>
         <translation>首页（Alt+Home）</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="183"/>
+        <location filename="../src/app/MainWindow.cpp" line="184"/>
         <source>Players, pages, actions …    Ctrl+K</source>
         <translation>球员、页面、操作 …    Ctrl+K</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="193"/>
+        <location filename="../src/app/MainWindow.cpp" line="194"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="232"/>
+        <location filename="../src/app/MainWindow.cpp" line="233"/>
         <source>Later</source>
         <translation>稍后</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="347"/>
+        <location filename="../src/app/MainWindow.cpp" line="348"/>
         <source>Recalculation</source>
         <translation>重新计算</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="350"/>
+        <location filename="../src/app/MainWindow.cpp" line="351"/>
         <source>DWRS recalculated: %1 ratings, %2 changed entries saved.</source>
         <translation>DWRS重新计算：%1评分，%2保存更改的条目。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="385"/>
+        <location filename="../src/app/MainWindow.cpp" line="386"/>
         <source>New FM27 rating profile</source>
         <translation>新的 FM27 评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="386"/>
+        <location filename="../src/app/MainWindow.cpp" line="387"/>
         <source>There is a new rating profile for FM27: “DWRS FM27 · harvestgreen22” (provisional).</source>
         <translation>FM27 有新的评分方案：“DWRS FM27 · harvestgreen22”（暂定）。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="389"/>
+        <location filename="../src/app/MainWindow.cpp" line="390"/>
         <source>It is based on measurements in FM27 matches and separates roles more clearly. Values have one decimal. Switching recalculates all ratings of this save; the history marks the switch. You can change the profile at any time under Settings → DWRS rating.</source>
         <translation>它基于 FM27 比赛中的测量数据，能更清晰地区分不同角色。数值保留一位小数。切换后会重新计算此存档的所有评分；历史记录会标记这次切换。你可以随时在设置 → DWRS 评分中更改评分方案。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="393"/>
+        <location filename="../src/app/MainWindow.cpp" line="394"/>
         <source>Use new profile</source>
         <translation>使用新评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="394"/>
+        <location filename="../src/app/MainWindow.cpp" line="395"/>
         <source>Keep previous</source>
         <translation>保留原方案</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="403"/>
+        <location filename="../src/app/MainWindow.cpp" line="404"/>
         <source>Rating profile</source>
         <translation>评分方案</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="421"/>
+        <location filename="../src/app/MainWindow.cpp" line="422"/>
         <source>The DWRS calculation has been improved (goalkeepers are rated on all goalkeeping attributes). The ratings in this save still come from the old calculation.</source>
         <translation>DWRS计算得到了改进（守门员在所有守门员属性上被评分）。这个存档中的评分仍然来自旧的计算。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="424"/>
+        <location filename="../src/app/MainWindow.cpp" line="425"/>
         <source>Recalculate now</source>
         <translation>现在重新计算</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="445"/>
+        <location filename="../src/app/MainWindow.cpp" line="446"/>
         <source>Switch save (Ctrl+O)</source>
         <translation>切换存档（Ctrl+O）</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="460"/>
-        <location filename="../src/app/MainWindow.cpp" line="1162"/>
+        <location filename="../src/app/MainWindow.cpp" line="461"/>
+        <location filename="../src/app/MainWindow.cpp" line="1174"/>
         <source>Club</source>
         <translation>俱乐部</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="460"/>
-        <location filename="../src/app/MainWindow.cpp" line="1013"/>
-        <location filename="../src/app/MainWindow.cpp" line="1162"/>
+        <location filename="../src/app/MainWindow.cpp" line="461"/>
+        <location filename="../src/app/MainWindow.cpp" line="1020"/>
+        <location filename="../src/app/MainWindow.cpp" line="1174"/>
         <source>National Team</source>
         <translation>国家队</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="502"/>
-        <location filename="../src/app/MainWindow.cpp" line="1192"/>
+        <location filename="../src/app/MainWindow.cpp" line="503"/>
+        <location filename="../src/app/MainWindow.cpp" line="1204"/>
         <source>Toggle day/night</source>
         <translation>切换白天/夜间</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="512"/>
+        <location filename="../src/app/MainWindow.cpp" line="513"/>
         <source>v%1 · ElectroHugin</source>
         <translation>v%1 · ElectroHugin</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="513"/>
+        <location filename="../src/app/MainWindow.cpp" line="514"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="580"/>
+        <location filename="../src/app/MainWindow.cpp" line="581"/>
         <source>&amp;File</source>
         <translation>&amp;文件</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="581"/>
-        <location filename="../src/app/MainWindow.cpp" line="1190"/>
-        <location filename="../src/app/MainWindow.cpp" line="1255"/>
+        <location filename="../src/app/MainWindow.cpp" line="582"/>
+        <location filename="../src/app/MainWindow.cpp" line="1202"/>
+        <location filename="../src/app/MainWindow.cpp" line="1267"/>
         <source>New save …</source>
         <translation>新的存档…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="584"/>
-        <location filename="../src/app/MainWindow.cpp" line="1188"/>
+        <location filename="../src/app/MainWindow.cpp" line="585"/>
+        <location filename="../src/app/MainWindow.cpp" line="1200"/>
         <source>Switch save …</source>
         <translation>切换存档…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="195"/>
+        <location filename="../src/app/MainWindow.cpp" line="196"/>
         <source>Read player data (Ctrl+I). You can also simply drop a file onto the window.</source>
         <translation>读取球员数据（Ctrl+I）。也可以直接把文件拖到窗口上。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="588"/>
-        <location filename="../src/app/MainWindow.cpp" line="1186"/>
+        <location filename="../src/app/MainWindow.cpp" line="589"/>
+        <location filename="../src/app/MainWindow.cpp" line="1198"/>
         <source>Import player data …</source>
         <translation>读取球员数据…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="591"/>
+        <location filename="../src/app/MainWindow.cpp" line="592"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="595"/>
+        <location filename="../src/app/MainWindow.cpp" line="596"/>
         <source>&amp;Language</source>
         <translation>&amp;语言</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="612"/>
-        <location filename="../src/app/MainWindow.cpp" line="668"/>
+        <location filename="../src/app/MainWindow.cpp" line="613"/>
+        <location filename="../src/app/MainWindow.cpp" line="675"/>
         <source>Currency</source>
         <translation>货币</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="617"/>
+        <location filename="../src/app/MainWindow.cpp" line="618"/>
         <source>Matching the language: %1</source>
         <translation>与语言一致：%1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="631"/>
+        <location filename="../src/app/MainWindow.cpp" line="632"/>
         <source>&amp;Help</source>
         <translation>&amp;帮助</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="632"/>
+        <location filename="../src/app/MainWindow.cpp" line="633"/>
         <source>Welcome assistant …</source>
         <translation>欢迎向导…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="633"/>
+        <location filename="../src/app/MainWindow.cpp" line="634"/>
+        <source>What&apos;s new …</source>
+        <translation>更新内容 …</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="640"/>
         <source>About %1…</source>
         <translation>关于%1…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="651"/>
+        <location filename="../src/app/MainWindow.cpp" line="658"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="652"/>
+        <location filename="../src/app/MainWindow.cpp" line="659"/>
         <source>The language will change after a restart. Restart now?</source>
         <translation>重启后语言会改变。现在重新启动？</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="669"/>
+        <location filename="../src/app/MainWindow.cpp" line="676"/>
         <source>Amounts are shown in the new currency after a restart. Restart now?</source>
         <translation>重启后金额将以新货币显示。现在重启吗？</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="956"/>
+        <location filename="../src/app/MainWindow.cpp" line="963"/>
         <source>Recalculating DWRS ratings…</source>
         <translation>重新计算DWRS评分…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1020"/>
+        <location filename="../src/app/MainWindow.cpp" line="1027"/>
         <source>FM Dashboard</source>
         <translation>FM 仪表板</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1110"/>
+        <location filename="../src/app/MainWindow.cpp" line="1122"/>
         <source>Test version %1 is available.</source>
         <translation>测试版 %1 已发布。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1111"/>
+        <location filename="../src/app/MainWindow.cpp" line="1123"/>
         <source>Version %1 is available.</source>
         <translation>版本 %1 已发布。</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1112"/>
+        <location filename="../src/app/MainWindow.cpp" line="1124"/>
         <source>What&apos;s new</source>
         <translation>更新内容</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1163"/>
+        <location filename="../src/app/MainWindow.cpp" line="1175"/>
         <source>Pages</source>
         <translation>页面</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1183"/>
+        <location filename="../src/app/MainWindow.cpp" line="1195"/>
         <source>Actions</source>
         <translation>操作</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1186"/>
+        <location filename="../src/app/MainWindow.cpp" line="1198"/>
         <source>Ctrl+I</source>
         <translation>Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1188"/>
+        <location filename="../src/app/MainWindow.cpp" line="1200"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1190"/>
+        <location filename="../src/app/MainWindow.cpp" line="1202"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1191"/>
+        <location filename="../src/app/MainWindow.cpp" line="1203"/>
         <source>Recalculate DWRS</source>
         <translation>重新计算DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1208"/>
+        <location filename="../src/app/MainWindow.cpp" line="1220"/>
         <source>Players</source>
         <translation>球员</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1227"/>
+        <location filename="../src/app/MainWindow.cpp" line="1239"/>
         <source>%1 players</source>
         <translation>%1 名球员</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1239"/>
+        <location filename="../src/app/MainWindow.cpp" line="1251"/>
         <source>Recently used</source>
         <translation>最近使用过</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1247"/>
+        <location filename="../src/app/MainWindow.cpp" line="1259"/>
         <source>Open save</source>
         <translation>打开存档</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1254"/>
+        <location filename="../src/app/MainWindow.cpp" line="1266"/>
         <source>All saves …</source>
         <translation>所有存档…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1307"/>
+        <location filename="../src/app/MainWindow.cpp" line="1319"/>
         <source>Choose save</source>
         <translation>选择存档</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1308"/>
+        <location filename="../src/app/MainWindow.cpp" line="1320"/>
         <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
         <translation>存档 (*.fm);;球员列表 (*.csv *.html *.htm);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1310"/>
+        <location filename="../src/app/MainWindow.cpp" line="1322"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>选择FM导出或FM27存档</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1311"/>
+        <location filename="../src/app/MainWindow.cpp" line="1323"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>FM导出和FM27存档 (*.html *.htm *.csv *.fm);;所有文件 (*)</translation>
     </message>
@@ -7179,8 +7184,8 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="321"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2347"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2371"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2355"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2379"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -7495,7 +7500,7 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="558"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2171"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2179"/>
         <source>Football Manager Version</source>
         <translation>Football Manager 版本</translation>
     </message>
@@ -8172,13 +8177,13 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1288"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2142"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2150"/>
         <source>Night</source>
         <translation>夜间</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1289"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2142"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2150"/>
         <source>Day</source>
         <translation>白天</translation>
     </message>
@@ -8507,97 +8512,107 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
         <translation>测试版在正式发布前推出，用于试用新功能，可能仍有错误。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1841"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1839"/>
+        <source>Show what&apos;s new after an update</source>
+        <translation>更新后显示更新内容</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1840"/>
+        <source>Once, at the first start of a new version, in the language of the app. Works without the update check.</source>
+        <translation>在新版本首次启动时以应用语言显示一次。无需开启更新检查。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1847"/>
         <source>Check now</source>
         <translation>立即检查</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1854"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1860"/>
         <source>The check only asks GitHub for the latest version number and its release notes. No data about you, your saves or your players is sent. A new version is shown as a hint with its changes and a download button that opens the release page; nothing is installed automatically. Without the check the app makes no connection to the internet.</source>
         <translation>检查时仅向 GitHub 查询最新版本号及其更新说明。不会发送任何关于你、你的存档或球员的数据。新版本会以提示形式显示，附带更新内容和一个打开发布页面的下载按钮；不会自动安装任何内容。不开启检查时，本应用不会连接互联网。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1860"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1866"/>
         <source>Data folder</source>
         <translation>数据文件夹</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1865"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1871"/>
         <source>Can be changed in bootstrap.ini.</source>
         <translation>可在 bootstrap.ini 中更改。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1876"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1882"/>
         <source>Version %1 · last checked %2</source>
         <translation>版本 %1 · 上次检查 %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1878"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1884"/>
         <source>Version %1</source>
         <translation>版本 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1891"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1897"/>
         <source>Version %1 is available.</source>
         <translation>版本 %1 已发布。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1898"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1904"/>
         <source>You are using the latest version (%1).</source>
         <translation>你使用的是最新版本（%1）。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1902"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1908"/>
         <source>GitHub could not be reached. Please try again later.</source>
         <translation>无法连接 GitHub，请稍后再试。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1908"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1914"/>
         <source>Checking …</source>
         <translation>正在检查…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1917"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1923"/>
         <source>No profile active.</source>
         <translation>没有启用评分方案。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1917"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1923"/>
         <source>Active: %1</source>
         <translation>启用：%1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1942"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1948"/>
         <source>The save contains players. Please create a new save for a different version.</source>
         <translation>存档包含球员。请为不同的版本创建一个新的存档。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2016"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2022"/>
         <source>Default (no restriction)</source>
         <translation>默认（无限制）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2049"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2055"/>
         <source>Weights for %1 saves.</source>
         <translation>%1存档的权重。</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2129"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2137"/>
         <source>Applies to the save “%1”</source>
         <translation>适用于存档“%1”</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2141"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2149"/>
         <source>%1: text/background contrast only %2:1 (WCAG recommends at least 4.5:1)</source>
         <translation>%1：仅文本/背景对比度%2： 1（网页内容无障碍指南建议至少4.5:1）</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2147"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2155"/>
         <source>Text/background contrast OK</source>
         <translation>文字/背景对比度合格</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2348"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2356"/>
         <source>The settings could not be saved. The save keeps its previous state.
 
 %1</source>
@@ -8606,7 +8621,7 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2371"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2379"/>
         <source>Settings saved.</source>
         <translation>已保存设置。</translation>
     </message>
@@ -10553,6 +10568,39 @@ A backup is created automatically in the “backups” folder first. You can bri
         <location filename="../src/app/WelcomeWizard.cpp" line="763"/>
         <source>(no logo)</source>
         <translation>（无标志）</translation>
+    </message>
+</context>
+<context>
+    <name>fm::WhatsNewDialog</name>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="75"/>
+        <source>What&apos;s new</source>
+        <translation>更新内容</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="82"/>
+        <source>New in version %1</source>
+        <translation>版本 %1 的新内容</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="90"/>
+        <source>No release notes for this version.</source>
+        <translation>此版本没有发布说明。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="98"/>
+        <source>Don&apos;t show again after updates</source>
+        <translation>不再显示</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="99"/>
+        <source>Help → What&apos;s new still shows the changes. Can be switched back on under Settings → Saves → Updates.</source>
+        <translation>帮助 → 更新内容 仍可查看更改。可在 设置 → 存档 → 更新 中重新开启。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="104"/>
+        <source>Close</source>
+        <translation>关闭</translation>
     </message>
 </context>
 </TS>

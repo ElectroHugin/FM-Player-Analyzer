@@ -1836,8 +1836,14 @@ QWidget *SettingsPage::buildDatabasePage()
             [this](bool on) { m_context.paths().setUpdateCheckEnabled(on); });
     connect(m_updateTestBuildsBox, &QCheckBox::toggled, this,
             [this](bool on) { m_context.paths().setUpdateIncludesTestBuilds(on); });
+    m_whatsNewBox = new QCheckBox(tr("Show what's new after an update"));
+    m_whatsNewBox->setToolTip(tr("Once, at the first start of a new version, in the language of "
+                                 "the app. Works without the update check."));
+    connect(m_whatsNewBox, &QCheckBox::toggled, this,
+            [this](bool on) { m_context.paths().setShowWhatsNew(on); });
     body->addWidget(m_updateCheckBox);
     body->addWidget(m_updateTestBuildsBox);
+    body->addWidget(m_whatsNewBox);
     m_updateNowButton = new QPushButton(tr("Check now"));
     m_updateStatus = caption(QString());
     m_updateStatus->setWordWrap(true);
@@ -2120,6 +2126,8 @@ void SettingsPage::refresh()
         QSignalBlocker blockTestBuilds(m_updateTestBuildsBox);
         m_updateCheckBox->setChecked(m_context.paths().updateCheckEnabled());
         m_updateTestBuildsBox->setChecked(m_context.paths().updateIncludesTestBuilds());
+        QSignalBlocker blockWhatsNew(m_whatsNewBox);
+        m_whatsNewBox->setChecked(m_context.paths().showWhatsNew());
     }
     if (!m_updateChecker || !m_updateChecker->isRunning())
         showLastUpdateCheck();

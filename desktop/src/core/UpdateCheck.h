@@ -51,4 +51,15 @@ std::optional<ReleaseInfo> newestReleaseAfter(const QByteArray &releasesJson,
                                               bool includePreReleases,
                                               QString *error = nullptr);
 
+// The part of a changelog (CHANGELOG.md or one of its translations) that is
+// new between two versions: every "## X.Y.Z" section after fromVersion up to
+// and including toVersion, newest first. A test build (toVersion with a
+// suffix such as "-test.2") also gets the "## Unreleased" section, where the
+// changes of the coming version are collected. Without fromVersion (unknown
+// previous version) only the section of toVersion itself is returned. With
+// several sections each keeps its heading, one level lower ("### 2.3.2 – …").
+// Returns an empty string when the changelog has nothing for that range.
+QString changelogNotes(const QString &changelog, const QString &fromVersion,
+                       const QString &toVersion);
+
 } // namespace fm

@@ -275,7 +275,7 @@ Details: %1</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="992"/>
+        <location filename="../src/app/MainWindow.cpp" line="999"/>
         <source>Saving ratings …</source>
         <translation type="unfinished"></translation>
     </message>
@@ -628,13 +628,13 @@ Details: %1</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/app/main.cpp" line="80"/>
+        <location filename="../src/app/main.cpp" line="82"/>
         <source>Startup failed:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="103"/>
+        <location filename="../src/app/main.cpp" line="105"/>
         <source>The last used save “%1” could not be opened:
 %2</source>
         <translation type="unfinished"></translation>
@@ -3200,296 +3200,301 @@ You can change the folder later in the settings.</source>
 <context>
     <name>fm::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="156"/>
+        <location filename="../src/app/MainWindow.cpp" line="157"/>
         <source>Back (Alt+←)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="157"/>
+        <location filename="../src/app/MainWindow.cpp" line="158"/>
         <source>Forward (Alt+→)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="160"/>
+        <location filename="../src/app/MainWindow.cpp" line="161"/>
         <source>Home (Alt+Home)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="183"/>
+        <location filename="../src/app/MainWindow.cpp" line="184"/>
         <source>Players, pages, actions …    Ctrl+K</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="193"/>
+        <location filename="../src/app/MainWindow.cpp" line="194"/>
         <source>Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="232"/>
+        <location filename="../src/app/MainWindow.cpp" line="233"/>
         <source>Later</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="347"/>
+        <location filename="../src/app/MainWindow.cpp" line="348"/>
         <source>Recalculation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="350"/>
+        <location filename="../src/app/MainWindow.cpp" line="351"/>
         <source>DWRS recalculated: %1 ratings, %2 changed entries saved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="385"/>
+        <location filename="../src/app/MainWindow.cpp" line="386"/>
         <source>New FM27 rating profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="386"/>
+        <location filename="../src/app/MainWindow.cpp" line="387"/>
         <source>There is a new rating profile for FM27: “DWRS FM27 · harvestgreen22” (provisional).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="389"/>
+        <location filename="../src/app/MainWindow.cpp" line="390"/>
         <source>It is based on measurements in FM27 matches and separates roles more clearly. Values have one decimal. Switching recalculates all ratings of this save; the history marks the switch. You can change the profile at any time under Settings → DWRS rating.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="393"/>
+        <location filename="../src/app/MainWindow.cpp" line="394"/>
         <source>Use new profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="394"/>
+        <location filename="../src/app/MainWindow.cpp" line="395"/>
         <source>Keep previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="403"/>
+        <location filename="../src/app/MainWindow.cpp" line="404"/>
         <source>Rating profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="421"/>
+        <location filename="../src/app/MainWindow.cpp" line="422"/>
         <source>The DWRS calculation has been improved (goalkeepers are rated on all goalkeeping attributes). The ratings in this save still come from the old calculation.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="424"/>
+        <location filename="../src/app/MainWindow.cpp" line="425"/>
         <source>Recalculate now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="445"/>
+        <location filename="../src/app/MainWindow.cpp" line="446"/>
         <source>Switch save (Ctrl+O)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="460"/>
-        <location filename="../src/app/MainWindow.cpp" line="1162"/>
+        <location filename="../src/app/MainWindow.cpp" line="461"/>
+        <location filename="../src/app/MainWindow.cpp" line="1174"/>
         <source>Club</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="460"/>
-        <location filename="../src/app/MainWindow.cpp" line="1013"/>
-        <location filename="../src/app/MainWindow.cpp" line="1162"/>
+        <location filename="../src/app/MainWindow.cpp" line="461"/>
+        <location filename="../src/app/MainWindow.cpp" line="1020"/>
+        <location filename="../src/app/MainWindow.cpp" line="1174"/>
         <source>National Team</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="502"/>
-        <location filename="../src/app/MainWindow.cpp" line="1192"/>
+        <location filename="../src/app/MainWindow.cpp" line="503"/>
+        <location filename="../src/app/MainWindow.cpp" line="1204"/>
         <source>Toggle day/night</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="512"/>
+        <location filename="../src/app/MainWindow.cpp" line="513"/>
         <source>v%1 · ElectroHugin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="513"/>
+        <location filename="../src/app/MainWindow.cpp" line="514"/>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="580"/>
+        <location filename="../src/app/MainWindow.cpp" line="581"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="581"/>
-        <location filename="../src/app/MainWindow.cpp" line="1190"/>
-        <location filename="../src/app/MainWindow.cpp" line="1255"/>
+        <location filename="../src/app/MainWindow.cpp" line="582"/>
+        <location filename="../src/app/MainWindow.cpp" line="1202"/>
+        <location filename="../src/app/MainWindow.cpp" line="1267"/>
         <source>New save …</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="584"/>
-        <location filename="../src/app/MainWindow.cpp" line="1188"/>
+        <location filename="../src/app/MainWindow.cpp" line="585"/>
+        <location filename="../src/app/MainWindow.cpp" line="1200"/>
         <source>Switch save …</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="195"/>
+        <location filename="../src/app/MainWindow.cpp" line="196"/>
         <source>Read player data (Ctrl+I). You can also simply drop a file onto the window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="588"/>
-        <location filename="../src/app/MainWindow.cpp" line="1186"/>
+        <location filename="../src/app/MainWindow.cpp" line="589"/>
+        <location filename="../src/app/MainWindow.cpp" line="1198"/>
         <source>Import player data …</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="591"/>
+        <location filename="../src/app/MainWindow.cpp" line="592"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="595"/>
+        <location filename="../src/app/MainWindow.cpp" line="596"/>
         <source>&amp;Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="612"/>
-        <location filename="../src/app/MainWindow.cpp" line="668"/>
+        <location filename="../src/app/MainWindow.cpp" line="613"/>
+        <location filename="../src/app/MainWindow.cpp" line="675"/>
         <source>Currency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="617"/>
+        <location filename="../src/app/MainWindow.cpp" line="618"/>
         <source>Matching the language: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="631"/>
+        <location filename="../src/app/MainWindow.cpp" line="632"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="632"/>
+        <location filename="../src/app/MainWindow.cpp" line="633"/>
         <source>Welcome assistant …</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="633"/>
+        <location filename="../src/app/MainWindow.cpp" line="634"/>
+        <source>What&apos;s new …</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="640"/>
         <source>About %1…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="651"/>
+        <location filename="../src/app/MainWindow.cpp" line="658"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="652"/>
+        <location filename="../src/app/MainWindow.cpp" line="659"/>
         <source>The language will change after a restart. Restart now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="669"/>
+        <location filename="../src/app/MainWindow.cpp" line="676"/>
         <source>Amounts are shown in the new currency after a restart. Restart now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="956"/>
+        <location filename="../src/app/MainWindow.cpp" line="963"/>
         <source>Recalculating DWRS ratings…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1020"/>
+        <location filename="../src/app/MainWindow.cpp" line="1027"/>
         <source>FM Dashboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1110"/>
+        <location filename="../src/app/MainWindow.cpp" line="1122"/>
         <source>Test version %1 is available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1111"/>
+        <location filename="../src/app/MainWindow.cpp" line="1123"/>
         <source>Version %1 is available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1112"/>
+        <location filename="../src/app/MainWindow.cpp" line="1124"/>
         <source>What&apos;s new</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1163"/>
+        <location filename="../src/app/MainWindow.cpp" line="1175"/>
         <source>Pages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1183"/>
+        <location filename="../src/app/MainWindow.cpp" line="1195"/>
         <source>Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1186"/>
+        <location filename="../src/app/MainWindow.cpp" line="1198"/>
         <source>Ctrl+I</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1188"/>
+        <location filename="../src/app/MainWindow.cpp" line="1200"/>
         <source>Ctrl+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1190"/>
+        <location filename="../src/app/MainWindow.cpp" line="1202"/>
         <source>Ctrl+N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1191"/>
+        <location filename="../src/app/MainWindow.cpp" line="1203"/>
         <source>Recalculate DWRS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1208"/>
+        <location filename="../src/app/MainWindow.cpp" line="1220"/>
         <source>Players</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1227"/>
+        <location filename="../src/app/MainWindow.cpp" line="1239"/>
         <source>%1 players</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1239"/>
+        <location filename="../src/app/MainWindow.cpp" line="1251"/>
         <source>Recently used</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1247"/>
+        <location filename="../src/app/MainWindow.cpp" line="1259"/>
         <source>Open save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1254"/>
+        <location filename="../src/app/MainWindow.cpp" line="1266"/>
         <source>All saves …</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1307"/>
+        <location filename="../src/app/MainWindow.cpp" line="1319"/>
         <source>Choose save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1308"/>
+        <location filename="../src/app/MainWindow.cpp" line="1320"/>
         <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1310"/>
+        <location filename="../src/app/MainWindow.cpp" line="1322"/>
         <source>Choose an FM export or FM27 save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1311"/>
+        <location filename="../src/app/MainWindow.cpp" line="1323"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7155,8 +7160,8 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="321"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2347"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2371"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2355"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2379"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7471,7 +7476,7 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="558"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2171"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2179"/>
         <source>Football Manager Version</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8145,13 +8150,13 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1288"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2142"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2150"/>
         <source>Night</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1289"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2142"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2150"/>
         <source>Day</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8472,104 +8477,114 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1841"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1839"/>
+        <source>Show what&apos;s new after an update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1840"/>
+        <source>Once, at the first start of a new version, in the language of the app. Works without the update check.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1847"/>
         <source>Check now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1854"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1860"/>
         <source>The check only asks GitHub for the latest version number and its release notes. No data about you, your saves or your players is sent. A new version is shown as a hint with its changes and a download button that opens the release page; nothing is installed automatically. Without the check the app makes no connection to the internet.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1860"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1866"/>
         <source>Data folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1865"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1871"/>
         <source>Can be changed in bootstrap.ini.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1876"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1882"/>
         <source>Version %1 · last checked %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1878"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1884"/>
         <source>Version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1891"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1897"/>
         <source>Version %1 is available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1898"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1904"/>
         <source>You are using the latest version (%1).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1902"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1908"/>
         <source>GitHub could not be reached. Please try again later.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1908"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1914"/>
         <source>Checking …</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1917"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1923"/>
         <source>No profile active.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1917"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1923"/>
         <source>Active: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1942"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1948"/>
         <source>The save contains players. Please create a new save for a different version.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2016"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2022"/>
         <source>Default (no restriction)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2049"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2055"/>
         <source>Weights for %1 saves.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2129"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2137"/>
         <source>Applies to the save “%1”</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2141"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2149"/>
         <source>%1: text/background contrast only %2:1 (WCAG recommends at least 4.5:1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2147"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2155"/>
         <source>Text/background contrast OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2348"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2356"/>
         <source>The settings could not be saved. The save keeps its previous state.
 
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2371"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2379"/>
         <source>Settings saved.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10506,6 +10521,39 @@ A backup is created automatically in the “backups” folder first. You can bri
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="763"/>
         <source>(no logo)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>fm::WhatsNewDialog</name>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="75"/>
+        <source>What&apos;s new</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="82"/>
+        <source>New in version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="90"/>
+        <source>No release notes for this version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="98"/>
+        <source>Don&apos;t show again after updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="99"/>
+        <source>Help → What&apos;s new still shows the changes. Can be switched back on under Settings → Saves → Updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/app/WhatsNewDialog.cpp" line="104"/>
+        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -215,6 +215,28 @@ void AppPaths::setLastUpdateCheck(const QDateTime &when)
     m_settings->sync();
 }
 
+QString AppPaths::lastStartedVersion() const
+{
+    return m_settings->value(QStringLiteral("Updates/lastStartedVersion")).toString();
+}
+
+void AppPaths::setLastStartedVersion(const QString &version)
+{
+    m_settings->setValue(QStringLiteral("Updates/lastStartedVersion"), version);
+    m_settings->sync();
+}
+
+bool AppPaths::showWhatsNew() const
+{
+    return m_settings->value(QStringLiteral("Updates/showWhatsNew"), true).toBool();
+}
+
+void AppPaths::setShowWhatsNew(bool show)
+{
+    m_settings->setValue(QStringLiteral("Updates/showWhatsNew"), show);
+    m_settings->sync();
+}
+
 QString AppPaths::currency() const
 {
     return m_settings->value(QStringLiteral("currency")).toString();

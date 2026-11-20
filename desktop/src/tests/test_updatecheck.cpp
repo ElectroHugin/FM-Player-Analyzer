@@ -29,6 +29,33 @@ class TestUpdateCheck : public QObject
     Q_OBJECT
 
 private slots:
+    void changelogNotesPickTheNewVersions()
+    {
+        const QString changelog = QStringLiteral(
+            "# Changelog\n\n## Unreleased\n\n- coming\n\n## 2.3.2 – 2026-11-21\n\n- two\n\n"
+            "## 2.3.1 – 2026-11-20\n\n- one\n\n## 2.3.0 – 2026-11-15\n\n**Block**\n\n- zero\n");
+        // Unknown previous version: only the running one.
+        QCOMPARE(changelogNotes(changelog, QString(), QStringLiteral("2.3.1")),
+                 QStringLiteral("- one"));
+        // Update over several versions: each with its heading, newest first.
+        QCOMPARE(changelogNotes(changelog, QStringLiteral("2.3.0"), QStringLiteral("2.3.2")),
+                 QStringLiteral("### 2.3.2 – 2026-11-21\n\n- two\n\n### 2.3.1 – 2026-11-20\n\n- one"));
+        // A test build shows the collected changes of the coming version.
+        QCOMPARE(changelogNotes(changelog, QStringLiteral("2.3.1"), QStringLiteral("2.3.2-test.1")),
+                 QStringLiteral("- coming"));
+        QCOMPARE(changelogNotes(changelog, QString(), QStringLiteral("2.3.2-test.1")),
+                 QStringLiteral("- coming"));
+        // From a test build to its final release.
+        QCOMPARE(changelogNotes(changelog, QStringLiteral("2.3.2-test.3"), QStringLiteral("2.3.2")),
+                 QStringLiteral("- two"));
+        // Nothing new, unknown version, no changelog.
+        QVERIFY(changelogNotes(changelog, QStringLiteral("2.3.2"), QStringLiteral("2.3.2")).isEmpty());
+        QVERIFY(changelogNotes(changelog, QString(), QStringLiteral("2.4.0")).isEmpty());
+        QVERIFY(changelogNotes(QString(), QString(), QStringLiteral("2.3.1")).isEmpty());
+        // Sub-headings inside a section stay.
+        QVERIFY(changelogNotes(changelog, QString(), QStringLiteral("2.3.0")).contains(QStringLiteral("**Block**")));
+    }
+
     void parsesVersions()
     {
         const auto plain = AppVersion::parse(QStringLiteral("v2.3.1"));

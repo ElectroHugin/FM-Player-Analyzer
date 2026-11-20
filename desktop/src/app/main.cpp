@@ -68,6 +68,8 @@ int main(int argc, char *argv[])
             return 0;
         context.paths().setDataDir(dialog.chosenDataDir());
         context.paths().setUpdateCheckEnabled(dialog.updateCheckChosen());
+        // A fresh install has no update to tell about.
+        context.paths().setLastStartedVersion(fm::appVersion());
     }
 
     // --smoke (build verification) must never block on a dialog: it opens

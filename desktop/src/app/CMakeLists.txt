@@ -25,6 +25,8 @@ add_executable(fmplayeranalyzer
     UpdateChecker.cpp
     UpdateDialog.h
     UpdateDialog.cpp
+    WhatsNewDialog.h
+    WhatsNewDialog.cpp
     MigrationWizard.h
     MigrationWizard.cpp
     Navigation.h

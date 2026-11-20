@@ -17,6 +17,7 @@
 #include "StartScreen.h"
 #include "UpdateChecker.h"
 #include "UpdateDialog.h"
+#include "WhatsNewDialog.h"
 #include "widgets/DropZone.h"
 #include "widgets/TacticPitchWidget.h"
 #include "pages/AssignRolesPage.h"
@@ -630,6 +631,12 @@ void MainWindow::buildMenuBar()
 
     auto *helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(tr("Welcome assistant …"), this, &MainWindow::showWelcome);
+    helpMenu->addAction(tr("What's new …"), this, [this] {
+        WhatsNewDialog dialog(WhatsNewDialog::notes(m_context.paths().language(), QString(),
+                                                    appVersion()),
+                              m_context.paths(), /*withOptOut*/ false, this);
+        dialog.exec();
+    });
     auto *about = helpMenu->addAction(tr("About %1…").arg(appName()));
     about->setMenuRole(QAction::AboutRole);
     connect(about, &QAction::triggered, this, &MainWindow::showAbout);
@@ -1077,6 +1084,11 @@ void MainWindow::runStartupUpdateStep()
         return;
     }
     AppPaths &paths = m_context.paths();
+    if (!m_whatsNewChecked) {
+        // First start of a newer version: its changes once, in the UI language.
+        m_whatsNewChecked = true;
+        WhatsNewDialog::showAfterUpdate(paths, paths.language(), this);
+    }
     if (!paths.updateQuestionAnswered())
         UpdateDialog::askForConsent(paths, this);
     if (!paths.updateCheckEnabled() || m_updateChecker)

@@ -141,6 +141,7 @@ private:
     // Updates (app-wide, apply immediately).
     QCheckBox *m_updateCheckBox = nullptr;
     QCheckBox *m_updateTestBuildsBox = nullptr;
+    QCheckBox *m_whatsNewBox = nullptr;
     QPushButton *m_updateNowButton = nullptr;
     QLabel *m_updateStatus = nullptr;
     UpdateChecker *m_updateChecker = nullptr; // created on the first "Check now"
