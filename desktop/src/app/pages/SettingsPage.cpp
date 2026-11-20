@@ -1135,6 +1135,14 @@ QWidget *SettingsPage::buildSquadPage()
                      "applies to the weighted selection score. 0 allows ties only. Within the allowance, "
                      "manual side preferences come first, then short paths. The selected players stay the "
                      "same."));
+    m_offPositionSpin = sized(new QDoubleSpinBox, kNumberWidth);
+    m_offPositionSpin->setRange(0.0, 1.0);
+    m_offPositionSpin->setDecimals(2);
+    m_offPositionSpin->setSingleStep(0.05);
+    addRow(form, tr("Factor for a foreign position (FM27 and later)"), m_offPositionSpin);
+    addHint(form, tr("If a player lacks the position for a place, he can still stand in there so "
+                     "that no place stays empty. His value on that place is multiplied by this "
+                     "factor. 0 turns this off. Goalkeepers stay in goal. Default 0.80."));
     addRow(form, tr("Max. roles per depth player"), m_maxDepthRolesSpin);
 
     cards->addWidget(makeCard(tr("Youth and loans"), QString(), &body));
@@ -2054,6 +2062,7 @@ void SettingsPage::refresh()
     m_naturalPosSpin->setValue(config.selectionBonus(QStringLiteral("natural_position")));
     m_ipShareSpin->setValue(config.ipSharePercent());
     m_bridgeToleranceSpin->setValue(config.bridgeTolerance());
+    m_offPositionSpin->setValue(config.offPositionFactor());
     m_maxDepthRolesSpin->setValue(
         config.squadManagementSetting(QStringLiteral("max_roles_per_depth_player")));
     m_minLoanTalentSpin->setValue(
@@ -2253,6 +2262,7 @@ void SettingsPage::saveAll()
     config.setSelectionBonus(QStringLiteral("natural_position"), m_naturalPosSpin->value());
     config.setIpSharePercent(m_ipShareSpin->value());
     config.setBridgeTolerance(m_bridgeToleranceSpin->value());
+    config.setOffPositionFactor(m_offPositionSpin->value());
     config.setSquadManagementSetting(QStringLiteral("max_roles_per_depth_player"),
                                      m_maxDepthRolesSpin->value());
     config.setSquadManagementSetting(QStringLiteral("min_loan_talent_score"),

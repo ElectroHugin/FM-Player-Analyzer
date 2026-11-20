@@ -562,6 +562,8 @@ void AppContext::recompileRatingSnapshot()
     }
     const bool changed = !m_ratingSnapshot || !snapshot || m_ratingSnapshot->cacheKey() != snapshot->cacheKey();
     m_ratingSnapshot = snapshot;
+    if (m_squadBuilder)
+        m_squadBuilder->setRatingSnapshot(snapshot);
     if (snapshot) {
         setDwrsDecimals(snapshot->isClassic() ? 0 : 1);
     }

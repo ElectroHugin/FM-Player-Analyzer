@@ -934,6 +934,8 @@ void BestXiPage::rebuild()
                 card.ipRating = ipCell.rating;
                 card.oopRating = oopCell.rating;
                 card.value = squad.valueOfUid.value(card.uid);
+                card.ipOffPosition = ipCell.offPosition;
+                card.oopOffPosition = oopCell.offPosition;
                 cards.append(card);
             }
             return cards;
@@ -958,6 +960,18 @@ void BestXiPage::rebuild()
                 .arg(QLocale().toString(std::abs(squad.startingBridgeLoss) < 1e-9 ? 0.0 : -squad.startingBridgeLoss, 'f', 3))
                 .arg(QLocale().toString(std::abs(squad.bTeamBridgeLoss) < 1e-9 ? 0.0 : -squad.bTeamBridgeLoss, 'f', 3))
                 .arg(QLocale().toString(m_context.config().bridgeTolerance(), 'f', 2)));
+        bool standIn = false;
+        for (const auto *team : {&squad.startingIp, &squad.startingOop, &squad.bTeamIp,
+                                 &squad.bTeamOop}) {
+            for (const XiCell &cell : *team)
+                standIn |= cell.isFilled() && cell.offPosition;
+        }
+        if (standIn)
+            m_phaseNote->setText(
+                m_phaseNote->text() + QLatin1Char('\n')
+                + tr("Hatched role: the player does not have this position and stands in there "
+                     "(value × %1, Settings → Squad and analysis).")
+                      .arg(QLocale().toString(m_context.config().offPositionFactor(), 'f', 2)));
     } else {
         m_singleXiPitch->setTeam(first.startingXi, positions, layout, roleNames);
         m_singleBPitch->setTeam(first.bTeam, positions, layout, roleNames);

@@ -15,6 +15,7 @@
 #include <QRandomGenerator>
 #include <QTemporaryDir>
 #include <QtTest>
+#include <QScopeGuard>
 
 #include <algorithm>
 #include <memory>
@@ -360,8 +361,11 @@ private slots:
 
     void playerNeedsAPositionInBothLineUps()
     {
-        // Olise has no D (R): even as the only right-sided attacker he cannot be
-        // the out-of-possession full-back, so the team stays one short.
+        // With stand-ins switched off (factor 0): Olise has no D (R), so even
+        // as the only right-sided attacker he cannot be the out-of-possession
+        // full-back, and the team stays one short.
+        m_config->setOffPositionFactor(0.0);
+        const auto restore = qScopeGuard([this] { m_config->setOffPositionFactor(0.8); });
         Definitions defs;
         defs.setRoot(root(slotMap({{"AMR", "IF"}, {"DR", "FB"}}),
                           slotMap({{"DR", "PFB"}, {"MR", "WM"}})));
@@ -377,6 +381,52 @@ private slots:
         QCOMPARE(r.slotsOfUid.value(QStringLiteral("boey")),
                  qMakePair(QStringLiteral("DR"), QStringLiteral("DR")));
         QCOMPARE(r.depthPool.size(), size_t(1));
+    }
+
+    void standInFillsASlotOutsideHisPositions()
+    {
+        // The out-of-possession shape has no right winger's slot that Olise
+        // (AM (R) only) can play. As a stand-in at MR he still makes the
+        // team, with his MR value lowered by the off-position factor.
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"AMR", "IF"}, {"DR", "FB"}}),
+                          slotMap({{"DR", "PFB"}, {"MR", "WM"}})));
+        const std::vector<Player> players = {makePlayer(QStringLiteral("olise"), QStringLiteral("AM (R)")),
+                                             makePlayer(QStringLiteral("boey"), QStringLiteral("D (R)"))};
+        RoleRatings ratings;
+        ratings[QStringLiteral("IF")] = {{QStringLiteral("olise"), 90}};
+        ratings[QStringLiteral("WM")] = {{QStringLiteral("olise"), 80}};
+        ratings[QStringLiteral("PFB")] = {{QStringLiteral("boey"), 72}};
+        ratings[QStringLiteral("FB")] = {{QStringLiteral("boey"), 70}};
+
+        const auto r = solve(defs, players, ratings, 0.5);
+        QCOMPARE(r.slotsOfUid.value(QStringLiteral("olise")),
+                 qMakePair(QStringLiteral("AMR"), QStringLiteral("MR")));
+        QCOMPARE(r.slotsOfUid.value(QStringLiteral("boey")),
+                 qMakePair(QStringLiteral("DR"), QStringLiteral("DR")));
+        QVERIFY(!r.startingIp.value(QStringLiteral("AMR")).offPosition);
+        QVERIFY(r.startingOop.value(QStringLiteral("MR")).offPosition);
+        QVERIFY(!r.startingOop.value(QStringLiteral("DR")).offPosition);
+        QCOMPARE(r.startingOop.value(QStringLiteral("MR")).rating, 80.0);
+        QVERIFY(qAbs(r.valueOfUid.value(QStringLiteral("olise")) - (0.5 * 90 + 0.5 * 80 * 0.8)) < 1e-9);
+    }
+
+    void goalkeepersNeverStandIn()
+    {
+        Definitions defs;
+        defs.setRoot(root(slotMap({{"GK", "SK"}, {"STC", "AF"}}),
+                          slotMap({{"GK", "GK"}, {"DMC", "DM"}})));
+        const std::vector<Player> players = {makePlayer(QStringLiteral("keeper"), QStringLiteral("GK")),
+                                             makePlayer(QStringLiteral("striker"), QStringLiteral("ST (C)"))};
+        RoleRatings ratings;
+        for (const char *role : {"SK", "GK", "AF", "DM"})
+            ratings[QLatin1String(role)] = {{QStringLiteral("keeper"), 90}, {QStringLiteral("striker"), 90}};
+        const auto r = solve(defs, players, ratings, 0.5);
+        QCOMPARE(r.slotsOfUid.value(QStringLiteral("keeper")),
+                 qMakePair(QStringLiteral("GK"), QStringLiteral("GK")));
+        QCOMPARE(r.slotsOfUid.value(QStringLiteral("striker")),
+                 qMakePair(QStringLiteral("STC"), QStringLiteral("DMC")));
+        QVERIFY(r.startingOop.value(QStringLiteral("DMC")).offPosition);
     }
 
     void moreSlotsFilledBeatsHigherValue()
@@ -854,7 +904,10 @@ private slots:
     void replacementNeverDropsAnotherStarter()
     {
         // Exactly one extra player: "star" could only come in if "a" made
-        // room, which would leave "a" out - not allowed. Then nobody fits.
+        // room, which would leave "a" out - not allowed. Then nobody fits
+        // (stand-ins off; with them "star" helps out on the right).
+        m_config->setOffPositionFactor(0.0);
+        const auto restore = qScopeGuard([this] { m_config->setOffPositionFactor(0.8); });
         Definitions defs;
         defs.setRoot(root(slotMap({{"AML", "W"}, {"AMR", "W"}}),
                           slotMap({{"ML", "WM"}, {"MR", "WM"}})));

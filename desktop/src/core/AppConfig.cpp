@@ -796,6 +796,21 @@ double AppConfig::bridgeTolerance() const
     return std::isfinite(value) ? std::clamp(value, 0.0, 1.0) : 0.1;
 }
 
+double AppConfig::offPositionFactor() const
+{
+    const double value = readValue(QStringLiteral("Phases/off_position_factor"),
+                                   QStringLiteral("0.8")).toDouble();
+    return std::isfinite(value) ? std::clamp(value, 0.0, 1.0) : 0.8;
+}
+
+bool AppConfig::setOffPositionFactor(double value)
+{
+    if (!std::isfinite(value))
+        return false;
+    return writeValue(QStringLiteral("Phases/off_position_factor"),
+                      QString::number(std::clamp(value, 0.0, 1.0)));
+}
+
 bool AppConfig::setBridgeTolerance(double value)
 {
     if (!std::isfinite(value))

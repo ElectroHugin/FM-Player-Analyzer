@@ -15,6 +15,12 @@
 - A new version shows as a hint with its changes and a download button that opens the release page. Nothing is installed automatically; a version can be skipped.
 - Settings → Saves → Updates: switch the check on or off, include test versions, or check now.
 
+Added for the next test build:
+
+- FM27 Best XI: a player can stand in on a slot outside his positions in one of the two line-ups, so slots no longer stay empty just because nobody has both positions. His value there is lowered (factor 0.80, Settings → Squad and analysis); the role is shown hatched.
+- Players are also rated for roles they have not been assigned when the line-up needs them.
+- Combined view: a place that is free with and without the ball shows as one box, and free places no longer draw connecting lines.
+
 ## 2.3.1 – 2026-11-20
 
 - FM27 saves from game version 27.1 can be read again (the club table moved with the patch). Saves from 27.0 work as before.

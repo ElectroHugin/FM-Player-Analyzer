@@ -161,6 +161,10 @@ public:
     bool setIpSharePercent(int percent);
     double bridgeTolerance() const;
     bool setBridgeTolerance(double value);
+    // FM27: multiplier for a player on a slot outside his positions
+    // (stand-in in one line-up), 0 = never, default 0.8.
+    double offPositionFactor() const;
+    bool setOffPositionFactor(double value);
 
     // [SquadManagement]
     int squadManagementSetting(const QString &key) const;
