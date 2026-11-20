@@ -652,8 +652,7 @@ QWidget *SettingsPage::buildImportPage()
     };
 
     cards->addWidget(makeCard(tr("Football Manager 27"),
-                              tr("FM27 has no export of its own. The analyzer reads lists "
-                                 "through the bundled views or reads the save directly."),
+                              tr("Game files for Football Manager 27."),
                               &body));
     form = makeForm(body);
     auto *viewsButton = new QPushButton(tr("Install views"));

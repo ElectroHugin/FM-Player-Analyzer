@@ -354,7 +354,7 @@ QWidget *StartScreen::buildEmptyState(QWidget *parent)
     layout->addSpacing(16);
 
     const QStringList steps = {tr("Choose the FM version"),
-                               tr("Read in an export or an FM27 save game (.fm)"),
+                               tr("Read in your save game (.fm)"),
                                tr("Set your club and key settings in the welcome assistant")};
     for (int i = 0; i < steps.size(); ++i) {
         auto *row = new QHBoxLayout;

@@ -285,8 +285,7 @@ QWidget *WelcomeWizard::buildClubPage()
         const AppConfig &config = m_context.config();
         m_followCheck = new QCheckBox(tr("follow live"), page);
         m_followCheck->setToolTip(tr("While the analyzer is open, it reads the save again "
-                                     "every time the game saves, autosaves included. Faster "
-                                     "than an export."));
+                                     "every time the game saves, autosaves included."));
         m_followEdit = new QLineEdit(page);
         m_followEdit->setPlaceholderText(tr("Choose .fm file"));
         m_followEdit->setText(QDir::toNativeSeparators(config.liveSavePath()));

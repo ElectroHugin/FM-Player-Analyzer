@@ -53,7 +53,6 @@ private:
     QCheckBox *m_autoAssignCheck;
     QCheckBox *m_followCheck = nullptr;
     QLabel *m_importIntro = nullptr;
-    QLabel *m_exportHint = nullptr;
     QLabel *m_importResult;
     QPushButton *m_cancelButton;
     QPushButton *m_skipButton;
