@@ -8,6 +8,7 @@
 - Game terms (attributes, positions, foot strength, personalities, playing time and more) now follow the official texts of each language version of the game.
 - FM27 role names and abbreviations follow the interface language, worded as in that language version of the game (German: "Inverser Außenstürmer", "IAS"). Your tactics and settings stay as they are.
 - Player values follow the interface language the same way: attributes, personality, foot strength, preferred foot and positions (German: "Erfolgshungrig", "Sehr stark", "V (Z)").
+- Money can be shown in pounds, US dollars, euros, Swiss francs, Chinese yuan or Russian rubles (Language → Currency), converted with the game's own exchange rates. By default the currency matches the interface language. Stored values stay as they are.
 - For FM27 the import now offers the save game first. HTML/CSV exports still work as before.
 - HTML/CSV exports are read in every supported game language (English, German, French, Italian, Simplified Chinese, Russian, Spanish). The language is recognised from the column headers; it can also be set under Settings → Import.
 

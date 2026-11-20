@@ -57,6 +57,8 @@ add_library(fmcore STATIC
     GameTermsData.cpp
     GameTerms.h
     GameTerms.cpp
+    Currency.h
+    Currency.cpp
     ImportSchema.h
     ImportSchema.cpp
     ImportTable.h

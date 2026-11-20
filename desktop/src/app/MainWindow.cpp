@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 
+#include "core/Currency.h"
 #include "core/RatingsUpdater.h"
 #include "core/Constants.h"
 
@@ -598,6 +599,27 @@ void MainWindow::buildMenuBar()
                 [this, code = option.code] { changeLanguage(code); });
     }
 
+    // Display currency, independent of the language (which only preselects it).
+    languageMenu->addSeparator();
+    auto *currencyMenu = languageMenu->addMenu(tr("Currency"));
+    auto *currencyGroup = new QActionGroup(this);
+    currencyGroup->setExclusive(true);
+    const QString chosen = m_context.paths().currency();
+    auto *automatic = currencyMenu->addAction(
+        tr("Matching the language: %1").arg(Currency::label(Currency::defaultFor(current))));
+    automatic->setCheckable(true);
+    automatic->setChecked(chosen.isEmpty());
+    currencyGroup->addAction(automatic);
+    connect(automatic, &QAction::triggered, this, [this] { changeCurrency(QString()); });
+    currencyMenu->addSeparator();
+    for (const QString &code : Currency::codes()) {
+        auto *action = currencyMenu->addAction(Currency::label(code));
+        action->setCheckable(true);
+        action->setChecked(chosen == code);
+        currencyGroup->addAction(action);
+        connect(action, &QAction::triggered, this, [this, code] { changeCurrency(code); });
+    }
+
     auto *helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(tr("Welcome assistant …"), this, &MainWindow::showWelcome);
     auto *about = helpMenu->addAction(tr("About %1…").arg(appName()));
@@ -625,6 +647,21 @@ void MainWindow::changeLanguage(const QString &language)
         return;
 
     // The window geometry is persisted in closeEvent so the new instance restores it.
+    StartScreen::relaunchApplication();
+}
+
+void MainWindow::changeCurrency(const QString &code)
+{
+    if (code == m_context.paths().currency())
+        return;
+    m_context.paths().setCurrency(code);
+
+    const auto answer = QMessageBox::question(
+        this, tr("Currency"),
+        tr("Amounts are shown in the new currency after a restart. Restart now?"),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    if (answer != QMessageBox::Yes)
+        return;
     StartScreen::relaunchApplication();
 }
 

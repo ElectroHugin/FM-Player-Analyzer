@@ -1,4 +1,5 @@
 #include "PlayerComparisonPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
@@ -446,8 +447,8 @@ void PlayerComparisonPage::rebuildComparison()
         {tr("Personality"), [](const Player &p) { return GameTerms::text(QStringLiteral("personality"), p.personality); }},
         {tr("Height"), [](const Player &p) { return p.heightRaw; }},
         {tr("Preferred Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("preferred_foot"), p.preferredFoot); }},
-        {tr("Wage"), [](const Player &p) { return p.wageRaw; }},
-        {tr("Market Value"), [](const Player &p) { return p.transferValueRaw; }},
+        {tr("Wage"), [](const Player &p) { return Currency::displayText(p.wageRaw); }},
+        {tr("Market Value"), [](const Player &p) { return Currency::displayText(p.transferValueRaw); }},
         {tr("Playing Time"), [](const Player &p) { return p.agreedPlayingTime; }},
         {tr("Best roles (DWRS)"),
          [rolesByRating](const Player &p) {

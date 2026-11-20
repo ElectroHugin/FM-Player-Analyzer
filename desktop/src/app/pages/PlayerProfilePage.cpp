@@ -1,4 +1,5 @@
 #include "PlayerProfilePage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "../widgets/RatingProfileEditor.h"
 #include "widgets/RolePhaseSwitch.h"
@@ -896,8 +897,8 @@ void PlayerProfilePage::fillFacts(const Player *player)
     const ImportHistory::Snapshot *before =
         snapshots.size() >= 2 ? &snapshots[snapshots.size() - 2] : nullptr;
     const QString dash = QStringLiteral("–");
-    m_factValues[0]->setText(player->transferValueRaw.isEmpty() ? dash : player->transferValueRaw);
-    m_factValues[1]->setText(player->wageRaw.isEmpty() ? dash : player->wageRaw);
+    m_factValues[0]->setText(player->transferValueRaw.isEmpty() ? dash : Currency::displayText(player->transferValueRaw));
+    m_factValues[1]->setText(player->wageRaw.isEmpty() ? dash : Currency::displayText(player->wageRaw));
     m_factValues[2]->setText(player->averageRating > 0
                                  ? QLocale().toString(player->averageRating, 'f', 2)
                                  : dash);
@@ -909,10 +910,10 @@ void PlayerProfilePage::fillFacts(const Player *player)
                                                             m_context.database()))
                            : QLocale().toString(s.gameDate, QLocale::ShortFormat);
     };
-    // Same style as the game's figures ("€1.8M", "€450K").
-    const auto moneyText = [](double euros) {
-        return euros >= 1e6 ? QStringLiteral("€%1M").arg(euros / 1e6, 0, 'f', 1)
-                            : QStringLiteral("€%1K").arg(std::lround(euros / 1e3));
+    // Same style as the game's figures ("€1.8M", "€450K"), in the display currency.
+    const auto moneyText = [last](double amount) {
+        return Currency::format(
+            Currency::toDisplay(amount, Currency::ofText(last ? last->transferValueText : QString())));
     };
     const auto signedText = [](double delta, const QString &number) {
         return (delta > 0 ? QStringLiteral("+") : QStringLiteral("−")) + number;
@@ -926,7 +927,7 @@ void PlayerProfilePage::fillFacts(const Player *player)
                     .arg(signedText(valueDelta, moneyText(std::abs(valueDelta))),
                          since(*before)));
         if (last->wage != before->wage && !before->wage.isEmpty())
-            m_factChanges[1]->setText(tr("previously %1").arg(before->wage));
+            m_factChanges[1]->setText(tr("previously %1").arg(Currency::displayText(before->wage)));
         const double ratingDelta = last->averageRating - before->averageRating;
         if (last->averageRating > 0 && before->averageRating > 0 && std::abs(ratingDelta) >= 0.005)
             m_factChanges[2]->setText(
@@ -980,8 +981,8 @@ void PlayerProfilePage::fillHistory(const Player *player)
         const QStringList cells = {
             when,
             s.averageRating > 0 ? QLocale().toString(s.averageRating, 'f', 2) : QStringLiteral("–"),
-            s.transferValueText.isEmpty() ? QStringLiteral("–") : s.transferValueText,
-            s.wage.isEmpty() ? QStringLiteral("–") : s.wage,
+            s.transferValueText.isEmpty() ? QStringLiteral("–") : Currency::displayText(s.transferValueText),
+            s.wage.isEmpty() ? QStringLiteral("–") : Currency::displayText(s.wage),
             i == 0 ? tr("first state") : (moved.isEmpty() ? QStringLiteral("–")
                                                             : moved.join(QStringLiteral(" · "))),
         };

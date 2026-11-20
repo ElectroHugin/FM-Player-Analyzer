@@ -4,6 +4,7 @@
 #include <QTemporaryDir>
 
 #include "core/Database.h"
+#include "core/Currency.h"
 #include "core/Definitions.h"
 #include "core/GameTerms.h"
 #include "core/GameLanguage.h"
@@ -242,6 +243,35 @@ private slots:
         // Russian "П": midfielder as a position, right as a side.
         QCOMPARE(GameLanguage::positionsToEnglish(QString::fromUtf8("П (П)"), QStringLiteral("ru")),
                  QStringLiteral("M (R)"));
+    }
+
+    void moneyIsShownInTheDisplayCurrency()
+    {
+        // The game's own rates (units per pound); data stays as imported.
+        QCOMPARE(Currency::defaultFor(QStringLiteral("de")), QStringLiteral("EUR"));
+        QCOMPARE(Currency::defaultFor(QStringLiteral("zh_CN")), QStringLiteral("CNY"));
+        QCOMPARE(Currency::defaultFor(QStringLiteral("en")), QStringLiteral("GBP"));
+        QCOMPARE(Currency::ofText(QStringLiteral("£5K p/w")), QStringLiteral("GBP"));
+        QCOMPARE(Currency::ofText(QStringLiteral("Not for Sale")), QStringLiteral("EUR"));
+
+        Currency::setDisplay(QStringLiteral("EUR"));
+        QCOMPARE(Currency::displayText(QStringLiteral("€1.2M")), QStringLiteral("€1.2M"));
+
+        Currency::setDisplay(QStringLiteral("GBP"));
+        QCOMPARE(Currency::displayText(QStringLiteral("€1.1641M")), QStringLiteral("£1M"));
+        QCOMPARE(Currency::displayText(QStringLiteral("€11.641K - €23,282 p/w")),
+                 QStringLiteral("£10K - £20K p/w"));
+        QCOMPARE(Currency::displayText(QStringLiteral("Not for Sale")), QStringLiteral("Not for Sale"));
+
+        Currency::setDisplay(QStringLiteral("CHF"));
+        QCOMPARE(Currency::displayText(QStringLiteral("£10M")), QStringLiteral("CHF 11M"));
+        Currency::setDisplay(QStringLiteral("CNY"));
+        QCOMPARE(Currency::displayText(QStringLiteral("£1M")), QString::fromUtf8("\uFFE59.1M"));
+        Currency::setDisplay(QStringLiteral("RUB"));
+        QCOMPARE(Currency::displayText(QStringLiteral("£100K p/w")), QString::fromUtf8("12M руб p/w"));
+        QCOMPARE(Currency::fromDisplay(117.63680267333984, QStringLiteral("GBP")), 1.0);
+
+        Currency::setDisplay(QStringLiteral("EUR"));
     }
 
     void gameTermsFollowTheUiLanguage()

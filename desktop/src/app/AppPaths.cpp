@@ -166,6 +166,17 @@ void AppPaths::setLanguage(const QString &language)
     m_settings->sync();
 }
 
+QString AppPaths::currency() const
+{
+    return m_settings->value(QStringLiteral("currency")).toString();
+}
+
+void AppPaths::setCurrency(const QString &code)
+{
+    m_settings->setValue(QStringLiteral("currency"), code);
+    m_settings->sync();
+}
+
 QList<AppPaths::UiLanguage> AppPaths::uiLanguages()
 {
     QList<UiLanguage> languages{

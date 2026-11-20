@@ -1,4 +1,5 @@
 #include "SquadMatrixPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
@@ -64,7 +65,7 @@ constexpr int kDefaultThreshold = 14;
 
 QString millions(double value)
 {
-    return QStringLiteral("%1 Mio. €").arg(QLocale().toString(value / 1'000'000.0, 'f', 1));
+    return Currency::formatMillions(value, 1);
 }
 
 // Layout for the contents of an optional (checkable) filter box. The contents
@@ -193,7 +194,7 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
         // players (kUnbuyableValue) stay visible.
         m_maxValueLabel->setText(m_maxValueSlider->value() >= m_maxValueSlider->maximum()
                                      ? tr("No limit")
-                                     : millions(m_maxValueSlider->value() * 500'000.0));
+                                     : millions(m_maxValueSlider->value() * Currency::sliderStep()));
     };
     connect(m_maxValueSlider, &QSlider::valueChanged, this,
             [updateMaxValueLabel, scoutedRowsSoon] {
@@ -293,7 +294,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     rangeRow->addSpacing(16);
     rangeRow->addWidget(new QLabel(tr("Max. Value:"), tab));
     m_maxValueSlider = new QSlider(Qt::Horizontal, tab);
-    m_maxValueSlider->setRange(0, 400); // 0.5 Mio € steps
+    m_maxValueSlider->setRange(0, 400); // steps of Currency::sliderStep()
     m_maxValueSlider->setValue(400);
     m_maxValueSlider->setMaximumWidth(160);
     m_maxValueLabel = new QLabel(tab);
@@ -585,7 +586,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     if (!clubTable) {
         columns.append(
             {tr("Club"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}});
-        columns.append({tr("Market Value"), [](const Player &p) { return p.transferValueRaw; },
+        columns.append({tr("Market Value"), [](const Player &p) { return Currency::displayText(p.transferValueRaw); },
                         [](const Player &p) { return p.transferValue; }, nullptr,
                         Qt::AlignRight | Qt::AlignVCenter});
         columns.append(makeFreshnessColumn(
@@ -594,7 +595,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
             m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads")),
             m_context.userClub()));
     }
-    columns.append({tr("Wage"), [](const Player &p) { return p.wageRaw; }, nullptr, nullptr,
+    columns.append({tr("Wage"), [](const Player &p) { return Currency::displayText(p.wageRaw); }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});
     if (extraDetails) {
         columns.append({tr("Left Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.leftFoot); }, nullptr,
@@ -606,7 +607,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                         Qt::AlignRight | Qt::AlignVCenter});
         if (clubTable) {
             columns.append({tr("Market Value"),
-                            [](const Player &p) { return p.transferValueRaw; },
+                            [](const Player &p) { return Currency::displayText(p.transferValueRaw); },
                             [](const Player &p) { return p.transferValue; }, nullptr,
                             Qt::AlignRight | Qt::AlignVCenter});
         }
@@ -1075,7 +1076,7 @@ void SquadMatrixPage::rebuildScoutedOnly(bool columnsChanged)
     // players are defined partly BY their value), so it is bypassed then.
     const bool noValueCap =
         freeAgentsOnly || m_maxValueSlider->value() >= m_maxValueSlider->maximum();
-    const double maxValue = m_maxValueSlider->value() * 500'000.0;
+    const double maxValue = Currency::fromDisplay(m_maxValueSlider->value() * Currency::sliderStep());
     const QList<QPair<int, int>> thresholds =
         m_attrOnlyMatchesCheck->isChecked() ? activeThresholds() : QList<QPair<int, int>>();
 

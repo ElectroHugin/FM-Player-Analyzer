@@ -1,4 +1,5 @@
 #include "RoleAnalysisPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
@@ -252,7 +253,7 @@ void RoleAnalysisPage::rebuildTables()
              [](const Player &p) { return p.heightCm; }, nullptr,
              Qt::AlignRight | Qt::AlignVCenter},
             {tr("Club"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}},
-            {tr("Market Value"), [](const Player &p) { return p.transferValueRaw; },
+            {tr("Market Value"), [](const Player &p) { return Currency::displayText(p.transferValueRaw); },
              [](const Player &p) { return p.transferValue; }, nullptr,
              Qt::AlignRight | Qt::AlignVCenter},
             {tr("DWRS (absolute)"),
