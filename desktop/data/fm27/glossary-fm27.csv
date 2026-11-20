@@ -276,85 +276,85 @@ role.oop.Wide Outlet Wide Midfielder;role;Wide Outlet Wide Midfielder;Äußerer 
 role.oop.Wide Outlet Winger;role;Wide Outlet Winger;Umschaltflügel;Ailier De Contre-Attaque;Ala Alta;边路支点边锋;Крайний Полузащитник-Аутлет;Extremo de salida;screen S5/S6;
 role.oop.Wing-Back;role;Wing-Back;Flügelverteidiger;Latéral Offensif;Esterno;边翼卫;Крайний Защитник;Lateral ofensivo;screen S5/S6;several game texts for es
 role.oop.Winger;role;Winger;Flügelspieler;Ailier;Ala;边锋;Крайний Полузащитник;Extremo;screen S5/S6;
-role_abbr.ip.ACB;role_abbr;ACB;;;;;;;;"Advanced Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.AM;role_abbr;AM;OM;MO;COf;前腰;АП;;export;"Attacking Midfielder; not captured: es"
-role_abbr.ip.AP;role_abbr;AP;;;;;;;;"Advanced Playmaker; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.AWB;role_abbr;AWB;VFV;LOA;EOf;前翼卫;УКЗ;;export;"Advanced Wing-Back; not captured: es"
-role_abbr.ip.BBM;role_abbr;BBM;B2B;B2B;TtC;全中场;БТБ;;export;"Box-To-Box Midfielder; not captured: es"
-role_abbr.ip.BBP;role_abbr;BBP;;;;;;;;"Box-To-Box Playmaker; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.BCB;role_abbr;BCB;SpIV;DCP;DCs;出中卫;СЦЗ;;export;"Ball-Playing Centre-Back; not captured: es"
-role_abbr.ip.BGK;role_abbr;BGK;BTW;GAP;PCs;出门将;СВр;;export;"Ball-Playing Goalkeeper; not captured: es"
-role_abbr.ip.CB;role_abbr;CB;;;;;;;;"Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.CFD;role_abbr;CFD;;;;;;;;"Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.CHF;role_abbr;CHF;HRS;AdC;AdM;肋前锋;ПФ;;export;"Channel Forward; not captured: es"
-role_abbr.ip.CHM;role_abbr;CHM;HR;MdC;CIn;肋中场;ПрП;;export;"Channel Midfielder; not captured: es"
-role_abbr.ip.CM;role_abbr;CM;;;;;;;;"Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.DLF;role_abbr;DLF;HS;AeR;Amn;后前锋;ОФ;;export;"Deep-Lying Forward; not captured: es"
-role_abbr.ip.DLP;role_abbr;DLP;TSm;MJR;RAr;后组织;ОПл;;export;"Deep-Lying Playmaker; not captured: es"
-role_abbr.ip.DM;role_abbr;DM;DM;MD;CDf;后腰;ОП;;export;"Defensive Midfielder; not captured: es"
-role_abbr.ip.F9;role_abbr;F9;F9;F9;F9;伪九号;Л9;;export;"False Nine; not captured: es"
-role_abbr.ip.FB;role_abbr;FB;;;;;;;;"Full-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.FR;role_abbr;FR;F;RL;Fnt;自由人;Ткв;;export;"Free Role; not captured: es"
-role_abbr.ip.GK;role_abbr;GK;TW;GB;Por;门将;Вр;;export;"Goalkeeper; not captured: es"
-role_abbr.ip.HB;role_abbr;HB;;;;;;;;"Half Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.IF;role_abbr;IF;;;;;;;;"Inside Forward; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.IFB;role_abbr;IFB;;;;;;;;"Inside Full-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.IW;role_abbr;IW;HFl;AI;AlH;内边锋;ПКП;;export;"Inside Winger; not captured: es"
-role_abbr.ip.IWB;role_abbr;IWB;;;;;;;;"Inside Wing-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.MPM;role_abbr;MPM;;;;;;;;"Midfield Playmaker; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.NCB;role_abbr;NCB;KIV;DCs;DSR;防中卫;ЧЦЗ;;export;"No-Nonsense Centre-Back; not captured: es"
-role_abbr.ip.NGK;role_abbr;NGK;KTW;GPr;PSR;纯门将;ТВр;;export;"No-Nonsense Goalkeeper; not captured: es"
-role_abbr.ip.OCB;role_abbr;OCB;HHV;DCD;DIn;套中卫;ЗЦЗ;;export;"Overlapping Centre-Back; not captured: es"
-role_abbr.ip.P;role_abbr;P;;;;;;;;"Poacher; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.PW;role_abbr;PW;;;;;;;;"Playmaking Winger; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.PWB;role_abbr;PWB;;;;;;;;"Playmaking Wing-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.SS;role_abbr;SS;ZwS;9 ½;StP;二前锋;ТН;;export;"Second Striker; not captured: es"
-role_abbr.ip.TF;role_abbr;TF;ZS;AtP;FdG;桩锋;Тм;;export;"Target Forward; not captured: es"
-role_abbr.ip.W;role_abbr;W;FL;Ail;Ala;边锋;КП;;export;"Winger; not captured: es"
-role_abbr.ip.WB;role_abbr;WB;FV;LOf;Est;边翼卫;КАЗ;;export;"Wing-Back; not captured: es"
-role_abbr.ip.WCB;role_abbr;WCB;;;;;;;;"Wide Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.WCM;role_abbr;WCM;;;;;;;;"Wide Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.ip.WFD;role_abbr;WFD;AS;AtD;AtL;边前锋;РД;;export;"Wide Forward; not captured: es"
-role_abbr.ip.WM;role_abbr;WM;;;;;;;;"Wide Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.AM;role_abbr;AM;OM;MO;COf;前腰;АП;;export;"Attacking Midfielder; not captured: es"
-role_abbr.oop.CB;role_abbr;CB;;;;;;;;"Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.CCB;role_abbr;CCB;;;;;;;;"Covering Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.CFD;role_abbr;CFD;;;;;;;;"Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.CM;role_abbr;CM;;;;;;;;"Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.CWD;role_abbr;CWD;;;;;;;;"Covering Wide Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.DDM;role_abbr;DDM;;;;;;;;"Dropping Defensive Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.DM;role_abbr;DM;DM;MD;CDf;后腰;ОП;;export;"Defensive Midfielder; not captured: es"
-role_abbr.oop.FB;role_abbr;FB;;;;;;;;"Full-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.GK;role_abbr;GK;TW;GB;Por;门将;Вр;;export;"Goalkeeper; not captured: es"
-role_abbr.oop.HFB;role_abbr;HFB;;;;;;;;"Holding Full-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.HWB;role_abbr;HWB;;;;;;;;"Holding Wing-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.IOW;role_abbr;IOW;;;;;;;;"Inside Outlet Winger; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.LHK;role_abbr;LHK;;;;;;;;"Line-Holding Goalkeeper; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.OAM;role_abbr;OAM;;;;;;;;"Central Outlet Attacking Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.OCF;role_abbr;OCF;;;;;;;;"Central Outlet Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.OWM;role_abbr;OWM;;;;;;;;"Wide Outlet Wide Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.PCM;role_abbr;PCM;;;;;;;;"Pressing Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.PDM;role_abbr;PDM;;;;;;;;"Pressing Defensive Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.PFB;role_abbr;PFB;;;;;;;;"Pressing Full-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.PWB;role_abbr;PWB;;;;;;;;"Pressing Wing-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.SAM;role_abbr;SAM;;;;;;;;"Splitting Outlet Attacking Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.SCB;role_abbr;SCB;;;;;;;;"Stopping Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.SCF;role_abbr;SCF;;;;;;;;"Splitting Outlet Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.SCM;role_abbr;SCM;;;;;;;;"Screening Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.SDM;role_abbr;SDM;;;;;;;;"Screening Defensive Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.SK;role_abbr;SK;;;;;;;;"Sweeper Keeper; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.SWD;role_abbr;SWD;;;;;;;;"Stopping Wide Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.TAM;role_abbr;TAM;;;;;;;;"Tracking Attacking Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.TCF;role_abbr;TCF;;;;;;;;"Tracking Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.TW;role_abbr;TW;;;;;;;;"Tracking Winger; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.TWM;role_abbr;TWM;;;;;;;;"Tracking Wide Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.W;role_abbr;W;FL;Ail;Ala;边锋;КП;;export;"Winger; not captured: es"
-role_abbr.oop.WB;role_abbr;WB;FV;LOf;Est;边翼卫;КАЗ;;export;"Wing-Back; not captured: es"
-role_abbr.oop.WCB;role_abbr;WCB;;;;;;;;"Wide Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.WCM;role_abbr;WCM;;;;;;;;"Wide Covering Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.WDM;role_abbr;WDM;;;;;;;;"Wide Covering Defensive Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.WMF;role_abbr;WMF;;;;;;;;"Wide Midfielder; not captured: de, fr, it, zh_CN, ru, es"
-role_abbr.oop.WOW;role_abbr;WOW;;;;;;;;"Wide Outlet Winger; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.ACB;role_abbr;ACB;AIV;DCA;DAv;前中卫;Лб;CAV;game file;Advanced Centre-Back
+role_abbr.ip.AM;role_abbr;AM;OM;MO;COf;前腰;АП;MP;export + game file;Attacking Midfielder
+role_abbr.ip.AP;role_abbr;AP;VSm;MJA;RAv;前组织;ВПл;OAD;game file;Advanced Playmaker
+role_abbr.ip.AWB;role_abbr;AWB;VFV;LOA;EOf;前翼卫;УКЗ;LOA;export + game file;Advanced Wing-Back
+role_abbr.ip.BBM;role_abbr;BBM;B2B;B2B;TtC;全中场;БТБ;CTT;export + game file;Box-To-Box Midfielder
+role_abbr.ip.BBP;role_abbr;BBP;BBSm;MBB;RMo;全组核;БПл;OTT;game file;Box-To-Box Playmaker
+role_abbr.ip.BCB;role_abbr;BCB;SpIV;DCP;DCs;出中卫;СЦЗ;CCT;export + game file;Ball-Playing Centre-Back
+role_abbr.ip.BGK;role_abbr;BGK;BTW;GAP;PCs;出门将;СВр;PJP;export + game file;Ball-Playing Goalkeeper
+role_abbr.ip.CB;role_abbr;CB;IV;DC;DC;中后卫;ЦЗ;DFC;game file;Centre-Back
+role_abbr.ip.CFD;role_abbr;CFD;MS;AtC;CAv;中锋;ВФ;DLC;game file;Centre Forward
+role_abbr.ip.CHF;role_abbr;CHF;HRS;AdC;AdM;肋前锋;ПФ;DB;export + game file;Channel Forward
+role_abbr.ip.CHM;role_abbr;CHM;HR;MdC;CIn;肋中场;ПрП;CI;export + game file;Channel Midfielder
+role_abbr.ip.CM;role_abbr;CM;ZM;MA;CCn;中前卫;ЦП;MC;game file;Central Midfielder
+role_abbr.ip.DLF;role_abbr;DLF;HS;AeR;Amn;后前锋;ОФ;DLA;export + game file;Deep-Lying Forward
+role_abbr.ip.DLP;role_abbr;DLP;TSm;MJR;RAr;后组织;ОПл;PVO;export + game file;Deep-Lying Playmaker
+role_abbr.ip.DM;role_abbr;DM;DM;MD;CDf;后腰;ОП;MC;export + game file;Defensive Midfielder
+role_abbr.ip.F9;role_abbr;F9;F9;F9;F9;伪九号;Л9;F9;export + game file;False Nine
+role_abbr.ip.FB;role_abbr;FB;AV;AL;Ter;边后卫;ФЗ;LAT;game file;Full-Back
+role_abbr.ip.FR;role_abbr;FR;F;RL;Fnt;自由人;Ткв;LIB;export + game file;Free Role
+role_abbr.ip.GK;role_abbr;GK;TW;GB;Por;门将;Вр;POR;export + game file;Goalkeeper
+role_abbr.ip.HB;role_abbr;HB;Ak6;½D;CAC;后后腰;Хб;MCI;game file;Half Back
+role_abbr.ip.IF;role_abbr;IF;IAS;AtI;Aca;内锋;ИФ;DPD;game file;Inside Forward
+role_abbr.ip.IFB;role_abbr;IFB;IAV;ALI;DCA;内边后;ФЗИ;LPD;game file;Inside Full-Back
+role_abbr.ip.IW;role_abbr;IW;HFl;AI;AlH;内边锋;ПКП;EPD;export + game file;Inside Winger
+role_abbr.ip.IWB;role_abbr;IWB;IFV;LOI;MA;内翼卫;ПКЗ;CPD;game file;Inside Wing-Back
+role_abbr.ip.MPM;role_abbr;MPM;Spm;MJM;RCn;中组织;Пл;CO;game file;Midfield Playmaker
+role_abbr.ip.NCB;role_abbr;NCB;KIV;DCs;DSR;防中卫;ЧЦЗ;CD;export + game file;No-Nonsense Centre-Back
+role_abbr.ip.NGK;role_abbr;NGK;KTW;GPr;PSR;纯门将;ТВр;PSC;export + game file;No-Nonsense Goalkeeper
+role_abbr.ip.OCB;role_abbr;OCB;HHV;DCD;DIn;套中卫;ЗЦЗ;CPO;export + game file;Overlapping Centre-Back
+role_abbr.ip.P;role_abbr;P;K;RS;AdA;抢前锋;Гд;ARI;game file;Poacher
+role_abbr.ip.PW;role_abbr;PW;ÄSm;AMJ;RgL;组边锋;СПм;EXO;game file;Playmaking Winger
+role_abbr.ip.PWB;role_abbr;PWB;SmFV;LOM;ERg;组翼卫;РКЗ;LOC;game file;Playmaking Wing-Back
+role_abbr.ip.SS;role_abbr;SS;ZwS;9 ½;StP;二前锋;ТН;SD;export + game file;Second Striker
+role_abbr.ip.TF;role_abbr;TF;ZS;AtP;FdG;桩锋;Тм;OBJ;export + game file;Target Forward
+role_abbr.ip.W;role_abbr;W;FL;Ail;Ala;边锋;КП;EXT;export + game file;Winger
+role_abbr.ip.WB;role_abbr;WB;FV;LOf;Est;边翼卫;КАЗ;LO;export + game file;Wing-Back
+role_abbr.ip.WCB;role_abbr;WCB;HRV;DCE;BDi;边中卫;ФЦЗ;CLT;game file;Wide Centre-Back
+role_abbr.ip.WCM;role_abbr;WCM;W8;MCD;CCL;边中场;Крл;MB;game file;Wide Central Midfielder
+role_abbr.ip.WFD;role_abbr;WFD;AS;AtD;AtL;边前锋;РД;DES;export + game file;Wide Forward
+role_abbr.ip.WM;role_abbr;WM;AM;ML;Ecn;边前卫;ФП;CBA;game file;Wide Midfielder
+role_abbr.oop.AM;role_abbr;AM;OM;MO;COf;前腰;АП;MP;export + game file;Attacking Midfielder
+role_abbr.oop.CB;role_abbr;CB;IV;DC;DC;中后卫;ЦЗ;DFC;game file;Centre-Back
+role_abbr.oop.CCB;role_abbr;CCB;AbIV;DCC;DCp;补中卫;СЦЗ;CDC;game file;Covering Centre-Back
+role_abbr.oop.CFD;role_abbr;CFD;MS;AtC;CAv;中锋;ВФ;DLC;game file;Centre Forward
+role_abbr.oop.CM;role_abbr;CM;ZM;MA;CCn;中前卫;ЦП;MC;game file;Central Midfielder
+role_abbr.oop.CWD;role_abbr;CWD;AbHV;CEC;BCo;补边中;СтФ;CLC;game file;Covering Wide Centre-Back
+role_abbr.oop.DDM;role_abbr;DDM;HV;MDR;DCA;撤后腰;ООП;MCR;game file;Dropping Defensive Midfielder
+role_abbr.oop.DM;role_abbr;DM;DM;MD;CDf;后腰;ОП;MC;export + game file;Defensive Midfielder
+role_abbr.oop.FB;role_abbr;FB;AV;AL;Ter;边后卫;ФЗ;LAT;game file;Full-Back
+role_abbr.oop.GK;role_abbr;GK;TW;GB;Por;门将;Вр;POR;export + game file;Goalkeeper
+role_abbr.oop.HFB;role_abbr;HFB;AbAV;ALR;TeB;固边后;СФЗ;LDC;game file;Holding Full-Back
+role_abbr.oop.HWB;role_abbr;HWB;AbFV;LOR;EBl;固翼卫;СКЗ;CCN;game file;Holding Wing-Back
+role_abbr.oop.IOW;role_abbr;IOW;IUF;AIC;AlI;内支边;ИВА;EDS;game file;Inside Outlet Winger
+role_abbr.oop.LHK;role_abbr;LHK;LnTW;GSL;PBl;门线门;ВнЛ;PLG;game file;Line-Holding Goalkeeper
+role_abbr.oop.OAM;role_abbr;OAM;ZU10;OAC;TAv;中支前;АПА;MIN;game file;Central Outlet Attacking Midfielder
+role_abbr.oop.OCF;role_abbr;OCF;ZUS;ACt;ROf;中支中;ЦФА;DCE;game file;Central Outlet Centre Forward
+role_abbr.oop.OWM;role_abbr;OWM;ÄU;MCA;MzS;支边前;ФПА;CBI;game file;Wide Outlet Wide Midfielder
+role_abbr.oop.PCM;role_abbr;PCM;Pr8;MAP;CQn;压中卫;ПЦП;MCP;game file;Pressing Central Midfielder
+role_abbr.oop.PDM;role_abbr;PDM;Pr6;MDP;MQn;压后腰;ПОП;MP;game file;Pressing Defensive Midfielder
+role_abbr.oop.PFB;role_abbr;PFB;PrAV;ALP;TeG;压边后;ПФЗ;LPR;game file;Pressing Full-Back
+role_abbr.oop.PWB;role_abbr;PWB;PrFV;LOP;EGa;压翼卫;ПКЗ;CPR;game file;Pressing Wing-Back
+role_abbr.oop.SAM;role_abbr;SAM;Aw10;MCC;TMv;游支前;РАА;MPS;game file;Splitting Outlet Attacking Midfielder
+role_abbr.oop.SCB;role_abbr;SCB;StIV;DCS;DAn;阻中卫;БЦЗ;CC;game file;Stopping Centre-Back
+role_abbr.oop.SCF;role_abbr;SCF;AUS;ACC;CMo;游支中;РЦА;DCB;game file;Splitting Outlet Centre Forward
+role_abbr.oop.SCM;role_abbr;SCM;As8;MAC;CIn;屏中卫;ПрЦ;MCN;game file;Screening Central Midfielder
+role_abbr.oop.SDM;role_abbr;SDM;As6;MDC;MIn;屏后腰;ПрО;MCC;game file;Screening Defensive Midfielder
+role_abbr.oop.SK;role_abbr;SK;LbTW;GL;PLb;清道夫;ВЧ;PCI;game file;Sweeper Keeper
+role_abbr.oop.SWD;role_abbr;SWD;StHV;CES;BAn;截边中;БлФ;CCO;game file;Stopping Wide Centre-Back
+role_abbr.oop.TAM;role_abbr;TAM;Ma10;MOC;TCp;回前腰;САП;MPI;game file;Tracking Attacking Midfielder
+role_abbr.oop.TCF;role_abbr;TCF;MaMS;ACv;CCp;回中锋;СЦФ;DCM;game file;Tracking Centre Forward
+role_abbr.oop.TW;role_abbr;TW;MaF;AC;AlT;追边锋;СКП;EXM;game file;Tracking Winger
+role_abbr.oop.TWM;role_abbr;TWM;MaA;MLC;ICp;追边前;СФП;CBM;game file;Tracking Wide Midfielder
+role_abbr.oop.W;role_abbr;W;FL;Ail;Ala;边锋;КП;EXT;export + game file;Winger
+role_abbr.oop.WB;role_abbr;WB;FV;LOf;Est;边翼卫;КАЗ;LO;export + game file;Wing-Back
+role_abbr.oop.WCB;role_abbr;WCB;HRV;DCE;BDi;边中卫;ФЦЗ;CLT;game file;Wide Centre-Back
+role_abbr.oop.WCM;role_abbr;WCM;Fl8;ACL;ICF;边补中;СФЦ;MDD;game file;Wide Covering Central Midfielder
+role_abbr.oop.WDM;role_abbr;WDM;Fl6;DCL;MCF;边补后;СФО;MAC;game file;Wide Covering Defensive Midfielder
+role_abbr.oop.WMF;role_abbr;WMF;ÄMF;ML;EDC;边前卫;ФП;CB;game file;Wide Midfielder
+role_abbr.oop.WOW;role_abbr;WOW;UF;ACA;AlA;边支边;КПА;ES;game file;Wide Outlet Winger
 side_code.C;side_code;C;Z;C;C;中;Ц;;export;not captured: es
 side_code.L;side_code;L;L;G;S;左;Л;;export;not captured: es
 side_code.R;side_code;R;R;D;D;右;П;;export;not captured: es
