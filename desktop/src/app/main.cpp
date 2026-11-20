@@ -7,6 +7,7 @@
 #include <QTranslator>
 
 #include "AppContext.h"
+#include "core/Definitions.h"
 #include "core/DwrsDisplay.h"
 #include "FirstRunDialog.h"
 #include "MainWindow.h"
@@ -47,6 +48,10 @@ int main(int argc, char *argv[])
         && languageTranslator.load(QStringLiteral(":/i18n/fmplayeranalyzer_%1.qm").arg(language))) {
         QApplication::installTranslator(&languageTranslator);
     }
+
+    // FM27 role names and abbreviations follow the UI language (the game's
+    // own wording); the game language of a save only matters for imports.
+    fm::Definitions::setDisplayLanguage(language);
 
     // DWRS decimals use the separator of the UI language (restart on change).
     fm::setDwrsLocale(language == QLatin1String("de")   ? QLocale(QLocale::German)

@@ -4,6 +4,9 @@
 
 #include "Constants.h"
 #include "PitchGeometry.h"
+#include "RoleTermsData.h"
+
+#include <QCoreApplication>
 
 #include <QFile>
 #include <QJsonArray>
@@ -300,13 +303,54 @@ QString Definitions::baseRoleAbbr(const QString &role)
     return role;
 }
 
+namespace {
+QString g_displayLanguage = QStringLiteral("en");
+} // namespace
+
+void Definitions::setDisplayLanguage(const QString &language)
+{
+    g_displayLanguage = language.isEmpty() ? QStringLiteral("en") : language;
+}
+
+QString Definitions::displayLanguage()
+{
+    return g_displayLanguage;
+}
+
+QString Definitions::phaseTag(const QString &phase)
+{
+    if (phase == QLatin1String("ip"))
+        //: Short tag for "in possession" after a role, as in "WB-IP".
+        return QCoreApplication::translate("fm::Definitions", "IP");
+    if (phase == QLatin1String("oop"))
+        //: Short tag for "out of possession" after a role, as in "WB-OOP".
+        return QCoreApplication::translate("fm::Definitions", "OOP");
+    return {};
+}
+
+const RoleTerm *Definitions::localRoleTerm(const QString &role)
+{
+    if (g_displayLanguage == QLatin1String("en"))
+        return nullptr;
+    const auto &all = fm27RoleTerms();
+    const auto lang = all.constFind(g_displayLanguage);
+    if (lang == all.constEnd())
+        return nullptr;
+    const auto term = lang->constFind(role);
+    return term == lang->constEnd() ? nullptr : &term.value();
+}
+
+QString Definitions::roleAbbreviation(const QString &role)
+{
+    const RoleTerm *term = localRoleTerm(role);
+    return term ? term->abbreviation : baseRoleAbbr(role);
+}
+
 QString Definitions::roleLabel(const QString &role) const
 {
     const QString phase = m_rolePhases.value(role);
-    if (phase == QLatin1String("ip"))
-        return baseRoleAbbr(role) + QStringLiteral("-IP");
-    if (phase == QLatin1String("oop"))
-        return baseRoleAbbr(role) + QStringLiteral("-OOP");
+    if (phase == QLatin1String("ip") || phase == QLatin1String("oop"))
+        return roleAbbreviation(role) + QLatin1Char('-') + phaseTag(phase);
     return role;
 }
 
@@ -495,14 +539,21 @@ void Definitions::rebuildCache()
     const QJsonObject phases = m_root.value(QLatin1String("role_phases")).toObject();
     for (auto it = phases.begin(); it != phases.end(); ++it)
         m_rolePhases.insert(it.key(), it.value().toString());
+    // FM27 role names in the UI language, as the game words them. Only names
+    // that still match the game's English name: a role the user renamed keeps
+    // the user's name.
+    for (auto it = m_roleDisplayMap.begin(); it != m_roleDisplayMap.end(); ++it) {
+        const RoleTerm *term = hasRolePhases() ? localRoleTerm(it.key()) : nullptr;
+        if (term && term->englishName == it.value())
+            it.value() = term->name;
+    }
     // One marking for every phase-split role (FM27): the full name always ends
-    // in " (IP)" or " (OOP)", so "Central Midfielder" with and without ball
-    // can be told apart everywhere (FM's own terms, like the role names).
+    // in " (IP)" or " (OOP)" (in the UI language), so "Central Midfielder" with
+    // and without ball can be told apart everywhere.
     for (auto it = m_roleDisplayMap.begin(); it != m_roleDisplayMap.end(); ++it) {
         const QString phase = m_rolePhases.value(it.key());
         if (phase == QLatin1String("ip") || phase == QLatin1String("oop"))
-            it.value() += phase == QLatin1String("ip") ? QStringLiteral(" (IP)")
-                                                       : QStringLiteral(" (OOP)");
+            it.value() += QStringLiteral(" (%1)").arg(phaseTag(phase));
     }
 
     m_tacticRoles.clear();

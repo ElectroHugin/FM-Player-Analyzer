@@ -876,13 +876,7 @@ void DashboardPage::showStarterView()
         }
         return strata;
     };
-    const auto abbr = [](QString role) {
-        if (role.endsWith(QLatin1String("-IP")))
-            role.chop(3);
-        else if (role.endsWith(QLatin1String("-OOP")))
-            role.chop(4);
-        return role;
-    };
+    const auto abbr = [](const QString &role) { return Definitions::roleAbbreviation(role); };
     // One line-up: each starter at his slot with that line-up's role DWRS.
     const auto singleMarkers = [&](const QHash<QString, XiCell> &team,
                                    const QHash<QString, QString> &lineUp) {

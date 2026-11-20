@@ -4,6 +4,7 @@
 
 #include "core/Database.h"
 #include "core/Fm27Save.h"
+#include "core/Fm27SaveClubs.h"
 #include "core/Fm27SaveFamily.h"
 #include "core/Fm27SaveImport.h"
 #include "core/HtmlImporter.h"
@@ -20,6 +21,86 @@ using namespace fm;
 using namespace fm::fm27save;
 
 namespace {
+
+void putU32(QByteArray *out, quint32 v)
+{
+    char b[4];
+    std::memcpy(b, &v, 4);
+    out->append(b, 4);
+}
+
+void putName(QByteArray *out, const QByteArray &name)
+{
+    putU32(out, quint32(name.size()));
+    out->append(name);
+}
+
+// A minimal counted club table as fmsave's ClubTableLayout describes it:
+// one club without and one with a full finance record, whose last block is
+// lastFinanceBlock bytes long (67 in FM27 27.0, 72 since 27.1).
+QByteArray clubTable(int lastFinanceBlock)
+{
+    struct Club {
+        QByteArray name, shortName;
+        bool fullFinance;
+        quint32 teamId;
+        quint32 uniqueId;
+    };
+    const Club clubs[] = {{"First Club", "First", false, 1001, 7001},
+                          {"Second Club", "Second", true, 1002, 7002}};
+    // The table header (u32 row count, a zero byte) ends the first club's
+    // 12-byte record head; each later club's head is the footer before it.
+    QByteArray db(64 + 7, '\0');
+    putU32(&db, 2);
+    db.append('\0');
+    for (quint32 ordinal = 0; ordinal < 2; ++ordinal) {
+        const Club &c = clubs[ordinal];
+        const qsizetype body = db.size();
+        db.append('\0'); // ordinary variant (also the record's zero byte)
+        putU32(&db, 1); // nation
+        db.append("\xff\xff\xff\xff", 4);
+        putU32(&db, 1); // FA nation
+        putU32(&db, 1); // nation copy
+        db.append(QByteArray(27 - (db.size() - body), '\0'));
+        putName(&db, c.name);
+        putName(&db, c.shortName);
+        db.append(QByteArray(8, '\0'));
+        db.append('\0'); // no 4-byte entries
+        if (!c.fullFinance) {
+            db.append('\0');
+            db.append(QByteArray(45, '\0'));
+        } else {
+            db.append('\1');
+            db.append(QByteArray(66, '\0'));
+            for (int i = 0; i < 4; ++i) {
+                db.append(QByteArray(235, '\0'));
+                db.append(QByteArray(2, '\0')); // two empty 8-byte lists
+            }
+            db.append(QByteArray(67, '\0'));
+            db.append('\0'); // 230-byte entries
+            putU32(&db, 0);   // 49-byte entries
+            db.append(QByteArray(71, '\0'));
+            db.append('\0'); // 19-byte entries
+            db.append(QByteArray(lastFinanceBlock, '\0'));
+        }
+        // Team list: no 25- or 12-byte entries, 9 filler bytes (the last
+        // codes the gender), one team, no affiliates, the remaining lists empty.
+        db.append(QByteArray(2, '\0'));
+        db.append(QByteArray(9, '\0'));
+        db.append('\1');
+        putU32(&db, c.teamId);
+        db.append('\0');
+        db.append(QByteArray(6, '\0'));
+        db.append('\0');
+        db.append(QByteArray(2, '\0'));
+        // Footer: ordinal, Unique ID twice (the next club's index, uid, uid copy).
+        putU32(&db, ordinal);
+        putU32(&db, c.uniqueId);
+        putU32(&db, c.uniqueId);
+    }
+    db.append(QByteArray(64, '\0'));
+    return db;
+}
 
 SavePlayer makePlayer(quint32 uniqueId, quint32 pindex, const QString &name, quint32 clubUid,
                       const QString &club, int value)
@@ -171,6 +252,30 @@ private slots:
         QVERIFY(parseFogOfWar(fogSection({{17867, 97}}), &knowledge));
         QVERIFY(!parseFogOfWar(damaged, &knowledge));
         QVERIFY(knowledge.isEmpty());
+    }
+
+    void clubTableLayouts_data()
+    {
+        QTest::addColumn<int>("lastFinanceBlock");
+        QTest::newRow("27.0") << 67;
+        QTest::newRow("27.1") << 72;
+    }
+
+    void clubTableLayouts()
+    {
+        QFETCH(int, lastFinanceBlock);
+        ClubTeams teams;
+        QString error;
+        QVERIFY2(readClubTeams(clubTable(lastFinanceBlock), &teams, &error), qPrintable(error));
+        QCOMPARE(teams.clubs.size(), 2);
+        QCOMPARE(teams.clubs[1].name, QStringLiteral("Second Club"));
+        QCOMPARE(teams.clubs[1].shortName, QStringLiteral("Second"));
+        QCOMPARE(teams.clubs[1].uniqueId, 7002u);
+        const ClubInfo *second = teams.clubForTeam(1002);
+        QVERIFY(second);
+        QCOMPARE(second->uniqueId, 7002u);
+        // An unknown layout is refused rather than read wrongly.
+        QVERIFY(!readClubTeams(clubTable(lastFinanceBlock + 3), &teams, &error));
     }
 
     void positionText_data()

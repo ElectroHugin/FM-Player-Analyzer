@@ -1388,8 +1388,8 @@ void BestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>> &option
             // In the split view the phase is in the caption; drop the suffix.
             QString roleName = roleNames.value(role, role);
             if (twoPhase) {
-                roleName.remove(QStringLiteral(" (IP)"));
-                roleName.remove(QStringLiteral(" (OOP)"));
+                roleName.remove(QStringLiteral(" (%1)").arg(Definitions::phaseTag(QStringLiteral("ip"))));
+                roleName.remove(QStringLiteral(" (%1)").arg(Definitions::phaseTag(QStringLiteral("oop"))));
             }
             for (const DepthOption &option : options.value(role)) {
                 int column = 0;

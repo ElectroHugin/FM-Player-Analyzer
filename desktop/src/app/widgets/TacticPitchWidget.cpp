@@ -3,6 +3,7 @@
 
 #include "../theming/ThemeManager.h"
 #include "core/Constants.h"
+#include "core/Definitions.h"
 
 #include <algorithm>
 #include <QContextMenuEvent>
@@ -317,13 +318,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     if (m_editor) {
         // Tactic editor: the slots in use as role cards, the free ones as
         // dashed "+" boxes — a grid that shows only what can still be added.
-        const auto stripPhase = [](QString role) {
-            if (role.endsWith(QLatin1String("-IP")))
-                role.chop(3);
-            else if (role.endsWith(QLatin1String("-OOP")))
-                role.chop(4);
-            return role;
-        };
+        const auto stripPhase = [](const QString &role) { return Definitions::roleAbbreviation(role); };
         // squeezed: free middle place between two cards that closed up.
         const auto drawSlot = [&](const QRectF &baseBox, const QString &slot, const QString &label,
                                   int row, bool squeezed = false) {
@@ -430,11 +425,8 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         // FM27 ids carry the phase when an abbreviation exists in both
         // ("CFD-OOP"); the pitch belongs to one phase, so show the game's
         // abbreviation.
-        QString roleAbbr = m_positions.value(slot);
-        if (roleAbbr.endsWith(QLatin1String("-IP")))
-            roleAbbr.chop(3);
-        else if (roleAbbr.endsWith(QLatin1String("-OOP")))
-            roleAbbr.chop(4);
+        const QString roleAbbr = Definitions::baseRoleAbbr(m_positions.value(slot));
+        const QString roleText = Definitions::roleAbbreviation(m_positions.value(slot));
         const QString apt = aptAbbreviations().value(cell.apt, cell.apt);
         const QString subtext = m_slotSubtexts.value(slot);
 
@@ -463,7 +455,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.setFont(headerFont);
         painter.drawText(headerText, Qt::AlignCenter,
                          painter.fontMetrics().elidedText(
-                             roleAbbr, Qt::ElideRight, static_cast<int>(headerText.width() - 4)));
+                             roleText, Qt::ElideRight, static_cast<int>(headerText.width() - 4)));
 
         // Rating with a slim bar, then the name, then the extra line.
         const QRectF body = box.adjusted(4, headerH + 1, -4, -2);
@@ -542,13 +534,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         return;
     }
 
-    const auto stripPhase = [](QString role) {
-        if (role.endsWith(QLatin1String("-IP")))
-            role.chop(3);
-        else if (role.endsWith(QLatin1String("-OOP")))
-            role.chop(4);
-        return role;
-    };
+    const auto stripPhase = [](const QString &role) { return Definitions::roleAbbreviation(role); };
     // Anchors in field fractions, with the same role shift as the single
     // line-ups (display only).
     const auto anchorsOf = [&](const QHash<QString, QStringList> &layout,

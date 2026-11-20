@@ -12,6 +12,8 @@
 
 namespace fm {
 
+struct RoleTerm; // RoleTermsData.h
+
 // Role key/preferable attribute lists (role_specific_weights entry).
 struct RoleWeights {
     QStringList key;
@@ -133,7 +135,19 @@ public:
     // Short label of a role for tables and headers. Phase-split roles (FM27)
     // all carry the phase the same way: "WB-IP", "SDM-OOP" (the ids only add
     // it where an abbreviation exists in both phases). Other roles: the id.
+    // In the UI language (see setDisplayLanguage): "IAS-IP", "LO-SB".
     QString roleLabel(const QString &role) const;
+    // Game abbreviation of an FM27 role in the UI language, without phase
+    // ("CB-IP" -> "CB", German "IV"). Other ids (FM24 "IF-S", custom roles):
+    // baseRoleAbbr().
+    static QString roleAbbreviation(const QString &role);
+    // UI language for FM27 role names and abbreviations ("en", "de", ...).
+    // Set once at startup, before definitions load (the UI language needs a
+    // restart anyway).
+    static void setDisplayLanguage(const QString &language);
+    static QString displayLanguage();
+    // Short phase tag in the UI language: "IP"/"OOP", French "AB"/"SB", ...
+    static QString phaseTag(const QString &phase);
     // Game abbreviation without the phase suffix ("CFD-OOP" -> "CFD").
     static QString baseRoleAbbr(const QString &role);
     // Natural order, roles with ball before roles without (FM27).
@@ -186,6 +200,7 @@ public:
     }
 
 private:
+    static const RoleTerm *localRoleTerm(const QString &role);
     void indexTacticOrder(const QByteArray &json);
     QStringList pitchOrder(QStringList slotKeys) const;
     // Re-derives every cached table below from m_root.
