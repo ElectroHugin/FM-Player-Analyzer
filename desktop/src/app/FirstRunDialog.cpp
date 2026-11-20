@@ -2,6 +2,7 @@
 
 #include "core/Version.h"
 
+#include <QCheckBox>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QFileDialog>
@@ -43,6 +44,18 @@ FirstRunDialog::FirstRunDialog(const QString &defaultDir, QWidget *parent)
             m_pathEdit->setText(QDir::toNativeSeparators(dir));
     });
 
+    layout->addSpacing(8);
+    m_updateCheck = new QCheckBox(tr("Check for new versions at startup"), this);
+    layout->addWidget(m_updateCheck);
+    auto *updateHint = new QLabel(
+        tr("Only asks GitHub for the latest version number. No data about you or your saves "
+           "is sent, and nothing is installed automatically. Can be changed later under "
+           "Settings → Saves."),
+        this);
+    updateHint->setObjectName(QStringLiteral("kpiCaption"));
+    updateHint->setWordWrap(true);
+    layout->addWidget(updateHint);
+
     auto *buttons =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     buttons->button(QDialogButtonBox::Ok)->setText(tr("Get Started"));
@@ -55,6 +68,15 @@ FirstRunDialog::FirstRunDialog(const QString &defaultDir, QWidget *parent)
 QString FirstRunDialog::chosenDataDir() const
 {
     return QDir::fromNativeSeparators(m_pathEdit->text().trimmed());
+}
+
+} // namespace fm
+
+namespace fm {
+
+bool FirstRunDialog::updateCheckChosen() const
+{
+    return m_updateCheck->isChecked();
 }
 
 } // namespace fm

@@ -114,6 +114,8 @@ add_library(fmcore STATIC
     ColorTemplates.cpp
     Version.h
     Version.cpp
+    UpdateCheck.h
+    UpdateCheck.cpp
 )
 
 target_include_directories(fmcore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)

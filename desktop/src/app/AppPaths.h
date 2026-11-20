@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDateTime>
 #include <QList>
 #include <QSettings>
 #include <QString>
@@ -72,6 +73,20 @@ public:
         QString label;
     };
     static QList<UiLanguage> uiLanguages();
+
+    // Optional update check, app-global. Off until the user switches it on:
+    // the app stays offline otherwise. The question at first start is asked
+    // once; answered either way, it does not come back.
+    bool updateQuestionAnswered() const;
+    bool updateCheckEnabled() const;
+    void setUpdateCheckEnabled(bool enabled); // also marks the question answered
+    bool updateIncludesTestBuilds() const;
+    void setUpdateIncludesTestBuilds(bool include);
+    // A version the user chose to skip: no startup notice for it.
+    QString skippedUpdateVersion() const;
+    void setSkippedUpdateVersion(const QString &version);
+    QDateTime lastUpdateCheck() const;
+    void setLastUpdateCheck(const QDateTime &when);
 
 private:
     std::unique_ptr<QSettings> m_settings;

@@ -22,6 +22,8 @@ linuxdeploy="$out_dir/tools/linuxdeploy-$linuxdeploy_tag-x86_64.AppImage"
 # Qt plugins the app needs. They are copied by hand instead of using
 # linuxdeploy-plugin-qt, which bundles every SQL driver of the Qt installation
 # (MySQL, PostgreSQL, ODBC) together with their client libraries.
+# The TLS backend (optional update check) loads the system's OpenSSL at run
+# time, so no OpenSSL is bundled.
 qt_plugins=(
     platforms/libqxcb.so
     xcbglintegrations/libqxcb-glx-integration.so
@@ -33,6 +35,7 @@ qt_plugins=(
     imageformats/libqjpeg.so
     imageformats/libqgif.so
     sqldrivers/libqsqlite.so
+    tls/libqopensslbackend.so
 )
 
 fail() { echo "build-appimage: $*" >&2; exit 1; }

@@ -9,6 +9,9 @@
 
 #include "Navigation.h"
 #include "core/RatingsUpdater.h"
+#include "core/UpdateCheck.h"
+
+#include <optional>
 
 class QButtonGroup;
 class QFrame;
@@ -33,6 +36,7 @@ class BusyProgressDialog;
 class PageBase;
 class CommandPalette;
 class ThemeManager;
+class UpdateChecker;
 
 class MainWindow : public QMainWindow
 {
@@ -112,6 +116,11 @@ private:
     // Hint bar above the page (instead of a blocking pop-up).
     void showNotice(const QString &text, const QString &actionLabel,
                     std::function<void()> action);
+    // Optional update check: asks once whether it may run, then (only if the
+    // user agreed) checks at startup and shows a newer version in the hint bar.
+    // Waits for the welcome assistant and other dialogs to close first.
+    void runStartupUpdateStep();
+    void showUpdateNotice();
     // Short confirmation at the bottom right that fades out by itself.
     void showToast(const QString &text);
 
@@ -161,6 +170,10 @@ private:
     QTimer m_welcomeTimer;
     QStringList m_welcomeLater; // saves whose assistant was closed for this session
     bool m_sidebarCustomRoles = true;
+
+    UpdateChecker *m_updateChecker = nullptr; // created only when the check is on
+    QTimer m_updateTimer;
+    std::optional<ReleaseInfo> m_pendingUpdate; // waits for a free hint bar
 };
 
 } // namespace fm

@@ -21,6 +21,10 @@ add_executable(fmplayeranalyzer
     SaveLibrary.cpp
     StartScreen.h
     StartScreen.cpp
+    UpdateChecker.h
+    UpdateChecker.cpp
+    UpdateDialog.h
+    UpdateDialog.cpp
     MigrationWizard.h
     MigrationWizard.cpp
     Navigation.h
@@ -142,6 +146,7 @@ target_link_libraries(fmplayeranalyzer PRIVATE
     fmcore
     Qt6::Widgets
     Qt6::Charts
+    Qt6::Network
 )
 
 # --- Translations -----------------------------------------------------------

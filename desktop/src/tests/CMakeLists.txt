@@ -16,6 +16,7 @@ endfunction()
 
 fm_add_test(test_smoke)
 fm_add_test(test_utils)
+fm_add_test(test_updatecheck)
 fm_add_test(test_graphicsindex)
 fm_add_test(test_themecolors)
 fm_add_test(test_definitions)

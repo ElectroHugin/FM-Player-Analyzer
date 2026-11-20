@@ -166,6 +166,55 @@ void AppPaths::setLanguage(const QString &language)
     m_settings->sync();
 }
 
+bool AppPaths::updateQuestionAnswered() const
+{
+    return m_settings->contains(QStringLiteral("Updates/check"));
+}
+
+bool AppPaths::updateCheckEnabled() const
+{
+    return m_settings->value(QStringLiteral("Updates/check"), false).toBool();
+}
+
+void AppPaths::setUpdateCheckEnabled(bool enabled)
+{
+    m_settings->setValue(QStringLiteral("Updates/check"), enabled);
+    m_settings->sync();
+}
+
+bool AppPaths::updateIncludesTestBuilds() const
+{
+    return m_settings->value(QStringLiteral("Updates/testBuilds"), false).toBool();
+}
+
+void AppPaths::setUpdateIncludesTestBuilds(bool include)
+{
+    m_settings->setValue(QStringLiteral("Updates/testBuilds"), include);
+    m_settings->sync();
+}
+
+QString AppPaths::skippedUpdateVersion() const
+{
+    return m_settings->value(QStringLiteral("Updates/skippedVersion")).toString();
+}
+
+void AppPaths::setSkippedUpdateVersion(const QString &version)
+{
+    m_settings->setValue(QStringLiteral("Updates/skippedVersion"), version);
+    m_settings->sync();
+}
+
+QDateTime AppPaths::lastUpdateCheck() const
+{
+    return m_settings->value(QStringLiteral("Updates/lastCheck")).toDateTime();
+}
+
+void AppPaths::setLastUpdateCheck(const QDateTime &when)
+{
+    m_settings->setValue(QStringLiteral("Updates/lastCheck"), when);
+    m_settings->sync();
+}
+
 QString AppPaths::currency() const
 {
     return m_settings->value(QStringLiteral("currency")).toString();
