@@ -21,7 +21,7 @@ public:
         layout->addStretch(1);
         auto *heading = new QLabel(QStringLiteral("<h2>%1</h2>").arg(title), this);
         heading->setAlignment(Qt::AlignCenter);
-        auto *note = new QLabel(tr("Diese Seite ist nicht verfügbar."), this);
+        auto *note = new QLabel(tr("This page is not available."), this);
         note->setAlignment(Qt::AlignCenter);
         layout->addWidget(heading);
         layout->addWidget(note);

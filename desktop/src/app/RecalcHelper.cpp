@@ -15,7 +15,7 @@ namespace fm {
 void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affectedUids,
                    std::function<void(QString)> onDone, RatingsOrigin origin)
 {
-    auto *dialog = new BusyProgressDialog(QObject::tr("DWRS-Bewertungen werden berechnet…"),
+    auto *dialog = new BusyProgressDialog(QObject::tr("Calculating DWRS ratings…"),
                                           parent);
 
     const QString dbFile = context.database().filePath();
@@ -71,7 +71,7 @@ void recalcDwrsFor(AppContext &context, QWidget *parent, const QStringList &affe
                             dialogGuard->setValue(percent);
                             // Writing to the database follows the last role.
                             if (saving)
-                                dialogGuard->setLabelText(QObject::tr("Bewertungen werden gespeichert …"));
+                                dialogGuard->setLabelText(QObject::tr("Saving ratings …"));
                         },
                         Qt::QueuedConnection);
                 },

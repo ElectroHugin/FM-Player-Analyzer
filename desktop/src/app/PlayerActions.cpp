@@ -36,7 +36,7 @@ void togglePlayerFlag(AppContext &context, QWidget *parent, const QString &uid,
     std::vector<Player> batch{player};
     if (!context.database().upsertPlayers(batch)) {
         mutate(player); // toggle back
-        QMessageBox::critical(parent, ActionText::tr("Spieler"),
+        QMessageBox::critical(parent, ActionText::tr("Player"),
                               context.database().errorString());
         return;
     }
@@ -75,13 +75,13 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
     const PlayerRegistration current = player.registration;
     const auto store = [&context, parent, uid](const PlayerRegistration &r) {
         if (!context.setPlayerRegistration(uid, r))
-            QMessageBox::critical(parent, ActionText::tr("Registrierung"),
+            QMessageBox::critical(parent, ActionText::tr("Registration"),
                                   context.database().errorString());
     };
 
-    QMenu *sub = menu.addMenu(ActionText::tr("Registrierung"));
+    QMenu *sub = menu.addMenu(ActionText::tr("Registration"));
     sub->setToolTipsVisible(true);
-    auto *homeGrown = sub->addAction(ActionText::tr("Home-Grown (im Verband ausgebildet)"));
+    auto *homeGrown = sub->addAction(ActionText::tr("Home-grown (trained in the association)"));
     homeGrown->setCheckable(true);
     homeGrown->setChecked(Registration::isHomeGrown(player));
     QObject::connect(homeGrown, &QAction::triggered, parent, [current, store](bool on) {
@@ -91,7 +91,7 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
             r.clubTrained = false; // club-trained implies home-grown
         store(r);
     });
-    auto *clubTrained = sub->addAction(ActionText::tr("Club-Grown (im Verein ausgebildet)"));
+    auto *clubTrained = sub->addAction(ActionText::tr("Club-grown (trained at the club)"));
     clubTrained->setCheckable(true);
     clubTrained->setChecked(current.clubTrained);
     QObject::connect(clubTrained, &QAction::triggered, parent, [current, store](bool on) {
@@ -103,9 +103,9 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
     const Registration::Settings settings = context.registrationSettings();
     const Registration::YouthRule youthRule = Registration::youthRule(settings.league);
     const auto statusText = [](Registration::U21Status status) {
-        return status == Registration::U21Status::Yes  ? ActionText::tr("ja")
-               : status == Registration::U21Status::No ? ActionText::tr("nein")
-                                                       : ActionText::tr("unklar");
+        return status == Registration::U21Status::Yes  ? ActionText::tr("yes")
+               : status == Registration::U21Status::No ? ActionText::tr("no")
+                                                       : ActionText::tr("unclear");
     };
     // One group of three choices (automatic / yes / no) for an override field.
     const auto addOverride = [&](const QStringList &texts, U21 PlayerRegistration::*field) {
@@ -132,16 +132,16 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
         autoPlayer.registration.youth = U21::Auto;
         const QString autoText =
             statusText(Registration::u18EuStatus(autoPlayer, settings.gameDate));
-        addOverride({ActionText::tr("U18 EU automatisch nach Alter (%1)").arg(autoText),
-                     ActionText::tr("U18 EU: ja (braucht keinen Platz)"),
-                     ActionText::tr("U18 EU: nein")},
+        addOverride({ActionText::tr("U18 EU automatic by age (%1)").arg(autoText),
+                     ActionText::tr("U18 EU: yes (needs no slot)"),
+                     ActionText::tr("U18 EU: no")},
                     &PlayerRegistration::youth);
     }
     // U21: where the league exempts U21 players, and for UEFA list B.
     if (youthRule != Registration::YouthRule::U18Eu || settings.uefa) {
         const QString autoText = statusText(Registration::u21StatusByAge(player.age));
-        addOverride({ActionText::tr("U21 automatisch nach Alter (%1)").arg(autoText),
-                     ActionText::tr("U21: ja"), ActionText::tr("U21: nein")},
+        addOverride({ActionText::tr("U21 automatic by age (%1)").arg(autoText),
+                     ActionText::tr("U21: yes"), ActionText::tr("U21: no")},
                     &PlayerRegistration::u21);
     }
 
@@ -151,11 +151,11 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
                                : 0;
     if (nonEuLimit > 0) {
         sub->addSeparator();
-        auto *nonEu = sub->addAction(ActionText::tr("Nicht-EU-Spieler"));
+        auto *nonEu = sub->addAction(ActionText::tr("Non-EU player"));
         nonEu->setCheckable(true);
         nonEu->setChecked(current.nonEu);
-        nonEu->setToolTip(ActionText::tr("Zählt laut Spiel als Nicht-EU-Spieler. %1 erlaubt "
-                                         "höchstens %2 auf der Meldeliste.")
+        nonEu->setToolTip(ActionText::tr("The game counts him as a non-EU player. %1 allows "
+                                         "at most %2 in the squad registration.")
                               .arg(Registration::leagueDisplayName(settings.league))
                               .arg(nonEuLimit));
         QObject::connect(nonEu, &QAction::triggered, parent, [current, store](bool on) {
@@ -168,13 +168,13 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
     // Exceptions the assistant cannot know, e.g. signed after the deadline.
     sub->addSeparator();
     if (Registration::hasWageRules(settings.league)) {
-        auto *wageExempt = sub->addAction(ActionText::tr("Mindestgehalt gilt nicht (z. B. Leihe)"));
+        auto *wageExempt = sub->addAction(ActionText::tr("Minimum wage does not apply (e.g. loan)"));
         wageExempt->setCheckable(true);
         wageExempt->setChecked(current.minWageExempt);
         wageExempt->setToolTip(ActionText::tr(
-            "Im Spiel registrierbar, obwohl das Gehalt unter dem Mindestgehalt liegt, z. B. bei "
-            "einer Leihe mit Gehaltsanteil. Fürs Gehaltsbudget zählt weiter das Gehalt aus dem "
-            "Export."));
+            "Can be registered in the game although the wage is below the minimum wage, e.g. a "
+            "loan where your club pays only part of it. The wage budget still uses the wage "
+            "from the export."));
         QObject::connect(wageExempt, &QAction::triggered, parent, [current, store](bool on) {
             PlayerRegistration r = current;
             r.minWageExempt = on;
@@ -192,17 +192,17 @@ void addRegistrationMenu(AppContext &context, QWidget *parent, QMenu &menu,
         });
     };
     if (Registration::restrictsSquad(settings.league))
-        addBlocked(ActionText::tr("Nicht registrierbar: %1")
+        addBlocked(ActionText::tr("Cannot be registered: %1")
                        .arg(Registration::leagueDisplayName(settings.league)),
                    &PlayerRegistration::leagueBlocked);
     else // no squad list (e.g. Bundesliga): a player can still be left unregistered
-        addBlocked(ActionText::tr("Nicht registriert: %1")
+        addBlocked(ActionText::tr("Not registered: %1")
                        .arg(Registration::leagueDisplayName(settings.league).isEmpty()
-                                ? ActionText::tr("Liga")
+                                ? ActionText::tr("League")
                                 : Registration::leagueDisplayName(settings.league)),
                    &PlayerRegistration::leagueBlocked);
     if (settings.uefa)
-        addBlocked(ActionText::tr("Nicht registrierbar: Europapokal"),
+        addBlocked(ActionText::tr("Cannot be registered: European competitions"),
                    &PlayerRegistration::uefaBlocked);
 }
 
@@ -232,20 +232,20 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
         menu.addSeparator();
     }
 
-    menu.addAction(ActionText::tr("👤 Profil öffnen"), [&context, uid] {
+    menu.addAction(ActionText::tr("👤 Open profile"), [&context, uid] {
         openProfile(context, uid);
     });
-    menu.addAction(ActionText::tr("⚖️ Zum Vergleich hinzufügen"), [&context, uid] {
+    menu.addAction(ActionText::tr("⚖️ Add to comparison"), [&context, uid] {
         context.addPendingComparisonUid(uid);
         context.requestNavigation(QStringLiteral("player_comparison"));
     });
-    menu.addAction(ActionText::tr("✏️ Bearbeiten"), [&context, uid] {
+    menu.addAction(ActionText::tr("✏️ Edit"), [&context, uid] {
         context.setPendingEditUid(uid);
         context.requestNavigation(QStringLiteral("edit_player"));
     });
     menu.addSeparator();
 
-    auto *transferAction = menu.addAction(ActionText::tr("Zum Verkauf anbieten"));
+    auto *transferAction = menu.addAction(ActionText::tr("Offer for sale"));
     transferAction->setCheckable(true);
     transferAction->setChecked(player->transferStatus);
     QObject::connect(transferAction, &QAction::triggered, parent,
@@ -255,7 +255,7 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
                          });
                      });
 
-    auto *loanAction = menu.addAction(ActionText::tr("Zum Verleih anbieten"));
+    auto *loanAction = menu.addAction(ActionText::tr("Offer for loan"));
     loanAction->setCheckable(true);
     loanAction->setChecked(player->loanStatus);
     QObject::connect(loanAction, &QAction::triggered, parent, [&context, parent, uid] {
@@ -263,7 +263,7 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
                          [](Player &p) { p.loanStatus = !p.loanStatus; });
     });
 
-    auto *shortlistAction = menu.addAction(ActionText::tr("★ Auf der Shortlist"));
+    auto *shortlistAction = menu.addAction(ActionText::tr("★ On the shortlist"));
     shortlistAction->setCheckable(true);
     shortlistAction->setChecked(player->onShortlist);
     QObject::connect(shortlistAction, &QAction::triggered, parent,
@@ -275,13 +275,13 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
     const bool ownPlayer = (!userClub.isEmpty() && player->club == userClub)
                            || (!secondClub.isEmpty() && player->club == secondClub);
     if (ownPlayer || player->longTermInjured) {
-        auto *injuryAction = menu.addAction(ActionText::tr("🚑 Langzeitverletzt"));
+        auto *injuryAction = menu.addAction(ActionText::tr("🚑 Long-term injured"));
         injuryAction->setCheckable(true);
         injuryAction->setChecked(player->longTermInjured);
         QObject::connect(injuryAction, &QAction::triggered, parent,
                          [&context, parent, uid, injured = !player->longTermInjured] {
                              if (!context.setLongTermInjured(uid, injured))
-                                 QMessageBox::critical(parent, ActionText::tr("Spieler"),
+                                 QMessageBox::critical(parent, ActionText::tr("Player"),
                                                        context.database().errorString());
                          });
     }
@@ -291,16 +291,16 @@ void showContextMenu(AppContext &context, QWidget *parent, const QString &uid,
     } else if (ownPlayer || player->registration.leagueBlocked) {
         // No squad list to keep (e.g. Bundesliga): a player can still be left
         // unregistered by mistake; Best XI then leaves him out.
-        auto *unregistered = menu.addAction(ActionText::tr("Nicht registriert"));
+        auto *unregistered = menu.addAction(ActionText::tr("Not registered"));
         unregistered->setCheckable(true);
         unregistered->setChecked(player->registration.leagueBlocked);
-        unregistered->setToolTip(ActionText::tr("Im Spiel nicht für die Liga registriert. Best XI "
-                                                "und Übersicht stellen ihn nicht auf."));
+        unregistered->setToolTip(ActionText::tr("Not registered for the league in the game. Best "
+                                                "XI and Overview leave him out."));
         PlayerRegistration r = player->registration;
         r.leagueBlocked = !r.leagueBlocked;
         QObject::connect(unregistered, &QAction::triggered, parent, [&context, parent, uid, r] {
             if (!context.setPlayerRegistration(uid, r))
-                QMessageBox::critical(parent, ActionText::tr("Registrierung"),
+                QMessageBox::critical(parent, ActionText::tr("Registration"),
                                       context.database().errorString());
         });
         menu.setToolTipsVisible(true);

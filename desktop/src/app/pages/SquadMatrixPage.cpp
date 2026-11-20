@@ -1,4 +1,5 @@
 #include "SquadMatrixPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
@@ -18,6 +19,7 @@
 #include "core/TalentEngine.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -63,7 +65,7 @@ constexpr int kDefaultThreshold = 14;
 
 QString millions(double value)
 {
-    return QStringLiteral("%1 Mio. €").arg(QLocale().toString(value / 1'000'000.0, 'f', 1));
+    return Currency::formatMillions(value, 1);
 }
 
 // Layout for the contents of an optional (checkable) filter box. The contents
@@ -121,18 +123,18 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
 
     // --- Options shared by both tabs ---
     auto *optionsRow = new QHBoxLayout;
-    optionsRow->addWidget(new QLabel(tr("Taktik:"), content));
+    optionsRow->addWidget(new QLabel(tr("Tactic:"), content));
     m_tacticCombo = new QComboBox(content);
     m_tacticCombo->setMinimumWidth(240);
     optionsRow->addWidget(m_tacticCombo);
-    m_extraDetailsCheck = new QCheckBox(tr("Extra-Details"), content);
+    m_extraDetailsCheck = new QCheckBox(tr("Extra details"), content);
     optionsRow->addWidget(m_extraDetailsCheck);
     optionsRow->addStretch(1);
     layout->addLayout(optionsRow);
 
     m_tabs = new QTabWidget(content);
     m_tabs->addTab(buildScoutingTab(), tr("Scouting"));
-    m_tabs->addTab(buildSquadTab(), tr("Mein Kader"));
+    m_tabs->addTab(buildSquadTab(), tr("My Squad"));
     m_tabs->tabBar()->hide(); // the main window's tabs choose (showSection)
     layout->addWidget(m_tabs, 1);
 
@@ -151,14 +153,14 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
     connect(m_talentScope, &QButtonGroup::idClicked, this, fullRebuild);
     connect(m_talentGoodOnlyCheck, &QCheckBox::toggled, this, fullRebuild);
     connect(m_talentAgeSlider, &QSlider::valueChanged, this, [this, fullRebuild] {
-        m_talentAgeLabel->setText(tr("%1 Jahre").arg(m_talentAgeSlider->value()));
+        m_talentAgeLabel->setText(tr("%1 years").arg(m_talentAgeSlider->value()));
         fullRebuild();
     });
     connect(m_talentMentalitySlider, &QSlider::valueChanged, this, [this, fullRebuild] {
         m_talentMentalityLabel->setText(QString::number(m_talentMentalitySlider->value()));
         fullRebuild();
     });
-    m_talentAgeLabel->setText(tr("%1 Jahre").arg(m_talentAgeSlider->value()));
+    m_talentAgeLabel->setText(tr("%1 years").arg(m_talentAgeSlider->value()));
     m_talentMentalityLabel->setText(QString::number(m_talentMentalitySlider->value()));
 
     // The sort/role choice changes the columns (focus role, delta to the first
@@ -191,8 +193,8 @@ SquadMatrixPage::SquadMatrixPage(AppContext &context, QWidget *parent)
         // Right end of the slider means "no cap" so that "Not for Sale"
         // players (kUnbuyableValue) stay visible.
         m_maxValueLabel->setText(m_maxValueSlider->value() >= m_maxValueSlider->maximum()
-                                     ? tr("Kein Limit")
-                                     : millions(m_maxValueSlider->value() * 500'000.0));
+                                     ? tr("No limit")
+                                     : millions(m_maxValueSlider->value() * Currency::sliderStep()));
     };
     connect(m_maxValueSlider, &QSlider::valueChanged, this,
             [updateMaxValueLabel, scoutedRowsSoon] {
@@ -224,7 +226,7 @@ void SquadMatrixPage::showSection(const QString &pageId)
 {
     const bool scouting = pageId == QLatin1String("scouting_matrix");
     m_tabs->setCurrentIndex(scouting ? TabScouting : TabSquad);
-    m_heading->setText(scouting ? tr("Squad Matrix – Scouting") : tr("Squad Matrix – Mein Kader"));
+    m_heading->setText(scouting ? tr("Squad Matrix – Scouting") : tr("Squad Matrix – My Squad"));
 }
 
 QWidget *SquadMatrixPage::buildScoutingTab()
@@ -236,31 +238,31 @@ QWidget *SquadMatrixPage::buildScoutingTab()
 
     // Row 1: what to look at.
     auto *filterRow = new QHBoxLayout;
-    filterRow->addWidget(new QLabel(tr("Filter/Sortierung:"), tab));
+    filterRow->addWidget(new QLabel(tr("Filter/Sorting:"), tab));
     m_scoutedFilterCombo = new QComboBox(tab);
     m_scoutedFilterCombo->setMinimumWidth(200);
     m_scoutedFilterCombo->setToolTip(
-        tr("Nach einer Rolle sortieren und filtern. Dann zeigt eine Spalte „Δ“, wie weit der "
-           "Spieler über oder unter dem besten Spieler deiner ersten Mannschaft liegt."));
+        tr("Sort and filter by a role. A “Δ” column then shows how far the player is above "
+           "or below the best player of your first team."));
     filterRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_scoutedFilterCombo, m_scoutedFilterCombo->parentWidget()));
     filterRow->addWidget(m_scoutedFilterCombo);
     filterRow->addWidget(new QLabel(tr("Nation:"), tab));
     m_scoutedNatCombo = new QComboBox(tab);
     m_scoutedNatCombo->setMinimumWidth(150);
     m_scoutedNatCombo->setToolTip(
-        tr("Nach Nationalität einschränken (unabhängig vom Talent-Filter): eigenes Land, "
-           "Ausländer oder eine bestimmte Nation — hilfreich für Registrierungsregeln."));
+        tr("Restrict by nationality (independent of the talent filter): your own "
+           "country, foreigners or a specific nation — useful for registration rules."));
     filterRow->addWidget(m_scoutedNatCombo);
-    m_freeAgentsCheck = new QCheckBox(tr("Nur Free Agents"), tab);
+    m_freeAgentsCheck = new QCheckBox(tr("Free agents only"), tab);
     m_freeAgentsCheck->setToolTip(
-        tr("Nur ablösefreie Spieler: Marktwert explizit 0 oder kein Verein gesetzt "
-           "(unabhängig davon, wie der Verein benannt ist). Marktwert-Limit wird dabei "
-           "ignoriert; nach Rolle/Talent sortierbar."));
+        tr("Free agents only: transfer value explicitly 0 or no club set (regardless "
+           "of how the club is labelled). The value cap is ignored; sortable by "
+           "role/talent."));
     filterRow->addWidget(m_freeAgentsCheck);
-    m_hideRetiredCheck = new QCheckBox(tr("Retired/veraltete ausblenden"), tab);
+    m_hideRetiredCheck = new QCheckBox(tr("Hide retired/stale"), tab);
     m_hideRetiredCheck->setToolTip(
-        tr("Blendet Spieler aus, deren Verein auf 'Retired' steht oder die in den "
-           "letzten Komplett-Exporten fehlten (außer eigenem Verein und Shortlist)."));
+        tr("Hides players whose club is set to 'Retired' or who were missing from "
+           "the latest full exports (except your own club and the shortlist)."));
     m_hideRetiredCheck->setChecked(true);
     filterRow->addWidget(m_hideRetiredCheck);
     filterRow->addStretch(1);
@@ -279,7 +281,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     rangeRow->addWidget(new QLabel(QStringLiteral("–"), tab));
     rangeRow->addWidget(m_dwrsMaxSpin);
     rangeRow->addSpacing(16);
-    rangeRow->addWidget(new QLabel(tr("Alter:"), tab));
+    rangeRow->addWidget(new QLabel(tr("Age:"), tab));
     m_minAgeSpin = new QSpinBox(tab);
     m_minAgeSpin->setRange(15, 50);
     m_minAgeSpin->setValue(15); // default: as low as possible
@@ -290,9 +292,9 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     rangeRow->addWidget(new QLabel(QStringLiteral("–"), tab));
     rangeRow->addWidget(m_maxAgeSpin);
     rangeRow->addSpacing(16);
-    rangeRow->addWidget(new QLabel(tr("Max. Wert:"), tab));
+    rangeRow->addWidget(new QLabel(tr("Max. Value:"), tab));
     m_maxValueSlider = new QSlider(Qt::Horizontal, tab);
-    m_maxValueSlider->setRange(0, 400); // 0.5 Mio € steps
+    m_maxValueSlider->setRange(0, 400); // steps of Currency::sliderStep()
     m_maxValueSlider->setValue(400);
     m_maxValueSlider->setMaximumWidth(160);
     m_maxValueLabel = new QLabel(tab);
@@ -308,12 +310,12 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     layout->addWidget(m_personalityFilter);
 
     // --- Talent filter ---
-    m_talentBox = new QGroupBox(tr("Talent-Filter"), tab);
+    m_talentBox = new QGroupBox(tr("Talent Filter"), tab);
     m_talentBox->setCheckable(true);
     m_talentBox->setChecked(false);
     auto *talentLayout = collapsibleBody(m_talentBox);
     auto *scopeRow = new QHBoxLayout;
-    scopeRow->addWidget(new QLabel(tr("Nationalität:"), m_talentBox));
+    scopeRow->addWidget(new QLabel(tr("Nationality:"), m_talentBox));
     m_talentScope = new QButtonGroup(this);
     const auto addScope = [&](const QString &label, int id, bool checked = false) {
         auto *radio = new QRadioButton(label, m_talentBox);
@@ -321,14 +323,14 @@ QWidget *SquadMatrixPage::buildScoutingTab()
         m_talentScope->addButton(radio, id);
         scopeRow->addWidget(radio);
     };
-    addScope(tr("Inland"), ScopeDomestic);
-    addScope(tr("Ausland"), ScopeForeign);
-    addScope(tr("Beliebig"), ScopeAny, true);
+    addScope(tr("Domestic"), ScopeDomestic);
+    addScope(tr("Foreign"), ScopeForeign);
+    addScope(tr("Any"), ScopeAny, true);
     scopeRow->addStretch(1);
     talentLayout->addLayout(scopeRow);
 
     auto *talentSliders = new QHBoxLayout;
-    talentSliders->addWidget(new QLabel(tr("Max. Alter:"), m_talentBox));
+    talentSliders->addWidget(new QLabel(tr("Max. Age:"), m_talentBox));
     m_talentAgeSlider = new QSlider(Qt::Horizontal, m_talentBox);
     m_talentAgeSlider->setRange(15, 24);
     m_talentAgeSlider->setValue(21);
@@ -336,7 +338,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     talentSliders->addWidget(m_talentAgeSlider, 1);
     talentSliders->addWidget(m_talentAgeLabel);
     talentSliders->addSpacing(16);
-    talentSliders->addWidget(new QLabel(tr("Min. Ent + Arb:"), m_talentBox));
+    talentSliders->addWidget(new QLabel(tr("Min. Det + Wor:"), m_talentBox));
     m_talentMentalitySlider = new QSlider(Qt::Horizontal, m_talentBox);
     m_talentMentalitySlider->setRange(0, 40);
     m_talentMentalitySlider->setValue(20);
@@ -344,16 +346,16 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     talentSliders->addWidget(m_talentMentalitySlider, 1);
     talentSliders->addWidget(m_talentMentalityLabel);
     talentSliders->addSpacing(16);
-    m_talentGoodOnlyCheck = new QCheckBox(tr("Nur gute Persönlichkeiten"), m_talentBox);
+    m_talentGoodOnlyCheck = new QCheckBox(tr("Only good personalities"), m_talentBox);
     talentSliders->addWidget(m_talentGoodOnlyCheck);
     talentLayout->addLayout(talentSliders);
 
     auto *talentHint = new QLabel(
-        tr("Talent-Score = bester DWRS der angezeigten Rollen + 2 je Jahr unter der "
-           "Altersgrenze + (Ent + Arb − 20) / 4 + 3 (gute) / − 5 (schlechte Persönlichkeit). "
-           "Grobe Entwicklungseinschätzung, kein versteckter Potenzialwert. Attributspannen "
-           "zählen mit ihrem Mittelwert, unbekannte Attribute neutral mit 10. Vergleiche "
-           "Spieler mit denselben Rollen und Altersgrenzen."),
+        tr("Talent Score = best DWRS of the displayed roles + 2 per year below the age cap + "
+           "(Det + WR − 20) / 4 + 3 (good) / − 5 (bad personality). A rough development "
+           "estimate, not hidden potential ability. Attribute ranges use their midpoint; "
+           "unknown attributes are neutral at 10. Compare players with the same roles and "
+           "age caps."),
         m_talentBox);
     talentHint->setObjectName(QStringLiteral("kpiCaption"));
     talentHint->setWordWrap(true);
@@ -361,15 +363,14 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     layout->addWidget(m_talentBox);
 
     // --- Attribute thresholds ---
-    m_attrBox = new QGroupBox(tr("Attribut-Schwellen"), tab);
+    m_attrBox = new QGroupBox(tr("Attribute thresholds"), tab);
     m_attrBox->setCheckable(true);
     m_attrBox->setChecked(false);
     auto *attrLayout = collapsibleBody(m_attrBox);
     auto *attrHint = new QLabel(
-        tr("Hebt Spieler hervor, deren Attribut die Schwelle erreicht, z. B. Decisions für "
-           "einen AM(C) oder Crossing für Außenverteidiger. Jede Schwelle bekommt eine "
-           "eigene Spalte, „Schwellen“ zählt die erfüllten. Gerechnet wird mit der Mitte "
-           "der gescouteten Spanne."),
+        tr("Highlights players whose attribute reaches the threshold, e.g. Decisions for "
+           "an AM(C) or Crossing for full-backs. Each threshold gets its own column, "
+           "“Thresholds” counts the ones met. Uses the middle of the scouted range."),
         m_attrBox);
     attrHint->setObjectName(QStringLiteral("kpiCaption"));
     attrHint->setWordWrap(true);
@@ -378,7 +379,7 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     m_attrRowsLayout->setSpacing(4);
     attrLayout->addLayout(m_attrRowsLayout);
     auto *attrButtons = new QHBoxLayout;
-    auto *addButton = new QPushButton(tr("+ Attribut"), m_attrBox);
+    auto *addButton = new QPushButton(tr("+ Attribute"), m_attrBox);
     connect(addButton, &QPushButton::clicked, this, [this] {
         addAttributeRow(idx(Attr::Decisions), kDefaultThreshold);
         attributeThresholdsChanged();
@@ -386,13 +387,13 @@ QWidget *SquadMatrixPage::buildScoutingTab()
     attrButtons->addWidget(addButton);
     attrButtons->addSpacing(16);
     m_attrOnlyMatchesCheck =
-        new QCheckBox(tr("Nur Spieler zeigen, die alle Schwellen erfüllen"), m_attrBox);
+        new QCheckBox(tr("Only show players who meet all thresholds"), m_attrBox);
     attrButtons->addWidget(m_attrOnlyMatchesCheck);
     attrButtons->addStretch(1);
     attrLayout->addLayout(attrButtons);
     layout->addWidget(m_attrBox);
 
-    buildTable(&m_scoutedSection, tr("Gescoutete Spieler"), tab, true);
+    buildTable(&m_scoutedSection, tr("Scouted Players"), tab, true);
     layout->addWidget(m_scoutedSection.box, 1);
     return tab;
 }
@@ -409,7 +410,7 @@ QWidget *SquadMatrixPage::buildSquadTab()
     m_squadScopeBox = new QWidget(tab);
     auto *scopeRow = new QHBoxLayout(m_squadScopeBox);
     scopeRow->setContentsMargins(0, 0, 0, 0);
-    scopeRow->addWidget(new QLabel(tr("Anzeigen:"), m_squadScopeBox));
+    scopeRow->addWidget(new QLabel(tr("Show:"), m_squadScopeBox));
     m_squadScope = new QButtonGroup(this);
     const auto addScope = [&](const QString &label, int id, bool checked = false) {
         auto *radio = new QRadioButton(label, m_squadScopeBox);
@@ -417,20 +418,20 @@ QWidget *SquadMatrixPage::buildSquadTab()
         m_squadScope->addButton(radio, id);
         scopeRow->addWidget(radio);
     };
-    addScope(tr("Erste Mannschaft"), SquadFirstTeam);
-    addScope(tr("Zweitteam"), SquadSecondTeam);
-    addScope(tr("Beide"), SquadBoth, true);
+    addScope(tr("First team"), SquadFirstTeam);
+    addScope(tr("Second Team"), SquadSecondTeam);
+    addScope(tr("Both"), SquadBoth, true);
     scopeRow->addSpacing(16);
     optionsRow->addWidget(m_squadScopeBox);
     m_youthOnlyCheck = new QCheckBox(tab);
     m_youthOnlyCheck->setToolTip(
-        tr("Nur Spieler bis zur Jugend-Altersgrenze aus den Einstellungen "
-           "(Feldspieler und Torhüter getrennt)."));
+        tr("Only players up to the youth age limits from the settings "
+           "(outfield players and goalkeepers separately)."));
     optionsRow->addWidget(m_youthOnlyCheck);
     optionsRow->addStretch(1);
     layout->addLayout(optionsRow);
 
-    buildTable(&m_clubSection, tr("Mein Verein"), tab, false);
+    buildTable(&m_clubSection, tr("My Club"), tab, false);
     layout->addWidget(m_clubSection.box, 1);
     return tab;
 }
@@ -443,9 +444,9 @@ void SquadMatrixPage::buildTable(TableSection *section, const QString &title, QW
 
     auto *searchRow = new QHBoxLayout;
     section->search = new QLineEdit(section->box);
-    section->search->setPlaceholderText(tr("Nach Name suchen…"));
+    section->search->setPlaceholderText(tr("Search by name…"));
     section->search->setClearButtonEnabled(true);
-    auto *exportButton = new QPushButton(tr("CSV exportieren"), section->box);
+    auto *exportButton = new QPushButton(tr("Export CSV"), section->box);
     searchRow->addWidget(section->search, 1);
     layout->addLayout(searchRow);
 
@@ -457,7 +458,7 @@ void SquadMatrixPage::buildTable(TableSection *section, const QString &title, QW
     section->columns = new ColumnChooser(
         m_context, section->table, section->model,
         scouted ? QStringLiteral("squad_matrix_scouted") : QStringLiteral("squad_matrix_club"),
-        {tr("Frische")}, this);
+        {tr("Freshness")}, this);
     searchRow->addWidget(section->columns->createButton(section->box));
     searchRow->addWidget(exportButton);
     section->table->setSortingEnabled(true);
@@ -548,14 +549,14 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
         name.toolTip = [=](const Player &p) {
             if (!outdated(p))
                 return QString();
-            return tr("Daten veraltet: seit %1 Komplett-Exporten nicht mehr gesehen.")
+            return tr("Data outdated: not seen in the last %1 full exports.")
                 .arg(Freshness::uploadsSinceSeen(p, counter));
         };
         columns.append(name);
     }
     for (PlayerColumn &column : columns)
         column.pinned = true; // star + name always stay
-    columns.append({tr("Alter"), [](const Player &p) { return p.age; }, nullptr, nullptr,
+    columns.append({tr("Age"), [](const Player &p) { return p.age; }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});
     if (talentOn) {
         columns.append({tr("Talent"),
@@ -572,9 +573,9 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     // right after name and age, so what is being searched for stays in view.
     const qsizetype focusIndex = columns.size();
     columns.append(
-        {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}});
+        {tr("Position"), [](const Player &p) { return GameTerms::positions(p.positionRaw); }, nullptr, nullptr, {}});
     if (m_personalityKnown) {
-        columns.append({tr("Persönlichkeit"), [](const Player &p) { return p.personality; },
+        columns.append({tr("Personality"), [](const Player &p) { return GameTerms::text(QStringLiteral("personality"), p.personality); },
                         nullptr,
                         [definitions](const Player &p) {
                             return personalityCellStyle(
@@ -584,8 +585,8 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     }
     if (!clubTable) {
         columns.append(
-            {tr("Verein"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}});
-        columns.append({tr("Marktwert"), [](const Player &p) { return p.transferValueRaw; },
+            {tr("Club"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}});
+        columns.append({tr("Market Value"), [](const Player &p) { return Currency::displayText(p.transferValueRaw); },
                         [](const Player &p) { return p.transferValue; }, nullptr,
                         Qt::AlignRight | Qt::AlignVCenter});
         columns.append(makeFreshnessColumn(
@@ -594,19 +595,19 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
             m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads")),
             m_context.userClub()));
     }
-    columns.append({tr("Gehalt"), [](const Player &p) { return p.wageRaw; }, nullptr, nullptr,
+    columns.append({tr("Wage"), [](const Player &p) { return Currency::displayText(p.wageRaw); }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});
     if (extraDetails) {
-        columns.append({tr("Linker Fuß"), [](const Player &p) { return p.leftFoot; }, nullptr,
+        columns.append({tr("Left Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.leftFoot); }, nullptr,
                         nullptr, {}});
-        columns.append({tr("Rechter Fuß"), [](const Player &p) { return p.rightFoot; }, nullptr,
+        columns.append({tr("Right Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.rightFoot); }, nullptr,
                         nullptr, {}});
-        columns.append({tr("Größe"), [](const Player &p) { return p.heightRaw; },
+        columns.append({tr("Height"), [](const Player &p) { return p.heightRaw; },
                         [](const Player &p) { return p.heightCm; }, nullptr,
                         Qt::AlignRight | Qt::AlignVCenter});
         if (clubTable) {
-            columns.append({tr("Marktwert"),
-                            [](const Player &p) { return p.transferValueRaw; },
+            columns.append({tr("Market Value"),
+                            [](const Player &p) { return Currency::displayText(p.transferValueRaw); },
                             [](const Player &p) { return p.transferValue; }, nullptr,
                             Qt::AlignRight | Qt::AlignVCenter});
         }
@@ -625,8 +626,8 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                                 },
                                 Qt::AlignRight | Qt::AlignVCenter};
         };
-        columns.append(attrColumn(tr("Ent"), Attr::Determination));
-        columns.append(attrColumn(tr("Arb"), Attr::WorkRate));
+        columns.append(attrColumn(tr("Det"), Attr::Determination));
+        columns.append(attrColumn(tr("Wor"), Attr::WorkRate));
     }
 
     // Attribute thresholds: a met/total counter plus one column per threshold,
@@ -644,7 +645,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
             return met;
         };
         const int total = static_cast<int>(thresholds.size());
-        thresholdColumns.append({tr("Schwellen"),
+        thresholdColumns.append({tr("Thresholds"),
                         [metCount, total](const Player &p) {
                             return QStringLiteral("%1/%2").arg(metCount(p)).arg(total);
                         },
@@ -696,7 +697,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
         const QHash<QString, double> *values = &m_requirementValues;
         const auto valueOf = [values](const Player &p) { return values->value(p.uid, -1.0); };
         focusColumns.append(
-            {tr("⌀ Anforderungen"),
+            {tr("⌀ Requirements"),
              [valueOf](const Player &p) -> QVariant {
                  const double v = valueOf(p);
                  return v < 0.0 ? QVariant(QStringLiteral("–")) : QVariant(formatDwrs(v));
@@ -707,8 +708,8 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                  return v < 0.0 ? CellStyle{} : dwrsCellStyle(v);
              },
              Qt::AlignRight | Qt::AlignVCenter,
-             tr("Mittel der DWRS in den verlangten Rollen; bei einer Bridge gewichtet mit dem "
-                "Anteil mit Ball aus den Einstellungen, wie in Best XI.")});
+             tr("Mean DWRS in the required roles; for a bridge weighted with the "
+                "in-possession share from the settings, as in Best XI.")});
         if (!m_referenceName.isEmpty() && m_referenceValue >= 0.0) {
             const double best = roundDwrs(m_referenceValue);
             focusColumns.append(
@@ -728,7 +729,7 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
                      return v >= 0.0 && roundDwrs(v) > best ? thresholdMetStyle() : CellStyle{};
                  },
                  Qt::AlignRight | Qt::AlignVCenter,
-                 tr("Abstand zum Wert des Spielers, für den die Suche gestartet wurde.")});
+                 tr("Difference to the value of the player the search was started for.")});
         }
     }
     for (const QString &role : roles) {
@@ -816,7 +817,7 @@ void SquadMatrixPage::refresh()
             ordered << tactic;
     }
     m_tacticCombo->clear();
-    m_tacticCombo->addItem(tr("Alle Rollen"), QString());
+    m_tacticCombo->addItem(tr("All Roles"), QString());
     for (const QString &tactic : ordered)
         m_tacticCombo->addItem(tactic, tactic);
     if (hadSelection && !previous.isEmpty()) {
@@ -852,10 +853,10 @@ void SquadMatrixPage::refresh()
     std::sort(nationalities.begin(), nationalities.end());
     const QString previousNat = m_scoutedNatCombo->currentData().toString();
     m_scoutedNatCombo->clear();
-    m_scoutedNatCombo->addItem(tr("Alle"), QStringLiteral("__any"));
+    m_scoutedNatCombo->addItem(tr("All"), QStringLiteral("__any"));
     if (!clubCountry.isEmpty())
-        m_scoutedNatCombo->addItem(tr("Inland (%1)").arg(clubCountry), QStringLiteral("__domestic"));
-    m_scoutedNatCombo->addItem(tr("Ausländer"), QStringLiteral("__foreign"));
+        m_scoutedNatCombo->addItem(tr("Domestic (%1)").arg(clubCountry), QStringLiteral("__domestic"));
+    m_scoutedNatCombo->addItem(tr("Foreigners"), QStringLiteral("__foreign"));
     m_scoutedNatCombo->insertSeparator(m_scoutedNatCombo->count());
     for (const QString &nat : nationalities)
         m_scoutedNatCombo->addItem(nat, nat);
@@ -864,8 +865,8 @@ void SquadMatrixPage::refresh()
     m_scoutedNatCombo->setCurrentIndex(previousNatIndex >= 0 ? previousNatIndex : 0);
 
     if (auto *domestic = m_talentScope->button(ScopeDomestic)) {
-        domestic->setText(clubCountry.isEmpty() ? tr("Inland (Land fehlt in Einstellungen)")
-                                                : tr("Inland (%1)").arg(clubCountry));
+        domestic->setText(clubCountry.isEmpty() ? tr("Domestic (country missing in settings)")
+                                                : tr("Domestic (%1)").arg(clubCountry));
         domestic->setEnabled(!clubCountry.isEmpty());
         if (clubCountry.isEmpty() && domestic->isChecked())
             m_talentScope->button(ScopeAny)->setChecked(true);
@@ -874,7 +875,7 @@ void SquadMatrixPage::refresh()
     // Team scopes only make sense with a second team configured.
     m_squadScopeBox->setVisible(!m_context.secondTeamClub().isEmpty());
     m_youthOnlyCheck->setText(
-        tr("Nur Jugend (bis %1, TW bis %2)")
+        tr("Youth only (up to %1, GK up to %2)")
             .arg(m_context.config().ageThreshold(QStringLiteral("outfielder")))
             .arg(m_context.config().ageThreshold(QStringLiteral("goalkeeper"))));
 
@@ -1019,14 +1020,14 @@ void SquadMatrixPage::rebuildAll()
         const int cmp = getLastName(a->name).localeAwareCompare(getLastName(b->name));
         return cmp != 0 ? cmp < 0 : a->name.localeAwareCompare(b->name) < 0;
     });
-    const QString clubName = userClub.isEmpty() ? tr("Mein Verein") : userClub;
+    const QString clubName = userClub.isEmpty() ? tr("My Club") : userClub;
     QString clubTitle;
     if (scope == SquadSecondTeam)
-        clubTitle = tr("Spieler von %1 (Zweitteam, %2)").arg(secondClub).arg(clubRows.size());
+        clubTitle = tr("Players from %1 (Second Team, %2)").arg(secondClub).arg(clubRows.size());
     else if (scope == SquadBoth)
-        clubTitle = tr("Spieler von %1 & Zweitteam (%2)").arg(clubName).arg(clubRows.size());
+        clubTitle = tr("Players from %1 & Second Team (%2)").arg(clubName).arg(clubRows.size());
     else
-        clubTitle = tr("Spieler von %1 (%2)").arg(clubName).arg(clubRows.size());
+        clubTitle = tr("Players from %1 (%2)").arg(clubName).arg(clubRows.size());
     m_clubSection.box->setTitle(clubTitle);
     m_clubSection.model->setColumnsAndRows(buildColumns(true), std::move(clubRows));
     fitColumnsCompact(m_clubSection.table);
@@ -1041,7 +1042,7 @@ void SquadMatrixPage::rebuildAll()
     if (talentOn)
         m_scoutedFilterCombo->addItem(tr("Talent"), QStringLiteral("__talent"));
     if (!m_requirements->criteria().isEmpty())
-        m_scoutedFilterCombo->addItem(tr("Anforderungen (Wert)"), QStringLiteral("__requirements"));
+        m_scoutedFilterCombo->addItem(tr("Requirements (value)"), QStringLiteral("__requirements"));
     for (const QString &role : roles)
         m_scoutedFilterCombo->addItem(roleNames.value(role, role), role);
     const int previousIndex = m_scoutedFilterCombo->findData(
@@ -1075,7 +1076,7 @@ void SquadMatrixPage::rebuildScoutedOnly(bool columnsChanged)
     // players are defined partly BY their value), so it is bypassed then.
     const bool noValueCap =
         freeAgentsOnly || m_maxValueSlider->value() >= m_maxValueSlider->maximum();
-    const double maxValue = m_maxValueSlider->value() * 500'000.0;
+    const double maxValue = Currency::fromDisplay(m_maxValueSlider->value() * Currency::sliderStep());
     const QList<QPair<int, int>> thresholds =
         m_attrOnlyMatchesCheck->isChecked() ? activeThresholds() : QList<QPair<int, int>>();
 
@@ -1160,7 +1161,7 @@ void SquadMatrixPage::rebuildScoutedOnly(bool columnsChanged)
 
     m_scoutedSection.box->setTitle(freeAgentsOnly
                                        ? tr("Free Agents (%1)").arg(rows.size())
-                                       : tr("Gescoutete Spieler (%1)").arg(rows.size()));
+                                       : tr("Scouted Players (%1)").arg(rows.size()));
     if (!columnsChanged) {
         // Same columns: swap the rows (the proxy re-sorts by its current sort
         // column) and keep the widths. Only re-sort if the sort was changed
@@ -1178,7 +1179,7 @@ void SquadMatrixPage::rebuildScoutedOnly(bool columnsChanged)
     int sortColumn = 1; // Name (column 0 is the shortlist star)
     Qt::SortOrder order = Qt::AscendingOrder;
     const QString wantedHeader = filterKey == QLatin1String("__requirements")
-                                     ? tr("⌀ Anforderungen")
+                                     ? tr("⌀ Requirements")
                                  : filterKey == QLatin1String("__talent")
                                      ? tr("Talent")
                                      : (!filterKey.startsWith(QLatin1String("__"))
@@ -1212,17 +1213,17 @@ void SquadMatrixPage::addAttributeRow(int attrIndex, int minimum)
     QList<int> order(kAttrCount);
     std::iota(order.begin(), order.end(), 0);
     std::sort(order.begin(), order.end(), [](int a, int b) {
-        return attrNames()[a].localeAwareCompare(attrNames()[b]) < 0;
+        return GameTerms::attribute(attrNames()[a]).localeAwareCompare(GameTerms::attribute(attrNames()[b])) < 0;
     });
     for (int index : order)
-        row.attribute->addItem(attrNames()[index], index);
+        row.attribute->addItem(GameTerms::attribute(attrNames()[index]), index);
     row.attribute->setCurrentIndex(std::max(0, row.attribute->findData(attrIndex)));
     row.minimum = new QSpinBox(rowWidget);
     row.minimum->setRange(1, 20);
     row.minimum->setValue(minimum);
     auto *removeButton = new QToolButton(rowWidget);
     removeButton->setText(QStringLiteral("✕"));
-    removeButton->setToolTip(tr("Schwelle entfernen"));
+    removeButton->setToolTip(tr("Remove threshold"));
 
     rowLayout->addWidget(row.attribute);
     rowLayout->addWidget(new QLabel(QStringLiteral("≥"), rowWidget));
@@ -1269,7 +1270,7 @@ void SquadMatrixPage::attributeThresholdsChanged()
     QStringList entries;
     for (const AttributeRow &row : m_attrRows) {
         entries << QStringLiteral("%1:%2")
-                       .arg(attrNames()[row.attribute->currentData().toInt()])
+                       .arg(GameTerms::attribute(attrNames()[row.attribute->currentData().toInt()]))
                        .arg(row.minimum->value());
     }
     Database &db = m_context.database();
@@ -1325,14 +1326,14 @@ void SquadMatrixPage::toggleShortlist(const Player *player)
 
 void SquadMatrixPage::exportCsv(const TableSection &section)
 {
-    const QString path = QFileDialog::getSaveFileName(this, tr("CSV exportieren"),
+    const QString path = QFileDialog::getSaveFileName(this, tr("Export CSV"),
                                                       QStringLiteral("matrix.csv"),
-                                                      tr("CSV-Dateien (*.csv)"));
+                                                      tr("CSV files (*.csv)"));
     if (path.isEmpty())
         return;
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        QMessageBox::critical(this, tr("CSV exportieren"), file.errorString());
+        QMessageBox::critical(this, tr("Export CSV"), file.errorString());
         return;
     }
     file.write("\xEF\xBB\xBF", 3); // UTF-8 BOM for Excel

@@ -6,14 +6,15 @@ translated yet appear in English, so a partial translation is already useful.
 
 ## How it works
 
-- The app's original texts are **German**. **English** is the reference
-  translation (`fmplayeranalyzer_en.ts`).
+- The app's original texts are **English**. `fmplayeranalyzer.ts` is the
+  template: the list of every text in the app. (`fmplayeranalyzer_en.ts` only
+  holds English plural forms.)
 - Each language has one file: `fmplayeranalyzer_<code>.ts`, for example
   `fmplayeranalyzer_fr.ts` or `fmplayeranalyzer_zh_CN.ts`. The code is a
   language code, optionally with a country (`pt_BR`, `zh_TW`).
 - `translate.py` (Python 3, nothing to install) turns a language file into a
-  simple JSON list with German, English and an empty `translation` field, and
-  back. That JSON is the easiest way to work, alone or with an AI tool.
+  simple JSON list with the English text and an empty `translation` field,
+  and back. That JSON is the easiest way to work, alone or with an AI tool.
 
 ## Ways to help
 
@@ -53,8 +54,7 @@ Each JSON entry looks like this:
 ```json
 {
   "context": "fm::StartScreen",
-  "german": "Neuer Spielstand",
-  "english": "New save",
+  "source": "New save",
   "translation": ""
 }
 ```
@@ -64,8 +64,7 @@ plural form of your language (the file says how many under `plural_forms`).
 Languages without plural forms, such as Chinese or Japanese, have one.
 
 Prefer a graphical tool? The `.ts` files open in
-[Qt Linguist](https://doc.qt.io/qt-6/linguist-translators.html). Load
-`fmplayeranalyzer_en.ts` next to yours to see the English text.
+[Qt Linguist](https://doc.qt.io/qt-6/linguist-translators.html).
 
 ## Rules that keep the app working
 
@@ -91,9 +90,23 @@ file filters and plural forms. The other rules are up to you:
 
 ## Terms
 
-Use the words of Football Manager in your language. For roles, positions,
-attributes and duties, take the names from the game itself so players
-recognise them. Keep these as they are:
+**Game terms are fixed, not free to translate.** Whatever the game itself
+shows (attributes, roles, positions, personalities, foot strength, playing
+time, media handling, column headers) must be written exactly as Football
+Manager writes it in your language, letter for letter. Players compare the
+app with the game, so a synonym, even a good one, is a mistake here.
+
+The official terms are in
+[`desktop/data/fm27/glossary-fm27.csv`](../data/fm27/glossary-fm27.csv):
+one row per term, with the English text and the game's own text in German,
+French, Italian, Simplified Chinese and Russian. They were read from the game
+(FM27), not translated by hand. Use them as they are. For a language that is
+not in the glossary yet, take the terms from the game in that language; if
+you are unsure about one, say so in your issue or pull request rather than
+guessing.
+
+Everything else (buttons, hints, explanations) is yours to translate freely,
+in a short and friendly tone. Keep these as they are:
 
 | Term | Meaning |
 | --- | --- |
@@ -104,7 +117,7 @@ recognise them. Keep these as they are:
 
 And use one word consistently for each of these:
 
-| English | German original | Meaning in the app |
+| English | German | Meaning in the app |
 | --- | --- | --- |
 | save | Spielstand | A career; both the game's `.fm` file and the app's own database for it. A noun, not the verb "to save". |
 | export | Export | A list exported from the game (HTML/CSV). |
@@ -122,9 +135,11 @@ AI tools translate the JSON well if you give them the context. Tips:
   it to fill in only `translation` / `translation_plural`.
 - Work in batches of a few hundred entries and keep the same chat, so the
   terms stay consistent. Ask it to keep a short glossary of the terms it chose.
-- Tell it to translate from the **German** text and use the **English** one to
-  resolve doubts. Translating only from English loses meaning ("save",
-  "weights", "crest" are frequent mistakes).
+- Give it the glossary too (`desktop/data/fm27/glossary-fm27.csv`) and tell
+  it that game terms must be copied from there exactly.
+- Point it to the term table above: "save", "weights" and "crest" are
+  frequent mistakes. `context` (the screen a text belongs to) helps with
+  short labels.
 - Run `python translate.py import <lang> <file>.json` afterwards: it checks
   the result and lists anything broken.
 - If you can, run the app in your language and look at a few screens. Short
@@ -135,11 +150,12 @@ A prompt you can start from:
 > You are translating the user interface of FM Player Analyzer, a companion
 > app for the game Football Manager, into **&lt;language&gt;**. Attached are
 > TRANSLATING.md (rules and terms) and a JSON file. For each entry, translate
-> the `german` text into &lt;language&gt;, using `english` as a reference and
-> `context` (the screen it belongs to) for meaning. Write the result into
+> the English `source` text into &lt;language&gt;, using `context` (the screen
+> it belongs to) for meaning. Write the result into
 > `translation` (or one text per plural form into `translation_plural`). Use
-> the official Football Manager terms in &lt;language&gt; for roles,
-> positions and attributes. Follow the rules in TRANSLATING.md exactly:
+> the official Football Manager terms in &lt;language&gt; exactly as they
+> appear in the attached glossary-fm27.csv for roles, positions, attributes
+> and every other game term; never translate those freely. Follow the rules in TRANSLATING.md exactly:
 > keep placeholders (%1, %n), HTML tags, `&` shortcuts and file filters, and
 > keep the listed names untranslated. Keep the tone short and friendly, like
 > the English text. Return the complete JSON, changing nothing but the
@@ -155,11 +171,13 @@ After adding or changing `tr()` texts in the code:
 
 ```bash
 cd desktop
-lupdate src -ts translations/fmplayeranalyzer_en.ts -no-obsolete
-# translate the new texts in fmplayeranalyzer_en.ts
-python translations/translate.py sync      # adds them to every other language
+lupdate src -ts translations/fmplayeranalyzer.ts -no-obsolete -source-language en
+lupdate src -ts translations/fmplayeranalyzer_en.ts -pluralonly -no-obsolete -source-language en
+# fill in the English plural forms in fmplayeranalyzer_en.ts, if a new text uses %n
+python translations/translate.py sync      # adds them to every language
 python translations/translate.py check
 ```
 
 New texts then show in English in the other languages until a translator
-fills them in (`export` lists exactly those).
+fills them in (`export` lists exactly those). Write new texts in English, with
+the game's own English terms.

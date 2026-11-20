@@ -117,10 +117,10 @@ void start(AppContext &context, ThemeManager &theme, QWidget *window)
          },
          QStringLiteral("dashboard-light.png")},
     });
-    // Settings: open the design section (or FMPA_SETTINGS_TAB, German section title).
+    // Settings: open the appearance section (or FMPA_SETTINGS_TAB, a section id such as "dwrs_weights").
     const QByteArray settingsTab = qEnvironmentVariableIsSet("FMPA_SETTINGS_TAB")
                                        ? qgetenv("FMPA_SETTINGS_TAB")
-                                       : QByteArray("Design");
+                                       : QByteArray("appearance");
     for (Step &step : *steps) {
         if (step.file.endsWith(QLatin1String("settings.png"))) {
             const auto open = step.prepare;

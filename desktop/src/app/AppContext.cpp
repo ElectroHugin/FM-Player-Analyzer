@@ -75,7 +75,7 @@ bool AppContext::initialize(QString *errorOut, bool openActiveDatabase)
 {
     if (!m_paths.ensureDataDirInitialized()) {
         if (errorOut)
-            *errorOut = tr("Datenordner %1 konnte nicht angelegt werden.").arg(m_paths.dataDir());
+            *errorOut = tr("Data folder %1 could not be created.").arg(m_paths.dataDir());
         return false;
     }
 
@@ -205,7 +205,7 @@ bool AppContext::createDatabase(const QString &dbName, const QString &fmVersionI
 {
     if (QFile::exists(m_paths.databaseFile(dbName))) {
         if (errorOut)
-            *errorOut = tr("Ein Spielstand mit dem Namen „%1“ existiert bereits.").arg(dbName);
+            *errorOut = tr("A save named “%1” already exists.").arg(dbName);
         return false;
     }
     return openDatabaseImpl(dbName, copyProfileFrom, errorOut)
@@ -387,7 +387,7 @@ bool AppContext::activateFmVersion(Database &db, const QString &versionId, QStri
     ProfileStore::DefinitionsResult result;
     if (!store.loadDefinitions(versionId, shipped, shared, result)) {
         if (errorOut)
-            *errorOut = tr("Rollen und Taktiken für %1 konnten nicht geladen werden (%2).")
+            *errorOut = tr("Roles and tactics for %1 could not be loaded (%2).")
                             .arg(version.displayName, store.errorString());
         return false;
     }
@@ -396,7 +396,7 @@ bool AppContext::activateFmVersion(Database &db, const QString &versionId, QStri
         // previous state next to the backups.
         QDir().mkpath(m_paths.backupsDir());
         QFile backup(QDir(m_paths.backupsDir())
-                         .filePath(QStringLiteral("%1_definitions_%2_vor_update_%3.json")
+                         .filePath(QStringLiteral("%1_definitions_%2_before_update_%3.json")
                                        .arg(QFileInfo(db.filePath()).completeBaseName(), versionId,
                                             QDateTime::currentDateTime().toString(
                                                 QStringLiteral("yyyyMMdd_HHmmss")))));
@@ -415,7 +415,7 @@ bool AppContext::activateFmVersion(Database &db, const QString &versionId, QStri
     m_definitions->setSaveHandler([this, versionId](const QByteArray &json, QString *error) {
         if (!m_database) {
             if (error)
-                *error = tr("Kein Spielstand geöffnet.");
+                *error = tr("No save is open.");
             return false;
         }
         ProfileStore target(*m_database);
@@ -520,9 +520,9 @@ void AppContext::initializeRatingSelection(Database &db)
                 profile = m_ratingLibrary.profiles().value(kClassicId);
             } else if (own) {
                 own->id = QStringLiteral("my-weights-%1-%2").arg(game, own->revision().left(8));
-                own->name = tr("Meine Gewichte (%1)").arg(fmDataVersion(game).displayName);
+                own->name = tr("My weights (%1)").arg(fmDataVersion(game).displayName);
                 own->origin = QStringLiteral("personal");
-                own->description = tr("Aus den bisherigen Gewichten dieses Spielstands übernommen.");
+                own->description = tr("Taken over from the previous weights of this save.");
                 profile = own;
                 if (!m_ratingLibrary.profiles().contains(own->id)
                     && m_ratingLibrary.insert(*own).isEmpty())
@@ -589,12 +589,12 @@ bool AppContext::ratingDecisionPending() const
 QString AppContext::activateRatingProfile(const QString &profileId)
 {
     if (!m_database || !m_ratingSelection)
-        return tr("Kein Spielstand geöffnet.");
+        return tr("No save is open.");
     if (!m_ratingLibrary.profiles().contains(profileId))
-        return tr("Das Bewertungsprofil wurde nicht gefunden.");
+        return tr("The rating profile was not found.");
     const RatingProfile profile = m_ratingLibrary.profiles().value(profileId);
     if (!profile.compatibleGames.contains(fmVersionId()))
-        return tr("Das Profil passt nicht zur Football-Manager-Version dieses Spielstands.");
+        return tr("The profile does not match this save's Football Manager version.");
     // Workers hold their own snapshot copy; they are not disturbed.
     QString error;
     const QDate gameDate = m_database->lastGameDate();
@@ -602,7 +602,7 @@ QString AppContext::activateRatingProfile(const QString &profileId)
         profile, *m_definitions, m_ratingSelection->generation,
         gameDate.isValid() ? gameDate.toString(Qt::ISODate) : QString(), &error);
     if (!selection)
-        return error.isEmpty() ? tr("Das Profil konnte nicht aktiviert werden.") : error;
+        return error.isEmpty() ? tr("The profile could not be activated.") : error;
     const QString before = m_ratingSnapshot ? m_ratingSnapshot->cacheKey() : QString();
     m_ratingSelection = selection;
     recompileRatingSnapshot();
@@ -635,7 +635,7 @@ QList<QPair<QString, QString>> AppContext::ratingProfileSwitches() const
 QString AppContext::keepPreviousRatingProfile()
 {
     if (!m_database || !m_ratingSelection)
-        return tr("Kein Spielstand geöffnet.");
+        return tr("No save is open.");
     QString error;
     auto selection = RatingSelectionStore(*m_database).keepPrevious(m_ratingSelection->generation, &error);
     if (!selection)
@@ -651,9 +651,9 @@ bool AppContext::setFmVersion(const QString &versionId, QString *errorOut)
     // Role assignments, ratings and history refer to the old version's roles.
     if (m_store.size() > 0) {
         if (errorOut)
-            *errorOut = tr("Die Football-Manager-Version ist an den Spielstand gebunden, "
-                           "sobald er Spieler enthält. Für eine andere Version bitte einen "
-                           "neuen Spielstand anlegen.");
+            *errorOut = tr("The Football Manager version is tied to the save once it "
+                           "contains players. Please create a new save for a different "
+                           "version.");
         return false;
     }
     if (!activateFmVersion(*m_database, versionId, errorOut))

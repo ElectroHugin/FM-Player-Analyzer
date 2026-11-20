@@ -7,6 +7,8 @@
 #include <QTranslator>
 
 #include "AppContext.h"
+#include "core/Currency.h"
+#include "core/Definitions.h"
 #include "core/DwrsDisplay.h"
 #include "FirstRunDialog.h"
 #include "MainWindow.h"
@@ -34,20 +36,26 @@ int main(int argc, char *argv[])
 
     // Language must be installed before any widgets are built (including the
     // first-run dialog and the statically initialized navigation labels).
-    // Default English via the bundled .qm; "de" keeps the German source text.
-    // Other languages are installed on top of English: Qt asks the most
-    // recently installed translator first, so untranslated strings stay English.
+    // The source strings are English. The English .qm only holds plural forms
+    // and is always installed; any other language is installed on top of it:
+    // Qt asks the most recently installed translator first, so untranslated
+    // strings stay English.
     const QString language = context.paths().language();
     QTranslator englishTranslator;
     QTranslator languageTranslator;
-    if (language != QLatin1String("de")
-        && englishTranslator.load(QStringLiteral(":/i18n/fmplayeranalyzer_en.qm"))) {
+    if (englishTranslator.load(QStringLiteral(":/i18n/fmplayeranalyzer_en.qm")))
         QApplication::installTranslator(&englishTranslator);
-    }
-    if (language != QLatin1String("de") && language != QLatin1String("en")
+    if (language != QLatin1String("en")
         && languageTranslator.load(QStringLiteral(":/i18n/fmplayeranalyzer_%1.qm").arg(language))) {
         QApplication::installTranslator(&languageTranslator);
     }
+
+    // FM27 role names and abbreviations follow the UI language (the game's
+    // own wording); the game language of a save only matters for imports.
+    fm::Definitions::setDisplayLanguage(language);
+    // Money is shown in the chosen currency, by default the one of the UI language.
+    const QString currency = context.paths().currency();
+    fm::Currency::setDisplay(currency.isEmpty() ? fm::Currency::defaultFor(language) : currency);
 
     // DWRS decimals use the separator of the UI language (restart on change).
     fm::setDwrsLocale(language == QLatin1String("de")   ? QLocale(QLocale::German)
@@ -68,7 +76,7 @@ int main(int argc, char *argv[])
     QString error;
     if (!context.initialize(&error, /*openActiveDatabase*/ smoke)) {
         QMessageBox::critical(nullptr, fm::appName(),
-                              QObject::tr("Start fehlgeschlagen:\n%1").arg(error));
+                              QObject::tr("Startup failed:\n%1").arg(error));
         return 1;
     }
 
@@ -91,8 +99,8 @@ int main(int argc, char *argv[])
             if (!opened) {
                 QMessageBox::warning(
                     nullptr, fm::appName(),
-                    QObject::tr("Der zuletzt verwendete Spielstand „%1“ konnte nicht geöffnet "
-                                "werden:\n%2")
+                    QObject::tr("The last used save “%1” could not be opened:\n"
+                                "%2")
                         .arg(last, error));
             }
         }

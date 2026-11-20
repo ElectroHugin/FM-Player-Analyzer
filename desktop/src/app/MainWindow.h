@@ -61,6 +61,7 @@ private:
     void buildSidebar();
     void buildMenuBar();
     void changeLanguage(const QString &language);
+    void changeCurrency(const QString &code);
     void showAbout();
     // selectFirst: also navigate to the first entry (a user mode switch);
     // false when the history restores a page itself.

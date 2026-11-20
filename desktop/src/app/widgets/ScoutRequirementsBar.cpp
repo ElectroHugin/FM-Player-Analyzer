@@ -13,7 +13,7 @@
 namespace fm {
 
 ScoutRequirementsBar::ScoutRequirementsBar(const Definitions &definitions, QWidget *parent)
-    : QGroupBox(tr("🧩 Anforderungen (ein Kandidat muss alle erfüllen)"), parent)
+    : QGroupBox(tr("🧩 Requirements (a candidate must meet all of them)"), parent)
     , m_definitions(definitions)
 {
     auto *layout = new QVBoxLayout(this);
@@ -26,9 +26,9 @@ ScoutRequirementsBar::ScoutRequirementsBar(const Definitions &definitions, QWidg
     layout->addWidget(m_sourceLabel);
 
     m_emptyLabel = new QLabel(
-        tr("Keine. Wähle eine Position, eine Rolle oder beides und füge sie hinzu. Mehrere "
-           "Anforderungen gelten zusammen; die DWRS-Spanne oben gilt für jede Rolle. Eine "
-           "Bridge-Suche startest du per Rechtsklick auf einen Platz in Best XI."),
+        tr("None. Pick a position, a role or both and add them. Several requirements apply "
+           "together; the DWRS range above applies to every role. Start a bridge search by "
+           "right-clicking a place in Best XI."),
         this);
     m_emptyLabel->setObjectName(QStringLiteral("kpiCaption"));
     m_emptyLabel->setWordWrap(true);
@@ -44,17 +44,17 @@ ScoutRequirementsBar::ScoutRequirementsBar(const Definitions &definitions, QWidg
     m_positionCombo->setMinimumWidth(110);
     addRow->addWidget(m_positionCombo);
     addRow->addSpacing(8);
-    addRow->addWidget(new QLabel(tr("Rolle:"), this));
+    addRow->addWidget(new QLabel(tr("Role:"), this));
     m_roleCombo = new QComboBox(this);
     m_roleCombo->setMinimumWidth(220);
     addRow->addWidget(new RolePhaseSwitch(m_definitions, m_roleCombo, this));
     addRow->addWidget(m_roleCombo);
-    m_addButton = new QPushButton(tr("+ Hinzufügen"), this);
+    m_addButton = new QPushButton(tr("+ Add"), this);
     m_addButton->setToolTip(
-        tr("Position und Rolle zusammen: Der Spieler braucht die Position und die Rolle. "
-           "Nur eines von beiden: Es zählt nur das."));
+        tr("Position and role together: the player needs the position and the role. Only "
+           "one of them: only that counts."));
     addRow->addWidget(m_addButton);
-    m_clearButton = new QPushButton(tr("Alle entfernen"), this);
+    m_clearButton = new QPushButton(tr("Remove all"), this);
     addRow->addWidget(m_clearButton);
     addRow->addStretch(1);
     layout->addLayout(addRow);
@@ -97,7 +97,7 @@ void ScoutRequirementsBar::setRoleChoices(const QStringList &roles)
     const QString previous = m_roleCombo->currentData().toString();
     const QSignalBlocker blocker(m_roleCombo);
     m_roleCombo->clear();
-    m_roleCombo->addItem(tr("beliebig"), QString());
+    m_roleCombo->addItem(tr("any"), QString());
     const auto names = m_definitions.roleDisplayMap();
     for (const QString &role : roles)
         m_roleCombo->addItem(names.value(role, role), role);
@@ -111,7 +111,7 @@ void ScoutRequirementsBar::setPositionChoices(const QStringList &positions)
     const QString previous = m_positionCombo->currentData().toString();
     const QSignalBlocker blocker(m_positionCombo);
     m_positionCombo->clear();
-    m_positionCombo->addItem(tr("beliebig"), QString());
+    m_positionCombo->addItem(tr("any"), QString());
     for (const QString &position : positions)
         m_positionCombo->addItem(position, position);
     m_positionCombo->setCurrentIndex(std::max(0, m_positionCombo->findData(previous)));
@@ -131,7 +131,7 @@ QString ScoutRequirementsBar::describePlace(const ScoutPlace &place) const
                                  ? QString()
                                  : m_definitions.roleDisplayMap().value(place.role, place.role);
     if (place.positionLabel.isEmpty())
-        return tr("Rolle %1").arg(roleName);
+        return tr("Role %1").arg(roleName);
     if (roleName.isEmpty())
         return tr("Position %1").arg(place.positionLabel);
     return QStringLiteral("%1 · %2").arg(place.positionLabel, roleName);
@@ -141,7 +141,7 @@ QString ScoutRequirementsBar::describe(const ScoutCriterion &criterion) const
 {
     if (criterion.places.size() == 2) {
         // A bridge: the place with ball first, as the Best XI hands it over.
-        return tr("Bridge: mit Ball %1 + ohne Ball %2")
+        return tr("Bridge: in possession %1 + out of possession %2")
             .arg(describePlace(criterion.places[0]), describePlace(criterion.places[1]));
     }
     QStringList parts;
@@ -164,7 +164,7 @@ void ScoutRequirementsBar::rebuildRows()
         auto *remove = new QToolButton(row);
         remove->setText(QStringLiteral("✕"));
         remove->setAutoRaise(true);
-        remove->setToolTip(tr("Anforderung entfernen"));
+        remove->setToolTip(tr("Remove requirement"));
         remove->setCursor(Qt::PointingHandCursor);
         rowLayout->addWidget(remove);
         auto *text = new QLabel(QStringLiteral("<b>%1</b>").arg(describe(m_criteria.at(i)).toHtmlEscaped()), row);

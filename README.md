@@ -149,7 +149,7 @@ its own after every save in the game. **Attribute masking as in the game** (on
 by default) shows exact values only for players you know well; everyone else comes with
 attribute ranges, wider the less your scouts know. Switch it off for exact
 values everywhere. Details are in
-[docs/IMPORT-FM27.md](docs/IMPORT-FM27.md) (German).
+[docs/IMPORT-FM27.md](docs/IMPORT-FM27.md).
 
 ### Scout by role, not by reputation
 
@@ -247,7 +247,7 @@ portraits for FM, the analyzer can use it too (optional, off by default).
 - **Your own tactics** — built-in editor, new tactics are available everywhere immediately. For FM24 you can add your own roles too; for FM27 every role of the game is already included.
 - **One profile per save** — club, tactics, colours and settings belong to the save. Switch careers and everything switches with it.
 - **Smart imports** — newgens keep their identity across exports, departures are detected, and new players get their roles assigned automatically.
-- **Small things that matter** — global player search that finds "Müller" when you type "muller", back/forward navigation, English, German and Simplified Chinese interface (Chinese translation contributed by the community).
+- **Small things that matter** — global player search that finds "Müller" when you type "muller", back/forward navigation, English, German, French, Italian, Spanish, Russian and Simplified Chinese interface (Chinese translation contributed by the community).
 
 ---
 
@@ -303,7 +303,7 @@ you who you should really be buying.
 > - With exports: re-import whenever you like, once a month in game time is a good rhythm. The app updates known players and builds their rating history.
 > - When you import your complete squad as an export, tick *"File is a complete squad export of my club"* and the app asks what happened to the players who are gone.
 > - The installer can copy the FM27 example tactics into your FM27 `tactics` folder; later this is under *Settings → Import*.
-> - Switch between English, German and Simplified Chinese in the **Language** menu. Want the app in your language? See [TRANSLATING.md](desktop/translations/TRANSLATING.md).
+> - Switch between English, German, French, Italian, Spanish, Russian and Simplified Chinese in the **Language** menu. Want the app in your language? See [TRANSLATING.md](desktop/translations/TRANSLATING.md).
 
 ---
 
@@ -433,7 +433,7 @@ Choose *Default (no restriction)*. For FM24 the Premier League is modelled; for
 FM27 eleven leagues are (Bundesliga, Premier League, LaLiga, Serie A, Ligue 1,
 Liga Portugal, Swiss Super League, Austrian Bundesliga, Russian Premier Liga,
 Ukrainian Premier League, Süper Lig, details in
-[docs/REGISTRIERUNG-FM27.md](docs/REGISTRIERUNG-FM27.md)). The UEFA list works
+[docs/REGISTRATION-FM27.md](docs/REGISTRATION-FM27.md)). The UEFA list works
 with any league. Checked are squad size and players trained in the country and
 at the club; limits for foreign or non-EU players are not.
 
@@ -493,8 +493,8 @@ cd desktop
 ```
 
 See [`desktop/README.md`](desktop/README.md) for details. Ideas and the
-technical backlog live in [`desktop/IDEEN.md`](desktop/IDEEN.md) and
-[`desktop/BACKLOG.md`](desktop/BACKLOG.md) (German).
+technical backlog live in [`desktop/IDEAS.md`](desktop/IDEAS.md) and
+[`desktop/BACKLOG.md`](desktop/BACKLOG.md).
 
 </details>
 

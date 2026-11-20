@@ -30,8 +30,8 @@ protected:
         const int labelWidth = 96;
         const QRect area = rect().adjusted(labelWidth, 4, -8, -20);
         const double from = 30.0, to = 100.0;
-        const QStringList names = {DwrsColorSchemeEditor::tr("Feldspieler"),
-                                   DwrsColorSchemeEditor::tr("Torhüter")};
+        const QStringList names = {DwrsColorSchemeEditor::tr("Outfield players"),
+                                   DwrsColorSchemeEditor::tr("Goalkeepers")};
         const int barHeight = (area.height() - 8) / 2;
         for (int row = 0; row < 2; ++row) {
             const QRect bar(area.left(), area.top() + row * (barHeight + 8), area.width(), barHeight);
@@ -71,8 +71,8 @@ DwrsColorSchemeEditor::DwrsColorSchemeEditor(QWidget *parent) : QWidget(parent)
     m_grid->setVerticalSpacing(6);
     layout->addWidget(m_rows);
 
-    m_add = new QPushButton(tr("Stufe hinzufügen"));
-    m_remove = new QPushButton(tr("Oberste Stufe entfernen"));
+    m_add = new QPushButton(tr("Add band"));
+    m_remove = new QPushButton(tr("Remove top band"));
     auto *buttons = new QHBoxLayout;
     buttons->addWidget(m_add);
     buttons->addWidget(m_remove);
@@ -92,13 +92,13 @@ DwrsColorSchemeEditor::DwrsColorSchemeEditor(QWidget *parent) : QWidget(parent)
     });
 
     auto *blendRow = new QHBoxLayout;
-    blendRow->addWidget(new QLabel(tr("Weicher Übergang")));
+    blendRow->addWidget(new QLabel(tr("Soft transition")));
     m_blend = new QDoubleSpinBox;
     m_blend->setRange(0.0, DwrsColorScheme::kMaxBlend);
     m_blend->setDecimals(1);
     m_blend->setSingleStep(0.5);
-    m_blend->setSuffix(tr(" Punkte"));
-    m_blend->setSpecialValueText(tr("aus (harte Grenzen)"));
+    m_blend->setSuffix(tr(" points"));
+    m_blend->setSpecialValueText(tr("off (hard borders)"));
     m_blend->setMaximumWidth(200);
     blendRow->addWidget(m_blend);
     blendRow->addStretch(1);
@@ -126,7 +126,7 @@ void DwrsColorSchemeEditor::beginEdit()
     if (m_scheme.rainbow)
         m_scheme = m_scheme.editableCopy(QString(), QString());
     m_scheme.id = QStringLiteral("custom");
-    m_scheme.name = tr("Benutzerdefiniert");
+    m_scheme.name = tr("Custom");
     m_scheme.builtin = false;
 }
 
@@ -143,29 +143,29 @@ void DwrsColorSchemeEditor::rebuild()
         delete item->widget();
         delete item;
     }
-    m_grid->addWidget(new QLabel(tr("Farbe")), 0, 1);
-    m_grid->addWidget(new QLabel(tr("Feldspieler ab")), 0, 3);
-    m_grid->addWidget(new QLabel(tr("Torhüter ab")), 0, 4);
+    m_grid->addWidget(new QLabel(tr("Colour")), 0, 1);
+    m_grid->addWidget(new QLabel(tr("Outfield from")), 0, 3);
+    m_grid->addWidget(new QLabel(tr("Goalkeepers from")), 0, 4);
     for (int i = 0; i < m_scheme.stops.size(); ++i) {
         const int row = i + 1;
         const DwrsColorStop stop = m_scheme.stops[i];
-        m_grid->addWidget(new QLabel(tr("Stufe %1").arg(i + 1)), row, 0);
+        m_grid->addWidget(new QLabel(tr("Band %1").arg(i + 1)), row, 0);
 
         auto *swatch = new QPushButton;
         swatch->setFixedSize(132, 30);
         swatch->setCursor(Qt::PointingHandCursor);
-        swatch->setAccessibleName(tr("Farbe Stufe %1").arg(i + 1));
+        swatch->setAccessibleName(tr("Colour band %1").arg(i + 1));
         if (stop.color.isValid()) {
             const QColor text = dwrsReadableStyle(stop.color).text;
             swatch->setText(stop.color.name().toUpper());
             swatch->setStyleSheet(QStringLiteral("QPushButton { background: %1; color: %2; border-radius: 6px; }")
                                       .arg(stop.color.name(), text.name()));
         } else {
-            swatch->setText(tr("keine Füllung"));
+            swatch->setText(tr("no fill"));
         }
         connect(swatch, &QPushButton::clicked, this, [this, i] {
             const QColor initial = m_scheme.stops[i].color.isValid() ? m_scheme.stops[i].color : QColor(Qt::white);
-            const QColor picked = QColorDialog::getColor(initial, this, tr("Farbe wählen"));
+            const QColor picked = QColorDialog::getColor(initial, this, tr("Choose colour"));
             if (!picked.isValid()) return;
             beginEdit();
             m_scheme.stops[i].color = picked;
@@ -173,7 +173,7 @@ void DwrsColorSchemeEditor::rebuild()
         });
         m_grid->addWidget(swatch, row, 1);
 
-        auto *noFill = new QCheckBox(tr("keine Füllung"));
+        auto *noFill = new QCheckBox(tr("no fill"));
         noFill->setChecked(!stop.color.isValid());
         connect(noFill, &QCheckBox::toggled, this, [this, i](bool on) {
             if (m_loading) return;
@@ -191,8 +191,8 @@ void DwrsColorSchemeEditor::rebuild()
             spin->setMaximumWidth(110);
             spin->setValue(keeper ? stop.goalkeeper : stop.field);
             spin->setEnabled(i > 0); // the first band starts at 0
-            spin->setAccessibleName((keeper ? tr("Torhüter ab") : tr("Feldspieler ab"))
-                                    + QLatin1Char(' ') + tr("Stufe %1").arg(i + 1));
+            spin->setAccessibleName((keeper ? tr("Goalkeepers from") : tr("Outfield from"))
+                                    + QLatin1Char(' ') + tr("Band %1").arg(i + 1));
             // Applied when editing ends, so typing "7" on the way to "72"
             // never reorders the bands.
             connect(spin, &QDoubleSpinBox::editingFinished, this, [this, i, keeper, spin] {

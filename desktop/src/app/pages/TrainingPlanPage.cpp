@@ -7,6 +7,7 @@
 #include "core/DwrsEngine.h"
 #include "core/TrainingAdvice.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QComboBox>
 #include <QHBoxLayout>
@@ -43,18 +44,18 @@ TrainingPlanPage::TrainingPlanPage(AppContext &context, QWidget *parent)
     layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(10);
 
-    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Trainingsplan")), this);
+    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Training Plan")), this);
     layout->addWidget(heading);
 
     auto *tacticRow = new QHBoxLayout;
-    tacticRow->addWidget(new QLabel(tr("Taktik:"), this));
+    tacticRow->addWidget(new QLabel(tr("Tactic:"), this));
     m_tacticCombo = new QComboBox(this);
     m_tacticCombo->setMinimumWidth(240);
     tacticRow->addWidget(m_tacticCombo);
     tacticRow->addStretch(1);
-    auto *refreshButton = new QPushButton(tr("🔄 Aktualisieren"), this);
-    refreshButton->setToolTip(tr("Kader, Rollen und Empfehlungen neu berechnen "
-                                 "(z. B. nach Änderungen an den Rollen)."));
+    auto *refreshButton = new QPushButton(tr("🔄 Refresh"), this);
+    refreshButton->setToolTip(tr("Recompute squad, roles and recommendations "
+                                 "(e.g. after changing roles)."));
     tacticRow->addWidget(refreshButton);
     layout->addLayout(tacticRow);
     connect(refreshButton, &QPushButton::clicked, this, &TrainingPlanPage::refresh);
@@ -63,12 +64,12 @@ TrainingPlanPage::TrainingPlanPage(AppContext &context, QWidget *parent)
     m_hint->setWordWrap(true);
     layout->addWidget(m_hint);
 
-    m_first.title = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("Erste Mannschaft")), this);
+    m_first.title = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("First team")), this);
     m_first.table = makeTable();
     layout->addWidget(m_first.title);
     layout->addWidget(m_first.table, 1);
 
-    m_second.title = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("Zweitteam")), this);
+    m_second.title = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("Second team")), this);
     m_second.table = makeTable();
     layout->addWidget(m_second.title);
     layout->addWidget(m_second.table, 1);
@@ -106,8 +107,8 @@ QTableWidget *TrainingPlanPage::makeTable()
     auto *table = new QTableWidget(this);
     table->setColumnCount(ColCount);
     table->setHorizontalHeaderLabels(
-        {tr("Name"), tr("Alter"), tr("Position"), tr("Trainingsrolle"),
-         tr("Trainingsmethoden (in Reihenfolge)")});
+        {tr("Name"), tr("Age"), tr("Position"), tr("Training role"),
+         tr("Training methods (in order)")});
     table->verticalHeader()->setVisible(false);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -133,11 +134,11 @@ void TrainingPlanPage::refresh()
 
     const bool haveClub = !m_first.club.isEmpty();
     m_hint->setText(haveClub
-                        ? tr("Rolle wählbar aus <i>Positionen ∩ Taktik</i> (wird gespeichert). "
-                             "Reihenfolge der Methoden = größter DWRS-Gewinn zuerst; Reha-Methoden "
-                             "werden nicht vorgeschlagen. Spaltenkopf klicken sortiert.")
-                        : tr("⚠️ Kein Verein gesetzt. Wähle unter Einstellungen → Verein "
-                             "'Mein Verein', damit dein Kader angezeigt wird."));
+                        ? tr("Role selectable from <i>positions ∩ tactic</i> (saved). Method order "
+                             "= biggest DWRS gain first; rehab methods are not suggested. Click a "
+                             "column header to sort.")
+                        : tr("⚠️ No club set. Pick 'My club' under Settings → Club so "
+                             "your squad is shown."));
 
     fillSection(m_first);
     fillSection(m_second);
@@ -155,7 +156,7 @@ QString TrainingPlanPage::focusText(const Player &player, const QString &role) c
     const TrainingAdvice::FocusAdvice advice = TrainingAdvice::adviseFocusesForRole(
         player, role, *m_context.ratingSnapshot(), trainingProfile(m_context));
     if (!advice.valid || advice.focus.empty())
-        return tr("nichts sinnvoll trainierbar");
+        return tr("nothing worth training");
     QStringList parts;
     const int limit = std::min<int>(3, static_cast<int>(advice.focus.size()));
     for (int i = 0; i < limit; ++i)
@@ -222,14 +223,14 @@ void TrainingPlanPage::fillSection(Section &section)
         table->setItem(row, ColName, nameItem);
         table->setItem(row, ColAge,
                        new NumericItem(QString::number(player->age), player->age));
-        table->setItem(row, ColPosition, new QTableWidgetItem(player->positionRaw));
+        table->setItem(row, ColPosition, new QTableWidgetItem(GameTerms::positions(player->positionRaw)));
 
         auto *focusItem = new QTableWidgetItem(rd.focus);
         table->setItem(row, ColFocus, focusItem);
 
         if (rd.choices.isEmpty()) {
             table->setItem(row, ColRole, new QTableWidgetItem(QStringLiteral("—")));
-            focusItem->setText(tr("keine Rolle in dieser Taktik"));
+            focusItem->setText(tr("no role in this tactic"));
             continue;
         }
 

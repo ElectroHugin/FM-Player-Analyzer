@@ -145,13 +145,14 @@ target_link_libraries(fmplayeranalyzer PRIVATE
 )
 
 # --- Translations -----------------------------------------------------------
-# The source strings are German; English is shipped as a compiled .qm loaded by
-# default (German = source fallback, no translator). Every other
-# translations/fmplayeranalyzer_<lang>.ts is picked up automatically, embedded
-# under :/i18n/fmplayeranalyzer_<lang>.qm and offered in the language menus;
-# it is loaded on top of English. After adding tr() strings, regenerate the
-# English file and bring the other languages in line:
-#   lupdate src -ts translations/fmplayeranalyzer_en.ts -no-obsolete
+# The source strings are English. Every translations/fmplayeranalyzer_<lang>.ts
+# is picked up automatically, embedded under :/i18n/fmplayeranalyzer_<lang>.qm
+# and offered in the language menus; it is loaded on top of the English file,
+# which only holds English plural forms. After adding or changing tr() strings,
+# regenerate the template and the English plural forms, then bring the
+# languages in line:
+#   lupdate src -ts translations/fmplayeranalyzer.ts -no-obsolete -source-language en
+#   lupdate src -ts translations/fmplayeranalyzer_en.ts -pluralonly -no-obsolete -source-language en
 #   python translations/translate.py sync
 # See translations/TRANSLATING.md.
 file(GLOB FM_TS_FILES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/translations/fmplayeranalyzer_*.ts)

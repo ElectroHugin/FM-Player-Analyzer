@@ -1,4 +1,5 @@
 #include "DashboardPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "core/Registration.h"
 #include "core/ImportHistory.h"
@@ -14,6 +15,7 @@
 #include "core/Database.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -85,8 +87,8 @@ void installClickMenu(QWidget *card, std::function<void(const QPoint &)> open)
 
 QString formatMillions(double value)
 {
-    return QStringLiteral("%1 Mio. €")
-        .arg(QLocale().toString(value / 1'000'000.0, 'f', 2));
+    // value in the display currency
+    return Currency::formatMillions(value, 2);
 }
 
 // One "player has left" resolution row. destination = new club, or the status
@@ -116,21 +118,20 @@ public:
     DepartureDialog(const std::vector<const Player *> &missing, QWidget *parent)
         : QDialog(parent)
     {
-        setWindowTitle(tr("Spieler-Abgänge klären"));
+        setWindowTitle(tr("Resolve player departures"));
         setMinimumWidth(640);
 
         auto *layout = new QVBoxLayout(this);
         auto *info = new QLabel(
-            tr("Diese Spieler stehen in der Datenbank bei deinem Verein, waren aber "
-               "nicht in der hochgeladenen Kader-Datei. Standardmäßig gelten alle als "
-               "gegangen und werden zu Free Agents (FrA) — hake die aus, die geblieben "
-               "sind, und trage bei den anderen bei Bedarf einen neuen Verein oder "
-               "'Retired' ein."),
+            tr("These players are in the database at your club but were not in the "
+               "uploaded squad file. By default they all count as departed and become "
+               "free agents (FrA) — untick the ones who stayed, and enter a new club "
+               "or 'Retired' for the others where needed."),
             this);
         info->setWordWrap(true);
         layout->addWidget(info);
 
-        auto *toggleAll = new QCheckBox(tr("Alle als gegangen markieren"), this);
+        auto *toggleAll = new QCheckBox(tr("Mark all as departed"), this);
         toggleAll->setChecked(true);
         layout->addWidget(toggleAll);
 
@@ -141,9 +142,9 @@ public:
         auto *grid = new QGridLayout(content);
         grid->setColumnStretch(2, 1);
 
-        auto *hName = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("Spieler")), content);
-        auto *hGone = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("Gegangen")), content);
-        auto *hDest = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("Neuer Verein / Status")),
+        auto *hName = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("Player")), content);
+        auto *hGone = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("Departed")), content);
+        auto *hDest = new QLabel(QStringLiteral("<b>%1</b>").arg(tr("New club / status")),
                                  content);
         grid->addWidget(hName, 0, 0);
         grid->addWidget(hGone, 0, 1);
@@ -162,8 +163,8 @@ public:
             dest->addItem(freeAgentTag());
             dest->addItem(retiredTag());
             dest->setCurrentText(freeAgentTag());
-            dest->setToolTip(tr("Neuer Verein eintippen oder Status wählen "
-                                "(FrA = Free Agent, Retired = Karriereende)."));
+            dest->setToolTip(tr("Type a new club or pick a status (FrA = "
+                                "free agent, Retired = end of career)."));
             connect(gone, &QCheckBox::toggled, dest, &QComboBox::setEnabled);
 
             grid->addWidget(name, row, 0);
@@ -182,7 +183,7 @@ public:
 
         auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                              this);
-        buttons->button(QDialogButtonBox::Ok)->setText(tr("Abgänge bestätigen"));
+        buttons->button(QDialogButtonBox::Ok)->setText(tr("Confirm departures"));
         connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
         connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
         layout->addWidget(buttons);
@@ -224,7 +225,7 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
     layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(12);
 
-    auto *heading = new QLabel(tr("Übersicht"), content);
+    auto *heading = new QLabel(tr("Overview"), content);
     heading->setObjectName(QStringLiteral("pageTitle"));
     layout->addWidget(heading);
 
@@ -251,16 +252,16 @@ DashboardPage::DashboardPage(AppContext &context, ThemeManager &theme, QWidget *
 
 QWidget *DashboardPage::buildImportSection(QWidget *parent)
 {
-    auto *box = new QGroupBox(tr("Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), parent);
+    auto *box = new QGroupBox(tr("Import new player data (FM export, HTML or CSV)"), parent);
     m_importBox = box;
     auto *layout = new QVBoxLayout(box);
 
     auto *fileRow = new QHBoxLayout;
     m_filePathEdit = new QLineEdit(box);
     m_filePathEdit->setReadOnly(true);
-    m_filePathEdit->setPlaceholderText(tr("Keine Datei ausgewählt…"));
-    auto *browseButton = new QPushButton(tr("Durchsuchen…"), box);
-    m_importButton = new QPushButton(tr("Importieren"), box);
+    m_filePathEdit->setPlaceholderText(tr("No file selected…"));
+    auto *browseButton = new QPushButton(tr("Browse…"), box);
+    m_importButton = new QPushButton(tr("Import"), box);
     m_importButton->setEnabled(false);
     m_importButton->setDefault(true);
     fileRow->addWidget(m_filePathEdit, 1);
@@ -270,12 +271,12 @@ QWidget *DashboardPage::buildImportSection(QWidget *parent)
 
     auto *optionsRow = new QHBoxLayout;
     m_squadUpdateCheck = new QCheckBox(
-        tr("Datei ist ein kompletter Kader-Export meines Vereins (Abgänge erkennen)"), box);
+        tr("File is a complete squad export of my club (detect departures)"), box);
     m_squadUpdateCheck->setToolTip(
-        tr("Aktivieren, wenn die Datei NUR Spieler deines Haupt- und Zweitteams enthält. "
-           "Die App erkennt Spieler, die den Verein verlassen haben, und fragt nach."));
+        tr("Enable if the file contains ONLY players from your main and second team. The "
+           "app detects players who have left the club and asks about them."));
     m_autoAssignCheck = new QCheckBox(
-        tr("Neuen/unzugeordneten Spielern automatisch Rollen zuweisen"), box);
+        tr("Automatically assign roles to new/unassigned players"), box);
     m_autoAssignCheck->setChecked(true);
     optionsRow->addWidget(m_squadUpdateCheck);
     optionsRow->addWidget(m_autoAssignCheck);
@@ -290,8 +291,8 @@ QWidget *DashboardPage::buildImportSection(QWidget *parent)
     m_followStatus->hide();
     connect(m_followStatus, &QLabel::linkActivated, this, [this](const QString &) {
         const QString path = QFileDialog::getOpenFileName(
-            this, tr("Spielstand auswählen"), AppConfig::defaultSavesDir(m_context.fmVersionId()),
-            tr("Spielstände (*.fm);;Alle Dateien (*)"));
+            this, tr("Choose save"), AppConfig::defaultSavesDir(m_context.fmVersionId()),
+            tr("Saves (*.fm);;All files (*)"));
         if (path.isEmpty())
             return;
         m_context.config().followSave(path, 0);
@@ -312,19 +313,19 @@ QWidget *DashboardPage::buildAnalysisHeader(QWidget *parent)
     layout->setContentsMargins(0, 0, 0, 0);
 
     auto *row = new QHBoxLayout;
-    auto *title = new QLabel(tr("Kader-Analyse"), widget);
+    auto *title = new QLabel(tr("Squad Analysis"), widget);
     title->setObjectName(QStringLiteral("sectionTitle"));
     row->addWidget(title);
     row->addSpacing(24);
 
-    row->addWidget(new QLabel(tr("Mein Verein:"), widget));
+    row->addWidget(new QLabel(tr("My Club:"), widget));
     m_clubCombo = new QComboBox(widget);
     m_clubCombo->setMinimumWidth(220);
     m_clubCombo->setMaxVisibleItems(25);
     row->addWidget(m_clubCombo);
 
     row->addSpacing(16);
-    row->addWidget(new QLabel(tr("Analyse-Taktik:"), widget));
+    row->addWidget(new QLabel(tr("Analysis Tactic:"), widget));
     m_tacticCombo = new QComboBox(widget);
     m_tacticCombo->setMinimumWidth(220);
     row->addWidget(m_tacticCombo);
@@ -378,10 +379,10 @@ QWidget *DashboardPage::buildKpiRow(QWidget *parent)
             *tileOut = tile;
     };
 
-    makeTile(tr("Spieler im Kern-Kader"), &m_kpiPlayers);
-    makeTile(tr("Gesamtwert Kader"), &m_kpiTotalValue);
-    makeTile(tr("Ø Spielerwert"), &m_kpiAvgValue);
-    makeTile(tr("Ø Alter"), &m_kpiAvgAge);
+    makeTile(tr("Players in core squad"), &m_kpiPlayers);
+    makeTile(tr("Total Squad Value"), &m_kpiTotalValue);
+    makeTile(tr("Avg. Player Value"), &m_kpiAvgValue);
+    makeTile(tr("Avg. Age"), &m_kpiAvgAge);
     makeTile(QString(), &m_kpiGameDate, &m_kpiGameDateCaption, &m_kpiGameDateTile);
     m_kpiGameDateTile->setVisible(false);
     return row;
@@ -395,7 +396,7 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     layout->setSpacing(16);
 
     auto *gridColumn = new QVBoxLayout;
-    auto *gridTitle = new QLabel(tr("Positionsstärke"), widget);
+    auto *gridTitle = new QLabel(tr("Positional Strength"), widget);
     gridTitle->setObjectName(QStringLiteral("sectionTitle"));
     gridTitle->setAlignment(Qt::AlignHCenter);
     gridColumn->addWidget(gridTitle);
@@ -407,7 +408,7 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     phaseLayout->setContentsMargins(3, 3, 3, 3);
     phaseLayout->setSpacing(3);
     auto *phaseGroup = new QButtonGroup(widget);
-    const QStringList views = {tr("Kombiniert"), tr("Mit Ball"), tr("Ohne Ball"), tr("Beide")};
+    const QStringList views = {tr("Combined"), tr("In possession"), tr("Out of possession"), tr("Both")};
     for (int i = 0; i < views.size(); ++i) {
         auto *button = new QPushButton(views.at(i), phases);
         button->setCheckable(true);
@@ -426,7 +427,7 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     // Colouring: level (rarity tiers) or squad comparison; stored per save.
     auto *colorRow = new QHBoxLayout;
     colorRow->setSpacing(6);
-    auto *colorLabel = new QLabel(tr("Färben nach:"), widget);
+    auto *colorLabel = new QLabel(tr("Colour by:"), widget);
     colorLabel->setObjectName(QStringLiteral("kpiCaption"));
     colorRow->addStretch(1);
     colorRow->addWidget(colorLabel);
@@ -436,17 +437,17 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     colorLayout->setContentsMargins(3, 3, 3, 3);
     colorLayout->setSpacing(3);
     m_colorModeGroup = new QButtonGroup(widget);
-    const QStringList colorViews = {tr("Niveau"), tr("Kadervergleich")};
+    const QStringList colorViews = {tr("Level"), tr("Squad comparison")};
     for (int i = 0; i < colorViews.size(); ++i) {
         auto *button = new QPushButton(colorViews.at(i), colorModes);
         button->setCheckable(true);
         button->setObjectName(QStringLiteral("segmentButton"));
         button->setCursor(Qt::PointingHandCursor);
         button->setChecked(i == 0);
-        button->setToolTip(i == 0 ? tr("Farbstufen wie überall in der App: Schwach bis Legendär.")
-                                  : tr("Jeder Starter im Vergleich zur Kadermitte (Median der gezeigten "
-                                       "Starter): grau bis 1,5 Punkte Abstand, darunter orange, darüber "
-                                       "blau, ab 4 Punkten kräftig."));
+        button->setToolTip(i == 0 ? tr("Colour tiers as everywhere in the app: Poor to Legendary.")
+                                  : tr("Each starter compared with the squad median (median of the "
+                                       "starters shown): grey within 1.5 points, orange below, blue "
+                                       "above, strong from 4 points."));
         m_colorModeGroup->addButton(button, i);
         colorLayout->addWidget(button);
     }
@@ -500,9 +501,9 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
     m_clubTableTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_clubTable = new QTableWidget(widget);
     m_clubTable->setColumnCount(7);
-    m_clubTable->setHorizontalHeaderLabels({tr("Name"), tr("Alter"), tr("Position"),
-                                            tr("Persönlichkeit"), tr("Spielzeit"),
-                                            tr("Ø-Note"), tr("Marktwert")});
+    m_clubTable->setHorizontalHeaderLabels({tr("Name"), tr("Age"), tr("Position"),
+                                            tr("Personality"), tr("Playing Time"),
+                                            tr("Avg. Rating"), tr("Market Value")});
     m_clubTable->verticalHeader()->setVisible(false);
     m_clubTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_clubTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -520,17 +521,17 @@ QWidget *DashboardPage::buildSquadSection(QWidget *parent)
 
 QWidget *DashboardPage::buildSuggestionSection(QWidget *parent)
 {
-    auto *box = new QGroupBox(tr("Transferziele"), parent);
+    auto *box = new QGroupBox(tr("Transfer targets"), parent);
     auto *layout = new QVBoxLayout(box);
 
-    auto *info = new QLabel(tr("Mögliche Verstärkungen aus deiner Scouting-Datenbank, "
-                               "basierend auf den Rollen der gewählten Taktik."),
+    auto *info = new QLabel(tr("Possible reinforcements from your scouting database, "
+                               "based on the roles of the selected tactic."),
                             box);
     info->setWordWrap(true);
     layout->addWidget(info);
 
     auto *filterRow = new QHBoxLayout;
-    filterRow->addWidget(new QLabel(tr("Max. Alter:"), box));
+    filterRow->addWidget(new QLabel(tr("Max. Age:"), box));
     m_ageSlider = new QSlider(Qt::Horizontal, box);
     m_ageSlider->setRange(15, 40);
     m_ageSlider->setValue(28);
@@ -539,10 +540,10 @@ QWidget *DashboardPage::buildSuggestionSection(QWidget *parent)
     filterRow->addWidget(m_ageSlider, 1);
     filterRow->addWidget(m_ageLabel);
     filterRow->addSpacing(20);
-    filterRow->addWidget(new QLabel(tr("Max. Marktwert:"), box));
+    filterRow->addWidget(new QLabel(tr("Max. Market Value:"), box));
     m_valueSlider = new QSlider(Qt::Horizontal, box);
-    m_valueSlider->setRange(0, 400); // 0.5 Mio € steps -> 0..200 Mio €
-    m_valueSlider->setValue(20);     // 10 Mio €
+    m_valueSlider->setRange(0, 400); // steps of Currency::sliderStep(), 0..200M in euros
+    m_valueSlider->setValue(20);     // 10M in euros
     m_valueLabel = new QLabel(box);
     m_valueLabel->setMinimumWidth(110);
     filterRow->addWidget(m_valueSlider, 1);
@@ -560,8 +561,8 @@ QWidget *DashboardPage::buildSuggestionSection(QWidget *parent)
     layout->addWidget(cardsHost);
 
     const auto updateLabels = [this] {
-        m_ageLabel->setText(tr("%1 Jahre").arg(m_ageSlider->value()));
-        m_valueLabel->setText(formatMillions(maxValueFilter()));
+        m_ageLabel->setText(tr("%1 years").arg(m_ageSlider->value()));
+        m_valueLabel->setText(formatMillions(m_valueSlider->value() * Currency::sliderStep()));
     };
     updateLabels();
     connect(m_ageSlider, &QSlider::valueChanged, this, [this, updateLabels] {
@@ -582,7 +583,7 @@ QString DashboardPage::selectedTactic() const
 
 double DashboardPage::maxValueFilter() const
 {
-    return m_valueSlider->value() * 500'000.0;
+    return Currency::fromDisplay(m_valueSlider->value() * Currency::sliderStep());
 }
 
 void DashboardPage::applyStrengthColorMode()
@@ -607,8 +608,8 @@ void DashboardPage::updateColorLegend()
         return;
     // Five swatches from far below to far above the squad median.
     const QList<QColor> colors = dwrsComparisonColors();
-    const QStringList labels = {tr("weit darunter"), tr("darunter"), tr("Kadermitte"),
-                                tr("darüber"), tr("weit darüber")};
+    const QStringList labels = {tr("far below"), tr("below"), tr("squad median"),
+                                tr("above"), tr("far above")};
     QStringList parts;
     for (int i = 0; i < colors.size() && i < labels.size(); ++i)
         parts << QStringLiteral("<span style=\"color:%1\">&#9632;</span>&nbsp;%2")
@@ -616,7 +617,7 @@ void DashboardPage::updateColorLegend()
     QString text = parts.join(QStringLiteral(" &nbsp; "));
     const bool both = m_strengthGridOop->isVisibleTo(m_strengthGridOop->parentWidget());
     if (!both)
-        text = tr("Kadermitte: %1").arg(formatDwrs(median)).toHtmlEscaped() + QStringLiteral("<br>") + text;
+        text = tr("Squad median: %1").arg(formatDwrs(median)).toHtmlEscaped() + QStringLiteral("<br>") + text;
     m_colorLegend->setFixedWidth(m_gridLegend->width());
     m_colorLegend->setText(text);
 }
@@ -633,20 +634,20 @@ void DashboardPage::updateImportSource()
     if (!m_importBox)
         return;
     const bool saves = readsSaves();
-    m_importBox->setTitle(saves ? tr("Spielerdaten einlesen (Spielstand .fm, CSV oder HTML)")
-                                : tr("Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"));
+    m_importBox->setTitle(saves ? tr("Read player data (save game)")
+                                : tr("Import new player data (FM export, HTML or CSV)"));
     const AppConfig &config = m_context.config();
     if (!saves) {
         m_followStatus->hide();
     } else if (config.liveSaveEnabled() && !config.liveSavePath().isEmpty()) {
-        m_followStatus->setText(tr("Folgt „%1“ und liest ihn nach jedem Speichern im Spiel neu ein.")
+        m_followStatus->setText(tr("Following “%1”: read again after every save in the game.")
                                     .arg(QFileInfo(config.liveSavePath()).completeBaseName().toHtmlEscaped()));
         m_followStatus->show();
     } else if (config.saveTipDismissed()) {
         m_followStatus->hide();
     } else {
-        QString text = tr("Schneller als ein Export: <a href=\"follow\">Spielstand live "
-                          "verfolgen</a>");
+        QString text = tr("Tip: <a href=\"follow\">follow your save live</a>, it is read "
+                          "again after every save in the game.");
         text.replace(QStringLiteral("<a href=\"follow\">"),
                      QStringLiteral("<a href=\"follow\" style=\"color:%1; text-decoration:none\">")
                          .arg(m_theme.accentText().name()));
@@ -704,8 +705,8 @@ void DashboardPage::refreshAnalysis()
 
     if (userClub.isEmpty() || m_context.store().isEmpty()) {
         m_analysisHint->setText(
-            tr("Bitte importiere Spielerdaten und wähle oben deinen Verein, "
-               "um die Kader-Analyse zu sehen."));
+            tr("Please import player data and select your club above to see "
+               "the squad analysis."));
         m_analysisHint->show();
         m_kpiRow->hide();
         m_squadSection->hide();
@@ -732,8 +733,8 @@ void DashboardPage::refreshAnalysis()
         m_strengthGrid->clearData();
         m_strengthGridOop->clearData();
         m_analysisHint->setText(
-            tr("Für die Taktik '%1' konnte kein Kader gebildet werden — es gibt "
-               "keine passenden Spieler in deinem Verein.")
+            tr("No squad could be built for the tactic '%1' — there are no "
+               "suitable players in your club.")
                 .arg(tactic));
         m_analysisHint->show();
         clearSuggestionCards();
@@ -757,8 +758,8 @@ void DashboardPage::refreshAnalysis()
         m_strengthGrid->clearData();
         m_strengthGridOop->clearData();
         m_analysisHint->setText(
-            tr("Für die Taktik '%1' konnte kein Kader gebildet werden — es gibt "
-               "keine passenden Spieler in deinem Verein.")
+            tr("No squad could be built for the tactic '%1' — there are no "
+               "suitable players in your club.")
                 .arg(tactic));
         m_analysisHint->show();
     } else {
@@ -825,7 +826,7 @@ void DashboardPage::updateStarterView(const std::vector<const Player *> &clubPla
     };
     const bool twoPhase = view.twoPhase;
     const auto places = [twoPhase](const QPair<QString, QString> &pair) {
-        return twoPhase ? tr("mit %1 · ohne %2").arg(pair.first, pair.second) : pair.first;
+        return twoPhase ? tr("IP %1 · OOP %2").arg(pair.first, pair.second) : pair.first;
     };
     const auto delta = [](double value) {
         const QString text = QLocale().toString(std::abs(value), 'f', 1);
@@ -838,17 +839,17 @@ void DashboardPage::updateStarterView(const std::vector<const Player *> &clubPla
     for (const OutageCover &cover : covers) {
         const ReplacementPlan &plan = cover.plans.front();
         QStringList lines;
-        lines << tr("Fällt %1 aus:").arg(nameOf(cover.outUid));
+        lines << tr("If %1 is unavailable:").arg(nameOf(cover.outUid));
         if (!plan.complete) {
-            view.impact.insert(cover.outUid, tr("Lücke"));
-            lines << tr("Kein Spieler im Kader füllt die Lücke, ein Platz bleibt frei.");
+            view.impact.insert(cover.outUid, tr("gap"));
+            lines << tr("No squad player fills the gap; one place stays empty.");
         } else {
-            view.impact.insert(cover.outUid, tr("Elf %1").arg(delta(plan.total - cover.current)));
-            lines << tr("%1 kommt (%2).").arg(nameOf(plan.inUid), places(plan.inSlots));
+            view.impact.insert(cover.outUid, tr("XI %1").arg(delta(plan.total - cover.current)));
+            lines << tr("%1 comes on (%2).").arg(nameOf(plan.inUid), places(plan.inSlots));
             for (const PlaceMove &move : plan.moves)
-                lines << tr("%1 rückt um: %2 → %3.")
+                lines << tr("%1 moves: %2 → %3.")
                              .arg(nameOf(move.uid), places(move.from), places(move.to));
-            lines << tr("Startelf %1 DWRS-Punkte (Summe aller elf).")
+            lines << tr("Starting XI %1 DWRS points (sum of all eleven).")
                          .arg(delta(plan.total - cover.current));
         }
         view.tooltip.insert(cover.outUid, lines.join(QLatin1Char('\n')));
@@ -877,13 +878,7 @@ void DashboardPage::showStarterView()
         }
         return strata;
     };
-    const auto abbr = [](QString role) {
-        if (role.endsWith(QLatin1String("-IP")))
-            role.chop(3);
-        else if (role.endsWith(QLatin1String("-OOP")))
-            role.chop(4);
-        return role;
-    };
+    const auto abbr = [](const QString &role) { return Definitions::roleAbbreviation(role); };
     // One line-up: each starter at his slot with that line-up's role DWRS.
     const auto singleMarkers = [&](const QHash<QString, XiCell> &team,
                                    const QHash<QString, QString> &lineUp) {
@@ -904,8 +899,8 @@ void DashboardPage::showStarterView()
                 marker.tooltip = cell.name + QLatin1Char('\n')
                                  + view.tooltip.value(cell.playerUid);
             } else {
-                marker.impact = tr("frei");
-                marker.tooltip = tr("Für %1 hat der Kader keinen Spieler.").arg(it.key());
+                marker.impact = tr("free");
+                marker.tooltip = tr("The squad has no player for %1.").arg(it.key());
             }
             markers.append(marker);
         }
@@ -931,8 +926,8 @@ void DashboardPage::showStarterView()
         } else if (m_phaseView == 2) {
             m_strengthGrid->setMarkers(singleMarkers(view.oop, lineUps.oop));
         } else if (both) {
-            m_gridTitle->setText(tr("Mit Ball"));
-            m_gridTitleOop->setText(tr("Ohne Ball"));
+            m_gridTitle->setText(tr("In possession"));
+            m_gridTitleOop->setText(tr("Out of possession"));
             m_strengthGrid->setMarkers(singleMarkers(view.ip, lineUps.ip));
             m_strengthGridOop->setMarkers(singleMarkers(view.oop, lineUps.oop));
         } else {
@@ -948,9 +943,9 @@ void DashboardPage::showStarterView()
                 if (!cell.isFilled()) {
                     StrengthGridWidget::Marker marker;
                     marker.anchor = ipAnchors.value(ipSlot);
-                    marker.header = tr("mit: %1").arg(abbr(lineUps.ip.value(ipSlot)));
-                    marker.impact = tr("frei");
-                    marker.tooltip = tr("%1 mit Ball ist frei.").arg(ipSlot);
+                    marker.header = tr("IP: %1").arg(abbr(lineUps.ip.value(ipSlot)));
+                    marker.impact = tr("free");
+                    marker.tooltip = tr("%1 in possession is empty.").arg(ipSlot);
                     markers.append(marker);
                     continue;
                 }
@@ -963,7 +958,7 @@ void DashboardPage::showStarterView()
                                                              abbr(lineUps.oop.value(oopSlot)));
                 marker.value = view.valueOfUid.value(cell.playerUid);
                 marker.impact = view.impact.value(cell.playerUid);
-                marker.tooltip = tr("%1 (mit Ball %2, ohne Ball %3)")
+                marker.tooltip = tr("%1 (in possession %2, out of possession %3)")
                                      .arg(cell.name, ipSlot, oopSlot)
                                  + QLatin1Char('\n') + view.tooltip.value(cell.playerUid);
                 markers.append(marker);
@@ -973,9 +968,9 @@ void DashboardPage::showStarterView()
                     continue;
                 StrengthGridWidget::Marker marker;
                 marker.anchor = oopAnchors.value(oopSlot);
-                marker.header = tr("ohne: %1").arg(abbr(lineUps.oop.value(oopSlot)));
-                marker.impact = tr("frei");
-                marker.tooltip = tr("%1 ohne Ball ist frei.").arg(oopSlot);
+                marker.header = tr("OOP: %1").arg(abbr(lineUps.oop.value(oopSlot)));
+                marker.impact = tr("free");
+                marker.tooltip = tr("%1 out of possession is empty.").arg(oopSlot);
                 markers.append(marker);
             }
             m_strengthGrid->setMarkers(markers);
@@ -984,14 +979,14 @@ void DashboardPage::showStarterView()
 
     QString what;
     if (!view.twoPhase || m_phaseView == 1 || m_phaseView == 2 || both)
-        what = tr("Groß: DWRS des Starters in seiner Rolle.");
+        what = tr("Large: the starter's DWRS in his role.");
     else
-        what = tr("Groß: Wert des Starters über beide Aufstellungen (%1 % mit Ball).")
+        what = tr("Large: the starter's value over both line-ups (%1 % in possession).")
                    .arg(view.ipShare);
     m_gridLegend->setFixedWidth(both ? 2 * width + 16 : width);
     m_gridLegend->setText(what + QLatin1Char(' ')
-                          + tr("Klein: so ändert sich die Startelf, wenn er ausfällt. Details "
-                               "zeigt der Tooltip."));
+                          + tr("Small: how the starting XI changes if he is out. The tooltip "
+                               "shows the details."));
     // A wrapped label in this row does not ask for its height by itself.
     m_gridLegend->setFixedHeight(
         m_gridLegend->fontMetrics()
@@ -1000,11 +995,11 @@ void DashboardPage::showStarterView()
             .height()
         + 4);
     m_gridLegend->setToolTip(
-        tr("„Elf −4,0“: Fällt der Spieler aus, kommt der beste Ersatz (wie in Best XI unter "
-           "„Ausfall in der Startelf“), und die Summe der DWRS der ganzen Startelf sinkt um "
-           "4,0. „Lücke“: Kein Spieler im Kader füllt den Platz. Grundlage ist der ganze Verein "
-           "ohne Langzeitverletzte und ohne Spieler, die als nicht registriert markiert sind, "
-           "sonst ohne Wettbewerbsregeln; von Hand gesetzte Plätze aus Best XI gelten."));
+        tr("“XI −4.0”: if the player is out, the best cover comes on (as in Best XI under "
+           "“Squad depth: a starter is missing”), and the sum of DWRS of the whole starting XI "
+           "drops by 4.0. “gap”: no squad player fills the place. Based on the whole club "
+           "without long-term injured and without players marked as not registered, otherwise "
+           "without competition rules; manual places from Best XI apply."));
     updateColorLegend();
 }
 
@@ -1025,8 +1020,8 @@ void DashboardPage::updateKpis(const std::vector<const Player *> &coreSquad)
     const double avgAge = ageCount > 0 ? static_cast<double>(ageSum) / ageCount : 0.0;
 
     m_kpiPlayers->setText(QString::number(coreSquad.size()));
-    m_kpiTotalValue->setText(formatMillions(totalValue));
-    m_kpiAvgValue->setText(formatMillions(avgValue));
+    m_kpiTotalValue->setText(formatMillions(Currency::toDisplay(totalValue)));
+    m_kpiAvgValue->setText(formatMillions(Currency::toDisplay(avgValue)));
     m_kpiAvgAge->setText(QLocale().toString(avgAge, 'f', 1));
     {
         // Where the data stands in the game: the newest save game read in.
@@ -1037,17 +1032,17 @@ void DashboardPage::updateKpis(const std::vector<const Player *> &coreSquad)
                 ImportHistory::seasonStartOf(m_context.database());
             m_kpiGameDate->setText(QLocale().toString(gameDate, QLocale::ShortFormat));
             m_kpiGameDateCaption->setText(
-                tr("Ingame-Datum · Saison %1")
+                tr("In-game date · season %1")
                     .arg(ImportHistory::seasonLabel(ImportHistory::seasonOf(gameDate, start),
                                                     start)));
-            m_kpiGameDateTile->setToolTip(tr("Stand des zuletzt eingelesenen FM27-Spielstands"));
+            m_kpiGameDateTile->setToolTip(tr("State of the most recently read FM27 save"));
         }
     }
 }
 
 void DashboardPage::updateClubTable(const std::vector<const Player *> &clubPlayers)
 {
-    m_clubTableTitle->setText(tr("Spieler bei %1 (%2)")
+    m_clubTableTitle->setText(tr("Players at %1 (%2)")
                                   .arg(m_context.userClub())
                                   .arg(clubPlayers.size()));
 
@@ -1060,7 +1055,7 @@ void DashboardPage::updateClubTable(const std::vector<const Player *> &clubPlaye
         m_clubTable->setItem(row, 0, nameItem);
         m_clubTable->setItem(row, 1,
                              new NumericItem(QString::number(player->age), player->age));
-        m_clubTable->setItem(row, 2, new QTableWidgetItem(player->positionRaw));
+        m_clubTable->setItem(row, 2, new QTableWidgetItem(GameTerms::positions(player->positionRaw)));
 
         auto *personality = new QTableWidgetItem(player->personality);
         const CellStyle style = personalityCellStyle(
@@ -1079,7 +1074,7 @@ void DashboardPage::updateClubTable(const std::vector<const Player *> &clubPlaye
                                 : QStringLiteral("–"),
                             player->averageRating));
         m_clubTable->setItem(row, 6,
-                             new NumericItem(player->transferValueRaw, player->transferValue));
+                             new NumericItem(Currency::displayText(player->transferValueRaw), player->transferValue));
         ++row;
     }
     m_clubTable->setSortingEnabled(true);
@@ -1175,8 +1170,8 @@ void DashboardPage::rebuildSuggestions()
 
     if (suggestions.empty()) {
         m_suggestionStatus->setText(
-            tr("Dein Kader ist gut aufgestellt. Keine klaren Verstärkungen "
-               "innerhalb der Filterkriterien gefunden."));
+            tr("Your squad is well set up. No clear reinforcements found "
+               "within the filter criteria."));
         return;
     }
     m_suggestionStatus->clear();
@@ -1196,7 +1191,7 @@ void DashboardPage::rebuildSuggestions()
         header->setObjectName(QStringLiteral("cardTitle"));
         header->setWordWrap(true);
         cardLayout->addWidget(header);
-        auto *role = new QLabel(tr("Upgrade für %1").arg(roleName), card);
+        auto *role = new QLabel(tr("Upgrade for %1").arg(roleName), card);
         role->setObjectName(QStringLiteral("kpiCaption"));
         role->setWordWrap(true);
         cardLayout->addWidget(role);
@@ -1207,11 +1202,11 @@ void DashboardPage::rebuildSuggestions()
         figures->setHorizontalSpacing(12);
         figures->setVerticalSpacing(2);
         const QList<QPair<QString, QString>> rows = {
-            {tr("Bewertung"), tr("%1 % (dein Bester %2 %)")
+            {tr("Rating"), tr("%1 % (your best %2 %)")
                                   .arg(formatDwrs(suggestion.rating))
                                   .arg(formatDwrs(suggestion.myBest))},
-            {tr("Wert"), player->transferValueRaw},
-            {tr("Alter"), QString::number(player->age)},
+            {tr("Value"), Currency::displayText(player->transferValueRaw)},
+            {tr("Age"), QString::number(player->age)},
         };
         for (int row = 0; row < rows.size(); ++row) {
             auto *label = new QLabel(rows[row].first, card);
@@ -1223,9 +1218,9 @@ void DashboardPage::rebuildSuggestions()
         figures->setColumnStretch(1, 1);
         cardLayout->addLayout(figures);
 
-        auto *footer = new QLabel(tr("Verein: %1<br/>Positionen: %2")
+        auto *footer = new QLabel(tr("Club: %1<br/>Positions: %2")
                                       .arg(player->club.toHtmlEscaped(),
-                                           player->positionRaw.toHtmlEscaped()),
+                                           GameTerms::positions(player->positionRaw).toHtmlEscaped()),
                                   card);
         footer->setObjectName(QStringLiteral("kpiCaption"));
         footer->setWordWrap(true);
@@ -1234,13 +1229,13 @@ void DashboardPage::rebuildSuggestions()
         // Left or right click: the player menu, with comparisons against the
         // own players this target would replace.
         card->setCursor(Qt::PointingHandCursor);
-        card->setToolTip(tr("Klicken für Aktionen: Profil, Shortlist, Vergleich"));
+        card->setToolTip(tr("Click for actions: profile, shortlist, comparison"));
         const QString targetUid = player->uid;
         const QString targetRole = suggestion.role;
         std::vector<std::pair<QString, QString>> ownEntries; // uid, label
         for (const auto &[own, ownRating] : suggestion.mine)
             ownEntries.emplace_back(own->uid,
-                                    tr("%1 (%2 %)").arg(own->name).arg(formatDwrs(ownRating)));
+                                    tr("%1 (%2%)").arg(own->name).arg(formatDwrs(ownRating)));
         const auto showMenu = [this, targetUid, targetRole, ownEntries](const QPoint &pos) {
             // The window, not the card, owns the menu: a shortlist toggle
             // rebuilds the cards while the menu is still open.
@@ -1255,14 +1250,14 @@ void DashboardPage::rebuildSuggestions()
                         m_context.requestNavigation(QStringLiteral("player_comparison"));
                     };
                     for (const auto &[uid, label] : ownEntries) {
-                        menu.addAction(tr("Vergleichen mit %1").arg(label),
+                        menu.addAction(tr("Compare with %1").arg(label),
                                        [compare, uid] { compare({uid}); });
                     }
                     if (ownEntries.size() > 1) {
                         QStringList all;
                         for (const auto &entry : ownEntries)
                             all << entry.first;
-                        menu.addAction(tr("Vergleichen mit allen %n", nullptr,
+                        menu.addAction(tr("Compare with all %n", nullptr,
                                           static_cast<int>(all.size())),
                                        [compare, all] { compare(all); });
                     }
@@ -1279,10 +1274,14 @@ void DashboardPage::rebuildSuggestions()
 
 void DashboardPage::chooseImportFile()
 {
-    const QString path = QFileDialog::getOpenFileName(
-        this, tr("FM-Export oder FM27-Spielstand auswählen"),
-        readsSaves() ? AppConfig::defaultSavesDir(m_context.fmVersionId()) : m_context.htmlExportDir(),
-        tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
+    // Versions that read saves offer the save first; exports still work.
+    const QString path = readsSaves()
+        ? QFileDialog::getOpenFileName(
+              this, tr("Choose save"), AppConfig::defaultSavesDir(m_context.fmVersionId()),
+              tr("Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)"))
+        : QFileDialog::getOpenFileName(
+              this, tr("Choose an FM export or FM27 save"), m_context.htmlExportDir(),
+              tr("FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)"));
     if (path.isEmpty())
         return;
     m_filePathEdit->setText(path);
@@ -1320,10 +1319,13 @@ void DashboardPage::importFinished(const ImportPipelineResult &result)
 {
     if (!result.import.success) {
         QMessageBox::critical(
-            this, tr("Import fehlgeschlagen"),
-            tr("Die Datei konnte nicht importiert werden.\n\n%1\n\n"
-               "Mögliche Ursachen: keine 'UID'-Spalte oder kein gültiger "
-               "Football-Manager-Export (HTML oder CSV).")
+            this, tr("Import failed"),
+            tr("The file could not be imported.\n"
+               "\n"
+               "%1\n"
+               "\n"
+               "Possible causes: no 'UID' column, or not a valid "
+               "Football Manager export (HTML or CSV).")
                 .arg(importErrorText(result.import)));
         return;
     }
@@ -1333,7 +1335,7 @@ void DashboardPage::importFinished(const ImportPipelineResult &result)
 
     QMessageBox box(this);
     box.setIcon(warnings.isEmpty() ? QMessageBox::Information : QMessageBox::Warning);
-    box.setWindowTitle(tr("Import abgeschlossen"));
+    box.setWindowTitle(tr("Import complete"));
     box.setText(summary.join(QLatin1Char('\n')));
     // A large export means the exporter ran a long list: point at the save.
     const QString suffix = QFileInfo(m_filePathEdit->text()).suffix().toLower();
@@ -1341,9 +1343,9 @@ void DashboardPage::importFinished(const ImportPipelineResult &result)
     QCheckBox *showAgain = nullptr;
     if (readsSaves() && suffix != QLatin1String("fm") && !m_context.config().liveSaveEnabled()
         && !m_context.config().saveTipDismissed() && result.import.playersImported >= 500) {
-        box.setInformativeText(tr("Tipp: Den Spielstand (.fm) direkt einzulesen geht schneller "
-                                  "und braucht keinen Export."));
-        showAgain = new QCheckBox(tr("Beim nächsten Mal wieder anzeigen"), &box);
+        box.setInformativeText(tr("Tip: reading the save (.fm) directly is faster and needs no "
+                                  "export."));
+        showAgain = new QCheckBox(tr("Show again next time"), &box);
         box.setCheckBox(showAgain);
     }
     if (!warnings.isEmpty())
@@ -1402,15 +1404,15 @@ void DashboardPage::resolveDepartures(const QSet<QString> &affectedUids)
         return;
 
     if (!m_context.database().upsertPlayers(updates)) {
-        QMessageBox::critical(this, tr("Abgänge"), m_context.database().errorString());
+        QMessageBox::critical(this, tr("Departures"), m_context.database().errorString());
         return;
     }
     QList<int> ids;
     for (const Player &player : updates)
         ids << player.id;
     m_context.refreshPlayers(ids);
-    QMessageBox::information(this, tr("Abgänge"),
-                             tr("%1 Spieler-Datensätze aktualisiert.").arg(updates.size()));
+    QMessageBox::information(this, tr("Departures"),
+                             tr("%1 player records updated.").arg(updates.size()));
 }
 
 } // namespace fm

@@ -12,6 +12,7 @@
 #include "core/SquadBuilder.h"
 #include "core/TalentEngine.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QCheckBox>
 #include <QFrame>
@@ -76,41 +77,41 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
     layout->addWidget(m_heading);
 
     auto *tacticRow = new QHBoxLayout;
-    tacticRow->addWidget(new QLabel(tr("Taktik:"), content));
+    tacticRow->addWidget(new QLabel(tr("Tactic:"), content));
     m_tacticCombo = new QComboBox(content);
     m_tacticCombo->setMinimumWidth(260);
     tacticRow->addWidget(m_tacticCombo);
     // The bundled tactics are examples; your own go into the tactic editor.
-    auto *ownTactic = new QPushButton(tr("＋ Eigene Taktik"), content);
+    auto *ownTactic = new QPushButton(tr("＋ Own tactic"), content);
     ownTactic->setCursor(Qt::PointingHandCursor);
-    ownTactic->setToolTip(tr("Die mitgelieferten Taktiken sind nur Beispiele. Im Taktik-Editor "
-                             "legst du deine eigenen an; Updates lassen sie unberührt."));
+    ownTactic->setToolTip(tr("The bundled tactics are only examples. Create your own in the "
+                             "tactic editor; updates leave them untouched."));
     connect(ownTactic, &QPushButton::clicked, this,
             [this] { m_context.requestNavigation(QStringLiteral("new_tactic")); });
     tacticRow->addWidget(ownTactic);
-    m_competitionLabel = new QLabel(tr("Wettbewerb:"), content);
+    m_competitionLabel = new QLabel(tr("Competition:"), content);
     tacticRow->addSpacing(16);
     tacticRow->addWidget(m_competitionLabel);
     m_competitionCombo = new QComboBox(content);
     m_competitionCombo->setMinimumWidth(260);
     m_competitionCombo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     m_competitionCombo->setToolTip(
-        tr("Beschränkt die erste Mannschaft auf die Spieler, die im Wettbewerb spielberechtigt "
-           "sind: die gespeicherte Meldeliste (Kader → Meldeliste) plus alle, die ohne "
-           "Platz spielen dürfen. Im Pokal dürfen alle spielen."));
+        tr("Limits the first team to the players eligible in the competition: the saved squad "
+           "list (Squad → Squad Registration) plus everyone who may play without a slot. In "
+           "the cup everyone may play."));
     tacticRow->addWidget(m_competitionCombo);
     tacticRow->addStretch(1);
     // How the line-up is computed: one click away instead of always on screen.
     m_hintToggle = new QToolButton(content);
-    m_hintToggle->setText(tr("Beweisbar optimal"));
-    m_hintToggle->setToolTip(tr("Erklärung des Rechenverfahrens ein- oder ausblenden"));
+    m_hintToggle->setText(tr("Provably optimal"));
+    m_hintToggle->setToolTip(tr("Show or hide how the line-up is computed"));
     m_hintToggle->setCheckable(true);
     m_hintToggle->setArrowType(Qt::RightArrow);
     m_hintToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     tacticRow->addWidget(m_hintToggle);
     layout->addLayout(tacticRow);
 
-    m_clubNotice = new QLabel(tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."),
+    m_clubNotice = new QLabel(tr("Please choose your club first (Overview or Settings)."),
                               content);
     m_clubNotice->setWordWrap(true);
     m_clubNotice->setVisible(false);
@@ -139,20 +140,20 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_injuryNote = new QLabel(m_injuryBox);
         m_injuryNote->setWordWrap(true);
         m_injuryNote->setTextFormat(Qt::RichText);
-        m_injuryNote->setToolTip(tr("Klick auf einen Namen öffnet das Spieler-Menü "
-                                    "(z. B. um ihn wieder als fit zu markieren)."));
+        m_injuryNote->setToolTip(tr("Click a name to open the player menu (e.g. to "
+                                    "mark him fit again)."));
         noteRow->addWidget(m_injuryNote, 1);
-        m_planInjuredCheck = new QCheckBox(tr("Trotzdem einplanen"), m_injuryBox);
+        m_planInjuredCheck = new QCheckBox(tr("Plan them in anyway"), m_injuryBox);
         m_planInjuredCheck->setToolTip(
-            tr("Zeigt die Aufstellung, als wären alle fit. Die Tabelle bleibt der Vergleich "
-               "mit allen fit gegen ohne die Verletzten."));
+            tr("Shows the line-up as if everyone were fit. The table keeps comparing all "
+               "fit against without the injured."));
         noteRow->addWidget(m_planInjuredCheck, 0, Qt::AlignTop);
         injuryLayout->addLayout(noteRow);
         m_injuryTable = new QTableWidget(m_injuryBox);
         m_injuryTable->setColumnCount(8);
-        m_injuryTable->setHorizontalHeaderLabels({tr("Team"), tr("Slot"), tr("Rolle"),
-                                                  tr("Alle fit"), tr("DWRS"),
-                                                  tr("Ohne Verletzte"), tr("DWRS"), tr("Δ")});
+        m_injuryTable->setHorizontalHeaderLabels({tr("Team"), tr("Slot"), tr("Role"),
+                                                  tr("All fit"), tr("DWRS"),
+                                                  tr("Without injured"), tr("DWRS"), tr("Δ")});
         m_injuryTable->verticalHeader()->setVisible(false);
         m_injuryTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         m_injuryTable->setAlternatingRowColors(true);
@@ -196,7 +197,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         auto *segLayout = new QHBoxLayout(segmented);
         segLayout->setContentsMargins(3, 3, 3, 3);
         segLayout->setSpacing(3);
-        m_xiButton = new QPushButton(tr("Startelf"), segmented);
+        m_xiButton = new QPushButton(tr("Starting XI"), segmented);
         m_bButton = new QPushButton(tr("B-Team"), segmented);
         auto *teamGroup = new QButtonGroup(tab);
         for (QPushButton *button : {m_xiButton, m_bButton}) {
@@ -220,10 +221,10 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         phaseLayout->setSpacing(3);
         auto *phaseGroup = new QButtonGroup(tab);
         const QList<QPair<int, QString>> views = {
-            {Combined, tr("Kombiniert")},
-            {InPossession, tr("Mit Ball")},
-            {OutOfPossession, tr("Ohne Ball")},
-            {BothPhases, tr("Beide")}};
+            {Combined, tr("Combined")},
+            {InPossession, tr("In possession")},
+            {OutOfPossession, tr("Out of possession")},
+            {BothPhases, tr("Both")}};
         for (const auto &[view, text] : views) {
             auto *button = new QPushButton(text, phases);
             button->setCheckable(true);
@@ -234,9 +235,9 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
             phaseLayout->addWidget(button);
         }
         phases->setToolTip(
-            tr("Kombiniert: Startelf und B-Team nebeneinander, die ausgewählte Mannschaft links. "
-               "Bei wenig Platz erscheint nur die Auswahl. Jeder Spieler steht zwischen seinen "
-               "beiden Positionen. Beide: mit und ohne Ball für die ausgewählte Mannschaft."));
+            tr("Combined: Starting XI and B-team side by side, with the selected team on the "
+               "left. On narrow screens only the selected team is shown. Each player sits "
+               "between his two positions. Both: in and out of possession for the selected team."));
         connect(phaseGroup, &QButtonGroup::idClicked, this, [this](int view) {
             m_phaseView = view;
             applyPhaseView();
@@ -256,7 +257,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         bridgeLayout->setContentsMargins(0, 0, 0, 0);
         m_bridgeNote = new QLabel(m_bridgeBar);
         m_bridgeNote->setWordWrap(true);
-        auto *bridgeReset = new QPushButton(tr("Vorschlag wiederherstellen"), m_bridgeBar);
+        auto *bridgeReset = new QPushButton(tr("Restore suggestion"), m_bridgeBar);
         bridgeReset->setCursor(Qt::PointingHandCursor);
         connect(bridgeReset, &QPushButton::clicked, this, [this] {
             saveBridges(m_bridge.tactic, {});
@@ -287,10 +288,10 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
                 row->addWidget(widget, 1);
                 return widget;
             };
-            team.ipColumn = column(ipTitle, ipPitch, tr("Mit Ball"));
-            team.oopColumn = column(oopTitle, oopPitch, tr("Ohne Ball"));
+            team.ipColumn = column(ipTitle, ipPitch, tr("In possession"));
+            team.oopColumn = column(oopTitle, oopPitch, tr("Out of possession"));
             QLabel *combinedTitle = nullptr;
-            team.combinedColumn = column(combinedTitle, team.combined, tr("Kombiniert"));
+            team.combinedColumn = column(combinedTitle, team.combined, tr("Combined"));
             team.combinedColumn->setVisible(false);
             return page;
         };
@@ -298,15 +299,15 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
             makePage(m_xiIpPitch, m_xiPitch, m_xiIpTitle, m_xiTitle, m_teamPages[0]));
         m_teamStack->addWidget(
             makePage(m_bTeamIpPitch, m_bTeamPitch, m_bIpTitle, m_bTitle, m_teamPages[1]));
-        m_teamPages[0].combinedColumn->findChild<QLabel *>()->setText(tr("Startelf · Kombiniert"));
-        m_teamPages[1].combinedColumn->findChild<QLabel *>()->setText(tr("B-Team · Kombiniert"));
+        m_teamPages[0].combinedColumn->findChild<QLabel *>()->setText(tr("Starting XI · Combined"));
+        m_teamPages[1].combinedColumn->findChild<QLabel *>()->setText(tr("B-Team · Combined"));
         // FM24 (one line-up): starting XI and B-team side by side, as in 1.6.2.
         {
             QLabel *xiTitle = nullptr;
             QLabel *bTitle = nullptr;
             m_teamStack->addWidget(
                 makePage(m_singleXiPitch, m_singleBPitch, xiTitle, bTitle, m_teamPages[2]));
-            xiTitle->setText(tr("Startelf"));
+            xiTitle->setText(tr("Starting XI"));
             bTitle->setText(tr("B-Team"));
         }
         tabLayout->addWidget(m_teamStack);
@@ -318,7 +319,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_teamStack->addWidget(combinedPage);
         connect(m_xiButton, &QPushButton::toggled, this, [this] { applyPhaseView(); });
 
-        m_outageBox = new QGroupBox(tr("Kadertiefe: Ausfall in der Startelf"), tab);
+        m_outageBox = new QGroupBox(tr("Squad depth: a starter is missing"), tab);
         auto *outageLayout = new QVBoxLayout(m_outageBox);
         m_outageNote = new QLabel(m_outageBox);
         m_outageNote->setWordWrap(true);
@@ -326,16 +327,16 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         outageLayout->addWidget(m_outageNote);
         m_outageTable = new QTableWidget(m_outageBox);
         m_outageTable->setColumnCount(8);
-        m_outageTable->setHorizontalHeaderLabels({tr("Fällt aus"), tr("Plätze"), tr("Kommt"),
-                                                  tr("Spielt dort"), tr("DWRS"),
-                                                  tr("Elf-Änderung"), tr("Wer übernimmt"),
-                                                  tr("Weitere Umstellungen")});
+        m_outageTable->setHorizontalHeaderLabels({tr("Unavailable"), tr("Places"), tr("Comes on"),
+                                                  tr("Plays at"), tr("DWRS"),
+                                                  tr("XI change"), tr("Who covers"),
+                                                  tr("Other moves")});
         m_outageTable->horizontalHeaderItem(6)->setToolTip(
-            tr("Wer die frei gewordenen Plätze besetzt: der neue Spieler oder ein Mitspieler, "
-               "der dafür umrückt."));
+            tr("Who fills the vacated places: the incoming player or a teammate who moves "
+               "across for it."));
         m_outageTable->horizontalHeaderItem(5)->setToolTip(
-            tr("Wie sich der Wert der ganzen Startelf (Summe der DWRS) gegenüber der gezeigten "
-               "Startelf ändert."));
+            tr("How the value of the whole starting XI (sum of DWRS) changes compared with the "
+               "XI shown."));
         m_outageTable->verticalHeader()->setVisible(false);
         m_outageTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         m_outageTable->setAlternatingRowColors(true);
@@ -347,7 +348,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         m_outageBox->setVisible(false);
         tabLayout->addWidget(m_outageBox);
 
-        m_depthBox = new QGroupBox(tr("Reserveoptionen je Rolle"), tab);
+        m_depthBox = new QGroupBox(tr("Reserve options per role"), tab);
         auto *depthLayout = new QVBoxLayout(m_depthBox);
         m_depthEmpty = new QLabel(m_depthBox);
         m_depthEmpty->setWordWrap(true);
@@ -359,14 +360,14 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         depthRow->setSpacing(24);
         for (int i = 0; i < 2; ++i) {
             auto *column = new QVBoxLayout;
-            m_depthCaptions[i] = new QLabel(i == 0 ? tr("Mit Ball (IP)") : tr("Ohne Ball (OOP)"),
+            m_depthCaptions[i] = new QLabel(i == 0 ? tr("In possession (IP)") : tr("Out of possession (OOP)"),
                                             m_depthBox);
             m_depthCaptions[i]->setObjectName(QStringLiteral("sectionTitle"));
             column->addWidget(m_depthCaptions[i]);
             auto *table = new QTableWidget(m_depthBox);
             table->setColumnCount(5);
             table->setHorizontalHeaderLabels(
-                {tr("Rolle"), tr("Name"), tr("Alter"), tr("DWRS"), tr("Eignung")});
+                {tr("Role"), tr("Name"), tr("Age"), tr("DWRS"), tr("Suitability")});
             table->verticalHeader()->setVisible(false);
             table->setEditTriggers(QAbstractItemView::NoEditTriggers);
             table->setAlternatingRowColors(true);
@@ -383,7 +384,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         depthLayout->addLayout(depthRow);
         tabLayout->addWidget(m_depthBox);
         tabLayout->addStretch(1);
-        m_tabs->addTab(tab, tr("Erste Mannschaft"));
+        m_tabs->addTab(tab, tr("First Team"));
     }
 
     // --- Tab 2: youth & second team ---
@@ -392,14 +393,14 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         auto *tabLayout = new QVBoxLayout(tab);
         auto *pitchRow = new QHBoxLayout;
         auto *secondColumn = new QVBoxLayout;
-        m_secondXiTitle = new QLabel(tr("Zweitteam-XI"), tab);
+        m_secondXiTitle = new QLabel(tr("Second Team XI"), tab);
         m_secondXiTitle->setObjectName(QStringLiteral("sectionTitle"));
         m_secondXiTitle->setAlignment(Qt::AlignHCenter);
         m_secondXiPitch = new TacticPitchWidget(m_theme, tab);
         secondColumn->addWidget(m_secondXiTitle);
         secondColumn->addWidget(m_secondXiPitch, 0, Qt::AlignTop | Qt::AlignHCenter);
         auto *youthColumn = new QVBoxLayout;
-        auto *youthTitle = new QLabel(tr("Jugend-XI"), tab);
+        auto *youthTitle = new QLabel(tr("Youth XI"), tab);
         youthTitle->setObjectName(QStringLiteral("sectionTitle"));
         youthTitle->setAlignment(Qt::AlignHCenter);
         m_youthXiPitch = new TacticPitchWidget(m_theme, tab);
@@ -410,7 +411,7 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
         tabLayout->addLayout(pitchRow);
 
         auto *manageHint = new QLabel(
-            tr("Zum Verwalten dieser Spieler dient Transfers → Leihen & Verkäufe."), tab);
+            tr("Manage these players under Transfers → Loans & Sales."), tab);
         tabLayout->addWidget(manageHint);
 
         const auto makeTable = [tab](const QStringList &headers) {
@@ -425,31 +426,31 @@ BestXiPage::BestXiPage(AppContext &context, ThemeManager &theme, QWidget *parent
             table->horizontalHeader()->setStretchLastSection(true);
             return table;
         };
-        m_loanBox = new QGroupBox(tr("Vielversprechende Talente zum Verleihen "
-                                     "(nach Talent-Score)"),
+        m_loanBox = new QGroupBox(tr("Promising talents to loan out (by "
+                                     "talent score)"),
                                   tab);
         auto *loanLayout = new QVBoxLayout(m_loanBox);
-        m_loanTable = makeTable({tr("Name"), tr("Alter"), tr("Position"), tr("Beste Rolle"),
-                                 tr("Bester DWRS"), tr("Talent"), tr("Ent"), tr("Arb"),
-                                 tr("Transfer"), tr("Leihe")});
+        m_loanTable = makeTable({tr("Name"), tr("Age"), tr("Position"), tr("Best Role"),
+                                 tr("Best DWRS"), tr("Talent"), tr("Det"), tr("Wor"),
+                                 tr("Transfer"), tr("Loan")});
         loanLayout->addWidget(m_loanTable);
         tabLayout->addWidget(m_loanBox);
 
-        m_sellBox = new QGroupBox(tr("Überzählige Spieler für Verkauf / Freigabe"), tab);
+        m_sellBox = new QGroupBox(tr("Surplus players for sale / release"), tab);
         auto *sellLayout = new QVBoxLayout(m_sellBox);
-        m_sellTable = makeTable({tr("Name"), tr("Alter"), tr("Position"), tr("Beste Rolle"),
-                                 tr("Bester DWRS"), tr("Ent"), tr("Arb"), tr("Transfer"),
-                                 tr("Leihe")});
+        m_sellTable = makeTable({tr("Name"), tr("Age"), tr("Position"), tr("Best Role"),
+                                 tr("Best DWRS"), tr("Det"), tr("Wor"), tr("Transfer"),
+                                 tr("Loan")});
         sellLayout->addWidget(m_sellTable);
         tabLayout->addWidget(m_sellBox);
         tabLayout->addStretch(1);
 
-        m_tabs->addTab(tab, tr("Jugend && Zweitteam"));
+        m_tabs->addTab(tab, tr("Youth && Second Team"));
     }
 
     // --- Tab 3: where buying really improves the line-up ---
     m_signingTab = new SigningAdvisorTab(m_context);
-    m_tabs->addTab(m_signingTab, tr("Kaufberatung"));
+    m_tabs->addTab(m_signingTab, tr("Signing Advisor"));
 
     // The main window's tabs choose the view (showSection).
     m_tabs->tabBar()->hide();
@@ -543,7 +544,7 @@ void BestXiPage::showSection(const QString &pageId)
     const bool signing = pageId == QLatin1String("signing_advisor");
     m_tabs->setCurrentIndex(signing ? 2 : pageId == QLatin1String("best_xi_youth") ? 1 : 0);
     m_viewControls->setVisible(m_twoPhase && m_tabs->currentIndex() == 0);
-    m_heading->setText(signing ? tr("Kaufberatung") : tr("Best XI"));
+    m_heading->setText(signing ? tr("Signing Advisor") : tr("Best XI"));
 }
 
 void BestXiPage::releaseStoreRows()
@@ -555,13 +556,12 @@ void BestXiPage::releaseStoreRows()
 
 QString BestXiPage::algorithmHint()
 {
-    return tr("Startelf und B-Team werden gemeinsam als Zuordnungsproblem berechnet, mit der "
-              "Ungarischen Methode (englisch: Hungarian algorithm, Kuhn–Munkres): Spieler werden "
-              "Positionen eins zu eins so zugeordnet, dass die Summe der Bewertungen maximal ist. "
-              "Keine andere Aufstellung hat eine stärkere Startelf, und unter allen gleich starken "
-              "bekommst du das stärkste B-Team — vielseitige Spieler stehen dort, wo ihr Fehlen "
-              "am wenigsten kostet. Grundlage ist der DWRS je Rolle, gewichtet mit Spielzeit und "
-              "natürlicher Position; Hauptrollen werden eingehalten.");
+    return tr("Starting XI and B-team are computed together as an assignment problem with the "
+              "Hungarian algorithm (Kuhn–Munkres): players are assigned to positions one to one so "
+              "that the sum of the ratings is maximal. No other line-up has a stronger starting "
+              "XI, and of all equally strong ones you get the strongest B-team — versatile players "
+              "play where their absence costs least. Based on the DWRS per role, weighted by "
+              "playing time and natural position; primary roles are respected.");
 }
 
 void BestXiPage::refresh()
@@ -583,15 +583,15 @@ void BestXiPage::refresh()
         const QString league = Registration::leagueDisplayName(registration.league);
         const QString cup = Registration::cupDisplayName(registration.league);
         if (Registration::restrictsSquad(registration.league))
-            m_competitionCombo->addItem(tr("%1 (Meldeliste)").arg(league), kLeague);
+            m_competitionCombo->addItem(tr("%1 (squad list)").arg(league), kLeague);
         else
             m_competitionCombo->addItem(
-                tr("%1 (alle Spieler)").arg(league.isEmpty() ? tr("Liga") : league), kLeague);
+                tr("%1 (all players)").arg(league.isEmpty() ? tr("League") : league), kLeague);
         if (registration.uefa)
             m_competitionCombo->addItem(
-                tr("Champions / Europa / Conference League (Liste A + B)"), kUefa);
+                tr("Champions / Europa / Conference League (list A + B)"), kUefa);
         m_competitionCombo->addItem(
-            tr("%1 (alle Spieler)").arg(cup.isEmpty() ? tr("Pokal") : cup), kCup);
+            tr("%1 (all players)").arg(cup.isEmpty() ? tr("Cup") : cup), kCup);
         if (previousCompetition.isValid())
             m_competitionCombo->setCurrentIndex(
                 std::max(0, m_competitionCombo->findData(previousCompetition)));
@@ -718,7 +718,7 @@ void BestXiPage::rebuild()
                 }
                 if (!unregistered.isEmpty()) {
                     if (note)
-                        *note = tr("Nicht registriert, bleiben außen vor: %1")
+                        *note = tr("Not registered, left out: %1")
                                     .arg(unregistered.join(QStringLiteral(", ")));
                     if (pool)
                         *pool = registered;
@@ -754,14 +754,13 @@ void BestXiPage::rebuild()
         }
         if (note) {
             if (leftOut == 0) {
-                *note = tr("Alle Spieler der ersten Mannschaft sind spielberechtigt.");
+                *note = tr("All first-team players are eligible.");
             } else {
-                *note = tr("%1 Spieler der ersten Mannschaft sind nicht gemeldet und bleiben "
-                           "außen vor.")
+                *note = tr("%1 first-team players are not registered and are left out.")
                             .arg(leftOut);
                 if (!missed.isEmpty())
                     *note += QLatin1Char(' ')
-                             + tr("Ohne Meldeliste stünden davon in Startelf oder B-Team: %1")
+                             + tr("Without the squad list these would be in the starting XI or B-team: %1")
                                    .arg(missed.join(QStringLiteral(", ")));
             }
         }
@@ -774,15 +773,15 @@ void BestXiPage::rebuild()
 
     QString note;
     if (listedCompetition && !restricted)
-        note = tr("Für diesen Wettbewerb ist noch keine Meldeliste gespeichert — Best XI "
-                  "rechnet mit allen Spielern. Speichere sie unter Kader → Meldeliste.");
+        note = tr("No squad list saved for this competition yet — Best XI uses all "
+                  "players. Save it under Squad → Squad Registration.");
     SquadResult full;
     std::vector<const Player *> firstPool;
     const SquadResult first =
         firstTeamOf(clubPlayers, secondPlayers, &full, &note, &firstPool);
     if (xiLimit.max > 0) {
         const QString capNote =
-            tr("In der Startelf stehen höchstens %1 Nicht-EU-Spieler (markiert: %2).")
+            tr("At most %1 non-EU players in the starting XI (marked: %2).")
                 .arg(xiLimit.max)
                 .arg(xiLimit.uids.size());
         note = note.isEmpty() ? capNote : note + QLatin1Char(' ') + capNote;
@@ -797,7 +796,7 @@ void BestXiPage::rebuild()
         QString text = note;
         if (xiLimit.max > 0 && capped > xiLimit.max)
             text += QStringLiteral("<br><span style=\"color:#e5484d;\">⚠️ %1</span>")
-                        .arg(tr("%1 Nicht-EU-Spieler in der Startelf, erlaubt sind höchstens %2.")
+                        .arg(tr("%1 non-EU players in the starting XI, at most %2 are allowed.")
                                  .arg(capped)
                                  .arg(xiLimit.max));
         m_registrationNote->setText(text);
@@ -837,12 +836,11 @@ void BestXiPage::rebuild()
     m_teamSwitch->setVisible(twoPhase);
     m_phaseSwitch->setVisible(twoPhase);
     m_twoPhase = twoPhase;
-    m_hintToggle->setText(twoPhase ? tr("So wird aufgestellt") : tr("Beweisbar optimal"));
+    m_hintToggle->setText(twoPhase ? tr("How the team is picked") : tr("Provably optimal"));
     m_hint->setText(twoPhase
-        ? tr("Die Spielerauswahl berücksichtigt beide Phasen, Spielzeit und natürliche Positionen. "
-             "Innerhalb des eingestellten DWRS-Spielraums werden dieselben Spieler so zugeordnet, "
-             "dass zuerst manuelle Seitenwünsche und dann kurze Wege zwischen den Phasen zählen. "
-             "Fest gesetzte Positionen bleiben erhalten.")
+        ? tr("Player selection considers both phases, playing time and natural positions. Within "
+             "the configured DWRS allowance, the same players are assigned by manual side "
+             "preferences first, then short paths between phases. Pinned positions are kept.")
         : algorithmHint());
     m_viewControls->setVisible(twoPhase && m_tabs->currentIndex() == 0);
     applyPhaseView();
@@ -882,7 +880,7 @@ void BestXiPage::rebuild()
         if (!bridges.isEmpty()) {
             const double loss = m_bridge.optimum - m_bridge.current;
             m_bridgeNote->setText(
-                tr("Von Hand angepasst (%n Spieler). DWRS-Änderung gegenüber dem Vorschlag: %1.",
+                tr("Adjusted by hand (%n players). DWRS change from the suggestion: %1.",
                    nullptr, static_cast<int>(bridges.size()))
                     .arg(QLocale().toString(std::abs(loss) < 1e-9 ? 0.0 : -loss, 'f', 3)));
             m_bridgeBar->setVisible(true);
@@ -903,8 +901,8 @@ void BestXiPage::rebuild()
                 if (!it->isFilled())
                     continue;
                 const auto pair = squad.slotsOfUid.value(it->playerUid);
-                texts.insert(it.key(), ipSide ? tr("ohne: %1").arg(pair.second)
-                                              : tr("mit: %1").arg(pair.first));
+                texts.insert(it.key(), ipSide ? tr("OOP: %1").arg(pair.second)
+                                              : tr("IP: %1").arg(pair.first));
             }
             return texts;
         };
@@ -953,9 +951,9 @@ void BestXiPage::rebuild()
         m_pitchTeams.insert(m_bTeamPitch, {squad.bTeamOop, lineUps.oop, lineUps.oopOrder, m_bTeamIpPitch, false});
         m_valueOfUid = squad.valueOfUid;
         m_phaseNote->setText(
-            tr("%1 % mit Ball · %2 % ohne Ball. Innerhalb des DWRS-Spielraums gelten zuerst "
-               "manuelle Seitenpräferenzen, dann kurze Wege. Rechtsklick zum Verschieben.\n"
-               "DWRS-Änderung durch die Zuordnung: Startelf %3 · B-Team %4. Spielraum je Mannschaft: %5.")
+            tr("%1 % in possession · %2 % out of possession. Within the DWRS allowance, manual side "
+               "preferences come first, then short paths. Right-click to move.\n"
+               "DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team: %5.")
                 .arg(share).arg(100 - share)
                 .arg(QLocale().toString(std::abs(squad.startingBridgeLoss) < 1e-9 ? 0.0 : -squad.startingBridgeLoss, 'f', 3))
                 .arg(QLocale().toString(std::abs(squad.bTeamBridgeLoss) < 1e-9 ? 0.0 : -squad.bTeamBridgeLoss, 'f', 3))
@@ -976,8 +974,8 @@ void BestXiPage::rebuild()
                         twoPhase ? m_bridge.bridges : Bridges(), xiLimit),
                     twoPhase);
     m_secondXiTitle->setText(secondClub.isEmpty()
-                                 ? tr("Zweitteam-XI (aus Überschuss des Hauptvereins)")
-                                 : tr("Zweitteam-XI (%1)").arg(secondClub));
+                                 ? tr("Second Team XI (from main club surplus)")
+                                 : tr("Second Team XI (%1)").arg(secondClub));
     m_secondXiPitch->setTeam(dev.secondTeamXi, positions, layout, roleNames);
     m_youthXiPitch->setTeam(dev.youthXi, positions, layout, roleNames);
 
@@ -1026,10 +1024,10 @@ void BestXiPage::applyPhaseView()
             m_combinedLayout->addWidget(m_phaseView == InPossession
                 ? m_teamPages[t].ipColumn : m_teamPages[t].oopColumn, 1);
     }
-    m_xiIpTitle->setText(tr("Startelf") + QStringLiteral(" · ") + tr("Mit Ball"));
-    m_bIpTitle->setText(tr("B-Team") + QStringLiteral(" · ") + tr("Mit Ball"));
-    m_xiTitle->setText(tr("Startelf") + QStringLiteral(" · ") + tr("Ohne Ball"));
-    m_bTitle->setText(tr("B-Team") + QStringLiteral(" · ") + tr("Ohne Ball"));
+    m_xiIpTitle->setText(tr("Starting XI") + QStringLiteral(" · ") + tr("In possession"));
+    m_bIpTitle->setText(tr("B-Team") + QStringLiteral(" · ") + tr("In possession"));
+    m_xiTitle->setText(tr("Starting XI") + QStringLiteral(" · ") + tr("Out of possession"));
+    m_bTitle->setText(tr("B-Team") + QStringLiteral(" · ") + tr("Out of possession"));
     m_teamStack->setCurrentIndex(!m_twoPhase ? 2 : m_phaseView == BothPhases ? selected : 3);
     m_combinedLayout->insertWidget(0, m_teamPages[selected].combinedColumn, 1);
     // FM24 page (index 2) always shows both teams side by side.
@@ -1090,23 +1088,23 @@ void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, int
                 continue;
             const QString current = ipPhase ? mine.first : mine.second;
             QMenu *sub = menu.addMenu(ipPhase
-                                          ? tr("↔ Platz mit Ball ändern (jetzt %1)").arg(current)
-                                          : tr("↔ Platz ohne Ball ändern (jetzt %1)").arg(current));
+                                          ? tr("↔ Change in-possession place (now %1)").arg(current)
+                                          : tr("↔ Change out-of-possession place (now %1)").arg(current));
             const QList<BridgeOption> options = m_context.squadBuilder().bridgeOptions(
                 state.pool, state.tactic, m_context.ratings(), state.share, state.bridges, uid,
                 ipPhase);
             if (options.isEmpty()) {
-                sub->addAction(tr("Kein anderer Platz möglich (Position fehlt)"))
+                sub->addAction(tr("No other place possible (position missing)"))
                     ->setEnabled(false);
             } else {
-                auto *caption = sub->addAction(tr("Platz · Tausch mit · DWRS-Punkte der Elf"));
+                auto *caption = sub->addAction(tr("Place · swap with · DWRS points of the XI"));
                 caption->setEnabled(false);
                 sub->addSeparator();
             }
             for (const BridgeOption &option : options) {
                 const QString text =
                     option.swapUid.isEmpty()
-                        ? tr("%1 (frei) · %2").arg(option.slot, delta(option.total - state.current))
+                        ? tr("%1 (free) · %2").arg(option.slot, delta(option.total - state.current))
                         : tr("%1 · %2 · %3")
                               .arg(option.slot, nameOf(option.swapUid),
                                    delta(option.total - state.current));
@@ -1119,7 +1117,7 @@ void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, int
             }
         }
         if (state.bridges.contains(uid)) {
-            menu.addAction(tr("↺ %1 wieder dem Analyzer überlassen").arg(nameOf(uid)), this,
+            menu.addAction(tr("↺ Leave %1 to the analyzer again").arg(nameOf(uid)), this,
                            [this, uid, tactic = state.tactic] {
                                Bridges bridges = loadBridges(tactic);
                                bridges.remove(uid);
@@ -1128,7 +1126,7 @@ void BestXiPage::showBridgeMenu(const QString &uid, const QPoint &globalPos, int
                            });
         }
         if (!state.bridges.isEmpty()) {
-            menu.addAction(tr("↺ Vorschlag des Analyzers wiederherstellen (%1)")
+            menu.addAction(tr("↺ Restore the analyzer's suggestion (%1)")
                                .arg(delta(state.optimum - state.current)),
                            this, [this, tactic = state.tactic] {
                                saveBridges(tactic, {});
@@ -1158,22 +1156,22 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
                           m_theme.text().name());
     const double xiLoss = roundDwrs(total(allFit.startingXi) - total(withoutInjured.startingXi));
     const double bLoss = roundDwrs(total(allFit.bTeam) - total(withoutInjured.bTeam));
-    QString text = (m_planInjuredCheck->isChecked() ? tr("Trotz Verletzung eingeplant: %1.")
-                                                    : tr("Nicht eingeplant: %1."))
+    QString text = (m_planInjuredCheck->isChecked() ? tr("Planned in despite injury: %1.")
+                                                    : tr("Not planned in: %1."))
                        .arg(names.join(QStringLiteral(", ")));
     if (xiLoss == 0 && bLoss == 0)
-        text += QLatin1Char(' ') + tr("Startelf und B-Team bleiben gleich stark.");
+        text += QLatin1Char(' ') + tr("Starting XI and B-team stay just as strong.");
     else
         text += QLatin1Char(' ')
-                + tr("Der Kader gleicht das so aus — Startelf %1, B-Team %2 DWRS-Punkte "
-                     "(Summe über alle Positionen):")
+                + tr("This is how the squad makes up for it — starting XI %1, B-team %2 "
+                     "DWRS points (sum over all positions):")
                       .arg(xiLoss > 0 ? QStringLiteral("−%1").arg(formatDwrs(xiLoss))
                                       : QStringLiteral("±0"))
                       .arg(bLoss > 0 ? QStringLiteral("−%1").arg(formatDwrs(bLoss))
                                      : bLoss < 0 ? QStringLiteral("+%1").arg(formatDwrs(-bLoss))
                                                  : QStringLiteral("±0"));
     m_injuryNote->setText(text);
-    m_injuryBox->setTitle(tr("Langzeitverletzt (%1)").arg(injured.size()));
+    m_injuryBox->setTitle(tr("Long-term injured (%1)").arg(injured.size()));
 
     struct Change {
         QString team;
@@ -1219,7 +1217,7 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
                 changes.append({team, left.at(i).first, left.at(i).second, joined.at(i)});
         }
     };
-    collect(tr("Startelf"), allFit.startingXi, withoutInjured.startingXi);
+    collect(tr("Starting XI"), allFit.startingXi, withoutInjured.startingXi);
     collect(tr("B-Team"), allFit.bTeam, withoutInjured.bTeam);
 
     // Visible before filling, so the columns are measured with the final style.
@@ -1228,7 +1226,7 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
     m_injuryTable->clearContents();
     m_injuryTable->setRowCount(static_cast<int>(changes.size()));
     const auto playerItem = [](const XiCell &cell) {
-        auto *item = new QTableWidgetItem(cell.isFilled() ? cell.name : tr("— unbesetzt —"));
+        auto *item = new QTableWidgetItem(cell.isFilled() ? cell.name : tr("— unfilled —"));
         item->setData(Qt::UserRole, cell.playerUid);
         return item;
     };
@@ -1252,7 +1250,7 @@ void BestXiPage::fillInjuryBox(const std::vector<const Player *> &injured,
         auto *before = playerItem(change.before);
         if (const Player *p = m_context.store().findByUid(change.before.playerUid);
             p && p->longTermInjured)
-            before->setText(tr("%1 (verletzt)").arg(before->text()));
+            before->setText(tr("%1 (injured)").arg(before->text()));
         m_injuryTable->setItem(row, 3, before);
         m_injuryTable->setItem(row, 4, dwrsItem(change.before));
         m_injuryTable->setItem(row, 5, playerItem(change.after));
@@ -1300,7 +1298,7 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
         table->setItem(row, column++, nameItem);
         table->setItem(row, column++,
                        new NumericItem(QString::number(player->age), player->age));
-        table->setItem(row, column++, new QTableWidgetItem(player->positionRaw));
+        table->setItem(row, column++, new QTableWidgetItem(GameTerms::positions(player->positionRaw)));
         table->setItem(row, column++,
                        new QTableWidgetItem(bestRole.isEmpty()
                                                 ? QStringLiteral("–")
@@ -1338,9 +1336,9 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
         table->setItem(row, column++, attrItem(Attr::Determination));
         table->setItem(row, column++, attrItem(Attr::WorkRate));
         table->setItem(row, column++,
-                       new QTableWidgetItem(player->transferStatus ? tr("ja") : tr("nein")));
+                       new QTableWidgetItem(player->transferStatus ? tr("yes") : tr("no")));
         table->setItem(row, column++,
-                       new QTableWidgetItem(player->loanStatus ? tr("ja") : tr("nein")));
+                       new QTableWidgetItem(player->loanStatus ? tr("yes") : tr("no")));
         ++row;
     }
     table->setSortingEnabled(true);
@@ -1354,7 +1352,7 @@ void BestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>> &option
 
     if (options.isEmpty()) {
         m_depthEmpty->setText(
-            tr("Keine weiteren Spieler als Tiefen-Optionen für diese Taktik geeignet."));
+            tr("No further players suitable as depth options for this tactic."));
         m_depthEmpty->setVisible(true);
         for (int i = 0; i < 2; ++i) {
             m_depthTables[i]->setVisible(false);
@@ -1391,8 +1389,8 @@ void BestXiPage::fillDepthTable(const QHash<QString, QList<DepthOption>> &option
             // In the split view the phase is in the caption; drop the suffix.
             QString roleName = roleNames.value(role, role);
             if (twoPhase) {
-                roleName.remove(QStringLiteral(" (IP)"));
-                roleName.remove(QStringLiteral(" (OOP)"));
+                roleName.remove(QStringLiteral(" (%1)").arg(Definitions::phaseTag(QStringLiteral("ip"))));
+                roleName.remove(QStringLiteral(" (%1)").arg(Definitions::phaseTag(QStringLiteral("oop"))));
             }
             for (const DepthOption &option : options.value(role)) {
                 int column = 0;

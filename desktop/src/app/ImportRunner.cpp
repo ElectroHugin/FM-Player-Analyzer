@@ -2,6 +2,7 @@
 
 #include "core/RatingsUpdater.h"
 #include "core/Fm27SaveImport.h"
+#include "core/GameLanguage.h"
 
 #include "AppContext.h"
 #include "widgets/BusyProgressDialog.h"
@@ -19,8 +20,8 @@ namespace fm {
 namespace {
 
 // Translation context "ImportRunner" for this free-function module. A plain
-// helper taking a const char* hid every string from lupdate, so the English
-// UI showed them in German.
+// helper taking a const char* hid every string from lupdate, so they were
+// never translated.
 struct ImportText {
     Q_DECLARE_TR_FUNCTIONS(ImportRunner)
 };
@@ -30,7 +31,7 @@ struct ImportText {
 void runImportPipeline(AppContext &context, QWidget *parent, const QString &filePath,
                        bool autoAssign, std::function<void(ImportPipelineResult)> onDone)
 {
-    auto *dialog = new BusyProgressDialog(ImportText::tr("Import wird vorbereitet…"), parent);
+    auto *dialog = new BusyProgressDialog(ImportText::tr("Preparing import…"), parent);
     dialog->setMinimumWidth(420);
 
     // Snapshot everything the worker needs; it opens its own DB connection.
@@ -40,6 +41,7 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
     request.backupsDir = context.paths().backupsDir();
     request.autoAssign = autoAssign;
     request.fmVersionId = context.fmVersionId();
+    request.gameLanguage = context.gameLanguage();
     // A save game (.fm) is filtered on the worker by the save's masking option.
     Fm27SaveImport::setAttributeMasking(context.config().attributeMasking());
     const Definitions *definitions = &context.definitions();
@@ -58,29 +60,29 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
         int percent = 0;
         switch (s) {
         case ImportPipeline::Stage::Backup:
-            text = ImportText::tr("Backup wird erstellt…");
+            text = ImportText::tr("Creating backup…");
             percent = 2;
             break;
         case ImportPipeline::Stage::Parse:
-            text = ImportText::tr("Datei wird analysiert…");
+            text = ImportText::tr("Analyzing file…");
             percent = scaled(5, 10);
             break;
         case ImportPipeline::Stage::Import:
-            text = ImportText::tr("Spieler werden importiert… (%1/%2)").arg(done).arg(total);
+            text = ImportText::tr("Importing players… (%1/%2)").arg(done).arg(total);
             percent = scaled(15, 40);
             break;
         case ImportPipeline::Stage::AutoAssign:
-            text = ImportText::tr("Rollen werden automatisch zugewiesen…");
+            text = ImportText::tr("Assigning roles automatically…");
             percent = 58;
             break;
         case ImportPipeline::Stage::Dwrs:
             text = RatingsUpdater::savingPhase(done, total)
-                       ? ImportText::tr("DWRS-Bewertungen werden gespeichert…")
-                       : ImportText::tr("DWRS-Bewertungen werden berechnet…");
+                       ? ImportText::tr("Saving DWRS ratings…")
+                       : ImportText::tr("Calculating DWRS ratings…");
             percent = scaled(62, 36);
             break;
         case ImportPipeline::Stage::Finalize:
-            text = ImportText::tr("Ergebnis wird vorbereitet…");
+            text = ImportText::tr("Preparing results…");
             percent = 99;
             break;
         }
@@ -136,27 +138,31 @@ void runImportPipeline(AppContext &context, QWidget *parent, const QString &file
 QStringList importSummaryLines(const ImportPipelineResult &result)
 {
     QStringList summary;
-    summary << ImportText::tr("%1 Spieler importiert (davon %2 neu).")
+    summary << ImportText::tr("%1 players imported (%2 of them new).")
                    .arg(result.import.playersImported)
                    .arg(result.import.newPlayers);
     summary << (result.import.fullUpload
-                    ? ImportText::tr("Komplett-Export: Spieler, die fehlen, altern um einen "
-                                     "Export.")
-                    : ImportText::tr("Teil-Export: nur die enthaltenen Spieler wurden "
-                                     "aufgefrischt, niemand altert."));
+                    ? ImportText::tr("Full export: players missing from it age by one "
+                                     "export.")
+                    : ImportText::tr("Partial export: only the players it contains "
+                                     "were refreshed, nobody ages."));
     if (!result.import.expiredU21Names.isEmpty())
-        summary << ImportText::tr("Jetzt 22, manuelle U21-Einstufung aufgehoben (braucht einen "
-                                  "Registrierungsplatz): %1")
+        summary << ImportText::tr("Now 22, manual U21 decision lifted (needs a registration "
+                                  "slot): %1")
                        .arg(result.import.expiredU21Names.join(QStringLiteral(", ")));
     if (!result.autoAssignedUids.isEmpty())
-        summary << ImportText::tr("%1 Spielern wurden automatisch Rollen zugewiesen.")
+        summary << ImportText::tr("Roles were assigned automatically to %1 players.")
                        .arg(result.autoAssignedUids.size());
     if (result.recalcRan && result.recalc.success)
-        summary << ImportText::tr("DWRS: %1 Bewertungen berechnet, %2 geänderte Einträge gespeichert.")
+        summary << ImportText::tr("DWRS: %1 ratings calculated, %2 changed entries saved.")
                        .arg(result.recalc.computed)
                        .arg(result.recalc.inserted);
+    if (!result.import.gameLanguage.isEmpty()
+        && result.import.gameLanguage != QLatin1String("en"))
+        summary << ImportText::tr("Export read in the game language %1.")
+                       .arg(GameLanguage::nativeName(result.import.gameLanguage));
     if (result.import.gameDate.isValid())
-        summary << ImportText::tr("Ingame-Datum %1: Verlauf für %2 Spieler erfasst.")
+        summary << ImportText::tr("In-game date %1: history recorded for %2 players.")
                        .arg(QLocale().toString(result.import.gameDate, QLocale::ShortFormat))
                        .arg(result.import.snapshots);
     return summary;
@@ -166,48 +172,56 @@ QStringList importWarningLines(const ImportPipelineResult &result)
 {
     QStringList warnings;
     if (!result.backupError.isEmpty())
-        warnings << ImportText::tr("Backup fehlgeschlagen: %1").arg(result.backupError);
+        warnings << ImportText::tr("Backup failed: %1").arg(result.backupError);
     if (result.import.malformedRows > 0)
-        warnings << ImportText::tr("%1 fehlerhafte Zeile(n) übersprungen (Zellenzahl passte nicht "
-                             "zur Kopfzeile). Exportiere die Datei ggf. neu aus FM.")
+        warnings << ImportText::tr("%1 malformed row(s) skipped (cell count did not match the "
+                             "header). Re-export the file from FM if needed.")
                         .arg(result.import.malformedRows);
     if (result.import.emptyUidRows > 0)
-        warnings << ImportText::tr("%1 Zeile(n) ohne UID übersprungen.")
+        warnings << ImportText::tr("%1 row(s) without UID skipped.")
                         .arg(result.import.emptyUidRows);
     if (!result.import.duplicateUidNames.isEmpty())
-        warnings << ImportText::tr("Doppelte UIDs in der Datei — nur die letzte Zeile wurde "
-                             "übernommen: %1")
+        warnings << ImportText::tr("Duplicate UIDs in the file — only the last row was "
+                             "used: %1")
                         .arg(result.import.duplicateUidNames.mid(0, 10)
                                  .join(QStringLiteral(", ")));
+    const QString configured = result.configuredGameLanguage;
+    const QString detected = result.import.detectedGameLanguage;
+    if (!detected.isEmpty() && !configured.isEmpty()
+        && configured != QLatin1String(GameLanguage::kAuto) && configured != detected)
+        warnings << ImportText::tr("The column headers are in %1, but the game language of this "
+                                   "save is set to %2. The export was read as %1. Set the game "
+                                   "language to %1 or to Automatic in Settings → Import.")
+                        .arg(GameLanguage::nativeName(detected),
+                             GameLanguage::nativeName(configured));
     if (!result.import.unknownColumns.isEmpty())
-        warnings << ImportText::tr("Unbekannte Spalten (werden ignoriert): %1")
+        warnings << ImportText::tr("Unknown columns (ignored): %1")
                         .arg(result.import.unknownColumns.join(QStringLiteral(", ")));
     if (!result.import.missingColumns.isEmpty())
-        warnings << ImportText::tr("Fehlende Spalten (diese Werte werden nicht aktualisiert): %1. "
-                                   "Nimm sie ggf. in die Exportansicht in FM auf.")
+        warnings << ImportText::tr("Missing columns (these values are not updated): %1. Add them "
+                                   "to the export view in FM if needed.")
                         .arg(result.import.missingColumns.join(QStringLiteral(", ")));
     if (!result.import.idNameConflicts.isEmpty())
-        warnings << ImportText::tr("ID/Namens-Konflikt übersprungen: %1. Eine numerische UID "
-                             "entspricht einer bekannten Newgen-ID, aber die Namen "
-                             "unterscheiden sich.")
+        warnings << ImportText::tr("ID/name conflict skipped: %1. A numeric UID matches a "
+                             "known newgen ID, but the names differ.")
                         .arg(result.import.idNameConflicts.mid(0, 10)
                                  .join(QStringLiteral("; ")));
     if (!result.import.identityChanges.isEmpty())
-        warnings << ImportText::tr("Name unter bekannter UID geändert: %1. FM hat die ID evtl. an "
-                             "einen neuen Newgen vergeben — zugewiesene Rollen und "
-                             "DWRS-Historie gehören ggf. noch zum alten Spieler.")
+        warnings << ImportText::tr("Name changed under a known UID: %1. FM may have reissued the "
+                             "ID to a new newgen — assigned roles and DWRS history may "
+                             "still belong to the old player.")
                         .arg(result.import.identityChanges.mid(0, 10)
                                  .join(QStringLiteral("; ")));
     if (!result.autoAssignError.isEmpty())
-        warnings << ImportText::tr("Automatische Rollen-Zuweisung fehlgeschlagen: %1")
+        warnings << ImportText::tr("Automatic role assignment failed: %1")
                         .arg(result.autoAssignError);
     if (!result.unratedColumns.isEmpty())
-        warnings << ImportText::tr("Das Bewertungsprofil nutzt Spalten, die in dieser Ansicht fehlen: %1. "
-                                   "Die Bewertungen beruhen auf den übrigen Attributen; nimm die Spalten "
-                                   "in die Exportansicht in FM auf.")
+        warnings << ImportText::tr("The rating profile uses columns that are missing from this view: %1. "
+                                   "Ratings are based on the remaining attributes; add the columns to the "
+                                   "export view in FM.")
                         .arg(result.unratedColumns.join(QStringLiteral(", ")));
     if (result.recalcRan && !result.recalc.success)
-        warnings << ImportText::tr("DWRS-Berechnung fehlgeschlagen: %1").arg(result.recalc.error);
+        warnings << ImportText::tr("DWRS calculation failed: %1").arg(result.recalc.error);
     return warnings;
 }
 
@@ -218,33 +232,35 @@ QString importErrorText(const ImportError &error)
     case ImportErrorCode::Other:
         break;
     case ImportErrorCode::FileOpen:
-        return ImportText::tr("Datei konnte nicht geöffnet werden: %1").arg(error.arg);
+        return ImportText::tr("File could not be opened: %1").arg(error.arg);
     case ImportErrorCode::UnsupportedFormat:
-        return ImportText::tr("Diese FM-Version kann keine %1-Dateien importieren.")
+        return ImportText::tr("This FM version cannot import %1 files.")
             .arg(error.arg.toUpper());
     case ImportErrorCode::NoTable:
-        return ImportText::tr("Kein <table>-Element in der Datei gefunden.");
+        return ImportText::tr("No <table> element found in the file.");
     case ImportErrorCode::NoHeaderCells:
-        return ImportText::tr("Die erste Tabellenzeile enthält keine Spaltenköpfe (<th>).");
+        return ImportText::tr("The first table row contains no column headers (<th>).");
     case ImportErrorCode::NoHeaderRow:
-        return ImportText::tr("Keine Kopfzeile in der Datei gefunden.");
+        return ImportText::tr("No header row found in the file.");
     case ImportErrorCode::TooFewColumns:
-        return ImportText::tr("Zu wenige Spalten (%1), erwartet werden mindestens 10.")
+        return ImportText::tr("Too few columns (%1), at least 10 are expected.")
             .arg(error.arg);
     case ImportErrorCode::RequiredColumnMissing:
-        return ImportText::tr("Pflichtspalte '%1' nicht gefunden.").arg(error.arg);
+        return ImportText::tr("Required column '%1' not found.").arg(error.arg);
     case ImportErrorCode::NoImportableRows:
-        return ImportText::tr("Keine importierbaren Zeilen gefunden (allen Zeilen fehlte die UID).");
+        return ImportText::tr("No importable rows found (every row was missing the UID).");
     case ImportErrorCode::NotSingleRow:
-        return ImportText::tr("Die Datei muss genau EINEN Spieler enthalten, gefunden wurden "
-                              "%1 Zeilen.")
+        return ImportText::tr("The file must contain exactly ONE player, but %1 rows were "
+                              "found.")
             .arg(error.arg);
     case ImportErrorCode::TargetNotFound:
-        return ImportText::tr("Zielspieler %1 nicht gefunden.").arg(error.arg);
+        return ImportText::tr("Target player %1 not found.").arg(error.arg);
     case ImportErrorCode::SaveUnreadable:
-        return ImportText::tr("Der Spielstand konnte nicht gelesen werden. Wenn das Spiel gerade "
-                              "speichert, warte kurz und versuche es noch einmal. Nach einem "
-                              "FM-Patch braucht der Analyzer eventuell ein Update.\n\nDetails: %1")
+        return ImportText::tr("The save could not be read. If the game is saving right now, wait "
+                              "a moment and try again. After an FM patch the analyzer may need "
+                              "an update.\n"
+                              "\n"
+                              "Details: %1")
             .arg(error.arg);
     }
     return error.message;

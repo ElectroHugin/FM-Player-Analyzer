@@ -1,4 +1,5 @@
 #include "RegistrationPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 
 #include "../AppContext.h"
@@ -8,6 +9,7 @@
 #include "core/Constants.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QApplication>
 #include <QComboBox>
@@ -118,24 +120,24 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     headLayout->setContentsMargins(18, 14, 18, 6);
     headLayout->setSpacing(8);
     headLayout->addWidget(
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Meldeliste")), head));
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Squad Registration")), head));
     m_controls = new QWidget(head);
     auto *controlsLayout = new QVBoxLayout(m_controls);
     controlsLayout->setContentsMargins(0, 0, 0, 0);
     controlsLayout->setSpacing(8);
     auto *competitionRow = new QHBoxLayout;
-    competitionRow->addWidget(new QLabel(tr("Wettbewerb:"), m_controls));
+    competitionRow->addWidget(new QLabel(tr("Competition:"), m_controls));
     m_competitionCombo = new QComboBox(m_controls);
     m_competitionCombo->setMinimumWidth(260);
     competitionRow->addWidget(m_competitionCombo);
     competitionRow->addStretch(1);
-    m_adoptButton = new QPushButton(tr("Empfehlung übernehmen"), m_controls);
-    m_adoptButton->setToolTip(tr("Setzt die Häkchen auf den Vorschlag des Assistenten."));
+    m_adoptButton = new QPushButton(tr("Apply recommendation"), m_controls);
+    m_adoptButton->setToolTip(tr("Sets the ticks to the assistant's proposal."));
     competitionRow->addWidget(m_adoptButton);
-    m_saveButton = new QPushButton(tr("Meldeliste speichern"), m_controls);
+    m_saveButton = new QPushButton(tr("Save squad list"), m_controls);
     m_saveButton->setToolTip(
-        tr("Speichert die angehakten Spieler als gemeldete Liste dieses Wettbewerbs. Best XI "
-           "nutzt sie, und spätere Änderungen (Transfers, neue Markierungen) werden sichtbar."));
+        tr("Saves the ticked players as this competition's registered list. Best XI uses it, "
+           "and later changes (transfers, new markers) become visible."));
     competitionRow->addWidget(m_saveButton);
     controlsLayout->addLayout(competitionRow);
 
@@ -156,27 +158,27 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
         return spin;
     };
     m_wageBudgetSpin = makeMoneySpin(
-        tr("kein Limit"),
-        tr("Höchstsumme der Gehälter aller gemeldeten Spieler, wie die Liga sie vorgibt "
-           "(z. B. LaLiga). Ändert sich der Betrag im Spiel, hier einfach anpassen. "
-           "Der Vorschlag meldet zuerst die Spieler mit zugesagter Spielzeit (Star, "
-           "wichtiger Spieler, Stammspieler, Stammtorhüter) und verteilt den Rest so, dass "
-           "Startelf, B-Team und Kadertiefe möglichst stark bleiben. 0 = kein Limit."));
+        tr("no limit"),
+        tr("Maximum total wages of all registered players, as set by the league (e.g. "
+           "LaLiga). If the amount changes in the game, just adjust it here. The proposal "
+           "registers the players with promised playing time first (star, important "
+           "player, regular starter, first-choice goalkeeper) and spends the rest so that "
+           "the starting XI, B team and depth stay as strong as possible. 0 = no limit."));
     m_minWageSpin = makeMoneySpin(
-        tr("keins"), tr("Spieler mit weniger Gehalt dürfen nicht gemeldet werden. 0 = keins."));
+        tr("none"), tr("Players earning less may not be registered. 0 = none."));
     m_wagePeriodCombo = new QComboBox(m_wageRow);
-    m_wagePeriodCombo->addItem(tr("pro Woche"),
+    m_wagePeriodCombo->addItem(tr("per week"),
                                Registration::wagePeriodKey(Registration::WagePeriod::Week));
-    m_wagePeriodCombo->addItem(tr("pro Monat"),
+    m_wagePeriodCombo->addItem(tr("per month"),
                                Registration::wagePeriodKey(Registration::WagePeriod::Month));
-    m_wagePeriodCombo->addItem(tr("pro Jahr"),
+    m_wagePeriodCombo->addItem(tr("per year"),
                                Registration::wagePeriodKey(Registration::WagePeriod::Year));
     m_wagePeriodCombo->setToolTip(
-        tr("Zeitraum, auf den sich beide Beträge beziehen — so, wie das Spiel sie anzeigt."));
-    wageLayout->addWidget(new QLabel(tr("Gehaltsbudget:"), m_wageRow));
+        tr("Period both amounts refer to, as the game shows them."));
+    wageLayout->addWidget(new QLabel(tr("Wage budget:"), m_wageRow));
     wageLayout->addWidget(m_wageBudgetSpin);
     wageLayout->addSpacing(12);
-    wageLayout->addWidget(new QLabel(tr("Mindestgehalt:"), m_wageRow));
+    wageLayout->addWidget(new QLabel(tr("Minimum wage:"), m_wageRow));
     wageLayout->addWidget(m_minWageSpin);
     wageLayout->addWidget(m_wagePeriodCombo);
     wageLayout->addStretch(1);
@@ -204,14 +206,14 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
 
     // Leagues without a squad list (e.g. Bundesliga): tick who is registered;
     // Best XI and the overview leave the others out.
-    m_registeredBox = new QGroupBox(tr("Für die Liga registriert"), content);
+    m_registeredBox = new QGroupBox(tr("Registered for the league"), content);
     auto *registeredLayout = new QVBoxLayout(m_registeredBox);
     m_registeredSummary = new QLabel(m_registeredBox);
     m_registeredSummary->setWordWrap(true);
     registeredLayout->addWidget(m_registeredSummary);
     m_registeredTable = new QTableWidget(0, 5, m_registeredBox);
     m_registeredTable->setHorizontalHeaderLabels(
-        {tr("Registriert"), tr("Name"), tr("Alter"), tr("Position"), tr("Mannschaft")});
+        {tr("Registered"), tr("Name"), tr("Age"), tr("Position"), tr("Team")});
     m_registeredTable->verticalHeader()->setVisible(false);
     m_registeredTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_registeredTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -235,7 +237,7 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
             PlayerRegistration r = player->registration;
             r.leagueBlocked = !registered;
             if (!m_context.setPlayerRegistration(uid, r))
-                QMessageBox::critical(this, tr("Registrierung"), m_context.database().errorString());
+                QMessageBox::critical(this, tr("Registration"), m_context.database().errorString());
         });
     });
     PlayerActions::attachToTableWidget(m_context, m_registeredTable);
@@ -248,9 +250,9 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     auto *changesLayout = new QHBoxLayout(m_changesBox);
     m_changesLabel = new QLabel(m_changesBox);
     m_changesLabel->setWordWrap(true);
-    m_ackButton = new QPushButton(tr("Gesehen"), m_changesBox);
+    m_ackButton = new QPushButton(tr("Got it"), m_changesBox);
     m_ackButton->setToolTip(
-        tr("Nimmt den aktuellen Stand als neuen Vergleichspunkt, ohne die Liste zu speichern."));
+        tr("Takes the current state as the new reference without saving the list."));
     changesLayout->addWidget(m_changesLabel, 1);
     changesLayout->addWidget(m_ackButton, 0, Qt::AlignTop);
     layout->addWidget(m_changesBox);
@@ -268,11 +270,10 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     layout->addWidget(m_warningLabel);
 
     m_usageHint = new QLabel(
-        tr("Setze das Häkchen bei jedem Spieler, den du im Spiel wirklich gemeldet hast, und "
-           "speichere die Liste — Best XI rechnet dann mit ihr. Vorbelegt ist die Empfehlung, "
-           "nach dem Speichern deine Liste. Orange markiert: Häkchen und Empfehlung weichen ab. "
-           "Sortieren: Klick auf einen Spaltenkopf (Standard: Position, vom Tor zum Sturm, "
-           "rechts vor links)."),
+        tr("Tick every player you have actually registered in the game and save the list — Best "
+           "XI then works with it. The ticks start as the recommendation, after saving they "
+           "show your list. Orange: tick and recommendation differ. Sort: click a column header "
+           "(default: position, goalkeeper to striker, right before left)."),
         content);
     m_usageHint->setWordWrap(true);
     m_usageHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -281,10 +282,10 @@ RegistrationPage::RegistrationPage(AppContext &context, QWidget *parent)
     const auto makeTable = [this](QGroupBox *box) {
         auto *table = new QTableWidget(box);
         table->setColumnCount(ColCount);
-        table->setHorizontalHeaderLabels({tr("Gemeldet"), tr("Empfehlung"), tr("Name"),
-                                          tr("Alter"), tr("Position"), tr("Ausbildung"),
-                                          tr("Bedarf"), tr("DWRS"), tr("Gehalt"),
-                                          tr("Hinweis")});
+        table->setHorizontalHeaderLabels({tr("Registered", "registration list"), tr("Recommendation"), tr("Name"),
+                                          tr("Age"), tr("Position"), tr("Training status"),
+                                          tr("Need"), tr("DWRS"), tr("Wage"),
+                                          tr("Note")});
         table->verticalHeader()->setVisible(false);
         table->setEditTriggers(QAbstractItemView::NoEditTriggers);
         table->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -397,7 +398,7 @@ void RegistrationPage::refresh()
     if (Registration::restrictsSquad(settings.league))
         m_competitionCombo->addItem(Registration::leagueDisplayName(settings.league), kLeague);
     if (settings.uefa)
-        m_competitionCombo->addItem(tr("Champions / Europa / Conference League (Liste A)"),
+        m_competitionCombo->addItem(tr("Champions / Europa / Conference League (List A)"),
                                     kUefa);
     m_competitionCombo->setCurrentIndex(std::max(0, m_competitionCombo->findData(previous)));
     m_updating = false;
@@ -409,15 +410,14 @@ void RegistrationPage::refresh()
     if (settings.league != Registration::LeagueRules::None
         && !Registration::restrictsSquad(settings.league)) {
         const QString league = Registration::leagueDisplayName(settings.league);
-        noListNote = tr("%1 hat keine Meldeliste: Bis zu 99 Spieler sind spielberechtigt. "
-                        "Nimm unten den Haken bei Spielern raus, die im Spiel nicht registriert "
-                        "sind.")
+        noListNote = tr("%1 has no squad list: up to 99 players are eligible. Untick the "
+                        "players below who are not registered in the game.")
                          .arg(league);
         if (settings.league == Registration::LeagueRules::Ligue1)
             noListNote += QLatin1Char(' ')
-                          + tr("Die einzige Grenze sind höchstens 4 Nicht-EU-Spieler im Kader. "
-                               "Sie entscheidet sich bei Transfers, nicht bei der Meldung, "
-                               "deshalb behalte sie dort im Blick.");
+                          + tr("The only limit is at most 4 non-EU players in the squad. That "
+                               "is decided by transfers, not by registration, so keep an eye "
+                               "on it there.");
     }
     m_registeredBox->setVisible(!Registration::restrictsSquad(settings.league)
                                 && !userClub.isEmpty());
@@ -433,20 +433,20 @@ void RegistrationPage::refresh()
         releaseStoreRows();
         const QString versionId = m_context.fmVersionId();
         if (settings.active()) {
-            m_hint->setText(tr("Bitte wähle zuerst deinen Verein (Übersicht oder Einstellungen)."));
+            m_hint->setText(tr("Please choose your club first (Overview or Settings)."));
         } else if (Registration::leagueRulesFor(versionId).isEmpty()
                    && !Registration::uefaRulesFor(versionId)) {
             m_hint->setText(
-                tr("Für %1 sind noch keine Registrierungsregeln hinterlegt. Die Meldeliste "
-                   "steht für diese Version noch nicht zur Verfügung.")
+                tr("No registration rules are stored for %1 yet. The squad list is not "
+                   "available for this version yet.")
                     .arg(fmDataVersion(versionId).displayName));
         } else if (!noListNote.isEmpty()) {
             m_hint->setText(noListNote);
         } else {
             m_hint->setText(
-                tr("Hier stellst du die Meldeliste für Liga und Europapokal zusammen. "
-                   "Schalte dazu zuerst die Registrierungsregeln ein: Einstellungen → "
-                   "Meldeliste."));
+                tr("Build your squad list for league and European competitions here. "
+                   "First switch on the registration rules: Settings → Squad "
+                   "Registration."));
         }
         return;
     }
@@ -454,13 +454,14 @@ void RegistrationPage::refresh()
     const Registration::Competition comp = competition();
     m_pool = pool();
     m_tactics = rankingTactics(&m_tacticFallback);
-    m_currency.clear();
+    // Currency of the imported wages; amounts are shown in the display currency.
+    m_currency = QStringLiteral("EUR");
     for (const Player *p : m_pool) {
-        for (const QChar c : {QChar(0x20AC), QChar(0x00A3), QChar(u'$')})
-            if (p->wageRaw.contains(c))
-                m_currency = c;
-        if (!m_currency.isEmpty())
+        const QString code = Currency::ofText(p->wageRaw, QString());
+        if (!code.isEmpty()) {
+            m_currency = code;
             break;
+        }
     }
     loadWageFields();
     m_wageRow->setVisible(comp == Registration::Competition::League
@@ -474,11 +475,11 @@ void RegistrationPage::refresh()
     QApplication::restoreOverrideCursor();
 
     m_hint->setText(
-        tr("Pool: Erste Mannschaft + Zweitteam (%1 Spieler, ohne Retired). Rangfolge aus "
-           "Startelf, B-Team und Kadertiefe von: %2. Markierungen änderst du per Rechtsklick "
-           "→ Registrierung — der Vorschlag rechnet sofort neu.")
+        tr("Pool: first team + second team (%1 players, retired excluded). Ranking from "
+           "starting XI, B-team and squad depth of: %2. Change markers via right-click → "
+           "Registration — the proposal recalculates immediately.")
             .arg(m_pool.size())
-            .arg(m_tactics.isEmpty() ? tr("keine Taktik vorhanden")
+            .arg(m_tactics.isEmpty() ? tr("no tactic available")
                                      : m_tactics.join(QStringLiteral(", ")))
         + (noListNote.isEmpty() ? QString() : QStringLiteral("<br>") + noListNote));
 
@@ -545,7 +546,7 @@ void RegistrationPage::fillRegisteredTable()
         name->setData(Qt::UserRole, p->uid);
         m_registeredTable->setItem(row, 1, name);
         m_registeredTable->setItem(row, 2, new NumericItem(QString::number(p->age), p->age));
-        m_registeredTable->setItem(row, 3, new QTableWidgetItem(p->positionRaw));
+        m_registeredTable->setItem(row, 3, new QTableWidgetItem(GameTerms::positions(p->positionRaw)));
         m_registeredTable->setItem(row, 4, new QTableWidgetItem(p->club));
         if (p->registration.leagueBlocked)
             missing << p->name;
@@ -553,9 +554,9 @@ void RegistrationPage::fillRegisteredTable()
             ++registered;
     }
     m_updating = false;
-    QString summary = tr("%1 von %2 Spielern registriert.").arg(registered).arg(players.size());
+    QString summary = tr("%1 of %2 players registered.").arg(registered).arg(players.size());
     if (!missing.isEmpty())
-        summary += QLatin1Char(' ') + tr("Best XI und Übersicht lassen weg: %1")
+        summary += QLatin1Char(' ') + tr("Best XI and Overview leave out: %1")
                                           .arg(missing.join(QStringLiteral(", ")));
     m_registeredSummary->setText(summary);
 }
@@ -566,21 +567,21 @@ void RegistrationPage::fillTables()
     const auto reasonText = [](Registration::LeftOutReason reason) {
         switch (reason) {
         case Registration::LeftOutReason::NonHomeGrownFull:
-            return tr("Nicht-HG-Quote voll");
+            return tr("Non-HG quota full");
         case Registration::LeftOutReason::NonClubTrainedFull:
-            return tr("nur noch Club-Grown-Plätze frei");
+            return tr("only club-grown places left");
         case Registration::LeftOutReason::BelowMinWage:
-            return tr("unter Mindestgehalt");
+            return tr("below minimum wage");
         case Registration::LeftOutReason::WageBudgetFull:
-            return tr("über dem Gehaltsbudget");
+            return tr("over the wage budget");
         case Registration::LeftOutReason::NonEuFull:
-            return tr("Nicht-EU-Plätze voll");
+            return tr("non-EU places full");
         case Registration::LeftOutReason::Blocked:
-            return tr("als nicht registrierbar markiert");
+            return tr("marked as cannot be registered");
         case Registration::LeftOutReason::ListFull:
             break;
         }
-        return tr("Liste voll");
+        return tr("List full");
     };
 
     std::vector<Row> rows;
@@ -622,13 +623,13 @@ void RegistrationPage::fillTables()
     fillTable(m_outfieldTable, outfield);
     m_updating = false;
 
-    const QString exemptLabel = uefa ? tr("Liste B") : youthName(m_quota);
+    const QString exemptLabel = uefa ? tr("List B") : youthName(m_quota);
     for (QTableWidget *table : {m_keeperTable, m_outfieldTable}) {
         table->horizontalHeaderItem(ColListed)->setToolTip(
-            tr("Im Spiel gemeldet. '%1' ist ohne Platz spielberechtigt.").arg(exemptLabel));
+            tr("Registered in the game. '%1' is eligible without a slot.").arg(exemptLabel));
     }
-    m_keeperBox->setTitle(tr("Torhüter (%1)").arg(keepers.size()));
-    m_outfieldBox->setTitle(tr("Feldspieler (%1)").arg(outfield.size()));
+    m_keeperBox->setTitle(tr("Goalkeepers (%1)").arg(keepers.size()));
+    m_outfieldBox->setTitle(tr("Outfield players (%1)").arg(outfield.size()));
     m_keeperBox->setVisible(!keepers.empty());
     m_outfieldBox->setVisible(!outfield.empty());
 }
@@ -640,27 +641,27 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         QString text;
         switch (Registration::category(p)) {
         case Registration::Category::ClubTrained:
-            text = tr("Club-Grown");
+            text = tr("Club-grown");
             break;
         case Registration::Category::HomeGrown:
-            text = tr("Home-Grown");
+            text = tr("Home-grown");
             break;
         case Registration::Category::NonHomeGrown:
-            text = tr("Nicht-HG");
+            text = tr("Non-HG");
             break;
         }
         if (Registration::countsAsNonEu(p, m_quota))
-            text += QStringLiteral(" · ") + tr("Nicht-EU");
+            text += QStringLiteral(" · ") + tr("Non-EU");
         return text;
     };
     const auto tierText = [](Registration::Tier tier) {
         switch (tier) {
         case Registration::Tier::StartingXi:
-            return tr("Startelf");
+            return tr("Starting XI");
         case Registration::Tier::BTeam:
-            return tr("B-Team");
+            return tr("B-team");
         case Registration::Tier::Depth:
-            return tr("Kadertiefe");
+            return tr("Squad depth");
         case Registration::Tier::Reserve:
             break;
         }
@@ -670,13 +671,13 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
     const auto adviceText = [uefa, youth](Advice advice) {
         switch (advice) {
         case Advice::List:
-            return tr("✅ Melden");
+            return tr("✅ Register");
         case Advice::Exempt:
-            return uefa ? tr("🆓 Liste B") : QStringLiteral("🆓 ") + youth;
+            return uefa ? tr("🆓 List B") : QStringLiteral("🆓 ") + youth;
         case Advice::LeaveOut:
             break;
         }
-        return tr("❌ Nicht melden");
+        return tr("❌ Leave out");
     };
 
     // Filling an auto-sorting table would re-sort on every cell.
@@ -689,14 +690,14 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
 
         auto *listedItem = new ListedItem;
         if (entry.advice == Advice::Exempt) {
-            listedItem->setText(uefa ? tr("Liste B") : youth);
+            listedItem->setText(uefa ? tr("List B") : youth);
             listedItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-            listedItem->setToolTip(tr("Ohne Platz auf der Meldeliste spielberechtigt."));
+            listedItem->setToolTip(tr("Eligible without a slot on the squad list."));
         } else if (!m_checkableUids.contains(p.uid)) {
-            listedItem->setText(tr("gesperrt"));
+            listedItem->setText(tr("blocked"));
             listedItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-            listedItem->setToolTip(tr("Als nicht registrierbar markiert. Aufheben per "
-                                      "Rechtsklick → Registrierung."));
+            listedItem->setToolTip(tr("Marked as cannot be registered. Undo via "
+                                      "right-click → Registration."));
         } else {
             listedItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable
                                  | Qt::ItemIsUserCheckable);
@@ -710,7 +711,7 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         nameItem->setData(Qt::UserRole, p.uid);
         table->setItem(row, ColName, nameItem);
         table->setItem(row, ColAge, new NumericItem(QString::number(p.age), p.age));
-        table->setItem(row, ColPosition, new NumericItem(p.positionRaw, entry.order));
+        table->setItem(row, ColPosition, new NumericItem(GameTerms::positions(p.positionRaw), entry.order));
         table->setItem(row, ColCategory, new QTableWidgetItem(categoryText(p)));
         table->setItem(row, ColNeed,
                        new NumericItem(tierText(entry.entry.tier),
@@ -724,23 +725,23 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         }
         table->setItem(row, ColDwrs, dwrsItem);
         table->setItem(row, ColWage,
-                       new NumericItem(p.wageRaw, wageToWeekly(p.wageRaw)));
+                       new NumericItem(Currency::displayText(p.wageRaw), wageToWeekly(p.wageRaw)));
         QStringList notes;
         if (!entry.note.isEmpty())
             notes << entry.note;
         if (m_lostExempt.contains(p.uid))
-            notes.prepend(uefa ? tr("⚠️ nicht mehr Liste B – braucht einen Platz")
-                               : tr("⚠️ kein %1 mehr – braucht einen Platz").arg(youth));
+            notes.prepend(uefa ? tr("⚠️ no longer list B – needs a slot")
+                               : tr("⚠️ no longer %1 – needs a slot").arg(youth));
         if (m_gainedExempt.contains(p.uid))
-            notes.prepend(uefa ? tr("jetzt Liste B") : tr("jetzt %1").arg(youth));
+            notes.prepend(uefa ? tr("now list B") : tr("now %1").arg(youth));
         if (youthUncertain(p, uefa, m_quota))
-            notes << tr("%1 unklar").arg(uefa ? QStringLiteral("U21") : youth);
+            notes << tr("%1 unclear").arg(uefa ? QStringLiteral("U21") : youth);
         if (entry.advice == Advice::List && m_quota.wageBudget > 0.0
             && Registration::hasPromisedPlayingTime(p))
-            notes << tr("Spielzeit zugesagt");
+            notes << tr("playing time promised");
         if (entry.advice != Advice::Exempt && Registration::belowMinWage(p, m_quota)
             && entry.note.isEmpty())
-            notes << tr("unter Mindestgehalt");
+            notes << tr("below minimum wage");
         table->setItem(row, ColNote, new QTableWidgetItem(notes.join(QStringLiteral(" · "))));
         ++row;
     }
@@ -841,40 +842,40 @@ void RegistrationPage::updateSelection()
                       : text;
     };
     QStringList parts;
-    parts << marked(tr("<b>Meldeliste:</b> %1 / %2").arg(check.size).arg(m_quota.maxSize),
+    parts << marked(tr("<b>Squad list:</b> %1 / %2").arg(check.size).arg(m_quota.maxSize),
                     check.tooMany);
-    parts << marked(tr("Nicht-HG %1 / %2").arg(check.nonHomeGrown).arg(m_quota.maxNonHomeGrown),
+    parts << marked(tr("Non-HG %1 / %2").arg(check.nonHomeGrown).arg(m_quota.maxNonHomeGrown),
                     check.tooManyNonHomeGrown);
-    parts << tr("Home-Grown %1").arg(check.homeGrownOnly);
-    parts << marked(tr("Club-Grown %1").arg(check.clubTrained), check.tooManyNonClubTrained);
+    parts << tr("Home-grown %1").arg(check.homeGrownOnly);
+    parts << marked(tr("Club-grown %1").arg(check.clubTrained), check.tooManyNonClubTrained);
     parts << marked(
-        tr("Torhüter %1 (min. %2)").arg(check.goalkeepers).arg(m_quota.minGoalkeepers),
+        tr("Goalkeepers %1 (min. %2)").arg(check.goalkeepers).arg(m_quota.minGoalkeepers),
         check.tooFewGoalkeepers);
     if (m_quota.maxNonEu > 0)
-        parts << marked(tr("Nicht-EU %1 / %2").arg(check.nonEu).arg(m_quota.maxNonEu),
+        parts << marked(tr("Non-EU %1 / %2").arg(check.nonEu).arg(m_quota.maxNonEu),
                         check.tooManyNonEu);
     if (m_quota.wageBudget > 0.0)
-        parts << marked(tr("Gehälter %1 / %2")
+        parts << marked(tr("Wages %1 / %2")
                             .arg(moneyText(check.totalWage), moneyText(m_quota.wageBudget)),
                         check.overWageBudget);
     else if (!uefa)
-        parts << tr("Gehälter %1").arg(moneyText(check.totalWage));
-    parts << (uefa ? tr("<b>Liste B</b> (ohne Platz): %1 Spieler")
-                   : tr("<b>%1</b> (ohne Platz): %2 Spieler").arg(youthName(m_quota)))
+        parts << tr("Wages %1").arg(moneyText(check.totalWage));
+    parts << (uefa ? tr("<b>List B</b> (no place needed): %1 players")
+                   : tr("<b>%1</b> (no place needed): %2 players").arg(youthName(m_quota)))
                  .arg(exempt.size());
     m_countsLabel->setText(parts.join(QStringLiteral(" · ")));
 
     // --- Saved list and recommendation ---
     QStringList lines;
     if (m_savedUids.isEmpty()) {
-        lines << (asProposed ? tr("Noch keine Meldeliste gespeichert — die Häkchen entsprechen "
-                                  "der Empfehlung.")
-                             : tr("Noch keine Meldeliste gespeichert."));
+        lines << (asProposed ? tr("No squad list saved yet — the ticks match the "
+                                  "recommendation.")
+                             : tr("No squad list saved yet."));
     } else if (m_checkedUids == m_savedUids) {
-        lines << tr("Entspricht der gespeicherten Meldeliste.");
+        lines << tr("Matches the saved squad list.");
     } else {
-        lines << tr("Ungespeicherte Änderungen gegenüber der gespeicherten Liste: <b>%1</b> neu "
-                    "gemeldet, <b>%2</b> abgemeldet.")
+        lines << tr("Unsaved changes compared with the saved list: <b>%1</b> newly registered, "
+                    "<b>%2</b> deregistered.")
                      .arg((m_checkedUids - m_savedUids).size())
                      .arg((m_savedUids - m_checkedUids).size());
     }
@@ -882,9 +883,9 @@ void RegistrationPage::updateSelection()
         const QSet<QString> missing = m_proposedUids - m_checkedUids;
         const QSet<QString> extra = m_checkedUids - m_proposedUids;
         if (!missing.isEmpty())
-            lines << tr("Empfohlen, aber nicht gemeldet: %1").arg(namesOf(missing));
+            lines << tr("Recommended but not registered: %1").arg(namesOf(missing));
         if (!extra.isEmpty())
-            lines << tr("Gemeldet, aber nicht empfohlen: %1").arg(namesOf(extra));
+            lines << tr("Registered but not recommended: %1").arg(namesOf(extra));
     }
     m_summaryLabel->setText(lines.join(QStringLiteral("<br>")));
 
@@ -897,43 +898,43 @@ void RegistrationPage::updateSelection()
     for (const auto &cost : costs) {
         const int before = static_cast<int>(std::lround(cost.unrestricted));
         const int after = static_cast<int>(std::lround(cost.registered));
-        costLines << tr("%1: Ø Startelf-DWRS %2 → %3 (%4)")
+        costLines << tr("%1: avg. starting XI DWRS %2 → %3 (%4)")
                          .arg(cost.tactic)
                          .arg(before)
                          .arg(after)
-                         .arg(after - before >= 0 ? tr("keine Einbuße")
+                         .arg(after - before >= 0 ? tr("no loss")
                                                   : QString::number(after - before));
     }
-    m_costLabel->setText(tr("Kosten der Registrierung (ohne Regeln → mit Meldeliste):")
+    m_costLabel->setText(tr("Cost of registration (without rules → with squad list):")
                          + QStringLiteral("<br>") + costLines.join(QStringLiteral("<br>")));
 
     // --- Warnings ---
     QStringList warnings;
     if (m_tacticFallback)
-        warnings << tr("Keine Lieblingstaktik gesetzt — Rangfolge aus '%1'. Lege sie unter "
-                       "Einstellungen → Verein fest.")
+        warnings << tr("No favorite tactic set — ranking from '%1'. Set them under "
+                       "Settings → Club.")
                         .arg(m_tactics.value(0));
     if (check.tooMany)
-        warnings << tr("Zu viele Spieler gemeldet: %1 (höchstens %2).")
+        warnings << tr("Too many players registered: %1 (at most %2).")
                         .arg(check.size)
                         .arg(m_quota.maxSize);
     if (check.tooManyNonHomeGrown)
-        warnings << tr("Zu viele Nicht-Home-Grown gemeldet: %1 (höchstens %2).")
+        warnings << tr("Too many non-home-grown players registered: %1 (at most %2).")
                         .arg(check.nonHomeGrown)
                         .arg(m_quota.maxNonHomeGrown);
     if (check.tooManyNonClubTrained)
-        warnings << tr("Zu viele Spieler ohne Club-Grown gemeldet: %1 (höchstens %2).")
+        warnings << tr("Too many players who are not club-grown registered: %1 (at most %2).")
                         .arg(check.nonHomeGrown + check.homeGrownOnly)
                         .arg(m_quota.maxNonClubTrained);
     if (check.overWageBudget)
-        warnings << tr("Gehaltsbudget überschritten: %1 (höchstens %2).")
+        warnings << tr("Wage budget exceeded: %1 (at most %2).")
                         .arg(moneyText(check.totalWage), moneyText(m_quota.wageBudget));
     if (check.tooManyNonEu)
-        warnings << tr("Zu viele Nicht-EU-Spieler gemeldet: %1 (höchstens %2).")
+        warnings << tr("Too many non-EU players registered: %1 (at most %2).")
                         .arg(check.nonEu)
                         .arg(m_quota.maxNonEu);
     if (check.belowMinWage > 0)
-        warnings << tr("Gemeldet, aber unter dem Mindestgehalt von %1: %2 Spieler.")
+        warnings << tr("Registered although below the minimum wage of %1: %2 players.")
                         .arg(moneyText(m_quota.minWage))
                         .arg(check.belowMinWage);
     const int freeSlots = m_quota.maxSize - check.size;
@@ -944,23 +945,23 @@ void RegistrationPage::updateSelection()
     if (freeSlots > 0 && asProposed) {
         QString why;
         if (budgetBound)
-            why = tr("das Gehaltsbudget reicht für keinen weiteren Spieler (%1 frei).")
+            why = tr("the wage budget does not cover another player (%1 left).")
                       .arg(moneyText(std::max(0.0, m_quota.wageBudget - check.totalWage)));
         else if (check.nonHomeGrown >= m_quota.maxNonHomeGrown
             && check.nonHomeGrown + check.homeGrownOnly >= m_quota.maxNonClubTrained)
-            why = tr("nur Club-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.");
+            why = tr("only club-grown players may take them, and there are no more.");
         else if (check.nonHomeGrown >= m_quota.maxNonHomeGrown)
-            why = tr("nur Home-Grown-Spieler dürften sie belegen, und es gibt keine weiteren.");
+            why = tr("only home-grown players may take them, and there are no more.");
         else if (m_quota.maxNonEu > 0 && check.nonEu >= m_quota.maxNonEu)
-            why = tr("nur EU-Spieler dürften sie belegen, und es gibt keine weiteren.");
+            why = tr("only EU players could take them, and there are no more.");
         else
-            why = tr("es gibt keine weiteren Spieler im Pool.");
-        warnings << tr("%1 Plätze bleiben frei: %2").arg(freeSlots).arg(why);
+            why = tr("there are no more players in the pool.");
+        warnings << tr("%1 places stay empty: %2").arg(freeSlots).arg(why);
     } else if (freeSlots > 0) {
-        warnings << tr("%1 Plätze sind noch frei.").arg(freeSlots);
+        warnings << tr("%1 places are still free.").arg(freeSlots);
     }
     if (check.tooFewGoalkeepers)
-        warnings << tr("Nur %1 Torhüter gemeldet (gewünscht: %2).")
+        warnings << tr("Only %1 goalkeepers registered (wanted: %2).")
                         .arg(check.goalkeepers)
                         .arg(m_quota.minGoalkeepers);
     QStringList uncertain;
@@ -969,14 +970,14 @@ void RegistrationPage::updateSelection()
             uncertain << p->name;
     if (!uncertain.isEmpty()) {
         if (!uefa && m_quota.youth == Registration::YouthRule::U18Eu)
-            warnings << tr("U18 EU unklar (Stichtag 1. Januar je nach Geburtstag und "
-                           "Ingame-Datum, keine EU-Nationalität erkannt oder Alter unbekannt), "
-                           "zählt vorsichtshalber als nicht befreit: %1. Per Rechtsklick → "
-                           "Registrierung festlegen.")
+            warnings << tr("U18 EU unclear (cut-off 1 January depending on birthday and "
+                           "in-game date, no EU nationality recognised, or age unknown), "
+                           "counts as needing a slot to be safe: %1. Set it via right-click → "
+                           "Registration.")
                             .arg(uncertain.join(QStringLiteral(", ")));
         else
-            warnings << tr("U21 unklar (Alter 21 oder unbekannt), zählt vorsichtshalber als "
-                           "nicht U21: %1. Per Rechtsklick → Registrierung festlegen.")
+            warnings << tr("U21 unclear (age 21 or unknown), counted as not U21 to be safe: "
+                           "%1. Set it via right-click → Registration.")
                             .arg(uncertain.join(QStringLiteral(", ")));
     }
     // Saved entries without a checkbox any more: sold, retired, or now exempt.
@@ -986,8 +987,8 @@ void RegistrationPage::updateSelection()
             gone << p->name;
     if (!gone.isEmpty()) {
         gone.sort();
-        warnings << tr("Steht noch auf der gespeicherten Liste, braucht aber keinen Platz mehr "
-                       "oder ist nicht mehr im Kader — wird beim Speichern entfernt: %1")
+        warnings << tr("Still on the saved list but no longer needs a slot or has left the "
+                       "squad — removed on saving: %1")
                         .arg(gone.join(QStringLiteral(", ")));
     }
     m_warningLabel->setText(warnings.isEmpty()
@@ -1010,9 +1011,12 @@ void RegistrationPage::loadWageFields()
     m_wagePeriodCombo->setCurrentIndex(std::max(
         0, m_wagePeriodCombo->findData(Registration::wagePeriodKey(Registration::wagePeriodFromKey(
                db.setting(QStringLiteral("registration_wage_period")))))));
-    m_wageBudgetSpin->setValue(db.setting(QStringLiteral("registration_wage_budget")).toDouble());
-    m_minWageSpin->setValue(db.setting(QStringLiteral("registration_min_wage")).toDouble());
-    const QString prefix = m_currency.isEmpty() ? QString() : m_currency + QLatin1Char(' ');
+    // Stored in the currency of the wages, entered in the display currency.
+    m_wageBudgetSpin->setValue(std::round(Currency::toDisplay(
+        db.setting(QStringLiteral("registration_wage_budget")).toDouble(), m_currency)));
+    m_minWageSpin->setValue(std::round(Currency::toDisplay(
+        db.setting(QStringLiteral("registration_min_wage")).toDouble(), m_currency)));
+    const QString prefix = Currency::symbol() + QLatin1Char(' ');
     m_wageBudgetSpin->setPrefix(prefix);
     m_minWageSpin->setPrefix(prefix);
 }
@@ -1020,8 +1024,10 @@ void RegistrationPage::loadWageFields()
 void RegistrationPage::saveWageFields()
 {
     Database &db = m_context.database();
-    const auto amount = [](const QDoubleSpinBox *spin) {
-        return spin->value() > 0.0 ? QString::number(spin->value(), 'f', 0) : QString();
+    const auto amount = [this](const QDoubleSpinBox *spin) {
+        return spin->value() > 0.0
+                   ? QString::number(Currency::fromDisplay(spin->value(), m_currency), 'f', 0)
+                   : QString();
     };
     db.setSetting(QStringLiteral("registration_wage_budget"), amount(m_wageBudgetSpin));
     db.setSetting(QStringLiteral("registration_min_wage"), amount(m_minWageSpin));
@@ -1035,23 +1041,6 @@ QString RegistrationPage::moneyText(double weekly) const
     const Registration::WagePeriod period =
         Registration::wagePeriodFromKey(m_wagePeriodCombo->currentData().toString());
     const double value = weekly * Registration::weeksPer(period);
-    const auto trimmed = [](double v, int decimals) {
-        QString t = QString::number(v, 'f', decimals);
-        if (t.contains(QLatin1Char('.'))) {
-            while (t.endsWith(QLatin1Char('0')))
-                t.chop(1);
-            if (t.endsWith(QLatin1Char('.')))
-                t.chop(1);
-        }
-        return t;
-    };
-    QString number;
-    if (value >= 1e6)
-        number = trimmed(value / 1e6, 2) + QStringLiteral("M");
-    else if (value >= 1e3)
-        number = trimmed(value / 1e3, 1) + QStringLiteral("K");
-    else
-        number = QString::number(qRound(value));
     QString unit;
     switch (period) {
     case Registration::WagePeriod::Week:
@@ -1064,7 +1053,7 @@ QString RegistrationPage::moneyText(double weekly) const
         unit = QStringLiteral(" p/a");
         break;
     }
-    return m_currency + number + unit;
+    return Currency::format(Currency::toDisplay(value, m_currency)) + unit;
 }
 
 void RegistrationPage::saveList()
@@ -1080,9 +1069,9 @@ void RegistrationPage::saveList()
     const Registration::ListCheck check = Registration::checkList(listed, exempt, m_quota);
     if ((check.tooMany || check.tooManyNonHomeGrown || check.tooManyNonClubTrained
          || check.overWageBudget || check.belowMinWage > 0)
-        && QMessageBox::question(this, tr("Registrierung"),
-                                 tr("Die Auswahl verletzt die Registrierungsregeln (siehe "
-                                    "Warnungen). Trotzdem speichern?"))
+        && QMessageBox::question(this, tr("Registration"),
+                                 tr("The selection breaks the registration rules (see "
+                                    "warnings). Save anyway?"))
                != QMessageBox::Yes)
         return;
 
@@ -1098,12 +1087,12 @@ void RegistrationPage::saveList()
         ids << player.id;
     }
     if (changes.empty()) {
-        QMessageBox::information(this, tr("Registrierung"),
-                                 tr("Die gespeicherte Meldeliste ist bereits aktuell."));
+        QMessageBox::information(this, tr("Registration"),
+                                 tr("The saved squad list is already up to date."));
         return;
     }
     if (!m_context.database().setRegistrations(changes)) {
-        QMessageBox::critical(this, tr("Registrierung"), m_context.database().errorString());
+        QMessageBox::critical(this, tr("Registration"), m_context.database().errorString());
         return;
     }
     const int count = static_cast<int>(m_checkedUids.size());
@@ -1111,8 +1100,8 @@ void RegistrationPage::saveList()
     // The saved list is the new reference for later changes.
     storeExemptSnapshot(comp, currentExempt());
     m_context.refreshPlayers(ids); // re-reads the rows and refreshes the pages
-    QMessageBox::information(this, tr("Registrierung"),
-                             tr("Meldeliste gespeichert (%1 Spieler).").arg(count));
+    QMessageBox::information(this, tr("Registration"),
+                             tr("Squad list saved (%1 players).").arg(count));
 }
 
 QSet<QString> RegistrationPage::exemptSnapshot(Registration::Competition competition) const
@@ -1174,7 +1163,7 @@ QSet<QString> RegistrationPage::currentExempt() const
 void RegistrationPage::updateChanges()
 {
     const bool uefa = competition() == Registration::Competition::Uefa;
-    const QString exemptLabel = uefa ? tr("Liste B") : youthName(m_quota);
+    const QString exemptLabel = uefa ? tr("List B") : youthName(m_quota);
     const auto namesOf = [this](const QSet<QString> &uids) {
         QStringList names;
         for (const Player *p : m_pool)
@@ -1190,22 +1179,23 @@ void RegistrationPage::updateChanges()
         for (const QString &uid : m_lostExempt)
             if (!m_checkedUids.contains(uid))
                 unticked << uid;
-        lines << tr("<b>Braucht jetzt einen Platz</b> (kein %1 mehr): %2")
+        lines << tr("<b>Needs a slot now</b> (no longer %1): %2")
                      .arg(exemptLabel, namesOf(m_lostExempt));
         if (!unticked.isEmpty())
-            lines << tr("Ohne Häkchen nicht spielberechtigt: anmelden und dafür jemand anderen "
-                        "streichen, oder bewusst draußen lassen.");
+            lines << tr("Not eligible without a tick: register and drop someone else instead, "
+                        "or leave out on purpose.");
     }
     if (!m_gainedExempt.isEmpty())
-        lines << tr("<b>Jetzt ohne Platz spielberechtigt</b> (%1): %2 — dadurch werden Plätze frei.")
+        lines << tr("<b>Now eligible without a slot</b> (%1): %2 — this frees up slots.")
                      .arg(exemptLabel, namesOf(m_gainedExempt));
     if (lines.isEmpty()) {
         m_changesBox->hide();
         return;
     }
-    lines << tr("Die Empfehlung rechnet das schon ein. Wo Häkchen und Empfehlung "
-                "auseinanderliegen, ist die Empfehlung in der Tabelle orange markiert.");
-    m_changesLabel->setText(tr("🔔 <b>Seit dem letzten Speichern geändert</b>") + QStringLiteral("<br>")
+    lines << tr("The recommendation already accounts for this. Where tick and "
+                "recommendation differ, the recommendation is marked orange in the "
+                "table.");
+    m_changesLabel->setText(tr("🔔 <b>Changed since the last save</b>") + QStringLiteral("<br>")
                             + lines.join(QStringLiteral("<br>")));
     m_changesBox->show();
 }
@@ -1228,8 +1218,8 @@ void RegistrationPage::markAdviceMismatches()
             if (checkable && ticked != advised) {
                 advice->setBackground(QColor(QStringLiteral("#e67e22")));
                 advice->setForeground(QColorConstants::Black);
-                advice->setToolTip(ticked ? tr("Gemeldet, aber nicht empfohlen")
-                                          : tr("Empfohlen, aber nicht gemeldet"));
+                advice->setToolTip(ticked ? tr("Registered, but not recommended")
+                                          : tr("Recommended, but not registered"));
             } else {
                 advice->setBackground(QBrush());
                 advice->setForeground(QBrush());

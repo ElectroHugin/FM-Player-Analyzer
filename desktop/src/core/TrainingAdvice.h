@@ -73,7 +73,7 @@ struct AgeWindows;
 TrainingProfile standardProfile(const AgeWindows &windows);
 
 Group groupOf(const QString &attrName);
-QString groupName(Group group); // German label for the UI
+QString groupName(Group group); // English label (debug output)
 double devFactor(Group group, int age, const AgeWindows &windows);
 
 struct Recommendation {

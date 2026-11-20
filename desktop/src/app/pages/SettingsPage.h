@@ -43,8 +43,8 @@ public:
     void refresh() override;
     bool confirmLeave() override;
 
-    // Opens a section by its German title (screenshot tour); false if unknown.
-    bool openSettingsSection(const QString &germanTitle);
+    // Opens a section by its id, e.g. "dwrs_weights" (screenshot tour); false if unknown.
+    bool openSettingsSection(const QString &sectionId);
 
 signals:
     void recalcRequested(); // weights changed or asked for -> MainWindow runs the recalc
@@ -68,12 +68,12 @@ private:
     QHash<QString, QJsonObject> m_personalityRoots;
     QWidget *buildThemePage();
     QWidget *buildDatabasePage();
-    void addSection(const QString &groupTitle, const QString &title, const char *germanTitle,
+    void addSection(const QString &groupTitle, const QString &title, const char *sectionId,
                     QWidget *page);
 
     QListWidget *m_nav = nullptr;
     QStackedWidget *m_stack = nullptr;
-    QHash<QString, int> m_sectionRows; // German title -> nav row
+    QHash<QString, int> m_sectionRows; // section id -> nav row
     QString m_currentNavGroup;
     QLabel *m_footerScope = nullptr;
     void saveAll();
@@ -147,6 +147,7 @@ private:
     QComboBox *m_fmVersionCombo = nullptr;
     QLabel *m_weightsVersionLabel = nullptr;
     QLineEdit *m_importDirEdit = nullptr; // app-wide (config.ini), not per save
+    QComboBox *m_gameLanguageCombo = nullptr; // per save: language of HTML/CSV exports
     QComboBox *m_userClubCombo = nullptr;
     QComboBox *m_secondClubCombo = nullptr;
     QLineEdit *m_clubCountryEdit = nullptr;

@@ -26,14 +26,14 @@ MigrationWizard::MigrationWizard(AppContext &context, QWidget *parent)
     : QDialog(parent)
     , m_context(context)
 {
-    setWindowTitle(tr("Legacy-Datenbank importieren"));
+    setWindowTitle(tr("Import Legacy Database"));
     setMinimumSize(640, 480);
 
     auto *layout = new QVBoxLayout(this);
 
     auto *intro = new QLabel(
-        tr("Importiert eine Datenbank der alten Streamlit-Version in das neue Format.\n"
-           "Die Originaldatei wird dabei nicht verändert."),
+        tr("Imports a database from the old Streamlit version into the new format.\n"
+           "The original file is not modified."),
         this);
     intro->setWordWrap(true);
     layout->addWidget(intro);
@@ -41,18 +41,18 @@ MigrationWizard::MigrationWizard(AppContext &context, QWidget *parent)
     auto *form = new QFormLayout;
     auto *sourceRow = new QHBoxLayout;
     m_sourceEdit = new QLineEdit(this);
-    m_sourceEdit->setPlaceholderText(tr("Pfad zur alten .db-Datei…"));
-    auto *browse = new QPushButton(tr("Durchsuchen…"), this);
+    m_sourceEdit->setPlaceholderText(tr("Path to the old .db file…"));
+    auto *browse = new QPushButton(tr("Browse…"), this);
     sourceRow->addWidget(m_sourceEdit, 1);
     sourceRow->addWidget(browse);
-    form->addRow(tr("Legacy-Datenbank:"), sourceRow);
+    form->addRow(tr("Legacy Database:"), sourceRow);
 
     m_targetNameEdit = new QLineEdit(this);
-    m_targetNameEdit->setPlaceholderText(tr("Name der neuen Datenbank (ohne .db)"));
-    form->addRow(tr("Ziel-Name:"), m_targetNameEdit);
+    m_targetNameEdit->setPlaceholderText(tr("Name of the new database (without .db)"));
+    form->addRow(tr("Target Name:"), m_targetNameEdit);
 
     m_importExtras = new QCheckBox(
-        tr("config.ini, definitions.json, Logo und Flagge aus dem Legacy-Ordner übernehmen"),
+        tr("Import config.ini, definitions.json, logo and flag from the legacy folder"),
         this);
     m_importExtras->setChecked(true);
     form->addRow(QString(), m_importExtras);
@@ -68,9 +68,9 @@ MigrationWizard::MigrationWizard(AppContext &context, QWidget *parent)
     layout->addWidget(m_log, 1);
 
     auto *buttons = new QHBoxLayout;
-    m_startButton = new QPushButton(tr("Import starten"), this);
+    m_startButton = new QPushButton(tr("Start Import"), this);
     m_startButton->setDefault(true);
-    m_closeButton = new QPushButton(tr("Schließen"), this);
+    m_closeButton = new QPushButton(tr("Close"), this);
     buttons->addStretch(1);
     buttons->addWidget(m_startButton);
     buttons->addWidget(m_closeButton);
@@ -86,8 +86,8 @@ MigrationWizard::MigrationWizard(AppContext &context, QWidget *parent)
 void MigrationWizard::browseSource()
 {
     const QString file = QFileDialog::getOpenFileName(
-        this, tr("Legacy-Datenbank wählen"), QString(),
-        tr("SQLite-Datenbanken (*.db);;Alle Dateien (*)"));
+        this, tr("Choose legacy database"), QString(),
+        tr("SQLite databases (*.db);;All files (*)"));
     if (file.isEmpty())
         return;
     m_sourceEdit->setText(QDir::toNativeSeparators(file));
@@ -100,17 +100,17 @@ void MigrationWizard::startMigration()
     const QString source = QDir::fromNativeSeparators(m_sourceEdit->text().trimmed());
     const QString targetName = m_targetNameEdit->text().trimmed();
     if (source.isEmpty() || !QFile::exists(source)) {
-        QMessageBox::warning(this, windowTitle(), tr("Bitte eine vorhandene .db-Datei wählen."));
+        QMessageBox::warning(this, windowTitle(), tr("Please choose an existing .db file."));
         return;
     }
     if (targetName.isEmpty()) {
-        QMessageBox::warning(this, windowTitle(), tr("Bitte einen Ziel-Namen angeben."));
+        QMessageBox::warning(this, windowTitle(), tr("Please provide a target name."));
         return;
     }
     const QString targetPath = m_context.paths().databaseFile(targetName);
     if (QFile::exists(targetPath)
         && QMessageBox::question(this, windowTitle(),
-                                 tr("Die Datenbank '%1' existiert bereits. Überschreiben?")
+                                 tr("The database '%1' already exists. Overwrite?")
                                      .arg(targetName))
                != QMessageBox::Yes) {
         return;
@@ -118,7 +118,7 @@ void MigrationWizard::startMigration()
 
     m_startButton->setEnabled(false);
     m_closeButton->setEnabled(false);
-    m_log->appendPlainText(tr("Importiere %1 …").arg(source));
+    m_log->appendPlainText(tr("Importing %1 …").arg(source));
 
     // Progress updates arrive from the worker thread; forward via queued call.
     auto progressHandler = [this](qint64 current, qint64 total) {
@@ -157,19 +157,19 @@ void MigrationWizard::migrationFinished()
 
     if (!stats.success) {
         m_progress->setValue(0);
-        m_log->appendPlainText(tr("FEHLER: %1").arg(stats.error));
+        m_log->appendPlainText(tr("ERROR: %1").arg(stats.error));
         m_migratedDbName.clear();
         return;
     }
 
     m_progress->setValue(100);
-    m_log->appendPlainText(tr("Fertig: %1 Spieler, %2 Bewertungs-Einträge übernommen "
-                              "(%3 verwaiste übersprungen).")
+    m_log->appendPlainText(tr("Done: %1 players, %2 rating entries imported (%3 "
+                              "orphaned skipped).")
                                .arg(stats.playersMigrated)
                                .arg(stats.ratingsMigrated)
                                .arg(stats.orphanedRatings));
     if (stats.nationalSquadMigrated || stats.shortlistMigrated)
-        m_log->appendPlainText(tr("Nationalkader: %1, Shortlist: %2 Spieler.")
+        m_log->appendPlainText(tr("National squad: %1, shortlist: %2 players.")
                                    .arg(stats.nationalSquadMigrated)
                                    .arg(stats.shortlistMigrated));
     for (const QString &note : stats.coercions)
@@ -189,7 +189,7 @@ void MigrationWizard::migrationFinished()
                 QFile::remove(to);
                 if (QFile::copy(from, to)) {
                     QFile::setPermissions(to, QFile::ReadOwner | QFile::WriteOwner);
-                    m_log->appendPlainText(tr("Übernommen: %1").arg(QFileInfo(from).fileName()));
+                    m_log->appendPlainText(tr("Imported: %1").arg(QFileInfo(from).fileName()));
                 }
             }
         };
@@ -207,14 +207,14 @@ void MigrationWizard::migrationFinished()
         // The files on disk changed under the running app — reload them.
         if (!m_context.reloadConfigAndDefinitions()) {
             m_log->appendPlainText(
-                tr("WARNUNG: Die Definitionen konnten nach dem Import nicht geladen "
-                   "werden (%1). Die bisherigen Definitionen bleiben aktiv.")
+                tr("WARNING: The definitions could not be loaded after the import "
+                   "(%1). The previous definitions remain active.")
                     .arg(m_context.definitions().errorString()));
         }
     }
 
-    m_log->appendPlainText(tr("Import abgeschlossen. Die Datenbank '%1' kann jetzt "
-                              "ausgewählt werden.")
+    m_log->appendPlainText(tr("Import complete. The database '%1' can now be "
+                              "selected.")
                                .arg(m_migratedDbName));
 }
 

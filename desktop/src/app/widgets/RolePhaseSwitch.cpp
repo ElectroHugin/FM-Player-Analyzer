@@ -50,12 +50,12 @@ RolePhaseSwitch::RolePhaseSwitch(const Definitions &definitions, QComboBox *comb
     layout->setContentsMargins(2, 2, 2, 2);
     layout->setSpacing(0);
     m_ipButton = new QToolButton(this);
-    m_ipButton->setText(tr("Mit Ball"));
-    m_ipButton->setToolTip(tr("Rollen mit Ball (IP) zeigen"));
+    m_ipButton->setText(tr("In possession"));
+    m_ipButton->setToolTip(tr("Show roles in possession (IP)"));
     m_ipButton->setObjectName(QStringLiteral("phaseSwitchLeft"));
     m_oopButton = new QToolButton(this);
-    m_oopButton->setText(tr("Ohne Ball"));
-    m_oopButton->setToolTip(tr("Rollen ohne Ball (OOP) zeigen"));
+    m_oopButton->setText(tr("Out of possession"));
+    m_oopButton->setToolTip(tr("Show roles out of possession (OOP)"));
     m_oopButton->setObjectName(QStringLiteral("phaseSwitchRight"));
     auto *group = new QButtonGroup(this);
     group->setExclusive(true);

@@ -6,6 +6,7 @@
 #include "../widgets/PlayerTableModel.h"
 #include "core/RoleAssignment.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QComboBox>
 #include <QHBoxLayout>
@@ -41,27 +42,27 @@ AssignRolesPage::AssignRolesPage(AppContext &context, QWidget *parent)
     layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(10);
 
-    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Rollen zuweisen")), this);
+    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Assign Roles")), this);
     layout->addWidget(heading);
 
     // --- Filter row ---
     auto *filterRow = new QHBoxLayout;
     m_filterCombo = new QComboBox(this);
-    m_filterCombo->addItem(tr("Alle Spieler"), AllPlayers);
-    m_filterCombo->addItem(tr("Spieler ohne Rollen"), Unassigned);
-    m_filterCombo->addItem(tr("Nicht von meinem Verein"), NotFromMyClub);
-    m_filterCombo->addItem(tr("Ohne Rollen, nicht von meinem Verein"), UnassignedNotFromMyClub);
+    m_filterCombo->addItem(tr("All Players"), AllPlayers);
+    m_filterCombo->addItem(tr("Players without roles"), Unassigned);
+    m_filterCombo->addItem(tr("Not from my club"), NotFromMyClub);
+    m_filterCombo->addItem(tr("Without roles, not from my club"), UnassignedNotFromMyClub);
     m_filterCombo->setCurrentIndex(1); // legacy default: Unassigned Players
     m_clubCombo = new QComboBox(this);
     m_clubCombo->setMinimumWidth(180);
     m_positionCombo = new QComboBox(this);
     m_positionCombo->setMinimumWidth(140);
     m_searchEdit = new QLineEdit(this);
-    m_searchEdit->setPlaceholderText(tr("Nach Name suchen…"));
+    m_searchEdit->setPlaceholderText(tr("Search by name…"));
     m_searchEdit->setClearButtonEnabled(true);
     filterRow->addWidget(new QLabel(tr("Filter:"), this));
     filterRow->addWidget(m_filterCombo);
-    filterRow->addWidget(new QLabel(tr("Verein:"), this));
+    filterRow->addWidget(new QLabel(tr("Club:"), this));
     filterRow->addWidget(m_clubCombo);
     filterRow->addWidget(new QLabel(tr("Position:"), this));
     filterRow->addWidget(m_positionCombo);
@@ -70,15 +71,15 @@ AssignRolesPage::AssignRolesPage(AppContext &context, QWidget *parent)
 
     // --- Auto-assign row ---
     auto *autoRow = new QHBoxLayout;
-    auto *autoUnassigned = new QPushButton(tr("Fehlende Standardrollen ergänzen"), this);
+    auto *autoUnassigned = new QPushButton(tr("Add missing default roles"), this);
     autoUnassigned->setToolTip(
-        tr("Ergänzt bei allen Spielern die Standardrollen ihrer aktuellen Positionen "
-           "(wie beim Import). Vorhandene und manuell gesetzte Rollen bleiben erhalten."));
-    auto *autoAll = new QPushButton(tr("⚠️ Auto-Zuweisung (ALLE Spieler)"), this);
-    autoAll->setToolTip(tr("Setzt die Rollen ALLER Spieler neu auf die Standardrollen ihrer "
-                           "Positionen — manuell angepasste Rollen gehen verloren."));
+        tr("Adds the default roles of their current positions to all players (like the "
+           "import). Existing and manually set roles are kept."));
+    auto *autoAll = new QPushButton(tr("⚠️ Auto-assign (ALL players)"), this);
+    autoAll->setToolTip(tr("Resets the roles of ALL players to the default roles of their "
+                           "positions — manually adjusted roles are lost."));
     m_pendingLabel = new QLabel(this);
-    m_saveButton = new QPushButton(tr("Änderungen speichern"), this);
+    m_saveButton = new QPushButton(tr("Save Changes"), this);
     m_saveButton->setEnabled(false);
     m_saveButton->setDefault(true);
     autoRow->addWidget(autoUnassigned);
@@ -114,7 +115,7 @@ AssignRolesPage::AssignRolesPage(AppContext &context, QWidget *parent)
     auto *editorPanel = new QWidget(splitter);
     auto *editorLayout = new QVBoxLayout(editorPanel);
     editorLayout->setContentsMargins(8, 0, 0, 0);
-    m_editorTitle = new QLabel(tr("Spieler in der Tabelle auswählen, um Rollen zu bearbeiten."),
+    m_editorTitle = new QLabel(tr("Select a player in the table to edit roles."),
                                editorPanel);
     m_editorTitle->setWordWrap(true);
     m_roleList = new QListWidget(editorPanel);
@@ -153,16 +154,16 @@ void AssignRolesPage::setupColumns()
     m_model->setColumns({
         {tr("Name"), [](const Player &p) { return p.name; },
          [](const Player &p) { return getLastName(p.name); }, nullptr, {}},
-        {tr("Alter"), [](const Player &p) { return p.age; }, nullptr, nullptr,
+        {tr("Age"), [](const Player &p) { return p.age; }, nullptr, nullptr,
          Qt::AlignRight | Qt::AlignVCenter},
-        {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}},
-        {tr("Verein"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}},
+        {tr("Position"), [](const Player &p) { return GameTerms::positions(p.positionRaw); }, nullptr, nullptr, {}},
+        {tr("Club"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}},
         makeFreshnessColumn(
             m_context.updateCounter(),
             m_context.config().freshnessSetting(QStringLiteral("retirement_age")),
             m_context.config().freshnessSetting(QStringLiteral("stale_after_full_uploads")),
             m_context.userClub()),
-        {tr("Zugewiesene Rollen"),
+        {tr("Assigned Roles"),
          [definitions = &m_context.definitions()](const Player &p) {
              QStringList labels;
              for (const QString &role : p.assignedRoles)
@@ -204,12 +205,12 @@ void AssignRolesPage::rebuildFilters()
     std::sort(positionList.begin(), positionList.end());
 
     m_clubCombo->clear();
-    m_clubCombo->addItem(tr("Alle"));
+    m_clubCombo->addItem(tr("All"));
     m_clubCombo->addItems(clubList);
     if (!club.isEmpty())
         m_clubCombo->setCurrentText(club);
     m_positionCombo->clear();
-    m_positionCombo->addItem(tr("Alle"));
+    m_positionCombo->addItem(tr("All"));
     m_positionCombo->addItems(positionList);
     if (!position.isEmpty())
         m_positionCombo->setCurrentText(position);
@@ -260,7 +261,7 @@ void AssignRolesPage::showEditorFor(const Player *player)
 
     if (!player) {
         m_editorUid.clear();
-        m_editorTitle->setText(tr("Spieler in der Tabelle auswählen, um Rollen zu bearbeiten."));
+        m_editorTitle->setText(tr("Select a player in the table to edit roles."));
         m_roleList->setEnabled(false);
         m_updatingEditor = false;
         return;
@@ -269,7 +270,7 @@ void AssignRolesPage::showEditorFor(const Player *player)
     m_editorUid = player->uid;
     m_editorTitle->setText(
         QStringLiteral("<b>%1</b> (%2)").arg(player->name.toHtmlEscaped(),
-                                             player->positionRaw.toHtmlEscaped()));
+                                             GameTerms::positions(player->positionRaw).toHtmlEscaped()));
     m_roleList->setEnabled(true);
 
     const QStringList currentRoles = m_pending.value(player->uid, player->assignedRoles);
@@ -334,7 +335,7 @@ void AssignRolesPage::stagePendingFromEditor()
     m_saveButton->setEnabled(!m_pending.isEmpty());
     m_pendingLabel->setText(
         m_pending.isEmpty() ? QString()
-                            : tr("%1 Spieler mit ungespeicherten Änderungen").arg(m_pending.size()));
+                            : tr("%1 players with unsaved changes").arg(m_pending.size()));
 }
 
 void AssignRolesPage::releaseStoreRows()
@@ -354,7 +355,7 @@ void AssignRolesPage::revertRoles(const std::vector<PreviousRoles> &previous)
 void AssignRolesPage::savePending()
 {
     if (m_pending.isEmpty()) {
-        QMessageBox::information(this, tr("Rollen"), tr("Keine Änderungen zum Speichern."));
+        QMessageBox::information(this, tr("Roles"), tr("No changes to save."));
         return;
     }
 
@@ -375,7 +376,7 @@ void AssignRolesPage::savePending()
     }
     if (!m_context.database().upsertPlayers(batch)) {
         revertRoles(previousRoles); // DB unchanged
-        QMessageBox::critical(this, tr("Rollen"), m_context.database().errorString());
+        QMessageBox::critical(this, tr("Roles"), m_context.database().errorString());
         return;
     }
     const int count = static_cast<int>(batch.size());
@@ -383,11 +384,11 @@ void AssignRolesPage::savePending()
 
     recalcDwrsFor(m_context, this, affectedUids, [this, count](const QString &error) {
         if (!error.isEmpty())
-            QMessageBox::critical(this, tr("Rollen"), error);
+            QMessageBox::critical(this, tr("Roles"), error);
         else
             QMessageBox::information(
-                this, tr("Rollen"),
-                tr("Rollen für %1 Spieler aktualisiert und DWRS neu berechnet.").arg(count));
+                this, tr("Roles"),
+                tr("Updated roles for %1 players and recalculated DWRS.").arg(count));
     });
 }
 
@@ -399,9 +400,9 @@ void AssignRolesPage::addMissingDefaultRoles()
     const auto additions = RoleAssignment::missingRoleAdditions(m_context.store().players(),
                                                                 m_context.definitions());
     if (additions.empty()) {
-        QMessageBox::information(this, tr("Auto-Zuweisung"),
-                                 tr("Alle Spieler haben bereits die Standardrollen ihrer "
-                                    "Positionen."));
+        QMessageBox::information(this, tr("Auto-assign"),
+                                 tr("All players already have the default roles of their "
+                                    "positions."));
         return;
     }
 
@@ -417,26 +418,26 @@ void AssignRolesPage::addMissingDefaultRoles()
     }
     if (!m_context.database().replacePlayerRoles(rolesById)) {
         revertRoles(previousRoles); // DB unchanged
-        QMessageBox::critical(this, tr("Auto-Zuweisung"), m_context.database().errorString());
+        QMessageBox::critical(this, tr("Auto-assign"), m_context.database().errorString());
         return;
     }
     const int count = static_cast<int>(rolesById.size());
     recalcDwrsFor(m_context, this, affectedUids, [this, count](const QString &error) {
         if (!error.isEmpty())
-            QMessageBox::critical(this, tr("Auto-Zuweisung"), error);
+            QMessageBox::critical(this, tr("Auto-assign"), error);
         else
             QMessageBox::information(
-                this, tr("Auto-Zuweisung"),
-                tr("%1 Spielern Rollen zugewiesen und DWRS neu berechnet.").arg(count));
+                this, tr("Auto-assign"),
+                tr("Assigned roles to %1 players and recalculated DWRS.").arg(count));
     });
 }
 
 void AssignRolesPage::resetAllRoles()
 {
     if (QMessageBox::question(
-            this, tr("Auto-Zuweisung"),
-            tr("Wirklich die Rollen ALLER Spieler anhand ihrer Positionen neu setzen? "
-               "Manuell angepasste Rollen gehen dabei verloren."))
+            this, tr("Auto-assign"),
+            tr("Really reset the roles of ALL players based on their positions? "
+               "Manually adjusted roles will be lost."))
         != QMessageBox::Yes) {
         return;
     }
@@ -462,23 +463,23 @@ void AssignRolesPage::resetAllRoles()
     }
 
     if (batch.empty()) {
-        QMessageBox::information(this, tr("Auto-Zuweisung"),
-                                 tr("Keine Spieler zu aktualisieren."));
+        QMessageBox::information(this, tr("Auto-assign"),
+                                 tr("No players to update."));
         return;
     }
     if (!m_context.database().upsertPlayers(batch)) {
         revertRoles(previousRoles); // DB unchanged
-        QMessageBox::critical(this, tr("Auto-Zuweisung"), m_context.database().errorString());
+        QMessageBox::critical(this, tr("Auto-assign"), m_context.database().errorString());
         return;
     }
     const int count = static_cast<int>(batch.size());
     recalcDwrsFor(m_context, this, affectedUids, [this, count](const QString &error) {
         if (!error.isEmpty())
-            QMessageBox::critical(this, tr("Auto-Zuweisung"), error);
+            QMessageBox::critical(this, tr("Auto-assign"), error);
         else
             QMessageBox::information(
-                this, tr("Auto-Zuweisung"),
-                tr("%1 Spielern Rollen zugewiesen und DWRS neu berechnet.").arg(count));
+                this, tr("Auto-assign"),
+                tr("Assigned roles to %1 players and recalculated DWRS.").arg(count));
     });
 }
 

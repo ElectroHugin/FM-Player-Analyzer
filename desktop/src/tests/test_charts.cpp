@@ -60,7 +60,7 @@ private slots:
         hoverAt(widget, 2, 55);
         QTRY_VERIFY(!panelText(widget).isEmpty());
         QString text = panelText(widget);
-        QVERIFY2(text.contains(QStringLiteral("Aktueller Stand")), qPrintable(text));
+        QVERIFY2(text.contains(QStringLiteral("Current state")), qPrintable(text));
         QVERIFY(text.contains(QStringLiteral("t2")));
         QVERIFY(text.contains(QStringLiteral("Alpha")) && text.contains(QStringLiteral("55 %")));
         QVERIFY(text.contains(QStringLiteral("Beta")) && text.contains(QStringLiteral("58 %")));
@@ -71,7 +71,7 @@ private slots:
         QTRY_VERIFY(panelText(widget).contains(QStringLiteral("−1")));
         text = panelText(widget);
         QVERIFY(text.contains(QStringLiteral("t1")));
-        QVERIFY(text.contains(QStringLiteral("Neuberechnung")));
+        QVERIFY(text.contains(QStringLiteral("Recalculation")));
 
         // Snapshot 0: Beta had no rating yet and is left out.
         hoverAt(widget, 0, 50);
@@ -86,7 +86,7 @@ private slots:
         ThemeManager theme(config);
         LineChartWidget widget(theme);
         widget.resize(900, 520);
-        widget.setSeries({{QStringLiteral("Kader"), {{0, 0.0}, {1, -1.5}, {2, 2.0}}, true}},
+        widget.setSeries({{QStringLiteral("Squad"), {{0, 0.0}, {1, -1.5}, {2, 2.0}}, true}},
                          {QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")},
                          LineChartWidget::ValueMode::Delta);
         widget.show();
@@ -120,7 +120,7 @@ private slots:
         QVERIFY(axis);
         const QStringList labels = axis->categoriesLabels();
         QVERIFY2(labels.contains(QLocale().toString(first, QLocale::ShortFormat)), qPrintable(labels.join('|')));
-        QVERIFY(labels.contains(QStringLiteral("jetzt"))); // newest snapshot has no date
+        QVERIFY(labels.contains(QStringLiteral("now"))); // newest snapshot has no date
         QVERIFY(!labels.contains(QStringLiteral("−2")));
 
         hoverAt(widget, 0, 50);

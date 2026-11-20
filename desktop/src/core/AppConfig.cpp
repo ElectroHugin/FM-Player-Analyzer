@@ -931,6 +931,17 @@ bool AppConfig::setHtmlExportDir(const QString &dir)
     return writeValue(QStringLiteral("Import/html_export_dir"), dir);
 }
 
+QString AppConfig::gameLanguage() const
+{
+    return readValue(QStringLiteral("Import/game_language"), QStringLiteral("auto"));
+}
+
+bool AppConfig::setGameLanguage(const QString &code)
+{
+    return writeValue(QStringLiteral("Import/game_language"),
+                      code.isEmpty() ? QStringLiteral("auto") : code);
+}
+
 QString AppConfig::defaultHtmlExportDir(const QString &fmVersionId)
 {
     const QString documents =

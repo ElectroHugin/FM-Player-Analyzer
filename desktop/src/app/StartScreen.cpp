@@ -46,29 +46,29 @@ QString relativeTime(const QDateTime &when)
     const QDate today = QDate::currentDate();
     const QString time = when.time().toString(QStringLiteral("HH:mm"));
     if (when.date() == today)
-        return StartScreen::tr("heute, %1").arg(time);
+        return StartScreen::tr("today, %1").arg(time);
     if (when.date() == today.addDays(-1))
-        return StartScreen::tr("gestern, %1").arg(time);
+        return StartScreen::tr("yesterday, %1").arg(time);
     return when.date().toString(QStringLiteral("dd.MM.yyyy"));
 }
 
-// "vor 2 Std.", "vor 3 Tagen", "vor 3 Wochen" … (German is the source
-// language without plural forms, so singular and plural are separate texts).
+// "2 h ago", "3 days ago", "3 weeks ago" … (singular and plural are
+// separate texts, so translations need no plural forms).
 QString ageText(const QDateTime &when)
 {
     const qint64 minutes = qMax<qint64>(1, when.secsTo(QDateTime::currentDateTime()) / 60);
     if (minutes < 60)
-        return StartScreen::tr("vor %1 Min.").arg(minutes);
+        return StartScreen::tr("%1 min ago").arg(minutes);
     if (minutes < 24 * 60)
-        return StartScreen::tr("vor %1 Std.").arg(minutes / 60);
+        return StartScreen::tr("%1 h ago").arg(minutes / 60);
     const qint64 days = minutes / (24 * 60);
     if (days == 1)
-        return StartScreen::tr("vor 1 Tag");
+        return StartScreen::tr("1 day ago");
     if (days < 14)
-        return StartScreen::tr("vor %1 Tagen").arg(days);
+        return StartScreen::tr("%1 days ago").arg(days);
     if (days < 60)
-        return StartScreen::tr("vor %1 Wochen").arg(days / 7);
-    return StartScreen::tr("am %1").arg(when.date().toString(QStringLiteral("dd.MM.yyyy")));
+        return StartScreen::tr("%1 weeks ago").arg(days / 7);
+    return StartScreen::tr("on %1").arg(when.date().toString(QStringLiteral("dd.MM.yyyy")));
 }
 
 } // namespace
@@ -79,7 +79,7 @@ StartScreen::StartScreen(AppContext &context, ThemeManager &theme, Mode mode, QW
     , m_theme(theme)
     , m_mode(mode)
 {
-    setWindowTitle(mode == Mode::Startup ? appName() : tr("Spielstand wechseln"));
+    setWindowTitle(mode == Mode::Startup ? appName() : tr("Switch save"));
     setObjectName(QStringLiteral("startScreen"));
     resize(1040, 640);
     setMinimumSize(820, 520);
@@ -118,7 +118,7 @@ QWidget *StartScreen::buildHero()
             versions.prepend(SaveLibrary::shortVersionLabel(version.id));
     }
     auto *version = new QLabel(tr("Version %1 · %2")
-                                   .arg(appVersion(), versions.join(tr(" und "))),
+                                   .arg(appVersion(), versions.join(tr(" and "))),
                                hero);
     version->setObjectName(QStringLiteral("kpiCaption"));
     layout->addWidget(version);
@@ -157,14 +157,14 @@ QWidget *StartScreen::buildHero()
         layout->addWidget(button);
         return button;
     };
-    connect(addAction(QStringLiteral("plus"), tr("Neuer Spielstand"),
-                      tr("FM-Version und erster Import"), true),
+    connect(addAction(QStringLiteral("plus"), tr("New save"),
+                      tr("FM version and first import"), true),
             &QPushButton::clicked, this, &StartScreen::newSave);
-    connect(addAction(QStringLiteral("folder"), tr("Spielstand-Datei öffnen …"),
-                      tr("Aus anderem Ordner oder Backup"), false),
+    connect(addAction(QStringLiteral("folder"), tr("Open save file …"),
+                      tr("From another folder or a backup"), false),
             &QPushButton::clicked, this, &StartScreen::openExternalFile);
-    connect(addAction(QStringLiteral("migrate"), tr("FM24-Daten übernehmen …"),
-                      tr("Alte Streamlit-Version (Migration)"), false),
+    connect(addAction(QStringLiteral("migrate"), tr("Take over FM24 data …"),
+                      tr("Old Streamlit version (migration)"), false),
             &QPushButton::clicked, this, &StartScreen::migrateLegacy);
 
     layout->addStretch(1);
@@ -198,15 +198,15 @@ QWidget *StartScreen::buildHero()
         connect(action, &QAction::triggered, this, [this, code] { changeLanguage(code); });
     }
     language->setMenu(languageMenu);
-    language->setToolTip(tr("Sprache"));
+    language->setToolTip(tr("Language"));
 
     m_themeButton = footButton(QStringLiteral("moon"));
-    m_themeButton->setToolTip(tr("Tag/Nacht wechseln"));
+    m_themeButton->setToolTip(tr("Toggle day/night"));
     connect(m_themeButton, &QToolButton::clicked, this, [this] { m_theme.toggle(); });
 
     auto *help = footButton(QStringLiteral("help"));
-    help->setText(tr("Hilfe"));
-    help->setToolTip(tr("Über %1, Support und Kontakt").arg(appName()));
+    help->setText(tr("Help"));
+    help->setToolTip(tr("About %1, support and contact").arg(appName()));
     connect(help, &QToolButton::clicked, this, [this] {
         AboutDialog dialog(m_theme, this);
         dialog.exec();
@@ -225,7 +225,7 @@ void StartScreen::updateThemedIcons()
     if (m_themeButton) {
         m_themeButton->setProperty("iconName", night ? QStringLiteral("moon")
                                                      : QStringLiteral("sun"));
-        m_themeButton->setText(night ? tr("Nacht") : tr("Tag"));
+        m_themeButton->setText(night ? tr("Night") : tr("Day"));
     }
     QColor muted = m_theme.text();
     muted.setAlphaF(0.7);
@@ -251,13 +251,13 @@ QWidget *StartScreen::buildList()
     layout->setSpacing(16);
 
     auto *head = new QHBoxLayout;
-    auto *heading = new QLabel(tr("Zuletzt verwendet"), panel);
+    auto *heading = new QLabel(tr("Recently used"), panel);
     m_listHeading = heading;
     heading->setObjectName(QStringLiteral("sectionTitle"));
     head->addWidget(heading);
     head->addStretch(1);
     m_search = new QLineEdit(panel);
-    m_search->setPlaceholderText(tr("Spielstand suchen"));
+    m_search->setPlaceholderText(tr("Search saves"));
     m_search->setClearButtonEnabled(true);
     m_search->setFixedWidth(240);
     head->addWidget(m_search);
@@ -290,29 +290,29 @@ QWidget *StartScreen::buildList()
     auto *footerLayout = new QHBoxLayout(footer);
     footerLayout->setContentsMargins(0, 12, 0, 0);
     m_autoOpenCheck =
-        new QCheckBox(tr("Beim Start immer den zuletzt verwendeten Spielstand öffnen"), footer);
+        new QCheckBox(tr("Always open the last used save at startup"), footer);
     m_autoOpenCheck->setChecked(m_context.config().autoOpenLastDatabase());
     m_autoOpenCheck->setToolTip(
-        tr("Der Startbildschirm wird dann übersprungen. Mit gedrückter Umschalttaste beim "
-           "Start erscheint er trotzdem. Abschaltbar in Einstellungen → Spielstände."));
+        tr("The start screen is then skipped. Holding Shift at startup still shows it. "
+           "Can be turned off in Settings → Saves."));
     connect(m_autoOpenCheck, &QCheckBox::toggled, this,
             [this](bool on) { m_context.config().setAutoOpenLastDatabase(on); });
     auto *autoOpenText = new QVBoxLayout;
     autoOpenText->setSpacing(0);
     autoOpenText->addWidget(m_autoOpenCheck);
-    auto *autoOpenHint = new QLabel(tr("Jederzeit in den Einstellungen wieder abschaltbar"), footer);
+    auto *autoOpenHint = new QLabel(tr("You can switch this off again in the settings at any time"), footer);
     autoOpenHint->setObjectName(QStringLiteral("kpiCaption"));
     autoOpenHint->setIndent(28);
     autoOpenText->addWidget(autoOpenHint);
     footerLayout->addLayout(autoOpenText);
     footerLayout->addStretch(1);
     if (m_mode == Mode::Switch) {
-        auto *close = new QPushButton(tr("Schließen"), footer);
+        auto *close = new QPushButton(tr("Close"), footer);
         close->setAutoDefault(false);
         connect(close, &QPushButton::clicked, this, &QDialog::reject);
         footerLayout->addWidget(close);
     }
-    m_openButton = new QPushButton(tr("Öffnen"), footer);
+    m_openButton = new QPushButton(tr("Open"), footer);
     m_openButton->setDefault(true);
     connect(m_openButton, &QPushButton::clicked, this, [this] { openSave(selectedName()); });
     footerLayout->addWidget(m_openButton);
@@ -342,20 +342,20 @@ QWidget *StartScreen::buildEmptyState(QWidget *parent)
     icon->setFixedSize(32, 32);
     layout->addWidget(icon);
     layout->addSpacing(8);
-    auto *title = new QLabel(tr("Noch keine Spielstände"), box);
+    auto *title = new QLabel(tr("No saves yet"), box);
     title->setObjectName(QStringLiteral("emptyTitle"));
     layout->addWidget(title);
-    auto *text = new QLabel(tr("Ein Spielstand gehört zu einer Karriere im Spiel. Er sammelt "
-                               "deine Importe, Rollen, Taktiken und Einstellungen."),
+    auto *text = new QLabel(tr("A save belongs to one career in the game. It keeps your "
+                               "imports, roles, tactics and settings."),
                             box);
     text->setObjectName(QStringLiteral("emptyText"));
     text->setWordWrap(true);
     layout->addWidget(text);
     layout->addSpacing(16);
 
-    const QStringList steps = {tr("FM-Version wählen"),
-                               tr("Export oder FM27-Spielstand (.fm) einlesen"),
-                               tr("Verein und wichtige Einstellungen im Willkommens-Assistenten festlegen")};
+    const QStringList steps = {tr("Choose the FM version"),
+                               tr("Read in your save game (.fm)"),
+                               tr("Set your club and key settings in the welcome assistant")};
     for (int i = 0; i < steps.size(); ++i) {
         auto *row = new QHBoxLayout;
         row->setSpacing(12);
@@ -370,7 +370,7 @@ QWidget *StartScreen::buildEmptyState(QWidget *parent)
         layout->addLayout(row);
     }
     layout->addSpacing(16);
-    auto *start = new QPushButton(tr("Neuer Spielstand"), box);
+    auto *start = new QPushButton(tr("New save"), box);
     start->setAutoDefault(false);
     start->setCursor(Qt::PointingHandCursor);
     connect(start, &QPushButton::clicked, this, &StartScreen::newSave);
@@ -410,7 +410,7 @@ QWidget *StartScreen::buildSaveCard(const SaveInfo &save)
                                                                 : QStringLiteral("chip"));
     nameRow->addWidget(chip);
     if (m_mode == Mode::Switch && save.name == m_context.currentDbName()) {
-        auto *open = new QLabel(tr("geöffnet"), card);
+        auto *open = new QLabel(tr("open"), card);
         open->setObjectName(QStringLiteral("chip"));
         nameRow->addWidget(open);
     }
@@ -418,15 +418,15 @@ QWidget *StartScreen::buildSaveCard(const SaveInfo &save)
     text->addLayout(nameRow);
 
     QStringList meta;
-    meta << (save.clubName.isEmpty() ? tr("Noch kein Verein") : save.clubName);
+    meta << (save.clubName.isEmpty() ? tr("No club yet") : save.clubName);
     if (save.playerCount == 0)
-        meta << tr("leer");
+        meta << tr("empty");
     else if (save.playerCount > 0)
-        meta << tr("%1 Spieler").arg(QLocale().toString(save.playerCount));
+        meta << tr("%1 players").arg(QLocale().toString(save.playerCount));
     else
-        meta << tr("nicht lesbar");
+        meta << tr("unreadable");
     if (!save.tactic.isEmpty())
-        meta << tr("Taktik %1").arg(save.tactic);
+        meta << tr("Tactic %1").arg(save.tactic);
     auto *metaLabel = new QLabel(meta.join(QStringLiteral(" · ")), card);
     metaLabel->setObjectName(QStringLiteral("kpiCaption"));
     text->addWidget(metaLabel);
@@ -438,7 +438,7 @@ QWidget *StartScreen::buildSaveCard(const SaveInfo &save)
     if (save.lastImport.isValid())
         imported = tr("Import %1").arg(ageText(save.lastImport));
     else if (save.playerCount == 0)
-        imported = tr("noch kein Import");
+        imported = tr("no import yet");
     const QString when = imported.isEmpty() ? opened : opened + QLatin1Char('\n') + imported;
     auto *whenLabel = new QLabel(when, card);
     whenLabel->setObjectName(QStringLiteral("kpiCaption"));
@@ -448,7 +448,7 @@ QWidget *StartScreen::buildSaveCard(const SaveInfo &save)
     auto *more = new QToolButton(card);
     more->setObjectName(QStringLiteral("cardMenuButton"));
     more->setText(QStringLiteral("⋯"));
-    more->setToolTip(tr("Weitere Aktionen"));
+    more->setToolTip(tr("More actions"));
     more->setCursor(Qt::PointingHandCursor);
     more->setFocusPolicy(Qt::NoFocus);
     connect(more, &QToolButton::clicked, this, [this, more, saveName = save.name] {
@@ -538,8 +538,8 @@ bool StartScreen::openSave(const QString &name)
     const bool ok = m_context.openDatabase(name, &error);
     QApplication::restoreOverrideCursor();
     if (!ok) {
-        QMessageBox::critical(this, tr("Spielstand öffnen"),
-                              tr("„%1“ konnte nicht geöffnet werden:\n\n%2").arg(name, error));
+        QMessageBox::critical(this, tr("Open save"),
+                              tr("“%1” could not be opened:\n\n%2").arg(name, error));
         return false;
     }
     accept();
@@ -550,20 +550,20 @@ void StartScreen::showSaveMenu(const QString &name, const QPoint &globalPos)
 {
     const bool isOpen = m_context.hasDatabase() && name == m_context.currentDbName();
     QMenu menu(this);
-    menu.addAction(tr("Öffnen"), this, [this, name] { openSave(name); });
+    menu.addAction(tr("Open"), this, [this, name] { openSave(name); });
     menu.addSeparator();
-    QAction *rename = menu.addAction(tr("Umbenennen …"), this, [this, name] { renameSave(name); });
+    QAction *rename = menu.addAction(tr("Rename …"), this, [this, name] { renameSave(name); });
     rename->setEnabled(!isOpen);
-    menu.addAction(tr("Duplizieren …"), this, [this, name] { duplicateSave(name); });
-    menu.addAction(tr("Im Ordner zeigen"), this, [this] {
+    menu.addAction(tr("Duplicate …"), this, [this, name] { duplicateSave(name); });
+    menu.addAction(tr("Show in folder"), this, [this] {
         QDesktopServices::openUrl(QUrl::fromLocalFile(m_context.paths().databasesDir()));
     });
     menu.addSeparator();
-    QAction *remove = menu.addAction(tr("Löschen …"), this, [this, name] { deleteSave(name); });
+    QAction *remove = menu.addAction(tr("Delete …"), this, [this, name] { deleteSave(name); });
     remove->setEnabled(!isOpen);
     if (isOpen) {
-        rename->setToolTip(tr("Der geöffnete Spielstand kann nicht umbenannt werden."));
-        remove->setToolTip(tr("Der geöffnete Spielstand kann nicht gelöscht werden."));
+        rename->setToolTip(tr("The open save cannot be renamed."));
+        remove->setToolTip(tr("The open save cannot be deleted."));
         menu.setToolTipsVisible(true);
     }
     menu.exec(globalPos);
@@ -583,16 +583,16 @@ void StartScreen::newSave()
 void StartScreen::openExternalFile()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("Spielstand-Datei öffnen"), QDir::homePath(),
-        tr("Spielstände (*.db);;Alle Dateien (*)"));
+        this, tr("Open save file"), QDir::homePath(),
+        tr("Saves (*.db);;All files (*)"));
     if (path.isEmpty())
         return;
     QString name = QFileInfo(path).completeBaseName();
     while (!SaveLibrary::validateName(m_context, name).isEmpty()) {
         bool ok = false;
         name = QInputDialog::getText(
-            this, tr("Spielstand-Datei öffnen"),
-            tr("%1\nUnter welchem Namen soll der Spielstand übernommen werden?")
+            this, tr("Open save file"),
+            tr("%1\nUnder which name should the save be added?")
                 .arg(SaveLibrary::validateName(m_context, name)),
             QLineEdit::Normal, name, &ok);
         if (!ok)
@@ -600,7 +600,7 @@ void StartScreen::openExternalFile()
     }
     QString error;
     if (!SaveLibrary::importFile(m_context, path, name, &error)) {
-        QMessageBox::critical(this, tr("Spielstand-Datei öffnen"), error);
+        QMessageBox::critical(this, tr("Open save file"), error);
         return;
     }
     reload();
@@ -622,13 +622,13 @@ void StartScreen::migrateLegacy()
 void StartScreen::renameSave(const QString &name)
 {
     bool ok = false;
-    const QString newName = QInputDialog::getText(this, tr("Spielstand umbenennen"),
-                                                  tr("Neuer Name:"), QLineEdit::Normal, name, &ok);
+    const QString newName = QInputDialog::getText(this, tr("Rename save"),
+                                                  tr("New name:"), QLineEdit::Normal, name, &ok);
     if (!ok || newName.trimmed() == name)
         return;
     QString error;
     if (!SaveLibrary::rename(m_context, name, newName, &error))
-        QMessageBox::warning(this, tr("Spielstand umbenennen"), error);
+        QMessageBox::warning(this, tr("Rename save"), error);
     reload();
 }
 
@@ -636,30 +636,31 @@ void StartScreen::duplicateSave(const QString &name)
 {
     bool ok = false;
     const QString newName =
-        QInputDialog::getText(this, tr("Spielstand duplizieren"), tr("Name der Kopie:"),
-                              QLineEdit::Normal, tr("%1 (Kopie)").arg(name), &ok);
+        QInputDialog::getText(this, tr("Duplicate save"), tr("Name of the copy:"),
+                              QLineEdit::Normal, tr("%1 (copy)").arg(name), &ok);
     if (!ok)
         return;
     QString error;
     if (!SaveLibrary::duplicate(m_context, name, newName, &error))
-        QMessageBox::warning(this, tr("Spielstand duplizieren"), error);
+        QMessageBox::warning(this, tr("Duplicate save"), error);
     reload();
 }
 
 void StartScreen::deleteSave(const QString &name)
 {
     const auto answer = QMessageBox::question(
-        this, tr("Spielstand löschen"),
-        tr("„%1“ wirklich löschen?\n\nVorher wird automatisch ein Backup im Ordner "
-           "„backups“ angelegt. Von dort lässt er sich über „Spielstand-Datei öffnen“ "
-           "zurückholen.")
+        this, tr("Delete save"),
+        tr("Really delete “%1”?\n"
+           "\n"
+           "A backup is created automatically in the “backups” folder first. You can "
+           "bring it back from there with “Open save file”.")
             .arg(name),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
     if (answer != QMessageBox::Yes)
         return;
     QString error;
     if (!SaveLibrary::remove(m_context, name, &error))
-        QMessageBox::warning(this, tr("Spielstand löschen"), error);
+        QMessageBox::warning(this, tr("Delete save"), error);
     reload();
 }
 
@@ -669,8 +670,8 @@ void StartScreen::changeLanguage(const QString &language)
         return;
     m_context.paths().setLanguage(language);
     const auto answer = QMessageBox::question(
-        this, tr("Sprache"),
-        tr("Die Sprache wird nach einem Neustart geändert. Jetzt neu starten?"),
+        this, tr("Language"),
+        tr("The language will change after a restart. Restart now?"),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
     if (answer == QMessageBox::Yes)
         relaunchApplication();

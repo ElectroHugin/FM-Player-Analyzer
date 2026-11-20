@@ -1,43 +1,44 @@
-# Entwickeln mit Qt Creator
+# Developing with Qt Creator
 
-Das Projekt ist ein **CMake-Projekt** — die Projektdatei für Qt Creator ist
-[`CMakeLists.txt`](CMakeLists.txt) in diesem Ordner. Eine separate `.pro`-Datei
-gibt es bei CMake-Projekten nicht.
+The project is a **CMake project**: the project file for Qt Creator is
+[`CMakeLists.txt`](CMakeLists.txt) in this folder. CMake projects have no
+separate `.pro` file.
 
-## Projekt öffnen
+## Open the project
 
-1. Qt Creator starten
-2. **Datei → Projekt öffnen…** (oder „Open Project" auf der Startseite)
-3. `desktop/CMakeLists.txt` auswählen
-4. Beim ersten Öffnen fragt Qt Creator nach der Konfiguration:
-   - Qt Creator erkennt unsere **`CMakePresets.json`** automatisch — wähle
-     das Preset **`msvc-debug`** (zum Entwickeln/Debuggen) oder
-     **`msvc-release`** (volle Optimierung, für Performance-Messungen).
-   - Alternativ ein Kit mit **Qt 6.8.3 MSVC2022 64bit** (`C:\Qt\6.8.3\msvc2022_64`)
-     und dem **MSVC 2022 x64**-Compiler wählen.
+1. Start Qt Creator
+2. **File → Open File or Project…** (or "Open Project" on the welcome page)
+3. Select `desktop/CMakeLists.txt`
+4. On first opening, Qt Creator asks for the configuration:
+   - Qt Creator detects our **`CMakePresets.json`** automatically: choose the
+     preset **`msvc-debug`** (for developing/debugging) or **`msvc-release`**
+     (full optimisation, for performance measurements).
+   - Alternatively choose a kit with **Qt 6.8.3 MSVC2022 64bit**
+     (`C:\Qt\6.8.3\msvc2022_64`) and the **MSVC 2022 x64** compiler.
 
-## Bauen und Starten
+## Build and run
 
-- **Bauen:** Strg+B (Hammer-Symbol)
-- **Starten:** Strg+R — als Run-Target **`fmplayeranalyzer`** auswählen
-  (links unten über das Monitor-Symbol). Qt Creator setzt den Qt-`PATH`
-  beim Start automatisch, `windeployqt` ist nicht nötig.
-- Weitere Targets: `fmmigrate` (Legacy-DB-Migration per Kommandozeile),
-  `fmgolden` (Golden-Master-Vergleich gegen die Python-Referenz).
+- **Build:** Ctrl+B (hammer icon)
+- **Run:** Ctrl+R; select **`fmplayeranalyzer`** as run target (bottom left,
+  via the monitor icon). Qt Creator sets the Qt `PATH` automatically on start,
+  `windeployqt` is not needed.
+- Other targets: `fmmigrate` (legacy DB migration on the command line),
+  `fmgolden` (golden master comparison against the Python reference).
 
-## Tests ausführen
+## Run tests
 
-- **Werkzeuge → Tests → Alle Tests ausführen**, oder im Terminal:
+- **Tools → Tests → Run All Tests**, or in a terminal:
   ```
   ctest --preset msvc-debug
   ```
-- Qt Creator zeigt die Qt-Test-Suiten (`test_utils`, `test_dwrs`, …) im
-  Ausgabefenster „Testergebnisse" einzeln an.
+- Qt Creator lists the Qt Test suites (`test_utils`, `test_dwrs`, …) one by one
+  in the "Test Results" output pane.
 
-## Hinweise
+## Notes
 
-- Die Build-Ordner liegen unter `desktop/build/<preset>/` und sind gitignoriert.
-- Eigene lokale Konfigurationen speichert Qt Creator in
-  `CMakeUserPresets.json` bzw. `CMakeLists.txt.user` — beide sind (bzw.
-  werden) gitignoriert und gehören nicht ins Repo.
-- Kommandozeilen-Build ohne Qt Creator: `.\scripts\build.ps1 -Preset msvc-release -Test`
+- Build folders live under `desktop/build/<preset>/` and are git-ignored.
+- Qt Creator stores local configurations in `CMakeUserPresets.json` or
+  `CMakeLists.txt.user`; both are (or will be) git-ignored and do not belong in
+  the repository.
+- Command-line build without Qt Creator:
+  `.\scripts\build.ps1 -Preset msvc-release -Test`

@@ -53,14 +53,14 @@ void BestXiPage::addScoutActions(QMenu &menu, TacticPitchWidget *pitch, const QS
         request.tactic = tactic;
         request.criteria = {ScoutSearch::criterion(ScoutSearch::slotPlace(version, slot, role))};
         if (cell.isFilled()) {
-            request.source = tr("Aus Best XI: Ersatz für %1 (%2).")
+            request.source = tr("From Best XI: replacement for %1 (%2).")
                                  .arg(cell.name, placeText(slot, role));
             request.referenceName = getLastName(cell.name);
             request.referenceValue = m_valueOfUid.value(cell.playerUid, cell.rating);
         } else {
-            request.source = tr("Aus Best XI: freier Platz %1.").arg(placeText(slot, role));
+            request.source = tr("From Best XI: free place %1.").arg(placeText(slot, role));
         }
-        menu.addAction(tr("🔍 Im Scouting suchen (%1)").arg(placeText(slot, role)), this,
+        menu.addAction(tr("🔍 Search in scouting (%1)").arg(placeText(slot, role)), this,
                        [launch, request] { launch(request); });
         return;
     }
@@ -88,11 +88,11 @@ void BestXiPage::addScoutActions(QMenu &menu, TacticPitchWidget *pitch, const QS
         if (otherSlot.isEmpty())
             return;
         auto [request, ipText, oopText] = bridgeRequest(otherSlot);
-        request.source = tr("Aus Best XI: Bridge von %1 (mit Ball %2, ohne Ball %3).")
+        request.source = tr("From Best XI: bridge of %1 (in possession %2, out of possession %3).")
                              .arg(cell.name, ipText, oopText);
         request.referenceName = getLastName(cell.name);
         request.referenceValue = m_valueOfUid.value(cell.playerUid, cell.rating);
-        menu.addAction(tr("🔍 Bridge im Scouting suchen (mit Ball %1, ohne Ball %2)")
+        menu.addAction(tr("🔍 Search bridge in scouting (in possession %1, out of possession %2)")
                            .arg(ipText, oopText),
                        this, [launch, request] { launch(request); });
         return;
@@ -108,18 +108,18 @@ void BestXiPage::addScoutActions(QMenu &menu, TacticPitchWidget *pitch, const QS
     }
     const auto freeBridge = [&](const QString &otherSlot) {
         auto [request, ipText, oopText] = bridgeRequest(otherSlot);
-        request.source = tr("Aus Best XI: freie Plätze mit Ball %1 und ohne Ball %2.")
+        request.source = tr("From Best XI: free places in possession %1 and out of possession %2.")
                              .arg(ipText, oopText);
         return std::make_tuple(request, ipText, oopText);
     };
     if (freeSlots.size() == 1) {
         auto [request, ipText, oopText] = freeBridge(freeSlots.front());
-        menu.addAction(tr("🔍 Bridge im Scouting suchen (mit Ball %1, ohne Ball %2)")
+        menu.addAction(tr("🔍 Search bridge in scouting (in possession %1, out of possession %2)")
                            .arg(ipText, oopText),
                        this, [launch, request] { launch(request); });
     } else if (freeSlots.size() > 1) {
-        QMenu *sub = menu.addMenu(team.ip ? tr("🔍 Bridge im Scouting suchen – Platz ohne Ball wählen")
-                                          : tr("🔍 Bridge im Scouting suchen – Platz mit Ball wählen"));
+        QMenu *sub = menu.addMenu(team.ip ? tr("🔍 Search bridge in scouting – choose the place out of possession")
+                                          : tr("🔍 Search bridge in scouting – choose the place in possession"));
         for (const QString &s : std::as_const(freeSlots)) {
             auto [request, ipText, oopText] = freeBridge(s);
             sub->addAction(placeText(s, other.lineUp.value(s)), this,
@@ -129,10 +129,10 @@ void BestXiPage::addScoutActions(QMenu &menu, TacticPitchWidget *pitch, const QS
     ScoutSearchRequest single;
     single.tactic = tactic;
     single.criteria = {ScoutSearch::criterion(ScoutSearch::slotPlace(version, slot, role))};
-    single.source = team.ip ? tr("Aus Best XI: freier Platz mit Ball %1.").arg(placeText(slot, role))
-                            : tr("Aus Best XI: freier Platz ohne Ball %1.").arg(placeText(slot, role));
-    menu.addAction(team.ip ? tr("🔍 Nur mit Ball suchen (%1)").arg(placeText(slot, role))
-                           : tr("🔍 Nur ohne Ball suchen (%1)").arg(placeText(slot, role)),
+    single.source = team.ip ? tr("From Best XI: free place in possession %1.").arg(placeText(slot, role))
+                            : tr("From Best XI: free place out of possession %1.").arg(placeText(slot, role));
+    menu.addAction(team.ip ? tr("🔍 Search in possession only (%1)").arg(placeText(slot, role))
+                           : tr("🔍 Search out of possession only (%1)").arg(placeText(slot, role)),
                    this, [launch, single] { launch(single); });
 }
 
@@ -140,7 +140,7 @@ void BestXiPage::showEmptySlotMenu(TacticPitchWidget *pitch, const QString &slot
                                    const QPoint &globalPos)
 {
     QMenu menu(this);
-    auto *title = menu.addAction(tr("Freier Platz %1").arg(slot));
+    auto *title = menu.addAction(tr("Free place %1").arg(slot));
     title->setEnabled(false);
     menu.addSeparator();
     addScoutActions(menu, pitch, slot);
@@ -156,33 +156,31 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
         return;
     }
     m_outageNote->setText(
-        twoPhase ? tr("Fällt ein Spieler der Startelf aus, zeigt die Tabelle den besten geprüften "
-                      "Ersatzplan: Genau ein Spieler kommt dazu, die übrigen dürfen dafür ihre "
-                      "Plätze mit und ohne Ball tauschen. „Wer übernimmt“ nennt, wer die frei "
-                      "gewordenen Plätze besetzt, auch wenn das ein Mitspieler ist, der dafür "
-                      "umrückt. „Volle Bridge“ heißt: Der Neue übernimmt beide Plätze. Von Hand "
-                      "gesetzte Plätze und eine Startelf-Grenze gelten weiter. Weitere Lösungen "
-                      "zeigt der Tooltip.")
-                 : tr("Fällt ein Spieler der Startelf aus, zeigt die Tabelle den besten geprüften "
-                      "Ersatzplan: Genau ein Spieler kommt dazu, die übrigen dürfen dafür ihre "
-                      "Plätze tauschen. „Wer übernimmt“ nennt, wer den frei gewordenen Platz "
-                      "besetzt. Eine Startelf-Grenze gilt weiter. Weitere Lösungen zeigt der "
-                      "Tooltip."));
+        twoPhase ? tr("If a starter is unavailable, the table shows the best evaluated cover "
+                      "plan: exactly one player comes on, and the others may swap their places in "
+                      "and out of possession for it. “Who covers” names who fills the vacated "
+                      "places, even when that is a teammate who moves across. “Full bridge” means "
+                      "the incoming player takes both places. Manually set places and a starting "
+                      "XI limit still apply. The tooltip shows further options.")
+                 : tr("If a starter is unavailable, the table shows the best evaluated cover "
+                      "plan: exactly one player comes on, and the others may swap places for it. "
+                      "“Who covers” names who fills the vacated place. A starting XI limit still "
+                      "applies. The tooltip shows further options."));
 
     const auto nameOf = [this](const QString &uid) {
         const Player *p = m_context.store().findByUid(uid);
         return p ? p->name : uid;
     };
     const auto places = [twoPhase](const QPair<QString, QString> &pair) {
-        return twoPhase ? tr("mit %1 · ohne %2").arg(pair.first, pair.second) : pair.first;
+        return twoPhase ? tr("IP %1 · OOP %2").arg(pair.first, pair.second) : pair.first;
     };
     const auto moveText = [twoPhase](const PlaceMove &move) {
         QStringList changes;
         if (move.from.first != move.to.first)
-            changes << (twoPhase ? tr("mit %1 → %2").arg(move.from.first, move.to.first)
+            changes << (twoPhase ? tr("IP %1 → %2").arg(move.from.first, move.to.first)
                                  : QStringLiteral("%1 → %2").arg(move.from.first, move.to.first));
         if (twoPhase && move.from.second != move.to.second)
-            changes << tr("ohne %1 → %2").arg(move.from.second, move.to.second);
+            changes << tr("OOP %1 → %2").arg(move.from.second, move.to.second);
         return changes.join(QStringLiteral(", "));
     };
     // except: starters already named under "who covers".
@@ -193,24 +191,24 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
                 continue;
             parts << QStringLiteral("%1: %2").arg(getLastName(nameOf(move.uid)), moveText(move));
         }
-        return parts.isEmpty() ? tr("keine") : parts.join(QStringLiteral("; "));
+        return parts.isEmpty() ? tr("none") : parts.join(QStringLiteral("; "));
     };
     // Who holds a vacated place: the newcomer, or a starter who moved there.
     const auto coverName = [&](const ReplacementPlan &plan, const QString &uid) {
         if (uid.isEmpty())
-            return tr("niemand");
+            return tr("nobody");
         if (uid == plan.inUid)
-            return tr("%1 (kommt)").arg(getLastName(nameOf(uid)));
+            return tr("%1 (comes on)").arg(getLastName(nameOf(uid)));
         for (const PlaceMove &move : plan.moves) {
             if (move.uid == uid)
-                return tr("%1 (rückt von %2)").arg(getLastName(nameOf(uid)), places(move.from));
+                return tr("%1 (moves from %2)").arg(getLastName(nameOf(uid)), places(move.from));
         }
         return getLastName(nameOf(uid));
     };
     const auto coverText = [&](const OutageCover &cover, const ReplacementPlan &plan) {
         if (!twoPhase || plan.coverIp == plan.coverOop)
             return coverName(plan, plan.coverIp);
-        return tr("mit %1: %2 · ohne %3: %4")
+        return tr("IP %1: %2 · OOP %3: %4")
             .arg(cover.outSlots.first, coverName(plan, plan.coverIp), cover.outSlots.second,
                  coverName(plan, plan.coverOop));
     };
@@ -233,19 +231,19 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
         m_outageTable->setItem(row, column++, outItem);
         m_outageTable->setItem(row, column++, new QTableWidgetItem(places(cover.outSlots)));
 
-        auto *inItem = new NameItem(plan.inUid.isEmpty() ? tr("— niemand passt —")
+        auto *inItem = new NameItem(plan.inUid.isEmpty() ? tr("— nobody fits —")
                                                          : nameOf(plan.inUid));
         inItem->setData(Qt::UserRole, plan.inUid);
         // The other solutions, best first.
         QStringList alternatives;
         for (qsizetype i = 1; i < cover.plans.size(); ++i) {
             const ReplacementPlan &alt = cover.plans.at(i);
-            alternatives << tr("%1: %2, Umstellungen: %3, Elf %4")
+            alternatives << tr("%1: %2, moves: %3, XI %4")
                                 .arg(nameOf(alt.inUid), places(alt.inSlots), movesText(alt, {}),
                                      delta(alt.total - cover.current));
         }
         if (!alternatives.isEmpty())
-            inItem->setToolTip(tr("Weitere Lösungen:") + QLatin1Char('\n')
+            inItem->setToolTip(tr("Further solutions:") + QLatin1Char('\n')
                                + alternatives.join(QLatin1Char('\n')));
         m_outageTable->setItem(row, column++, inItem);
 
@@ -253,7 +251,7 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
         if (plan.inUid.isEmpty())
             plays = QStringLiteral("–");
         else if (twoPhase && plan.inSlots == cover.outSlots)
-            plays = tr("%1 (volle Bridge)").arg(places(plan.inSlots));
+            plays = tr("%1 (full bridge)").arg(places(plan.inSlots));
         else
             plays = places(plan.inSlots);
         m_outageTable->setItem(row, column++, new QTableWidgetItem(plays));
@@ -276,7 +274,7 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
             changeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             m_outageTable->setItem(row, column++, changeItem);
         } else {
-            auto *changeItem = new NumericItem(tr("Keine volle Elf möglich"), -1e9);
+            auto *changeItem = new NumericItem(tr("No full XI available"), -1e9);
             changeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             m_outageTable->setItem(row, column++, changeItem);
         }
@@ -287,7 +285,7 @@ void BestXiPage::fillOutageTable(const QList<OutageCover> &covers, bool twoPhase
                                    new QTableWidgetItem(coverText(cover, plan)));
             named = {plan.coverIp, plan.coverOop};
         } else {
-            m_outageTable->setItem(row, column++, new QTableWidgetItem(tr("Platz bleibt frei")));
+            m_outageTable->setItem(row, column++, new QTableWidgetItem(tr("Place stays empty")));
         }
         m_outageTable->setItem(row, column++, new QTableWidgetItem(movesText(plan, named)));
         ++row;

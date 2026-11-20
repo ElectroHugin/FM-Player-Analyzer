@@ -57,7 +57,7 @@ QList<DwrsColorScheme> builtinDwrsColorSchemes()
 {
     DwrsColorScheme original;
     original.id = originalDwrsColorSchemeId();
-    original.name = QCoreApplication::translate(kContext, QT_TRANSLATE_NOOP("DwrsColorScheme", "Original (Regenbogen)"));
+    original.name = QCoreApplication::translate(kContext, QT_TRANSLATE_NOOP("DwrsColorScheme", "Original (rainbow)"));
     original.builtin = true;
     original.rainbow = true;
     // Shown in the editor and used for a copy: samples of the rainbow.
@@ -67,7 +67,7 @@ QList<DwrsColorScheme> builtinDwrsColorSchemes()
     return {
         original,
         // Rarity tiers as in role-playing games; "Common" has no fill.
-        make(QStringLiteral("rarity"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Seltenheit"), 0.0,
+        make(QStringLiteral("rarity"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Rarity"), 0.0,
              {{0, 0, QColor(0x9A, 0xA0, 0xA6)},
               {55, 48, QColor()},
               {65, 55, QColor(0x2E, 0x9E, 0x4F)},
@@ -75,21 +75,21 @@ QList<DwrsColorScheme> builtinDwrsColorSchemes()
               {78, 69, QColor(0x8E, 0x4E, 0xC6)},
               {84, 78, QColor(0xE8, 0x89, 0x1C)}}),
         // Red to green with soft borders.
-        make(QStringLiteral("traffic-light"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Ampel"), 2.0,
+        make(QStringLiteral("traffic-light"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Traffic light"), 2.0,
              {{0, 0, QColor(0xD6, 0x45, 0x45)},
               {60, 52, QColor(0xE8, 0x89, 0x1C)},
               {68, 60, QColor(0xE3, 0xC3, 0x41)},
               {75, 67, QColor(0x8C, 0xC1, 0x52)},
               {82, 74, QColor(0x2E, 0x9E, 0x4F)}}),
         // Viridis-like: readable with red-green colour blindness.
-        make(QStringLiteral("viridis"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Farbenblind-freundlich"), 3.0,
+        make(QStringLiteral("viridis"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Colour-blind friendly"), 3.0,
              {{0, 0, QColor(0x3B, 0x52, 0x8B)},
               {62, 54, QColor(0x21, 0x91, 0x8C)},
               {72, 64, QColor(0x5E, 0xC9, 0x62)},
               {80, 72, QColor(0xB5, 0xDE, 0x2B)},
               {86, 78, QColor(0xFD, 0xE7, 0x25)}}),
         // One hue, light to dark: calm tables.
-        make(QStringLiteral("mono"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Dezent (Lila)"), 3.0,
+        make(QStringLiteral("mono"), QT_TRANSLATE_NOOP("DwrsColorScheme", "Subtle (purple)"), 3.0,
              {{0, 0, QColor()},
               {60, 52, QColor(0xE4, 0xD8, 0xF5)},
               {70, 62, QColor(0xC3, 0xA6, 0xEC)},

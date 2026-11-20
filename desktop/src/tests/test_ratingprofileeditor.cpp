@@ -91,8 +91,8 @@ private slots:
     void rendersProfileEditor() {
         QFETCH(QString, language); QFETCH(QString, mode); QFETCH(int, width);
         QTranslator translator;
-        if (language == QStringLiteral("en")) {
-            QVERIFY(translator.load(QStringLiteral(EDITOR_QM)));
+        if (language != QStringLiteral("en")) {
+            QVERIFY(translator.load(QStringLiteral(EDITOR_QM_DIR "/fmplayeranalyzer_%1.qm").arg(language)));
             QApplication::installTranslator(&translator);
         }
         QTemporaryDir directory; const auto path = directory.filePath("profiles.json");

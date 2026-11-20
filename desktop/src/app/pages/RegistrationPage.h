@@ -86,7 +86,8 @@ private:
     // League wage rules: fills the fields from the settings / stores them.
     void loadWageFields();
     void saveWageFields();
-    // A weekly amount in the unit of the wage fields, e.g. "€1.2M p/a".
+    // A weekly amount (in the wages' currency) shown in the display currency
+    // and the unit of the wage fields, e.g. "€1.2M p/a".
     QString moneyText(double weekly) const;
 
     // Fixed head above the scrolling part.
@@ -97,7 +98,7 @@ private:
     QDoubleSpinBox *m_wageBudgetSpin = nullptr;
     QDoubleSpinBox *m_minWageSpin = nullptr;
     QComboBox *m_wagePeriodCombo = nullptr;
-    QString m_currency; // symbol of the exported wages (€, £, $)
+    QString m_currency; // currency code of the imported wages (EUR, GBP, USD)
 
     QScrollArea *m_scroll = nullptr;
     QWidget *m_content = nullptr;

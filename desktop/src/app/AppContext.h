@@ -300,6 +300,8 @@ public:
 
     // Start folder for the FM export file dialogs.
     QString htmlExportDir() { return m_config->effectiveHtmlExportDir(fmVersionId()); }
+    // The save's game-language setting for reading exports (see GameLanguage).
+    QString gameLanguage() const { return m_config->gameLanguage(); }
     bool nationalModeEnabled()
     {
         return m_database->setting(QStringLiteral("national_mode_enabled")) == QLatin1String("true");

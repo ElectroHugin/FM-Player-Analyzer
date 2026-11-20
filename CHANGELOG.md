@@ -2,15 +2,15 @@
 
 ## Unreleased
 
-Test build 2.3.1-test.1:
-
-- New interface language: Simplified Chinese (简体中文), contributed by the community. Choose it in the Language menu.
+- New interface languages: Simplified Chinese (简体中文, contributed by the community), French, Italian, Spanish and Russian. Choose them in the Language menu. French, Italian, Spanish and Russian were made with an AI tool and are not yet reviewed by native speakers; corrections are welcome as a Translation issue.
 - Texts that are not translated yet show in English.
 - Translating the app into more languages is now much easier: see [TRANSLATING.md](desktop/translations/TRANSLATING.md) or open a Translation issue.
-
-Added for 2.3.1-test.2:
-
-- Chinese translation reviewed: football terms as in the Chinese version of the game (e.g. in/out of possession, attributes), clearer explanations.
+- Game terms (attributes, positions, foot strength, personalities, playing time and more) now follow the official texts of each language version of the game.
+- FM27 role names and abbreviations follow the interface language, worded as in that language version of the game (German: "Inverser Außenstürmer", "IAS"). Your tactics and settings stay as they are.
+- Player values follow the interface language the same way: attributes, personality, foot strength, preferred foot and positions (German: "Erfolgshungrig", "Sehr stark", "V (Z)").
+- Money can be shown in pounds, US dollars, euros, Swiss francs, Chinese yuan or Russian rubles (Language → Currency), converted with the game's own exchange rates. By default the currency matches the interface language. Stored values stay as they are.
+- For FM27 the import now offers the save game first. HTML/CSV exports still work as before.
+- HTML/CSV exports are read in every supported game language (English, German, French, Italian, Simplified Chinese, Russian, Spanish). The language is recognised from the column headers; it can also be set under Settings → Import.
 
 ## 2.3.1 – 2026-11-20
 

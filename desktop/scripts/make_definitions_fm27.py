@@ -2,9 +2,9 @@
 """Builds src/app/resources/definitions_fm27.json from the FM27 source tables.
 
 Sources (desktop/data/fm27/, transcribed from in-game screenshots):
-    rollen-fm27.csv              Phase;Position;Rolle;Kuerzel;Key;Preferable;Merkmale;Notiz
-    rollen-kuerzel-fm27.csv Phase;Rolle;Kuerzel-Vorschlag;Kuerzel-im-Spiel;Positionen
-    formationen-fm27.csv         Phase;Formation;Slots;Anzahl;Notiz
+    roles-fm27.csv               Phase;Position;Role;Abbreviation;Key;Preferable;Traits;Note
+    role-abbreviations-fm27.csv  Phase;Role;Abbreviation-Suggestion;Abbreviation-In-Game;Positions
+    formations-fm27.csv          Phase;Formation;Slots;Count;Note
 
 Usage (from desktop/):  python3 scripts/make_definitions_fm27.py
 
@@ -26,7 +26,7 @@ DATA = os.path.join(DESKTOP, "data", "fm27")
 OUT = os.path.join(DESKTOP, "src", "app", "resources", "definitions_fm27.json")
 FM24 = os.path.join(DESKTOP, "src", "app", "resources", "definitions.json")
 
-PHASES = {"mit Ball": "ip", "ohne Ball": "oop"}
+PHASES = {"in possession": "ip", "out of possession": "oop"}
 
 # In-game attribute spelling -> analyzer attribute name.
 ATTRIBUTE_NAMES = {
@@ -53,7 +53,7 @@ def category(position):
 # Starter tactics whose two line-ups differ (in possession, out of possession).
 # Real tactics only (Edmund 31.10.2026: formations are no tactics, they stay
 # templates for the tactic editor). Role ids as in role_id(); game
-# abbreviations from data/fm27/rollen-kuerzel-fm27.csv (checked in the game).
+# abbreviations from data/fm27/role-abbreviations-fm27.csv (checked in the game).
 DATA_REVISION = 7
 # Formerly shipped (generated from formations); dropped from users' copies.
 RETIRED_TACTICS = ["3-4-3 DM Narrow", "3-4-3 DM Wide", "4-2-2-2 DM Wide",
@@ -124,18 +124,18 @@ def attr_list(text):
 
 def main():
     abbreviations = {}
-    for row in read("rollen-kuerzel-fm27.csv"):
-        abbr = row["Kuerzel-im-Spiel"].strip() or row["Kuerzel-Vorschlag"].strip()
-        abbreviations[(PHASES[row["Phase"]], row["Rolle"])] = abbr
+    for row in read("role-abbreviations-fm27.csv"):
+        abbr = row["Abbreviation-In-Game"].strip() or row["Abbreviation-Suggestion"].strip()
+        abbreviations[(PHASES[row["Phase"]], row["Role"])] = abbr
 
     roles = {}  # (phase, name) -> {key, preferable, positions}
-    for row in read("rollen-fm27.csv"):
+    for row in read("roles-fm27.csv"):
         phase = PHASES[row["Phase"]]
-        entry = roles.setdefault((phase, row["Rolle"]), {
+        entry = roles.setdefault((phase, row["Role"]), {
             "key": attr_list(row["Key"]), "preferable": attr_list(row["Preferable"]),
             "positions": []})
         if (entry["key"], entry["preferable"]) != (attr_list(row["Key"]), attr_list(row["Preferable"])):
-            sys.exit("Rolle %s (%s) hat je Position andere Attribute" % (row["Rolle"], phase))
+            sys.exit("Role %s (%s) has different attributes per position" % (row["Role"], phase))
         entry["positions"].append(row["Position"])
 
     abbr_phases = {}
@@ -161,10 +161,10 @@ def main():
     # (in / out of possession) with default roles; which slot goes with which
     # is decided by the best-XI optimisation, not by the tactic.
     templates = {"ip": {}, "oop": {}}
-    for row in read("formationen-fm27.csv"):
+    for row in read("formations-fm27.csv"):
         slots = row["Slots"].split("|")
         if len(slots) != 11 or len(set(slots)) != 11:
-            sys.exit("Formation %s hat keine 11 Slots" % row["Formation"])
+            sys.exit("Formation %s does not have 11 slots" % row["Formation"])
         templates[PHASES[row["Phase"]]][row["Formation"]] = slots
 
     tactic_roles, tactic_layouts = {}, {}
@@ -172,10 +172,10 @@ def main():
     for name, tactic in TACTICS.items():
         for phase in ("ip", "oop"):
             if len(tactic[phase]) != 11:
-                sys.exit("Taktik %s (%s) hat keine 11 Plätze" % (name, phase))
+                sys.exit("Tactic %s (%s) does not have 11 places" % (name, phase))
             for slot, role in tactic[phase].items():
                 if role not in known_roles or phases[role] != phase:
-                    sys.exit("Taktik %s: Rolle %s passt nicht zu %s" % (name, role, phase))
+                    sys.exit("Tactic %s: role %s does not fit %s" % (name, role, phase))
         tactic_roles[name] = tactic
         layout = {}
         for s in tactic["oop"]:
@@ -185,14 +185,14 @@ def main():
 
     # Where the game draws a role's card, relative to its slot: percent of
     # the pitch length, + towards the opponent goal (Edmund's measurements,
-    # data/fm27/rollen-verschiebung-fm27.json). Display only.
-    with open(os.path.join(DATA, "rollen-verschiebung-fm27.json"), encoding="utf-8") as f:
+    # data/fm27/role-shifts-fm27.json). Display only.
+    with open(os.path.join(DATA, "role-shifts-fm27.json"), encoding="utf-8") as f:
         shift_data = json.load(f)
     role_shifts = {}
     for profile in shift_data["implementation"]["profiles"]:
         role = profile["role_id"]
         if role not in known_roles:
-            sys.exit("Verschiebung für unbekannte Rolle %s" % role)
+            sys.exit("Shift for unknown role %s" % role)
         value = float(profile["vertical_shift_percent"])
         if value == 0:
             continue
@@ -222,7 +222,7 @@ def main():
     with open(OUT, "w", encoding="utf-8", newline="\n") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
         f.write("\n")
-    print("%d Rollen (%d mit Ball, %d ohne Ball), %d Vorlagen, %d Starttaktiken -> %s" % (
+    print("%d roles (%d in possession, %d out of possession), %d templates, %d starter tactics -> %s" % (
         len(phases), list(phases.values()).count("ip"), list(phases.values()).count("oop"),
         len(templates["ip"]) + len(templates["oop"]), len(tactic_roles), os.path.relpath(OUT, DESKTOP)))
 

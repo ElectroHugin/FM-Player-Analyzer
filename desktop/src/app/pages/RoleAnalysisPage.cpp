@@ -1,4 +1,5 @@
 #include "RoleAnalysisPage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "widgets/RolePhaseSwitch.h"
 
@@ -8,6 +9,7 @@
 #include "../widgets/PlayerTableModel.h"
 #include "core/RoleAnalysis.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QButtonGroup>
 #include <QComboBox>
@@ -44,11 +46,11 @@ RoleAnalysisPage::RoleAnalysisPage(AppContext &context, QWidget *parent)
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    m_heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Rollen-Abdeckung")), content);
+    m_heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Role Coverage")), content);
     layout->addWidget(m_heading);
 
     auto *controlRow = new QHBoxLayout;
-    controlRow->addWidget(new QLabel(tr("Rolle:"), content));
+    controlRow->addWidget(new QLabel(tr("Role:"), content));
     m_roleCombo = new QComboBox(content);
     m_roleCombo->setMinimumWidth(320);
     controlRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_roleCombo, m_roleCombo->parentWidget()));
@@ -60,11 +62,11 @@ RoleAnalysisPage::RoleAnalysisPage(AppContext &context, QWidget *parent)
     layout->addWidget(m_personalityFilter);
 
     m_tabs = new QTabWidget(content);
-    m_tabs->addTab(buildGroupTab(&m_myClub), tr("Mein Verein"));
+    m_tabs->addTab(buildGroupTab(&m_myClub), tr("My Club"));
     m_myClub.tabIndex = 0;
-    m_tabs->addTab(buildGroupTab(&m_secondTeam), tr("Zweitteam"));
+    m_tabs->addTab(buildGroupTab(&m_secondTeam), tr("Second Team"));
     m_secondTeam.tabIndex = 1;
-    m_tabs->addTab(buildGroupTab(&m_scouted), tr("Gescoutete Spieler"));
+    m_tabs->addTab(buildGroupTab(&m_scouted), tr("Scouted Players"));
     m_scouted.tabIndex = 2;
     m_tabs->setMinimumHeight(420);
     layout->addWidget(m_tabs, 1);
@@ -88,9 +90,9 @@ RoleAnalysisPage::RoleAnalysisPage(AppContext &context, QWidget *parent)
         m_scopeGroup->addButton(radio, id);
         scopeLayout->addWidget(radio);
     };
-    addScope(tr("Mein Verein"), MyClub, true);
-    addScope(tr("Zweitteam"), SecondTeam);
-    addScope(tr("Gescoutete"), Scouted);
+    addScope(tr("My Club"), MyClub, true);
+    addScope(tr("Second Team"), SecondTeam);
+    addScope(tr("Scouted"), Scouted);
     scopeLayout->addSpacing(16);
     m_playerCombo = new QComboBox(m_scopeRow);
     m_playerCombo->setMinimumWidth(320);
@@ -158,7 +160,7 @@ void RoleAnalysisPage::showSection(const QString &pageId)
 {
     m_scoutedView = pageId == QLatin1String("scouting_roles");
     m_heading->setText(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(
-        m_scoutedView ? tr("Scouting nach Rolle") : tr("Rollen-Abdeckung")));
+        m_scoutedView ? tr("Scouting by Role") : tr("Role Coverage")));
     applySectionVisibility();
     m_tabs->setCurrentIndex(m_scoutedView ? m_scouted.tabIndex : m_myClub.tabIndex);
     // Strengths & weaknesses look at the players of this section.
@@ -237,24 +239,24 @@ void RoleAnalysisPage::rebuildTables()
         return {
             {tr("Name"), [](const Player &p) { return p.name; },
              [](const Player &p) { return getLastName(p.name); }, nullptr, {}},
-            {tr("Alter"), [](const Player &p) { return p.age; }, nullptr, nullptr,
+            {tr("Age"), [](const Player &p) { return p.age; }, nullptr, nullptr,
              Qt::AlignRight | Qt::AlignVCenter},
-            {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}},
-            {tr("Persönlichkeit"), [](const Player &p) { return p.personality; }, nullptr,
+            {tr("Position"), [](const Player &p) { return GameTerms::positions(p.positionRaw); }, nullptr, nullptr, {}},
+            {tr("Personality"), [](const Player &p) { return GameTerms::text(QStringLiteral("personality"), p.personality); }, nullptr,
              [definitions](const Player &p) {
                  return personalityCellStyle(definitions->personalityCategory(p.personality));
              },
              {}},
-            {tr("Linker Fuß"), [](const Player &p) { return p.leftFoot; }, nullptr, nullptr, {}},
-            {tr("Rechter Fuß"), [](const Player &p) { return p.rightFoot; }, nullptr, nullptr, {}},
-            {tr("Größe"), [](const Player &p) { return p.heightRaw; },
+            {tr("Left Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.leftFoot); }, nullptr, nullptr, {}},
+            {tr("Right Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.rightFoot); }, nullptr, nullptr, {}},
+            {tr("Height"), [](const Player &p) { return p.heightRaw; },
              [](const Player &p) { return p.heightCm; }, nullptr,
              Qt::AlignRight | Qt::AlignVCenter},
-            {tr("Verein"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}},
-            {tr("Marktwert"), [](const Player &p) { return p.transferValueRaw; },
+            {tr("Club"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}},
+            {tr("Market Value"), [](const Player &p) { return Currency::displayText(p.transferValueRaw); },
              [](const Player &p) { return p.transferValue; }, nullptr,
              Qt::AlignRight | Qt::AlignVCenter},
-            {tr("DWRS (absolut)"),
+            {tr("DWRS (absolute)"),
              [absoluteOf](const Player &p) {
                  return QString::number(absoluteOf(p), 'f', 2);
              },
@@ -294,14 +296,14 @@ void RoleAnalysisPage::rebuildTables()
         m_tabs->setTabText(group.tabIndex, tr("%1 (%2)").arg(tabText).arg(count));
     };
     apply(m_myClub, std::move(mine),
-          tr("%1").arg(userClub.isEmpty() ? tr("Mein Verein") : userClub));
+          tr("%1").arg(userClub.isEmpty() ? tr("My Club") : userClub));
     apply(m_secondTeam, std::move(second),
-          tr("%1").arg(secondClub.isEmpty() ? tr("Zweitteam") : secondClub));
-    apply(m_scouted, std::move(scouted), tr("Gescoutete Spieler"));
+          tr("%1").arg(secondClub.isEmpty() ? tr("Second Team") : secondClub));
+    apply(m_scouted, std::move(scouted), tr("Scouted Players"));
 
     const auto roleNames = m_context.definitions().roleDisplayMap();
     m_prosConsTitle->setText(
-        tr("Stärken und Schwächen als %1").arg(roleNames.value(role, role)));
+        tr("Strengths and weaknesses as %1").arg(roleNames.value(role, role)));
 }
 
 void RoleAnalysisPage::rebuildPlayerCombo()
@@ -342,7 +344,7 @@ void RoleAnalysisPage::rebuildProsCons()
     const QString uid = m_playerCombo->currentData().toString();
     const Player *player = m_context.store().findByUid(uid);
     if (!player) {
-        m_prosLabel->setText(tr("Keine Spieler mit dieser Rolle im gewählten Pool."));
+        m_prosLabel->setText(tr("No players with this role in the selected pool."));
         m_consLabel->clear();
         return;
     }
@@ -350,20 +352,20 @@ void RoleAnalysisPage::rebuildProsCons()
     const RoleAnalysis::RoleReport report = RoleAnalysis::analyzePlayerForRole(
         m_context.definitions(), *player, selectedRole());
 
-    QString prosHtml = QStringLiteral("<b>%1</b><ul>").arg(tr("Stärken"));
+    QString prosHtml = QStringLiteral("<b>%1</b><ul>").arg(tr("Strengths"));
     if (report.pros.empty()) {
         prosHtml = QStringLiteral("<b>%1</b><p>%2</p>")
-                       .arg(tr("Stärken"), tr("Keine herausragenden Stärken für diese Rolle."));
+                       .arg(tr("Strengths"), tr("No outstanding strengths for this role."));
     } else {
         for (const auto &pro : report.pros)
             prosHtml += QStringLiteral("<li>%1</li>")
                             .arg(RoleAnalysis::formatProLine(pro, report.roleName).toHtmlEscaped());
         prosHtml += QStringLiteral("</ul>");
     }
-    QString consHtml = QStringLiteral("<b>%1</b><ul>").arg(tr("Schwächen"));
+    QString consHtml = QStringLiteral("<b>%1</b><ul>").arg(tr("Weaknesses"));
     if (report.cons.empty()) {
         consHtml = QStringLiteral("<b>%1</b><p>%2</p>")
-                       .arg(tr("Schwächen"), tr("Keine nennenswerten Schwächen für diese Rolle."));
+                       .arg(tr("Weaknesses"), tr("No notable weaknesses for this role."));
     } else {
         for (const auto &con : report.cons)
             consHtml += QStringLiteral("<li>%1</li>")

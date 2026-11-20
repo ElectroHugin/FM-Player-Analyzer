@@ -33,16 +33,16 @@ class AgeSpin : public QSpinBox
 public:
     QString textFromValue(int value) const override
     {
-        return value >= kLifelongAge ? TrainingProfileEditor::tr("immer") : QSpinBox::textFromValue(value);
+        return value >= kLifelongAge ? TrainingProfileEditor::tr("always") : QSpinBox::textFromValue(value);
     }
     int valueFromText(const QString &text) const override
     {
-        return text == TrainingProfileEditor::tr("immer") ? kLifelongAge : QSpinBox::valueFromText(text);
+        return text == TrainingProfileEditor::tr("always") ? kLifelongAge : QSpinBox::valueFromText(text);
     }
     QValidator::State validate(QString &text, int &pos) const override
     {
-        if (TrainingProfileEditor::tr("immer").startsWith(text) && !text.isEmpty())
-            return text == TrainingProfileEditor::tr("immer") ? QValidator::Acceptable
+        if (TrainingProfileEditor::tr("always").startsWith(text) && !text.isEmpty())
+            return text == TrainingProfileEditor::tr("always") ? QValidator::Acceptable
                                                               : QValidator::Intermediate;
         return QSpinBox::validate(text, pos);
     }
@@ -60,11 +60,11 @@ QSpinBox *ageSpin(int value, const QString &lifelongText)
 
 QString TrainingProfileEditor::bandLabel(const QString &storedName)
 {
-    if (storedName == QLatin1String("Explosive")) return tr("Explosiv");
-    if (storedName == QLatin1String("Strength")) return tr("Kraft");
-    if (storedName == QLatin1String("Technical")) return tr("Technik");
+    if (storedName == QLatin1String("Explosive")) return tr("Explosive");
+    if (storedName == QLatin1String("Strength")) return tr("Strength");
+    if (storedName == QLatin1String("Technical")) return tr("Technical");
     if (storedName == QLatin1String("Mental")) return tr("Mental");
-    if (storedName == QLatin1String("Character")) return tr("Charakter");
+    if (storedName == QLatin1String("Character")) return tr("Character");
     return storedName;
 }
 
@@ -86,8 +86,8 @@ TrainingProfileEditor::TrainingProfileEditor(QWidget *parent)
     layout->setSpacing(10);
 
     m_bands = new QTableWidget(0, BandColumns, this);
-    m_bands->setHorizontalHeaderLabels({tr("Band"), tr("Voll trainierbar bis"), tr("Gesperrt ab"),
-                                        tr("Gewicht"), tr("Nur Mentoring")});
+    m_bands->setHorizontalHeaderLabels({tr("Band"), tr("Fully trainable until"), tr("Locked from"),
+                                        tr("Weight"), tr("Mentoring only")});
     m_bands->verticalHeader()->hide();
     m_bands->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_bands->horizontalHeader()->setSectionResizeMode(ColName, QHeaderView::Stretch);
@@ -97,8 +97,8 @@ TrainingProfileEditor::TrainingProfileEditor(QWidget *parent)
     layout->addWidget(m_bands);
 
     auto *bandButtons = new QHBoxLayout;
-    auto *addBandButton = new QPushButton(tr("Band hinzufügen"), this);
-    m_removeBand = new QPushButton(tr("Band entfernen"), this);
+    auto *addBandButton = new QPushButton(tr("Add band"), this);
+    m_removeBand = new QPushButton(tr("Remove band"), this);
     bandButtons->addWidget(addBandButton);
     bandButtons->addWidget(m_removeBand);
     bandButtons->addStretch(1);
@@ -111,7 +111,7 @@ TrainingProfileEditor::TrainingProfileEditor(QWidget *parent)
     });
 
     m_attributes = new QTableWidget(0, 2, this);
-    m_attributes->setHorizontalHeaderLabels({tr("Attribut"), tr("Band")});
+    m_attributes->setHorizontalHeaderLabels({tr("Attribute"), tr("Band")});
     m_attributes->verticalHeader()->hide();
     m_attributes->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_attributes->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -119,9 +119,9 @@ TrainingProfileEditor::TrainingProfileEditor(QWidget *parent)
     layout->addWidget(m_attributes);
 
     auto *fileButtons = new QHBoxLayout;
-    auto *importButton = new QPushButton(tr("Importieren …"), this);
-    auto *exportButton = new QPushButton(tr("Exportieren …"), this);
-    auto *standardButton = new QPushButton(tr("Standard wiederherstellen"), this);
+    auto *importButton = new QPushButton(tr("Import …"), this);
+    auto *exportButton = new QPushButton(tr("Export …"), this);
+    auto *standardButton = new QPushButton(tr("Restore standard"), this);
     fileButtons->addWidget(importButton);
     fileButtons->addWidget(exportButton);
     fileButtons->addStretch(1);
@@ -153,7 +153,7 @@ void TrainingProfileEditor::fillBands(const TrainingProfile &profile)
 {
     const QSignalBlocker blocker(m_bands);
     m_bands->setRowCount(0);
-    const QString lifelong = tr("Ganz nach oben: immer trainierbar");
+    const QString lifelong = tr("Top value: always trainable");
     for (const TrainingBand &band : profile.bands) {
         const int row = m_bands->rowCount();
         m_bands->insertRow(row);
@@ -225,7 +225,7 @@ void TrainingProfileEditor::refreshAttributeChoices()
         const int band = combo->count() > 0 ? combo->currentData().toInt() : combo->property("band").toInt();
         const QSignalBlocker blocker(combo);
         combo->clear();
-        combo->addItem(tr("nicht trainieren"), -1);
+        combo->addItem(tr("do not train"), -1);
         for (int i = 0; i < names.size(); ++i)
             combo->addItem(names.at(i), i);
         combo->setCurrentIndex(std::max(0, combo->findData(band)));
@@ -236,7 +236,7 @@ void TrainingProfileEditor::addBand()
 {
     TrainingProfile current = profile();
     TrainingBand band;
-    band.name = tr("Neues Band %1").arg(current.bands.size() + 1);
+    band.name = tr("New band %1").arg(current.bands.size() + 1);
     current.bands.append(band);
     fillBands(current);
     refreshAttributeChoices();
@@ -295,8 +295,8 @@ TrainingProfile TrainingProfileEditor::profile() const
 
 void TrainingProfileEditor::importProfile()
 {
-    const QString path = QFileDialog::getOpenFileName(this, tr("Trainingsprofil importieren"), QString(),
-                                                      tr("Trainingsprofil (*.json)"));
+    const QString path = QFileDialog::getOpenFileName(this, tr("Import training profile"), QString(),
+                                                      tr("Training profile (*.json)"));
     if (path.isEmpty())
         return;
     QFile file(path);
@@ -305,26 +305,26 @@ void TrainingProfileEditor::importProfile()
                     && TrainingProfile::fromJson(QJsonDocument::fromJson(file.readAll()).object(), &imported);
     m_status->setVisible(true);
     if (!ok) {
-        m_status->setText(tr("Die Datei ist kein gültiges Trainingsprofil."));
+        m_status->setText(tr("The file is not a valid training profile."));
         return;
     }
     fillBands(imported);
     fillAttributes(imported);
-    m_status->setText(tr("Importiert. Mit „Speichern“ übernehmen."));
+    m_status->setText(tr("Imported. Apply with “Save”."));
 }
 
 void TrainingProfileEditor::exportProfile()
 {
-    const QString path = QFileDialog::getSaveFileName(this, tr("Trainingsprofil exportieren"),
+    const QString path = QFileDialog::getSaveFileName(this, tr("Export training profile"),
                                                       QStringLiteral("training-profile.json"),
-                                                      tr("Trainingsprofil (*.json)"));
+                                                      tr("Training profile (*.json)"));
     if (path.isEmpty())
         return;
     QFile file(path);
     const bool ok = file.open(QIODevice::WriteOnly | QIODevice::Truncate)
                     && file.write(QJsonDocument(profile().toJson()).toJson()) > 0;
     m_status->setVisible(true);
-    m_status->setText(ok ? tr("Exportiert.") : tr("Die Datei konnte nicht geschrieben werden."));
+    m_status->setText(ok ? tr("Exported.") : tr("The file could not be written."));
 }
 
 } // namespace fm

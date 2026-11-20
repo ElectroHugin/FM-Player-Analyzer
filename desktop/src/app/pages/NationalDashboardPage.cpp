@@ -10,6 +10,7 @@
 #include "core/Database.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -50,19 +51,19 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     scroll->setWidget(content);
 
     auto *heading =
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Nationalteam-Übersicht")), content);
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("National Team Overview")), content);
     layout->addWidget(heading);
 
     // --- Import section ---
     auto *importBox =
-        new QGroupBox(tr("⬆️ Neue Spielerdaten importieren (FM-Export, HTML oder CSV)"), content);
+        new QGroupBox(tr("⬆️ Import new player data (FM export, HTML or CSV)"), content);
     auto *importLayout = new QVBoxLayout(importBox);
     auto *fileRow = new QHBoxLayout;
     m_filePathEdit = new QLineEdit(importBox);
     m_filePathEdit->setReadOnly(true);
-    m_filePathEdit->setPlaceholderText(tr("Keine Datei ausgewählt…"));
-    auto *browseButton = new QPushButton(tr("Durchsuchen…"), importBox);
-    m_importButton = new QPushButton(tr("Importieren"), importBox);
+    m_filePathEdit->setPlaceholderText(tr("No file selected…"));
+    auto *browseButton = new QPushButton(tr("Browse…"), importBox);
+    m_importButton = new QPushButton(tr("Import"), importBox);
     m_importButton->setEnabled(false);
     fileRow->addWidget(m_filePathEdit, 1);
     fileRow->addWidget(browseButton);
@@ -70,12 +71,12 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     importLayout->addLayout(fileRow);
     auto *optionsRow = new QHBoxLayout;
     m_replaceSquadCheck =
-        new QCheckBox(tr("Nationalkader durch Spieler dieser Datei ersetzen"), importBox);
+        new QCheckBox(tr("Replace national squad with players from this file"), importBox);
     m_replaceSquadCheck->setToolTip(
-        tr("Wenn aktiviert, wird der aktuelle Nationalkader geleert und durch ALLE Spieler "
-           "aus dieser Exportdatei ersetzt — praktisch für schnelle Kader-Updates."));
+        tr("When enabled, the current national squad is cleared and replaced with ALL "
+           "players from this export file — handy for quick squad updates."));
     m_autoAssignCheck =
-        new QCheckBox(tr("Neuen/unzugeordneten Spielern automatisch Rollen zuweisen"),
+        new QCheckBox(tr("Automatically assign roles to new/unassigned players"),
                       importBox);
     m_autoAssignCheck->setChecked(true);
     optionsRow->addWidget(m_replaceSquadCheck);
@@ -85,8 +86,8 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     layout->addWidget(importBox);
     connect(browseButton, &QPushButton::clicked, this, [this] {
         const QString path = QFileDialog::getOpenFileName(
-            this, tr("FM-Export oder FM27-Spielstand auswählen"), m_context.htmlExportDir(),
-            tr("FM-Exporte und FM27-Spielstände (*.html *.htm *.csv *.fm);;Alle Dateien (*)"));
+            this, tr("Choose an FM export or FM27 save"), m_context.htmlExportDir(),
+            tr("FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)"));
         if (path.isEmpty())
             return;
         m_filePathEdit->setText(path);
@@ -106,11 +107,11 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     analysisLayout->setSpacing(12);
 
     auto *tacticRow = new QHBoxLayout;
-    auto *analysisTitle = new QLabel(tr("Kader-Analyse"), m_analysisWidget);
+    auto *analysisTitle = new QLabel(tr("Squad Analysis"), m_analysisWidget);
     analysisTitle->setObjectName(QStringLiteral("sectionTitle"));
     tacticRow->addWidget(analysisTitle);
     tacticRow->addSpacing(24);
-    tacticRow->addWidget(new QLabel(tr("Analyse-Taktik:"), m_analysisWidget));
+    tacticRow->addWidget(new QLabel(tr("Analysis Tactic:"), m_analysisWidget));
     m_tacticCombo = new QComboBox(m_analysisWidget);
     m_tacticCombo->setMinimumWidth(240);
     tacticRow->addWidget(m_tacticCombo);
@@ -132,14 +133,14 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
         kpiRow->addWidget(tile, 1);
         *valueOut = value;
     };
-    makeTile(tr("Spieler im Kader"), &m_kpiPlayers);
-    makeTile(tr("Ø Alter"), &m_kpiAvgAge);
+    makeTile(tr("Players in squad"), &m_kpiPlayers);
+    makeTile(tr("Avg. Age"), &m_kpiAvgAge);
     kpiRow->addStretch(2);
     analysisLayout->addLayout(kpiRow);
 
     auto *squadRow = new QHBoxLayout;
     auto *gridColumn = new QVBoxLayout;
-    auto *gridTitle = new QLabel(tr("Positionsstärke"), m_analysisWidget);
+    auto *gridTitle = new QLabel(tr("Positional Strength"), m_analysisWidget);
     gridTitle->setObjectName(QStringLiteral("sectionTitle"));
     gridTitle->setAlignment(Qt::AlignHCenter);
     m_strengthGrid = new StrengthGridWidget(m_theme, m_analysisWidget);
@@ -153,7 +154,7 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     m_squadTable = new QTableWidget(m_analysisWidget);
     m_squadTable->setColumnCount(5);
     m_squadTable->setHorizontalHeaderLabels(
-        {tr("Name"), tr("Alter"), tr("Ø-Note"), tr("Verein"), tr("Position")});
+        {tr("Name"), tr("Age"), tr("Avg. Rating"), tr("Club"), tr("Position")});
     m_squadTable->verticalHeader()->setVisible(false);
     m_squadTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_squadTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -168,16 +169,16 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
     analysisLayout->addLayout(squadRow);
 
     // --- Potential call-ups ---
-    auto *callUpBox = new QGroupBox(tr("🎯 Mögliche Nachnominierungen"), m_analysisWidget);
+    auto *callUpBox = new QGroupBox(tr("🎯 Possible call-ups"), m_analysisWidget);
     auto *callUpLayout = new QVBoxLayout(callUpBox);
     auto *callUpInfo = new QLabel(
-        tr("Mögliche Verstärkungen aus dem berechtigten Spieler-Pool, die aktuell nicht im "
-           "Kader stehen."),
+        tr("Possible reinforcements from the eligible player pool who are not currently in "
+           "the squad."),
         callUpBox);
     callUpInfo->setWordWrap(true);
     callUpLayout->addWidget(callUpInfo);
     auto *filterRow = new QHBoxLayout;
-    filterRow->addWidget(new QLabel(tr("Max. Alter:"), callUpBox));
+    filterRow->addWidget(new QLabel(tr("Max. Age:"), callUpBox));
     m_maxAgeSlider = new QSlider(Qt::Horizontal, callUpBox);
     m_maxAgeSlider->setRange(15, 99);
     m_maxAgeLabel = new QLabel(callUpBox);
@@ -203,7 +204,7 @@ NationalDashboardPage::NationalDashboardPage(AppContext &context, ThemeManager &
             rebuildAnalysis();
     });
     connect(m_maxAgeSlider, &QSlider::valueChanged, this, [this] {
-        m_maxAgeLabel->setText(tr("%1 Jahre").arg(m_maxAgeSlider->value()));
+        m_maxAgeLabel->setText(tr("%1 years").arg(m_maxAgeSlider->value()));
         if (!m_updating)
             rebuildCallUps();
     });
@@ -223,7 +224,7 @@ void NationalDashboardPage::refresh()
     m_maxAgeSlider->setMaximum(sliderMax);
     if (m_maxAgeSlider->value() > sliderMax || m_maxAgeSlider->value() == m_maxAgeSlider->minimum())
         m_maxAgeSlider->setValue(sliderMax);
-    m_maxAgeLabel->setText(tr("%1 Jahre").arg(m_maxAgeSlider->value()));
+    m_maxAgeLabel->setText(tr("%1 years").arg(m_maxAgeSlider->value()));
     m_updating = false;
 
     rebuildAnalysis();
@@ -237,8 +238,8 @@ void NationalDashboardPage::rebuildAnalysis()
 
     if (name.isEmpty() || code.isEmpty() || ageLimit <= 0) {
         m_hint->setText(
-            tr("⚠️ Bitte konfiguriere zuerst dein Nationalteam vollständig unter "
-               "Einstellungen → Nationalteam (Name, Länder-Code, Altersgrenze)."));
+            tr("⚠️ Please fully configure your national team first under "
+               "Settings → National team (name, country code, age limit)."));
         m_hint->show();
         m_analysisWidget->hide();
         return;
@@ -250,8 +251,8 @@ void NationalDashboardPage::rebuildAnalysis()
             squadPlayers.push_back(&player);
     }
     if (squadPlayers.empty()) {
-        m_hint->setText(tr("Noch keine Spieler im Nationalkader. Stelle ihn unter "
-                           "Kader → Auswahl zusammen."));
+        m_hint->setText(tr("No players in the national squad yet. Put it together "
+                           "under Squad → Selection."));
         m_hint->show();
         m_analysisWidget->hide();
         return;
@@ -273,7 +274,7 @@ void NationalDashboardPage::rebuildAnalysis()
                              : QStringLiteral("–"));
 
     // --- Squad table ---
-    m_squadTableTitle->setText(tr("Aktueller %1-Kader").arg(name));
+    m_squadTableTitle->setText(tr("Current %1 squad").arg(name));
     m_squadTable->setSortingEnabled(false);
     m_squadTable->setRowCount(static_cast<int>(squadPlayers.size()));
     int row = 0;
@@ -290,7 +291,7 @@ void NationalDashboardPage::rebuildAnalysis()
                                 : QStringLiteral("–"),
                             player->averageRating));
         m_squadTable->setItem(row, 3, new QTableWidgetItem(player->club));
-        m_squadTable->setItem(row, 4, new QTableWidgetItem(player->positionRaw));
+        m_squadTable->setItem(row, 4, new QTableWidgetItem(GameTerms::positions(player->positionRaw)));
         ++row;
     }
     m_squadTable->setSortingEnabled(true);
@@ -404,8 +405,8 @@ void NationalDashboardPage::rebuildCallUps()
     }
 
     if (suggestions.empty()) {
-        m_callUpStatus->setText(tr("✅ Dein Kader ist gut aufgestellt! Keine klaren "
-                                   "Verstärkungen im berechtigten Pool gefunden."));
+        m_callUpStatus->setText(tr("✅ Your squad is well set up! No clear "
+                                   "reinforcements found in the eligible pool."));
         return;
     }
     m_callUpStatus->clear();
@@ -423,24 +424,24 @@ void NationalDashboardPage::rebuildCallUps()
         auto *header = new QLabel(
             QStringLiteral("<b>%1</b><br/><span>%2</span>")
                 .arg(player->name.toHtmlEscaped(),
-                     tr("Upgrade für <b>%1</b>").arg(roleName.toHtmlEscaped())),
+                     tr("Upgrade for <b>%1</b>").arg(roleName.toHtmlEscaped())),
             card);
         header->setWordWrap(true);
         cardLayout->addWidget(header);
         auto *line = new QFrame(card);
         line->setFrameShape(QFrame::HLine);
         cardLayout->addWidget(line);
-        auto *body = new QLabel(tr("🎯 <b>Bewertung:</b> %1 %% (dein Bester: %2 %%)<br/>"
-                                   "🎂 <b>Alter:</b> %3")
+        auto *body = new QLabel(tr("🎯 <b>Rating:</b> %1 %% (your best: %2 %%)<br/>🎂 "
+                                   "<b>Age:</b> %3")
                                     .arg(formatDwrs(suggestion.rating))
                                     .arg(formatDwrs(suggestion.squadBest))
                                     .arg(player->age),
                                 card);
         body->setWordWrap(true);
         cardLayout->addWidget(body);
-        auto *footer = new QLabel(tr("Verein: %1<br/>Positionen: %2")
+        auto *footer = new QLabel(tr("Club: %1<br/>Positions: %2")
                                       .arg(player->club.toHtmlEscaped(),
-                                           player->positionRaw.toHtmlEscaped()),
+                                           GameTerms::positions(player->positionRaw).toHtmlEscaped()),
                                   card);
         footer->setObjectName(QStringLiteral("kpiCaption"));
         footer->setWordWrap(true);
@@ -480,8 +481,8 @@ void NationalDashboardPage::importFinished(const ImportPipelineResult &result)
 {
     if (!result.import.success) {
         QMessageBox::critical(
-            this, tr("Import fehlgeschlagen"),
-            tr("❌ Die Datei konnte nicht importiert werden.\n\n%1")
+            this, tr("Import failed"),
+            tr("❌ The file could not be imported.\n\n%1")
                 .arg(importErrorText(result.import)));
         return;
     }
@@ -496,10 +497,10 @@ void NationalDashboardPage::importFinished(const ImportPipelineResult &result)
                 ids << player->id;
         }
         if (!m_context.setNationalSquad(ids)) {
-            QMessageBox::critical(this, tr("Nationalkader"),
+            QMessageBox::critical(this, tr("National Squad"),
                                   m_context.database().errorString());
         } else {
-            summary << tr("🔁 Nationalkader durch %1 Spieler aus der Datei ersetzt.")
+            summary << tr("🔁 National squad replaced with %1 players from the file.")
                            .arg(ids.size());
         }
     }
@@ -507,7 +508,7 @@ void NationalDashboardPage::importFinished(const ImportPipelineResult &result)
     const QStringList warnings = importWarningLines(result);
     QMessageBox box(this);
     box.setIcon(warnings.isEmpty() ? QMessageBox::Information : QMessageBox::Warning);
-    box.setWindowTitle(tr("Import abgeschlossen"));
+    box.setWindowTitle(tr("Import complete"));
     box.setText(summary.join(QLatin1Char('\n')));
     if (!warnings.isEmpty())
         box.setDetailedText(warnings.join(QStringLiteral("\n\n")));

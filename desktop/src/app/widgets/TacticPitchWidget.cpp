@@ -3,6 +3,7 @@
 
 #include "../theming/ThemeManager.h"
 #include "core/Constants.h"
+#include "core/Definitions.h"
 
 #include <algorithm>
 #include <QContextMenuEvent>
@@ -274,7 +275,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     }
     if (!m_editor && m_layout.isEmpty() && !m_positions.contains(QStringLiteral("GK"))) {
         painter.setPen(textColor);
-        painter.drawText(pitch, Qt::AlignCenter, tr("Keine Daten"));
+        painter.drawText(pitch, Qt::AlignCenter, tr("No data"));
         return;
     }
 
@@ -317,13 +318,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
     if (m_editor) {
         // Tactic editor: the slots in use as role cards, the free ones as
         // dashed "+" boxes — a grid that shows only what can still be added.
-        const auto stripPhase = [](QString role) {
-            if (role.endsWith(QLatin1String("-IP")))
-                role.chop(3);
-            else if (role.endsWith(QLatin1String("-OOP")))
-                role.chop(4);
-            return role;
-        };
+        const auto stripPhase = [](const QString &role) { return Definitions::roleAbbreviation(role); };
         // squeezed: free middle place between two cards that closed up.
         const auto drawSlot = [&](const QRectF &baseBox, const QString &slot, const QString &label,
                                   int row, bool squeezed = false) {
@@ -430,11 +425,8 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         // FM27 ids carry the phase when an abbreviation exists in both
         // ("CFD-OOP"); the pitch belongs to one phase, so show the game's
         // abbreviation.
-        QString roleAbbr = m_positions.value(slot);
-        if (roleAbbr.endsWith(QLatin1String("-IP")))
-            roleAbbr.chop(3);
-        else if (roleAbbr.endsWith(QLatin1String("-OOP")))
-            roleAbbr.chop(4);
+        const QString roleAbbr = Definitions::baseRoleAbbr(m_positions.value(slot));
+        const QString roleText = Definitions::roleAbbreviation(m_positions.value(slot));
         const QString apt = aptAbbreviations().value(cell.apt, cell.apt);
         const QString subtext = m_slotSubtexts.value(slot);
 
@@ -463,7 +455,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
         painter.setFont(headerFont);
         painter.drawText(headerText, Qt::AlignCenter,
                          painter.fontMetrics().elidedText(
-                             roleAbbr, Qt::ElideRight, static_cast<int>(headerText.width() - 4)));
+                             roleText, Qt::ElideRight, static_cast<int>(headerText.width() - 4)));
 
         // Rating with a slim bar, then the name, then the extra line.
         const QRectF body = box.adjusted(4, headerH + 1, -4, -2);
@@ -485,7 +477,7 @@ void TacticPitchWidget::paintEvent(QPaintEvent *)
                          barColor);
         line.translate(0, lineH);
         painter.setPen(textColor);
-        drawFittedName(painter, line, cell.isFilled() ? cell.name : tr("unbesetzt"), nameFont);
+        drawFittedName(painter, line, cell.isFilled() ? cell.name : tr("empty"), nameFont);
         const QString lastLine = !subtext.isEmpty() ? subtext : (m_showApt ? apt : QString());
         if (!lastLine.isEmpty()) {
             line.translate(0, lineH);
@@ -538,17 +530,11 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
     m_combinedUids.clear();
     if (m_combinedCards.isEmpty() && m_ipLineUp.isEmpty()) {
         painter.setPen(textColor);
-        painter.drawText(field, Qt::AlignCenter, tr("Keine Daten"));
+        painter.drawText(field, Qt::AlignCenter, tr("No data"));
         return;
     }
 
-    const auto stripPhase = [](QString role) {
-        if (role.endsWith(QLatin1String("-IP")))
-            role.chop(3);
-        else if (role.endsWith(QLatin1String("-OOP")))
-            role.chop(4);
-        return role;
-    };
+    const auto stripPhase = [](const QString &role) { return Definitions::roleAbbreviation(role); };
     // Anchors in field fractions, with the same role shift as the single
     // line-ups (display only).
     const auto anchorsOf = [&](const QHash<QString, QStringList> &layout,
@@ -676,13 +662,13 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
             const QString role = stripPhase((b.ipPhase ? m_ipLineUp : m_oopLineUp).value(b.slot));
             painter.drawText(header, Qt::AlignCenter,
                              painter.fontMetrics().elidedText(
-                                 b.ipPhase ? tr("mit: %1").arg(role) : tr("ohne: %1").arg(role),
+                                 b.ipPhase ? tr("IP: %1").arg(role) : tr("OOP: %1").arg(role),
                                  Qt::ElideRight, static_cast<int>(header.width() - 4)));
             painter.setFont(smallFont);
             painter.drawText(QRectF(body.left(), body.top() + lineH * 0.5, body.width(), lineH * 2),
                              Qt::AlignHCenter | Qt::AlignTop | Qt::TextWordWrap,
-                             b.ipPhase ? tr("%1 frei mit Ball").arg(b.slot)
-                                       : tr("%1 frei ohne Ball").arg(b.slot));
+                             b.ipPhase ? tr("%1 empty in possession").arg(b.slot)
+                                       : tr("%1 empty out of possession").arg(b.slot));
             continue;
         }
         const CombinedCard &card = *b.card;
@@ -729,7 +715,7 @@ void TacticPitchWidget::paintCombined(QPainter &painter, const QRectF &field)
         painter.setFont(smallFont);
         painter.drawText(line, Qt::AlignHCenter | Qt::AlignVCenter,
                          painter.fontMetrics().elidedText(
-                             tr("mit %1 · ohne %2")
+                             tr("IP %1 · OOP %2")
                                  .arg(formatDwrs(card.ipRating), formatDwrs(card.oopRating)),
                              Qt::ElideRight, static_cast<int>(line.width())));
         painter.setPen(QPen(cardBorder, 1));

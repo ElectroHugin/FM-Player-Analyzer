@@ -71,7 +71,7 @@ NewTacticPage::NewTacticPage(AppContext &context, ThemeManager &theme, QWidget *
     layout->addWidget(m_heading);
 
     // --- The save's tactics: open, rename, duplicate, delete, exchange ---
-    auto *libraryBox = new QGroupBox(tr("Deine Taktiken"), content);
+    auto *libraryBox = new QGroupBox(tr("Your tactics"), content);
     auto *libraryLayout = new QVBoxLayout(libraryBox);
     auto *libraryRow = new QHBoxLayout;
     m_tacticList = new QComboBox(libraryBox);
@@ -89,31 +89,31 @@ NewTacticPage::NewTacticPage(AppContext &context, ThemeManager &theme, QWidget *
             m_selectionButtons << button;
         return button;
     };
-    addButton(tr("Bearbeiten"), tr("Öffnet die Taktik unten im Editor."),
+    addButton(tr("Edit"), tr("Opens the tactic in the editor below."),
               [this] { loadTactic(selectedTactic()); }, true);
-    addButton(tr("Umbenennen…"), tr("Favoriten und gespeicherte Bridges ziehen mit."),
+    addButton(tr("Rename…"), tr("Favourites and saved bridges follow."),
               &NewTacticPage::renameSelected, true);
-    addButton(tr("Duplizieren…"), tr("Legt eine Kopie unter neuem Namen an."),
+    addButton(tr("Duplicate…"), tr("Creates a copy under a new name."),
               &NewTacticPage::duplicateSelected, true);
-    addButton(tr("Löschen…"),
-              tr("Entfernt die Taktik aus diesem Spielstand. Auch mitgelieferte Beispiele "
-                 "lassen sich löschen; Updates bringen sie nicht zurück."),
+    addButton(tr("Delete…"),
+              tr("Removes the tactic from this save. Bundled examples can be deleted too; "
+                 "updates do not bring them back."),
               &NewTacticPage::deleteSelected, true);
     libraryRow->addSpacing(12);
-    addButton(tr("Exportieren…"),
-              tr("Speichert die Taktik als Datei (.%1) für einen anderen Spielstand oder "
-                 "andere Nutzer, samt der verwendeten Rollen.")
+    addButton(tr("Export…"),
+              tr("Saves the tactic as a file (.%1) for another save or other users, "
+                 "including the roles it uses.")
                   .arg(TacticLibrary::exchangeSuffix()),
               &NewTacticPage::exportSelected, true);
-    addButton(tr("Importieren…"),
-              tr("Liest eine Taktik-Datei (.%1) in diesen Spielstand ein.")
+    addButton(tr("Import…"),
+              tr("Reads a tactic file (.%1) into this save.")
                   .arg(TacticLibrary::exchangeSuffix()),
               &NewTacticPage::importTactic, false);
     libraryRow->addStretch(1);
     libraryLayout->addLayout(libraryRow);
     auto *libraryHint = new QLabel(
-        tr("Taktiken gehören zum geöffneten Spielstand. Änderungen, Löschungen und Importe "
-           "bleiben bei Updates erhalten; ein Update ergänzt höchstens neue Beispieltaktiken."),
+        tr("Tactics belong to the open save. Edits, deletions and imports survive updates; "
+           "an update at most adds new example tactics."),
         libraryBox);
     libraryHint->setWordWrap(true);
     libraryHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -126,11 +126,11 @@ NewTacticPage::NewTacticPage(AppContext &context, ThemeManager &theme, QWidget *
     layout->addWidget(info);
 
     // --- 1. Naming ---
-    auto *nameBox = new QGroupBox(tr("1. Taktik-Name"), content);
+    auto *nameBox = new QGroupBox(tr("1. Tactic name"), content);
     auto *nameRow = new QHBoxLayout(nameBox);
-    nameRow->addWidget(new QLabel(tr("Formations-Name:"), nameBox));
+    nameRow->addWidget(new QLabel(tr("Formation name:"), nameBox));
     m_nameEdit = new QLineEdit(nameBox);
-    m_nameEdit->setPlaceholderText(tr("z. B. 'Mein Gegenpressing'"));
+    m_nameEdit->setPlaceholderText(tr("e.g. 'My Gegenpress'"));
     m_nameEdit->setMinimumWidth(220);
     nameRow->addWidget(m_nameEdit, 2);
     nameRow->addWidget(new QLabel(tr("Formation:"), nameBox));
@@ -158,11 +158,11 @@ NewTacticPage::NewTacticPage(AppContext &context, ThemeManager &theme, QWidget *
 
     auto *buttonRow = new QHBoxLayout;
     buttonRow->addStretch(1);
-    m_newButton = new QPushButton(tr("Bearbeitung abbrechen"), content);
-    m_newButton->setToolTip(tr("Leert den Editor für eine neue Taktik; nichts wird gespeichert."));
+    m_newButton = new QPushButton(tr("Cancel editing"), content);
+    m_newButton->setToolTip(tr("Clears the editor for a new tactic; nothing is saved."));
     connect(m_newButton, &QPushButton::clicked, this, &NewTacticPage::resetForm);
     buttonRow->addWidget(m_newButton);
-    m_createButton = new QPushButton(tr("Neue Taktik erstellen"), content);
+    m_createButton = new QPushButton(tr("Create New Tactic"), content);
     m_createButton->setDefault(true);
     buttonRow->addWidget(m_createButton);
     layout->addLayout(buttonRow);
@@ -179,14 +179,14 @@ void NewTacticPage::buildPhaseEditor(PhaseEditor &editor, QWidget *parent)
     editor.templateRow = new QWidget(editor.box);
     auto *templateLayout = new QHBoxLayout(editor.templateRow);
     templateLayout->setContentsMargins(0, 0, 0, 0);
-    templateLayout->addWidget(new QLabel(tr("Vorlage aus dem Spiel:"), editor.templateRow));
+    templateLayout->addWidget(new QLabel(tr("Template from the game:"), editor.templateRow));
     editor.templateCombo = new QComboBox(editor.templateRow);
     editor.templateCombo->setMinimumWidth(220);
     editor.templateCombo->setToolTip(
-        tr("Setzt die Plätze dieser Formation mit der ersten passenden Rolle. Danach kannst du "
-           "jede Rolle anpassen."));
+        tr("Fills the slots of this formation with the first matching role. You can change "
+           "every role afterwards."));
     templateLayout->addWidget(editor.templateCombo);
-    auto *applyButton = new QPushButton(tr("Übernehmen"), editor.templateRow);
+    auto *applyButton = new QPushButton(tr("Apply"), editor.templateRow);
     templateLayout->addWidget(applyButton);
     templateLayout->addStretch(1);
     pitchLayout->addWidget(editor.templateRow);
@@ -213,8 +213,8 @@ void NewTacticPage::buildPhaseEditor(PhaseEditor &editor, QWidget *parent)
 
     editor.pitch = new TacticPitchWidget(m_theme, editor.box);
     editor.pitch->setFmVersionId(m_context.fmVersionId());
-    editor.pitch->setToolTip(tr("Klicke auf ein „+“, um dort eine Rolle aufzustellen, oder auf "
-                                "eine Rolle, um sie zu ändern."));
+    editor.pitch->setToolTip(tr("Click a “+” to place a role there, or click a role to change "
+                                "it."));
     pitchLayout->addWidget(editor.pitch, 0, Qt::AlignHCenter);
     connect(editor.pitch, &TacticPitchWidget::slotClicked, this,
             [this, &editor](const QString &slot, const QPoint &globalPos) {
@@ -236,11 +236,7 @@ void NewTacticPage::showSlotMenu(PhaseEditor &editor, const QString &slot,
     menu.addSeparator();
     const int current = combo->currentIndex();
     for (int i = goalkeeper ? 0 : 1; i < combo->count(); ++i) {
-        QString role = combo->itemData(i).toString();
-        if (role.endsWith(QLatin1String("-IP")))
-            role.chop(3);
-        else if (role.endsWith(QLatin1String("-OOP")))
-            role.chop(4);
+        const QString role = Definitions::roleAbbreviation(combo->itemData(i).toString());
         auto *action = menu.addAction(QStringLiteral("%1  (%2)").arg(combo->itemText(i), role),
                                       this, [combo, i] { combo->setCurrentIndex(i); });
         action->setCheckable(true);
@@ -248,7 +244,7 @@ void NewTacticPage::showSlotMenu(PhaseEditor &editor, const QString &slot,
     }
     if (!goalkeeper && current > 0) {
         menu.addSeparator();
-        menu.addAction(tr("✕ Platz leeren"), this, [combo] { combo->setCurrentIndex(0); });
+        menu.addAction(tr("✕ Clear place"), this, [combo] { combo->setCurrentIndex(0); });
     }
     menu.exec(globalPos);
 }
@@ -301,7 +297,7 @@ void NewTacticPage::fillSlotCombo(QComboBox *combo, const QStringList &gamePosit
 
     combo->blockSignals(true);
     combo->clear();
-    combo->addItem(tr("— Unbesetzt —"), QString());
+    combo->addItem(tr("— Unfilled —"), QString());
     for (const QString &role : roles)
         combo->addItem(roleNames.value(role, role), role);
     if (!previous.isEmpty()) {
@@ -402,17 +398,17 @@ void NewTacticPage::refresh()
 {
     const bool phased = twoPhase();
     m_info->setText(
-        phased ? tr("Eine Taktik hat zwei Aufstellungen: eine mit Ball und eine ohne Ball, "
-                    "jede mit einem Torhüter und zehn Feldspielern. Die Plätze müssen nicht "
-                    "zusammenpassen; der Analyzer verteilt die Spieler später selbst. Klicke "
-                    "auf ein „+“, um dort eine Rolle aufzustellen, oder auf eine Rolle, um sie "
-                    "zu ändern. Mit einer Vorlage aus dem Spiel bist du schneller.")
-               : tr("Baue deine Formation auf dem Feld unten: Klicke auf ein „+“, um dort "
-                    "eine Rolle aufzustellen, oder auf eine Rolle, um sie zu ändern — genau "
-                    "ein Torhüter und zehn Feldspieler."));
-    m_phases[0].box->setTitle(phased ? tr("2b. Aufstellung ohne Ball")
-                                     : tr("2. Formation gestalten"));
-    m_phases[1].box->setTitle(tr("2a. Aufstellung mit Ball"));
+        phased ? tr("A tactic has two line-ups: one in possession and one out of possession, "
+                    "each with a goalkeeper and ten outfield players. The places do not have "
+                    "to match; the analyzer distributes the players later by itself. Click a "
+                    "“+” to place a role there, or click a role to change it. A template from "
+                    "the game makes it quicker.")
+               : tr("Build your formation on the pitch below: click a “+” to place a role "
+                    "there, or click a role to change it — exactly one goalkeeper and ten "
+                    "outfield players."));
+    m_phases[0].box->setTitle(phased ? tr("2b. Line-up out of possession")
+                                     : tr("2. Design formation"));
+    m_phases[1].box->setTitle(tr("2a. Line-up in possession"));
     m_phases[1].box->setVisible(phased);
     refreshPhase(m_phases[0]);
     if (phased)
@@ -444,12 +440,12 @@ void NewTacticPage::updateFullName()
         }
         syncPitch(editor);
         editor.countLabel->setText(outfield == 10
-                                       ? tr("✅ 10 Feldspieler ausgewählt.")
-                                       : tr("Feldspieler ausgewählt: %1 / 10").arg(outfield));
+                                       ? tr("✅ 10 outfield players selected.")
+                                       : tr("Outfield players selected: %1 / 10").arg(outfield));
     }
     const QString name = fullName();
     m_fullNameLabel->setText(
-        tr("<b>Vollständiger Taktik-Name:</b> <code>%1</code>")
+        tr("<b>Full tactic name:</b> <code>%1</code>")
             .arg(name.isEmpty() ? QStringLiteral("…") : name));
 }
 
@@ -457,7 +453,7 @@ bool NewTacticPage::collectPhase(const PhaseEditor &editor, QJsonObject &roles,
                                  QHash<QString, QString> &outfield)
 {
     const bool phased = twoPhase();
-    const QString lineUp = editor.phase == QLatin1String("ip") ? tr("mit Ball") : tr("ohne Ball");
+    const QString lineUp = editor.phase == QLatin1String("ip") ? tr("in possession") : tr("out of possession");
     for (auto it = editor.slotCombos.constBegin(); it != editor.slotCombos.constEnd(); ++it) {
         if (it.key() == QLatin1String("GK"))
             continue;
@@ -467,19 +463,19 @@ bool NewTacticPage::collectPhase(const PhaseEditor &editor, QJsonObject &roles,
     }
     if (outfield.size() != 10) {
         QMessageBox::warning(
-            this, tr("Neue Taktik"),
-            phased ? tr("Die Aufstellung %1 braucht genau 10 Feldspieler (aktuell: %2).")
+            this, tr("New Tactic"),
+            phased ? tr("The line-up %1 needs exactly 10 outfield players (currently: %2).")
                          .arg(lineUp)
                          .arg(outfield.size())
-                   : tr("Du musst genau 10 Feldspieler auswählen (aktuell: %1).")
+                   : tr("You must select exactly 10 outfield players (currently: %1).")
                          .arg(outfield.size()));
         return false;
     }
     const QString gkRole = editor.slotCombos.value(QStringLiteral("GK"))->currentData().toString();
     if (gkRole.isEmpty()) {
-        QMessageBox::warning(this, tr("Neue Taktik"),
-                             phased ? tr("Bitte wähle eine Torhüter-Rolle %1.").arg(lineUp)
-                                    : tr("Bitte wähle eine Torhüter-Rolle."));
+        QMessageBox::warning(this, tr("New Tactic"),
+                             phased ? tr("Please choose a goalkeeper role %1.").arg(lineUp)
+                                    : tr("Please select a goalkeeper role."));
         return false;
     }
     // slot -> role, GK first like legacy.
@@ -493,18 +489,18 @@ void NewTacticPage::createTactic()
 {
     const QString name = fullName();
     const bool editing = !m_editingName.isEmpty();
-    const QString title = editing ? tr("Taktik speichern") : tr("Neue Taktik");
+    const QString title = editing ? tr("Save tactic") : tr("New Tactic");
     if (m_nameEdit->text().trimmed().isEmpty()
         || (!editing && m_shapeEdit->text().trimmed().isEmpty())) {
         QMessageBox::warning(this, title,
-                             tr("Bitte gib sowohl einen Formations-Namen als auch eine "
-                                "Formation (z. B. 4-2-3-1) an."));
+                             tr("Please provide both a formation name and a formation "
+                                "(e.g. 4-2-3-1)."));
         return;
     }
     if (name != m_editingName && m_context.definitions().tacticNames().contains(name)) {
         QMessageBox::warning(this, title,
-                             tr("Eine Taktik namens '%1' existiert bereits. Bitte wähle "
-                                "einen anderen Namen.")
+                             tr("A tactic named '%1' already exists. Please choose a "
+                                "different name.")
                                  .arg(name));
         return;
     }
@@ -540,9 +536,9 @@ void NewTacticPage::createTactic()
         TacticLibrary::pruneBridges(db, name, ipSlots, oopRoles.keys());
 
     QMessageBox::information(this, title,
-                             editing ? tr("Taktik '%1' wurde gespeichert.").arg(name)
-                                     : tr("Taktik '%1' wurde erstellt und ist jetzt überall "
-                                          "verfügbar.")
+                             editing ? tr("Tactic '%1' has been saved.").arg(name)
+                                     : tr("Tactic '%1' has been created and is now "
+                                          "available everywhere.")
                                            .arg(name));
     resetForm();
     refreshTacticList();
@@ -560,7 +556,7 @@ bool NewTacticPage::commitDefinitions(const QJsonObject &root, const QString &ti
         // Nothing half-saved stays in memory.
         m_context.definitions().setRoot(before);
         QMessageBox::critical(this, title,
-                              tr("Die Taktiken konnten nicht gespeichert werden: %1").arg(error));
+                              tr("The tactics could not be saved: %1").arg(error));
         return false;
     }
     return true;
@@ -592,9 +588,9 @@ void NewTacticPage::updateEditMode()
 {
     const bool editing = !m_editingName.isEmpty();
     m_heading->setText(QStringLiteral("<h2 style='font-weight:600'>%1</h2>")
-                           .arg(editing ? tr("Taktik bearbeiten: %1").arg(m_editingName.toHtmlEscaped())
-                                        : tr("Neue Taktik erstellen")));
-    m_createButton->setText(editing ? tr("Änderungen speichern") : tr("Neue Taktik erstellen"));
+                           .arg(editing ? tr("Edit tactic: %1").arg(m_editingName.toHtmlEscaped())
+                                        : tr("Create New Tactic")));
+    m_createButton->setText(editing ? tr("Save Changes") : tr("Create New Tactic"));
     m_newButton->setVisible(editing);
 }
 
@@ -660,19 +656,19 @@ void NewTacticPage::renameSelected()
         return;
     bool ok = false;
     const QString newName =
-        QInputDialog::getText(this, tr("Taktik umbenennen"), tr("Neuer Name für '%1':").arg(oldName),
+        QInputDialog::getText(this, tr("Rename tactic"), tr("New name for '%1':").arg(oldName),
                               QLineEdit::Normal, oldName, &ok)
             .trimmed();
     if (!ok || newName.isEmpty() || newName == oldName)
         return;
     if (m_context.definitions().tacticNames().contains(newName)) {
-        QMessageBox::warning(this, tr("Taktik umbenennen"),
-                             tr("Eine Taktik namens '%1' existiert bereits.").arg(newName));
+        QMessageBox::warning(this, tr("Rename tactic"),
+                             tr("A tactic named '%1' already exists.").arg(newName));
         return;
     }
     QJsonObject root = m_context.definitions().root();
     if (!TacticLibrary::renameTactic(root, oldName, newName)
-        || !commitDefinitions(root, tr("Taktik umbenennen")))
+        || !commitDefinitions(root, tr("Rename tactic")))
         return;
     TacticLibrary::renameTacticReferences(m_context.database(), oldName, newName);
     if (m_editingName == oldName) {
@@ -692,15 +688,15 @@ void NewTacticPage::duplicateSelected()
     const QStringList taken = m_context.definitions().tacticNames();
     bool ok = false;
     const QString newName =
-        QInputDialog::getText(this, tr("Taktik duplizieren"), tr("Name der Kopie:"),
+        QInputDialog::getText(this, tr("Duplicate tactic"), tr("Name of the copy:"),
                               QLineEdit::Normal,
-                              TacticLibrary::uniqueName(source + tr(" (Kopie)"), taken), &ok)
+                              TacticLibrary::uniqueName(source + tr(" (copy)"), taken), &ok)
             .trimmed();
     if (!ok || newName.isEmpty())
         return;
     if (taken.contains(newName)) {
-        QMessageBox::warning(this, tr("Taktik duplizieren"),
-                             tr("Eine Taktik namens '%1' existiert bereits.").arg(newName));
+        QMessageBox::warning(this, tr("Duplicate tactic"),
+                             tr("A tactic named '%1' already exists.").arg(newName));
         return;
     }
     QJsonObject root = m_context.definitions().root();
@@ -709,7 +705,7 @@ void NewTacticPage::duplicateSelected()
     const QJsonObject layout =
         root.value(QLatin1String("tactic_layouts")).toObject().value(source).toObject();
     TacticLibrary::putTactic(root, m_context.fmVersionId(), newName, roles, layout);
-    if (!commitDefinitions(root, tr("Taktik duplizieren")))
+    if (!commitDefinitions(root, tr("Duplicate tactic")))
         return;
     refreshTacticList();
     m_tacticList->setCurrentIndex(m_tacticList->findText(newName));
@@ -721,23 +717,24 @@ void NewTacticPage::deleteSelected()
     if (name.isEmpty())
         return;
     if (m_context.definitions().tacticNames().size() <= 1) {
-        QMessageBox::information(this, tr("Taktik löschen"),
-                                 tr("Die letzte Taktik eines Spielstands kann nicht gelöscht "
-                                    "werden. Lege zuerst eine weitere an oder importiere eine."));
+        QMessageBox::information(this, tr("Delete tactic"),
+                                 tr("The last tactic of a save cannot be deleted. Create or "
+                                    "import another one first."));
         return;
     }
     if (QMessageBox::question(
-            this, tr("Taktik löschen"),
-            tr("Taktik '%1' aus diesem Spielstand löschen?\n\nIst sie ein Favorit, wird der "
-               "Favorit zurückgesetzt; gespeicherte Bridges dieser Taktik werden entfernt. "
-               "Updates stellen sie nicht wieder her. Wer sie später braucht, exportiert sie "
-               "vorher.")
+            this, tr("Delete tactic"),
+            tr("Delete tactic '%1' from this save?\n"
+               "\n"
+               "If it is a favourite, the favourite is reset; saved bridges of this tactic "
+               "are removed. Updates do not restore it. If you may need it later, export it "
+               "first.")
                 .arg(name),
             QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
         != QMessageBox::Yes)
         return;
     QJsonObject root = m_context.definitions().root();
-    if (!TacticLibrary::removeTactic(root, name) || !commitDefinitions(root, tr("Taktik löschen")))
+    if (!TacticLibrary::removeTactic(root, name) || !commitDefinitions(root, tr("Delete tactic")))
         return;
     TacticLibrary::removeTacticReferences(m_context.database(), name);
     if (m_editingName == name)
@@ -755,38 +752,38 @@ void NewTacticPage::exportSelected()
     fileName.replace(unsafe, QStringLiteral("_"));
     const QString suffix = TacticLibrary::exchangeSuffix();
     const QString path = QFileDialog::getSaveFileName(
-        this, tr("Taktik exportieren"),
+        this, tr("Export tactic"),
         QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
             .filePath(fileName + QLatin1Char('.') + suffix),
-        tr("Analyzer-Taktik (*.%1)").arg(suffix));
+        tr("Analyzer tactic (*.%1)").arg(suffix));
     if (path.isEmpty())
         return;
     QFile file(path);
     const QByteArray data = TacticLibrary::exportTactic(m_context.definitions(), name);
     if (data.isEmpty() || !file.open(QIODevice::WriteOnly) || file.write(data) != data.size()) {
-        QMessageBox::critical(this, tr("Taktik exportieren"),
-                              tr("Die Datei %1 konnte nicht geschrieben werden.")
+        QMessageBox::critical(this, tr("Export tactic"),
+                              tr("The file %1 could not be written.")
                                   .arg(QDir::toNativeSeparators(path)));
         return;
     }
-    QMessageBox::information(this, tr("Taktik exportieren"),
-                             tr("Taktik '%1' wurde nach %2 exportiert.")
+    QMessageBox::information(this, tr("Export tactic"),
+                             tr("Tactic '%1' has been exported to %2.")
                                  .arg(name, QDir::toNativeSeparators(path)));
 }
 
 void NewTacticPage::importTactic()
 {
-    const QString title = tr("Taktik importieren");
+    const QString title = tr("Import tactic");
     const QString suffix = TacticLibrary::exchangeSuffix();
     const QString path = QFileDialog::getOpenFileName(
         this, title, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-        tr("Analyzer-Taktik (*.%1);;Alle Dateien (*)").arg(suffix));
+        tr("Analyzer tactic (*.%1);;All files (*)").arg(suffix));
     if (path.isEmpty())
         return;
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::critical(this, title,
-                              tr("Die Datei %1 konnte nicht gelesen werden.")
+                              tr("The file %1 could not be read.")
                                   .arg(QDir::toNativeSeparators(path)));
         return;
     }
@@ -795,28 +792,29 @@ void NewTacticPage::importTactic()
     switch (check.status) {
     case TacticLibrary::ImportCheck::InvalidFile:
         QMessageBox::warning(this, title,
-                             tr("Die Datei ist keine gültige Taktik-Datei des Analyzers oder "
-                                "beschädigt.\n\nDetails: %1")
+                             tr("The file is not a valid analyzer tactic file or is "
+                                "damaged.\n"
+                                "\n"
+                                "Details: %1")
                                  .arg(check.error));
         return;
     case TacticLibrary::ImportCheck::TooNew:
         QMessageBox::warning(this, title,
-                             tr("Die Datei stammt aus einer neueren Version des Analyzers. "
-                                "Bitte aktualisiere den Analyzer, um sie zu importieren."));
+                             tr("The file comes from a newer version of the analyzer. "
+                                "Please update the analyzer to import it."));
         return;
     case TacticLibrary::ImportCheck::WrongFmVersion:
         QMessageBox::warning(
             this, title,
-            tr("Die Taktik '%1' gehört zu %2, dieser Spielstand nutzt %3. Rollen und Plätze "
-               "der FM-Versionen passen nicht zueinander; importiere sie in einen Spielstand "
-               "derselben Version.")
+            tr("The tactic '%1' belongs to %2, this save uses %3. Roles and slots of the FM "
+               "versions do not match; import it into a save of the same version.")
                 .arg(check.name, fmDataVersion(check.fileFmVersion).displayName,
                      fmDataVersion(definitions.fmVersionId()).displayName));
         return;
     case TacticLibrary::ImportCheck::MissingRoles:
         QMessageBox::warning(this, title,
-                             tr("Die Taktik '%1' nutzt Rollen, die dieser Spielstand nicht kennt "
-                                "und die in der Datei nicht beschrieben sind: %2")
+                             tr("The tactic '%1' uses roles this save does not know and the file "
+                                "does not describe: %2")
                                  .arg(check.name, check.unknownRoles.join(QStringLiteral(", "))));
         return;
     case TacticLibrary::ImportCheck::Ok:
@@ -828,26 +826,26 @@ void NewTacticPage::importTactic()
         QStringList names;
         for (const TacticLibrary::ImportedRole &role : check.rolesToAdd)
             names << QStringLiteral("%1 (%2)").arg(role.name, role.id);
-        notes << tr("Neue eigene Rollen werden mit angelegt: %1").arg(names.join(QStringLiteral(", ")));
+        notes << tr("New custom roles will be added as well: %1").arg(names.join(QStringLiteral(", ")));
     }
     if (!check.differingRoles.isEmpty())
-        notes << tr("Diese Rollen gibt es hier schon, mit anderen Gewichten oder Positionen; "
-                    "der Spielstand behält seine eigene Fassung: %1")
+        notes << tr("These roles already exist here with other weights or positions; the "
+                    "save keeps its own version: %1")
                      .arg(check.differingRoles.join(QStringLiteral(", ")));
 
     QString finalName = check.name;
     if (check.nameTaken) {
         QMessageBox box(QMessageBox::Question, title,
-                        tr("Es gibt schon eine Taktik namens '%1'.").arg(check.name),
+                        tr("There already is a tactic named '%1'.").arg(check.name),
                         QMessageBox::NoButton, this);
-        auto *rename = box.addButton(tr("Unter neuem Namen importieren"), QMessageBox::AcceptRole);
-        auto *replace = box.addButton(tr("Vorhandene ersetzen"), QMessageBox::DestructiveRole);
+        auto *rename = box.addButton(tr("Import under a new name"), QMessageBox::AcceptRole);
+        auto *replace = box.addButton(tr("Replace existing"), QMessageBox::DestructiveRole);
         box.addButton(QMessageBox::Cancel);
         box.setDefaultButton(rename);
         box.exec();
         if (box.clickedButton() == rename) {
             bool ok = false;
-            finalName = QInputDialog::getText(this, title, tr("Name der importierten Taktik:"),
+            finalName = QInputDialog::getText(this, title, tr("Name of the imported tactic:"),
                                               QLineEdit::Normal,
                                               TacticLibrary::uniqueName(check.name,
                                                                         definitions.tacticNames()),
@@ -857,7 +855,7 @@ void NewTacticPage::importTactic()
                 return;
             if (definitions.tacticNames().contains(finalName)) {
                 QMessageBox::warning(this, title,
-                                     tr("Eine Taktik namens '%1' existiert bereits.").arg(finalName));
+                                     tr("A tactic named '%1' already exists.").arg(finalName));
                 return;
             }
         } else if (box.clickedButton() != replace) {
@@ -865,7 +863,7 @@ void NewTacticPage::importTactic()
         }
     } else if (!notes.isEmpty()) {
         if (QMessageBox::question(this, title,
-                                  tr("Taktik '%1' importieren?").arg(check.name) + QStringLiteral("\n\n")
+                                  tr("Import tactic '%1'?").arg(check.name) + QStringLiteral("\n\n")
                                       + notes.join(QStringLiteral("\n\n")))
             != QMessageBox::Yes)
             return;
@@ -889,7 +887,7 @@ void NewTacticPage::importTactic()
     refreshTacticList();
     m_tacticList->setCurrentIndex(m_tacticList->findText(finalName));
     QMessageBox::information(this, title,
-                             tr("Taktik '%1' wurde importiert.").arg(finalName)
+                             tr("Tactic '%1' has been imported.").arg(finalName)
                                  + (notes.isEmpty() ? QString()
                                                     : QStringLiteral("\n\n")
                                                           + notes.join(QStringLiteral("\n\n"))));

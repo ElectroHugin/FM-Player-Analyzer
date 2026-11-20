@@ -31,6 +31,8 @@ struct ImportPipelineResult {
     // Attributes the active rating profile weights but that no imported
     // player has (a column missing from the export view). Snapshot runs only.
     QStringList unratedColumns;
+    // The save's game-language setting the import ran with (see GameLanguage).
+    QString configuredGameLanguage;
 
     // Post-import state, built entirely on the worker so the UI thread only
     // swaps it in (valid when import.success): the player store — same content
@@ -52,6 +54,7 @@ struct Request {
     QString backupsDir; // empty = skip the pre-import backup
     bool autoAssign = true;
     QString fmVersionId;
+    QString gameLanguage; // the save's game-language setting (see GameLanguage)
 };
 
 enum class Stage { Backup, Parse, Import, AutoAssign, Dwrs, Finalize };

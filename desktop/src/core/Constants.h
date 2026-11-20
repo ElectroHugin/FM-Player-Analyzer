@@ -30,7 +30,7 @@ struct FmDataVersion {
     bool provisionalWeights = false; // true = attribute tiers/weights are assumed, not yet measured
     bool registrationRules = false;  // true = league/UEFA registration rules are modelled
     QStringList unratedAttributes;   // attributes this release neither imports nor rates
-    bool customRoles = true;         // false = every game role ships built in; no "Neue Rolle"
+    bool customRoles = true;         // false = every game role ships built in; no "New Role"
 };
 
 // All FM releases the app knows (newest first). To add a release: an entry

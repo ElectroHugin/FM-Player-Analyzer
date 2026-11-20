@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "CsvReader.h"
 #include "Fm27SaveImport.h"
+#include "GameLanguage.h"
 #include "HtmlImporter.h"
 
 #include <QFile>
@@ -21,7 +22,8 @@ QString importFormatForFile(const QString &filePath)
 }
 
 bool readImportTable(const QString &filePath, const QString &fmVersionId, ImportTable *out,
-                     ImportError *error, const std::function<void(int, int)> &progress)
+                     ImportError *error, const std::function<void(int, int)> &progress,
+                     const QString &gameLanguage)
 {
     const auto fail = [&](ImportErrorCode code, const QString &arg, const QString &message) {
         if (error)
@@ -58,9 +60,13 @@ bool readImportTable(const QString &filePath, const QString &fmVersionId, Import
         const QString html = QString::fromUtf8(file.readAll());
         ok = HtmlImporter::extractTable(html, out, error, progress);
     }
-    if (ok)
-        applyHeaderAliases(&out->headers, fmVersionId);
-    return ok;
+    if (!ok)
+        return false;
+    out->detectedGameLanguage = GameLanguage::detect(out->headers, fmVersionId);
+    out->gameLanguage = GameLanguage::resolve(gameLanguage, out->detectedGameLanguage);
+    GameLanguage::toEnglish(out, out->gameLanguage, fmVersionId);
+    applyHeaderAliases(&out->headers, fmVersionId);
+    return true;
 }
 
 } // namespace fm

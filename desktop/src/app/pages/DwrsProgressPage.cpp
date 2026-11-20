@@ -168,11 +168,11 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
 
     auto *headRow = new QHBoxLayout;
     headRow->addWidget(
-        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("DWRS-Entwicklung")), this));
+        new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("DWRS Development")), this));
     headRow->addStretch(1);
     m_explainToggle = new QToolButton(this);
-    m_explainToggle->setText(tr("So wird gerechnet"));
-    m_explainToggle->setToolTip(tr("Erklärung ein- oder ausblenden"));
+    m_explainToggle->setText(tr("How it is calculated"));
+    m_explainToggle->setToolTip(tr("Show or hide the explanation"));
     m_explainToggle->setCheckable(true);
     m_explainToggle->setArrowType(Qt::RightArrow);
     m_explainToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -180,29 +180,26 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
     layout->addLayout(headRow);
 
     auto *intro = new QLabel(
-        tr("Wer legt zu, wer stagniert? Gemessen wird in Uploads statt in Kalendertagen."), this);
+        tr("Who is improving, who stalls? Measured in uploads instead of calendar days."), this);
     intro->setObjectName(QStringLiteral("kpiCaption"));
     intro->setWordWrap(true);
     layout->addWidget(intro);
 
     m_explain = new QLabel(
-        tr("<b>Datenstände:</b> Jeder Upload ist ein Datenstand. Uploads, die höchstens %1 "
-           "Minuten auseinanderliegen (z. B. Kader-, Shortlist- und Gesamtexport derselben "
-           "Spielwoche), zählen als einer. Die Achse zählt Datenstände statt Tage, denn der "
-           "Export enthält kein Spieldatum.<br>"
-           "<b>Δ:</b> Veränderung des DWRS in Prozentpunkten über den gewählten Zeitraum, in der "
-           "Rolle der Spalte „Rolle“. Standard ist die Rolle, die der Spieler in der Best XI "
-           "deiner Lieblingstaktik (Einstellungen) spielt — in Startelf oder B-Team. Wer dort "
-           "nicht steht, zählt in seiner besten Rolle dieser Taktik. Ein neuer "
-           "Wert wird nur gespeichert, wenn er sich um mindestens 1 Punkt ändert; dazwischen "
-           "gilt der letzte Wert weiter.<br>"
-           "<b>Neuberechnungen</b> (geänderte Gewichte, Rollen oder Formel) verschieben Werte "
-           "ohne echte Entwicklung. Sie erscheinen als gestrichelte Linie und werden "
-           "herausgerechnet: frühere Werte sind auf die heutige Berechnung umgerechnet, Δ zählt "
-           "nur echte Veränderung. Erfasst ab Version 1.4.14, ältere lassen sich nicht mehr "
-           "erkennen. Auch neu "
-           "sichtbare Attribute (gescoutete Spannen werden nach einer Verpflichtung zu exakten "
-           "Werten) können einen Sprung erzeugen.")
+        tr("<b>Snapshots:</b> Every upload is a snapshot. Uploads at most %1 minutes apart (e.g. "
+           "squad, shortlist and full export of the same game week) count as one. The axis "
+           "counts snapshots instead of days, because the export carries no in-game "
+           "date.<br><b>Δ:</b> Change of the DWRS in percentage points over the chosen period, "
+           "in the role of the \"Role\" column. The default is the role the player plays in the "
+           "Best XI of your favorite tactic (Settings) — in the starting XI or the B-team. "
+           "Anyone not there counts in his best role of that tactic. A new value is only stored "
+           "when it changes by at least 1 point; in between the last value stays "
+           "valid.<br><b>Recalculations</b> (changed weights, roles or formula) shift values "
+           "without any real development. They appear as a dashed line and are factored out: "
+           "earlier values are converted to today's calculation, Δ counts real change only. "
+           "Recorded from version 1.4.14 on; older ones can no longer be detected. Newly visible "
+           "attributes (scouted ranges turn into exact values after a signing) can cause a jump "
+           "as well.")
             .arg(Development::kSessionGapMinutes),
         this);
     m_explain->setObjectName(QStringLiteral("kpiCaption"));
@@ -217,34 +214,34 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
     // --- Filters ---
     auto *filterRow = new QHBoxLayout;
     filterRow->setSpacing(6);
-    filterRow->addWidget(new QLabel(tr("Zeitraum:"), this));
+    filterRow->addWidget(new QLabel(tr("Period:"), this));
     m_windowGroup = new QButtonGroup(this);
     for (const int uploads : {5, 10, 20}) {
-        addSegment(m_windowGroup, filterRow, tr("Letzte %1").arg(uploads), uploads,
-                   tr("Veränderung über die letzten %1 Datenstände (Uploads)").arg(uploads));
+        addSegment(m_windowGroup, filterRow, tr("Last %1").arg(uploads), uploads,
+                   tr("Change over the last %1 snapshots (uploads)").arg(uploads));
     }
-    addSegment(m_windowGroup, filterRow, tr("Alle"), 0,
-               tr("Veränderung seit dem ersten Datenstand"));
+    addSegment(m_windowGroup, filterRow, tr("All"), 0,
+               tr("Change since the first snapshot"));
     m_windowGroup->button(10)->setChecked(true);
 
     filterRow->addSpacing(18);
-    filterRow->addWidget(new QLabel(tr("Spieler:"), this));
+    filterRow->addWidget(new QLabel(tr("Player:"), this));
     m_groupGroup = new QButtonGroup(this);
-    addSegment(m_groupGroup, filterRow, tr("Alle"), AllPlayers)->setChecked(true);
-    addSegment(m_groupGroup, filterRow, tr("Jugend"), YouthOnly);
-    addSegment(m_groupGroup, filterRow, tr("Etablierte"), Established);
+    addSegment(m_groupGroup, filterRow, tr("All"), AllPlayers)->setChecked(true);
+    addSegment(m_groupGroup, filterRow, tr("Youth"), YouthOnly);
+    addSegment(m_groupGroup, filterRow, tr("Established"), Established);
 
     filterRow->addSpacing(18);
-    filterRow->addWidget(new QLabel(tr("Rolle:"), this));
+    filterRow->addWidget(new QLabel(tr("Role:"), this));
     m_roleCombo = new QComboBox(this);
     m_roleCombo->setMinimumWidth(240);
-    m_roleCombo->setToolTip(tr("Auf welche Rolle sich Werte und Δ beziehen"));
+    m_roleCombo->setToolTip(tr("The role that values and Δ refer to"));
     filterRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_roleCombo, m_roleCombo->parentWidget()));
     filterRow->addWidget(m_roleCombo);
 
     filterRow->addSpacing(18);
     m_searchEdit = new QLineEdit(this);
-    m_searchEdit->setPlaceholderText(tr("Spieler suchen…"));
+    m_searchEdit->setPlaceholderText(tr("Search player…"));
     m_searchEdit->setClearButtonEnabled(true);
     m_searchEdit->setMinimumWidth(180);
     filterRow->addWidget(m_searchEdit);
@@ -309,14 +306,14 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
     m_chartTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_chartTitle->setWordWrap(true);
     chartHead->addWidget(m_chartTitle, 1);
-    m_moreRoles = new QPushButton(tr("Weitere Rollen"), chartPanel);
-    m_moreRoles->setToolTip(tr("Zusätzlich die %1 besten Rollen des Spielers zeigen")
+    m_moreRoles = new QPushButton(tr("More roles"), chartPanel);
+    m_moreRoles->setToolTip(tr("Also show the player's %1 best roles")
                                 .arg(kMaxRoleLines));
     m_moreRoles->setCheckable(true);
     m_moreRoles->setAutoDefault(false);
     m_moreRoles->setVisible(false);
     chartHead->addWidget(m_moreRoles);
-    m_clearSelection = new QPushButton(tr("Zurück zum Kader-Trend"), chartPanel);
+    m_clearSelection = new QPushButton(tr("Back to the squad trend"), chartPanel);
     m_clearSelection->setAutoDefault(false);
     m_clearSelection->setVisible(false);
     chartHead->addWidget(m_clearSelection);
@@ -325,9 +322,8 @@ DwrsProgressPage::DwrsProgressPage(AppContext &context, ThemeManager &theme, QWi
     m_chart->setMinimumHeight(380);
     chartLayout->addWidget(m_chart, 1);
     auto *chartHint = new QLabel(
-        tr("Klick auf einen Spieler zeigt seine Entwicklung in der Rolle der Tabelle, Strg- "
-           "oder Umschalt-Klick vergleicht mehrere. Doppelklick öffnet das Profil, Rechtsklick "
-           "weitere Aktionen."),
+        tr("Click a player to see his development in the table's role, Ctrl- or Shift-click "
+           "compares several. Double-click opens the profile, right-click shows more actions."),
         chartPanel);
     chartHint->setObjectName(QStringLiteral("kpiCaption"));
     chartHint->setWordWrap(true);
@@ -456,14 +452,14 @@ void DwrsProgressPage::fillRoleCombo()
     m_roleCombo->blockSignals(true);
     m_roleCombo->clear();
     m_roleCombo->addItem(m_lineupTactic.isEmpty()
-                             ? tr("Rolle in der Best XI")
-                             : tr("Rolle in der Best XI (%1)").arg(m_lineupTactic),
+                             ? tr("Role in the Best XI")
+                             : tr("Role in the Best XI (%1)").arg(m_lineupTactic),
                          kLineupBasis);
     m_roleCombo->setItemData(0,
-                             tr("Die Rolle, die der Spieler in Startelf oder B-Team der "
-                                "Lieblingstaktik spielt (Einstellungen)"),
+                             tr("The role the player plays in the starting XI or B-team "
+                                "of the favorite tactic (Settings)"),
                              Qt::ToolTipRole);
-    m_roleCombo->addItem(tr("Beste Rolle je Spieler"), kBestBasis);
+    m_roleCombo->addItem(tr("Best role per player"), kBestBasis);
     for (const QString &role : std::as_const(roles))
         m_roleCombo->addItem(roleNames.value(role, role), role);
     const int index = m_roleCombo->findData(previous);
@@ -518,9 +514,9 @@ void DwrsProgressPage::rebuildRows()
     m_notice->setVisible(noPool);
     if (noPool) {
         m_notice->setText(m_context.nationalUiMode()
-                              ? tr("Noch kein Nationalkader gespeichert.")
-                              : tr("Bitte wähle zuerst deinen Verein (Übersicht oder "
-                                   "Einstellungen)."));
+                              ? tr("No national squad saved yet.")
+                              : tr("Please choose your club first (Overview or "
+                                   "Settings)."));
     }
 
     const int win = window();
@@ -529,7 +525,7 @@ void DwrsProgressPage::rebuildRows()
     const int outfielderCap = m_context.config().ageThreshold(QStringLiteral("outfielder"));
     const int goalkeeperCap = m_context.config().ageThreshold(QStringLiteral("goalkeeper"));
     m_groupGroup->button(YouthOnly)
-        ->setToolTip(tr("Bis %1 Jahre, Torhüter bis %2 (Einstellungen → Kader und Analyse)")
+        ->setToolTip(tr("Up to %1 years, goalkeepers up to %2 (Settings → Squad and analysis)")
                          .arg(outfielderCap)
                          .arg(goalkeeperCap));
 
@@ -577,8 +573,8 @@ void DwrsProgressPage::rebuildTable()
     const int start = Development::windowStart(n, win);
 
     m_table->setHorizontalHeaderLabels(
-        {tr("Spieler"), tr("Alter"), win > 0 ? tr("Δ letzte %1").arg(win) : tr("Δ gesamt"),
-         tr("Verlauf"), tr("Aktuell"), tr("Best XI"), tr("Rolle"), tr("Δ gesamt")});
+        {tr("Player"), tr("Age"), win > 0 ? tr("Δ last %1").arg(win) : tr("Δ total"),
+         tr("Trend"), tr("Current"), tr("Best XI"), tr("Role"), tr("Δ total")});
     m_table->setColumnHidden(ColTotal, win == 0);
     m_table->setColumnHidden(ColSpot, m_roleCombo->currentData().toString() != kLineupBasis);
     // Room for the sort arrow: the styled header leaves it out of its size
@@ -592,11 +588,11 @@ void DwrsProgressPage::rebuildTable()
             QSize(headerMetrics.horizontalAdvance(header->text()) + 48, headerMetrics.height() + 18));
     }
     m_table->horizontalHeaderItem(ColChange)
-        ->setToolTip(tr("Veränderung in Prozentpunkten über den gewählten Zeitraum"));
+        ->setToolTip(tr("Change in percentage points over the chosen period"));
     m_table->horizontalHeaderItem(ColTotal)
-        ->setToolTip(tr("Veränderung seit dem ersten Datenstand des Spielers"));
+        ->setToolTip(tr("Change since the player's first snapshot"));
     m_table->horizontalHeaderItem(ColSpot)
-        ->setToolTip(tr("Platz in der Best XI der Lieblingstaktik (%1)").arg(m_lineupTactic));
+        ->setToolTip(tr("Place in the Best XI of the favorite tactic (%1)").arg(m_lineupTactic));
 
     double maxAbs = 0.0;
     for (const Row &row : m_rows)
@@ -613,10 +609,10 @@ void DwrsProgressPage::rebuildTable()
         m_table->setItem(r, ColAge, new NumericItem(QString::number(row.age), row.age));
         m_table->setItem(r, ColRole, new QTableWidgetItem(roleNames.value(row.role, row.role)));
         QString spotText = QStringLiteral("–");
-        QString spotTip = tr("Nicht in Startelf oder B-Team: beste Rolle der Taktik");
+        QString spotTip = tr("Not in starting XI or B-team: best role of the tactic");
         switch (row.spot) {
         case Spot::StartingXi:
-            spotText = tr("Startelf");
+            spotText = tr("Starting XI");
             spotTip.clear();
             break;
         case Spot::BTeam:
@@ -624,14 +620,14 @@ void DwrsProgressPage::rebuildTable()
             spotTip.clear();
             break;
         case Spot::Injured:
-            spotText = tr("verletzt");
-            spotTip = tr("Langzeitverletzt, fehlt in der Best XI: beste Rolle der Taktik");
+            spotText = tr("injured");
+            spotTip = tr("Long-term injured, missing from the Best XI: best role of the tactic");
             break;
         case Spot::Squad:
             break;
         }
         if (!row.inLineup)
-            spotTip = tr("Noch kein Verlauf in seiner Best-XI-Rolle: Werte der besten Rolle");
+            spotTip = tr("No history in his Best XI role yet: values of his best role");
         auto *spot = new NumericItem(spotText, static_cast<double>(row.spot));
         spot->setTextAlignment(Qt::AlignCenter);
         spot->setToolTip(spotTip);
@@ -657,7 +653,7 @@ void DwrsProgressPage::rebuildTable()
         }
         auto *trend = new NumericItem(QString(), row.change);
         trend->setData(kSparkRole, spark);
-        trend->setToolTip(tr("Verlauf über den gewählten Zeitraum"));
+        trend->setToolTip(tr("Trend over the chosen period"));
         m_table->setItem(r, ColTrend, trend);
     }
     m_table->setSortingEnabled(true);
@@ -676,19 +672,19 @@ void DwrsProgressPage::rebuildKpis()
 {
     const int win = window();
     const auto dash = QStringLiteral("–");
-    m_avgCaption->setText(win > 0 ? tr("Ø Veränderung in den letzten %1 Uploads").arg(win)
-                                  : tr("Ø Veränderung seit dem ersten Datenstand"));
+    m_avgCaption->setText(win > 0 ? tr("Ø change over the last %1 uploads").arg(win)
+                                  : tr("Ø change since the first snapshot"));
     m_snapshotValue->setText(QString::number(m_timeline.size()));
     m_snapshotCaption->setText(
         m_timeline.size() > 0
-            ? tr("Datenstände · zuletzt %1").arg(m_snapshotLabels.constLast())
-            : tr("Datenstände"));
+            ? tr("Snapshots · latest %1").arg(m_snapshotLabels.constLast())
+            : tr("Snapshots"));
     if (m_rows.empty()) {
         m_avgValue->setText(dash);
         m_riserValue->setText(dash);
-        m_riserCaption->setText(tr("Größter Sprung"));
+        m_riserCaption->setText(tr("Biggest jump"));
         m_fallerValue->setText(dash);
-        m_fallerCaption->setText(tr("Größter Rückgang"));
+        m_fallerCaption->setText(tr("Biggest drop"));
         return;
     }
 
@@ -706,19 +702,19 @@ void DwrsProgressPage::rebuildKpis()
     const auto roleNames = m_context.definitions().roleDisplayMap();
     if (riser->change >= 0.5) {
         m_riserValue->setText(signedNumber(riser->change));
-        m_riserCaption->setText(tr("Größter Sprung: %1").arg(riser->name));
+        m_riserCaption->setText(tr("Biggest jump: %1").arg(riser->name));
         m_riserCaption->setToolTip(roleNames.value(riser->role, riser->role));
     } else {
         m_riserValue->setText(dash);
-        m_riserCaption->setText(tr("Größter Sprung: niemand hat zugelegt"));
+        m_riserCaption->setText(tr("Biggest jump: nobody improved"));
     }
     if (faller->change <= -0.5) {
         m_fallerValue->setText(signedNumber(faller->change));
-        m_fallerCaption->setText(tr("Größter Rückgang: %1").arg(faller->name));
+        m_fallerCaption->setText(tr("Biggest drop: %1").arg(faller->name));
         m_fallerCaption->setToolTip(roleNames.value(faller->role, faller->role));
     } else {
         m_fallerValue->setText(dash);
-        m_fallerCaption->setText(tr("Größter Rückgang: niemand hat abgebaut"));
+        m_fallerCaption->setText(tr("Biggest drop: nobody declined"));
     }
 }
 
@@ -750,14 +746,14 @@ void DwrsProgressPage::rebuildChart()
     if (m_rows.empty()) {
         m_chartTitle->setText(QString());
         m_chart->clearChart(m_timeline.size() == 0
-                                ? tr("Noch keine DWRS-Historie für diese Spieler.")
-                                : tr("Keine Spieler für die aktuelle Auswahl."));
+                                ? tr("No DWRS history for these players yet.")
+                                : tr("No players for the current selection."));
         return;
     }
     if (m_timeline.size() < 2) {
         m_chartTitle->setText(QString());
-        m_chart->clearChart(tr("Erst ein Datenstand vorhanden – nach dem nächsten Upload "
-                               "siehst du hier die Entwicklung."));
+        m_chart->clearChart(tr("Only one snapshot so far – after the next upload you "
+                               "will see the development here."));
         return;
     }
 
@@ -789,18 +785,18 @@ void DwrsProgressPage::rebuildChart()
                 line.points.append({double(s), trend.at(s)});
             series.append(line);
         };
-        addTrend(all, tr("Ø alle gezeigten (%1)").arg(all.size()), true);
+        addTrend(all, tr("Ø all shown (%1)").arg(all.size()), true);
         if (!youth.isEmpty() && !established.isEmpty()) {
-            addTrend(youth, tr("Ø Jugend (%1)").arg(youth.size()), false);
-            addTrend(established, tr("Ø Etablierte (%1)").arg(established.size()), false);
+            addTrend(youth, tr("Ø youth (%1)").arg(youth.size()), false);
+            addTrend(established, tr("Ø established (%1)").arg(established.size()), false);
         }
-        m_chartTitle->setText(tr("Kader-Trend: Ø Veränderung in Prozentpunkten"));
+        m_chartTitle->setText(tr("Squad trend: Ø change in percentage points"));
     } else if (uids.size() == 1) {
         // One player: the table's role; on request also his best roles, the
         // table's role emphasized.
         const Player *player = m_context.store().findByUid(uids.first());
         if (!player) {
-            m_chart->clearChart(tr("Spieler nicht gefunden."));
+            m_chart->clearChart(tr("Player not found."));
             return;
         }
         QString tableRole;
@@ -837,7 +833,7 @@ void DwrsProgressPage::rebuildChart()
                 series.append(line);
         }
         m_chartTitle->setText(moreRoles || tableRole.isEmpty()
-                                  ? tr("%1 · beste Rollen").arg(player->name)
+                                  ? tr("%1 · best roles").arg(player->name)
                                   : QStringLiteral("%1 · %2").arg(
                                         player->name, roleNames.value(tableRole, tableRole)));
     } else {
@@ -859,14 +855,14 @@ void DwrsProgressPage::rebuildChart()
         }
         const QString role = chosenRole();
         m_chartTitle->setText(
-            sameRole ? tr("Vergleich als %1").arg(roleNames.value(role, role))
+            sameRole ? tr("Comparison as %1").arg(roleNames.value(role, role))
             : m_roleCombo->currentData().toString() == kLineupBasis
-                ? tr("Vergleich in der jeweiligen Best-XI-Rolle")
-                : tr("Vergleich in der jeweils besten Rolle"));
+                ? tr("Comparison in each player's Best XI role")
+                : tr("Comparison, each in his best role"));
     }
 
     if (series.isEmpty())
-        m_chart->clearChart(tr("Keine historischen Daten für die aktuelle Auswahl."));
+        m_chart->clearChart(tr("No historical data for the current selection."));
     else
         m_chart->setSeries(std::move(series), m_snapshotLabels, mode,
                            Development::recalcMarkers(shownTracks, start), m_snapshotGameDates);

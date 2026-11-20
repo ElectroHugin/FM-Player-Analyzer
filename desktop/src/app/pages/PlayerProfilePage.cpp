@@ -1,4 +1,5 @@
 #include "PlayerProfilePage.h"
+#include "core/Currency.h"
 #include "core/DwrsDisplay.h"
 #include "../widgets/RatingProfileEditor.h"
 #include "widgets/RolePhaseSwitch.h"
@@ -38,6 +39,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include "widgets/FlowLayout.h"
+#include "core/GameTerms.h"
 
 #include <QScrollArea>
 #include <QSet>
@@ -97,7 +99,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     layout->setSpacing(10);
     scroll->setWidget(content);
 
-    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Spieler-Profil")), content);
+    auto *heading = new QLabel(QStringLiteral("<h2 style='font-weight:600'>%1</h2>").arg(tr("Player Profile")), content);
     layout->addWidget(heading);
 
     // --- Selection row ---
@@ -109,11 +111,11 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
         m_scopeGroup->addButton(radio, id);
         selectRow->addWidget(radio);
     };
-    addScope(tr("Mein Verein"), MyClub);
-    addScope(tr("Zweitteam"), SecondTeam);
-    addScope(tr("Gescoutete"), Scouted);
-    addScope(tr("Nationalkader"), NationalSquad);
-    addScope(tr("Alle Spieler"), All, true);
+    addScope(tr("My club"), MyClub);
+    addScope(tr("Second team"), SecondTeam);
+    addScope(tr("Scouted"), Scouted);
+    addScope(tr("National squad"), NationalSquad);
+    addScope(tr("All players"), All, true);
     selectRow->addSpacing(12);
 
     // Type-to-search instead of a giant dropdown: fast even with 80k players
@@ -122,7 +124,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_searchEdit = new QLineEdit(content);
     m_searchEdit->setMinimumWidth(340);
     m_searchEdit->setClearButtonEnabled(true);
-    m_searchEdit->setPlaceholderText(tr("Spieler suchen"));
+    m_searchEdit->setPlaceholderText(tr("Search players"));
     m_searchModel = new PlayerSearchModel(this);
     m_searchCompleter = new FoldingCompleter(m_searchModel, this);
     m_searchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
@@ -135,8 +137,8 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     // Small squads (own club, second team, national squad): pick from a
     // menu grouped by position instead of typing a name.
     m_squadButton = new QToolButton(content);
-    m_squadButton->setText(tr("Kader"));
-    m_squadButton->setToolTip(tr("Spieler aus der Liste wählen, nach Mannschaftsteil sortiert"));
+    m_squadButton->setText(tr("Squad"));
+    m_squadButton->setToolTip(tr("Pick a player from the list, sorted by team part"));
     m_squadButton->setPopupMode(QToolButton::InstantPopup);
     m_squadButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
     m_squadButton->setCursor(Qt::PointingHandCursor);
@@ -196,7 +198,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     facts->setContentsMargins(0, 0, 0, 0);
     facts->setHorizontalSpacing(32);
     facts->setVerticalSpacing(2);
-    const QStringList factCaptions = {tr("Marktwert"), tr("Gehalt"), tr("Ø-Note")};
+    const QStringList factCaptions = {tr("Market Value"), tr("Wage"), tr("Avg. Rating")};
     for (int i = 0; i < factCaptions.size(); ++i) {
         auto *caption = new QLabel(factCaptions.at(i), m_factsWidget);
         caption->setObjectName(QStringLiteral("kpiCaption"));
@@ -226,7 +228,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     });
 
     // --- Manual single-player update ---
-    m_updateBox = new QGroupBox(tr("Diesen Spieler aus einer Exportdatei aktualisieren (HTML oder CSV)"),
+    m_updateBox = new QGroupBox(tr("Update this player from an export file (HTML or CSV)"),
                                 content);
     m_updateBox->setCheckable(true);
     m_updateBox->setChecked(false);
@@ -237,10 +239,10 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     connect(m_updateBox, &QGroupBox::toggled, updateInner, &QWidget::setVisible);
     updateInner->setVisible(false);
     auto *updateHint = new QLabel(
-        tr("Lade einen FM-Export hoch, der NUR diesen Spieler enthält. Die Daten werden "
-           "direkt auf dieses Profil geschrieben — auch wenn die UID in der Datei abweicht "
-           "(z. B. fehlendes 'r-'-Präfix). Zugewiesene Rollen, Primärrolle und "
-           "Transfer-/Leih-Einstellungen bleiben erhalten."),
+        tr("Upload an FM export that contains ONLY this player. The data is written "
+           "directly onto this profile — even if the UID in the file differs (e.g. a "
+           "missing 'r-' prefix). Assigned roles, primary role and transfer/loan settings "
+           "are preserved."),
         updateInner);
     updateHint->setWordWrap(true);
     updateHint->setObjectName(QStringLiteral("kpiCaption"));
@@ -248,14 +250,14 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     auto *fileRow = new QHBoxLayout;
     m_updateFileEdit = new QLineEdit(updateInner);
     m_updateFileEdit->setReadOnly(true);
-    m_updateFileEdit->setPlaceholderText(tr("Keine Datei ausgewählt…"));
-    auto *browse = new QPushButton(tr("Durchsuchen…"), updateInner);
+    m_updateFileEdit->setPlaceholderText(tr("No file selected…"));
+    auto *browse = new QPushButton(tr("Browse…"), updateInner);
     fileRow->addWidget(m_updateFileEdit, 1);
     fileRow->addWidget(browse);
     updateLayout->addLayout(fileRow);
     auto *confirmRow = new QHBoxLayout;
     m_updateConfirm = new QCheckBox(updateInner);
-    m_updateButton = new QPushButton(tr("Spieler aktualisieren"), updateInner);
+    m_updateButton = new QPushButton(tr("Update Player"), updateInner);
     m_updateButton->setEnabled(false);
     confirmRow->addWidget(m_updateConfirm, 1);
     confirmRow->addWidget(m_updateButton);
@@ -263,8 +265,8 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     layout->addWidget(m_updateBox);
     connect(browse, &QPushButton::clicked, this, [this] {
         const QString path = QFileDialog::getOpenFileName(
-            this, tr("FM-Export (HTML oder CSV) auswählen"), m_context.htmlExportDir(),
-            tr("FM-Exporte (*.html *.htm *.csv);;Alle Dateien (*)"));
+            this, tr("Select FM export (HTML or CSV)"), m_context.htmlExportDir(),
+            tr("FM exports (*.html *.htm *.csv);;All files (*)"));
         if (!path.isEmpty())
             m_updateFileEdit->setText(path);
         m_updateButton->setEnabled(!m_updateFileEdit->text().isEmpty()
@@ -282,7 +284,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     detailLayout->setSpacing(10);
 
     auto *topRolesHeader = new QHBoxLayout;
-    auto *topRolesTitle = new QLabel(tr("Rollen (beste zuerst)"), m_detailWidget);
+    auto *topRolesTitle = new QLabel(tr("Roles (best first)"), m_detailWidget);
     topRolesTitle->setObjectName(QStringLiteral("sectionTitle"));
     topRolesHeader->addWidget(topRolesTitle);
     topRolesHeader->addSpacing(16);
@@ -304,15 +306,15 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_tacticLegendLabel = new QLabel(m_tacticLegend);
     m_tacticLegendLabel->setObjectName(QStringLiteral("kpiCaption"));
     legend->addWidget(m_tacticLegendLabel);
-    addSwatch(QStringLiteral("ipSwatch"), tr("mit Ball"));
-    addSwatch(QStringLiteral("oopSwatch"), tr("ohne Ball"));
+    addSwatch(QStringLiteral("ipSwatch"), tr("in possession"));
+    addSwatch(QStringLiteral("oopSwatch"), tr("out of possession"));
     topRolesHeader->addWidget(m_tacticLegend);
     topRolesHeader->addStretch(1);
     m_roleFilterCombo = new QComboBox(m_detailWidget);
-    m_roleFilterCombo->addItem(tr("Alle Rollen"), QStringLiteral("all"));
-    m_roleFilterCombo->addItem(tr("Nur mit Ball (IP)"), QStringLiteral("ip"));
-    m_roleFilterCombo->addItem(tr("Nur ohne Ball (OOP)"), QStringLiteral("oop"));
-    m_roleFilterCombo->setToolTip(tr("Welche Rollen als Kacheln gezeigt werden."));
+    m_roleFilterCombo->addItem(tr("All Roles"), QStringLiteral("all"));
+    m_roleFilterCombo->addItem(tr("In possession only (IP)"), QStringLiteral("ip"));
+    m_roleFilterCombo->addItem(tr("Out of possession only (OOP)"), QStringLiteral("oop"));
+    m_roleFilterCombo->setToolTip(tr("Which roles are shown as tiles."));
     connect(m_roleFilterCombo, &QComboBox::currentIndexChanged, this,
             [this] { fillRoleTiles(); });
     topRolesHeader->addWidget(m_roleFilterCombo);
@@ -329,17 +331,17 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_coverageNote->setVisible(false);
     detailLayout->addWidget(m_coverageNote);
 
-    m_talentBox = new QGroupBox(tr("🌱 Talent-Projektion"), m_detailWidget);
+    m_talentBox = new QGroupBox(tr("🌱 Talent Projection"), m_detailWidget);
     auto *talentLayout = new QVBoxLayout(m_talentBox);
     m_talentLabel = new QLabel(m_talentBox);
     m_talentLabel->setWordWrap(true);
     talentLayout->addWidget(m_talentLabel);
     detailLayout->addWidget(m_talentBox);
 
-    m_trainingBox = new QGroupBox(tr("🎯 Trainingsempfehlung"), m_detailWidget);
+    m_trainingBox = new QGroupBox(tr("🎯 Training Recommendation"), m_detailWidget);
     auto *trainingLayout = new QVBoxLayout(m_trainingBox);
     auto *trainingRoleRow = new QHBoxLayout;
-    trainingRoleRow->addWidget(new QLabel(tr("Rolle:"), m_trainingBox));
+    trainingRoleRow->addWidget(new QLabel(tr("Role:"), m_trainingBox));
     m_trainingRoleCombo = new QComboBox(m_trainingBox);
     m_trainingRoleCombo->setMinimumWidth(220);
     trainingRoleRow->addWidget(new RolePhaseSwitch(m_context.definitions(), m_trainingRoleCombo, m_trainingRoleCombo->parentWidget()));
@@ -372,7 +374,7 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     prosConsColumn->addWidget(m_consLabel);
     prosConsColumn->addStretch(1);
     auto *keyColumn = new QVBoxLayout;
-    auto *keyTitle = new QLabel(tr("Attribut-Übersicht"), m_detailWidget);
+    auto *keyTitle = new QLabel(tr("Attribute Overview"), m_detailWidget);
     keyTitle->setObjectName(QStringLiteral("sectionTitle"));
     m_keyAttrsLabel = new QLabel(m_detailWidget);
     m_keyAttrsLabel->setTextFormat(Qt::RichText);
@@ -385,12 +387,12 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     analysisRow->addLayout(keyColumn, 1);
     detailLayout->addLayout(analysisRow);
 
-    auto *chartTitle = new QLabel(tr("DWRS-Entwicklung"), m_detailWidget);
+    auto *chartTitle = new QLabel(tr("DWRS Development"), m_detailWidget);
     chartTitle->setObjectName(QStringLiteral("sectionTitle"));
     detailLayout->addWidget(chartTitle);
     m_chart = new LineChartWidget(m_theme, m_detailWidget);
     // One player's own history: each point is a stored change of his ratings.
-    m_chart->setAxisTitle(tr("Gespeicherte Veränderungen vor dem aktuellen Wert"));
+    m_chart->setAxisTitle(tr("Stored changes before the current value"));
     detailLayout->addWidget(m_chart);
     m_switchNote = new QLabel(m_detailWidget);
     m_switchNote->setObjectName(QStringLiteral("kpiCaption"));
@@ -398,23 +400,23 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
     m_switchNote->setVisible(false);
     detailLayout->addWidget(m_switchNote);
 
-    auto *historyTitle = new QLabel(tr("Verlauf nach Ingame-Datum"), m_detailWidget);
+    auto *historyTitle = new QLabel(tr("History by in-game date"), m_detailWidget);
     historyTitle->setObjectName(QStringLiteral("sectionTitle"));
     detailLayout->addWidget(historyTitle);
     m_historyTable = new QTableWidget(0, 5, m_detailWidget);
     m_historyTable->setHorizontalHeaderLabels(
-        {tr("Ingame-Datum"), tr("Ø-Note"), tr("Marktwert"), tr("Gehalt"),
-         tr("Veränderte Attribute")});
+        {tr("In-game date"), tr("Avg. Rating"), tr("Market Value"), tr("Wage"),
+         tr("Changed attributes")});
     m_historyTable->verticalHeader()->setVisible(false);
     m_historyTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_historyTable->setSelectionMode(QAbstractItemView::NoSelection);
     m_historyTable->setWordWrap(true);
     detailLayout->addWidget(m_historyTable);
     m_historyEmpty = new QLabel(
-        tr("Noch kein Verlauf. Bei jedem Einlesen eines FM27-Spielstands speichert der Analyzer pro "
-           "Ingame-Monat einen Stand: für deinen Kader, das Zweitteam, die Shortlist, den "
-           "Nationalkader und Spieler aus deinem Scouting, auf Wunsch für alle Spieler "
-           "(Einstellungen → Verlauf und Datenfrische)."),
+        tr("No history yet. Each time an FM27 save is read in, the analyzer keeps one state per "
+           "in-game month: for your squad, the second team, the shortlist, the national squad and "
+           "players from your scouting, or for all players if you choose (Settings → History and "
+           "data freshness)."),
         m_detailWidget);
     m_historyEmpty->setObjectName(QStringLiteral("kpiCaption"));
     m_historyEmpty->setWordWrap(true);
@@ -422,8 +424,8 @@ PlayerProfilePage::PlayerProfilePage(AppContext &context, ThemeManager &theme, Q
 
     layout->addWidget(m_detailWidget);
     m_noRolesLabel = new QLabel(
-        tr("Dieser Spieler hat noch keine bewerteten Rollen. Weise ihm unter "
-           "Rollen & Taktiken → Rollen zuweisen Rollen zu."),
+        tr("This player has no rated roles yet. Assign roles to him under "
+           "Roles & Tactics → Assign Roles."),
         content);
     m_noRolesLabel->hide();
     layout->addWidget(m_noRolesLabel);
@@ -515,8 +517,8 @@ void PlayerProfilePage::fillSquadMenu(QMenu *menu)
     // Grouped by the first position FM lists (FM lists them from the back
     // to the front, so a full-back who also plays wing-back sits in defence).
     enum Group { Keepers, Defence, Midfield, Attack, GroupCount };
-    const QStringList groupNames = {tr("Torhüter"), tr("Abwehr"), tr("Mittelfeld"),
-                                    tr("Angriff")};
+    const QStringList groupNames = {tr("Goalkeepers"), tr("Defence"), tr("Midfield"),
+                                    tr("Attack")};
     const auto groupOf = [](const Player &player) {
         if (player.isGoalkeeper())
             return Keepers;
@@ -552,7 +554,7 @@ void PlayerProfilePage::fillSquadMenu(QMenu *menu)
         QMenu *sub = menu->addMenu(QStringLiteral("%1 (%2)").arg(groupNames.at(g)).arg(pool.size()));
         for (const Player *player : pool) {
             QAction *action = sub->addAction(
-                QStringLiteral("%1   ·   %2").arg(player->name, player->positionRaw));
+                QStringLiteral("%1   ·   %2").arg(player->name, GameTerms::positions(player->positionRaw)));
             action->setCheckable(true);
             action->setChecked(player->uid == m_currentUid);
             const QString uid = player->uid;
@@ -564,7 +566,7 @@ void PlayerProfilePage::fillSquadMenu(QMenu *menu)
         }
     }
     if (!any)
-        menu->addAction(tr("Keine Spieler in dieser Auswahl"))->setEnabled(false);
+        menu->addAction(tr("No players in this selection"))->setEnabled(false);
 }
 
 void PlayerProfilePage::rebuildSearchModel()
@@ -623,7 +625,7 @@ void PlayerProfilePage::showPlayer()
     m_detailWidget->setVisible(hasPlayer);
     m_noRolesLabel->setVisible(false);
     if (!hasPlayer) {
-        m_nameLabel->setText(tr("Kein Spieler ausgewählt"));
+        m_nameLabel->setText(tr("No player selected"));
         m_factsWidget->setVisible(false);
         m_vitalsLabel->clear();
         m_tagsLabel->clear();
@@ -641,9 +643,9 @@ void PlayerProfilePage::showPlayer()
     if (!player->club.isEmpty())
         vitals << player->club.toHtmlEscaped();
     if (player->age > 0)
-        vitals << tr("%1 Jahre").arg(player->age);
+        vitals << tr("%1 years").arg(player->age);
     if (!player->positionRaw.isEmpty())
-        vitals << player->positionRaw.toHtmlEscaped();
+        vitals << GameTerms::positions(player->positionRaw).toHtmlEscaped();
     m_vitalsLabel->setText(vitals.join(QStringLiteral(" &nbsp;·&nbsp; ")));
 
     // Portrait in the picture slot; without one the crest stands in there,
@@ -671,13 +673,13 @@ void PlayerProfilePage::showPlayer()
     if (!player->agreedPlayingTime.isEmpty())
         status << player->agreedPlayingTime.toHtmlEscaped();
     if (!player->primaryRole.isEmpty())
-        status << tr("Primärrolle %1")
+        status << tr("Primary role %1")
                       .arg(roleNames.value(player->primaryRole, player->primaryRole).toHtmlEscaped());
     if (!player->personality.isEmpty()) {
         const CellStyle style = personalityCellStyle(
             m_context.definitions().personalityCategory(player->personality));
         status << (style.isValid() ? dot(style.background.name()) : QString())
-                      + player->personality.toHtmlEscaped();
+                      + GameTerms::text(QStringLiteral("personality"), player->personality).toHtmlEscaped();
     }
 
     // --- Data freshness (see Freshness) ---
@@ -690,21 +692,21 @@ void PlayerProfilePage::showPlayer()
     if (Freshness::isRetired(*player, counter, retirementAge, staleAfter,
                              m_context.userClub())) {
         status << dot(QStringLiteral("#c0392b"))
-                      + tr("Retired (verpasste Komplett-Exporte: %1)").arg(missed);
+                      + tr("Retired (missed full exports: %1)").arg(missed);
     } else if (Freshness::isStale(*player, counter, staleAfter)) {
         status << dot(QStringLiteral("#d9822b"))
-                      + tr("Daten veraltet (verpasste Komplett-Exporte: %1)").arg(missed);
+                      + tr("Data outdated (missed full exports: %1)").arg(missed);
     } else if (missed > 0) {
         status << dot(QStringLiteral("#8a8f98"))
-                      + tr("verpasste Komplett-Exporte: %1").arg(missed);
+                      + tr("missed full exports: %1").arg(missed);
     } else if (counter > 0) {
-        status << dot(QStringLiteral("#2e9e5b")) + tr("Daten aktuell");
+        status << dot(QStringLiteral("#2e9e5b")) + tr("Data current");
     }
     m_tagsLabel->setText(status.join(QStringLiteral(" &nbsp;·&nbsp; ")));
     fillFacts(player);
     m_footWidget->setFeet(player->leftFoot, player->rightFoot);
     m_updateConfirm->setText(
-        tr("Ja, diese Datei ist sicher ein Update für %1.").arg(player->name));
+        tr("Yes, this file is definitely an update for %1.").arg(player->name));
 
     // --- Training advice: own players only (first or second team). ---
     const bool ownPlayer =
@@ -758,8 +760,8 @@ void PlayerProfilePage::showPlayer()
                 names << RatingProfileEditor::attributeLabel(index);
             const double coverage = snapshot->evaluate(*player, role).coverage;
             m_coverageNote->setText(
-                tr("Die Bewertung beruht auf den vorhandenen Attributen (%1 % des Rollengewichts). "
-                   "Es fehlen: %2.")
+                tr("The rating is based on the available attributes (%1 % of the role weight). "
+                   "Missing: %2.")
                     .arg(qRound(coverage * 100))
                     .arg(names.join(QStringLiteral(", "))));
             m_coverageNote->setVisible(true);
@@ -781,9 +783,9 @@ void PlayerProfilePage::showPlayer()
             m_context.definitions(), *player, topRoles.front().normalized, ageCap);
         m_talentBox->setVisible(true);
         m_talentLabel->setText(
-            tr("<b style='font-size:14pt;'>Talent-Score (U%1): %2</b><br/>"
-               "Bester Rollen-DWRS <b>%3%</b> + Entwicklungs-Spielraum (%1−%4 Jahre) "
-               "+ Mentalität (Ent %5 / Arb %6) + Persönlichkeit (%7).")
+            tr("<b style='font-size:14pt;'>Talent score (U%1): %2</b><br/>Best role "
+               "DWRS <b>%3%</b> + development headroom (%1−%4 years) + mentality "
+               "(Det %5 / Wor %6) + personality (%7).")
                 .arg(static_cast<int>(ageCap))
                 .arg(qRound(score))
                 .arg(formatDwrs(topRoles.front().normalized))
@@ -791,34 +793,34 @@ void PlayerProfilePage::showPlayer()
                 .arg(static_cast<int>(player->attrMean(idx(Attr::Determination))))
                 .arg(static_cast<int>(player->attrMean(idx(Attr::WorkRate))))
                 .arg(player->personality.isEmpty() ? QStringLiteral("—")
-                                                   : player->personality.toHtmlEscaped()));
+                                                   : GameTerms::text(QStringLiteral("personality"), player->personality).toHtmlEscaped()));
     } else {
         m_talentBox->setVisible(false);
     }
 
     // --- Pros & cons + key attributes for the best role ---
     const QString bestRole = topRoles.front().role;
-    m_analysisTitle->setText(tr("Analyse als %1").arg(topRoles.front().roleName));
+    m_analysisTitle->setText(tr("Analysis as %1").arg(topRoles.front().roleName));
     const RoleAnalysis::RoleReport report = RoleAnalysis::analyzePlayerForRole(
         m_context.definitions(), *player, bestRole, true, true);
 
-    QString prosHtml = QStringLiteral("<b>✅ %1</b><ul>").arg(tr("Stärken"));
+    QString prosHtml = QStringLiteral("<b>✅ %1</b><ul>").arg(tr("Strengths"));
     for (const auto &pro : report.pros)
         prosHtml += QStringLiteral("<li>%1</li>")
                         .arg(RoleAnalysis::formatProLine(pro, report.roleName).toHtmlEscaped());
     prosHtml += QStringLiteral("</ul>");
     m_prosLabel->setText(report.pros.empty()
                              ? QStringLiteral("<b>✅ %1</b><p>%2</p>")
-                                   .arg(tr("Stärken"), tr("Keine herausragenden Stärken."))
+                                   .arg(tr("Strengths"), tr("No outstanding strengths."))
                              : prosHtml);
-    QString consHtml = QStringLiteral("<b>⚠️ %1</b><ul>").arg(tr("Schwächen"));
+    QString consHtml = QStringLiteral("<b>⚠️ %1</b><ul>").arg(tr("Weaknesses"));
     for (const auto &con : report.cons)
         consHtml += QStringLiteral("<li>%1</li>")
                         .arg(RoleAnalysis::formatConLine(con, report.roleName).toHtmlEscaped());
     consHtml += QStringLiteral("</ul>");
     m_consLabel->setText(report.cons.empty()
                              ? QStringLiteral("<b>⚠️ %1</b><p>%2</p>")
-                                   .arg(tr("Schwächen"), tr("Keine nennenswerten Schwächen."))
+                                   .arg(tr("Weaknesses"), tr("No notable weaknesses."))
                              : consHtml);
 
     const RoleWeights weights = m_context.definitions().roleWeights(bestRole);
@@ -837,9 +839,9 @@ void PlayerProfilePage::showPlayer()
         }
         chips += QStringLiteral("</p>");
     };
-    renderChips(weights.key, tr("Schlüssel-Attribute"));
-    renderChips(weights.preferable, tr("Bevorzugte Attribute"));
-    m_keyAttrsLabel->setText(chips.isEmpty() ? tr("Keine Attribut-Definitionen für diese Rolle.")
+    renderChips(weights.key, tr("Key Attributes"));
+    renderChips(weights.preferable, tr("Preferred Attributes"));
+    m_keyAttrsLabel->setText(chips.isEmpty() ? tr("No attribute definitions for this role.")
                                              : chips);
 
     // --- Development chart for the top 3 roles (x = his upload snapshots) ---
@@ -868,8 +870,8 @@ void PlayerProfilePage::showPlayer()
     const QStringList snapshotLabels = developmentSnapshotLabels(m_context, timeline);
     const QList<int> markers = Development::recalcMarkers(chartTracks, 0);
     if (chartSeries.isEmpty())
-        m_chart->clearChart(tr("Noch keine historischen DWRS-Daten. Importiere über die Zeit "
-                               "weitere Snapshots, um die Entwicklung zu sehen."));
+        m_chart->clearChart(tr("No historical DWRS data yet. Import more snapshots over time "
+                               "to see the development."));
     else
         m_chart->setSeries(std::move(chartSeries), snapshotLabels,
                            LineChartWidget::ValueMode::Percent, markers,
@@ -879,7 +881,7 @@ void PlayerProfilePage::showPlayer()
     QStringList switches;
     for (const auto &[when, name] : m_context.ratingProfileSwitches())
         switches << tr("%1: %2").arg(when, name);
-    m_switchNote->setText(tr("Profilwechsel (Markierung im Diagramm, keine Entwicklung über den Wechsel): %1")
+    m_switchNote->setText(tr("Profile switches (marked in the chart, no development across a switch): %1")
                               .arg(switches.join(QStringLiteral(" · "))));
     m_switchNote->setVisible(!switches.isEmpty());
     fillHistory(player);
@@ -895,8 +897,8 @@ void PlayerProfilePage::fillFacts(const Player *player)
     const ImportHistory::Snapshot *before =
         snapshots.size() >= 2 ? &snapshots[snapshots.size() - 2] : nullptr;
     const QString dash = QStringLiteral("–");
-    m_factValues[0]->setText(player->transferValueRaw.isEmpty() ? dash : player->transferValueRaw);
-    m_factValues[1]->setText(player->wageRaw.isEmpty() ? dash : player->wageRaw);
+    m_factValues[0]->setText(player->transferValueRaw.isEmpty() ? dash : Currency::displayText(player->transferValueRaw));
+    m_factValues[1]->setText(player->wageRaw.isEmpty() ? dash : Currency::displayText(player->wageRaw));
     m_factValues[2]->setText(player->averageRating > 0
                                  ? QLocale().toString(player->averageRating, 'f', 2)
                                  : dash);
@@ -908,10 +910,10 @@ void PlayerProfilePage::fillFacts(const Player *player)
                                                             m_context.database()))
                            : QLocale().toString(s.gameDate, QLocale::ShortFormat);
     };
-    // Same style as the game's figures ("€1.8M", "€450K").
-    const auto moneyText = [](double euros) {
-        return euros >= 1e6 ? QStringLiteral("€%1M").arg(euros / 1e6, 0, 'f', 1)
-                            : QStringLiteral("€%1K").arg(std::lround(euros / 1e3));
+    // Same style as the game's figures ("€1.8M", "€450K"), in the display currency.
+    const auto moneyText = [last](double amount) {
+        return Currency::format(
+            Currency::toDisplay(amount, Currency::ofText(last ? last->transferValueText : QString())));
     };
     const auto signedText = [](double delta, const QString &number) {
         return (delta > 0 ? QStringLiteral("+") : QStringLiteral("−")) + number;
@@ -921,19 +923,19 @@ void PlayerProfilePage::fillFacts(const Player *player)
         if (std::abs(valueDelta) >= 1000 && last->transferValue < kUnbuyableValue
             && before->transferValue < kUnbuyableValue)
             m_factChanges[0]->setText(
-                tr("%1 seit %2")
+                tr("%1 since %2")
                     .arg(signedText(valueDelta, moneyText(std::abs(valueDelta))),
                          since(*before)));
         if (last->wage != before->wage && !before->wage.isEmpty())
-            m_factChanges[1]->setText(tr("vorher %1").arg(before->wage));
+            m_factChanges[1]->setText(tr("previously %1").arg(Currency::displayText(before->wage)));
         const double ratingDelta = last->averageRating - before->averageRating;
         if (last->averageRating > 0 && before->averageRating > 0 && std::abs(ratingDelta) >= 0.005)
             m_factChanges[2]->setText(
-                tr("%1 seit %2")
+                tr("%1 since %2")
                     .arg(signedText(ratingDelta, QLocale().toString(std::abs(ratingDelta), 'f', 2)),
                          since(*before)));
     }
-    m_factsNote->setText(last ? tr("Ingame-Stand %1").arg(since(*last)) : QString());
+    m_factsNote->setText(last ? tr("In-game state %1").arg(since(*last)) : QString());
 }
 
 void PlayerProfilePage::fillHistory(const Player *player)
@@ -958,7 +960,7 @@ void PlayerProfilePage::fillHistory(const Player *player)
         const ImportHistory::Snapshot &s = snapshots[size_t(i)];
         const int row = rows - 1 - i;
         const QString when =
-            s.condensed ? tr("Saison %1 (Ende)")
+            s.condensed ? tr("Season %1 (end)")
                               .arg(ImportHistory::seasonLabel(ImportHistory::seasonOfPeriod(s.period),
                                                               seasonStart))
                         : QLocale().toString(s.gameDate, QLocale::ShortFormat);
@@ -971,7 +973,7 @@ void PlayerProfilePage::fillHistory(const Player *player)
                 const double delta = mean(s, a) - mean(before, a);
                 if (std::abs(delta) >= 0.5)
                     moved << QStringLiteral("%1 %2%3")
-                                 .arg(attrNames()[a], delta > 0 ? QStringLiteral("+")
+                                 .arg(GameTerms::attribute(attrNames()[a]), delta > 0 ? QStringLiteral("+")
                                                                 : QStringLiteral("−"))
                                  .arg(QLocale().toString(std::abs(delta), 'g', 3));
             }
@@ -979,9 +981,9 @@ void PlayerProfilePage::fillHistory(const Player *player)
         const QStringList cells = {
             when,
             s.averageRating > 0 ? QLocale().toString(s.averageRating, 'f', 2) : QStringLiteral("–"),
-            s.transferValueText.isEmpty() ? QStringLiteral("–") : s.transferValueText,
-            s.wage.isEmpty() ? QStringLiteral("–") : s.wage,
-            i == 0 ? tr("erster Stand") : (moved.isEmpty() ? QStringLiteral("–")
+            s.transferValueText.isEmpty() ? QStringLiteral("–") : Currency::displayText(s.transferValueText),
+            s.wage.isEmpty() ? QStringLiteral("–") : Currency::displayText(s.wage),
+            i == 0 ? tr("first state") : (moved.isEmpty() ? QStringLiteral("–")
                                                             : moved.join(QStringLiteral(" · "))),
         };
         for (int c = 0; c < cells.size(); ++c)
@@ -1048,14 +1050,14 @@ void PlayerProfilePage::fillRoleTiles()
     }
     m_topRolesLayout->invalidate();
     m_tacticLegend->setVisible(anyMarked);
-    m_tacticLegendLabel->setText(tr("Rahmen = Rolle in „%1“:").arg(tactic));
+    m_tacticLegendLabel->setText(tr("Outline = role in “%1”:").arg(tactic));
     // Without phases (FM24) a single color says "in the tactic".
     m_tacticLegend->findChild<QFrame *>(QStringLiteral("oopSwatch"))
         ->setVisible(definitions.hasRolePhases());
     for (QLabel *label : m_tacticLegend->findChildren<QLabel *>()) {
-        if (label->text() == tr("ohne Ball"))
+        if (label->text() == tr("out of possession"))
             label->setVisible(definitions.hasRolePhases());
-        else if (label->text() == tr("mit Ball"))
+        else if (label->text() == tr("in possession"))
             label->setVisible(definitions.hasRolePhases());
     }
 }
@@ -1070,15 +1072,16 @@ void PlayerProfilePage::runManualUpdate()
 
     ImportTable table;
     ImportError error;
-    if (!readImportTable(filePath, m_context.fmVersionId(), &table, &error)) {
-        QMessageBox::critical(this, tr("Spieler aktualisieren"), importErrorText(error));
+    if (!readImportTable(filePath, m_context.fmVersionId(), &table, &error, {},
+                         m_context.gameLanguage())) {
+        QMessageBox::critical(this, tr("Update Player"), importErrorText(error));
         return;
     }
     const QString fileName = HtmlImporter::forceUpdateSinglePlayer(
         table, m_context.database(), m_context.store().players(), uid, &error,
         m_context.fmVersionId());
     if (error.code != ImportErrorCode::None) {
-        QMessageBox::critical(this, tr("Spieler aktualisieren"), importErrorText(error));
+        QMessageBox::critical(this, tr("Update Player"), importErrorText(error));
         return;
     }
 
@@ -1090,13 +1093,13 @@ void PlayerProfilePage::runManualUpdate()
 
     recalcDwrsFor(m_context, this, {uid}, [this, playerName, fileName](const QString &recalcError) {
         if (!recalcError.isEmpty()) {
-            QMessageBox::critical(this, tr("Spieler aktualisieren"), recalcError);
+            QMessageBox::critical(this, tr("Update Player"), recalcError);
             return;
         }
-        QString message = tr("✅ %1 wurde aus der Datei aktualisiert.").arg(playerName);
+        QString message = tr("✅ %1 was updated from the file.").arg(playerName);
         if (!fileName.isEmpty() && fileName != playerName)
-            message += tr(" (Name in der Datei: '%1'.)").arg(fileName);
-        QMessageBox::information(this, tr("Spieler aktualisieren"), message);
+            message += tr(" (Name in the file: '%1'.)").arg(fileName);
+        QMessageBox::information(this, tr("Update Player"), message);
     }, RatingsOrigin::Import);
 }
 
@@ -1111,8 +1114,8 @@ void PlayerProfilePage::showTrainingAdvice(const Player *player)
     const QString role = m_trainingRoleCombo->currentData().toString();
     if (role.isEmpty()) {
         m_trainingLabel->setText(
-            tr("Keine trainierbare Rolle aus <i>Positionen ∩ Lieblingstaktik</i>. "
-               "Lege in den Einstellungen eine Lieblings-Taktik fest."));
+            tr("No trainable role from <i>positions ∩ favorite tactic</i>. Set a "
+               "favorite tactic in the settings."));
         return;
     }
 
@@ -1120,23 +1123,23 @@ void PlayerProfilePage::showTrainingAdvice(const Player *player)
         *player, role, *m_context.ratingSnapshot(), trainingProfile(m_context));
     if (!advice.valid || advice.focus.empty()) {
         m_trainingLabel->setText(
-            tr("Für diese Rolle gibt es aktuell keine sinnvolle Trainingsmethode "
-               "(Attribute bereits hoch oder altersbedingt gesperrt)."));
+            tr("There is currently no useful training method for this role "
+               "(attributes already high or locked by age)."));
         return;
     }
 
     QString html = QStringLiteral("<b>%1</b><ol>")
-                       .arg(tr("Trainingsmethoden in dieser Reihenfolge:"));
+                       .arg(tr("Training methods in this order:"));
     const int limit = std::min<int>(5, static_cast<int>(advice.focus.size()));
     for (int i = 0; i < limit; ++i) {
         const TrainingAdvice::FocusRecommendation &f = advice.focus[i];
         QString note;
         if (f.allMental)
-            note = tr("mental, lebenslang trainierbar");
+            note = tr("mental, trainable lifelong");
         else if (f.anyLimited)
-            note = tr("altersbedingt nur noch begrenzt");
+            note = tr("limited by age");
         else
-            note = tr("noch voll trainierbar");
+            note = tr("still fully trainable");
         html += QStringLiteral("<li><b>%1</b> — %2 <span style='opacity:0.75;'>(%3)</span></li>")
                     .arg(f.focus.toHtmlEscaped(),
                          f.attributes.join(QStringLiteral(", ")).toHtmlEscaped(), note);
@@ -1144,7 +1147,7 @@ void PlayerProfilePage::showTrainingAdvice(const Player *player)
     html += QStringLiteral("</ol>");
 
     if (advice.formLimited) {
-        html += tr("⚠ Ø-Note unter 7.0 — entwickelt sich aktuell nur langsam.");
+        html += tr("⚠ Average rating below 7.0 — currently develops only slowly.");
     }
     m_trainingLabel->setText(html);
 }

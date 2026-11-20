@@ -24,7 +24,7 @@ namespace Registration {
 // modelled (yet): no restriction. Leagues with 99 places and no quota the
 // analyzer can check (Bundesliga, Ligue 1, Austrian Bundesliga) are selectable
 // by name but behave like None. FM27 rules come from the game's "Squad
-// Selection Rules" screens (docs/REGISTRIERUNG-FM27.md). Nationality quotas
+// Selection Rules" screens (docs/REGISTRATION-FM27.md). Nationality quotas
 // are not modelled; the non-EU limit of the squad list is (LaLiga,
 // Switzerland), with the non-EU status maintained by hand.
 enum class LeagueRules {

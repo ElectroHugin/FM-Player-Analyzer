@@ -137,8 +137,8 @@ LineChartWidget::LineChartWidget(ThemeManager &theme, QWidget *parent)
     m_view->viewport()->installEventFilter(this);
     layout->addWidget(m_view);
     connect(&m_theme, &ThemeManager::themeChanged, this, &LineChartWidget::rebuild);
-    m_axisTitle = tr("Uploads vor dem aktuellen Stand");
-    clearChart(tr("Keine Daten"));
+    m_axisTitle = tr("Uploads before the current state");
+    clearChart(tr("No data"));
 }
 
 void LineChartWidget::setAxisTitle(const QString &title)
@@ -154,7 +154,7 @@ void LineChartWidget::setSeries(QList<Series> series, QStringList snapshotLabels
     m_gameDates = std::move(gameDates);
     m_mode = mode;
     m_markers = std::move(markers);
-    m_emptyMessage = tr("Noch keine historischen DWRS-Daten vorhanden.");
+    m_emptyMessage = tr("No historical DWRS data available yet.");
     rebuild();
 }
 
@@ -249,7 +249,7 @@ void LineChartWidget::rebuild()
         markerPen.setStyle(Qt::DashLine);
         markerPen.setWidthF(1.5);
         QLineSeries *marker = addGuide({double(index), low}, {double(index), high}, markerPen,
-                                       tr("Neuberechnung"));
+                                       tr("Recalculation"));
         if (markerInLegend)
             hiddenGuides << marker; // one legend entry for all of them
         markerInLegend = true;
@@ -272,14 +272,14 @@ void LineChartWidget::rebuild()
             continue;
         const QDate date = gameDate(index);
         QString label = date.isValid() ? QLocale().toString(date, QLocale::ShortFormat)
-                        : index == now ? tr("jetzt")
+                        : index == now ? tr("now")
                                        : QStringLiteral("−%1").arg(now - index);
         while (used.contains(label))
             label += QChar(0x200B); // same in-game date twice: invisible suffix
         used.insert(label);
         xAxis->append(label, index);
     }
-    xAxis->setTitleText(anyDate ? tr("Ingame-Datum") : m_axisTitle);
+    xAxis->setTitleText(anyDate ? tr("In-game date") : m_axisTitle);
 
     auto *yAxis = new QValueAxis(chart);
     yAxis->setRange(low, high);
@@ -389,7 +389,7 @@ void LineChartWidget::updateHover(const QPoint &viewPos)
               [](const auto &a, const auto &b) { return a.first > b.first; });
 
     const int now = m_labels.isEmpty() ? m_lastIndex : static_cast<int>(m_labels.size()) - 1;
-    const QString position = index == now ? tr("Aktueller Stand") : tr("Datenstand −%1").arg(now - index);
+    const QString position = index == now ? tr("Current state") : tr("Snapshot −%1").arg(now - index);
     QString html;
     const QDate date = gameDate(index);
     if (date.isValid()) {
@@ -410,8 +410,8 @@ void LineChartWidget::updateHover(const QPoint &viewPos)
         html += QStringLiteral("<br>") + row.second;
     if (m_markers.contains(index))
         html += QStringLiteral("<br><i>%1</i>")
-                    .arg(tr("Neuberechnung: herausgerechnet, frühere Werte sind auf die "
-                            "neue Berechnung umgerechnet."));
+                    .arg(tr("Recalculation: factored out, earlier values are converted "
+                            "to the new calculation."));
     // An own panel instead of QToolTip: a tooltip closes by itself after a few
     // seconds, this one stays while the mouse is over the plot.
     if (!m_hoverPanel) {
@@ -493,7 +493,7 @@ void RadarChartWidget::rebuild()
 
     const int n = static_cast<int>(m_categories.size());
     if (n == 0 || m_traces.isEmpty()) {
-        chart->setTitle(tr("Spieler auswählen, um den Vergleich zu sehen."));
+        chart->setTitle(tr("Select a player to see the comparison."));
         chart->setTitleBrush(m_theme.text());
         swapChart(m_view, chart, m_theme);
         return;

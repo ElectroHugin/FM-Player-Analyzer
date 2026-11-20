@@ -58,6 +58,10 @@ struct ImportResult {
     // The import counted as a full export and advanced the counter; a partial
     // export only refreshed its own players (Freshness::isFullUpload).
     bool fullUpload = false;
+    // Game language the export was read in, and the one its headers showed
+    // (empty = they did not tell; see GameLanguage). Empty for a save game.
+    QString gameLanguage;
+    QString detectedGameLanguage;
 };
 
 // Parses FM HTML exports and merges them into the database. Port of legacy
@@ -102,7 +106,8 @@ public:
                                    const QString &fmVersionId = QString(),
                                    const std::function<void(int, int)> &parseProgress = {},
                                    std::vector<Player> *updatedPlayers = nullptr,
-                                   const QDate &gameDate = {});
+                                   const QDate &gameDate = {},
+                                   const QString &gameLanguage = QString());
 
     // Manual, user-confirmed update of ONE player from an HTML export that
     // contains exactly one row. Writes the file's data onto targetUid

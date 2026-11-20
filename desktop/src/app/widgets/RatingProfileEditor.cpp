@@ -30,24 +30,24 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
 {
     auto *layout = new QVBoxLayout(this); layout->setContentsMargins(0, 0, 0, 0); layout->setSpacing(12);
     auto *top = new QHBoxLayout;
-    m_profiles = new QComboBox; m_profiles->setObjectName(QStringLiteral("ratingProfiles")); m_profiles->setMinimumWidth(200); m_profiles->setAccessibleName(tr("Bewertungsprofil"));
+    m_profiles = new QComboBox; m_profiles->setObjectName(QStringLiteral("ratingProfiles")); m_profiles->setMinimumWidth(200); m_profiles->setAccessibleName(tr("Rating profile"));
     top->addWidget(m_profiles, 1);
     const auto button = [this, top](const QString &name, auto callback) {
         auto *b = new QPushButton(name); top->addWidget(b); connect(b, &QPushButton::clicked, this, callback);
     };
-    button(tr("Neu"), [this] { newProfile(); });
-    button(tr("Importieren"), [this] { importProfile(); });
-    button(tr("Exportieren"), [this] { exportProfile(); });
-    button(tr("Löschen"), [this] { removeProfile(); });
+    button(tr("New"), [this] { newProfile(); });
+    button(tr("Import"), [this] { importProfile(); });
+    button(tr("Export"), [this] { exportProfile(); });
+    button(tr("Delete"), [this] { removeProfile(); });
     layout->addLayout(top);
-    m_name = new QLineEdit; m_name->setObjectName(QStringLiteral("ratingProfileName")); m_name->setPlaceholderText(tr("Profilname")); m_name->setAccessibleName(tr("Profilname"));
+    m_name = new QLineEdit; m_name->setObjectName(QStringLiteral("ratingProfileName")); m_name->setPlaceholderText(tr("Profile name")); m_name->setAccessibleName(tr("Profile name"));
     layout->addWidget(m_name);
-    m_useForSave = new QPushButton(tr("Für diesen Spielstand verwenden"));
+    m_useForSave = new QPushButton(tr("Use for this save"));
     m_useForSave->setObjectName(QStringLiteral("useRatingProfile"));
     connect(m_useForSave, &QPushButton::clicked, this, [this] {
         if (m_dirty) {
-            const auto answer = QMessageBox::question(this, tr("Für diesen Spielstand verwenden"),
-                tr("Das Profil hat ungespeicherte Änderungen. Erst speichern und dann verwenden?"),
+            const auto answer = QMessageBox::question(this, tr("Use for this save"),
+                tr("The profile has unsaved changes. Save first and then use it?"),
                 QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save);
             if (answer != QMessageBox::Save) return;
             save(false);
@@ -60,46 +60,49 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     // Profile-wide factors. They belong to the profile and change its formula.
     auto *factors = new QFormLayout; factors->setContentsMargins(0, 0, 0, 0);
     m_keyFactor = new QDoubleSpinBox; m_keyFactor->setRange(0, 5); m_keyFactor->setDecimals(2); m_keyFactor->setSingleStep(0.1); m_keyFactor->setMaximumWidth(120);
-    m_keyFactor->setAccessibleName(tr("Faktor Schlüssel-Attribute"));
+    m_keyFactor->setAccessibleName(tr("Key attribute factor"));
     m_preferableFactor = new QDoubleSpinBox; m_preferableFactor->setRange(0, 5); m_preferableFactor->setDecimals(2); m_preferableFactor->setSingleStep(0.1); m_preferableFactor->setMaximumWidth(120);
-    m_preferableFactor->setAccessibleName(tr("Faktor bevorzugte Attribute"));
-    factors->addRow(tr("Faktor Schlüssel-Attribute"), m_keyFactor);
-    factors->addRow(tr("Faktor bevorzugte Attribute"), m_preferableFactor);
+    m_preferableFactor->setAccessibleName(tr("Preferable attribute factor"));
+    factors->addRow(tr("Key attribute factor"), m_keyFactor);
+    factors->addRow(tr("Preferable attribute factor"), m_preferableFactor);
     auto *shareRow = new QHBoxLayout; shareRow->setContentsMargins(0, 0, 0, 0);
-    m_roleShareOn = new QCheckBox(tr("Verwenden"));
+    m_roleShareOn = new QCheckBox(tr("Use"));
     m_roleShareOn->setObjectName(QStringLiteral("roleShareEnabled"));
     m_roleShare = new QSpinBox; m_roleShare->setRange(1, int(RatingProfile::kMaxRoleShare * 100)); m_roleShare->setSuffix(QStringLiteral(" %"));
     m_roleShare->setObjectName(QStringLiteral("roleShare")); m_roleShare->setValue(33);
-    m_roleShare->setAccessibleName(tr("Rollenanteil"));
+    m_roleShare->setAccessibleName(tr("Role emphasis"));
     shareRow->addWidget(m_roleShareOn); shareRow->addWidget(m_roleShare); shareRow->addStretch(1);
-    factors->addRow(tr("Rollenanteil"), shareRow);
+    factors->addRow(tr("Role emphasis"), shareRow);
     auto *goalkeeperRow = new QHBoxLayout; goalkeeperRow->setContentsMargins(0, 0, 0, 0);
-    m_goalkeeperShareOn = new QCheckBox(tr("Verwenden"));
+    m_goalkeeperShareOn = new QCheckBox(tr("Use"));
     m_goalkeeperShareOn->setObjectName(QStringLiteral("goalkeeperRoleShareEnabled"));
     m_goalkeeperShare = new QSpinBox; m_goalkeeperShare->setRange(1, int(RatingProfile::kMaxRoleShare * 100)); m_goalkeeperShare->setSuffix(QStringLiteral(" %"));
     m_goalkeeperShare->setObjectName(QStringLiteral("goalkeeperRoleShare")); m_goalkeeperShare->setValue(20);
-    m_goalkeeperShare->setAccessibleName(tr("Rollenanteil Torhüter"));
+    m_goalkeeperShare->setAccessibleName(tr("Goalkeeper role emphasis"));
     goalkeeperRow->addWidget(m_goalkeeperShareOn); goalkeeperRow->addWidget(m_goalkeeperShare); goalkeeperRow->addStretch(1);
-    factors->addRow(tr("Rollenanteil Torhüter"), goalkeeperRow);
+    factors->addRow(tr("Goalkeeper role emphasis"), goalkeeperRow);
     layout->addLayout(factors);
-    auto *explainToggle = new QToolButton; explainToggle->setText(tr("Was ist der Rollenanteil?"));
+    auto *explainToggle = new QToolButton; explainToggle->setText(tr("What is role emphasis?"));
     explainToggle->setCheckable(true); explainToggle->setAutoRaise(true); explainToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     explainToggle->setArrowType(Qt::RightArrow);
     auto *explain = new QLabel(tr(
-        "Die Grundkurven eines Profils gelten für alle Rollen gleich. Die Faktoren für Schlüssel- "
-        "und bevorzugte Attribute verstärken nur Attribute, die schon ein Gewicht haben. "
-        "Beim FM27-Profil haben zum Beispiel Abschluss, Passen oder Tackling kaum Grundgewicht, "
-        "deshalb unterscheiden sich die Rollen eines Spielers sonst kaum.\n\n"
-        "Der Rollenanteil gibt jedem Schlüssel- und bevorzugten Attribut der Rolle zusätzlich ein "
-        "eigenes, gleichmäßig steigendes Gewicht (Schlüssel 1,5-fach). Der eingestellte Prozentsatz "
-        "ist der Anteil dieses Rollenteils an der fertigen Bewertung; 0 bis 100 bleibt die Skala. "
-        "Bei Torhütern stehen in allen Rollen fast dieselben Attribute. Ihr Rollenanteil zählt deshalb "
-        "nur die Attribute, in denen sich eine Rolle von den anderen Torhüterrollen derselben Phase "
-        "unterscheidet (Exzentrik nie). Der Prozentsatz gilt für die Rolle mit den meisten Unterschieden, "
-        "die anderen bekommen anteilig weniger.\n\n"
-        "Am Testspielstand sagt das FM27-Profil mit 33 % die Durchschnittsnote besser voraus als "
-        "ohne (Zusammenhang 0,207 statt 0,188) und trennt die Rollen deutlicher. "
-        "Ohne Haken rechnet das Profil nur mit den Grundkurven."));
+        "The base curves of a profile are the same for every role. The factors for key and preferable "
+        "attributes only strengthen attributes that already have a weight. In the FM27 profile, for "
+        "example, Finishing, Passing or Tackling have hardly any base weight, so a player's roles would "
+        "otherwise barely differ.\n"
+        "\n"
+        "The role share gives every key and preferable attribute of the role an extra, evenly rising "
+        "weight (key 1.5 times). The percentage is the share of this role part in the finished rating; "
+        "the scale stays 0 to 100.\n"
+        "\n"
+        "Goalkeeper roles list almost the same attributes. Their role share therefore only counts the "
+        "attributes in which a role differs from the other goalkeeper roles of the same phase (never "
+        "Eccentricity). The percentage applies to the role with the most differences; the others get "
+        "proportionally less.\n"
+        "\n"
+        "On the test save the FM27 profile with 33 % predicts the average rating better than without "
+        "(correlation 0.207 instead of 0.188) and separates the roles more clearly. Without the tick the "
+        "profile only uses the base curves."));
     explain->setWordWrap(true); explain->setVisible(false); explain->setObjectName(QStringLiteral("kpiCaption"));
     connect(explainToggle, &QToolButton::toggled, this, [explain, explainToggle](bool on) {
         explain->setVisible(on); explainToggle->setArrowType(on ? Qt::DownArrow : Qt::RightArrow);
@@ -115,7 +118,7 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
         m_draft.goalkeeperRoleShare = m_goalkeeperShareOn->isChecked() ? m_goalkeeperShare->value() / 100.0 : 0.0;
         m_goalkeeperShare->setEnabled(m_goalkeeperShareOn->isChecked());
         m_dirty = true;
-        m_status->setText(tr("Ungespeicherter Entwurf. Bestehende Bewertungen bleiben unverändert."));
+        m_status->setText(tr("Unsaved draft. Existing ratings remain unchanged."));
     };
     connect(m_keyFactor, &QDoubleSpinBox::valueChanged, this, factorsEdited);
     connect(m_preferableFactor, &QDoubleSpinBox::valueChanged, this, factorsEdited);
@@ -125,21 +128,21 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     connect(m_goalkeeperShare, &QSpinBox::valueChanged, this, factorsEdited);
     auto *body = new QHBoxLayout; body->setSpacing(16);
     auto *left = new QVBoxLayout;
-    m_search = new QLineEdit; m_search->setPlaceholderText(tr("Attribute suchen")); m_search->setAccessibleName(tr("Attribute suchen"));
+    m_search = new QLineEdit; m_search->setPlaceholderText(tr("Search attributes")); m_search->setAccessibleName(tr("Search attributes"));
     m_attributes = new QListWidget; m_attributes->setObjectName(QStringLiteral("ratingAttributes")); m_attributes->setMinimumWidth(144); m_attributes->setMaximumWidth(200);
-    m_attributes->setAccessibleName(tr("Attribute"));
-    m_category = new QComboBox; m_category->setAccessibleName(tr("Attributkategorie"));
-    m_category->addItems({tr("Alle Attribute"), tr("Technisch"), tr("Mental"), tr("Physisch"), tr("Torhüter")});
+    m_attributes->setAccessibleName(tr("Attributes"));
+    m_category = new QComboBox; m_category->setAccessibleName(tr("Attribute category"));
+    m_category->addItems({tr("All attributes"), tr("Technical"), tr("Mental"), tr("Physical"), tr("Goalkeeping")});
     left->addWidget(m_search); left->addWidget(m_category); left->addWidget(m_attributes, 1); body->addLayout(left);
     m_curve = new RatingCurveEditor; body->addWidget(m_curve, 1); layout->addLayout(body, 1);
     auto *actions = new FlowLayout;
     const auto action = [this, actions](const QString &name, auto callback) {
         auto *b = new QPushButton(name); b->setObjectName(QStringLiteral("profileAction%1").arg(actions->count())); actions->addWidget(b); connect(b, &QPushButton::clicked, this, callback);
     };
-    action(tr("Profil speichern"), [this] { save(false); });
-    action(tr("Als neues Profil speichern"), [this] { save(true); });
-    action(tr("Ursprung wiederherstellen"), [this] { resetProfile(); });
-    action(tr("Entwurf verwerfen"), [this] { if (discardDraft()) selectProfile(m_selectedId); });
+    action(tr("Save profile"), [this] { save(false); });
+    action(tr("Save as new profile"), [this] { save(true); });
+    action(tr("Restore original"), [this] { resetProfile(); });
+    action(tr("Discard draft"), [this] { if (discardDraft()) selectProfile(m_selectedId); });
     layout->addLayout(actions);
     m_status = new QLabel; m_status->setObjectName(QStringLiteral("kpiCaption")); m_status->setWordWrap(true); layout->addWidget(m_status);
     connect(m_profiles, &QComboBox::currentIndexChanged, this, [this] {
@@ -155,7 +158,7 @@ RatingProfileEditor::RatingProfileEditor(const QString &path, const QString &gam
     connect(m_curve, &RatingCurveEditor::curveChanged, this, [this] {
         if (m_loading || m_attribute.isEmpty()) return;
         m_draft.attributes[m_attribute] = m_curve->curve(); m_dirty = true;
-        m_status->setText(tr("Ungespeicherter Entwurf. Bestehende Bewertungen bleiben unverändert."));
+        m_status->setText(tr("Unsaved draft. Existing ratings remain unchanged."));
     });
     if (QFile::exists(m_path)) {
         QString error;
@@ -177,7 +180,7 @@ bool RatingProfileEditor::installBuiltins(const QList<RatingProfile> &profiles)
 bool RatingProfileEditor::discardDraft()
 {
     if (!m_dirty) return true;
-    if (QMessageBox::question(this, tr("Entwurf verwerfen"), tr("Ungespeicherte Profiländerungen verwerfen?"),
+    if (QMessageBox::question(this, tr("Discard draft"), tr("Discard unsaved profile changes?"),
                               QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Discard) return false;
     selectProfile(m_selectedId); return true;
 }
@@ -185,7 +188,7 @@ void RatingProfileEditor::fillProfiles(const QString &selected)
 {
     m_loading = true; m_profiles->clear();
     for (const auto &p : m_library.profiles())
-        m_profiles->addItem(p.name + (m_library.customized(p.id) ? tr(" · Angepasst") : QString()), p.id);
+        m_profiles->addItem(p.name + (m_library.customized(p.id) ? tr(" · Customized") : QString()), p.id);
     if (!selected.isEmpty()) m_profiles->setCurrentIndex(m_profiles->findData(selected));
     m_loading = false; selectProfile(m_profiles->currentData().toString());
 }
@@ -198,59 +201,59 @@ void RatingProfileEditor::selectProfile(const QString &id)
     updateFactors();
     setActiveProfile(m_activeId);
     fillAttributes();
-    if (m_storageValid) m_status->setText(tr("Profile bearbeiten und austauschen. Speichern ändert den Spielstand nicht; "
-                                             "„Für diesen Spielstand verwenden“ rechnet mit dem gespeicherten Profil neu."));
+    if (m_storageValid) m_status->setText(tr("Edit and exchange profiles. Saving does not change the save; “Use for this "
+                                             "save” recalculates with the saved profile."));
 }
 QString RatingProfileEditor::attributeLabel(int index)
 {
     static const QStringList labels = {
-        tr("Eins gegen Eins"),
-        tr("Antritt"),
-        tr("Reichweite"),
-        tr("Aggressivität"),
-        tr("Beweglichkeit"),
-        tr("Antizipation"),
+        tr("One vs One"),
+        tr("Acceleration"),
+        tr("Aerial Reach"),
+        tr("Aggression"),
+        tr("Agility"),
+        tr("Anticipation"),
         tr("Balance"),
-        tr("Mut"),
-        tr("Strafraumbeherrschung"),
-        tr("Konzentration"),
-        tr("Nervenstärke"),
-        tr("Ecken"),
-        tr("Flanken"),
-        tr("Entscheidungen"),
-        tr("Zielstrebigkeit"),
+        tr("Bravery"),
+        tr("Command of Area"),
+        tr("Concentration"),
+        tr("Composure"),
+        tr("Corners"),
+        tr("Crossing"),
+        tr("Decisions"),
+        tr("Determination"),
         tr("Dribbling"),
-        tr("Abschluss"),
-        tr("Ballannahme"),
+        tr("Finishing"),
+        tr("First Touch"),
         tr("Flair"),
-        tr("Fangsicherheit"),
-        tr("Kopfballtechnik"),
-        tr("Sprunghöhe"),
-        tr("Abschläge"),
-        tr("Führungsqualitäten"),
-        tr("Weitschüsse"),
-        tr("Deckung"),
-        tr("Ohne Ball"),
-        tr("Schnelligkeit"),
-        tr("Passen"),
-        tr("Stellungsspiel"),
-        tr("Reflexe"),
-        tr("Herauslaufen (Tendenz)"),
-        tr("Ausdauer"),
-        tr("Kraft"),
+        tr("Handling"),
+        tr("Heading"),
+        tr("Jumping Reach"),
+        tr("Kicking"),
+        tr("Leadership"),
+        tr("Long Shots"),
+        tr("Marking"),
+        tr("Off the Ball"),
+        tr("Pace"),
+        tr("Passing"),
+        tr("Positioning"),
+        tr("Reflexes"),
+        tr("Rushing Out (Tendency)"),
+        tr("Stamina"),
+        tr("Strength"),
         tr("Tackling"),
         tr("Teamwork"),
-        tr("Technik"),
-        tr("Abwürfe"),
-        tr("Übersicht"),
-        tr("Einsatzfreude"),
-        tr("Kommunikation"),
-        tr("Exzentrik"),
-        tr("Grundfitness"),
-        tr("Freistöße"),
-        tr("Weite Einwürfe"),
-        tr("Elfmeter"),
-        tr("Fausten")};
+        tr("Technique"),
+        tr("Throwing"),
+        tr("Vision"),
+        tr("Work Rate"),
+        tr("Communication"),
+        tr("Eccentricity"),
+        tr("Natural Fitness"),
+        tr("Free Kick Taking"),
+        tr("Long Throws"),
+        tr("Penalty Taking"),
+        tr("Punching")};
     return index >= 0 && index < labels.size() ? labels[index] : QString();
 }
 void RatingProfileEditor::updateFactors()
@@ -266,7 +269,7 @@ void RatingProfileEditor::updateFactors()
     m_roleShareOn->setChecked(m_draft.roleShare > 0);
     if (m_draft.roleShare > 0) m_roleShare->setValue(qRound(m_draft.roleShare * 100));
     m_roleShare->setEnabled(enabled && !classic && m_draft.roleShare > 0);
-    m_roleShareOn->setToolTip(classic ? tr("Das Classic-Verfahren rechnet unverändert wie 2.2.3 und hat keinen Rollenanteil.") : QString());
+    m_roleShareOn->setToolTip(classic ? tr("The Classic method calculates exactly as in 2.2.3 and has no role emphasis.") : QString());
     m_goalkeeperShareOn->setEnabled(enabled && !classic);
     m_goalkeeperShareOn->setChecked(m_draft.goalkeeperRoleShare > 0);
     if (m_draft.goalkeeperRoleShare > 0) m_goalkeeperShare->setValue(qRound(m_draft.goalkeeperRoleShare * 100));
@@ -287,13 +290,13 @@ void RatingProfileEditor::setActiveProfile(const QString &id)
     const bool compatible = !m_selectedId.isEmpty() && profile.compatibleGames.contains(m_game);
     m_useForSave->setEnabled(compatible);
     m_useForSave->setToolTip(compatible ? QString()
-                             : tr("Dieses Profil passt nicht zur Football-Manager-Version des Spielstands."));
+                             : tr("This profile does not match the save's Football Manager version."));
     for (int i = 0; i < m_profiles->count(); ++i) {
         const auto itemId = m_profiles->itemData(i).toString();
         const auto &p = m_library.profiles().value(itemId);
-        QString label = p.name + (m_library.customized(itemId) ? tr(" · Angepasst") : QString());
-        if (itemId == m_activeId) label += tr(" · Aktiv");
-        if (!p.compatibleGames.contains(m_game)) label += tr(" · nur %1").arg(p.compatibleGames.join(QStringLiteral("/")).toUpper());
+        QString label = p.name + (m_library.customized(itemId) ? tr(" · Customized") : QString());
+        if (itemId == m_activeId) label += tr(" · Active");
+        if (!p.compatibleGames.contains(m_game)) label += tr(" · %1 only").arg(p.compatibleGames.join(QStringLiteral("/")).toUpper());
         m_profiles->setItemText(i, label);
     }
 }
@@ -308,12 +311,12 @@ void RatingProfileEditor::fillAttributes()
         item->setData(Qt::UserRole, key); item->setData(Qt::UserRole + 1, categories[i]);
         QString evidence;
         const auto state = m_draft.attributeEvidence.value(key);
-        if (state == QStringLiteral("measured")) evidence = tr("Untersucht – angepasste Messkurve");
-        else if (state == QStringLiteral("noise-filtered")) evidence = tr("Als Rauschen eingestuft – im Editor bearbeitbar");
-        else if (state == QStringLiteral("not-investigated")) evidence = tr("Nicht untersucht – im Editor bearbeitbar");
-        else if (state == QStringLiteral("legacy")) evidence = tr("Bisherige DWRS-Bewertungsgrundlage");
+        if (state == QStringLiteral("measured")) evidence = tr("Investigated – fitted measurement curve");
+        else if (state == QStringLiteral("noise-filtered")) evidence = tr("Classified as noise – editable");
+        else if (state == QStringLiteral("not-investigated")) evidence = tr("Not investigated – editable");
+        else if (state == QStringLiteral("legacy")) evidence = tr("Previous DWRS rating basis");
         const auto active = m_draft.attributes.value(key, RatingCurve::linear(0)).weight == 0
-                            ? tr("Deaktiviert – im Editor bearbeitbar") : tr("Aktiv");
+                            ? tr("Disabled – editable") : tr("Active");
         item->setToolTip(label + QLatin1Char('\n') + active + QLatin1Char('\n') + evidence);
     }
     filterAttributes();
@@ -357,7 +360,7 @@ void RatingProfileEditor::save(bool asNew)
     auto candidate = m_library; auto profile = m_draft;
     if (asNew) {
         bool ok = false;
-        const auto name = QInputDialog::getText(this, tr("Als neues Profil speichern"), tr("Profilname"), QLineEdit::Normal, {}, &ok);
+        const auto name = QInputDialog::getText(this, tr("Save as new profile"), tr("Profile name"), QLineEdit::Normal, {}, &ok);
         if (!ok) return;
         profile.name = name; profile.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
     }
@@ -369,7 +372,7 @@ void RatingProfileEditor::newProfile()
 {
     if (!discardDraft()) return;
     bool ok = false;
-    const auto name = QInputDialog::getText(this, tr("Neues Profil"), tr("Profilname"), QLineEdit::Normal, {}, &ok);
+    const auto name = QInputDialog::getText(this, tr("New profile"), tr("Profile name"), QLineEdit::Normal, {}, &ok);
     if (!ok) return;
     RatingProfile profile; profile.id = QUuid::createUuid().toString(QUuid::WithoutBraces); profile.name = name;
     profile.compatibleGames = {m_game};
@@ -382,7 +385,7 @@ void RatingProfileEditor::newProfile()
 void RatingProfileEditor::removeProfile()
 {
     if (m_selectedId.isEmpty()) return;
-    if (QMessageBox::question(this, tr("Profil löschen"), tr("Dieses Profil löschen?")) != QMessageBox::Yes) return;
+    if (QMessageBox::question(this, tr("Delete profile"), tr("Delete this profile?")) != QMessageBox::Yes) return;
     auto candidate = m_library; const auto error = candidate.remove(m_selectedId);
     if (!error.isEmpty()) { reportError(error); return; }
     persist(std::move(candidate), {});
@@ -398,7 +401,7 @@ void RatingProfileEditor::resetProfile()
 void RatingProfileEditor::importProfile()
 {
     if (!discardDraft()) return;
-    const auto path = QFileDialog::getOpenFileName(this, tr("Profil importieren"), {}, tr("JSON-Profile (*.json)"));
+    const auto path = QFileDialog::getOpenFileName(this, tr("Import profile"), {}, tr("JSON profiles (*.json)"));
     if (path.isEmpty()) return;
     QFile file(path); if (!file.open(QIODevice::ReadOnly)) { reportError(file.errorString()); return; }
     QJsonParseError parse; const auto json = QJsonDocument::fromJson(file.readAll(), &parse);
@@ -408,7 +411,7 @@ void RatingProfileEditor::importProfile()
     auto candidate = m_library; error = candidate.insert(*profile);
     if (error == QStringLiteral("id-conflict") || error == QStringLiteral("name-conflict")) {
         bool ok = false;
-        const auto name = QInputDialog::getText(this, tr("Als neues Profil importieren"), tr("Ein Profil mit dieser Kennung oder diesem Namen existiert bereits. Neuen Namen vergeben:"), QLineEdit::Normal, {}, &ok);
+        const auto name = QInputDialog::getText(this, tr("Import as new profile"), tr("A profile with this ID or name already exists. Enter a new name:"), QLineEdit::Normal, {}, &ok);
         if (!ok) return;
         profile->id = QUuid::createUuid().toString(QUuid::WithoutBraces); profile->name = name;
         error = candidate.insert(*profile);
@@ -421,7 +424,7 @@ void RatingProfileEditor::exportProfile()
     if (m_draft.id.isEmpty()) return;
     const auto validation = m_draft.validate();
     if (!validation.isEmpty()) { reportError(validation); return; }
-    const auto path = QFileDialog::getSaveFileName(this, tr("Profilentwurf exportieren"), {}, tr("JSON-Profile (*.json)"));
+    const auto path = QFileDialog::getSaveFileName(this, tr("Export profile draft"), {}, tr("JSON profiles (*.json)"));
     if (path.isEmpty()) return;
     const auto bytes = QJsonDocument(m_draft.toJson()).toJson();
     QSaveFile file(path);
@@ -431,9 +434,9 @@ void RatingProfileEditor::reportError(const QString &error)
 {
     qWarning("Rating profile operation failed: %s", qPrintable(error));
     if (error == QStringLiteral("name-conflict") || error == QStringLiteral("id-conflict"))
-        m_status->setText(tr("Name oder Kennung bereits vorhanden. Bitte einen anderen Namen verwenden."));
+        m_status->setText(tr("Name or ID already exists. Please use a different name."));
     else if (error == QStringLiteral("library-conflict") || error == QStringLiteral("concurrent-edit"))
-        m_status->setText(tr("Die Profilbibliothek wurde zwischenzeitlich geändert. Bitte die Einstellungen neu öffnen, bevor du speicherst."));
-    else m_status->setText(tr("Das Profil konnte nicht übernommen werden. Prüfe Namen, Dateiformat, gültige Kurven und Schreibrechte."));
+        m_status->setText(tr("The profile library has changed. Please reopen settings before saving."));
+    else m_status->setText(tr("The profile could not be saved or loaded. Check the name, file format, curve validity and write permissions."));
 }
 } // namespace fm
