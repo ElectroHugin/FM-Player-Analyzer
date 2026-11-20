@@ -477,7 +477,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="60"/>
         <source>Shortlist</source>
-        <translation>Lista de seguimiento</translation>
+        <translation>Preselección</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="78"/>
@@ -609,7 +609,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="266"/>
         <source>★ On the shortlist</source>
-        <translation>★ En la lista de seguimiento</translation>
+        <translation>★ En la preselección</translation>
     </message>
     <message>
         <location filename="../src/app/PlayerActions.cpp" line="278"/>
@@ -846,7 +846,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/AboutDialog.cpp" line="186"/>
         <source>• App version and operating system (“Copy system info” button below)&lt;br&gt;• Football Manager version and which export (squad, shortlist, search)&lt;br&gt;• What you did, what happened and what you expected&lt;br&gt;• If possible, a screenshot or the affected export file</source>
-        <translation>• Versión de la app y sistema operativo (botón “Copiar información del sistema” abajo)&lt;br&gt;• Versión de Football Manager y qué exportación (plantilla, lista de seguimiento, búsqueda)&lt;br&gt;• Qué hiciste, qué pasó y qué esperabas&lt;br&gt;• Si es posible, una captura de pantalla o el archivo de exportación afectado</translation>
+        <translation>• Versión de la app y sistema operativo (botón “Copiar información del sistema” abajo)&lt;br&gt;• Versión de Football Manager y qué exportación (plantilla, preselección, búsqueda)&lt;br&gt;• Qué hiciste, qué pasó y qué esperabas&lt;br&gt;• Si es posible, una captura de pantalla o el archivo de exportación afectado</translation>
     </message>
     <message>
         <location filename="../src/app/AboutDialog.cpp" line="200"/>
@@ -1132,48 +1132,48 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="91"/>
         <source>From Best XI: bridge of %1 (in possession %2, out of possession %3).</source>
-        <translation>Desde el Mejor XI: enlace de %1 (con balón %2, sin balón %3).</translation>
+        <translation>Desde el Mejor XI: enlace de %1 (con posesión %2, sin posesión %3).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="95"/>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="117"/>
         <source>🔍 Search bridge in scouting (in possession %1, out of possession %2)</source>
-        <translation>🔍 Buscar enlace en el ojeo (con balón %1, sin balón %2)</translation>
+        <translation>🔍 Buscar enlace en el ojeo (con posesión %1, sin posesión %2)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="111"/>
         <source>From Best XI: free places in possession %1 and out of possession %2.</source>
-        <translation>Desde el Mejor XI: puestos libres con balón %1 y sin balón %2.</translation>
+        <translation>Desde el Mejor XI: puestos libres con posesión %1 y sin posesión %2.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="121"/>
         <source>🔍 Search bridge in scouting – choose the place out of possession</source>
-        <translation>🔍 Buscar enlace en el ojeo – elige el puesto sin balón</translation>
+        <translation>🔍 Buscar enlace en el ojeo – elige el puesto sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="122"/>
         <source>🔍 Search bridge in scouting – choose the place in possession</source>
-        <translation>🔍 Buscar enlace en el ojeo – elige el puesto con balón</translation>
+        <translation>🔍 Buscar enlace en el ojeo – elige el puesto con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="132"/>
         <source>From Best XI: free place in possession %1.</source>
-        <translation>Desde el Mejor XI: puesto libre con balón %1.</translation>
+        <translation>Desde el Mejor XI: puesto libre con posesión %1.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="133"/>
         <source>From Best XI: free place out of possession %1.</source>
-        <translation>Desde el Mejor XI: puesto libre sin balón %1.</translation>
+        <translation>Desde el Mejor XI: puesto libre sin posesión %1.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="134"/>
         <source>🔍 Search in possession only (%1)</source>
-        <translation>🔍 Buscar solo con balón (%1)</translation>
+        <translation>🔍 Buscar solo con posesión (%1)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="135"/>
         <source>🔍 Search out of possession only (%1)</source>
-        <translation>🔍 Buscar solo sin balón (%1)</translation>
+        <translation>🔍 Buscar solo sin posesión (%1)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="143"/>
@@ -1183,7 +1183,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="159"/>
         <source>If a starter is unavailable, the table shows the best evaluated cover plan: exactly one player comes on, and the others may swap their places in and out of possession for it. “Who covers” names who fills the vacated places, even when that is a teammate who moves across. “Full bridge” means the incoming player takes both places. Manually set places and a starting XI limit still apply. The tooltip shows further options.</source>
-        <translation>Si falta un titular, la tabla muestra el mejor plan de sustitución evaluado: entra exactamente un jugador y los demás pueden intercambiar sus puestos con balón y sin balón para ello. “Quién cubre” indica quién ocupa los puestos que quedan libres, aunque sea un compañero que se desplaza. “Enlace completo” significa que el que entra ocupa ambos puestos. Los puestos fijados a mano y un límite del once inicial siguen aplicándose. La información emergente muestra más opciones.</translation>
+        <translation>Si falta un titular, la tabla muestra el mejor plan de sustitución evaluado: entra exactamente un jugador y los demás pueden intercambiar sus puestos con posesión y sin posesión para ello. “Quién cubre” indica quién ocupa los puestos que quedan libres, aunque sea un compañero que se desplaza. “Enlace completo” significa que el que entra ocupa ambos puestos. Los puestos fijados a mano y un límite del once inicial siguen aplicándose. La información emergente muestra más opciones.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="165"/>
@@ -1193,7 +1193,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="175"/>
         <source>IP %1 · OOP %2</source>
-        <translation>CB %1 · SB %2</translation>
+        <translation>CP %1 · SP %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiDepth.cpp" line="180"/>
@@ -1391,7 +1391,7 @@ Detalles: %1</translation>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1026"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1027"/>
         <source>In possession</source>
-        <translation>Con balón</translation>
+        <translation>Con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="225"/>
@@ -1399,7 +1399,7 @@ Detalles: %1</translation>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1028"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1029"/>
         <source>Out of possession</source>
-        <translation>Sin balón</translation>
+        <translation>Sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="226"/>
@@ -1409,7 +1409,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="237"/>
         <source>Combined: Starting XI and B-team side by side, with the selected team on the left. On narrow screens only the selected team is shown. Each player sits between his two positions. Both: in and out of possession for the selected team.</source>
-        <translation>Combinado: once inicial y equipo B uno al lado del otro, con el equipo seleccionado a la izquierda. En pantallas estrechas solo se muestra el equipo seleccionado. Cada jugador se sitúa entre sus dos posiciones. Ambos: con balón y sin balón para el equipo seleccionado.</translation>
+        <translation>Combinado: once inicial y equipo B uno al lado del otro, con el equipo seleccionado a la izquierda. En pantallas estrechas solo se muestra el equipo seleccionado. Cada jugador se sitúa entre sus dos posiciones. Ambos: con posesión y sin posesión para el equipo seleccionado.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="259"/>
@@ -1484,12 +1484,12 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="362"/>
         <source>In possession (IP)</source>
-        <translation>Con balón (CB)</translation>
+        <translation>Con posesión (CP)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="362"/>
         <source>Out of possession (OOP)</source>
-        <translation>Sin balón (SB)</translation>
+        <translation>Sin posesión (SP)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="369"/>
@@ -1685,18 +1685,18 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="903"/>
         <source>OOP: %1</source>
-        <translation>SB: %1</translation>
+        <translation>SP: %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="904"/>
         <source>IP: %1</source>
-        <translation>CB: %1</translation>
+        <translation>CP: %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="953"/>
         <source>%1 % in possession · %2 % out of possession. Within the DWRS allowance, manual side preferences come first, then short paths. Right-click to move.
 DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team: %5.</source>
-        <translation>%1 % con balón · %2 % sin balón. Dentro del margen DWRS, primero cuentan las preferencias de banda manuales y después los recorridos cortos. Clic derecho para mover.
+        <translation>%1 % con posesión · %2 % sin posesión. Dentro del margen DWRS, primero cuentan las preferencias de banda manuales y después los recorridos cortos. Clic derecho para mover.
 Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen por equipo: %5.</translation>
     </message>
     <message>
@@ -1712,12 +1712,12 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1090"/>
         <source>↔ Change in-possession place (now %1)</source>
-        <translation>↔ Cambiar puesto con balón (ahora %1)</translation>
+        <translation>↔ Cambiar puesto con posesión (ahora %1)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1091"/>
         <source>↔ Change out-of-possession place (now %1)</source>
-        <translation>↔ Cambiar puesto sin balón (ahora %1)</translation>
+        <translation>↔ Cambiar puesto sin posesión (ahora %1)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1096"/>
@@ -1827,12 +1827,12 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     <message>
         <location filename="../src/app/widgets/ColumnChooser.cpp" line="132"/>
         <source>All in-possession roles (IP)</source>
-        <translation>Todos los roles con balón (CB)</translation>
+        <translation>Todos los roles con posesión (CP)</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/ColumnChooser.cpp" line="133"/>
         <source>All out-of-possession roles (OOP)</source>
-        <translation>Todos los roles sin balón (SB)</translation>
+        <translation>Todos los roles sin posesión (SP)</translation>
     </message>
 </context>
 <context>
@@ -1955,13 +1955,13 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
         <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
         <location filename="../src/app/pages/DashboardPage.cpp" line="933"/>
         <source>In possession</source>
-        <translation>Con balón</translation>
+        <translation>Con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
         <location filename="../src/app/pages/DashboardPage.cpp" line="934"/>
         <source>Out of possession</source>
-        <translation>Sin balón</translation>
+        <translation>Sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
@@ -2022,7 +2022,7 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
         <source>Avg. Rating</source>
-        <translation>Valoración media</translation>
+        <translation>Calificación media</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
@@ -2113,7 +2113,7 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="827"/>
         <source>IP %1 · OOP %2</source>
-        <translation>CB %1 · SB %2</translation>
+        <translation>CP %1 · SP %2</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="840"/>
@@ -2165,27 +2165,27 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="950"/>
         <source>IP: %1</source>
-        <translation>CB: %1</translation>
+        <translation>CP: %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="952"/>
         <source>%1 in possession is empty.</source>
-        <translation>%1 con balón está vacío.</translation>
+        <translation>%1 con posesión está vacío.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="965"/>
         <source>%1 (in possession %2, out of possession %3)</source>
-        <translation>%1 (con balón %2, sin balón %3)</translation>
+        <translation>%1 (con posesión %2, sin posesión %3)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="975"/>
         <source>OOP: %1</source>
-        <translation>SB: %1</translation>
+        <translation>SP: %1</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="977"/>
         <source>%1 out of possession is empty.</source>
-        <translation>%1 sin balón está vacío.</translation>
+        <translation>%1 sin posesión está vacío.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="986"/>
@@ -2195,7 +2195,7 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="988"/>
         <source>Large: the starter&apos;s value over both line-ups (%1 % in possession).</source>
-        <translation>Grande: el valor del titular en ambas alineaciones (%1 % con balón).</translation>
+        <translation>Grande: el valor del titular en ambas alineaciones (%1 % con posesión).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="992"/>
@@ -2235,7 +2235,7 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1209"/>
         <source>Rating</source>
-        <translation>Valoración</translation>
+        <translation>Calificación</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1209"/>
@@ -2255,7 +2255,7 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1236"/>
         <source>Click for actions: profile, shortlist, comparison</source>
-        <translation>Haz clic para acciones: perfil, lista de seguimiento, comparación</translation>
+        <translation>Haz clic para acciones: perfil, preselección, comparación</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="1242"/>
@@ -2465,7 +2465,7 @@ Posibles causas: no hay columna &apos;UID&apos; o no es una exportación válida
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="189"/>
         <source>&lt;b&gt;Snapshots:&lt;/b&gt; Every upload is a snapshot. Uploads at most %1 minutes apart (e.g. squad, shortlist and full export of the same game week) count as one. The axis counts snapshots instead of days, because the export carries no in-game date.&lt;br&gt;&lt;b&gt;Δ:&lt;/b&gt; Change of the DWRS in percentage points over the chosen period, in the role of the &quot;Role&quot; column. The default is the role the player plays in the Best XI of your favorite tactic (Settings) — in the starting XI or the B-team. Anyone not there counts in his best role of that tactic. A new value is only stored when it changes by at least 1 point; in between the last value stays valid.&lt;br&gt;&lt;b&gt;Recalculations&lt;/b&gt; (changed weights, roles or formula) shift values without any real development. They appear as a dashed line and are factored out: earlier values are converted to today&apos;s calculation, Δ counts real change only. Recorded from version 1.4.14 on; older ones can no longer be detected. Newly visible attributes (scouted ranges turn into exact values after a signing) can cause a jump as well.</source>
-        <translation>&lt;b&gt;Instantáneas:&lt;/b&gt; cada carga es una instantánea. Las cargas separadas como máximo %1 minutos (p. ej., plantilla, lista de seguimiento y exportación completa de la misma semana de juego) cuentan como una. El eje cuenta instantáneas en lugar de días, porque la exportación no lleva fecha del juego.&lt;br&gt;&lt;b&gt;Δ:&lt;/b&gt; cambio del DWRS en puntos porcentuales durante el periodo elegido, en el rol de la columna &quot;Rol&quot;. Por defecto es el rol que el jugador ocupa en el Mejor XI de tu táctica favorita (Ajustes) — en el once inicial o en el equipo B. Quien no esté ahí cuenta en su mejor rol de esa táctica. Solo se guarda un valor nuevo cuando cambia al menos 1 punto; entre medias sigue valiendo el último valor.&lt;br&gt;&lt;b&gt;Recálculos&lt;/b&gt; (pesos, roles o fórmula cambiados) desplazan los valores sin una evolución real. Aparecen como línea discontinua y se descuentan: los valores anteriores se convierten al cálculo actual y Δ solo cuenta el cambio real. Registrados desde la versión 1.4.14; los anteriores ya no se pueden detectar. Los atributos que pasan a ser visibles (los rangos ojeados se convierten en valores exactos tras un fichaje) también pueden causar un salto.</translation>
+        <translation>&lt;b&gt;Instantáneas:&lt;/b&gt; cada carga es una instantánea. Las cargas separadas como máximo %1 minutos (p. ej., plantilla, preselección y exportación completa de la misma semana de juego) cuentan como una. El eje cuenta instantáneas en lugar de días, porque la exportación no lleva fecha del juego.&lt;br&gt;&lt;b&gt;Δ:&lt;/b&gt; cambio del DWRS en puntos porcentuales durante el periodo elegido, en el rol de la columna &quot;Rol&quot;. Por defecto es el rol que el jugador ocupa en el Mejor XI de tu táctica favorita (Ajustes) — en el once inicial o en el equipo B. Quien no esté ahí cuenta en su mejor rol de esa táctica. Solo se guarda un valor nuevo cuando cambia al menos 1 punto; entre medias sigue valiendo el último valor.&lt;br&gt;&lt;b&gt;Recálculos&lt;/b&gt; (pesos, roles o fórmula cambiados) desplazan los valores sin una evolución real. Aparecen como línea discontinua y se descuentan: los valores anteriores se convierten al cálculo actual y Δ solo cuenta el cambio real. Registrados desde la versión 1.4.14; los anteriores ya no se pueden detectar. Los atributos que pasan a ser visibles (los rangos ojeados se convierten en valores exactos tras un fichaje) también pueden causar un salto.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DwrsProgressPage.cpp" line="217"/>
@@ -2827,7 +2827,7 @@ Posibles causas: no hay columna &apos;UID&apos; o no es una exportación válida
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="92"/>
         <source>Playing Time (Agreed Playing Time):</source>
-        <translation>Tiempo de juego (tiempo de juego acordado):</translation>
+        <translation>Tiempo de juego (minutos acordados):</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="100"/>
@@ -2944,7 +2944,7 @@ Posibles causas: no hay columna &apos;UID&apos; o no es una exportación válida
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="196"/>
         <source>Preferred central side for equally suitable assignments, including different roles. Applies in and out of possession. Preferred foot is not used for this.</source>
-        <translation>Lado central preferido en asignaciones igual de adecuadas, también con roles distintos. Se aplica con balón y sin balón. La pierna buena no se usa para esto.</translation>
+        <translation>Lado central preferido en asignaciones igual de adecuadas, también con roles distintos. Se aplica con posesión y sin posesión. La pierna buena no se usa para esto.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/EditPlayerPage.cpp" line="198"/>
@@ -3054,7 +3054,7 @@ Puedes cambiar la carpeta más tarde en los ajustes.</translation>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="30"/>
         <source>Reasonable</source>
-        <translation>Aceptable</translation>
+        <translation>Razonable</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="31"/>
@@ -3074,12 +3074,12 @@ Puedes cambiar la carpeta más tarde en los ajustes.</translation>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="57"/>
         <source>Left Foot</source>
-        <translation>Pie izquierdo</translation>
+        <translation>Pierna izquierda</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="58"/>
         <source>Right Foot</source>
-        <translation>Pie derecho</translation>
+        <translation>Pierna derecha</translation>
     </message>
 </context>
 <context>
@@ -3496,7 +3496,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="172"/>
         <source>National squad: %1, shortlist: %2 players.</source>
-        <translation>Selección nacional: %1, lista de seguimiento: %2 jugadores.</translation>
+        <translation>Selección nacional: %1, preselección: %2 jugadores.</translation>
     </message>
     <message>
         <location filename="../src/app/MigrationWizard.cpp" line="192"/>
@@ -3529,7 +3529,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NationalBestXiPage.cpp" line="64"/>
         <source>The playing time weighting (Agreed Playing Time) is left out here — it belongs to the club and must not distort the national team selection.</source>
-        <translation>Aquí no se tiene en cuenta la ponderación por tiempo de juego (tiempo de juego acordado): pertenece al club y no debe distorsionar la selección nacional.</translation>
+        <translation>Aquí no se tiene en cuenta la ponderación por tiempo de juego (minutos acordados): pertenece al club y no debe distorsionar la selección nacional.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalBestXiPage.cpp" line="73"/>
@@ -3941,7 +3941,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="156"/>
         <source>Avg. Rating</source>
-        <translation>Valoración media</translation>
+        <translation>Calificación media</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalDashboardPage.cpp" line="156"/>
@@ -4054,7 +4054,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="52"/>
         <source>Extra details (foot, height)</source>
-        <translation>Detalles adicionales (pie, altura)</translation>
+        <translation>Detalles adicionales (pierna, altura)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="53"/>
@@ -4064,7 +4064,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="55"/>
         <source>Hides players whose club is set to &apos;Retired&apos; or who were missing from the latest full exports (except your own club and the shortlist).</source>
-        <translation>Oculta a los jugadores cuyo club es &apos;Retired&apos; o que faltaban en las últimas exportaciones completas (excepto tu propio club y la lista de seguimiento).</translation>
+        <translation>Oculta a los jugadores cuyo club es &apos;Retired&apos; o que faltaban en las últimas exportaciones completas (excepto tu propio club y la preselección).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="66"/>
@@ -4109,12 +4109,12 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="140"/>
         <source>Left Foot</source>
-        <translation>Pie izquierdo</translation>
+        <translation>Pierna izquierda</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="142"/>
         <source>Right Foot</source>
-        <translation>Pie derecho</translation>
+        <translation>Pierna derecha</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="144"/>
@@ -4247,7 +4247,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="107"/>
         <source>Midfield</source>
-        <translation>Medio campo</translation>
+        <translation>Mediocampo</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="108"/>
@@ -4257,7 +4257,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="110"/>
         <source>Duty:</source>
-        <translation>Mentalidad:</translation>
+        <translation>Tarea:</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="125"/>
@@ -4282,17 +4282,17 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="170"/>
         <source>Technical</source>
-        <translation>Técnicos</translation>
+        <translation>Técnica</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="171"/>
         <source>Mental</source>
-        <translation>Mentales</translation>
+        <translation>Mental</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="172"/>
         <source>Physical</source>
-        <translation>Físicos</translation>
+        <translation>Físico</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="229"/>
@@ -4316,7 +4316,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="252"/>
         <source>The abbreviation &apos;%1&apos; already exists. Please choose a different role name or duty.</source>
-        <translation>La abreviatura &apos;%1&apos; ya existe. Elige otro nombre de rol u otra mentalidad.</translation>
+        <translation>La abreviatura &apos;%1&apos; ya existe. Elige otro nombre de rol u otra tarea.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewRolePage.cpp" line="314"/>
@@ -4637,7 +4637,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="405"/>
         <source>A tactic has two line-ups: one in possession and one out of possession, each with a goalkeeper and ten outfield players. The places do not have to match; the analyzer distributes the players later by itself. Click a “+” to place a role there, or click a role to change it. A template from the game makes it quicker.</source>
-        <translation>Una táctica tiene dos alineaciones: una con balón y otra sin balón, cada una con un portero y diez jugadores de campo. Los puestos no tienen que coincidir; el analizador reparte después a los jugadores por sí solo. Haz clic en un “+” para colocar un rol ahí, o haz clic en un rol para cambiarlo. Una plantilla del juego lo agiliza.</translation>
+        <translation>Una táctica tiene dos alineaciones: una con posesión y otra sin posesión, cada una con un portero y diez jugadores de campo. Los puestos no tienen que coincidir; el analizador reparte después a los jugadores por sí solo. Haz clic en un “+” para colocar un rol ahí, o haz clic en un rol para cambiarlo. Una plantilla del juego lo agiliza.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="410"/>
@@ -4647,7 +4647,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="413"/>
         <source>2b. Line-up out of possession</source>
-        <translation>2b. Alineación sin balón</translation>
+        <translation>2b. Alineación sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="414"/>
@@ -4657,7 +4657,7 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="415"/>
         <source>2a. Line-up in possession</source>
-        <translation>2a. Alineación con balón</translation>
+        <translation>2a. Alineación con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="447"/>
@@ -4677,12 +4677,12 @@ El archivo original no se modifica.</translation>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="460"/>
         <source>in possession</source>
-        <translation>con balón</translation>
+        <translation>con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="460"/>
         <source>out of possession</source>
-        <translation>sin balón</translation>
+        <translation>sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="470"/>
@@ -4915,12 +4915,12 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/PageHelpers.h" line="89"/>
         <source>Role in possession</source>
-        <translation>Rol con balón</translation>
+        <translation>Rol con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PageHelpers.h" line="92"/>
         <source>Role out of possession</source>
-        <translation>Rol sin balón</translation>
+        <translation>Rol sin posesión</translation>
     </message>
 </context>
 <context>
@@ -4980,7 +4980,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="40"/>
         <source>Passing</source>
-        <translation>Pases</translation>
+        <translation>Pase</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="42"/>
@@ -5174,7 +5174,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="447"/>
         <source>Preferred Foot</source>
-        <translation>Pie preferido</translation>
+        <translation>Pierna buena</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="448"/>
@@ -5270,7 +5270,7 @@ Detalles: %1</translation>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="199"/>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="406"/>
         <source>Avg. Rating</source>
-        <translation>Valoración media</translation>
+        <translation>Calificación media</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="229"/>
@@ -5320,13 +5320,13 @@ Detalles: %1</translation>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="307"/>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1058"/>
         <source>in possession</source>
-        <translation>con balón</translation>
+        <translation>con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="308"/>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1056"/>
         <source>out of possession</source>
-        <translation>sin balón</translation>
+        <translation>sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="312"/>
@@ -5336,12 +5336,12 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="313"/>
         <source>In possession only (IP)</source>
-        <translation>Solo con balón (CB)</translation>
+        <translation>Solo con posesión (CP)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="314"/>
         <source>Out of possession only (OOP)</source>
-        <translation>Solo sin balón (SB)</translation>
+        <translation>Solo sin posesión (SP)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="315"/>
@@ -5396,7 +5396,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="414"/>
         <source>No history yet. Each time an FM27 save is read in, the analyzer keeps one state per in-game month: for your squad, the second team, the shortlist, the national squad and players from your scouting, or for all players if you choose (Settings → History and data freshness).</source>
-        <translation>Todavía no hay historial. Cada vez que se lee una partida de FM27, el analizador guarda un estado por mes del juego: para tu plantilla, la filial, la lista de seguimiento, la convocatoria de la selección y los jugadores de tu ojeo, o para todos los jugadores si así lo eliges (Ajustes → Historial y actualidad de los datos).</translation>
+        <translation>Todavía no hay historial. Cada vez que se lee una partida de FM27, el analizador guarda un estado por mes del juego: para tu plantilla, la filial, la preselección, la convocatoria de la selección y los jugadores de tu ojeo, o para todos los jugadores si así lo eliges (Ajustes → Historial y actualidad de los datos).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="425"/>
@@ -5416,7 +5416,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="518"/>
         <source>Midfield</source>
-        <translation>Medio campo</translation>
+        <translation>Mediocampo</translation>
     </message>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="519"/>
@@ -5609,7 +5609,7 @@ Detalles: %1</translation>
     <message>
         <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1148"/>
         <source>⚠ Average rating below 7.0 — currently develops only slowly.</source>
-        <translation>⚠ Valoración media inferior a 7,0: ahora mismo progresa solo despacio.</translation>
+        <translation>⚠ Calificación media inferior a 7,0: ahora mismo progresa solo despacio.</translation>
     </message>
 </context>
 <context>
@@ -5787,13 +5787,13 @@ The role share gives every key and preferable attribute of the role an extra, ev
 Goalkeeper roles list almost the same attributes. Their role share therefore only counts the attributes in which a role differs from the other goalkeeper roles of the same phase (never Eccentricity). The percentage applies to the role with the most differences; the others get proportionally less.
 
 On the test save the FM27 profile with 33 % predicts the average rating better than without (correlation 0.207 instead of 0.188) and separates the roles more clearly. Without the tick the profile only uses the base curves.</source>
-        <translation>Las curvas base de un perfil son iguales para todos los roles. Los factores de atributos clave y preferibles solo refuerzan atributos que ya tienen peso. En el perfil de FM27, por ejemplo, Remate, Pases o Entradas casi no tienen peso base, así que los roles de un jugador apenas se diferenciarían.
+        <translation>Las curvas base de un perfil son iguales para todos los roles. Los factores de atributos clave y preferibles solo refuerzan atributos que ya tienen peso. En el perfil de FM27, por ejemplo, Remate, Pase o Entradas casi no tienen peso base, así que los roles de un jugador apenas se diferenciarían.
 
 La parte del rol da a cada atributo clave y preferible del rol un peso adicional que sube de forma uniforme (clave 1,5 veces). El porcentaje es la parte de este componente del rol en la valoración final; la escala sigue siendo de 0 a 100.
 
 Los roles de portero enumeran casi los mismos atributos. Por eso su parte del rol solo cuenta los atributos en los que un rol se diferencia de los demás roles de portero de la misma fase (nunca Excentricidad). El porcentaje se aplica al rol con más diferencias; los demás reciben proporcionalmente menos.
 
-En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración media mejor que sin él (correlación 0,207 en lugar de 0,188) y separa los roles con más claridad. Sin la marca, el perfil solo usa las curvas base.</translation>
+En la partida de prueba, el perfil de FM27 con un 33 % predice la calificación media mejor que sin él (correlación 0,207 en lugar de 0,188) y separa los roles con más claridad. Sin la marca, el perfil solo usa las curvas base.</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="121"/>
@@ -5824,17 +5824,17 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="135"/>
         <source>Technical</source>
-        <translation>Técnicos</translation>
+        <translation>Técnica</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="135"/>
         <source>Mental</source>
-        <translation>Mentales</translation>
+        <translation>Mental</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="135"/>
         <source>Physical</source>
-        <translation>Físicos</translation>
+        <translation>Físico</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="135"/>
@@ -5922,7 +5922,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="218"/>
         <source>Command of Area</source>
-        <translation>Dominio del área</translation>
+        <translation>Mando en el área</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="219"/>
@@ -5987,12 +5987,12 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="231"/>
         <source>Jumping Reach</source>
-        <translation>Salto</translation>
+        <translation>Alcance de salto</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="232"/>
         <source>Kicking</source>
-        <translation>Saque con el pie</translation>
+        <translation>Golpeo de balón</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="233"/>
@@ -6022,7 +6022,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="238"/>
         <source>Passing</source>
-        <translation>Pases</translation>
+        <translation>Pase</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="239"/>
@@ -6057,7 +6057,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="245"/>
         <source>Teamwork</source>
-        <translation>Trabajo en equipo</translation>
+        <translation>Trabajo de equipo</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="246"/>
@@ -6067,7 +6067,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="247"/>
         <source>Throwing</source>
-        <translation>Saque con la mano</translation>
+        <translation>Saques de mano</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="248"/>
@@ -6097,22 +6097,22 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="253"/>
         <source>Free Kick Taking</source>
-        <translation>Lanzamiento de faltas</translation>
+        <translation>Tiros libres</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="254"/>
         <source>Long Throws</source>
-        <translation>Saques de banda largos</translation>
+        <translation>Saques largos</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="255"/>
         <source>Penalty Taking</source>
-        <translation>Penaltis</translation>
+        <translation>Lanzamiento de penaltis</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="256"/>
         <source>Punching</source>
-        <translation>Despeje de puños</translation>
+        <translation>Puños</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="272"/>
@@ -6906,12 +6906,12 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="248"/>
         <source>Left Foot</source>
-        <translation>Pie izquierdo</translation>
+        <translation>Pierna izquierda</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="249"/>
         <source>Right Foot</source>
-        <translation>Pie derecho</translation>
+        <translation>Pierna derecha</translation>
     </message>
     <message>
         <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="250"/>
@@ -6987,22 +6987,22 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/RolePhaseSwitch.cpp" line="53"/>
         <source>In possession</source>
-        <translation>Con balón</translation>
+        <translation>Con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RolePhaseSwitch.cpp" line="54"/>
         <source>Show roles in possession (IP)</source>
-        <translation>Mostrar roles con balón (CB)</translation>
+        <translation>Mostrar roles con posesión (CP)</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RolePhaseSwitch.cpp" line="57"/>
         <source>Out of possession</source>
-        <translation>Sin balón</translation>
+        <translation>Sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RolePhaseSwitch.cpp" line="58"/>
         <source>Show roles out of possession (OOP)</source>
-        <translation>Mostrar roles sin balón (SB)</translation>
+        <translation>Mostrar roles sin posesión (SP)</translation>
     </message>
 </context>
 <context>
@@ -7061,7 +7061,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="144"/>
         <source>Bridge: in possession %1 + out of possession %2</source>
-        <translation>Enlace: con balón %1 + sin balón %2</translation>
+        <translation>Enlace: con posesión %1 + sin posesión %2</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/ScoutRequirementsBar.cpp" line="167"/>
@@ -7458,7 +7458,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="590"/>
         <source>The language Football Manager runs in. The game writes column headers and values such as positions or foot strength in this language. It can differ from the language of the analyzer. Automatic recognises the language by the column headers; if the headers don&apos;t tell, English is assumed. Saves (.fm) don&apos;t depend on the language.</source>
-        <translation>El idioma en el que se ejecuta Football Manager. El juego escribe en este idioma las cabeceras de columna y valores como las posiciones o la calidad del pie. Puede ser distinto del idioma del analizador. Automático reconoce el idioma por las cabeceras de columna; si las cabeceras no lo aclaran, se supone inglés. Las partidas (.fm) no dependen del idioma.</translation>
+        <translation>El idioma en el que se ejecuta Football Manager. El juego escribe en este idioma las cabeceras de columna y valores como las posiciones o la calidad de las piernas. Puede ser distinto del idioma del analizador. Automático reconoce el idioma por las cabeceras de columna; si las cabeceras no lo aclaran, se supone inglés. Las partidas (.fm) no dependen del idioma.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="606"/>
@@ -7516,7 +7516,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la valoración me
         <source>Views: copies the bundled views (squad, player database, shortlist) into the &apos;views&apos; folder of Football Manager 27. In the game you load them from the list&apos;s views menu. Existing files with the same name are replaced, other views stay untouched.
 
 Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 and Counter Surge · 3-4-2-1) as game files into the &apos;tactics&apos; folder of Football Manager 27. In the game you load them in the tactics view via loading a tactic. They are already built into the analyzer; you create your own tactics in the tactic editor or import them.</source>
-        <translation>Vistas: copia las vistas incluidas (plantilla, base de datos de jugadores, lista de seguimiento) en la carpeta &apos;views&apos; de Football Manager 27. En el juego las cargas desde el menú de vistas de la lista. Los archivos existentes con el mismo nombre se reemplazan; las demás vistas no se tocan.
+        <translation>Vistas: copia las vistas incluidas (plantilla, base de datos de jugadores, preselección) en la carpeta &apos;views&apos; de Football Manager 27. En el juego las cargas desde el menú de vistas de la lista. Los archivos existentes con el mismo nombre se reemplazan; las demás vistas no se tocan.
 
 Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Press · 4-2-3-1 y Counter Surge · 3-4-2-1) como archivos del juego en la carpeta &apos;tactics&apos; de Football Manager 27. En el juego las cargas en la vista de tácticas con la opción de cargar táctica. Ya están integradas en el analizador; tus propias tácticas las creas en el editor de tácticas o las importas.</translation>
     </message>
@@ -7603,7 +7603,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="728"/>
         <source>When an FM27 save is read in, the analyzer keeps one state per in-game month of the attributes, average rating, value and wage, but only when something changed. Unticked, this applies to your squad, the second team, the shortlist, the national squad and players from your scouting. Ticked, to every player read in; the database grows considerably. The current season and the two before it stay monthly; older seasons are condensed to their end-of-season state.</source>
-        <translation>Al leer una partida de FM27, el analizador guarda un estado por mes del juego de los atributos, la valoración media, el valor y el salario, pero solo si algo cambió. Sin marcar, se aplica a tu plantilla, la filial, la lista de seguimiento, la convocatoria de la selección y los jugadores de tu ojeo. Marcado, a todos los jugadores leídos; la base de datos crece considerablemente. La temporada actual y las dos anteriores se mantienen mensuales; las temporadas más antiguas se condensan en su estado de final de temporada.</translation>
+        <translation>Al leer una partida de FM27, el analizador guarda un estado por mes del juego de los atributos, la calificación media, el valor y el salario, pero solo si algo cambió. Sin marcar, se aplica a tu plantilla, la filial, la preselección, la convocatoria de la selección y los jugadores de tu ojeo. Marcado, a todos los jugadores leídos; la base de datos crece considerablemente. La temporada actual y las dos anteriores se mantienen mensuales; las temporadas más antiguas se condensan en su estado de final de temporada.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="739"/>
@@ -7633,7 +7633,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="753"/>
         <source>An import with at least a quarter as many players as the last full export counts as a full export itself. Smaller exports (squad, shortlist, scouting) only refresh their own players. Anyone missing from the last Y full exports counts as stale and is hidden from matrices, suggestions and pools, except players of your club and the shortlist. If they are also at least X years old, they are shown as Retired.</source>
-        <translation>Una importación con al menos una cuarta parte de los jugadores de la última exportación completa cuenta también como exportación completa. Las exportaciones más pequeñas (plantilla, lista de seguimiento, ojeo) solo actualizan a sus propios jugadores. Quien falte en las últimas Y exportaciones completas cuenta como desactualizado y se oculta de matrices, sugerencias y grupos, excepto los jugadores de tu club y de la lista de seguimiento. Si además tiene al menos X años, se muestra como Retired.</translation>
+        <translation>Una importación con al menos una cuarta parte de los jugadores de la última exportación completa cuenta también como exportación completa. Las exportaciones más pequeñas (plantilla, preselección, ojeo) solo actualizan a sus propios jugadores. Quien falte en las últimas Y exportaciones completas cuenta como desactualizado y se oculta de matrices, sugerencias y grupos, excepto los jugadores de tu club y de la preselección. Si además tiene al menos X años, se muestra como Retired.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="768"/>
@@ -7778,7 +7778,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="961"/>
         <source>Weight per agreed playing time.</source>
-        <translation>Peso por tiempo de juego acordado.</translation>
+        <translation>Peso por minutos acordados.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="985"/>
@@ -7849,12 +7849,12 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1120"/>
         <source>In-possession share (FM27+)</source>
-        <translation>Parte con balón (FM27+)</translation>
+        <translation>Parte con posesión (FM27+)</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1121"/>
         <source>From FM27 every tactic has one line-up in possession and one out of possession. A player&apos;s value is this share of the role in possession plus the rest of the role out of possession. Default 50 %.</source>
-        <translation>Desde FM27 cada táctica tiene una alineación con balón y otra sin balón. El valor de un jugador es esta parte del rol con balón más el resto del rol sin balón. Por defecto 50 %.</translation>
+        <translation>Desde FM27 cada táctica tiene una alineación con posesión y otra sin posesión. El valor de un jugador es esta parte del rol con posesión más el resto del rol sin posesión. Por defecto 50 %.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1128"/>
@@ -7934,7 +7934,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1185"/>
         <source>A band groups attributes that develop alike. Up to “fully trainable until” training works fully, then its effect drops linearly until “locked from”; “always” means never locked. The weight strengthens or weakens a band in the recommendation. Bands marked “Mentoring only” only appear as a mentoring note. Attributes without a band are not recommended. The profile belongs to this save.</source>
-        <translation>Una banda agrupa atributos que progresan de forma parecida. Hasta “totalmente entrenable hasta” el entrenamiento funciona por completo; después su efecto baja de forma lineal hasta “bloqueado desde”; “siempre” significa que nunca se bloquea. El peso refuerza o debilita una banda en la recomendación. Las bandas marcadas como “Solo tutoría” aparecen únicamente como nota de tutoría. Los atributos sin banda no se recomiendan. El perfil pertenece a esta partida.</translation>
+        <translation>Una banda agrupa atributos que progresan de forma parecida. Hasta “totalmente entrenable hasta” el entrenamiento funciona por completo; después su efecto baja de forma lineal hasta “bloqueado desde”; “siempre” significa que nunca se bloquea. El peso refuerza o debilita una banda en la recomendación. Las bandas marcadas como “Solo aprendizaje” aparecen únicamente como nota de aprendizaje. Los atributos sin banda no se recomiendan. El perfil pertenece a esta partida.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1199"/>
@@ -8492,7 +8492,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="136"/>
         <source>Shortlist only</source>
-        <translation>Solo lista de seguimiento</translation>
+        <translation>Solo preselección</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="139"/>
@@ -8507,7 +8507,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="145"/>
         <source>For every position the best players of the filtered market are added to the squad on trial, and the starting XI and B-team are lined up again, provably optimally, each time (as on &apos;First team&apos;). &apos;XI +&apos; is how much the starting XI&apos;s total DWRS rises — with every knock-on effect: if a versatile player moves to a better position thanks to the newcomer, that counts too (column &apos;Knock-on&apos;). A position that merely looks weak, but for which the market offers nobody better, therefore does not end up on top. &apos;Better on market&apos; counts how many players of the filtered market are better in the role than your current one. Signings are calculated without an agreed playing time; &apos;Not for Sale&apos; players are left out.</source>
-        <translation>Para cada posición, los mejores jugadores del mercado filtrado se añaden a prueba a la plantilla y se vuelven a alinear el once inicial y el equipo B, cada vez de forma demostrablemente óptima (como en &apos;Primer equipo&apos;). &apos;XI +&apos; es cuánto sube el DWRS total del once inicial, con todos los efectos en cadena: si un jugador polivalente pasa a una posición mejor gracias al recién llegado, eso también cuenta (columna &apos;En cadena&apos;). Una posición que solo parece débil, pero para la que el mercado no ofrece a nadie mejor, no acaba arriba. &apos;Mejores en el mercado&apos; cuenta cuántos jugadores del mercado filtrado son mejores en el rol que el tuyo actual. Los fichajes se calculan sin tiempo de juego acordado; los jugadores &apos;No transferible&apos; se dejan fuera.</translation>
+        <translation>Para cada posición, los mejores jugadores del mercado filtrado se añaden a prueba a la plantilla y se vuelven a alinear el once inicial y el equipo B, cada vez de forma demostrablemente óptima (como en &apos;Primer equipo&apos;). &apos;XI +&apos; es cuánto sube el DWRS total del once inicial, con todos los efectos en cadena: si un jugador polivalente pasa a una posición mejor gracias al recién llegado, eso también cuenta (columna &apos;En cadena&apos;). Una posición que solo parece débil, pero para la que el mercado no ofrece a nadie mejor, no acaba arriba. &apos;Mejores en el mercado&apos; cuenta cuántos jugadores del mercado filtrado son mejores en el rol que el tuyo actual. Los fichajes se calculan sin minutos acordados; los jugadores &apos;No a la venta&apos; se dejan fuera.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="170"/>
@@ -8800,7 +8800,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="262"/>
         <source>Hides players whose club is set to &apos;Retired&apos; or who were missing from the latest full exports (except your own club and the shortlist).</source>
-        <translation>Oculta a los jugadores cuyo club es &apos;Retired&apos; o que faltaban en las últimas exportaciones completas (excepto tu propio club y la lista de seguimiento).</translation>
+        <translation>Oculta a los jugadores cuyo club es &apos;Retired&apos; o que faltaban en las últimas exportaciones completas (excepto tu propio club y la preselección).</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="271"/>
@@ -8993,12 +8993,12 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="599"/>
         <source>Left Foot</source>
-        <translation>Pie izquierdo</translation>
+        <translation>Pierna izquierda</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="601"/>
         <source>Right Foot</source>
-        <translation>Pie derecho</translation>
+        <translation>Pierna derecha</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="603"/>
@@ -9029,7 +9029,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="709"/>
         <source>Mean DWRS in the required roles; for a bridge weighted with the in-possession share from the settings, as in Best XI.</source>
-        <translation>DWRS medio en los roles exigidos; para un enlace, ponderado con la parte con balón de los ajustes, como en el Mejor XI.</translation>
+        <translation>DWRS medio en los roles exigidos; para un enlace, ponderado con la parte con posesión de los ajustes, como en el Mejor XI.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="714"/>
@@ -9092,7 +9092,7 @@ Tácticas de ejemplo: copia las dos tácticas de ejemplo incluidas (Control Pres
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1039"/>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1319"/>
         <source>Shortlist</source>
-        <translation>Lista de seguimiento</translation>
+        <translation>Preselección</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1043"/>
@@ -9608,27 +9608,27 @@ Antes se crea automáticamente una copia de seguridad en la carpeta “backups�
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="679"/>
         <source>IP: %1</source>
-        <translation>CB: %1</translation>
+        <translation>CP: %1</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="679"/>
         <source>OOP: %1</source>
-        <translation>SB: %1</translation>
+        <translation>SP: %1</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="684"/>
         <source>%1 empty in possession</source>
-        <translation>%1 vacío con balón</translation>
+        <translation>%1 vacío con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="685"/>
         <source>%1 empty out of possession</source>
-        <translation>%1 vacío sin balón</translation>
+        <translation>%1 vacío sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="732"/>
         <source>IP %1 · OOP %2</source>
-        <translation>CB %1 · SB %2</translation>
+        <translation>CP %1 · SP %2</translation>
     </message>
 </context>
 <context>
@@ -9730,12 +9730,12 @@ Antes se crea automáticamente una copia de seguridad en la carpeta “backups�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="65"/>
         <source>Technical</source>
-        <translation>Técnicos</translation>
+        <translation>Técnica</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="66"/>
         <source>Mental</source>
-        <translation>Mentales</translation>
+        <translation>Mental</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="67"/>
@@ -9766,7 +9766,7 @@ Antes se crea automáticamente una copia de seguridad en la carpeta “backups�
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="90"/>
         <source>Mentoring only</source>
-        <translation>Solo tutoría</translation>
+        <translation>Solo aprendizaje</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/TrainingProfileEditor.cpp" line="100"/>
@@ -10136,12 +10136,12 @@ Antes se crea automáticamente una copia de seguridad en la carpeta “backups�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="378"/>
         <source>In and out of possession</source>
-        <translation>Con balón y sin balón</translation>
+        <translation>Con posesión y sin posesión</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="385"/>
         <source>In-possession share:</source>
-        <translation>Parte con balón:</translation>
+        <translation>Parte con posesión:</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="388"/>
@@ -10151,7 +10151,7 @@ Antes se crea automáticamente una copia de seguridad en la carpeta “backups�
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="389"/>
         <source>Every tactic has an in-possession and an out-of-possession line-up. A player&apos;s value is this share of their in-possession role plus the rest of their out-of-possession role. At 50 % both count the same; above that, possession counts more.</source>
-        <translation>Cada táctica tiene una alineación con balón y otra sin balón. El valor de un jugador es esta parte de su rol con balón más el resto de su rol sin balón. Con un 50 % ambos cuentan igual; por encima, cuenta más la fase con balón.</translation>
+        <translation>Cada táctica tiene una alineación con posesión y otra sin posesión. El valor de un jugador es esta parte de su rol con posesión más el resto de su rol sin posesión. Con un 50 % ambos cuentan igual; por encima, cuenta más la fase con posesión.</translation>
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="405"/>

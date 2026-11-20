@@ -1,363 +1,363 @@
-id;category;en;de;fr;it;zh_CN;ru;source;note
-attribute.Acceleration;attribute;Acceleration;Antritt;Accélération;Accelerazione;爆发力;Ускорение;export;group: Physical
-attribute.Aerial Reach;attribute;Aerial Reach;Hohe Bälle;Détente;Palle alte;制空范围;Уровень игры в воздухе;export;group: Goalkeeping
-attribute.Aggression;attribute;Aggression;Aggressivität;Agressivité;Aggressività;侵略性;Агрессивность;export;group: Mental
-attribute.Agility;attribute;Agility;Beweglichkeit;Agilité;Agilità;灵活;Ловкость;export;group: Physical
-attribute.Anticipation;attribute;Anticipation;Antizipation;Anticipation;Intuito;预判;Интуиция;export;group: Mental
-attribute.Balance;attribute;Balance;Balance;Équilibre;Equilibrio;平衡;Координация;export;group: Physical
-attribute.Bravery;attribute;Bravery;Mut;Courage;Coraggio;勇敢;Храбрость;export;group: Mental
-attribute.Command Of Area;attribute;Command Of Area;Strafraumkontrolle;Sorties dans la surface;Autorità in area;拦截传中;Игра в штрафной;export;group: Goalkeeping
-attribute.Communication;attribute;Communication;Kommunikation;Communication;Comunicazione;指挥防守;Взаимодействие;export;group: Goalkeeping
-attribute.Composure;attribute;Composure;Nervenstärke;Sang-froid;Freddezza;镇定;Самообладание;export;group: Mental
-attribute.Concentration;attribute;Concentration;Konzentration;Concentration;Concentrazione;集中;Концентрация;export;group: Mental
-attribute.Corners;attribute;Corners;Ecken;Corners;Calci d'angolo;角球;Угловые;export;group: Technical
-attribute.Crossing;attribute;Crossing;Flanken;Centres;Cross;传中;Навесы;export;group: Technical
-attribute.Decisions;attribute;Decisions;Entscheidungen;Décisions;Decisioni;决断;Принятие решений;export;group: Mental
-attribute.Determination;attribute;Determination;Zielstrebigkeit;Détermination;Determinazione;意志力;Решительность;export;group: Mental
-attribute.Dribbling;attribute;Dribbling;Dribbling;Dribbles;Dribbling;盘带;Дриблинг;export;group: Technical
-attribute.Eccentricity;attribute;Eccentricity;Exzentrizität;Excentricité;Eccentricità;意外性;Эксцентричность;export;group: Goalkeeping
-attribute.Finishing;attribute;Finishing;Abschluss;Finition;Finalizzazione;射门;Завершение атаки;export;group: Technical
-attribute.First Touch;attribute;First Touch;Ballannahme;Contrôle de balle;Controllo di palla;停球;Первое касание;export;group: Technical
-attribute.Flair;attribute;Flair;Kreativität;Inspiration;Fantasia;才华;Импровизация;export;group: Mental
-attribute.Free Kick Taking;attribute;Free Kick Taking;Freistöße;Coups francs;Calci piazzati;任意球;Исполнение штрафных;export;group: Technical
-attribute.Handling;attribute;Handling;Halten;Prises de balle;Presa;手控球;Игра руками;export;group: Goalkeeping
-attribute.Heading;attribute;Heading;Kopfballtechnik;Jeu de tête;Colpi di testa;头球;Игра головой;export;group: Technical
-attribute.Jumping Reach;attribute;Jumping Reach;Sprunghöhe;Détente verticale;Massima elevazione;弹跳;Высота прыжка;export;group: Physical
-attribute.Kicking;attribute;Kicking;Abschlag;Dégagements;Rinvii;大脚开球;Выбивание;export;group: Goalkeeping
-attribute.Leadership;attribute;Leadership;Führungsqualitäten;Leadership;Carisma;领导力;Лидерство;export;group: Mental
-attribute.Long Shots;attribute;Long Shots;Weitschüsse;Tirs de loin;Tiri da lontano;远射;Дальние удары;export;group: Technical
-attribute.Long Throws;attribute;Long Throws;Weite Einwürfe;Touches longues;Rimesse lunghe;界外球;Вброс из-за боковой;export;group: Technical
-attribute.Marking;attribute;Marking;Deckung;Marquage;Marcatura;盯人;Опека;export;group: Technical
-attribute.Natural Fitness;attribute;Natural Fitness;Grundfitness;Qualités phys. nat.;Integrità fisica;体质;Природные данные;export;group: Physical
-attribute.Off The Ball;attribute;Off The Ball;Ohne Ball;Appels de balle;Senza palla;无球跑动;Игра без мяча;export;group: Mental
-attribute.One On Ones;attribute;One On Ones;Eins gegen Eins;Un contre un;Uno contro uno;一对一;Один на один;export;group: Goalkeeping
-attribute.Pace;attribute;Pace;Schnelligkeit;Vitesse;Velocità;速度;Скорость;export;group: Physical
-attribute.Passing;attribute;Passing;Passen;Passes;Passaggi;传球;Пас;export;group: Technical
-attribute.Penalty Taking;attribute;Penalty Taking;Elfmeter;Penalty;Rigori;罚点球;Пенальти;export;group: Technical
-attribute.Positioning;attribute;Positioning;Stellungsspiel;Placement;Piazzamento;选位;Выбор позиции;export;group: Mental
-attribute.Punching;attribute;Punching;Fausten;Dégagements au poing;Respinte;击球;Отбивание кулаками;export;group: Goalkeeping
-attribute.Reflexes;attribute;Reflexes;Reflexe;Réflexes;Riflessi;反应;Реакция;export;group: Goalkeeping
-attribute.Rushing Out (Tendency);attribute;Rushing Out (Tendency);Herauslaufen (Tendenz);Sorties dans les pieds (tendance);Uscite;出击(倾向);Игра на выходах (Склонность);export;group: Goalkeeping
-attribute.Stamina;attribute;Stamina;Ausdauer;Endurance;Resistenza;耐力;Выносливость;export;group: Physical
-attribute.Strength;attribute;Strength;Kraft;Puissance;Forza;强壮;Сила;export;group: Physical
-attribute.Tackling;attribute;Tackling;Tackling;Tacles;Contrasti;抢断;Отбор;export;group: Technical
-attribute.Team Work;attribute;Team Work;Teamwork;Travail d'équipe;Lavoro di squadra;团队合作;Игра на команду;export;group: Mental
-attribute.Technique;attribute;Technique;Technik;Technique;Tecnica;技术;Техника;export;group: Technical
-attribute.Throwing;attribute;Throwing;Abwurf;Relances à la main;Rimesse;手抛球;Ввод мяча;export;group: Goalkeeping
-attribute.Vision;attribute;Vision;Übersicht;Vision du jeu;Visione di gioco;视野;Видение поля;export;group: Mental
-attribute.Work Rate;attribute;Work Rate;Einsatzfreude;Volume de jeu;Impegno;工作投入;Работоспособность;export;group: Mental
-attribute_group.Goalkeeping;attribute_group;Goalkeeping;Torhüter;Gardien;Portiere;守门;Вратарские;term list;
-attribute_group.Mental;attribute_group;Mental;Mentales;Mental;Psicologia;精神;Психологические;term list;
-attribute_group.Physical;attribute_group;Physical;Athletik;Physique;Fisico;身体;Физические;term list;several game texts for de, ru
-attribute_group.Technical;attribute_group;Technical;Technik;Technique;Tecnica;技术;Технические;term list;several game texts for de, ru
-column.2nd Nat;column;2nd Nat;2. Nation;2ème nat;2a naz;第二国籍/地区籍;2-е Гржд;export;
-column.Ability;column;Ability;Fähigkeit;Niveau;Abilità;能力;Способности;export;
-column.Age;column;Age;Alter;Âge;Età;年龄;Возраст;export;
-column.Best Pos;column;Best Pos;Idealpos;M. poste;Pos Migl;最佳位置;Лучш. поз;export;
-column.Best Role;column;Best Role;Beste Rolle;M. rôle;Ruolo Migl;最佳角色;Лучшая роль;export;
-column.Club;column;Club;Verein;Club;Società;俱乐部;Клуб;export;
-column.Height;column;Height;Größe;Taille;Altezza;身高;Рост;export;
-column.Inf;column;Inf;Info;Sta;Inf;现状;Инф;export;
-column.Left Foot;column;Left Foot;Linker Fuß;Pied gauche;Piede sinistro;左脚;Левая нога;export;
-column.Media Handling;column;Media Handling;Medienumgang;Rapports avec les médias;Gestione dei media;公关风格;Общение с прессой;export;
-column.Name;column;Name;Name;Nom;Nome;名字;Имя;export;
-column.Nation;column;Nation;Nation;Nation;Nazione;国家或地区;Страна;export;
-column.Personality;column;Personality;Persönlichkeit;Personnalité;Personalità;个性;Характер;export;
-column.Player;column;Player;Spieler;Joueur;Giocatore;球员;Игрок;export;
-column.Playing Time;column;Playing Time;Einsatzzeiten;Temps de jeu;Minutaggio;上场时间;Игровое время;export;
-column.Position;column;Position;Position;Position;Posizione;位置;Позиции;export;
-column.Potential;column;Potential;Potenzial;Potentiel;Potenziale;潜力;Потенциал;export;
-column.Preferred Foot;column;Preferred Foot;Starker Fuß;Meilleur pied;Piede preferito;惯用脚;«Рабочая» нога;export;
-column.Rating;column;Rating;Wertung;Note;Valutazione;评分;Оценка;export;
-column.Rec.;column;Rec.;Empf.;Rec.;Cns.;推荐;Рек.;export;
-column.Recommendation;column;Recommendation;Empfehlung;Recommandation;Raccomandazione;建议;Рекомендация;term list;
-column.Right Foot;column;Right Foot;Rechter Fuß;Pied droit;Piede destro;右脚;Правая нога;export;
-column.Transfer Value;column;Transfer Value;Transferwert;Montant transfert;Costo trasferimento;转会身价;Сумма трансфера;export;
-column.Unique ID;column;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;export;
-column.Wage;column;Wage;Gehalt;Salaire;Stipendio;工资;Зарплата;export;
-foot_strength.Fairly Strong;foot_strength;Fairly Strong;Gut;Assez fort;Abbastanza forte;不错;Вполне сильная;export;
-foot_strength.Reasonable;foot_strength;Reasonable;Durchschnitt;Correct;Decente;还行;Приемлемая;export;
-foot_strength.Strong;foot_strength;Strong;Stark;Très bonne;Molto buona;强势;Хорошая;export;
-foot_strength.Very Strong;foot_strength;Very Strong;Sehr stark;Très fort;Molto forte;精准;Очень сильная;export;
-foot_strength.Very Weak;foot_strength;Very Weak;Sehr schwach;Très faible;Molto debole;笨拙;Очень слабая;export;
-foot_strength.Weak;foot_strength;Weak;Schwach;Faible;Debole;欠佳;Слабая;export;
-information.A19;information;A19;A19;D19;D19;19可用;A19;export;
-information.Ask;information;Ask;UFg;Dem;Via;想走;Ухд;export;
-information.Bid;information;Bid;Anf;Offre;Off;出价;Прдл;export;
-information.FrA;information;FrA;VeL;Lib.;Svi;自由身;СвА;export;
-information.Frt;information;Frt;Abl;TG;P.0;自由;СТ;export;
-information.Hol;information;Hol;Url;Vac;Vac;度假;Отп;export;
-information.Inj;information;Inj;Ver;Bls;Inf;受伤;Трв;export;
-information.Int;information;Int;Nat;Int;Naz;国脚;Сбр;export;
-information.Lng;information;Lng;Spr;Lgu;Lng;语言;Язык;export;
-information.Loa;information;Loa;Lei;Pre;Prs;租借;Арн;export;
-information.Lst;information;Lst;TL;P;Trs;挂牌;Выст.;export;
-information.Prm;information;Prm;Vsp;Prm;Prm;承诺;ОбП;export;
-information.Set;information;Set;Set;Sdr;Res;定居;Ста;export;
-information.Unh;information;Unh;Unz;Méc;Sco;不满;Ндв;export;
-information.Wnt;information;Wnt;Vin;Obs;Ric;兴趣;Инт;export;
-information.Yth;information;Yth;Jgd;Jnr;Gio;青年;Юнр;export;
-information.nEU;information;nEU;nEU;UEs;nUE;非欧;нЕС;export;
-line.Attacking_Midfield;line;Attacking Midfield;;;;;;;"line of the pitch; not captured: de, fr, it, zh_CN, ru"
-line.Defense;line;Defense;;;;;;;"line of the pitch; not captured: de, fr, it, zh_CN, ru"
-line.Defensive_Midfield;line;Defensive Midfield;;;;;;;"line of the pitch; not captured: de, fr, it, zh_CN, ru"
-line.Goalkeeper;line;Goalkeeper;Torwart;Gardien de but;Portiere;门将;Вратарь;term list;"line of the pitch; several game texts for fr"
-line.Midfield;line;Midfield;Mittelfeld;Milieu de terrain;Centrocampo;中场;Середина поля;term list;line of the pitch
-line.Strikers;line;Strikers;;;;;;;"line of the pitch; not captured: de, fr, it, zh_CN, ru"
-media_handling.Evasive;media_handling;Evasive;Scheu;Évasif;Evasivo;闪烁其词;Уклончивый в ответах;export;
-media_handling.Level-headed;media_handling;Level-headed;Besonnen;Équilibré;Posato;冷静稳健;Уравновешенный;export;
-media_handling.Media-friendly;media_handling;Media-friendly;Medienfreundlich;Apprécié des médias;Amico dei media;亲善媒体;Открытый для прессы;export;
-media_handling.Outspoken;media_handling;Outspoken;Forsch;Spontané;Diretto;坦率直言;Откровенный;export;
-media_handling.Reserved;media_handling;Reserved;Verschlossen;Réservé;Riservato;不苟言笑;Немногословный;export;
-media_handling.Scouting Required;media_handling;Scouting Required;Scouting erforderlich;Observation nécessaire;Non ancora visionato;需要球探考察;Требуется отправить скаута;export;
-media_handling.Unflappable;media_handling;Unflappable;Stoisch;Imperturbable;Calmo;从容不迫;Невозмутимый;export;
-personality.Ambitious;personality;Ambitious;Ehrgeizig;Ambitieux;Ambizioso;雄心勃勃;Амбициозный;export;
-personality.Balanced;personality;Balanced;Ausgewogen;Équilibré;Equilibrato;平衡;Сдержанный;export;
-personality.Born Leader;personality;Born Leader;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Casual;personality;Casual;Lässig;Relax;Casuale;松弛的;Обыкновенные;term list;
-personality.Charismatic Leader;personality;Charismatic Leader;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Determined;personality;Determined;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Devoted;personality;Devoted;Zugetan;Dévoué;Leale;信徒;Предан;term list;
-personality.Driven;personality;Driven;Erfolgshungrig;Motivé;Motivato;自我鞭策型;Мотивированный;export;
-personality.Easily Discouraged;personality;Easily Discouraged;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Fairly Ambitious;personality;Fairly Ambitious;Relativ ehrgeizig;Assez ambitieux;Abbastanza ambizioso;雄心壮志;Достаточно амбициозный;export;
-personality.Fairly Determined;personality;Fairly Determined;Relativ zielstrebig;Assez déterminé;Abbastanza determinato;相当坚决;Достаточно настойчивый;export;
-personality.Fairly Loyal;personality;Fairly Loyal;Relativ loyal;Assez loyal;Abbastanza leale;尽忠竭力;Достаточно лояльный;export;
-personality.Fairly Professional;personality;Fairly Professional;Relativ professionell;Assez professionnel;Abbastanza professionale;相当专业;Достаточно профессиональный;export;
-personality.Fairly Sporting;personality;Fairly Sporting;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Fickle;personality;Fickle;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Honest;personality;Honest;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Iron Willed;personality;Iron Willed;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Jovial;personality;Jovial;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Leader;personality;Leader;Führungspers.;Leader;Leader;领导型;Лидер;term list;
-personality.Light-Hearted;personality;Light-Hearted;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Low Determination;personality;Low Determination;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Low Self-Belief;personality;Low Self-Belief;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Loyal;personality;Loyal;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Mercenary;personality;Mercenary;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Model Citizen;personality;Model Citizen;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Model Professional;personality;Model Professional;Musterprofi;Modèle de professionnalisme;Professionista modello;职业楷模;Образцовый профессионал;export;
-personality.Perfectionist;personality;Perfectionist;Perfektionist;Perfectionniste;Perfezionista;完美主义者;Идеалист;export;
-personality.Professional;personality;Professional;Professionell;Professionnel;Professionale;兢兢业业;Профессиональный;export;
-personality.Realist;personality;Realist;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Resilient;personality;Resilient;Belastbar;Résistant;Forte;韧劲十足型;Жизнерадостный;term list;
-personality.Resolute;personality;Resolute;Konsequent;Résolu;Risoluto;坚决果敢;Тверд в решениях;export;
-personality.Slack;personality;Slack;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Spineless;personality;Spineless;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Spirited;personality;Spirited;Energisch;Enthousiaste;Energico;精力十足;Энергичный;export;
-personality.Sporting;personality;Sporting;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Temperamental;personality;Temperamental;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Unambitious;personality;Unambitious;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Unsporting;personality;Unsporting;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Very Ambitious;personality;Very Ambitious;;;;;;;not captured: de, fr, it, zh_CN, ru
-personality.Very Loyal;personality;Very Loyal;;;;;;;not captured: de, fr, it, zh_CN, ru
-phase.In Possession;phase;In Possession;Mit Ball;Avec le ballon;In possesso;有球阶段;С мячом;term list;
-phase.Out of Possession;phase;Out of Possession;Ohne Ball;Sans le ballon;Non in possesso;无球阶段;Без мяча;term list;
-playing_time.2nd Team Regular;playing_time;2nd Team Regular;;;;;;;not captured: de, fr, it, zh_CN, ru
-playing_time.Backup;playing_time;Backup;Ersatztorhüter;Remplaçant;Seconda linea;替补;Запасной вратарь;export;
-playing_time.Breakthrough Prospect;playing_time;Breakthrough Prospect;Talent vor Durchbruch;Espoir aux portes de l'équipe;Potenziale campione;突破新星;Очень перспективный игрок;export;
-playing_time.Cup Goalkeeper;playing_time;Cup Goalkeeper;Pokaltorhüter;Gardien en coupe;Portiere di coppa;杯赛门将;Кубковый вратарь (Все кубки);export;
-playing_time.Domestic Cup Goalkeeper;playing_time;Domestic Cup Goalkeeper;Pokaltorhüter (nationaler Pokal);Gardien en coupe nationale;Portiere di coppa nazionale;国内杯赛门将;Кубковый вратарь (Национальные кубки);export;
-playing_time.Emergency Backup;playing_time;Emergency Backup;Notnagel;Remplaçant en cas de crise;Riserva d'emergenza;应急替补;Игрок запаса;export;
-playing_time.First-Choice Goalkeeper;playing_time;First-Choice Goalkeeper;Stammtorhüter;Gardien titulaire;Portiere titolare;首选门将;Основной вратарь;export;
-playing_time.Fringe Player;playing_time;Fringe Player;Ergänzungsspieler;Joueur secondaire;Giocatore marginale;边缘球员;Игрок ротации;export;
-playing_time.Future Prospect;playing_time;Future Prospect;Perspektivspieler;Joueur prometteur;Giovane promessa;未来之星;Перспективный игрок;export;
-playing_time.Impact Sub;playing_time;Impact Sub;Joker;Super sub;Riserva di lusso;关键替补;Игрок замены;term list;
-playing_time.Important Player;playing_time;Important Player;Schlüsselspieler;Joueur important;Giocatore importante;重要球员;Важный игрок;export;
-playing_time.Out On Loan;playing_time;Out On Loan;Verliehen;Parti en prêt;Fuori in prestito;外租中;Отдан в аренду;export;
-playing_time.Regular Starter;playing_time;Regular Starter;Stammspieler;Titulaire régulier;Titolare fisso;常规先发;Игрок стартового состава;export;
-playing_time.Scouting Required;playing_time;Scouting Required;Scouting erforderlich;Observation nécessaire;Non ancora visionato;需要球探考察;Требуется отправить скаута;export;
-playing_time.Squad Player;playing_time;Squad Player;Rotationsspieler;Joueur de rotation;Elemento della rosa;有用一员;Игрок основы;export;
-playing_time.Star Player;playing_time;Star Player;Starspieler;Joueur Vedette;Stella;明星球员;Звездный игрок;export;
-playing_time.Surplus to Requirements;playing_time;Surplus to Requirements;Nicht benötigt;Pas utile à l'équipe;In esubero;球队不再需要;Игрок не нужен клубу;term list;
-playing_time.Youngster;playing_time;Youngster;Nachwuchsspieler;Jeune joueur;Giovane;年轻球员;Молодой игрок;export;
-position_code.AM;position_code;AM;OM;MO;T;前腰;АП;export;
-position_code.D;position_code;D;V;D;D;后卫;З;export;
-position_code.DM;position_code;DM;DM;MD;M;后腰;ОП;export;
-position_code.GK;position_code;GK;TW;GB;Por;门将;В;export;
-position_code.M;position_code;M;M;M;C;中场;П;export;
-position_code.ST;position_code;ST;ST;BT;P;前锋;НП;export;
-position_code.WB;position_code;WB;FV;AL;Est;翼卫;КЗ;export;
-position_name.Attacking Midfielder;position_name;Attacking Midfielder;Offensiver Mittelfeldspieler;Milieu offensif;Centrocampista offensivo;前腰;Атакующий полузащитник;screen S3;
-position_name.Defender;position_name;Defender;Verteidiger;Défenseur;Difensore;后卫;Защитник;screen S3;
-position_name.Defensive Midfielder;position_name;Defensive Midfielder;Defensiver Mittelfeldspieler;Milieu défensif;Centrocampista difensivo;后腰;Опорный полузащитник;screen S3;
-position_name.Goalkeeper;position_name;Goalkeeper;Torwart;Gardien de but;Portiere;门将;Вратарь;screen S3;
-position_name.Midfielder;position_name;Midfielder;Mittelfeldspieler;Milieu;Centrocampista;中场;Полузащитник;screen S3;
-position_name.Striker;position_name;Striker;Stürmer;Buteur;Punta;前锋;Нападающий;screen S3;
-position_name.Wing-Back;position_name;Wing-Back;Flügelverteidiger;Arrière latéral offensif;Esterno;边翼卫;Крайний защитник;screen S3;
-preferred_foot.Either;preferred_foot;Either;Beide;Les deux;Ambidestro;左右脚;Обе;term list;
-preferred_foot.Left;preferred_foot;Left;Links;Gauche;Sinistra;左;Слева;term list;
-preferred_foot.Left-Footed;preferred_foot;Left-Footed;Links;Gaucher;Sinistro;左脚;Левоногий;export;
-preferred_foot.Left-Footed Only;preferred_foot;Left-Footed Only;Nur Links;Gaucher uniquement;Solo sinistro;只会左脚;Только левоногий;export;
-preferred_foot.Right;preferred_foot;Right;Rechts;Droite;Destra;右;Справа;term list;
-preferred_foot.Right-Footed;preferred_foot;Right-Footed;Rechts;Droitier;Destro;右脚;Правоногий;export;
-preferred_foot.Right-Footed Only;preferred_foot;Right-Footed Only;Nur Rechts;Droitier uniquement;Solo destro;只会右脚;Только правоногий;export;
-preferred_foot.Uses Both Feet;preferred_foot;Uses Both Feet;Beidfüßig;Utilise les deux pieds;Ambidestro;双脚;Использует обе ноги;export;
-registration.Home-Grown Status;registration;Home-Grown Status;Status Eigengewächs;Formé au pays;Cresciuto nel vivaio;青训球员;Статус воспитанника;term list;check exact English wording in game
-registration.Trained at club (0-21);registration;Trained at club (0-21);;;;;;;"check exact English wording in game; not captured: de, fr, it, zh_CN, ru"
-registration.Trained in nation (15-21);registration;Trained in nation (15-21);;;;;;;"check exact English wording in game; not captured: de, fr, it, zh_CN, ru"
-role.ip.Advanced Centre-Back;role;Advanced Centre-Back;Aufrückender Innenverteidiger;Défenseur Central Avancé;Difensore Centrale Avanzato;靠前中后卫;Либеро;screen S5/S6;
-role.ip.Advanced Playmaker;role;Advanced Playmaker;Vorgeschobener Spielmacher;Meneur De Jeu Avancé;Regista Avanzato;前场组织核心;Выдвинутый Плеймейкер;screen S5/S6;
-role.ip.Advanced Wing-Back;role;Advanced Wing-Back;Vorgeschobener Flügelverteidiger;Latéral Offensif Avancé;Esterno Offensivo;靠前边翼卫;Универсальный Крайний Атакующий Защитник;screen S5/S6;
-role.ip.Attacking Midfielder;role;Attacking Midfielder;Offensiver Mittelfeldspieler;Milieu Offensif;Centrocampista Offensivo;前腰;Атакующий Полузащитник;screen S5/S6;
-role.ip.Ball-Playing Centre-Back;role;Ball-Playing Centre-Back;Spielaufbauender Innenverteidiger;Défenseur Central À L'aise Au Pied;Difensore Centrale Di Costruzione;出球中后卫;Созидающий Центральный Защитник;screen S5/S6;
-role.ip.Ball-Playing Goalkeeper;role;Ball-Playing Goalkeeper;Ballspielender Torwart;Gardien À L'aise Au Pied;Portiere Di Costruzione;出球门将;Созидающий Вратарь;screen S5/S6;
-role.ip.Box-To-Box Midfielder;role;Box-To-Box Midfielder;Box-To-Box-Spieler;Milieu Box To Box;Tuttocampista;全能中场;Полузащитник Бокс-Ту-Бокс;screen S5/S6;
-role.ip.Box-To-Box Playmaker;role;Box-To-Box Playmaker;Box-To-Box-Spielmacher;Meneur De Jeu Box-To-Box;Regista Mobile;全能组织核心;Блуждающий Плеймейкер;screen S5/S6;
-role.ip.Central Midfielder;role;Central Midfielder;Zentraler Mittelfeldspieler;Milieu Axial;Centrocampista Centrale;中前卫;Центральный Полузащитник;screen S5/S6;
-role.ip.Centre Forward;role;Centre Forward;Mittelstürmer;Attaquant Central;Centravanti;中锋;Выдвинутый Форвард;screen S5/S6;
-role.ip.Centre-Back;role;Centre-Back;Innenverteidiger;Défenseur Central;Difensore Centrale;中后卫;Центральный Защитник;screen S5/S6;
-role.ip.Channel Forward;role;Channel Forward;Halbraumstürmer;Attaquant De Couloir;Attaccante Di Movimento;肋部前锋;Проникающий Форвард;screen S5/S6;
-role.ip.Channel Midfielder;role;Channel Midfielder;Halbraumspieler;Milieu De Couloir;Centrocampista D'inserimento;肋部中场;Проникающий Полузащитник;screen S5/S6;
-role.ip.Deep-Lying Forward;role;Deep-Lying Forward;Hängende Spitze;Attaquant En Retrait;Attaccante Di Manovra;拖后前锋;Оттянутый Форвард;screen S5/S6;
-role.ip.Deep-Lying Playmaker;role;Deep-Lying Playmaker;Tiefer Spielmacher;Meneur De Jeu En Retrait;Regista Arretrato;拖后组织核心;Оттянутый Плеймейкер;screen S5/S6;
-role.ip.Defensive Midfielder;role;Defensive Midfielder;Defensiver Mittelfeldspieler;Milieu Défensif;Centrocampista Difensivo;后腰;Опорный Полузащитник;screen S5/S6;
-role.ip.False Nine;role;False Nine;Falsche Neun;Faux Neuf;Falso Nove;伪九号;Ложная Девятка;screen S5/S6;
-role.ip.Free Role;role;Free Role;Freigeist;Rôle Libre;Fantasista;前场自由人;Треквартиста;screen S5/S6;
-role.ip.Full-Back;role;Full-Back;Außenverteidiger;Arrière Latéral;Terzino;边后卫;Фланговый Защитник;screen S5/S6;
-role.ip.Goalkeeper;role;Goalkeeper;Torwart;Gardien De But;Portiere;门将;Вратарь;screen S5/S6;
-role.ip.Half Back;role;Half Back;Abkippender Sechser;Demi-Centre;Centrale Aggiunto In Costruzione;拖后后腰;Хавбек;screen S5/S6;
-role.ip.Inside Forward;role;Inside Forward;Inverser Außenstürmer;Attaquant Intérieur;Attaccante Che Si Accentra;内锋;Инсайд-Форвард;screen S5/S6;
-role.ip.Inside Full-Back;role;Inside Full-Back;Inverser Außenverteidiger;Arrière Latéral Intérieur;Difensore Centrale Aggiunto;内收型边后卫;Фланговый Защитник-Инсайд;screen S5/S6;
-role.ip.Inside Wing-Back;role;Inside Wing-Back;Inverser Flügelverteidiger;Latéral Offensif Intérieur;Mediano Aggiunto;内收型边翼卫;Переставленный Крайний Атакующий Защитник;screen S5/S6;
-role.ip.Inside Winger;role;Inside Winger;Halbraumflügel;Ailier Intérieur;Ala Che Si Accentra;内收型边锋;Переставленный Крайний Полузащитник;screen S5/S6;
-role.ip.Midfield Playmaker;role;Midfield Playmaker;Spielmacher;Meneur De Jeu Du Milieu;Regista Di Centrocampo;中场组织核心;Плеймейкер;screen S5/S6;
-role.ip.No-Nonsense Centre-Back;role;No-Nonsense Centre-Back;Kompromissloser Innenverteidiger;Défenseur Central Strict;Difensore Centrale Senza Rischi;防守型中后卫;Чистый Центральный Защитник;screen S5/S6;
-role.ip.No-Nonsense Goalkeeper;role;No-Nonsense Goalkeeper;Kompromissloser Torwart;Gardien Pragmatique;Portiere Senza Rischi;纯扑救型门将;Традиционный Вратарь;screen S5/S6;
-role.ip.Overlapping Centre-Back;role;Overlapping Centre-Back;;;;;;;"role list not captured yet; not captured: de, fr, it, zh_CN, ru"
-role.ip.Playmaking Wing-Back;role;Playmaking Wing-Back;Spielmachender Flügelverteidiger;Latéral Offensif Meneur De Jeu;Esterno Di Regia;组织型边翼卫;Разыгрывающий Крайний Атакующий Защитник;screen S5/S6;
-role.ip.Playmaking Winger;role;Playmaking Winger;Äußerer Spielmacher;Ailier Meneur De Jeu;Regista Largo;组织型边锋;Свободный Плеймейкер;screen S5/S6;
-role.ip.Poacher;role;Poacher;Knipser;Renard Des Surfaces;Attaccante D'area;抢点型前锋;Чистый Форвард;screen S5/S6;
-role.ip.Second Striker;role;Second Striker;Zweiter Stürmer;Deuxième Avant-Centre;Sottopunta;二前锋;Теневой Нападающий;screen S5/S6;
-role.ip.Target Forward;role;Target Forward;Zielspieler;Attaquant Pivot;Fulcro Del Gioco;站桩中锋;Таргетмен;screen S5/S6;
-role.ip.Wide Central Midfielder;role;Wide Central Midfielder;Weiter Achter;Milieu Central Désaxé;Centrocampista Centrale Largo;边中前卫;Каррилеро;screen S5/S6;
-role.ip.Wide Centre-Back;role;Wide Centre-Back;;;;;;;"role list not captured yet; not captured: de, fr, it, zh_CN, ru"
-role.ip.Wide Forward;role;Wide Forward;Außenstürmer;Attaquant Désaxé;Attaccante Laterale;边前锋;Раумдойтер;screen S5/S6;
-role.ip.Wide Midfielder;role;Wide Midfielder;Äußerer Mittelfeldspieler;Milieu Latéral;Esterno Di Centrocampo;边前卫;Фланговый Полузащитник;screen S5/S6;
-role.ip.Wing-Back;role;Wing-Back;Flügelverteidiger;Latéral Offensif;Esterno;边翼卫;Крайний Защитник;screen S5/S6;
-role.ip.Winger;role;Winger;Flügelspieler;Ailier;Ala;边锋;Крайний Полузащитник;screen S5/S6;
-role.oop.Attacking Midfielder;role;Attacking Midfielder;Offensiver Mittelfeldspieler;Milieu Offensif;Centrocampista Offensivo;前腰;Атакующий Полузащитник;screen S5/S6;
-role.oop.Central Midfielder;role;Central Midfielder;Zentraler Mittelfeldspieler;Milieu Axial;Centrocampista Centrale;中前卫;Центральный Полузащитник;screen S5/S6;
-role.oop.Central Outlet Attacking Midfielder;role;Central Outlet Attacking Midfielder;Zentraler Umschaltzehner;Milieu De Terrain Offensif De Contre-Attaque Axiale;Trequartista Centrale Avanzato;中路支点前腰;Центральный Атакующий Полузащитник-Аутлет;screen S5/S6;
-role.oop.Central Outlet Centre Forward;role;Central Outlet Centre Forward;Zentraler Umschaltstürmer;Avant-Centre Point D'appui Axial;Riferimento Offensivo;中路支点中锋;Центрфорвард-Аутлет;screen S5/S6;
-role.oop.Centre Forward;role;Centre Forward;Mittelstürmer;Attaquant Central;Centravanti;中锋;Выдвинутый Форвард;screen S5/S6;
-role.oop.Centre-Back;role;Centre-Back;Innenverteidiger;Défenseur Central;Difensore Centrale;中后卫;Центральный Защитник;screen S5/S6;
-role.oop.Covering Centre-Back;role;Covering Centre-Back;Absichernder Innenverteidiger;Défenseur Central De Couverture;Difensore Centrale Di Copertura;补位型中后卫;Страхующий Центральный Защитник;screen S5/S6;
-role.oop.Covering Wide Centre-Back;role;Covering Wide Centre-Back;;;;;;;"role list not captured yet; not captured: de, fr, it, zh_CN, ru"
-role.oop.Defensive Midfielder;role;Defensive Midfielder;Defensiver Mittelfeldspieler;Milieu Défensif;Centrocampista Difensivo;后腰;Опорный Полузащитник;screen S5/S6;
-role.oop.Dropping Defensive Midfielder;role;Dropping Defensive Midfielder;Halbverteidiger;Milieu Défensif En Retrait;Centrale Aggiunto In Difesa;回撤型后腰;Опускающийся Опорный Полузащитник;screen S5/S6;
-role.oop.Full-Back;role;Full-Back;Außenverteidiger;Arrière Latéral;Terzino;边后卫;Фланговый Защитник;screen S5/S6;
-role.oop.Goalkeeper;role;Goalkeeper;Torwart;Gardien De But;Portiere;门将;Вратарь;screen S5/S6;
-role.oop.Holding Full-Back;role;Holding Full-Back;Abwartender Außenverteidiger;Arrière Latéral En Retrait;Terzino Bloccato;固守型边后卫;Сдерживающий Фланговый Защитник;screen S5/S6;
-role.oop.Holding Wing-Back;role;Holding Wing-Back;Abwartender Flügelverteidiger;Latéral Offensif En Retrait;Esterno Bloccato;固守型边翼卫;Сдерживающий Крайний Атакующий Защитник;screen S5/S6;
-role.oop.Inside Outlet Winger;role;Inside Outlet Winger;Inverser Umschaltflügel;Ailier Intérieur De Contre-Attaque;Ala Invertita D'attacco;内收型支点边锋;Сопровождающий Центрфорвард;screen S5/S6;
-role.oop.Line-Holding Goalkeeper;role;Line-Holding Goalkeeper;;;;;;;"role list not captured yet; not captured: de, fr, it, zh_CN, ru"
-role.oop.Line-Holding Keeper;role;Line-Holding Keeper;Linientorwart;Gardien Sur La Ligne;Portiere Bloccato;门线型门将;Вратарь, Играющий На Линии;screen S5/S6;
-role.oop.Pressing Central Midfielder;role;Pressing Central Midfielder;Pressender Achter;Milieu Axial De Pressing;Centrocampista Di Quantità;压迫型中前卫;Прессингующий Центральный Полузащитник;screen S5/S6;
-role.oop.Pressing Defensive Midfielder;role;Pressing Defensive Midfielder;;;;;;;"role list not captured yet; not captured: de, fr, it, zh_CN, ru"
-role.oop.Pressing Full-Back;role;Pressing Full-Back;Pressender Außenverteidiger;Arrière Latéral De Pressing;Terzino Di Gamba;压迫型边后卫;Прессингующий Фланговый Защитник;screen S5/S6;
-role.oop.Pressing Wing-Back;role;Pressing Wing-Back;Pressender Flügelverteidiger;Latéral Offensif De Pressing;Esterno Di Gamba;压迫型边翼卫;Прессингующий Крайний Атакующий Защитник;screen S5/S6;
-role.oop.Screening Central Midfielder;role;Screening Central Midfielder;Abschirmender Achter;Milieu Axial De Couverture;Centrocampista Di Interdizione;屏障型中前卫;Перехватывающий Центральный Полузащитник;screen S5/S6;
-role.oop.Screening Defensive Midfielder;role;Screening Defensive Midfielder;Abschirmender Sechser;Milieu Défensif De Couverture;Mediano Di Interdizione;屏障型后腰;Перехватывающий Опорный Полузащитник;screen S5/S6;
-role.oop.Splitting Outlet Attacking Midfielder;role;Splitting Outlet Attacking Midfielder;Ausweichender Umschaltzehner;Milieu Offensif De Contre-Attaque De Couloir;Trequartista Di Movimento;游走支点前腰;Располагающийся Между Линиями Атакующий Полузащитник-Аутлет;screen S5/S6;
-role.oop.Splitting Outlet Centre Forward;role;Splitting Outlet Centre Forward;;;;;;;"role list not captured yet; not captured: de, fr, it, zh_CN, ru"
-role.oop.Stopping Centre-Back;role;Stopping Centre-Back;Stoppender Innenverteidiger;Défenseur Central Stoppeur;Difensore Centrale Di Anticipo;阻截型中后卫;Блокирующий Центральный Защитник;screen S5/S6;
-role.oop.Stopping Wide Centre-Back;role;Stopping Wide Centre-Back;;;;;;;"role list not captured yet; not captured: de, fr, it, zh_CN, ru"
-role.oop.Sweeper Keeper;role;Sweeper Keeper;Libero-Torwart;Gardien Libéro;Portiere Libero;清道夫门将;Вратарь-Чистильщик;screen S5/S6;
-role.oop.Tracking Attacking Midfielder;role;Tracking Attacking Midfielder;Mitarbeitender Zehner;Milieu Offensif De Couverture;Trequartista Di Copertura;回追型前腰;Сопровождающий Атакующий Полузащитник;screen S5/S6;
-role.oop.Tracking Centre Forward;role;Tracking Centre Forward;Mitarbeitender Mittelstürmer;Attaquant Central De Couverture;Centravanti Di Copertura;回追型中锋;Сопровождающий Центрфорвард;screen S5/S6;
-role.oop.Tracking Wide Midfielder;role;Tracking Wide Midfielder;Mitarbeitender Außenspieler;Milieu Latéral De Couverture;Interno Di Copertura;回追型边前卫;Сопровождающий Фланговый Полузащитник;screen S5/S6;
-role.oop.Tracking Winger;role;Tracking Winger;Mitarbeitender Flügelspieler;Ailier De Couverture;Ala Tornante;回追型边锋;Сопровождающий Крайний Полузащитник;screen S5/S6;
-role.oop.Wide Centre-Back;role;Wide Centre-Back;;;;;;;"role list not captured yet; not captured: de, fr, it, zh_CN, ru"
-role.oop.Wide Covering Central Midfielder;role;Wide Covering Central Midfielder;Flügelsichernder Achter;Milieu Axial De Couverture Dans La Largeur;Interno Di Copertura In Fascia;边路补位型中前卫;Страхующий Фланг Центральный Полузащитник;screen S5/S6;
-role.oop.Wide Covering Defensive Midfielder;role;Wide Covering Defensive Midfielder;Flügelsichernder Sechser;Milieu Défensif De Couverture Dans La Largeur;Mediano Di Copertura In Fascia;边路补位型后腰;Страхующий Фланг Опорный Полузащитник;screen S5/S6;
-role.oop.Wide Midfielder;role;Wide Midfielder;Äußerer Mittelfeldspieler;Milieu Latéral;Esterno Di Centrocampo;边前卫;Фланговый Полузащитник;screen S5/S6;
-role.oop.Wide Outlet Wide Midfielder;role;Wide Outlet Wide Midfielder;Äußerer Umschaltspieler;Milieu Latéral De Contre-Attaque;Mezzala Di Supporto;边路支点边前卫;Фланговый Полузащитник-Аутлет;screen S5/S6;
-role.oop.Wide Outlet Winger;role;Wide Outlet Winger;Umschaltflügel;Ailier De Contre-Attaque;Ala Alta;边路支点边锋;Крайний Полузащитник-Аутлет;screen S5/S6;
-role.oop.Wing-Back;role;Wing-Back;Flügelverteidiger;Latéral Offensif;Esterno;边翼卫;Крайний Защитник;screen S5/S6;
-role.oop.Winger;role;Winger;Flügelspieler;Ailier;Ala;边锋;Крайний Полузащитник;screen S5/S6;
-role_abbr.ip.ACB;role_abbr;ACB;;;;;;;"Advanced Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.AM;role_abbr;AM;OM;MO;COf;前腰;АП;export;Attacking Midfielder
-role_abbr.ip.AP;role_abbr;AP;;;;;;;"Advanced Playmaker; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.AWB;role_abbr;AWB;VFV;LOA;EOf;前翼卫;УКЗ;export;Advanced Wing-Back
-role_abbr.ip.BBM;role_abbr;BBM;B2B;B2B;TtC;全中场;БТБ;export;Box-To-Box Midfielder
-role_abbr.ip.BBP;role_abbr;BBP;;;;;;;"Box-To-Box Playmaker; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.BCB;role_abbr;BCB;SpIV;DCP;DCs;出中卫;СЦЗ;export;Ball-Playing Centre-Back
-role_abbr.ip.BGK;role_abbr;BGK;BTW;GAP;PCs;出门将;СВр;export;Ball-Playing Goalkeeper
-role_abbr.ip.CB;role_abbr;CB;;;;;;;"Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.CFD;role_abbr;CFD;;;;;;;"Centre Forward; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.CHF;role_abbr;CHF;HRS;AdC;AdM;肋前锋;ПФ;export;Channel Forward
-role_abbr.ip.CHM;role_abbr;CHM;HR;MdC;CIn;肋中场;ПрП;export;Channel Midfielder
-role_abbr.ip.CM;role_abbr;CM;;;;;;;"Central Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.DLF;role_abbr;DLF;HS;AeR;Amn;后前锋;ОФ;export;Deep-Lying Forward
-role_abbr.ip.DLP;role_abbr;DLP;TSm;MJR;RAr;后组织;ОПл;export;Deep-Lying Playmaker
-role_abbr.ip.DM;role_abbr;DM;DM;MD;CDf;后腰;ОП;export;Defensive Midfielder
-role_abbr.ip.F9;role_abbr;F9;F9;F9;F9;伪九号;Л9;export;False Nine
-role_abbr.ip.FB;role_abbr;FB;;;;;;;"Full-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.FR;role_abbr;FR;F;RL;Fnt;自由人;Ткв;export;Free Role
-role_abbr.ip.GK;role_abbr;GK;TW;GB;Por;门将;Вр;export;Goalkeeper
-role_abbr.ip.HB;role_abbr;HB;;;;;;;"Half Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.IF;role_abbr;IF;;;;;;;"Inside Forward; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.IFB;role_abbr;IFB;;;;;;;"Inside Full-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.IW;role_abbr;IW;HFl;AI;AlH;内边锋;ПКП;export;Inside Winger
-role_abbr.ip.IWB;role_abbr;IWB;;;;;;;"Inside Wing-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.MPM;role_abbr;MPM;;;;;;;"Midfield Playmaker; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.NCB;role_abbr;NCB;KIV;DCs;DSR;防中卫;ЧЦЗ;export;No-Nonsense Centre-Back
-role_abbr.ip.NGK;role_abbr;NGK;KTW;GPr;PSR;纯门将;ТВр;export;No-Nonsense Goalkeeper
-role_abbr.ip.OCB;role_abbr;OCB;HHV;DCD;DIn;套中卫;ЗЦЗ;export;Overlapping Centre-Back
-role_abbr.ip.P;role_abbr;P;;;;;;;"Poacher; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.PW;role_abbr;PW;;;;;;;"Playmaking Winger; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.PWB;role_abbr;PWB;;;;;;;"Playmaking Wing-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.SS;role_abbr;SS;ZwS;9 ½;StP;二前锋;ТН;export;Second Striker
-role_abbr.ip.TF;role_abbr;TF;ZS;AtP;FdG;桩锋;Тм;export;Target Forward
-role_abbr.ip.W;role_abbr;W;FL;Ail;Ala;边锋;КП;export;Winger
-role_abbr.ip.WB;role_abbr;WB;FV;LOf;Est;边翼卫;КАЗ;export;Wing-Back
-role_abbr.ip.WCB;role_abbr;WCB;;;;;;;"Wide Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.WCM;role_abbr;WCM;;;;;;;"Wide Central Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.ip.WFD;role_abbr;WFD;AS;AtD;AtL;边前锋;РД;export;Wide Forward
-role_abbr.ip.WM;role_abbr;WM;;;;;;;"Wide Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.AM;role_abbr;AM;OM;MO;COf;前腰;АП;export;Attacking Midfielder
-role_abbr.oop.CB;role_abbr;CB;;;;;;;"Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.CCB;role_abbr;CCB;;;;;;;"Covering Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.CFD;role_abbr;CFD;;;;;;;"Centre Forward; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.CM;role_abbr;CM;;;;;;;"Central Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.CWD;role_abbr;CWD;;;;;;;"Covering Wide Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.DDM;role_abbr;DDM;;;;;;;"Dropping Defensive Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.DM;role_abbr;DM;DM;MD;CDf;后腰;ОП;export;Defensive Midfielder
-role_abbr.oop.FB;role_abbr;FB;;;;;;;"Full-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.GK;role_abbr;GK;TW;GB;Por;门将;Вр;export;Goalkeeper
-role_abbr.oop.HFB;role_abbr;HFB;;;;;;;"Holding Full-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.HWB;role_abbr;HWB;;;;;;;"Holding Wing-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.IOW;role_abbr;IOW;;;;;;;"Inside Outlet Winger; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.LHK;role_abbr;LHK;;;;;;;"Line-Holding Goalkeeper; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.OAM;role_abbr;OAM;;;;;;;"Central Outlet Attacking Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.OCF;role_abbr;OCF;;;;;;;"Central Outlet Centre Forward; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.OWM;role_abbr;OWM;;;;;;;"Wide Outlet Wide Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.PCM;role_abbr;PCM;;;;;;;"Pressing Central Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.PDM;role_abbr;PDM;;;;;;;"Pressing Defensive Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.PFB;role_abbr;PFB;;;;;;;"Pressing Full-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.PWB;role_abbr;PWB;;;;;;;"Pressing Wing-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.SAM;role_abbr;SAM;;;;;;;"Splitting Outlet Attacking Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.SCB;role_abbr;SCB;;;;;;;"Stopping Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.SCF;role_abbr;SCF;;;;;;;"Splitting Outlet Centre Forward; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.SCM;role_abbr;SCM;;;;;;;"Screening Central Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.SDM;role_abbr;SDM;;;;;;;"Screening Defensive Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.SK;role_abbr;SK;;;;;;;"Sweeper Keeper; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.SWD;role_abbr;SWD;;;;;;;"Stopping Wide Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.TAM;role_abbr;TAM;;;;;;;"Tracking Attacking Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.TCF;role_abbr;TCF;;;;;;;"Tracking Centre Forward; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.TW;role_abbr;TW;;;;;;;"Tracking Winger; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.TWM;role_abbr;TWM;;;;;;;"Tracking Wide Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.W;role_abbr;W;FL;Ail;Ala;边锋;КП;export;Winger
-role_abbr.oop.WB;role_abbr;WB;FV;LOf;Est;边翼卫;КАЗ;export;Wing-Back
-role_abbr.oop.WCB;role_abbr;WCB;;;;;;;"Wide Centre-Back; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.WCM;role_abbr;WCM;;;;;;;"Wide Covering Central Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.WDM;role_abbr;WDM;;;;;;;"Wide Covering Defensive Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.WMF;role_abbr;WMF;;;;;;;"Wide Midfielder; not captured: de, fr, it, zh_CN, ru"
-role_abbr.oop.WOW;role_abbr;WOW;;;;;;;"Wide Outlet Winger; not captured: de, fr, it, zh_CN, ru"
-side_code.C;side_code;C;Z;C;C;中;Ц;export;
-side_code.L;side_code;L;L;G;S;左;Л;export;
-side_code.R;side_code;R;R;D;D;右;П;export;
-side_name.Centre;side_name;Centre;Zentral;Centre;Centrale;中;Центр;screen S3;
-side_name.Left;side_name;Left;Links;Gauche;Sinistra;左;Слева;screen S3;
-side_name.Right;side_name;Right;Rechts;Droite;Destra;右;Справа;screen S3;
+id;category;en;de;fr;it;zh_CN;ru;es;source;note
+attribute.Acceleration;attribute;Acceleration;Antritt;Accélération;Accelerazione;爆发力;Ускорение;Aceleración;export;group: Physical
+attribute.Aerial Reach;attribute;Aerial Reach;Hohe Bälle;Détente;Palle alte;制空范围;Уровень игры в воздухе;Alcance aéreo;export;group: Goalkeeping
+attribute.Aggression;attribute;Aggression;Aggressivität;Agressivité;Aggressività;侵略性;Агрессивность;Agresividad;export;group: Mental
+attribute.Agility;attribute;Agility;Beweglichkeit;Agilité;Agilità;灵活;Ловкость;Agilidad;export;group: Physical
+attribute.Anticipation;attribute;Anticipation;Antizipation;Anticipation;Intuito;预判;Интуиция;Anticipación;export;group: Mental
+attribute.Balance;attribute;Balance;Balance;Équilibre;Equilibrio;平衡;Координация;Equilibrio;export;group: Physical
+attribute.Bravery;attribute;Bravery;Mut;Courage;Coraggio;勇敢;Храбрость;Valentía;export;group: Mental
+attribute.Command Of Area;attribute;Command Of Area;Strafraumkontrolle;Sorties dans la surface;Autorità in area;拦截传中;Игра в штрафной;Mando en el área;export;group: Goalkeeping
+attribute.Communication;attribute;Communication;Kommunikation;Communication;Comunicazione;指挥防守;Взаимодействие;Comunicación;export;group: Goalkeeping
+attribute.Composure;attribute;Composure;Nervenstärke;Sang-froid;Freddezza;镇定;Самообладание;Serenidad;export;group: Mental
+attribute.Concentration;attribute;Concentration;Konzentration;Concentration;Concentrazione;集中;Концентрация;Concentración;export;group: Mental
+attribute.Corners;attribute;Corners;Ecken;Corners;Calci d'angolo;角球;Угловые;Saques de esquina;export;group: Technical
+attribute.Crossing;attribute;Crossing;Flanken;Centres;Cross;传中;Навесы;Centros;export;group: Technical
+attribute.Decisions;attribute;Decisions;Entscheidungen;Décisions;Decisioni;决断;Принятие решений;Decisiones;export;group: Mental
+attribute.Determination;attribute;Determination;Zielstrebigkeit;Détermination;Determinazione;意志力;Решительность;Determinación;export;group: Mental
+attribute.Dribbling;attribute;Dribbling;Dribbling;Dribbles;Dribbling;盘带;Дриблинг;Regate;export;group: Technical
+attribute.Eccentricity;attribute;Eccentricity;Exzentrizität;Excentricité;Eccentricità;意外性;Эксцентричность;Excentricidad;export;group: Goalkeeping
+attribute.Finishing;attribute;Finishing;Abschluss;Finition;Finalizzazione;射门;Завершение атаки;Remate;export;group: Technical
+attribute.First Touch;attribute;First Touch;Ballannahme;Contrôle de balle;Controllo di palla;停球;Первое касание;Control;export;group: Technical
+attribute.Flair;attribute;Flair;Kreativität;Inspiration;Fantasia;才华;Импровизация;Talento;export;group: Mental
+attribute.Free Kick Taking;attribute;Free Kick Taking;Freistöße;Coups francs;Calci piazzati;任意球;Исполнение штрафных;Tiros libres;export;"group: Technical; several game texts for es"
+attribute.Handling;attribute;Handling;Halten;Prises de balle;Presa;手控球;Игра руками;Blocaje;export;group: Goalkeeping
+attribute.Heading;attribute;Heading;Kopfballtechnik;Jeu de tête;Colpi di testa;头球;Игра головой;Cabeceo;export;group: Technical
+attribute.Jumping Reach;attribute;Jumping Reach;Sprunghöhe;Détente verticale;Massima elevazione;弹跳;Высота прыжка;Alcance de salto;export;group: Physical
+attribute.Kicking;attribute;Kicking;Abschlag;Dégagements;Rinvii;大脚开球;Выбивание;Golpeo de balón;export;"group: Goalkeeping; several game texts for es"
+attribute.Leadership;attribute;Leadership;Führungsqualitäten;Leadership;Carisma;领导力;Лидерство;Liderazgo;export;group: Mental
+attribute.Long Shots;attribute;Long Shots;Weitschüsse;Tirs de loin;Tiri da lontano;远射;Дальние удары;Disparos lejanos;export;group: Technical
+attribute.Long Throws;attribute;Long Throws;Weite Einwürfe;Touches longues;Rimesse lunghe;界外球;Вброс из-за боковой;Saques largos;export;group: Technical
+attribute.Marking;attribute;Marking;Deckung;Marquage;Marcatura;盯人;Опека;Marcaje;export;group: Technical
+attribute.Natural Fitness;attribute;Natural Fitness;Grundfitness;Qualités phys. nat.;Integrità fisica;体质;Природные данные;Recuperación física;export;group: Physical
+attribute.Off The Ball;attribute;Off The Ball;Ohne Ball;Appels de balle;Senza palla;无球跑动;Игра без мяча;Desmarques;export;group: Mental
+attribute.One On Ones;attribute;One On Ones;Eins gegen Eins;Un contre un;Uno contro uno;一对一;Один на один;Uno contra uno;export;group: Goalkeeping
+attribute.Pace;attribute;Pace;Schnelligkeit;Vitesse;Velocità;速度;Скорость;Velocidad;export;group: Physical
+attribute.Passing;attribute;Passing;Passen;Passes;Passaggi;传球;Пас;Pase;export;group: Technical
+attribute.Penalty Taking;attribute;Penalty Taking;Elfmeter;Penalty;Rigori;罚点球;Пенальти;Lanzamiento de penaltis;export;group: Technical
+attribute.Positioning;attribute;Positioning;Stellungsspiel;Placement;Piazzamento;选位;Выбор позиции;Colocación;export;group: Mental
+attribute.Punching;attribute;Punching;Fausten;Dégagements au poing;Respinte;击球;Отбивание кулаками;Puños;export;group: Goalkeeping
+attribute.Reflexes;attribute;Reflexes;Reflexe;Réflexes;Riflessi;反应;Реакция;Reflejos;export;group: Goalkeeping
+attribute.Rushing Out (Tendency);attribute;Rushing Out (Tendency);Herauslaufen (Tendenz);Sorties dans les pieds (tendance);Uscite;出击(倾向);Игра на выходах (Склонность);Salidas (tendencia);export;group: Goalkeeping
+attribute.Stamina;attribute;Stamina;Ausdauer;Endurance;Resistenza;耐力;Выносливость;Resistencia;export;group: Physical
+attribute.Strength;attribute;Strength;Kraft;Puissance;Forza;强壮;Сила;Fuerza;export;group: Physical
+attribute.Tackling;attribute;Tackling;Tackling;Tacles;Contrasti;抢断;Отбор;Entradas;export;group: Technical
+attribute.Team Work;attribute;Team Work;Teamwork;Travail d'équipe;Lavoro di squadra;团队合作;Игра на команду;Trabajo de equipo;export;group: Mental
+attribute.Technique;attribute;Technique;Technik;Technique;Tecnica;技术;Техника;Técnica;export;group: Technical
+attribute.Throwing;attribute;Throwing;Abwurf;Relances à la main;Rimesse;手抛球;Ввод мяча;Saques de mano;export;group: Goalkeeping
+attribute.Vision;attribute;Vision;Übersicht;Vision du jeu;Visione di gioco;视野;Видение поля;Visión;export;group: Mental
+attribute.Work Rate;attribute;Work Rate;Einsatzfreude;Volume de jeu;Impegno;工作投入;Работоспособность;Sacrificio;export;group: Mental
+attribute_group.Goalkeeping;attribute_group;Goalkeeping;Torhüter;Gardien;Portiere;守门;Вратарские;Portería;term list;several game texts for es
+attribute_group.Mental;attribute_group;Mental;Mentales;Mental;Psicologia;精神;Психологические;Mental;term list;
+attribute_group.Physical;attribute_group;Physical;Athletik;Physique;Fisico;身体;Физические;Físico;term list;
+attribute_group.Technical;attribute_group;Technical;Technik;Technique;Tecnica;技术;Технические;Técnica;term list;several game texts for es
+column.2nd Nat;column;2nd Nat;2. Nation;2ème nat;2a naz;第二国籍/地区籍;2-е Гржд;2ª Nac;export;
+column.Ability;column;Ability;Fähigkeit;Niveau;Abilità;能力;Способности;Calidad;export;
+column.Age;column;Age;Alter;Âge;Età;年龄;Возраст;Edad;export;
+column.Best Pos;column;Best Pos;Idealpos;M. poste;Pos Migl;最佳位置;Лучш. поз;Mejor pos.;export;
+column.Best Role;column;Best Role;Beste Rolle;M. rôle;Ruolo Migl;最佳角色;Лучшая роль;Mejor rol;export;
+column.Club;column;Club;Verein;Club;Società;俱乐部;Клуб;Club;export;
+column.Height;column;Height;Größe;Taille;Altezza;身高;Рост;Altura;export;
+column.Inf;column;Inf;Info;Sta;Inf;现状;Инф;Inf;export;
+column.Left Foot;column;Left Foot;Linker Fuß;Pied gauche;Piede sinistro;左脚;Левая нога;Pierna izquierda;export;
+column.Media Handling;column;Media Handling;Medienumgang;Rapports avec les médias;Gestione dei media;公关风格;Общение с прессой;Trato con la prensa;export;several game texts for es
+column.Name;column;Name;Name;Nom;Nome;名字;Имя;Nombre;export;
+column.Nation;column;Nation;Nation;Nation;Nazione;国家或地区;Страна;País;export;
+column.Personality;column;Personality;Persönlichkeit;Personnalité;Personalità;个性;Характер;Personalidad;export;
+column.Player;column;Player;Spieler;Joueur;Giocatore;球员;Игрок;Jugador;export;
+column.Playing Time;column;Playing Time;Einsatzzeiten;Temps de jeu;Minutaggio;上场时间;Игровое время;Tiempo de juego;export;
+column.Position;column;Position;Position;Position;Posizione;位置;Позиции;Posición;export;
+column.Potential;column;Potential;Potenzial;Potentiel;Potenziale;潜力;Потенциал;Potencial;export;
+column.Preferred Foot;column;Preferred Foot;Starker Fuß;Meilleur pied;Piede preferito;惯用脚;«Рабочая» нога;Pierna buena;export;
+column.Rating;column;Rating;Wertung;Note;Valutazione;评分;Оценка;Calificación;export;several game texts for es
+column.Rec.;column;Rec.;Empf.;Rec.;Cns.;推荐;Рек.;Recomendación;export;several game texts for es
+column.Recommendation;column;Recommendation;Empfehlung;Recommandation;Raccomandazione;建议;Рекомендация;Recomendación;term list;
+column.Right Foot;column;Right Foot;Rechter Fuß;Pied droit;Piede destro;右脚;Правая нога;Pierna derecha;export;
+column.Transfer Value;column;Transfer Value;Transferwert;Montant transfert;Costo trasferimento;转会身价;Сумма трансфера;Valor de traspaso;export;
+column.Unique ID;column;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;Identidad única;export;
+column.Wage;column;Wage;Gehalt;Salaire;Stipendio;工资;Зарплата;Salario;export;
+foot_strength.Fairly Strong;foot_strength;Fairly Strong;Gut;Assez fort;Abbastanza forte;不错;Вполне сильная;Bastante fuerte;export;
+foot_strength.Reasonable;foot_strength;Reasonable;Durchschnitt;Correct;Decente;还行;Приемлемая;Razonable;export;several game texts for es
+foot_strength.Strong;foot_strength;Strong;Stark;Très bonne;Molto buona;强势;Хорошая;Fuerte;export;several game texts for es
+foot_strength.Very Strong;foot_strength;Very Strong;Sehr stark;Très fort;Molto forte;精准;Очень сильная;Muy fuerte;export;
+foot_strength.Very Weak;foot_strength;Very Weak;Sehr schwach;Très faible;Molto debole;笨拙;Очень слабая;Muy débil;export;
+foot_strength.Weak;foot_strength;Weak;Schwach;Faible;Debole;欠佳;Слабая;Débil;export;
+information.A19;information;A19;A19;D19;D19;19可用;A19;D19;export;
+information.Ask;information;Ask;UFg;Dem;Via;想走;Ухд;Pet;export;
+information.Bid;information;Bid;Anf;Offre;Off;出价;Прдл;Ofe;export;several game texts for es
+information.FrA;information;FrA;VeL;Lib.;Svi;自由身;СвА;AgL;export;
+information.Frt;information;Frt;Abl;TG;P.0;自由;СТ;Lib;export;
+information.Hol;information;Hol;Url;Vac;Vac;度假;Отп;Vac;export;
+information.Inj;information;Inj;Ver;Bls;Inf;受伤;Трв;Les;export;
+information.Int;information;Int;Nat;Int;Naz;国脚;Сбр;Int;export;several game texts for es
+information.Lng;information;Lng;Spr;Lgu;Lng;语言;Язык;Idi;export;
+information.Loa;information;Loa;Lei;Pre;Prs;租借;Арн;Ced;export;
+information.Lst;information;Lst;TL;P;Trs;挂牌;Выст.;Per;export;several game texts for es
+information.Prm;information;Prm;Vsp;Prm;Prm;承诺;ОбП;Prm;export;
+information.Set;information;Set;Set;Sdr;Res;定居;Ста;BPa;export;several game texts for es
+information.Unh;information;Unh;Unz;Méc;Sco;不满;Ндв;Des;export;
+information.Wnt;information;Wnt;Vin;Obs;Ric;兴趣;Инт;Seg;export;
+information.Yth;information;Yth;Jgd;Jnr;Gio;青年;Юнр;Juv;export;
+information.nEU;information;nEU;nEU;UEs;nUE;非欧;нЕС;nUE;export;
+line.Attacking_Midfield;line;Attacking Midfield;;;;;;;;"line of the pitch; not captured: de, fr, it, zh_CN, ru, es"
+line.Defense;line;Defense;;;;;;;;"line of the pitch; not captured: de, fr, it, zh_CN, ru, es"
+line.Defensive_Midfield;line;Defensive Midfield;;;;;;;;"line of the pitch; not captured: de, fr, it, zh_CN, ru, es"
+line.Goalkeeper;line;Goalkeeper;Torwart;Gardien de but;Portiere;门将;Вратарь;Portero;term list;line of the pitch
+line.Midfield;line;Midfield;Mittelfeld;Milieu de terrain;Centrocampo;中场;Середина поля;Mediocampo;term list;line of the pitch
+line.Strikers;line;Strikers;Stürmer;Avant-centres;Attaccanti;前锋;Нападающие;Delanteros;term list;line of the pitch
+media_handling.Evasive;media_handling;Evasive;Scheu;Évasif;Evasivo;闪烁其词;Уклончивый в ответах;Evasivo;export;
+media_handling.Level-headed;media_handling;Level-headed;Besonnen;Équilibré;Posato;冷静稳健;Уравновешенный;Mente equilibrada;export;
+media_handling.Media-friendly;media_handling;Media-friendly;Medienfreundlich;Apprécié des médias;Amico dei media;亲善媒体;Открытый для прессы;Respetuoso con la prensa;export;
+media_handling.Outspoken;media_handling;Outspoken;Forsch;Spontané;Diretto;坦率直言;Откровенный;Franco;export;
+media_handling.Reserved;media_handling;Reserved;Verschlossen;Réservé;Riservato;不苟言笑;Немногословный;Reservado;export;
+media_handling.Scouting Required;media_handling;Scouting Required;Scouting erforderlich;Observation nécessaire;Non ancora visionato;需要球探考察;Требуется отправить скаута;Se necesita ojeo;export;
+media_handling.Unflappable;media_handling;Unflappable;Stoisch;Imperturbable;Calmo;从容不迫;Невозмутимый;Imperturbable;export;
+personality.Ambitious;personality;Ambitious;Ehrgeizig;Ambitieux;Ambizioso;雄心勃勃;Амбициозный;Ambicioso;game list;
+personality.Balanced;personality;Balanced;Ausgewogen;Équilibré;Equilibrato;平衡;Сдержанный;Equilibrado;game list;
+personality.Born Leader;personality;Born Leader;Natürliche Autorität;Leader né;Leader nato;天生领袖;Прирожденный лидер;Líder nato;game list;
+personality.Casual;personality;Casual;Lässig;Désinvolte;Disinvolto;随便的;Непринужденный;Relajado;game list;
+personality.Charismatic Leader;personality;Charismatic Leader;Charismatischer Anführer;Leader charismatique;Leader carismatico;极富魅力的领袖;Харизматичный лидер;Líder carismático;game list;
+personality.Determined;personality;Determined;Zielstrebig;Déterminé;Determinato;坚决;Решительный;Decidido;game list;
+personality.Devoted;personality;Devoted;Hingebungsvoll;Dévoué;Gioca col cuore;信徒;Преданный;Devoto;game list;
+personality.Driven;personality;Driven;Erfolgshungrig;Motivé;Motivato;自我鞭策型;Мотивированный;Motivado;game list;
+personality.Easily Discouraged;personality;Easily Discouraged;Schnell entmutigt;Facilement découragé;Facilmente demoralizzabile;容易气馁的;Легко сдается;Se desanima con facilidad;game list;
+personality.Fairly Ambitious;personality;Fairly Ambitious;Relativ ehrgeizig;Assez ambitieux;Abbastanza ambizioso;雄心壮志;Достаточно амбициозный;Bastante ambicioso;game list;
+personality.Fairly Determined;personality;Fairly Determined;Relativ zielstrebig;Assez déterminé;Abbastanza determinato;相当坚决;Достаточно настойчивый;Bastante decidido;game list;
+personality.Fairly Loyal;personality;Fairly Loyal;Relativ loyal;Assez loyal;Abbastanza leale;尽忠竭力;Достаточно лояльный;Bastante leal;game list;
+personality.Fairly Professional;personality;Fairly Professional;Relativ professionell;Assez professionnel;Abbastanza professionale;相当专业;Достаточно профессиональный;Bastante profesional;game list;
+personality.Fairly Sporting;personality;Fairly Sporting;Relativ fair;Assez fair-play;Abbastanza sportivo;相当有体育道德;Достаточно дисциплинированный;Bastante deportivo;game list;
+personality.Fickle;personality;Fickle;Opportunist;Versatile;Incostante;浮躁的;Ненадежный;Caprichoso;game list;
+personality.Honest;personality;Honest;Ehrlich;Honnête;Onesto;正直的;Честный;Honrado;game list;
+personality.Iron Willed;personality;Iron Willed;Willensstark;Volonté de fer;Tenace e determinato;钢铁般意志的;С железной волей;Voluntad de hierro;game list;
+personality.Jovial;personality;Jovial;Frohnatur;Jovial;Gioviale;乐天派;Общительный;Jovial;game list;
+personality.Leader;personality;Leader;Führungspersönlichkeit;Leader;Leader;领导型;Лидер;Líder;game list;
+personality.Light-Hearted;personality;Light-Hearted;Unbeschwert;Enjoué;Spensierato;无忧无虑;Легкомысленный;Alegre;game list;
+personality.Low Determination;personality;Low Determination;Unentschlossen;Faible détermination;Poca determinazione;不够坚决;Нерешительный;Baja determinación;game list;
+personality.Low Self-Belief;personality;Low Self-Belief;Geringes Selbstvertrauen;Faible confiance en soi;Poca fiducia in sé stesso;缺乏自信的;Низкая самооценка;Baja autoestima;game list;
+personality.Loyal;personality;Loyal;Loyal;Loyal;Leale;忠诚;Лояльный;Leal;game list;
+personality.Mercenary;personality;Mercenary;Söldner;Mercenaire;Mercenario;惟利是图的;Меркантильный;Sin escrúpulos;game list;
+personality.Model Citizen;personality;Model Citizen;Modellbürger;Citoyen modèle;Cittadino modello;球队的表率;Сознательный;Ciudadano ejemplar;game list;
+personality.Model Professional;personality;Model Professional;Musterprofi;Modèle de professionnalisme;Professionista modello;职业楷模;Образцовый профессионал;Profesional ejemplar;game list;
+personality.Perfectionist;personality;Perfectionist;Perfektionist;Perfectionniste;Perfezionista;完美主义者;Идеалист;Perfeccionista;game list;
+personality.Professional;personality;Professional;Professionell;Professionnel;Professionale;兢兢业业;Профессиональный;Profesional;game list;
+personality.Realist;personality;Realist;Realist;Réaliste;Realista;现实的;Реалист;Realista;game list;
+personality.Resilient;personality;Resilient;Belastbar;Résistant;Forte;韧劲十足型;Жизнерадостный;Resistente;game list;
+personality.Resolute;personality;Resolute;Konsequent;Résolu;Risoluto;坚决果敢;Тверд в решениях;Resuelto;game list;
+personality.Slack;personality;Slack;Nachlässig;Indolent;Molle;懒散的;Ленивый;Flojo;game list;
+personality.Spineless;personality;Spineless;Rückgratlos;Sans caractère;Senza grinta;没勇气的;Бесхарактерный;Sin espíritu;game list;
+personality.Spirited;personality;Spirited;Energisch;Enthousiaste;Energico;精力十足;Энергичный;Enérgico;game list;
+personality.Sporting;personality;Sporting;Fair;Fair play;Sportivo;有体育道德的;Спортивный;Deportivo;game list;
+personality.Temperamental;personality;Temperamental;Temperamentvoll;Forte personnalité;Imprevedibile;喜怒无常;Темпераментный;Temperamental;game list;
+personality.Unambitious;personality;Unambitious;Ohne Ehrgeiz;Sans ambition;Senza ambizioni;缺乏野心的;Неамбициозный;Poco ambicioso;game list;
+personality.Unsporting;personality;Unsporting;Unsportlich;Déloyal;Antisportivo;没有体育道德的;Неспортивный;Poco deportivo;game list;
+personality.Very Ambitious;personality;Very Ambitious;Sehr ehrgeizig;Très ambitieux;Molto ambizioso;雄心大志型;Очень амбициозный;Muy ambicioso;game list;
+personality.Very Loyal;personality;Very Loyal;Sehr loyal;Très loyal;Molto leale;忠心耿耿;Очень лояльный;Muy leal;game list;
+phase.In Possession;phase;In Possession;Mit Ball;Avec le ballon;In possesso;有球阶段;С мячом;Con posesión;term list;
+phase.Out of Possession;phase;Out of Possession;Ohne Ball;Sans le ballon;Non in possesso;无球阶段;Без мяча;Sin posesión;term list;
+playing_time.2nd Team Regular;playing_time;2nd Team Regular;;;;;;;;not captured: de, fr, it, zh_CN, ru, es
+playing_time.Backup;playing_time;Backup;Ersatztorhüter;Remplaçant;Seconda linea;替补;Запасной вратарь;Recambio;export;
+playing_time.Breakthrough Prospect;playing_time;Breakthrough Prospect;Talent vor Durchbruch;Espoir aux portes de l'équipe;Potenziale campione;突破新星;Очень перспективный игрок;Promesa importante;export;
+playing_time.Cup Goalkeeper;playing_time;Cup Goalkeeper;Pokaltorhüter;Gardien en coupe;Portiere di coppa;杯赛门将;Кубковый вратарь (Все кубки);Portero de copa;export;several game texts for es
+playing_time.Domestic Cup Goalkeeper;playing_time;Domestic Cup Goalkeeper;Pokaltorhüter (nationaler Pokal);Gardien en coupe nationale;Portiere di coppa nazionale;国内杯赛门将;Кубковый вратарь (Национальные кубки);Portero de copas nacionales;export;
+playing_time.Emergency Backup;playing_time;Emergency Backup;Notnagel;Remplaçant en cas de crise;Riserva d'emergenza;应急替补;Игрок запаса;Recambio de emergencia;export;
+playing_time.First-Choice Goalkeeper;playing_time;First-Choice Goalkeeper;Stammtorhüter;Gardien titulaire;Portiere titolare;首选门将;Основной вратарь;Primer portero;export;
+playing_time.Fringe Player;playing_time;Fringe Player;Ergänzungsspieler;Joueur secondaire;Giocatore marginale;边缘球员;Игрок ротации;Jugador sobrante;export;
+playing_time.Future Prospect;playing_time;Future Prospect;Perspektivspieler;Joueur prometteur;Giovane promessa;未来之星;Перспективный игрок;Futura promesa;export;several game texts for es
+playing_time.Impact Sub;playing_time;Impact Sub;Joker;Super sub;Riserva di lusso;关键替补;Игрок замены;Revulsivo desde el banquillo;term list;
+playing_time.Important Player;playing_time;Important Player;Schlüsselspieler;Joueur important;Giocatore importante;重要球员;Важный игрок;Jugador importante;export;
+playing_time.Out On Loan;playing_time;Out On Loan;Verliehen;Parti en prêt;Fuori in prestito;外租中;Отдан в аренду;Cedido en otro club;export;
+playing_time.Regular Starter;playing_time;Regular Starter;Stammspieler;Titulaire régulier;Titolare fisso;常规先发;Игрок стартового состава;Titular habitual;export;
+playing_time.Scouting Required;playing_time;Scouting Required;Scouting erforderlich;Observation nécessaire;Non ancora visionato;需要球探考察;Требуется отправить скаута;Se necesita ojeo;export;
+playing_time.Squad Player;playing_time;Squad Player;Rotationsspieler;Joueur de rotation;Elemento della rosa;有用一员;Игрок основы;Jugador de plantilla;export;
+playing_time.Star Player;playing_time;Star Player;Starspieler;Joueur Vedette;Stella;明星球员;Звездный игрок;Jugador estrella;export;
+playing_time.Surplus to Requirements;playing_time;Surplus to Requirements;Nicht benötigt;Pas utile à l'équipe;In esubero;球队不再需要;Игрок не нужен клубу;No necesario;term list;several game texts for es
+playing_time.Youngster;playing_time;Youngster;Nachwuchsspieler;Jeune joueur;Giovane;年轻球员;Молодой игрок;Joven;export;several game texts for es
+position_code.AM;position_code;AM;OM;MO;T;前腰;АП;;export;not captured: es
+position_code.D;position_code;D;V;D;D;后卫;З;;export;not captured: es
+position_code.DM;position_code;DM;DM;MD;M;后腰;ОП;;export;not captured: es
+position_code.GK;position_code;GK;TW;GB;Por;门将;В;;export;not captured: es
+position_code.M;position_code;M;M;M;C;中场;П;;export;not captured: es
+position_code.ST;position_code;ST;ST;BT;P;前锋;НП;;export;not captured: es
+position_code.WB;position_code;WB;FV;AL;Est;翼卫;КЗ;;export;not captured: es
+position_name.Attacking Midfielder;position_name;Attacking Midfielder;Offensiver Mittelfeldspieler;Milieu offensif;Centrocampista offensivo;前腰;Атакующий полузащитник;Mediapunta;screen S3;
+position_name.Defender;position_name;Defender;Verteidiger;Défenseur;Difensore;后卫;Защитник;Defensa;screen S3;
+position_name.Defensive Midfielder;position_name;Defensive Midfielder;Defensiver Mittelfeldspieler;Milieu défensif;Centrocampista difensivo;后腰;Опорный полузащитник;Mediocentro;screen S3;
+position_name.Goalkeeper;position_name;Goalkeeper;Torwart;Gardien de but;Portiere;门将;Вратарь;Portero;screen S3;
+position_name.Midfielder;position_name;Midfielder;Mittelfeldspieler;Milieu;Centrocampista;中场;Полузащитник;Centrocampista;screen S3;
+position_name.Striker;position_name;Striker;Stürmer;Buteur;Punta;前锋;Нападающий;Delantero;screen S3;
+position_name.Wing-Back;position_name;Wing-Back;Flügelverteidiger;Arrière latéral offensif;Esterno;边翼卫;Крайний защитник;Lateral ofensivo;screen S3;several game texts for es
+preferred_foot.Either;preferred_foot;Either;Beide;Les deux;Ambidestro;左右脚;Обе;Ambas;term list;
+preferred_foot.Left;preferred_foot;Left;Links;Gauche;Sinistra;左;Слева;Izquierda;term list;
+preferred_foot.Left-Footed;preferred_foot;Left-Footed;Links;Gaucher;Sinistro;左脚;Левоногий;Zurdo;export;
+preferred_foot.Left-Footed Only;preferred_foot;Left-Footed Only;Nur Links;Gaucher uniquement;Solo sinistro;只会左脚;Только левоногий;Zurdo cerrado;export;
+preferred_foot.Right;preferred_foot;Right;Rechts;Droite;Destra;右;Справа;Derecha;term list;
+preferred_foot.Right-Footed;preferred_foot;Right-Footed;Rechts;Droitier;Destro;右脚;Правоногий;Diestro;export;
+preferred_foot.Right-Footed Only;preferred_foot;Right-Footed Only;Nur Rechts;Droitier uniquement;Solo destro;只会右脚;Только правоногий;Diestro cerrado;export;
+preferred_foot.Uses Both Feet;preferred_foot;Uses Both Feet;Beidfüßig;Utilise les deux pieds;Ambidestro;双脚;Использует обе ноги;Usa ambas piernas;export;
+registration.Home-Grown Status;registration;Home-Grown Status;Status Eigengewächs;Formé au pays;Cresciuto nel vivaio;青训球员;Статус воспитанника;Situación de cantera;term list;check exact English wording in game
+registration.Trained at club (0-21);registration;Trained at club (0-21);;;;;;;;"check exact English wording in game; not captured: de, fr, it, zh_CN, ru, es"
+registration.Trained in nation (15-21);registration;Trained in nation (15-21);;;;;;;;"check exact English wording in game; not captured: de, fr, it, zh_CN, ru, es"
+role.ip.Advanced Centre-Back;role;Advanced Centre-Back;Aufrückender Innenverteidiger;Défenseur Central Avancé;Difensore Centrale Avanzato;靠前中后卫;Либеро;Central avanzado;screen S5/S6;
+role.ip.Advanced Playmaker;role;Advanced Playmaker;Vorgeschobener Spielmacher;Meneur De Jeu Avancé;Regista Avanzato;前场组织核心;Выдвинутый Плеймейкер;Organizador adelantado;screen S5/S6;
+role.ip.Advanced Wing-Back;role;Advanced Wing-Back;Vorgeschobener Flügelverteidiger;Latéral Offensif Avancé;Esterno Offensivo;靠前边翼卫;Универсальный Крайний Атакующий Защитник;Lateral ofensivo avanzado;screen S5/S6;
+role.ip.Attacking Midfielder;role;Attacking Midfielder;Offensiver Mittelfeldspieler;Milieu Offensif;Centrocampista Offensivo;前腰;Атакующий Полузащитник;Mediapunta;screen S5/S6;
+role.ip.Ball-Playing Centre-Back;role;Ball-Playing Centre-Back;Spielaufbauender Innenverteidiger;Défenseur Central À L'aise Au Pied;Difensore Centrale Di Costruzione;出球中后卫;Созидающий Центральный Защитник;Central con toque;screen S5/S6;
+role.ip.Ball-Playing Goalkeeper;role;Ball-Playing Goalkeeper;Ballspielender Torwart;Gardien À L'aise Au Pied;Portiere Di Costruzione;出球门将;Созидающий Вратарь;Portero con juego de pies;screen S5/S6;
+role.ip.Box-To-Box Midfielder;role;Box-To-Box Midfielder;Box-To-Box-Spieler;Milieu Box To Box;Tuttocampista;全能中场;Полузащитник Бокс-Ту-Бокс;Centrocampista todoterreno;screen S5/S6;
+role.ip.Box-To-Box Playmaker;role;Box-To-Box Playmaker;Box-To-Box-Spielmacher;Meneur De Jeu Box-To-Box;Regista Mobile;全能组织核心;Блуждающий Плеймейкер;Organizador todoterreno;screen S5/S6;
+role.ip.Central Midfielder;role;Central Midfielder;Zentraler Mittelfeldspieler;Milieu Axial;Centrocampista Centrale;中前卫;Центральный Полузащитник;Centrocampista;screen S5/S6;several game texts for es
+role.ip.Centre Forward;role;Centre Forward;Mittelstürmer;Attaquant Central;Centravanti;中锋;Выдвинутый Форвард;Delantero centro;screen S5/S6;
+role.ip.Centre-Back;role;Centre-Back;Innenverteidiger;Défenseur Central;Difensore Centrale;中后卫;Центральный Защитник;Central;screen S5/S6;
+role.ip.Channel Forward;role;Channel Forward;Halbraumstürmer;Attaquant De Couloir;Attaccante Di Movimento;肋部前锋;Проникающий Форвард;Delantero buscaespacios;screen S5/S6;
+role.ip.Channel Midfielder;role;Channel Midfielder;Halbraumspieler;Milieu De Couloir;Centrocampista D'inserimento;肋部中场;Проникающий Полузащитник;Centrocampista interior;screen S5/S6;
+role.ip.Deep-Lying Forward;role;Deep-Lying Forward;Hängende Spitze;Attaquant En Retrait;Attaccante Di Manovra;拖后前锋;Оттянутый Форвард;Delantero de apoyo;screen S5/S6;
+role.ip.Deep-Lying Playmaker;role;Deep-Lying Playmaker;Tiefer Spielmacher;Meneur De Jeu En Retrait;Regista Arretrato;拖后组织核心;Оттянутый Плеймейкер;Pivote organizador;screen S5/S6;
+role.ip.Defensive Midfielder;role;Defensive Midfielder;Defensiver Mittelfeldspieler;Milieu Défensif;Centrocampista Difensivo;后腰;Опорный Полузащитник;Mediocentro;screen S5/S6;
+role.ip.False Nine;role;False Nine;Falsche Neun;Faux Neuf;Falso Nove;伪九号;Ложная Девятка;Falso nueve;screen S5/S6;
+role.ip.Free Role;role;Free Role;Freigeist;Rôle Libre;Fantasista;前场自由人;Треквартиста;Rol libre;screen S5/S6;
+role.ip.Full-Back;role;Full-Back;Außenverteidiger;Arrière Latéral;Terzino;边后卫;Фланговый Защитник;Lateral;screen S5/S6;
+role.ip.Goalkeeper;role;Goalkeeper;Torwart;Gardien De But;Portiere;门将;Вратарь;Portero;screen S5/S6;
+role.ip.Half Back;role;Half Back;Abkippender Sechser;Demi-Centre;Centrale Aggiunto In Costruzione;拖后后腰;Хавбек;Medio cierre;screen S5/S6;
+role.ip.Inside Forward;role;Inside Forward;Inverser Außenstürmer;Attaquant Intérieur;Attaccante Che Si Accentra;内锋;Инсайд-Форвард;Delantero por dentro;screen S5/S6;
+role.ip.Inside Full-Back;role;Inside Full-Back;Inverser Außenverteidiger;Arrière Latéral Intérieur;Difensore Centrale Aggiunto;内收型边后卫;Фланговый Защитник-Инсайд;Lateral por dentro;screen S5/S6;
+role.ip.Inside Wing-Back;role;Inside Wing-Back;Inverser Flügelverteidiger;Latéral Offensif Intérieur;Mediano Aggiunto;内收型边翼卫;Переставленный Крайний Атакующий Защитник;Carrilero por dentro;screen S5/S6;
+role.ip.Inside Winger;role;Inside Winger;Halbraumflügel;Ailier Intérieur;Ala Che Si Accentra;内收型边锋;Переставленный Крайний Полузащитник;Extremo por dentro;screen S5/S6;
+role.ip.Midfield Playmaker;role;Midfield Playmaker;Spielmacher;Meneur De Jeu Du Milieu;Regista Di Centrocampo;中场组织核心;Плеймейкер;Centrocampista organizador;screen S5/S6;
+role.ip.No-Nonsense Centre-Back;role;No-Nonsense Centre-Back;Kompromissloser Innenverteidiger;Défenseur Central Strict;Difensore Centrale Senza Rischi;防守型中后卫;Чистый Центральный Защитник;Central defensivo;screen S5/S6;
+role.ip.No-Nonsense Goalkeeper;role;No-Nonsense Goalkeeper;Kompromissloser Torwart;Gardien Pragmatique;Portiere Senza Rischi;纯扑救型门将;Традиционный Вратарь;Portero sin complicaciones;screen S5/S6;
+role.ip.Overlapping Centre-Back;role;Overlapping Centre-Back;Hinterlaufender Halbraumverteidiger;Défenseur central de dédoublement;Difensore centrale di inserimento;套边中后卫;Забегающий центральный защитник;Central con proyección ofensiva;term list;
+role.ip.Playmaking Wing-Back;role;Playmaking Wing-Back;Spielmachender Flügelverteidiger;Latéral Offensif Meneur De Jeu;Esterno Di Regia;组织型边翼卫;Разыгрывающий Крайний Атакующий Защитник;Lateral ofensivo creador;screen S5/S6;
+role.ip.Playmaking Winger;role;Playmaking Winger;Äußerer Spielmacher;Ailier Meneur De Jeu;Regista Largo;组织型边锋;Свободный Плеймейкер;Extremo organizador;screen S5/S6;
+role.ip.Poacher;role;Poacher;Knipser;Renard Des Surfaces;Attaccante D'area;抢点型前锋;Чистый Форвард;Ariete;screen S5/S6;
+role.ip.Second Striker;role;Second Striker;Zweiter Stürmer;Deuxième Avant-Centre;Sottopunta;二前锋;Теневой Нападающий;Segundo delantero;screen S5/S6;
+role.ip.Target Forward;role;Target Forward;Zielspieler;Attaquant Pivot;Fulcro Del Gioco;站桩中锋;Таргетмен;Delantero centro;screen S5/S6;several game texts for es
+role.ip.Wide Central Midfielder;role;Wide Central Midfielder;Weiter Achter;Milieu Central Désaxé;Centrocampista Centrale Largo;边中前卫;Каррилеро;Mediocampista de banda;screen S5/S6;
+role.ip.Wide Centre-Back;role;Wide Centre-Back;Halbraumverteidiger;Défenseur central excentré;Braccetto di difesa;边中后卫;Фланговый центральный защитник;Central lateral;term list;
+role.ip.Wide Forward;role;Wide Forward;Außenstürmer;Attaquant Désaxé;Attaccante Laterale;边前锋;Раумдойтер;Delantero escorado;screen S5/S6;
+role.ip.Wide Midfielder;role;Wide Midfielder;Äußerer Mittelfeldspieler;Milieu Latéral;Esterno Di Centrocampo;边前卫;Фланговый Полузащитник;Centrocampista de banda;screen S5/S6;
+role.ip.Wing-Back;role;Wing-Back;Flügelverteidiger;Latéral Offensif;Esterno;边翼卫;Крайний Защитник;Lateral ofensivo;screen S5/S6;several game texts for es
+role.ip.Winger;role;Winger;Flügelspieler;Ailier;Ala;边锋;Крайний Полузащитник;Extremo;screen S5/S6;
+role.oop.Attacking Midfielder;role;Attacking Midfielder;Offensiver Mittelfeldspieler;Milieu Offensif;Centrocampista Offensivo;前腰;Атакующий Полузащитник;Mediapunta;screen S5/S6;
+role.oop.Central Midfielder;role;Central Midfielder;Zentraler Mittelfeldspieler;Milieu Axial;Centrocampista Centrale;中前卫;Центральный Полузащитник;Centrocampista;screen S5/S6;several game texts for es
+role.oop.Central Outlet Attacking Midfielder;role;Central Outlet Attacking Midfielder;Zentraler Umschaltzehner;Milieu De Terrain Offensif De Contre-Attaque Axiale;Trequartista Centrale Avanzato;中路支点前腰;Центральный Атакующий Полузащитник-Аутлет;Mediapunta central iniciador;screen S5/S6;
+role.oop.Central Outlet Centre Forward;role;Central Outlet Centre Forward;Zentraler Umschaltstürmer;Avant-Centre Point D'appui Axial;Riferimento Offensivo;中路支点中锋;Центрфорвард-Аутлет;Delantero centro de enlace;screen S5/S6;
+role.oop.Centre Forward;role;Centre Forward;Mittelstürmer;Attaquant Central;Centravanti;中锋;Выдвинутый Форвард;Delantero centro;screen S5/S6;
+role.oop.Centre-Back;role;Centre-Back;Innenverteidiger;Défenseur Central;Difensore Centrale;中后卫;Центральный Защитник;Central;screen S5/S6;
+role.oop.Covering Centre-Back;role;Covering Centre-Back;Absichernder Innenverteidiger;Défenseur Central De Couverture;Difensore Centrale Di Copertura;补位型中后卫;Страхующий Центральный Защитник;Central de cobertura;screen S5/S6;
+role.oop.Covering Wide Centre-Back;role;Covering Wide Centre-Back;Absichernder Halbraumverteidiger;Défenseur central excentré de couverture;Braccetto di copertura;补位型边中后卫;Страхующий фланг центральный защитник;Central lateral de cobertura;term list;several game texts for zh_CN
+role.oop.Defensive Midfielder;role;Defensive Midfielder;Defensiver Mittelfeldspieler;Milieu Défensif;Centrocampista Difensivo;后腰;Опорный Полузащитник;Mediocentro;screen S5/S6;
+role.oop.Dropping Defensive Midfielder;role;Dropping Defensive Midfielder;Halbverteidiger;Milieu Défensif En Retrait;Centrale Aggiunto In Difesa;回撤型后腰;Опускающийся Опорный Полузащитник;Mediocentro retrasado;screen S5/S6;
+role.oop.Full-Back;role;Full-Back;Außenverteidiger;Arrière Latéral;Terzino;边后卫;Фланговый Защитник;Lateral;screen S5/S6;
+role.oop.Goalkeeper;role;Goalkeeper;Torwart;Gardien De But;Portiere;门将;Вратарь;Portero;screen S5/S6;
+role.oop.Holding Full-Back;role;Holding Full-Back;Abwartender Außenverteidiger;Arrière Latéral En Retrait;Terzino Bloccato;固守型边后卫;Сдерживающий Фланговый Защитник;Lateral de contención;screen S5/S6;
+role.oop.Holding Wing-Back;role;Holding Wing-Back;Abwartender Flügelverteidiger;Latéral Offensif En Retrait;Esterno Bloccato;固守型边翼卫;Сдерживающий Крайний Атакующий Защитник;Carrilero de contención;screen S5/S6;
+role.oop.Inside Outlet Winger;role;Inside Outlet Winger;Inverser Umschaltflügel;Ailier Intérieur De Contre-Attaque;Ala Invertita D'attacco;内收型支点边锋;Сопровождающий Центрфорвард;Extremo por dentro con salida;screen S5/S6;
+role.oop.Line-Holding Goalkeeper;role;Line-Holding Goalkeeper;Linientorwart;Gardien sur la ligne;Portiere bloccato;门线型门将;Вратарь, играющий на линии;Portero de línea de gol;term list;
+role.oop.Line-Holding Keeper;role;Line-Holding Keeper;Linientorwart;Gardien Sur La Ligne;Portiere Bloccato;门线型门将;Вратарь, Играющий На Линии;Portero que se queda bajo palos;screen S5/S6;
+role.oop.Pressing Central Midfielder;role;Pressing Central Midfielder;Pressender Achter;Milieu Axial De Pressing;Centrocampista Di Quantità;压迫型中前卫;Прессингующий Центральный Полузащитник;Mediocampista presionante;screen S5/S6;
+role.oop.Pressing Defensive Midfielder;role;Pressing Defensive Midfielder;Pressender Sechser;Milieu défensif de pressing;Mediano di quantità;压迫型后腰;Прессингующий опорный полузащитник;Mediocentro defensivo presionante;term list;several game texts for it, es
+role.oop.Pressing Full-Back;role;Pressing Full-Back;Pressender Außenverteidiger;Arrière Latéral De Pressing;Terzino Di Gamba;压迫型边后卫;Прессингующий Фланговый Защитник;Lateral presionante;screen S5/S6;
+role.oop.Pressing Wing-Back;role;Pressing Wing-Back;Pressender Flügelverteidiger;Latéral Offensif De Pressing;Esterno Di Gamba;压迫型边翼卫;Прессингующий Крайний Атакующий Защитник;Carrilero presionante;screen S5/S6;
+role.oop.Screening Central Midfielder;role;Screening Central Midfielder;Abschirmender Achter;Milieu Axial De Couverture;Centrocampista Di Interdizione;屏障型中前卫;Перехватывающий Центральный Полузащитник;Mediocampista de contención;screen S5/S6;
+role.oop.Screening Defensive Midfielder;role;Screening Defensive Midfielder;Abschirmender Sechser;Milieu Défensif De Couverture;Mediano Di Interdizione;屏障型后腰;Перехватывающий Опорный Полузащитник;Mediocentro de contención;screen S5/S6;
+role.oop.Splitting Outlet Attacking Midfielder;role;Splitting Outlet Attacking Midfielder;Ausweichender Umschaltzehner;Milieu Offensif De Contre-Attaque De Couloir;Trequartista Di Movimento;游走支点前腰;Располагающийся Между Линиями Атакующий Полузащитник-Аутлет;Mediapunta con salida;screen S5/S6;
+role.oop.Splitting Outlet Centre Forward;role;Splitting Outlet Centre Forward;Ausweichender Umschaltstürmer;Attaquant central de contre-attaque de couloir;Centravanti di movimento;游走支点中锋;Располагающийся между линиями центрфорвард-аутлет;Delantero centro buscaespacios;term list;several game texts for fr
+role.oop.Stopping Centre-Back;role;Stopping Centre-Back;Stoppender Innenverteidiger;Défenseur Central Stoppeur;Difensore Centrale Di Anticipo;阻截型中后卫;Блокирующий Центральный Защитник;Central contundente;screen S5/S6;
+role.oop.Stopping Wide Centre-Back;role;Stopping Wide Centre-Back;Stoppender Halbraumverteidiger;Défenseur central excentré stoppeur;Braccetto di anticipo;阻截型边中后卫;Блокирующий фланг центральный защитник;Central lateral contundente;term list;
+role.oop.Sweeper Keeper;role;Sweeper Keeper;Libero-Torwart;Gardien Libéro;Portiere Libero;清道夫门将;Вратарь-Чистильщик;Portero cierre;screen S5/S6;
+role.oop.Tracking Attacking Midfielder;role;Tracking Attacking Midfielder;Mitarbeitender Zehner;Milieu Offensif De Couverture;Trequartista Di Copertura;回追型前腰;Сопровождающий Атакующий Полузащитник;Mediapunta itinerante;screen S5/S6;
+role.oop.Tracking Centre Forward;role;Tracking Centre Forward;Mitarbeitender Mittelstürmer;Attaquant Central De Couverture;Centravanti Di Copertura;回追型中锋;Сопровождающий Центрфорвард;Delantero centro marcador;screen S5/S6;
+role.oop.Tracking Wide Midfielder;role;Tracking Wide Midfielder;Mitarbeitender Außenspieler;Milieu Latéral De Couverture;Interno Di Copertura;回追型边前卫;Сопровождающий Фланговый Полузащитник;Centrocampista de banda marcador;screen S5/S6;
+role.oop.Tracking Winger;role;Tracking Winger;Mitarbeitender Flügelspieler;Ailier De Couverture;Ala Tornante;回追型边锋;Сопровождающий Крайний Полузащитник;Extremo marcador;screen S5/S6;
+role.oop.Wide Centre-Back;role;Wide Centre-Back;Halbraumverteidiger;Défenseur central excentré;Braccetto di difesa;边中后卫;Фланговый центральный защитник;Central lateral;term list;
+role.oop.Wide Covering Central Midfielder;role;Wide Covering Central Midfielder;Flügelsichernder Achter;Milieu Axial De Couverture Dans La Largeur;Interno Di Copertura In Fascia;边路补位型中前卫;Страхующий Фланг Центральный Полузащитник;Mediocampista de despliegue;screen S5/S6;
+role.oop.Wide Covering Defensive Midfielder;role;Wide Covering Defensive Midfielder;Flügelsichernder Sechser;Milieu Défensif De Couverture Dans La Largeur;Mediano Di Copertura In Fascia;边路补位型后腰;Страхующий Фланг Опорный Полузащитник;Mediocentro de amplia cobertura;screen S5/S6;
+role.oop.Wide Midfielder;role;Wide Midfielder;Äußerer Mittelfeldspieler;Milieu Latéral;Esterno Di Centrocampo;边前卫;Фланговый Полузащитник;Centrocampista de banda;screen S5/S6;
+role.oop.Wide Outlet Wide Midfielder;role;Wide Outlet Wide Midfielder;Äußerer Umschaltspieler;Milieu Latéral De Contre-Attaque;Mezzala Di Supporto;边路支点边前卫;Фланговый Полузащитник-Аутлет;Centrocampista de banda interior;screen S5/S6;
+role.oop.Wide Outlet Winger;role;Wide Outlet Winger;Umschaltflügel;Ailier De Contre-Attaque;Ala Alta;边路支点边锋;Крайний Полузащитник-Аутлет;Extremo de salida;screen S5/S6;
+role.oop.Wing-Back;role;Wing-Back;Flügelverteidiger;Latéral Offensif;Esterno;边翼卫;Крайний Защитник;Lateral ofensivo;screen S5/S6;several game texts for es
+role.oop.Winger;role;Winger;Flügelspieler;Ailier;Ala;边锋;Крайний Полузащитник;Extremo;screen S5/S6;
+role_abbr.ip.ACB;role_abbr;ACB;;;;;;;;"Advanced Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.AM;role_abbr;AM;OM;MO;COf;前腰;АП;;export;"Attacking Midfielder; not captured: es"
+role_abbr.ip.AP;role_abbr;AP;;;;;;;;"Advanced Playmaker; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.AWB;role_abbr;AWB;VFV;LOA;EOf;前翼卫;УКЗ;;export;"Advanced Wing-Back; not captured: es"
+role_abbr.ip.BBM;role_abbr;BBM;B2B;B2B;TtC;全中场;БТБ;;export;"Box-To-Box Midfielder; not captured: es"
+role_abbr.ip.BBP;role_abbr;BBP;;;;;;;;"Box-To-Box Playmaker; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.BCB;role_abbr;BCB;SpIV;DCP;DCs;出中卫;СЦЗ;;export;"Ball-Playing Centre-Back; not captured: es"
+role_abbr.ip.BGK;role_abbr;BGK;BTW;GAP;PCs;出门将;СВр;;export;"Ball-Playing Goalkeeper; not captured: es"
+role_abbr.ip.CB;role_abbr;CB;;;;;;;;"Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.CFD;role_abbr;CFD;;;;;;;;"Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.CHF;role_abbr;CHF;HRS;AdC;AdM;肋前锋;ПФ;;export;"Channel Forward; not captured: es"
+role_abbr.ip.CHM;role_abbr;CHM;HR;MdC;CIn;肋中场;ПрП;;export;"Channel Midfielder; not captured: es"
+role_abbr.ip.CM;role_abbr;CM;;;;;;;;"Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.DLF;role_abbr;DLF;HS;AeR;Amn;后前锋;ОФ;;export;"Deep-Lying Forward; not captured: es"
+role_abbr.ip.DLP;role_abbr;DLP;TSm;MJR;RAr;后组织;ОПл;;export;"Deep-Lying Playmaker; not captured: es"
+role_abbr.ip.DM;role_abbr;DM;DM;MD;CDf;后腰;ОП;;export;"Defensive Midfielder; not captured: es"
+role_abbr.ip.F9;role_abbr;F9;F9;F9;F9;伪九号;Л9;;export;"False Nine; not captured: es"
+role_abbr.ip.FB;role_abbr;FB;;;;;;;;"Full-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.FR;role_abbr;FR;F;RL;Fnt;自由人;Ткв;;export;"Free Role; not captured: es"
+role_abbr.ip.GK;role_abbr;GK;TW;GB;Por;门将;Вр;;export;"Goalkeeper; not captured: es"
+role_abbr.ip.HB;role_abbr;HB;;;;;;;;"Half Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.IF;role_abbr;IF;;;;;;;;"Inside Forward; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.IFB;role_abbr;IFB;;;;;;;;"Inside Full-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.IW;role_abbr;IW;HFl;AI;AlH;内边锋;ПКП;;export;"Inside Winger; not captured: es"
+role_abbr.ip.IWB;role_abbr;IWB;;;;;;;;"Inside Wing-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.MPM;role_abbr;MPM;;;;;;;;"Midfield Playmaker; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.NCB;role_abbr;NCB;KIV;DCs;DSR;防中卫;ЧЦЗ;;export;"No-Nonsense Centre-Back; not captured: es"
+role_abbr.ip.NGK;role_abbr;NGK;KTW;GPr;PSR;纯门将;ТВр;;export;"No-Nonsense Goalkeeper; not captured: es"
+role_abbr.ip.OCB;role_abbr;OCB;HHV;DCD;DIn;套中卫;ЗЦЗ;;export;"Overlapping Centre-Back; not captured: es"
+role_abbr.ip.P;role_abbr;P;;;;;;;;"Poacher; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.PW;role_abbr;PW;;;;;;;;"Playmaking Winger; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.PWB;role_abbr;PWB;;;;;;;;"Playmaking Wing-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.SS;role_abbr;SS;ZwS;9 ½;StP;二前锋;ТН;;export;"Second Striker; not captured: es"
+role_abbr.ip.TF;role_abbr;TF;ZS;AtP;FdG;桩锋;Тм;;export;"Target Forward; not captured: es"
+role_abbr.ip.W;role_abbr;W;FL;Ail;Ala;边锋;КП;;export;"Winger; not captured: es"
+role_abbr.ip.WB;role_abbr;WB;FV;LOf;Est;边翼卫;КАЗ;;export;"Wing-Back; not captured: es"
+role_abbr.ip.WCB;role_abbr;WCB;;;;;;;;"Wide Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.WCM;role_abbr;WCM;;;;;;;;"Wide Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.ip.WFD;role_abbr;WFD;AS;AtD;AtL;边前锋;РД;;export;"Wide Forward; not captured: es"
+role_abbr.ip.WM;role_abbr;WM;;;;;;;;"Wide Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.AM;role_abbr;AM;OM;MO;COf;前腰;АП;;export;"Attacking Midfielder; not captured: es"
+role_abbr.oop.CB;role_abbr;CB;;;;;;;;"Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.CCB;role_abbr;CCB;;;;;;;;"Covering Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.CFD;role_abbr;CFD;;;;;;;;"Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.CM;role_abbr;CM;;;;;;;;"Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.CWD;role_abbr;CWD;;;;;;;;"Covering Wide Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.DDM;role_abbr;DDM;;;;;;;;"Dropping Defensive Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.DM;role_abbr;DM;DM;MD;CDf;后腰;ОП;;export;"Defensive Midfielder; not captured: es"
+role_abbr.oop.FB;role_abbr;FB;;;;;;;;"Full-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.GK;role_abbr;GK;TW;GB;Por;门将;Вр;;export;"Goalkeeper; not captured: es"
+role_abbr.oop.HFB;role_abbr;HFB;;;;;;;;"Holding Full-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.HWB;role_abbr;HWB;;;;;;;;"Holding Wing-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.IOW;role_abbr;IOW;;;;;;;;"Inside Outlet Winger; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.LHK;role_abbr;LHK;;;;;;;;"Line-Holding Goalkeeper; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.OAM;role_abbr;OAM;;;;;;;;"Central Outlet Attacking Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.OCF;role_abbr;OCF;;;;;;;;"Central Outlet Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.OWM;role_abbr;OWM;;;;;;;;"Wide Outlet Wide Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.PCM;role_abbr;PCM;;;;;;;;"Pressing Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.PDM;role_abbr;PDM;;;;;;;;"Pressing Defensive Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.PFB;role_abbr;PFB;;;;;;;;"Pressing Full-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.PWB;role_abbr;PWB;;;;;;;;"Pressing Wing-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.SAM;role_abbr;SAM;;;;;;;;"Splitting Outlet Attacking Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.SCB;role_abbr;SCB;;;;;;;;"Stopping Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.SCF;role_abbr;SCF;;;;;;;;"Splitting Outlet Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.SCM;role_abbr;SCM;;;;;;;;"Screening Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.SDM;role_abbr;SDM;;;;;;;;"Screening Defensive Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.SK;role_abbr;SK;;;;;;;;"Sweeper Keeper; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.SWD;role_abbr;SWD;;;;;;;;"Stopping Wide Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.TAM;role_abbr;TAM;;;;;;;;"Tracking Attacking Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.TCF;role_abbr;TCF;;;;;;;;"Tracking Centre Forward; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.TW;role_abbr;TW;;;;;;;;"Tracking Winger; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.TWM;role_abbr;TWM;;;;;;;;"Tracking Wide Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.W;role_abbr;W;FL;Ail;Ala;边锋;КП;;export;"Winger; not captured: es"
+role_abbr.oop.WB;role_abbr;WB;FV;LOf;Est;边翼卫;КАЗ;;export;"Wing-Back; not captured: es"
+role_abbr.oop.WCB;role_abbr;WCB;;;;;;;;"Wide Centre-Back; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.WCM;role_abbr;WCM;;;;;;;;"Wide Covering Central Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.WDM;role_abbr;WDM;;;;;;;;"Wide Covering Defensive Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.WMF;role_abbr;WMF;;;;;;;;"Wide Midfielder; not captured: de, fr, it, zh_CN, ru, es"
+role_abbr.oop.WOW;role_abbr;WOW;;;;;;;;"Wide Outlet Winger; not captured: de, fr, it, zh_CN, ru, es"
+side_code.C;side_code;C;Z;C;C;中;Ц;;export;not captured: es
+side_code.L;side_code;L;L;G;S;左;Л;;export;not captured: es
+side_code.R;side_code;R;R;D;D;右;П;;export;not captured: es
+side_name.Centre;side_name;Centre;Zentral;Centre;Centrale;中;Центр;Centro;screen S3;
+side_name.Left;side_name;Left;Links;Gauche;Sinistra;左;Слева;Izquierda;screen S3;
+side_name.Right;side_name;Right;Rechts;Droite;Destra;右;Справа;Derecha;screen S3;

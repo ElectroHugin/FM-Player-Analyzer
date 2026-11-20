@@ -5,6 +5,10 @@ Sources (captured locally, NOT part of the repository):
     <captured>/text-grabber/terms_<language>_<stamp>.tsv
         The game's whole term list per language, written by the FM Text Grabber
         plugin (id<TAB>text). Ids are the same in every language.
+    <captured>/text-grabber/lists_<language>_<stamp>.tsv (optional)
+        Ordered game lists (category<TAB>english<TAB>text), e.g. the player
+        personalities. They win over the term list, where one English word can
+        have several meanings.
     <captured>/Sprachordnung/<lang>/S3-*.txt, S5-*.txt, S6-*.txt
         Screen texts of the player profile position map (S3) and the role
         lists In / Out of Possession (S5, S6), one file per screen and language.
@@ -18,7 +22,11 @@ Outputs (in the repository):
         Tables the import uses to read exports written in another game language.
 
 Usage:
-    python3 desktop/scripts/make_game_languages_fm27.py <captured> [--template <csv>]
+    python3 desktop/scripts/make_game_languages_fm27.py <captured> [--template <csv>] [--keep <csv>]
+
+--keep takes an earlier glossary: its filled cells stay as they are (captures
+from screens and exports were checked by hand), new sources only fill gaps.
+Personalities from a game list replace earlier cells.
 
 The raw term lists stay outside the repository; only the terms the app needs are
 written out.
@@ -32,9 +40,9 @@ import os
 import re
 import sys
 
-LANGS = ["en", "de", "fr", "it", "zh_CN", "ru"]
+LANGS = ["en", "de", "fr", "it", "zh_CN", "ru", "es"]
 TERM_FILES = {"en": "english", "de": "german", "fr": "french", "it": "italian",
-              "zh_CN": "chinese", "ru": "russian"}
+              "zh_CN": "chinese", "ru": "russian", "es": "spanish"}
 TARGETS = LANGS[1:]
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -82,6 +90,23 @@ def load_terms(folder):
     return terms
 
 
+def load_lists(folder):
+    """(category, english) -> Vote from the optional ordered game lists."""
+    lists = collections.defaultdict(Vote)
+    for lang, name in TERM_FILES.items():
+        if lang == "en":
+            continue
+        files = sorted(glob.glob(os.path.join(folder, "text-grabber", f"lists_{name}_*.tsv")))
+        if not files:
+            continue
+        with open(files[-1], encoding="utf-8-sig") as handle:
+            for line in handle:
+                parts = line.rstrip("\n").split("\t")
+                if len(parts) == 3:
+                    lists[(parts[0], parts[1])].add(lang, clean(parts[2]))
+    return lists
+
+
 def read_screen(path):
     elements = []
     with open(path, encoding="utf-8-sig") as handle:
@@ -96,8 +121,18 @@ def read_screen(path):
     return elements
 
 
+def export_path(folder, lang, kind):
+    return os.path.join(folder, "Sprachordnung", lang, f"{kind}_{lang}.csv")
+
+
+def export_languages(folder):
+    """Target languages with captured exports; only these get import tables."""
+    return [lang for lang in TARGETS
+            if all(os.path.exists(export_path(folder, lang, kind)) for kind in ("squad", "db"))]
+
+
 def read_export(folder, lang, kind):
-    path = os.path.join(folder, "Sprachordnung", lang, f"{kind}_{lang}.csv")
+    path = export_path(folder, lang, kind)
     with open(path, encoding="utf-8-sig", newline="") as handle:
         rows = [[clean(cell) for cell in row] for row in csv.reader(handle)]
     return rows[0], rows[1:]
@@ -226,7 +261,7 @@ def exports(folder):
     for kind in ("squad", "db"):
         en_head, en_rows = read_export(folder, "en", kind)
         uid = en_head.index("Unique ID")
-        local = {lang: read_export(folder, lang, kind) for lang in TARGETS}
+        local = {lang: read_export(folder, lang, kind) for lang in export_languages(folder)}
         for lang, (head, _) in local.items():
             if len(head) != len(en_head):
                 sys.exit(f"{kind}_{lang}.csv has {len(head)} columns, English {len(en_head)}")
@@ -234,7 +269,7 @@ def exports(folder):
                 headers[en_name].add(lang, local_name)
         by_uid = {lang: {row[uid]: row for row in rows} for lang, (_, rows) in local.items()}
         for row in en_rows:
-            for lang in TARGETS:
+            for lang in local:
                 other = by_uid[lang].get(row[uid])
                 if other is None:
                     continue
@@ -300,7 +335,7 @@ def write_cpp(tables):
         "    static const QHash<QString, GameLanguageTable> tables = [] {",
         "        QHash<QString, GameLanguageTable> all;",
     ]
-    for lang in TARGETS:
+    for lang in tables:
         lines.append(f"        {{")
         lines.append(f"            GameLanguageTable &t = all[QStringLiteral(\"{lang}\")];")
         for member, mapping in tables[lang].items():
@@ -324,9 +359,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("captured", help="folder with text-grabber/ and Sprachordnung/")
     parser.add_argument("--template", help="glossary template (id;category;fill_from;en;...)")
+    parser.add_argument("--keep", help="earlier glossary whose filled cells stay")
     args = parser.parse_args()
 
     terms = load_terms(args.captured)
+    lists = load_lists(args.captured)
+    kept = {}
+    if args.keep:
+        with open(args.keep, encoding="utf-8-sig") as handle:
+            kept = {r["id"]: r for r in csv.DictReader(handle, delimiter=";")}
     roles = role_lists(args.captured)
     pos_names, side_names = position_names(args.captured)
     headers, values, bases, side_letters, countries, abbreviations = exports(args.captured)
@@ -336,11 +377,30 @@ def main():
     def add(row_id, category, english, vote, source, note=""):
         row = {"id": row_id, "category": category, "en": english, "source": source}
         flags = []
+        fallback = None
         for lang in TARGETS:
             text, ambiguous = vote.best(lang) if vote else ("", False)
+            # Languages without screens or exports (Spanish so far) take the
+            # term list, except for short codes, which are too ambiguous there.
+            if not text and category not in ("position_code", "side_code", "role_abbr"):
+                if fallback is None:
+                    fallback, _ = by_term_id(terms, english)
+                text, ambiguous = fallback.best(lang)
             row[lang] = text
             if ambiguous:
                 flags.append(lang)
+        listed = lists.get((category, english))
+        if listed:
+            row["source"] = "game list"
+        for lang in TARGETS:
+            if listed and listed.counts[lang]:
+                row[lang] = listed.best(lang)[0]
+                if lang in flags:
+                    flags.remove(lang)
+            elif kept.get(row_id, {}).get(lang):
+                row[lang] = kept[row_id][lang]
+                if lang in flags:
+                    flags.remove(lang)
         if flags:
             note = (note + "; " if note else "") + "several game texts for " + ", ".join(flags)
         missing = [lang for lang in TARGETS if not row[lang]]
@@ -387,10 +447,17 @@ def main():
 
     # Roles and their abbreviations
     for (phase, en_role) in sorted(roles):
-        add(f"role.{phase}.{en_role}", "role", en_role, roles[(phase, en_role)], "screen S5/S6")
+        vote = roles[(phase, en_role)]
+        fallback, _ = by_term_id(terms, en_role)
+        for lang in TARGETS:
+            if not vote.counts[lang]:
+                vote.counts[lang] = fallback.counts[lang]
+        add(f"role.{phase}.{en_role}", "role", en_role, vote, "screen S5/S6")
     template_roles = {(r["id"].split(".")[1], r["en"]) for r in template_rows if r["category"] == "role"}
     for phase, en_role in sorted(template_roles - set(roles)):
-        add(f"role.{phase}.{en_role}", "role", en_role, None, "", "role list not captured yet")
+        vote, count = by_term_id(terms, en_role)
+        add(f"role.{phase}.{en_role}", "role", en_role, vote if count else None,
+            "term list" if count else "", "" if count else "role list not captured yet")
     with open(ROLE_ABBR_CSV, encoding="utf-8") as handle:
         for row in csv.DictReader(handle, delimiter=";"):
             phase = "ip" if row["Phase"].startswith("in") else "oop"
@@ -432,7 +499,7 @@ def main():
                 countries_all[name].add(lang, text, 100 * n)
 
     tables = {}
-    for lang in TARGETS:
+    for lang in export_languages(args.captured):
         def mapping(source, warn=True):
             out = {}
             for english, vote in source.items():
