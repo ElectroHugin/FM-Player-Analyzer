@@ -8,6 +8,7 @@
 #include "PageHelpers.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -126,8 +127,8 @@ QList<PlayerColumn> NationalSquadMatrixPage::buildColumns() const
     columns.append({tr("Age"), [](const Player &p) { return p.age; }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});
     columns.append(
-        {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}});
-    columns.append({tr("Personality"), [](const Player &p) { return p.personality; },
+        {tr("Position"), [](const Player &p) { return GameTerms::positions(p.positionRaw); }, nullptr, nullptr, {}});
+    columns.append({tr("Personality"), [](const Player &p) { return GameTerms::text(QStringLiteral("personality"), p.personality); },
                     nullptr,
                     [definitions](const Player &p) {
                         return personalityCellStyle(
@@ -137,9 +138,9 @@ QList<PlayerColumn> NationalSquadMatrixPage::buildColumns() const
     columns.append(
         {tr("Club"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}});
     if (extraDetails) {
-        columns.append({tr("Left Foot"), [](const Player &p) { return p.leftFoot; }, nullptr,
+        columns.append({tr("Left Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.leftFoot); }, nullptr,
                         nullptr, {}});
-        columns.append({tr("Right Foot"), [](const Player &p) { return p.rightFoot; },
+        columns.append({tr("Right Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.rightFoot); },
                         nullptr, nullptr, {}});
         columns.append({tr("Height"), [](const Player &p) { return p.heightRaw; },
                         [](const Player &p) { return p.heightCm; }, nullptr,

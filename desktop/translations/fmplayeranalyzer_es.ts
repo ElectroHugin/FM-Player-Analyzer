@@ -3073,7 +3073,7 @@ Puedes cambiar la carpeta más tarde en los ajustes.</translation>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="30"/>
         <source>Reasonable</source>
-        <translation>Razonable</translation>
+        <translation>Decente</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="31"/>
@@ -3083,7 +3083,7 @@ Puedes cambiar la carpeta más tarde en los ajustes.</translation>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="32"/>
         <source>Strong</source>
-        <translation>Fuerte</translation>
+        <translation>Gran momento</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/FootStrengthWidget.cpp" line="33"/>
@@ -6016,7 +6016,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la calificación 
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="232"/>
         <source>Kicking</source>
-        <translation>Golpeo de balón</translation>
+        <translation>Saques de puerta</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="233"/>
@@ -6131,7 +6131,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la calificación 
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="255"/>
         <source>Penalty Taking</source>
-        <translation>Lanzamiento de penaltis</translation>
+        <translation>Penaltis</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="256"/>

@@ -14,6 +14,7 @@
 #include "core/Database.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -1053,7 +1054,7 @@ void DashboardPage::updateClubTable(const std::vector<const Player *> &clubPlaye
         m_clubTable->setItem(row, 0, nameItem);
         m_clubTable->setItem(row, 1,
                              new NumericItem(QString::number(player->age), player->age));
-        m_clubTable->setItem(row, 2, new QTableWidgetItem(player->positionRaw));
+        m_clubTable->setItem(row, 2, new QTableWidgetItem(GameTerms::positions(player->positionRaw)));
 
         auto *personality = new QTableWidgetItem(player->personality);
         const CellStyle style = personalityCellStyle(
@@ -1218,7 +1219,7 @@ void DashboardPage::rebuildSuggestions()
 
         auto *footer = new QLabel(tr("Club: %1<br/>Positions: %2")
                                       .arg(player->club.toHtmlEscaped(),
-                                           player->positionRaw.toHtmlEscaped()),
+                                           GameTerms::positions(player->positionRaw).toHtmlEscaped()),
                                   card);
         footer->setObjectName(QStringLiteral("kpiCaption"));
         footer->setWordWrap(true);

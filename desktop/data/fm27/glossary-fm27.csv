@@ -23,7 +23,7 @@ attribute.Free Kick Taking;attribute;Free Kick Taking;Freistöße;Coups francs;C
 attribute.Handling;attribute;Handling;Halten;Prises de balle;Presa;手控球;Игра руками;Blocaje;export;group: Goalkeeping
 attribute.Heading;attribute;Heading;Kopfballtechnik;Jeu de tête;Colpi di testa;头球;Игра головой;Cabeceo;export;group: Technical
 attribute.Jumping Reach;attribute;Jumping Reach;Sprunghöhe;Détente verticale;Massima elevazione;弹跳;Высота прыжка;Alcance de salto;export;group: Physical
-attribute.Kicking;attribute;Kicking;Abschlag;Dégagements;Rinvii;大脚开球;Выбивание;Golpeo de balón;export;"group: Goalkeeping; several game texts for es"
+attribute.Kicking;attribute;Kicking;Abschlag;Dégagements;Rinvii;大脚开球;Выбивание;Saques de puerta;export;"group: Goalkeeping; several game texts for es"
 attribute.Leadership;attribute;Leadership;Führungsqualitäten;Leadership;Carisma;领导力;Лидерство;Liderazgo;export;group: Mental
 attribute.Long Shots;attribute;Long Shots;Weitschüsse;Tirs de loin;Tiri da lontano;远射;Дальние удары;Disparos lejanos;export;group: Technical
 attribute.Long Throws;attribute;Long Throws;Weite Einwürfe;Touches longues;Rimesse lunghe;界外球;Вброс из-за боковой;Saques largos;export;group: Technical
@@ -33,7 +33,7 @@ attribute.Off The Ball;attribute;Off The Ball;Ohne Ball;Appels de balle;Senza pa
 attribute.One On Ones;attribute;One On Ones;Eins gegen Eins;Un contre un;Uno contro uno;一对一;Один на один;Uno contra uno;export;group: Goalkeeping
 attribute.Pace;attribute;Pace;Schnelligkeit;Vitesse;Velocità;速度;Скорость;Velocidad;export;group: Physical
 attribute.Passing;attribute;Passing;Passen;Passes;Passaggi;传球;Пас;Pase;export;group: Technical
-attribute.Penalty Taking;attribute;Penalty Taking;Elfmeter;Penalty;Rigori;罚点球;Пенальти;Lanzamiento de penaltis;export;group: Technical
+attribute.Penalty Taking;attribute;Penalty Taking;Elfmeter;Penalty;Rigori;罚点球;Пенальти;Penaltis;export;group: Technical
 attribute.Positioning;attribute;Positioning;Stellungsspiel;Placement;Piazzamento;选位;Выбор позиции;Colocación;export;group: Mental
 attribute.Punching;attribute;Punching;Fausten;Dégagements au poing;Respinte;击球;Отбивание кулаками;Puños;export;group: Goalkeeping
 attribute.Reflexes;attribute;Reflexes;Reflexe;Réflexes;Riflessi;反应;Реакция;Reflejos;export;group: Goalkeeping
@@ -73,11 +73,11 @@ column.Rec.;column;Rec.;Empf.;Rec.;Cns.;推荐;Рек.;Recomendación;export;sev
 column.Recommendation;column;Recommendation;Empfehlung;Recommandation;Raccomandazione;建议;Рекомендация;Recomendación;term list;
 column.Right Foot;column;Right Foot;Rechter Fuß;Pied droit;Piede destro;右脚;Правая нога;Pierna derecha;export;
 column.Transfer Value;column;Transfer Value;Transferwert;Montant transfert;Costo trasferimento;转会身价;Сумма трансфера;Valor de traspaso;export;
-column.Unique ID;column;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;Identidad única;export;
-column.Wage;column;Wage;Gehalt;Salaire;Stipendio;工资;Зарплата;Salario;export;
+column.Unique ID;column;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;Unique ID;export;
+column.Wage;column;Wage;Gehalt;Salaire;Stipendio;工资;Зарплата;Sueldo;export;
 foot_strength.Fairly Strong;foot_strength;Fairly Strong;Gut;Assez fort;Abbastanza forte;不错;Вполне сильная;Bastante fuerte;export;
-foot_strength.Reasonable;foot_strength;Reasonable;Durchschnitt;Correct;Decente;还行;Приемлемая;Razonable;export;several game texts for es
-foot_strength.Strong;foot_strength;Strong;Stark;Très bonne;Molto buona;强势;Хорошая;Fuerte;export;several game texts for es
+foot_strength.Reasonable;foot_strength;Reasonable;Durchschnitt;Correct;Decente;还行;Приемлемая;Decente;export;several game texts for es
+foot_strength.Strong;foot_strength;Strong;Stark;Très bonne;Molto buona;强势;Хорошая;Gran momento;export;several game texts for es
 foot_strength.Very Strong;foot_strength;Very Strong;Sehr stark;Très fort;Molto forte;精准;Очень сильная;Muy fuerte;export;
 foot_strength.Very Weak;foot_strength;Very Weak;Sehr schwach;Très faible;Molto debole;笨拙;Очень слабая;Muy débil;export;
 foot_strength.Weak;foot_strength;Weak;Schwach;Faible;Debole;欠佳;Слабая;Débil;export;
@@ -91,9 +91,9 @@ information.Inj;information;Inj;Ver;Bls;Inf;受伤;Трв;Les;export;
 information.Int;information;Int;Nat;Int;Naz;国脚;Сбр;Int;export;several game texts for es
 information.Lng;information;Lng;Spr;Lgu;Lng;语言;Язык;Idi;export;
 information.Loa;information;Loa;Lei;Pre;Prs;租借;Арн;Ced;export;
-information.Lst;information;Lst;TL;P;Trs;挂牌;Выст.;Per;export;several game texts for es
+information.Lst;information;Lst;TL;P;Trs;挂牌;Выст.;Trn;export;several game texts for es
 information.Prm;information;Prm;Vsp;Prm;Prm;承诺;ОбП;Prm;export;
-information.Set;information;Set;Set;Sdr;Res;定居;Ста;BPa;export;several game texts for es
+information.Set;information;Set;Set;Sdr;Res;定居;Ста;Est;export;several game texts for es
 information.Unh;information;Unh;Unz;Méc;Sco;不满;Ндв;Des;export;
 information.Wnt;information;Wnt;Vin;Obs;Ric;兴趣;Инт;Seg;export;
 information.Yth;information;Yth;Jgd;Jnr;Gio;青年;Юнр;Juv;export;
@@ -194,8 +194,8 @@ preferred_foot.Right-Footed;preferred_foot;Right-Footed;Rechts;Droitier;Destro;�
 preferred_foot.Right-Footed Only;preferred_foot;Right-Footed Only;Nur Rechts;Droitier uniquement;Solo destro;只会右脚;Только правоногий;Diestro cerrado;export;
 preferred_foot.Uses Both Feet;preferred_foot;Uses Both Feet;Beidfüßig;Utilise les deux pieds;Ambidestro;双脚;Использует обе ноги;Usa ambas piernas;export;
 registration.Home-Grown Status;registration;Home-Grown Status;Status Eigengewächs;Formé au pays;Cresciuto nel vivaio;青训球员;Статус воспитанника;Situación de cantera;term list;check exact English wording in game
-registration.Trained at club (0-21);registration;Trained at club (0-21);;;;;;;;"check exact English wording in game; not captured: de, fr, it, zh_CN, ru, es"
-registration.Trained in nation (15-21);registration;Trained in nation (15-21);;;;;;;;"check exact English wording in game; not captured: de, fr, it, zh_CN, ru, es"
+registration.Trained at club (0-21);registration;Trained at club (0-21);Ausgebildet im Verein (0–21);Formé au club (0-21);Cresciuto in società (0-21);俱乐部培养(0-21);Тренировался в клубе (0-21);Entrenado en el club (0-21);game file;
+registration.Trained in nation (15-21);registration;Trained in nation (15-21);Ausgebildet im Land (15–21);Formé au pays (15-21);Cresciuto nel vivaio nazionale (15-21);国内培养 (15-21);Тренировался в стране (15-21);Entrenado en el país (15-21);game file;
 role.ip.Advanced Centre-Back;role;Advanced Centre-Back;Aufrückender Innenverteidiger;Défenseur Central Avancé;Difensore Centrale Avanzato;靠前中后卫;Либеро;Central avanzado;screen S5/S6;
 role.ip.Advanced Playmaker;role;Advanced Playmaker;Vorgeschobener Spielmacher;Meneur De Jeu Avancé;Regista Avanzato;前场组织核心;Выдвинутый Плеймейкер;Organizador adelantado;screen S5/S6;
 role.ip.Advanced Wing-Back;role;Advanced Wing-Back;Vorgeschobener Flügelverteidiger;Latéral Offensif Avancé;Esterno Offensivo;靠前边翼卫;Универсальный Крайний Атакующий Защитник;Lateral ofensivo avanzado;screen S5/S6;

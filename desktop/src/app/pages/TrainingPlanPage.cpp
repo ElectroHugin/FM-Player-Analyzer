@@ -7,6 +7,7 @@
 #include "core/DwrsEngine.h"
 #include "core/TrainingAdvice.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QComboBox>
 #include <QHBoxLayout>
@@ -222,7 +223,7 @@ void TrainingPlanPage::fillSection(Section &section)
         table->setItem(row, ColName, nameItem);
         table->setItem(row, ColAge,
                        new NumericItem(QString::number(player->age), player->age));
-        table->setItem(row, ColPosition, new QTableWidgetItem(player->positionRaw));
+        table->setItem(row, ColPosition, new QTableWidgetItem(GameTerms::positions(player->positionRaw)));
 
         auto *focusItem = new QTableWidgetItem(rd.focus);
         table->setItem(row, ColFocus, focusItem);

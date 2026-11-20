@@ -38,6 +38,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include "widgets/FlowLayout.h"
+#include "core/GameTerms.h"
 
 #include <QScrollArea>
 #include <QSet>
@@ -552,7 +553,7 @@ void PlayerProfilePage::fillSquadMenu(QMenu *menu)
         QMenu *sub = menu->addMenu(QStringLiteral("%1 (%2)").arg(groupNames.at(g)).arg(pool.size()));
         for (const Player *player : pool) {
             QAction *action = sub->addAction(
-                QStringLiteral("%1   ·   %2").arg(player->name, player->positionRaw));
+                QStringLiteral("%1   ·   %2").arg(player->name, GameTerms::positions(player->positionRaw)));
             action->setCheckable(true);
             action->setChecked(player->uid == m_currentUid);
             const QString uid = player->uid;
@@ -643,7 +644,7 @@ void PlayerProfilePage::showPlayer()
     if (player->age > 0)
         vitals << tr("%1 years").arg(player->age);
     if (!player->positionRaw.isEmpty())
-        vitals << player->positionRaw.toHtmlEscaped();
+        vitals << GameTerms::positions(player->positionRaw).toHtmlEscaped();
     m_vitalsLabel->setText(vitals.join(QStringLiteral(" &nbsp;·&nbsp; ")));
 
     // Portrait in the picture slot; without one the crest stands in there,
@@ -677,7 +678,7 @@ void PlayerProfilePage::showPlayer()
         const CellStyle style = personalityCellStyle(
             m_context.definitions().personalityCategory(player->personality));
         status << (style.isValid() ? dot(style.background.name()) : QString())
-                      + player->personality.toHtmlEscaped();
+                      + GameTerms::text(QStringLiteral("personality"), player->personality).toHtmlEscaped();
     }
 
     // --- Data freshness (see Freshness) ---
@@ -791,7 +792,7 @@ void PlayerProfilePage::showPlayer()
                 .arg(static_cast<int>(player->attrMean(idx(Attr::Determination))))
                 .arg(static_cast<int>(player->attrMean(idx(Attr::WorkRate))))
                 .arg(player->personality.isEmpty() ? QStringLiteral("—")
-                                                   : player->personality.toHtmlEscaped()));
+                                                   : GameTerms::text(QStringLiteral("personality"), player->personality).toHtmlEscaped()));
     } else {
         m_talentBox->setVisible(false);
     }
@@ -971,7 +972,7 @@ void PlayerProfilePage::fillHistory(const Player *player)
                 const double delta = mean(s, a) - mean(before, a);
                 if (std::abs(delta) >= 0.5)
                     moved << QStringLiteral("%1 %2%3")
-                                 .arg(attrNames()[a], delta > 0 ? QStringLiteral("+")
+                                 .arg(GameTerms::attribute(attrNames()[a]), delta > 0 ? QStringLiteral("+")
                                                                 : QStringLiteral("−"))
                                  .arg(QLocale().toString(std::abs(delta), 'g', 3));
             }

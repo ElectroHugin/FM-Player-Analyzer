@@ -4,6 +4,8 @@
 #include <QTemporaryDir>
 
 #include "core/Database.h"
+#include "core/Definitions.h"
+#include "core/GameTerms.h"
 #include "core/GameLanguage.h"
 #include "core/HtmlImporter.h"
 #include "core/ImportTable.h"
@@ -218,6 +220,30 @@ private slots:
         // Russian "П": midfielder as a position, right as a side.
         QCOMPARE(GameLanguage::positionsToEnglish(QString::fromUtf8("П (П)"), QStringLiteral("ru")),
                  QStringLiteral("M (R)"));
+    }
+
+    void gameTermsFollowTheUiLanguage()
+    {
+        // Display only: values stay English in the app, the UI shows the
+        // game's wording of the UI language.
+        Definitions::setDisplayLanguage(QStringLiteral("de"));
+        QCOMPARE(GameTerms::text(QStringLiteral("personality"), QStringLiteral("Driven")),
+                 QStringLiteral("Erfolgshungrig"));
+        QCOMPARE(GameTerms::text(QStringLiteral("foot_strength"), QStringLiteral("Fairly Strong")),
+                 QStringLiteral("Gut"));
+        QCOMPARE(GameTerms::text(QStringLiteral("personality"), QStringLiteral("Unknown")),
+                 QStringLiteral("Unknown"));
+        QCOMPARE(GameTerms::attribute(QStringLiteral("Teamwork")), QStringLiteral("Teamwork"));
+        QCOMPARE(GameTerms::attribute(QStringLiteral("Acceleration")), QStringLiteral("Antritt"));
+        QCOMPARE(GameTerms::attribute(QStringLiteral("One vs One")), QStringLiteral("Eins gegen Eins"));
+        QCOMPARE(GameTerms::positions(QStringLiteral("D (LC), WB (L)")),
+                 QStringLiteral("V (LZ), FV (L)"));
+        QCOMPARE(GameTerms::positions(QStringLiteral("D/WB/M (R), AM (C), GK")),
+                 QStringLiteral("V/FV/M (R), OM (Z), TW"));
+        Definitions::setDisplayLanguage(QStringLiteral("en"));
+        QCOMPARE(GameTerms::positions(QStringLiteral("D (LC)")), QStringLiteral("D (LC)"));
+        QCOMPARE(GameTerms::text(QStringLiteral("personality"), QStringLiteral("Driven")),
+                 QStringLiteral("Driven"));
     }
 
     void germanCsvImport()

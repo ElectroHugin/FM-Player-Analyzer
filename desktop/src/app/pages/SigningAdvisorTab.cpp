@@ -8,6 +8,7 @@
 #include "../widgets/NumericTableItem.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QApplication>
 #include <QCheckBox>
@@ -511,7 +512,7 @@ void SigningAdvisorTab::showOptions()
         m_optionsTable->setItem(r, column++, nameItem);
         m_optionsTable->setItem(r, column++, new NumericItem(QString::number(p.age), p.age));
         m_optionsTable->setItem(r, column++, new QTableWidgetItem(p.club));
-        m_optionsTable->setItem(r, column++, new QTableWidgetItem(p.positionRaw));
+        m_optionsTable->setItem(r, column++, new QTableWidgetItem(GameTerms::positions(p.positionRaw)));
         auto *dwrs = new NumericItem(formatDwrsPercent(option.rating),
                                      option.rating);
         const CellStyle style = dwrsCellStyle(option.rating);
@@ -522,7 +523,7 @@ void SigningAdvisorTab::showOptions()
         m_optionsTable->setItem(r, column++, dwrs);
         m_optionsTable->setItem(r, column++, new NumericItem(p.transferValueRaw, p.transferValue));
         m_optionsTable->setItem(r, column++, new QTableWidgetItem(p.wageRaw));
-        m_optionsTable->setItem(r, column++, new QTableWidgetItem(p.personality));
+        m_optionsTable->setItem(r, column++, new QTableWidgetItem(GameTerms::text(QStringLiteral("personality"), p.personality)));
         auto *gain = new NumericItem(gainText(option.xiGain), option.xiGain);
         gain->setBackground(gainColor(option.xiGain, need.options.front().xiGain));
         gain->setForeground(QColor(Qt::white));
