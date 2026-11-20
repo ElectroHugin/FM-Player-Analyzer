@@ -4,42 +4,42 @@
 <context>
     <name>DepartureDialog</name>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="119"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="120"/>
         <source>Resolve player departures</source>
         <translation>Разобрать уходы игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="124"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="125"/>
         <source>These players are in the database at your club but were not in the uploaded squad file. By default they all count as departed and become free agents (FrA) — untick the ones who stayed, and enter a new club or &apos;Retired&apos; for the others where needed.</source>
         <translation>Эти игроки есть в базе вашего клуба, но отсутствуют в загруженном файле состава. По умолчанию все они считаются ушедшими и становятся свободными агентами (FrA). Снимите отметку с тех, кто остался, а для остальных при необходимости укажите новый клуб или &apos;Retired&apos;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="132"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="133"/>
         <source>Mark all as departed</source>
         <translation>Отметить всех как ушедших</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="143"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="144"/>
         <source>Player</source>
         <translation>Игрок</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="144"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="145"/>
         <source>Departed</source>
         <translation>Ушёл</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="145"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="146"/>
         <source>New club / status</source>
         <translation>Новый клуб / статус</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="164"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="165"/>
         <source>Type a new club or pick a status (FrA = free agent, Retired = end of career).</source>
         <translation>Введите новый клуб или выберите статус (FrA = свободный агент, Retired = завершил карьеру).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="184"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="185"/>
         <source>Confirm departures</source>
         <translation>Подтвердить уходы</translation>
     </message>
@@ -277,7 +277,7 @@ Details: %1</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="954"/>
+        <location filename="../src/app/MainWindow.cpp" line="955"/>
         <source>Saving ratings …</source>
         <translation>Сохранение оценок…</translation>
     </message>
@@ -682,42 +682,42 @@ Details: %1</source>
 <context>
     <name>RoleAnalysis</name>
     <message>
-        <location filename="../src/core/RoleAnalysis.cpp" line="118"/>
+        <location filename="../src/core/RoleAnalysis.cpp" line="131"/>
         <source>Good personality: %1</source>
         <translation>Хороший характер: %1</translation>
     </message>
     <message>
-        <location filename="../src/core/RoleAnalysis.cpp" line="122"/>
+        <location filename="../src/core/RoleAnalysis.cpp" line="135"/>
         <source>Elite %1 (%2), key for %3</source>
         <translation>Элитный показатель %1 (%2), ключевой для %3</translation>
     </message>
     <message>
-        <location filename="../src/core/RoleAnalysis.cpp" line="125"/>
+        <location filename="../src/core/RoleAnalysis.cpp" line="138"/>
         <source>Strong %1 (%2), key for %3</source>
         <translation>Сильный показатель %1 (%2), ключевой для %3</translation>
     </message>
     <message>
-        <location filename="../src/core/RoleAnalysis.cpp" line="128"/>
+        <location filename="../src/core/RoleAnalysis.cpp" line="141"/>
         <source>Elite %1 (%2)</source>
         <translation>Элитный показатель %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/core/RoleAnalysis.cpp" line="130"/>
+        <location filename="../src/core/RoleAnalysis.cpp" line="143"/>
         <source>Strong %1 (%2)</source>
         <translation>Сильный показатель %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/core/RoleAnalysis.cpp" line="137"/>
+        <location filename="../src/core/RoleAnalysis.cpp" line="151"/>
         <source>Poor personality: %1</source>
         <translation>Слабый характер: %1</translation>
     </message>
     <message>
-        <location filename="../src/core/RoleAnalysis.cpp" line="141"/>
+        <location filename="../src/core/RoleAnalysis.cpp" line="155"/>
         <source>Low %1 (%2), key for %3</source>
         <translation>Низкий показатель %1 (%2), ключевой для %3</translation>
     </message>
     <message>
-        <location filename="../src/core/RoleAnalysis.cpp" line="143"/>
+        <location filename="../src/core/RoleAnalysis.cpp" line="157"/>
         <source>Low %1 (%2)</source>
         <translation>Низкий показатель %1 (%2)</translation>
     </message>
@@ -948,166 +948,166 @@ Details: %1</source>
 <context>
     <name>fm::AssignRolesPage</name>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="44"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="45"/>
         <source>Assign Roles</source>
         <translation>Назначить роли</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="50"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="51"/>
         <source>All Players</source>
         <translation>Все игроки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="51"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="52"/>
         <source>Players without roles</source>
         <translation>Игроки без ролей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="52"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="53"/>
         <source>Not from my club</source>
         <translation>Не из моего клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="53"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="54"/>
         <source>Without roles, not from my club</source>
         <translation>Без ролей, не из моего клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="60"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="61"/>
         <source>Search by name…</source>
         <translation>Поиск по имени…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="62"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="63"/>
         <source>Filter:</source>
         <translation>Фильтр:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="64"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="65"/>
         <source>Club:</source>
         <translation>Клуб:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="66"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="67"/>
         <source>Position:</source>
         <translation>Позиция:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="73"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="74"/>
         <source>Add missing default roles</source>
         <translation>Добавить недостающие роли по умолчанию</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="75"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="76"/>
         <source>Adds the default roles of their current positions to all players (like the import). Existing and manually set roles are kept.</source>
         <translation>Добавляет всем игрокам роли по умолчанию для их текущих позиций (как при импорте). Существующие и заданные вручную роли сохраняются.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="77"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="78"/>
         <source>⚠️ Auto-assign (ALL players)</source>
         <translation>⚠️ Автоназначение (ВСЕ игроки)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="78"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="79"/>
         <source>Resets the roles of ALL players to the default roles of their positions — manually adjusted roles are lost.</source>
         <translation>Сбрасывает роли ВСЕХ игроков на роли по умолчанию для их позиций. Роли, изменённые вручную, будут потеряны.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="81"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="82"/>
         <source>Save Changes</source>
         <translation>Сохранить изменения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="117"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="263"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="118"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="264"/>
         <source>Select a player in the table to edit roles.</source>
         <translation>Выберите игрока в таблице, чтобы изменить его роли.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="154"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="155"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="156"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="157"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="158"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="159"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="159"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="160"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="165"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="166"/>
         <source>Assigned Roles</source>
         <translation>Назначенные роли</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="207"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="212"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="208"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="213"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="337"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="338"/>
         <source>%1 players with unsaved changes</source>
         <translation>Игроков с несохранёнными изменениями: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="357"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="378"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="386"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="389"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="358"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="379"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="387"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="390"/>
         <source>Roles</source>
         <translation>Роли</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="357"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="358"/>
         <source>No changes to save.</source>
         <translation>Нет изменений для сохранения.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="390"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="391"/>
         <source>Updated roles for %1 players and recalculated DWRS.</source>
         <translation>Роли обновлены для игроков: %1, DWRS пересчитан.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="402"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="420"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="426"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="429"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="437"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="465"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="471"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="477"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="480"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="403"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="421"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="427"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="430"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="438"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="466"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="472"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="478"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="481"/>
         <source>Auto-assign</source>
         <translation>Автоназначение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="403"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="404"/>
         <source>All players already have the default roles of their positions.</source>
         <translation>У всех игроков уже есть роли по умолчанию для их позиций.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="430"/>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="481"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="431"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="482"/>
         <source>Assigned roles to %1 players and recalculated DWRS.</source>
         <translation>Роли назначены игрокам: %1, DWRS пересчитан.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="438"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="439"/>
         <source>Really reset the roles of ALL players based on their positions? Manually adjusted roles will be lost.</source>
         <translation>Действительно сбросить роли ВСЕХ игроков по их позициям? Роли, изменённые вручную, будут потеряны.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/AssignRolesPage.cpp" line="466"/>
+        <location filename="../src/app/pages/AssignRolesPage.cpp" line="467"/>
         <source>No players to update.</source>
         <translation>Нет игроков для обновления.</translation>
     </message>
@@ -1261,114 +1261,105 @@ Details: %1</source>
         <translation>Место остаётся пустым</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="74"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="546"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="75"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="547"/>
         <source>Best XI</source>
         <translation>Лучший состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="79"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="80"/>
         <source>Tactic:</source>
         <translation>Тактика:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="84"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="85"/>
         <source>＋ Own tactic</source>
         <translation>＋ Своя тактика</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="86"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="87"/>
         <source>The bundled tactics are only examples. Create your own in the tactic editor; updates leave them untouched.</source>
         <translation>Встроенные тактики — лишь примеры. Создайте свои в редакторе тактик; обновления их не затрагивают.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="91"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="92"/>
         <source>Competition:</source>
         <translation>Турнир:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="98"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="99"/>
         <source>Limits the first team to the players eligible in the competition: the saved squad list (Squad → Squad Registration) plus everyone who may play without a slot. In the cup everyone may play.</source>
         <translation>Ограничивает первую команду игроками, допущенными к турниру: сохранённая заявка (Состав → Заявка на сезон) плюс все, кто может играть без места в заявке. В кубке могут играть все.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="105"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="838"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="106"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="839"/>
         <source>Provably optimal</source>
         <translation>Доказуемо оптимально</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="106"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="107"/>
         <source>Show or hide how the line-up is computed</source>
         <translation>Показать или скрыть, как рассчитывается расстановка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="113"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="114"/>
         <source>Please choose your club first (Overview or Settings).</source>
         <translation>Сначала выберите свой клуб (Обзор или Настройки).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="142"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="143"/>
         <source>Click a name to open the player menu (e.g. to mark him fit again).</source>
         <translation>Нажмите на имя, чтобы открыть меню игрока (например, чтобы снова отметить его здоровым).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="145"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="146"/>
         <source>Plan them in anyway</source>
         <translation>Всё равно учитывать</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="147"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="148"/>
         <source>Shows the line-up as if everyone were fit. The table keeps comparing all fit against without the injured.</source>
         <translation>Показывает расстановку так, будто все здоровы. Таблица по-прежнему сравнивает «все здоровы» и «без травмированных».</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="153"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="154"/>
         <source>Team</source>
         <translation>Команда</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="153"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="154"/>
         <source>Slot</source>
         <translation>Место</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="153"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="369"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="154"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="370"/>
         <source>Role</source>
         <translation>Роль</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="154"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="155"/>
         <source>All fit</source>
         <translation>Все здоровы</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="154"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="155"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="330"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="369"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="156"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="331"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="370"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="155"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="156"/>
         <source>Without injured</source>
         <translation>Без травмированных</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="155"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="156"/>
         <source>Δ</source>
         <translation>Δ</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="199"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="309"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1026"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1028"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1219"/>
-        <source>Starting XI</source>
-        <translation>Основной состав</translation>
     </message>
     <message>
         <location filename="../src/app/pages/BestXiPage.cpp" line="200"/>
@@ -1376,306 +1367,315 @@ Details: %1</source>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1027"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1029"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1220"/>
+        <source>Starting XI</source>
+        <translation>Основной состав</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="201"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="311"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1028"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1030"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1221"/>
         <source>B-Team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="223"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="293"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="224"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="294"/>
         <source>Combined</source>
         <translation>Вместе</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="224"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="290"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1026"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="225"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="291"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1027"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1028"/>
         <source>In possession</source>
         <translation>С мячом</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="225"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="291"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1028"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="226"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="292"/>
         <location filename="../src/app/pages/BestXiPage.cpp" line="1029"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1030"/>
         <source>Out of possession</source>
         <translation>Без мяча</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="226"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="227"/>
         <source>Both</source>
         <translation>Оба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="237"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="238"/>
         <source>Combined: Starting XI and B-team side by side, with the selected team on the left. On narrow screens only the selected team is shown. Each player sits between his two positions. Both: in and out of possession for the selected team.</source>
         <translation>Вместе: основной состав и команда B рядом, выбранная команда слева. На узких экранах показана только выбранная команда. Каждый игрок стоит между своими двумя позициями. Оба: с мячом и без мяча для выбранной команды.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="259"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="260"/>
         <source>Restore suggestion</source>
         <translation>Вернуть предложение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="301"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="302"/>
         <source>Starting XI · Combined</source>
         <translation>Основной состав · Вместе</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="302"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="303"/>
         <source>B-Team · Combined</source>
         <translation>Команда B · Вместе</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="321"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="322"/>
         <source>Squad depth: a starter is missing</source>
         <translation>Глубина состава: нет игрока основы</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="329"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="330"/>
         <source>Unavailable</source>
         <translation>Недоступен</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="329"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="330"/>
         <source>Places</source>
         <translation>Места</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="329"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="330"/>
         <source>Comes on</source>
         <translation>Выходит</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="330"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="331"/>
         <source>Plays at</source>
         <translation>Играет на</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="331"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="332"/>
         <source>XI change</source>
         <translation>Изменение состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="331"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="332"/>
         <source>Who covers</source>
         <translation>Кто закрывает</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="332"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="333"/>
         <source>Other moves</source>
         <translation>Другие перемещения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="334"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="335"/>
         <source>Who fills the vacated places: the incoming player or a teammate who moves across for it.</source>
         <translation>Кто занимает освободившиеся места: вышедший игрок или смещающийся ради этого партнёр.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="337"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="338"/>
         <source>How the value of the whole starting XI (sum of DWRS) changes compared with the XI shown.</source>
         <translation>Как меняется сила всего основного состава (сумма DWRS) по сравнению с показанным.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="350"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="351"/>
         <source>Reserve options per role</source>
         <translation>Резервные варианты по ролям</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="362"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="363"/>
         <source>In possession (IP)</source>
         <translation>С мячом (СМ)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="362"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="363"/>
         <source>Out of possession (OOP)</source>
         <translation>Без мяча (БМ)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="369"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="432"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="440"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="370"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="441"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="369"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="432"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="440"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="370"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="441"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="369"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="370"/>
         <source>Suitability</source>
         <translation>Пригодность</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="386"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="387"/>
         <source>First Team</source>
         <translation>Первая команда</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="395"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="396"/>
         <source>Second Team XI</source>
         <translation>Состав второй команды</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="402"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="403"/>
         <source>Youth XI</source>
         <translation>Молодёжный состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="413"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="414"/>
         <source>Manage these players under Transfers → Loans &amp; Sales.</source>
         <translation>Управляйте этими игроками в разделе Трансферы → Аренды и продажи.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="428"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="429"/>
         <source>Promising talents to loan out (by talent score)</source>
         <translation>Перспективные таланты для аренды (по оценке таланта)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="432"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="440"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="441"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="432"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="440"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="441"/>
         <source>Best Role</source>
         <translation>Лучшая роль</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="441"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="434"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="442"/>
         <source>Best DWRS</source>
         <translation>Лучший DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="434"/>
         <source>Talent</source>
         <translation>Талант</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="441"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="434"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="442"/>
         <source>Det</source>
         <translation>Реш</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="433"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="441"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="434"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="442"/>
         <source>Wor</source>
         <translation>Раб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="434"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="441"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="435"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="442"/>
         <source>Transfer</source>
         <translation>Трансфер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="434"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="442"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="435"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="443"/>
         <source>Loan</source>
         <translation>Аренда</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="438"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="439"/>
         <source>Surplus players for sale / release</source>
         <translation>Лишние игроки на продажу / освобождение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="447"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="448"/>
         <source>Youth &amp;&amp; Second Team</source>
         <translation>Молодёжь &amp;&amp; вторая команда</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="452"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="546"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="453"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="547"/>
         <source>Signing Advisor</source>
         <translation>Советник по трансферам</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="558"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="559"/>
         <source>Starting XI and B-team are computed together as an assignment problem with the Hungarian algorithm (Kuhn–Munkres): players are assigned to positions one to one so that the sum of the ratings is maximal. No other line-up has a stronger starting XI, and of all equally strong ones you get the strongest B-team — versatile players play where their absence costs least. Based on the DWRS per role, weighted by playing time and natural position; primary roles are respected.</source>
         <translation>Основной состав и команда B рассчитываются вместе как задача о назначениях венгерским алгоритмом (Кун–Манкрес): игроки распределяются по позициям один к одному так, чтобы сумма оценок была максимальной. Ни у какой другой расстановки нет более сильного основного состава, а среди равных по силе вы получаете сильнейшую команду B: универсальные игроки играют там, где их отсутствие обходится дешевле всего. Основано на DWRS по ролям с учётом игрового времени и естественной позиции; основные роли соблюдаются.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="585"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="586"/>
         <source>%1 (squad list)</source>
         <translation>%1 (заявка)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="588"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="593"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="589"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="594"/>
         <source>%1 (all players)</source>
         <translation>%1 (все игроки)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="588"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="589"/>
         <source>League</source>
         <translation>Лига</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="591"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="592"/>
         <source>Champions / Europa / Conference League (list A + B)</source>
         <translation>Лига чемпионов / Лига Европы / Лига конференций (список A + B)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="593"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="594"/>
         <source>Cup</source>
         <translation>Кубок</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="720"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="721"/>
         <source>Not registered, left out: %1</source>
         <translation>Не заявлены, не учитываются: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="756"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="757"/>
         <source>All first-team players are eligible.</source>
         <translation>Все игроки первой команды допущены.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="758"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="759"/>
         <source>%1 first-team players are not registered and are left out.</source>
         <translation>Игроков первой команды без заявки (не учитываются): %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="762"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="763"/>
         <source>Without the squad list these would be in the starting XI or B-team: %1</source>
         <translation>Без заявки они были бы в основном составе или команде B: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="775"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="776"/>
         <source>No squad list saved for this competition yet — Best XI uses all players. Save it under Squad → Squad Registration.</source>
         <translation>Для этого турнира ещё нет сохранённой заявки, лучший состав учитывает всех игроков. Сохраните её в разделе Состав → Заявка на сезон.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="783"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="784"/>
         <source>At most %1 non-EU players in the starting XI (marked: %2).</source>
         <translation>Не более %1 игроков не из ЕС в основном составе (отмечены: %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="798"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="799"/>
         <source>%1 non-EU players in the starting XI, at most %2 are allowed.</source>
         <translation>В основном составе игроков не из ЕС: %1, допускается не более %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="838"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="839"/>
         <source>How the team is picked</source>
         <translation>Как выбирается команда</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="840"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="841"/>
         <source>Player selection considers both phases, playing time and natural positions. Within the configured DWRS allowance, the same players are assigned by manual side preferences first, then short paths between phases. Pinned positions are kept.</source>
         <translation>При выборе игроков учитываются обе фазы, игровое время и естественные позиции. В пределах заданного допуска DWRS те же игроки сначала расставляются по ручным предпочтениям сторон, затем по кратчайшим перемещениям между фазами. Закреплённые позиции сохраняются.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/BestXiPage.cpp" line="882"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="883"/>
         <source>Adjusted by hand (%n players). DWRS change from the suggestion: %1.</source>
         <translation>
             <numerusform>Изменено вручную (%n игрок). Изменение DWRS относительно предложения: %1.</numerusform>
@@ -1684,121 +1684,121 @@ Details: %1</source>
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="903"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="904"/>
         <source>OOP: %1</source>
         <translation>БМ: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="904"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="905"/>
         <source>IP: %1</source>
         <translation>СМ: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="953"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="954"/>
         <source>%1 % in possession · %2 % out of possession. Within the DWRS allowance, manual side preferences come first, then short paths. Right-click to move.
 DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team: %5.</source>
         <translation>%1 % с мячом · %2 % без мяча. В пределах допуска DWRS сначала учитываются ручные предпочтения сторон, затем короткие перемещения. Правый клик — переместить.
 Изменение DWRS относительно назначения: основной состав %3 · команда B %4. Допуск на команду: %5.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="976"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="977"/>
         <source>Second Team XI (from main club surplus)</source>
         <translation>Состав второй команды (лишние игроки основного клуба)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="977"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="978"/>
         <source>Second Team XI (%1)</source>
         <translation>Состав второй команды (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1090"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1091"/>
         <source>↔ Change in-possession place (now %1)</source>
         <translation>↔ Сменить место с мячом (сейчас %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1091"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1092"/>
         <source>↔ Change out-of-possession place (now %1)</source>
         <translation>↔ Сменить место без мяча (сейчас %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1096"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1097"/>
         <source>No other place possible (position missing)</source>
         <translation>Другое место невозможно (нет позиции)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1099"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1100"/>
         <source>Place · swap with · DWRS points of the XI</source>
         <translation>Место · поменять с · очки DWRS состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1106"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1107"/>
         <source>%1 (free) · %2</source>
         <translation>%1 (свободно) · %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1107"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1108"/>
         <source>%1 · %2 · %3</source>
         <translation>%1 · %2 · %3</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1119"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1120"/>
         <source>↺ Leave %1 to the analyzer again</source>
         <translation>↺ Снова доверить %1 анализатору</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1128"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1129"/>
         <source>↺ Restore the analyzer&apos;s suggestion (%1)</source>
         <translation>↺ Вернуть предложение анализатора (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1158"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1159"/>
         <source>Planned in despite injury: %1.</source>
         <translation>Учтён несмотря на травму: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1159"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1160"/>
         <source>Not planned in: %1.</source>
         <translation>Не учтён: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1162"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1163"/>
         <source>Starting XI and B-team stay just as strong.</source>
         <translation>Основной состав и команда B остаются такими же сильными.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1165"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1166"/>
         <source>This is how the squad makes up for it — starting XI %1, B-team %2 DWRS points (sum over all positions):</source>
         <translation>Вот как состав это компенсирует: основной состав %1, команда B %2 очков DWRS (сумма по всем позициям):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1173"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1174"/>
         <source>Long-term injured (%1)</source>
         <translation>Длительные травмы (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1228"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1229"/>
         <source>— unfilled —</source>
         <translation>— не занято —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1252"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1253"/>
         <source>%1 (injured)</source>
         <translation>%1 (травмирован)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1338"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1340"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1339"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1341"/>
         <source>yes</source>
         <translation>да</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1338"/>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1340"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1339"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1341"/>
         <source>no</source>
         <translation>нет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/BestXiPage.cpp" line="1354"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="1355"/>
         <source>No further players suitable as depth options for this tactic.</source>
         <translation>Других подходящих игроков для глубины состава в этой тактике нет.</translation>
     </message>
@@ -1857,420 +1857,420 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
 <context>
     <name>fm::DashboardPage</name>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="226"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="227"/>
         <source>Overview</source>
         <translation>Обзор</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="253"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="636"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="254"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="637"/>
         <source>Import new player data (FM export, HTML or CSV)</source>
         <translation>Импорт новых данных игроков (экспорт FM, HTML или CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="260"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="261"/>
         <source>No file selected…</source>
         <translation>Файл не выбран…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="261"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="262"/>
         <source>Browse…</source>
         <translation>Обзор…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="262"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="263"/>
         <source>Import</source>
         <translation>Импорт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="272"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="273"/>
         <source>File is a complete squad export of my club (detect departures)</source>
         <translation>Файл — полный экспорт состава моего клуба (определять уходы)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="274"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="275"/>
         <source>Enable if the file contains ONLY players from your main and second team. The app detects players who have left the club and asks about them.</source>
         <translation>Включите, если в файле ТОЛЬКО игроки вашей основной и второй команды. Приложение определит ушедших из клуба игроков и спросит о них.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="277"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="278"/>
         <source>Automatically assign roles to new/unassigned players</source>
         <translation>Автоматически назначать роли новым игрокам и игрокам без ролей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="292"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1278"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="293"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1279"/>
         <source>Choose save</source>
         <translation>Выбрать сохранение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="293"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="294"/>
         <source>Saves (*.fm);;All files (*)</source>
         <translation>Сохранения (*.fm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="314"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="315"/>
         <source>Squad Analysis</source>
         <translation>Анализ состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="319"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="320"/>
         <source>My Club:</source>
         <translation>Мой клуб:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="326"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="327"/>
         <source>Analysis Tactic:</source>
         <translation>Тактика для анализа:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="380"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="381"/>
         <source>Players in core squad</source>
         <translation>Игроки основного состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="381"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="382"/>
         <source>Total Squad Value</source>
         <translation>Общая стоимость состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="382"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="383"/>
         <source>Avg. Player Value</source>
         <translation>Средняя стоимость игрока</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="383"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="384"/>
         <source>Avg. Age</source>
         <translation>Средний возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="397"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="398"/>
         <source>Positional Strength</source>
         <translation>Сила по позициям</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
         <source>Combined</source>
         <translation>Вместе</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="927"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="928"/>
         <source>In possession</source>
         <translation>С мячом</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="928"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="929"/>
         <source>Out of possession</source>
         <translation>Без мяча</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="410"/>
         <source>Both</source>
         <translation>Оба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="428"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="429"/>
         <source>Colour by:</source>
         <translation>Цвет по:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="438"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="439"/>
         <source>Level</source>
         <translation>Уровень</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="438"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="439"/>
         <source>Squad comparison</source>
         <translation>Сравнение с составом</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="445"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="446"/>
         <source>Colour tiers as everywhere in the app: Poor to Legendary.</source>
         <translation>Цветовые уровни, как везде в приложении: от слабого до легендарного.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="446"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="447"/>
         <source>Each starter compared with the squad median (median of the starters shown): grey within 1.5 points, orange below, blue above, strong from 4 points.</source>
         <translation>Каждый игрок основы сравнивается с медианой состава (медиана показанных игроков): серый — в пределах 1,5 очка, оранжевый — ниже, синий — выше, насыщенный — от 4 очков.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="502"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="502"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1207"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1208"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="502"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
         <source>Personality</source>
         <translation>Характер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="503"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
         <source>Playing Time</source>
         <translation>Игровое время</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
         <source>Avg. Rating</source>
         <translation>Ср. оценка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="504"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="505"/>
         <source>Market Value</source>
         <translation>Рыночная стоимость</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="522"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="523"/>
         <source>Transfer targets</source>
         <translation>Трансферные цели</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="525"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="526"/>
         <source>Possible reinforcements from your scouting database, based on the roles of the selected tactic.</source>
         <translation>Возможные усиления из вашей скаутской базы на основе ролей выбранной тактики.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="532"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="533"/>
         <source>Max. Age:</source>
         <translation>Макс. возраст:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="541"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="542"/>
         <source>Max. Market Value:</source>
         <translation>Макс. рыночная стоимость:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="562"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="563"/>
         <source>%1 years</source>
         <translation>%1 лет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="609"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
         <source>far below</source>
         <translation>намного ниже</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="609"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
         <source>below</source>
         <translation>ниже</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="609"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
         <source>squad median</source>
         <translation>медиана состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
         <source>above</source>
         <translation>выше</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="610"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="611"/>
         <source>far above</source>
         <translation>намного выше</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="618"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="619"/>
         <source>Squad median: %1</source>
         <translation>Медиана состава: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="635"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="636"/>
         <source>Read player data (save game)</source>
         <translation>Загрузить данные игроков (сохранение)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="647"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="648"/>
         <source>Tip: &lt;a href=&quot;follow&quot;&gt;follow your save live&lt;/a&gt;, it is read again after every save in the game.</source>
         <translation>Совет: &lt;a href=&quot;follow&quot;&gt;отслеживайте сохранение в реальном времени&lt;/a&gt;, оно перечитывается после каждого сохранения в игре.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="641"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="642"/>
         <source>Following “%1”: read again after every save in the game.</source>
         <translation>Отслеживается «%1»: перечитывается после каждого сохранения в игре.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="706"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="707"/>
         <source>Please import player data and select your club above to see the squad analysis.</source>
         <translation>Импортируйте данные игроков и выберите свой клуб выше, чтобы увидеть анализ состава.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="734"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="759"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="735"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="760"/>
         <source>No squad could be built for the tactic &apos;%1&apos; — there are no suitable players in your club.</source>
         <translation>Не удалось собрать состав для тактики &apos;%1&apos;: в вашем клубе нет подходящих игроков.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="827"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="828"/>
         <source>IP %1 · OOP %2</source>
         <translation>СМ %1 · БМ %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="840"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="841"/>
         <source>If %1 is unavailable:</source>
         <translation>Если %1 недоступен:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="842"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="843"/>
         <source>gap</source>
         <translation>дыра</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="843"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="844"/>
         <source>No squad player fills the gap; one place stays empty.</source>
         <translation>Никто из состава не закрывает дыру; одно место остаётся пустым.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="845"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="846"/>
         <source>XI %1</source>
         <translation>Состав %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="846"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="847"/>
         <source>%1 comes on (%2).</source>
         <translation>%1 выходит на поле (%2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="848"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="849"/>
         <source>%1 moves: %2 → %3.</source>
         <translation>%1 смещается: %2 → %3.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="850"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="851"/>
         <source>Starting XI %1 DWRS points (sum of all eleven).</source>
         <translation>Основной состав: %1 очков DWRS (сумма всех одиннадцати).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="900"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="945"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="970"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="901"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="946"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="971"/>
         <source>free</source>
         <translation>свободно</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="901"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="902"/>
         <source>The squad has no player for %1.</source>
         <translation>В составе нет игрока для %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="944"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="945"/>
         <source>IP: %1</source>
         <translation>СМ: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="946"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="947"/>
         <source>%1 in possession is empty.</source>
         <translation>%1 с мячом не занято.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="959"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="960"/>
         <source>%1 (in possession %2, out of possession %3)</source>
         <translation>%1 (с мячом %2, без мяча %3)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="969"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="970"/>
         <source>OOP: %1</source>
         <translation>БМ: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="971"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="972"/>
         <source>%1 out of possession is empty.</source>
         <translation>%1 без мяча не занято.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="980"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="981"/>
         <source>Large: the starter&apos;s DWRS in his role.</source>
         <translation>Крупно: DWRS игрока основы в его роли.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="982"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="983"/>
         <source>Large: the starter&apos;s value over both line-ups (%1 % in possession).</source>
         <translation>Крупно: ценность игрока основы в обеих расстановках (%1 % с мячом).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="986"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="987"/>
         <source>Small: how the starting XI changes if he is out. The tooltip shows the details.</source>
         <translation>Мелко: как изменится основной состав без него. Подсказка показывает подробности.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="996"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="997"/>
         <source>“XI −4.0”: if the player is out, the best cover comes on (as in Best XI under “Squad depth: a starter is missing”), and the sum of DWRS of the whole starting XI drops by 4.0. “gap”: no squad player fills the place. Based on the whole club without long-term injured and without players marked as not registered, otherwise without competition rules; manual places from Best XI apply.</source>
         <translation>«Состав −4.0»: если игрок выбывает, выходит лучшая замена (как в лучшем составе в разделе «Глубина состава: нет игрока основы»), и сумма DWRS всего основного состава снижается на 4,0. «дыра»: никто из состава не закрывает место. Учитывается весь клуб без длительно травмированных и без игроков, отмеченных как незаявленные, в остальном без правил турнира; ручные места из лучшего состава действуют.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1033"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1034"/>
         <source>In-game date · season %1</source>
         <translation>Игровая дата · сезон %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1036"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1037"/>
         <source>State of the most recently read FM27 save</source>
         <translation>Состояние последнего прочитанного сохранения FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1043"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1044"/>
         <source>Players at %1 (%2)</source>
         <translation>Игроки на %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1171"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1172"/>
         <source>Your squad is well set up. No clear reinforcements found within the filter criteria.</source>
         <translation>Ваш состав хорошо укомплектован. По критериям фильтра явных усилений не найдено.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1192"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1193"/>
         <source>Upgrade for %1</source>
         <translation>Усиление для %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1203"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1204"/>
         <source>Rating</source>
         <translation>Оценка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1203"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1204"/>
         <source>%1 % (your best %2 %)</source>
         <translation>%1 % (ваш лучший %2 %)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1206"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1207"/>
         <source>Value</source>
         <translation>Стоимость</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1219"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1220"/>
         <source>Club: %1&lt;br/&gt;Positions: %2</source>
         <translation>Клуб: %1&lt;br/&gt;Позиции: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1230"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1231"/>
         <source>Click for actions: profile, shortlist, comparison</source>
         <translation>Нажмите для действий: профиль, список наблюдения, сравнение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1236"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1237"/>
         <source>%1 (%2%)</source>
         <translation>%1 (%2%)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1251"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1252"/>
         <source>Compare with %1</source>
         <translation>Сравнить с %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1258"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1259"/>
         <source>Compare with all %n</source>
         <translation>
             <numerusform>Сравнить со всеми (%n)</numerusform>
@@ -2279,27 +2279,27 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1279"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1280"/>
         <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
         <translation>Сохранения (*.fm);;Списки игроков (*.csv *.html *.htm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1281"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1282"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>Выберите экспорт FM или сохранение FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1282"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1283"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>Экспорты FM и сохранения FM27 (*.html *.htm *.csv *.fm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1320"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1321"/>
         <source>Import failed</source>
         <translation>Ошибка импорта</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1321"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1322"/>
         <source>The file could not be imported.
 
 %1
@@ -2312,28 +2312,28 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
 Возможные причины: нет столбца &apos;UID&apos; или это не корректный экспорт Football Manager (HTML или CSV).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1336"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1337"/>
         <source>Import complete</source>
         <translation>Импорт завершён</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1344"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1345"/>
         <source>Tip: reading the save (.fm) directly is faster and needs no export.</source>
         <translation>Совет: чтение сохранения (.fm) напрямую быстрее и не требует экспорта.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1346"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1347"/>
         <source>Show again next time</source>
         <translation>Показать снова в следующий раз</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1405"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1412"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1406"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1413"/>
         <source>Departures</source>
         <translation>Уходы</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1413"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1414"/>
         <source>%1 player records updated.</source>
         <translation>Обновлено записей игроков: %1.</translation>
     </message>
@@ -3177,280 +3177,280 @@ You can change the folder later in the settings.</source>
 <context>
     <name>fm::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="154"/>
+        <location filename="../src/app/MainWindow.cpp" line="155"/>
         <source>Back (Alt+←)</source>
         <translation>Назад (Alt+←)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="155"/>
+        <location filename="../src/app/MainWindow.cpp" line="156"/>
         <source>Forward (Alt+→)</source>
         <translation>Вперёд (Alt+→)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="158"/>
+        <location filename="../src/app/MainWindow.cpp" line="159"/>
         <source>Home (Alt+Home)</source>
         <translation>Домой (Alt+Home)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="181"/>
+        <location filename="../src/app/MainWindow.cpp" line="182"/>
         <source>Players, pages, actions …    Ctrl+K</source>
         <translation>Игроки, страницы, действия…    Ctrl+K</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="191"/>
+        <location filename="../src/app/MainWindow.cpp" line="192"/>
         <source>Import</source>
         <translation>Импорт</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="230"/>
+        <location filename="../src/app/MainWindow.cpp" line="231"/>
         <source>Later</source>
         <translation>Позже</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="345"/>
+        <location filename="../src/app/MainWindow.cpp" line="346"/>
         <source>Recalculation</source>
         <translation>Пересчёт</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="348"/>
+        <location filename="../src/app/MainWindow.cpp" line="349"/>
         <source>DWRS recalculated: %1 ratings, %2 changed entries saved.</source>
         <translation>DWRS пересчитан: оценок %1, сохранено изменённых записей: %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="383"/>
+        <location filename="../src/app/MainWindow.cpp" line="384"/>
         <source>New FM27 rating profile</source>
         <translation>Новый профиль оценки FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="384"/>
+        <location filename="../src/app/MainWindow.cpp" line="385"/>
         <source>There is a new rating profile for FM27: “DWRS FM27 · harvestgreen22” (provisional).</source>
         <translation>Появился новый профиль оценки для FM27: «DWRS FM27 · harvestgreen22» (предварительный).</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="387"/>
+        <location filename="../src/app/MainWindow.cpp" line="388"/>
         <source>It is based on measurements in FM27 matches and separates roles more clearly. Values have one decimal. Switching recalculates all ratings of this save; the history marks the switch. You can change the profile at any time under Settings → DWRS rating.</source>
         <translation>Он основан на замерах в матчах FM27 и чётче различает роли. Значения с одним знаком после запятой. Переключение пересчитает все оценки этого сохранения; в истории будет отметка. Профиль можно сменить в любой момент в разделе Настройки → Оценка DWRS.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="391"/>
+        <location filename="../src/app/MainWindow.cpp" line="392"/>
         <source>Use new profile</source>
         <translation>Использовать новый профиль</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="392"/>
+        <location filename="../src/app/MainWindow.cpp" line="393"/>
         <source>Keep previous</source>
         <translation>Оставить прежний</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="401"/>
+        <location filename="../src/app/MainWindow.cpp" line="402"/>
         <source>Rating profile</source>
         <translation>Профиль оценки</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="419"/>
+        <location filename="../src/app/MainWindow.cpp" line="420"/>
         <source>The DWRS calculation has been improved (goalkeepers are rated on all goalkeeping attributes). The ratings in this save still come from the old calculation.</source>
         <translation>Расчёт DWRS улучшен (вратари оцениваются по всем вратарским атрибутам). Оценки в этом сохранении ещё по старому расчёту.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="422"/>
+        <location filename="../src/app/MainWindow.cpp" line="423"/>
         <source>Recalculate now</source>
         <translation>Пересчитать сейчас</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="443"/>
+        <location filename="../src/app/MainWindow.cpp" line="444"/>
         <source>Switch save (Ctrl+O)</source>
         <translation>Сменить сохранение (Ctrl+O)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="458"/>
-        <location filename="../src/app/MainWindow.cpp" line="1124"/>
+        <location filename="../src/app/MainWindow.cpp" line="459"/>
+        <location filename="../src/app/MainWindow.cpp" line="1125"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="458"/>
-        <location filename="../src/app/MainWindow.cpp" line="975"/>
-        <location filename="../src/app/MainWindow.cpp" line="1124"/>
+        <location filename="../src/app/MainWindow.cpp" line="459"/>
+        <location filename="../src/app/MainWindow.cpp" line="976"/>
+        <location filename="../src/app/MainWindow.cpp" line="1125"/>
         <source>National Team</source>
         <translation>Сборная</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="500"/>
-        <location filename="../src/app/MainWindow.cpp" line="1154"/>
+        <location filename="../src/app/MainWindow.cpp" line="501"/>
+        <location filename="../src/app/MainWindow.cpp" line="1155"/>
         <source>Toggle day/night</source>
         <translation>День/ночь</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="510"/>
+        <location filename="../src/app/MainWindow.cpp" line="511"/>
         <source>v%1 · ElectroHugin</source>
         <translation>v%1 · ElectroHugin</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="511"/>
+        <location filename="../src/app/MainWindow.cpp" line="512"/>
         <source>About %1</source>
         <translation>О программе %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="578"/>
+        <location filename="../src/app/MainWindow.cpp" line="579"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="579"/>
-        <location filename="../src/app/MainWindow.cpp" line="1152"/>
-        <location filename="../src/app/MainWindow.cpp" line="1217"/>
+        <location filename="../src/app/MainWindow.cpp" line="580"/>
+        <location filename="../src/app/MainWindow.cpp" line="1153"/>
+        <location filename="../src/app/MainWindow.cpp" line="1218"/>
         <source>New save …</source>
         <translation>Новое сохранение…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="582"/>
-        <location filename="../src/app/MainWindow.cpp" line="1150"/>
+        <location filename="../src/app/MainWindow.cpp" line="583"/>
+        <location filename="../src/app/MainWindow.cpp" line="1151"/>
         <source>Switch save …</source>
         <translation>Сменить сохранение…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="193"/>
+        <location filename="../src/app/MainWindow.cpp" line="194"/>
         <source>Read player data (Ctrl+I). You can also simply drop a file onto the window.</source>
         <translation>Загрузить данные игроков (Ctrl+I). Файл можно также просто перетащить в окно.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="586"/>
-        <location filename="../src/app/MainWindow.cpp" line="1148"/>
+        <location filename="../src/app/MainWindow.cpp" line="587"/>
+        <location filename="../src/app/MainWindow.cpp" line="1149"/>
         <source>Import player data …</source>
         <translation>Загрузить данные игроков …</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="589"/>
+        <location filename="../src/app/MainWindow.cpp" line="590"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="593"/>
+        <location filename="../src/app/MainWindow.cpp" line="594"/>
         <source>&amp;Language</source>
         <translation>&amp;Язык</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="608"/>
+        <location filename="../src/app/MainWindow.cpp" line="609"/>
         <source>&amp;Help</source>
         <translation>&amp;Справка</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="609"/>
+        <location filename="../src/app/MainWindow.cpp" line="610"/>
         <source>Welcome assistant …</source>
         <translation>Мастер приветствия…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="610"/>
+        <location filename="../src/app/MainWindow.cpp" line="611"/>
         <source>About %1…</source>
         <translation>О программе %1…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="628"/>
+        <location filename="../src/app/MainWindow.cpp" line="629"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="629"/>
+        <location filename="../src/app/MainWindow.cpp" line="630"/>
         <source>The language will change after a restart. Restart now?</source>
         <translation>Язык изменится после перезапуска. Перезапустить сейчас?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="918"/>
+        <location filename="../src/app/MainWindow.cpp" line="919"/>
         <source>Recalculating DWRS ratings…</source>
         <translation>Пересчёт оценок DWRS…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="982"/>
+        <location filename="../src/app/MainWindow.cpp" line="983"/>
         <source>FM Dashboard</source>
         <translation>Панель FM</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1072"/>
+        <location filename="../src/app/MainWindow.cpp" line="1073"/>
         <source>Test version %1 is available.</source>
         <translation>Доступна тестовая версия %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1073"/>
+        <location filename="../src/app/MainWindow.cpp" line="1074"/>
         <source>Version %1 is available.</source>
         <translation>Доступна версия %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1074"/>
+        <location filename="../src/app/MainWindow.cpp" line="1075"/>
         <source>What&apos;s new</source>
         <translation>Что нового</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1125"/>
+        <location filename="../src/app/MainWindow.cpp" line="1126"/>
         <source>Pages</source>
         <translation>Страницы</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1145"/>
+        <location filename="../src/app/MainWindow.cpp" line="1146"/>
         <source>Actions</source>
         <translation>Действия</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1148"/>
+        <location filename="../src/app/MainWindow.cpp" line="1149"/>
         <source>Ctrl+I</source>
         <translation>Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1150"/>
+        <location filename="../src/app/MainWindow.cpp" line="1151"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1152"/>
+        <location filename="../src/app/MainWindow.cpp" line="1153"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1153"/>
+        <location filename="../src/app/MainWindow.cpp" line="1154"/>
         <source>Recalculate DWRS</source>
         <translation>Пересчитать DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1170"/>
+        <location filename="../src/app/MainWindow.cpp" line="1171"/>
         <source>Players</source>
         <translation>Игроки</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1189"/>
+        <location filename="../src/app/MainWindow.cpp" line="1190"/>
         <source>%1 players</source>
         <translation>Игроков: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1201"/>
+        <location filename="../src/app/MainWindow.cpp" line="1202"/>
         <source>Recently used</source>
         <translation>Недавние</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1209"/>
+        <location filename="../src/app/MainWindow.cpp" line="1210"/>
         <source>Open save</source>
         <translation>Открыть сохранение</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1216"/>
+        <location filename="../src/app/MainWindow.cpp" line="1217"/>
         <source>All saves …</source>
         <translation>Все сохранения…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1269"/>
+        <location filename="../src/app/MainWindow.cpp" line="1270"/>
         <source>Choose save</source>
         <translation>Выбрать сохранение</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1270"/>
+        <location filename="../src/app/MainWindow.cpp" line="1271"/>
         <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
         <translation>Сохранения (*.fm);;Списки игроков (*.csv *.html *.htm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1272"/>
+        <location filename="../src/app/MainWindow.cpp" line="1273"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>Выберите экспорт FM или сохранение FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1273"/>
+        <location filename="../src/app/MainWindow.cpp" line="1274"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>Экспорты FM и сохранения FM27 (*.html *.htm *.csv *.fm);;Все файлы (*)</translation>
     </message>
@@ -3636,273 +3636,273 @@ The original file is not modified.</source>
 <context>
     <name>fm::NationalCallupPage</name>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="63"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="64"/>
         <source>Call-up Assistant</source>
         <translation>Помощник вызова</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="71"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="72"/>
         <source>1. Current squad</source>
         <translation>1. Текущий состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="73"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="74"/>
         <source>Use saved national squad</source>
         <translation>Использовать сохранённый состав сборной</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="74"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="75"/>
         <source>Upload squad from FM export (HTML or CSV)</source>
         <translation>Загрузить состав из экспорта FM (HTML или CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="80"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="81"/>
         <source>Choose squad file…</source>
         <translation>Выбрать файл состава…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="97"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="98"/>
         <source>2. Parameters</source>
         <translation>2. Параметры</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="107"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="108"/>
         <source>Total squad size:</source>
         <translation>Размер состава:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="110"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="111"/>
         <source>of which goalkeepers:</source>
         <translation>из них вратарей:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="113"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="114"/>
         <source>Tactic:</source>
         <translation>Тактика:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="118"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="119"/>
         <source>3. Injured / unavailable (for this run)</source>
         <translation>3. Травмированные / недоступные (для этого расчёта)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="122"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="123"/>
         <source>Search pool by name…</source>
         <translation>Поиск в пуле по имени…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="143"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="322"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="144"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="323"/>
         <source>%1 players marked as unavailable.</source>
         <translation>Игроков отмечено как недоступные: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="150"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="151"/>
         <source>Compute call-up</source>
         <translation>Рассчитать вызов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="166"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="167"/>
         <source>✅ Call up</source>
         <translation>✅ Вызвать</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="172"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="173"/>
         <source>❌ Drop</source>
         <translation>❌ Убрать</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="183"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="184"/>
         <source>Apply recommended squad</source>
         <translation>Применить рекомендуемый состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="206"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="207"/>
         <source>Copy name</source>
         <translation>Копировать имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="207"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="208"/>
         <source>Open profile</source>
         <translation>Открыть профиль</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="238"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="239"/>
         <source>⚠️ Please fully configure your national team first under Settings → National team (name, country code, age limit).</source>
         <translation>⚠️ Сначала полностью настройте сборную в разделе Настройки → Сборная (название, код страны, возрастной лимит).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="245"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="246"/>
         <source>Pool: players with nationality &apos;%1&apos;%2. The assistant builds the strongest possible squad from the whole eligible pool and compares it with your current squad.</source>
         <translation>Пул: игроки с гражданством &apos;%1&apos;%2. Помощник собирает сильнейший возможный состав из всего доступного пула и сравнивает его с текущим.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="248"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="249"/>
         <source> up to age %1</source>
         <translation> до %1 лет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="261"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="262"/>
         <source>Uploaded squad: %1 players.</source>
         <translation>Загруженный состав: %1 игроков.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="262"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="263"/>
         <source>No squad file loaded yet.</source>
         <translation>Файл состава ещё не загружен.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="265"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="266"/>
         <source>Saved national squad: %1 players.</source>
         <translation>Сохранённый состав сборной: %1 игроков.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="329"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="330"/>
         <source>Choose national-squad export</source>
         <translation>Выбрать экспорт состава сборной</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="330"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="331"/>
         <source>FM exports (*.html *.htm *.csv);;All files (*)</source>
         <translation>Экспорты FM (*.html *.htm *.csv);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="338"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="348"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="399"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="415"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="423"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="427"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="436"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="446"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="536"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="550"/>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="553"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="339"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="349"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="400"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="416"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="424"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="428"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="437"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="447"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="537"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="551"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="554"/>
         <source>Call-up</source>
         <translation>Вызов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="339"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="340"/>
         <source>Squad file could not be read: %1</source>
         <translation>Не удалось прочитать файл состава: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="349"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="350"/>
         <source>The file contains neither a &apos;%1&apos; nor a &apos;%2&apos; column.</source>
         <translation>В файле нет ни столбца &apos;%1&apos;, ни столбца &apos;%2&apos;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="400"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="401"/>
         <source>No player from the file could be matched to the database. Does the export include a UID column?</source>
         <translation>Ни одного игрока из файла не удалось сопоставить с базой. Есть ли в экспорте столбец UID?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="407"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="408"/>
         <source>%1 players from the file taken as the current squad.</source>
         <translation>Игроков из файла взято в текущий состав: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="411"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="412"/>
         <source>%1 not matched: %2</source>
         <translation>Не сопоставлено %1: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="423"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="424"/>
         <source>No tactic selected.</source>
         <translation>Тактика не выбрана.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="428"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="429"/>
         <source>Please upload a squad file first or switch to the saved squad.</source>
         <translation>Сначала загрузите файл состава или переключитесь на сохранённый состав.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="437"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="438"/>
         <source>The number of goalkeepers must be smaller than the squad size.</source>
         <translation>Число вратарей должно быть меньше размера состава.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="447"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="448"/>
         <source>No eligible, available player in the pool. Check nationality/age limit and the injured markings.</source>
         <translation>В пуле нет доступных игроков. Проверьте гражданство, возрастной лимит и отметки о травмах.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="468"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="469"/>
         <source>(only %1 goalkeepers available in the pool)</source>
         <translation>(в пуле доступно вратарей: только %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="471"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="472"/>
         <source>&lt;b&gt;Recommended squad:&lt;/b&gt; %1 players (%2 goalkeepers%3) — tactic %4.&lt;br&gt;&lt;b&gt;%5&lt;/b&gt; to call up, &lt;b&gt;%6&lt;/b&gt; to drop.</source>
         <translation>&lt;b&gt;Рекомендуемый состав:&lt;/b&gt; %1 игроков (%2 вратарей%3), тактика %4.&lt;br&gt;Вызвать: &lt;b&gt;%5&lt;/b&gt;, убрать: &lt;b&gt;%6&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="482"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="483"/>
         <source>Starting XI</source>
         <translation>Основной состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="484"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="485"/>
         <source>B-Team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="485"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="486"/>
         <source>Squad depth</source>
         <translation>Глубина состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="491"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="492"/>
         <source>%1  ·  %2  ·  DWRS %3%</source>
         <translation>%1  ·  %2  ·  DWRS %3%</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="499"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="500"/>
         <source>None — the current squad is already optimal.</source>
         <translation>Нет — текущий состав уже оптимален.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="510"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="511"/>
         <source>Retired</source>
         <translation>Retired</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="512"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="513"/>
         <source>stale</source>
         <translation>устарел</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="514"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="515"/>
         <source>injured/blocked</source>
         <translation>травма/блок</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="516"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="517"/>
         <source>unavailable/ineligible</source>
         <translation>недоступен/не допущен</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="518"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="519"/>
         <source>surplus</source>
         <translation>лишний</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="520"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="521"/>
         <source>%1  ·  %2</source>
         <translation>%1  ·  %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="525"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="526"/>
         <source>None — no current player needs to make way.</source>
         <translation>Нет — никому из текущих игроков не нужно уступать место.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="537"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="538"/>
         <source>Save the recommended squad (%1 players) as the national squad? The previous national squad will be replaced.</source>
         <translation>Сохранить рекомендуемый состав (%1 игроков) как состав сборной? Прежний состав будет заменён.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalCallupPage.cpp" line="554"/>
+        <location filename="../src/app/pages/NationalCallupPage.cpp" line="555"/>
         <source>%1 players saved in the national squad.</source>
         <translation>В состав сборной сохранено игроков: %1.</translation>
     </message>
@@ -3910,168 +3910,168 @@ The original file is not modified.</source>
 <context>
     <name>fm::NationalDashboardPage</name>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="53"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="54"/>
         <source>National Team Overview</source>
         <translation>Обзор сборной</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="58"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="59"/>
         <source>⬆️ Import new player data (FM export, HTML or CSV)</source>
         <translation>⬆️ Импорт новых данных игроков (экспорт FM, HTML или CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="63"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="64"/>
         <source>No file selected…</source>
         <translation>Файл не выбран…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="64"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="65"/>
         <source>Browse…</source>
         <translation>Обзор…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="65"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="66"/>
         <source>Import</source>
         <translation>Импорт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="73"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="74"/>
         <source>Replace national squad with players from this file</source>
         <translation>Заменить состав сборной игроками из этого файла</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="75"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="76"/>
         <source>When enabled, the current national squad is cleared and replaced with ALL players from this export file — handy for quick squad updates.</source>
         <translation>Если включено, текущий состав сборной очищается и заменяется ВСЕМИ игроками из этого файла — удобно для быстрого обновления.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="78"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="79"/>
         <source>Automatically assign roles to new/unassigned players</source>
         <translation>Автоматически назначать роли новым игрокам и игрокам без ролей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="88"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="89"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>Выберите экспорт FM или сохранение FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="89"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="90"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>Экспорты FM и сохранения FM27 (*.html *.htm *.csv *.fm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="109"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="110"/>
         <source>Squad Analysis</source>
         <translation>Анализ состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="113"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="114"/>
         <source>Analysis Tactic:</source>
         <translation>Тактика для анализа:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="135"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="136"/>
         <source>Players in squad</source>
         <translation>Игроки в составе</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="136"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="137"/>
         <source>Avg. Age</source>
         <translation>Средний возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="142"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="143"/>
         <source>Positional Strength</source>
         <translation>Сила по позициям</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="156"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="157"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="156"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="157"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="156"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="157"/>
         <source>Avg. Rating</source>
         <translation>Ср. оценка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="156"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="157"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="156"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="157"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="171"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="172"/>
         <source>🎯 Possible call-ups</source>
         <translation>🎯 Возможные вызовы</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="174"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="175"/>
         <source>Possible reinforcements from the eligible player pool who are not currently in the squad.</source>
         <translation>Возможные усиления из доступного пула, которых сейчас нет в составе.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="180"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="181"/>
         <source>Max. Age:</source>
         <translation>Макс. возраст:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="206"/>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="226"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="207"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="227"/>
         <source>%1 years</source>
         <translation>%1 лет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="240"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="241"/>
         <source>⚠️ Please fully configure your national team first under Settings → National team (name, country code, age limit).</source>
         <translation>⚠️ Сначала полностью настройте сборную в разделе Настройки → Сборная (название, код страны, возрастной лимит).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="253"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="254"/>
         <source>No players in the national squad yet. Put it together under Squad → Selection.</source>
         <translation>В составе сборной пока нет игроков. Соберите его в разделе Состав → Отбор.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="276"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="277"/>
         <source>Current %1 squad</source>
         <translation>Текущий состав %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="407"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="408"/>
         <source>✅ Your squad is well set up! No clear reinforcements found in the eligible pool.</source>
         <translation>✅ Ваш состав хорошо укомплектован! Явных усилений в доступном пуле нет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="426"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="427"/>
         <source>Upgrade for &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Усиление для &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="433"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="434"/>
         <source>🎯 &lt;b&gt;Rating:&lt;/b&gt; %1 %% (your best: %2 %%)&lt;br/&gt;🎂 &lt;b&gt;Age:&lt;/b&gt; %3</source>
         <translation>🎯 &lt;b&gt;Оценка:&lt;/b&gt; %1 %% (ваш лучший: %2 %%)&lt;br/&gt;🎂 &lt;b&gt;Возраст:&lt;/b&gt; %3</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="441"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="442"/>
         <source>Club: %1&lt;br/&gt;Positions: %2</source>
         <translation>Клуб: %1&lt;br/&gt;Позиции: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="483"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="484"/>
         <source>Import failed</source>
         <translation>Ошибка импорта</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="484"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="485"/>
         <source>❌ The file could not be imported.
 
 %1</source>
@@ -4080,17 +4080,17 @@ The original file is not modified.</source>
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="499"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="500"/>
         <source>National Squad</source>
         <translation>Состав сборной</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="502"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="503"/>
         <source>🔁 National squad replaced with %1 players from the file.</source>
         <translation>🔁 Состав сборной заменён игроками из файла: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="510"/>
+        <location filename="../src/app/pages/NationalDashboardPage.cpp" line="511"/>
         <source>Import complete</source>
         <translation>Импорт завершён</translation>
     </message>
@@ -4098,97 +4098,97 @@ The original file is not modified.</source>
 <context>
     <name>fm::NationalSquadMatrixPage</name>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="44"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="45"/>
         <source>National Squad Matrix</source>
         <translation>Матрица состава сборной</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="48"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="49"/>
         <source>Tactic:</source>
         <translation>Тактика:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="52"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="53"/>
         <source>Extra details (foot, height)</source>
         <translation>Доп. сведения (нога, рост)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="53"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="54"/>
         <source>Hide retired/stale</source>
         <translation>Скрыть завершивших/устаревших</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="55"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="56"/>
         <source>Hides players whose club is set to &apos;Retired&apos; or who were missing from the latest full exports (except your own club and the shortlist).</source>
         <translation>Скрывает игроков с клубом &apos;Retired&apos; или отсутствовавших в последних полных экспортах (кроме вашего клуба и списка наблюдения).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="66"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="67"/>
         <source>Current Squad</source>
         <translation>Текущий состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="68"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="69"/>
         <source>Eligible Pool (not called up)</source>
         <translation>Доступный пул (не вызваны)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="88"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="89"/>
         <source>Search by name…</source>
         <translation>Поиск по имени…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="124"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="125"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="126"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="127"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="129"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="130"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="130"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="131"/>
         <source>Personality</source>
         <translation>Характер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="138"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="139"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="140"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="141"/>
         <source>Left Foot</source>
         <translation>Левая нога</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="142"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="143"/>
         <source>Right Foot</source>
         <translation>Правая нога</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="144"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="145"/>
         <source>Height</source>
         <translation>Рост</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="185"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="186"/>
         <source>All Roles</source>
         <translation>Все роли</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="236"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="237"/>
         <source>Current Squad (%1)</source>
         <translation>Текущий состав (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="242"/>
+        <location filename="../src/app/pages/NationalSquadMatrixPage.cpp" line="243"/>
         <source>Eligible Pool — not called up (%1)</source>
         <translation>Доступный пул — не вызваны (%1)</translation>
     </message>
@@ -4196,68 +4196,68 @@ The original file is not modified.</source>
 <context>
     <name>fm::NationalSquadSelectionPage</name>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="45"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="46"/>
         <source>National Squad Selection</source>
         <translation>Отбор в сборную</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="56"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="57"/>
         <source>Available Player Pool</source>
         <translation>Пул доступных игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="59"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="60"/>
         <source>Search available players by name…</source>
         <translation>Поиск доступных игроков по имени…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="71"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="72"/>
         <source>Add →</source>
         <translation>Добавить →</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="72"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="73"/>
         <source>← Remove</source>
         <translation>← Убрать</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="92"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="93"/>
         <source>Save National Squad</source>
         <translation>Сохранить состав сборной</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="127"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="128"/>
         <source>⚠️ Please fully configure your national team first under Settings → National team (name, country code, age limit).</source>
         <translation>⚠️ Сначала полностью настройте сборную в разделе Настройки → Сборная (название, код страны, возрастной лимит).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="135"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="136"/>
         <source>Pool: players with nationality &apos;%1&apos;%2. Double-click or use the buttons to move them; saving stores the selection in the database.</source>
         <translation>Пул: игроки с гражданством &apos;%1&apos;%2. Перемещайте двойным кликом или кнопками; при сохранении выбор записывается в базу.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="137"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="138"/>
         <source> up to age %1</source>
         <translation> до %1 лет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="170"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="171"/>
         <source>Current Squad (%1 players)%2</source>
         <translation>Текущий состав (%1 игроков)%2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="172"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="173"/>
         <source> — unsaved</source>
         <translation> — не сохранено</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="203"/>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="207"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="204"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="208"/>
         <source>National Squad</source>
         <translation>Состав сборной</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="208"/>
+        <location filename="../src/app/pages/NationalSquadSelectionPage.cpp" line="209"/>
         <source>%1 players saved in the national squad.</source>
         <translation>В состав сборной сохранено игроков: %1.</translation>
     </message>
@@ -4977,33 +4977,33 @@ Details: %1</source>
 <context>
     <name>fm::PersonalityFilterWidget</name>
     <message>
-        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="21"/>
+        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="22"/>
         <source>Personality:</source>
         <translation>Характер:</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="30"/>
+        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="31"/>
         <source>🟢 Good</source>
         <translation>🟢 Хороший</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="31"/>
+        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="32"/>
         <source>🟡 Neutral</source>
         <translation>🟡 Нейтральный</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="32"/>
+        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="33"/>
         <source>🔴 Bad</source>
         <translation>🔴 Плохой</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="35"/>
-        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="71"/>
+        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="36"/>
+        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="73"/>
         <source>Specific…</source>
         <translation>Конкретный…</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="72"/>
+        <location filename="../src/app/widgets/PersonalityFilterWidget.cpp" line="74"/>
         <source>Specific (%1)</source>
         <translation>Конкретный (%1)</translation>
     </message>
@@ -5019,241 +5019,241 @@ Details: %1</source>
 <context>
     <name>fm::PlayerComparisonPage</name>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="36"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="37"/>
         <source>Pace</source>
         <translation>Скорость</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="38"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="39"/>
         <source>Finishing</source>
         <translation>Завершение атаки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="40"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="41"/>
         <source>Passing</source>
         <translation>Пас</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="42"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="43"/>
         <source>Dribbling</source>
         <translation>Дриблинг</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="44"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="45"/>
         <source>Defending</source>
         <translation>Оборона</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="46"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="47"/>
         <source>Physique</source>
         <translation>Физика</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="48"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="69"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="49"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="70"/>
         <source>Mentality</source>
         <translation>Менталитет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="57"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="58"/>
         <source>Shot stopping</source>
         <translation>Отражение ударов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="60"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="61"/>
         <source>Aerial control</source>
         <translation>Игра на выходах</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="63"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="64"/>
         <source>Distribution</source>
         <translation>Ввод мяча</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="66"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="67"/>
         <source>Sweeping</source>
         <translation>Подстраховка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="106"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="107"/>
         <source>Player Comparison</source>
         <translation>Сравнение игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="111"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="112"/>
         <source>Tactic:</source>
         <translation>Тактика:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="115"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="116"/>
         <source>Role:</source>
         <translation>Роль:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="120"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="121"/>
         <source>Pool:</source>
         <translation>Пул:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="122"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="123"/>
         <source>My Club</source>
         <translation>Мой клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="123"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="124"/>
         <source>National Squad</source>
         <translation>Сборная</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="124"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="125"/>
         <source>All Players</source>
         <translation>Все игроки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="129"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="130"/>
         <source>Check up to 5 players to compare them.</source>
         <translation>Отметьте до 5 игроков, чтобы сравнить их.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="140"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="141"/>
         <source>Playing Areas</source>
         <translation>Игровые зоны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="146"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="147"/>
         <source>Meta Attribute Profile</source>
         <translation>Профиль мета-атрибутов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="156"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="157"/>
         <source>Detailed Attribute Comparison</source>
         <translation>Подробное сравнение атрибутов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="216"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="217"/>
         <source>All Roles</source>
         <translation>Все роли</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="321"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="322"/>
         <source>No players with this role found in the selected pool.</source>
         <translation>В выбранном пуле нет игроков с этой ролью.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="322"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="323"/>
         <source>Check up to 5 players to compare them (%1 available).</source>
         <translation>Отметьте до 5 игроков, чтобы сравнить их (доступно: %1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="360"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="361"/>
         <source>Highest Prio</source>
         <translation>Высший приоритет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="362"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="363"/>
         <source>High Prio</source>
         <translation>Высокий приоритет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="364"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="365"/>
         <source>Medium Prio</source>
         <translation>Средний приоритет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="366"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="375"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="367"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="376"/>
         <source>Key</source>
         <translation>Ключевой</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="367"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="376"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="368"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="377"/>
         <source>Preferred</source>
         <translation>Желательный</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="368"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="369"/>
         <source>Goalkeeper Meta Attribute Profile</source>
         <translation>Профиль мета-атрибутов вратаря</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="370"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="371"/>
         <source>Extremely important</source>
         <translation>Крайне важно</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="372"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="373"/>
         <source>Important</source>
         <translation>Важно</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="374"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="375"/>
         <source>Good</source>
         <translation>Хорошо</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="377"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="378"/>
         <source>Outfield Meta Attribute Profile</source>
         <translation>Профиль мета-атрибутов полевых игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="442"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="443"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="443"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="444"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="444"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="445"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="445"/>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="475"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="446"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="476"/>
         <source>Personality</source>
         <translation>Характер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="446"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="447"/>
         <source>Height</source>
         <translation>Рост</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="447"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="448"/>
         <source>Preferred Foot</source>
         <translation>«Рабочая» нога</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="448"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="449"/>
         <source>Wage</source>
         <translation>Зарплата</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="449"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="450"/>
         <source>Market Value</source>
         <translation>Рыночная стоимость</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="450"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="451"/>
         <source>Playing Time</source>
         <translation>Игровое время</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="451"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="452"/>
         <source>Best roles (DWRS)</source>
         <translation>Лучшие роли (DWRS)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="456"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="457"/>
         <source>+%1 more</source>
         <translation>ещё +%1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="460"/>
+        <location filename="../src/app/pages/PlayerComparisonPage.cpp" line="461"/>
         <source>All assigned roles:</source>
         <translation>Все назначенные роли:</translation>
     </message>
@@ -5261,404 +5261,404 @@ Details: %1</source>
 <context>
     <name>fm::PlayerProfilePage</name>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="100"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="101"/>
         <source>Player Profile</source>
         <translation>Профиль игрока</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="112"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="113"/>
         <source>My club</source>
         <translation>Мой клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="113"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="114"/>
         <source>Second team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="114"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="115"/>
         <source>Scouted</source>
         <translation>Просмотренные</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="115"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="116"/>
         <source>National squad</source>
         <translation>Сборная</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="116"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="117"/>
         <source>All players</source>
         <translation>Все игроки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="125"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="126"/>
         <source>Search players</source>
         <translation>Поиск игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="138"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="139"/>
         <source>Squad</source>
         <translation>Состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="139"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="140"/>
         <source>Pick a player from the list, sorted by team part</source>
         <translation>Выберите игрока из списка, отсортированного по линиям</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="199"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="406"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="200"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
         <source>Market Value</source>
         <translation>Рыночная стоимость</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="199"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="406"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="200"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
         <source>Wage</source>
         <translation>Зарплата</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="199"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="406"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="200"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
         <source>Avg. Rating</source>
         <translation>Ср. оценка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="229"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="230"/>
         <source>Update this player from an export file (HTML or CSV)</source>
         <translation>Обновить этого игрока из файла экспорта (HTML или CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="240"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="241"/>
         <source>Upload an FM export that contains ONLY this player. The data is written directly onto this profile — even if the UID in the file differs (e.g. a missing &apos;r-&apos; prefix). Assigned roles, primary role and transfer/loan settings are preserved.</source>
         <translation>Загрузите экспорт FM, в котором есть ТОЛЬКО этот игрок. Данные записываются прямо в этот профиль — даже если UID в файле отличается (например, нет префикса &apos;r-&apos;). Назначенные роли, основная роль и настройки трансфера/аренды сохраняются.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="251"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="252"/>
         <source>No file selected…</source>
         <translation>Файл не выбран…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="252"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="253"/>
         <source>Browse…</source>
         <translation>Обзор…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="258"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1075"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1082"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1094"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1100"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="259"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1076"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1083"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1095"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1101"/>
         <source>Update Player</source>
         <translation>Обновить игрока</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="266"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="267"/>
         <source>Select FM export (HTML or CSV)</source>
         <translation>Выберите экспорт FM (HTML или CSV)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="267"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="268"/>
         <source>FM exports (*.html *.htm *.csv);;All files (*)</source>
         <translation>Экспорты FM (*.html *.htm *.csv);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="285"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="286"/>
         <source>Roles (best first)</source>
         <translation>Роли (сначала лучшие)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="307"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1058"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="308"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1059"/>
         <source>in possession</source>
         <translation>с мячом</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="308"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1056"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="309"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1057"/>
         <source>out of possession</source>
         <translation>без мяча</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="312"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="313"/>
         <source>All Roles</source>
         <translation>Все роли</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="313"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="314"/>
         <source>In possession only (IP)</source>
         <translation>Только с мячом (СМ)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="314"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="315"/>
         <source>Out of possession only (OOP)</source>
         <translation>Только без мяча (БМ)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="315"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="316"/>
         <source>Which roles are shown as tiles.</source>
         <translation>Какие роли показываются плитками.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="332"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="333"/>
         <source>🌱 Talent Projection</source>
         <translation>🌱 Прогноз таланта</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="339"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="340"/>
         <source>🎯 Training Recommendation</source>
         <translation>🎯 Рекомендация по тренировкам</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="342"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="343"/>
         <source>Role:</source>
         <translation>Роль:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="375"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="376"/>
         <source>Attribute Overview</source>
         <translation>Обзор атрибутов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="388"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="389"/>
         <source>DWRS Development</source>
         <translation>Развитие DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="393"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="394"/>
         <source>Stored changes before the current value</source>
         <translation>Сохранённые изменения до текущего значения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="401"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="402"/>
         <source>History by in-game date</source>
         <translation>История по игровой дате</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="406"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
         <source>In-game date</source>
         <translation>Игровая дата</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="407"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="408"/>
         <source>Changed attributes</source>
         <translation>Изменённые атрибуты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="414"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="415"/>
         <source>No history yet. Each time an FM27 save is read in, the analyzer keeps one state per in-game month: for your squad, the second team, the shortlist, the national squad and players from your scouting, or for all players if you choose (Settings → History and data freshness).</source>
         <translation>Истории пока нет. При каждом чтении сохранения FM27 анализатор хранит одно состояние на игровой месяц: для вашего состава, команды B, списка наблюдения, сборной и игроков из скаутинга или для всех игроков, если вы так выберете (Настройки → История и актуальность данных).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="425"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="426"/>
         <source>This player has no rated roles yet. Assign roles to him under Roles &amp; Tactics → Assign Roles.</source>
         <translation>У этого игрока пока нет оценённых ролей. Назначьте ему роли в разделе «Роли и тактики» → «Назначить роли».</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="518"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="519"/>
         <source>Goalkeepers</source>
         <translation>Вратари</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="518"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="519"/>
         <source>Defence</source>
         <translation>Оборона</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="518"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="519"/>
         <source>Midfield</source>
         <translation>Середина поля</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="519"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="520"/>
         <source>Attack</source>
         <translation>Атака</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="567"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="568"/>
         <source>No players in this selection</source>
         <translation>В этой выборке нет игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="626"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="627"/>
         <source>No player selected</source>
         <translation>Игрок не выбран</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="644"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="645"/>
         <source>%1 years</source>
         <translation>Возраст: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="674"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="675"/>
         <source>Primary role %1</source>
         <translation>Основная роль %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="693"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="694"/>
         <source>Retired (missed full exports: %1)</source>
         <translation>Retired (пропущено полных экспортов: %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="696"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="697"/>
         <source>Data outdated (missed full exports: %1)</source>
         <translation>Данные устарели (пропущено полных экспортов: %1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="699"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="700"/>
         <source>missed full exports: %1</source>
         <translation>пропущено полных экспортов: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="701"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="702"/>
         <source>Data current</source>
         <translation>Данные актуальны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="707"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="708"/>
         <source>Yes, this file is definitely an update for %1.</source>
         <translation>Да, этот файл точно является обновлением для %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="761"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="762"/>
         <source>The rating is based on the available attributes (%1 % of the role weight). Missing: %2.</source>
         <translation>Оценка основана на доступных атрибутах (%1 % веса роли). Отсутствуют: %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="784"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="785"/>
         <source>&lt;b style=&apos;font-size:14pt;&apos;&gt;Talent score (U%1): %2&lt;/b&gt;&lt;br/&gt;Best role DWRS &lt;b&gt;%3%&lt;/b&gt; + development headroom (%1−%4 years) + mentality (Det %5 / Wor %6) + personality (%7).</source>
         <translation>&lt;b style=&apos;font-size:14pt;&apos;&gt;Оценка таланта (U%1): %2&lt;/b&gt;&lt;br/&gt;DWRS лучшей роли &lt;b&gt;%3%&lt;/b&gt; + запас для развития (%1−%4 лет) + менталитет (Реш %5 / Раб %6) + характер (%7).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="801"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="802"/>
         <source>Analysis as %1</source>
         <translation>Анализ как %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="805"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="812"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="806"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="813"/>
         <source>Strengths</source>
         <translation>Сильные стороны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="812"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="813"/>
         <source>No outstanding strengths.</source>
         <translation>Выдающихся сильных сторон нет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="814"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="821"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="815"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="822"/>
         <source>Weaknesses</source>
         <translation>Слабые стороны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="821"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="822"/>
         <source>No notable weaknesses.</source>
         <translation>Заметных слабых сторон нет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="840"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="841"/>
         <source>Key Attributes</source>
         <translation>Ключевые атрибуты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="841"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="842"/>
         <source>Preferred Attributes</source>
         <translation>Желательные атрибуты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="842"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="843"/>
         <source>No attribute definitions for this role.</source>
         <translation>Для этой роли нет определений атрибутов.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="871"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="872"/>
         <source>No historical DWRS data yet. Import more snapshots over time to see the development.</source>
         <translation>Исторических данных DWRS пока нет. Импортируйте новые состояния со временем, чтобы увидеть развитие.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="881"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="882"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="882"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="883"/>
         <source>Profile switches (marked in the chart, no development across a switch): %1</source>
         <translation>Смены профиля (отмечены на графике, развитие через смену не считается): %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="924"/>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="932"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="925"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="933"/>
         <source>%1 since %2</source>
         <translation>%1 с %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="928"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="929"/>
         <source>previously %1</source>
         <translation>ранее %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="936"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="937"/>
         <source>In-game state %1</source>
         <translation>Игровое состояние %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="961"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="962"/>
         <source>Season %1 (end)</source>
         <translation>Сезон %1 (конец)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="984"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="985"/>
         <source>first state</source>
         <translation>первое состояние</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1051"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1052"/>
         <source>Outline = role in “%1”:</source>
         <translation>Контур = роль в «%1»:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1097"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1098"/>
         <source>✅ %1 was updated from the file.</source>
         <translation>✅ %1 обновлён из файла.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1099"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1100"/>
         <source> (Name in the file: &apos;%1&apos;.)</source>
         <translation> (Имя в файле: &apos;%1&apos;.)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1115"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1116"/>
         <source>No trainable role from &lt;i&gt;positions ∩ favorite tactic&lt;/i&gt;. Set a favorite tactic in the settings.</source>
         <translation>Нет тренируемой роли из &lt;i&gt;позиции ∩ избранная тактика&lt;/i&gt;. Задайте избранную тактику в настройках.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1124"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1125"/>
         <source>There is currently no useful training method for this role (attributes already high or locked by age).</source>
         <translation>Сейчас для этой роли нет полезного метода тренировки (атрибуты уже высокие или ограничены возрастом).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1130"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1131"/>
         <source>Training methods in this order:</source>
         <translation>Методы тренировки в таком порядке:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1136"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1137"/>
         <source>mental, trainable lifelong</source>
         <translation>психологический, тренируется всю жизнь</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1138"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1139"/>
         <source>limited by age</source>
         <translation>ограничен возрастом</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1140"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1141"/>
         <source>still fully trainable</source>
         <translation>ещё полностью тренируется</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1148"/>
+        <location filename="../src/app/pages/PlayerProfilePage.cpp" line="1149"/>
         <source>⚠ Average rating below 7.0 — currently develops only slowly.</source>
         <translation>⚠ Средняя оценка ниже 7,0 — сейчас развивается медленно.</translation>
     </message>
@@ -6275,618 +6275,618 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
 <context>
     <name>fm::RegistrationPage</name>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="121"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="122"/>
         <source>Squad Registration</source>
         <translation>Заявка на сезон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="127"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="128"/>
         <source>Competition:</source>
         <translation>Турнир:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="132"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="133"/>
         <source>Apply recommendation</source>
         <translation>Применить рекомендацию</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="133"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="134"/>
         <source>Sets the ticks to the assistant&apos;s proposal.</source>
         <translation>Ставит галочки по предложению помощника.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="135"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="136"/>
         <source>Save squad list</source>
         <translation>Сохранить заявку</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="137"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="138"/>
         <source>Saves the ticked players as this competition&apos;s registered list. Best XI uses it, and later changes (transfers, new markers) become visible.</source>
         <translation>Сохраняет отмеченных игроков как заявку на этот турнир. Лучший состав использует её, а последующие изменения (трансферы, новые отметки) становятся видны.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="159"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="160"/>
         <source>no limit</source>
         <translation>без ограничения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="160"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="161"/>
         <source>Maximum total wages of all registered players, as set by the league (e.g. LaLiga). If the amount changes in the game, just adjust it here. The proposal registers the players with promised playing time first (star, important player, regular starter, first-choice goalkeeper) and spends the rest so that the starting XI, B team and depth stay as strong as possible. 0 = no limit.</source>
         <translation>Максимальная сумма зарплат всех заявленных игроков, установленная лигой (например, LaLiga). Если сумма в игре изменится, просто поправьте её здесь. Предложение сначала заявляет игроков с обещанным игровым временем (звезда, важный игрок, игрок стартового состава, основной вратарь) и тратит остаток так, чтобы основной состав, команда B и глубина оставались как можно сильнее. 0 = без ограничения.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="166"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="167"/>
         <source>none</source>
         <translation>нет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="166"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="167"/>
         <source>Players earning less may not be registered. 0 = none.</source>
         <translation>Игроков с меньшей зарплатой заявлять нельзя. 0 = нет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="168"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="169"/>
         <source>per week</source>
         <translation>в неделю</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="170"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="171"/>
         <source>per month</source>
         <translation>в месяц</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="172"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="173"/>
         <source>per year</source>
         <translation>в год</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="175"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="176"/>
         <source>Period both amounts refer to, as the game shows them.</source>
         <translation>Период, к которому относятся обе суммы, как их показывает игра.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="176"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="177"/>
         <source>Wage budget:</source>
         <translation>Бюджет зарплат:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="179"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="180"/>
         <source>Minimum wage:</source>
         <translation>Минимальная зарплата:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="207"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="208"/>
         <source>Registered for the league</source>
         <translation>Заявлен на лигу</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="214"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
         <source>Registered</source>
         <translation>Заявлен</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="214"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="283"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="214"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="214"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="214"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="215"/>
         <source>Team</source>
         <translation>Команда</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="238"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1081"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1099"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1104"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1112"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="239"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1082"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1100"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1105"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1113"/>
         <source>Registration</source>
         <translation>Заявка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="251"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="252"/>
         <source>Got it</source>
         <translation>Понятно</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="253"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="254"/>
         <source>Takes the current state as the new reference without saving the list.</source>
         <translation>Принимает текущее состояние за новую точку отсчёта, не сохраняя заявку.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="271"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="272"/>
         <source>Tick every player you have actually registered in the game and save the list — Best XI then works with it. The ticks start as the recommendation, after saving they show your list. Orange: tick and recommendation differ. Sort: click a column header (default: position, goalkeeper to striker, right before left).</source>
         <translation>Отметьте каждого игрока, которого вы действительно заявили в игре, и сохраните заявку — лучший состав будет работать с ней. Сначала галочки соответствуют рекомендации, после сохранения показывают вашу заявку. Оранжевый: галочка и рекомендация различаются. Сортировка: нажмите на заголовок столбца (по умолчанию: позиция, от вратаря до нападающего, правые перед левыми).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="283"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
         <source>Registered</source>
         <comment>registration list</comment>
         <translation>Заявлен</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="283"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
         <source>Recommendation</source>
         <translation>Рекомендация</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="284"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
         <source>Training status</source>
         <translation>Статус воспитанника</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
         <source>Need</source>
         <translation>Потребность</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="285"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
         <source>Wage</source>
         <translation>Зарплата</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="286"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="287"/>
         <source>Note</source>
         <translation>Примечание</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="399"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="400"/>
         <source>Champions / Europa / Conference League (List A)</source>
         <translation>Лига чемпионов / Лига Европы / Лига конференций (список A)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="411"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="412"/>
         <source>%1 has no squad list: up to 99 players are eligible. Untick the players below who are not registered in the game.</source>
         <translation>У %1 нет заявки: допускаются до 99 игроков. Снимите галочки ниже с игроков, которые не заявлены в игре.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="416"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="417"/>
         <source>The only limit is at most 4 non-EU players in the squad. That is decided by transfers, not by registration, so keep an eye on it there.</source>
         <translation>Единственное ограничение — не более 4 игроков не из ЕС в составе. Это решается трансферами, а не заявкой, так что следите за этим там.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="434"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="435"/>
         <source>Please choose your club first (Overview or Settings).</source>
         <translation>Сначала выберите свой клуб (Обзор или Настройки).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="438"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="439"/>
         <source>No registration rules are stored for %1 yet. The squad list is not available for this version yet.</source>
         <translation>Для %1 правила заявки пока не сохранены. Заявка для этой версии пока недоступна.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="445"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="446"/>
         <source>Build your squad list for league and European competitions here. First switch on the registration rules: Settings → Squad Registration.</source>
         <translation>Составляйте здесь заявку на лигу и еврокубки. Сначала включите правила заявки: Настройки → Заявка на сезон.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="475"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="476"/>
         <source>Pool: first team + second team (%1 players, retired excluded). Ranking from starting XI, B-team and squad depth of: %2. Change markers via right-click → Registration — the proposal recalculates immediately.</source>
         <translation>Пул: основная команда + команда B (%1 игроков, без завершивших карьеру). Рейтинг по основному составу, команде B и глубине состава: %2. Меняйте отметки через правый клик → Заявка — предложение сразу пересчитывается.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="479"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="480"/>
         <source>no tactic available</source>
         <translation>нет доступной тактики</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="554"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="555"/>
         <source>%1 of %2 players registered.</source>
         <translation>Заявлено игроков: %1 из %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="556"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="557"/>
         <source>Best XI and Overview leave out: %1</source>
         <translation>Лучший состав и Обзор не учитывают: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="567"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="568"/>
         <source>Non-HG quota full</source>
         <translation>Квота не-воспитанников заполнена</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="569"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="570"/>
         <source>only club-grown places left</source>
         <translation>остались только места для воспитанников клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="571"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="741"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="572"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="742"/>
         <source>below minimum wage</source>
         <translation>ниже минимальной зарплаты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="573"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="574"/>
         <source>over the wage budget</source>
         <translation>сверх бюджета зарплат</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="575"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="576"/>
         <source>non-EU places full</source>
         <translation>места для игроков не из ЕС заняты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="577"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="578"/>
         <source>marked as cannot be registered</source>
         <translation>отмечен как не подлежащий заявке</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="581"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="582"/>
         <source>List full</source>
         <translation>Заявка заполнена</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="623"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="690"/>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1175"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="624"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="691"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1176"/>
         <source>List B</source>
         <translation>Список B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="626"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="627"/>
         <source>Registered in the game. &apos;%1&apos; is eligible without a slot.</source>
         <translation>Заявлен в игре. &apos;%1&apos; допускается без места.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="628"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="629"/>
         <source>Goalkeepers (%1)</source>
         <translation>Вратари (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="629"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="630"/>
         <source>Outfield players (%1)</source>
         <translation>Полевые игроки (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="641"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="642"/>
         <source>Club-grown</source>
         <translation>Воспитанник клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="644"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="645"/>
         <source>Home-grown</source>
         <translation>Воспитанник страны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="647"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="648"/>
         <source>Non-HG</source>
         <translation>Не воспитанник</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="651"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="652"/>
         <source>Non-EU</source>
         <translation>Не из ЕС</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="657"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="658"/>
         <source>Starting XI</source>
         <translation>Основной состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="659"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="660"/>
         <source>B-team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="661"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="662"/>
         <source>Squad depth</source>
         <translation>Глубина состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="665"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="666"/>
         <source>Reserve</source>
         <translation>Резерв</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="671"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="672"/>
         <source>✅ Register</source>
         <translation>✅ Заявить</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="673"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="674"/>
         <source>🆓 List B</source>
         <translation>🆓 Список B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="677"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="678"/>
         <source>❌ Leave out</source>
         <translation>❌ Не заявлять</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="692"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="693"/>
         <source>Eligible without a slot on the squad list.</source>
         <translation>Допускается без места в заявке.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="694"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="695"/>
         <source>blocked</source>
         <translation>заблокирован</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="696"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="697"/>
         <source>Marked as cannot be registered. Undo via right-click → Registration.</source>
         <translation>Отмечен как не подлежащий заявке. Отменить: правый клик → Заявка.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="730"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="731"/>
         <source>⚠️ no longer list B – needs a slot</source>
         <translation>⚠️ больше не список B — нужно место</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="731"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="732"/>
         <source>⚠️ no longer %1 – needs a slot</source>
         <translation>⚠️ больше не %1 — нужно место</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="733"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="734"/>
         <source>now list B</source>
         <translation>теперь список B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="733"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="734"/>
         <source>now %1</source>
         <translation>теперь %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="735"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="736"/>
         <source>%1 unclear</source>
         <translation>%1 неясно</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="738"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="739"/>
         <source>playing time promised</source>
         <translation>обещано игровое время</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="842"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="843"/>
         <source>&lt;b&gt;Squad list:&lt;/b&gt; %1 / %2</source>
         <translation>&lt;b&gt;Заявка:&lt;/b&gt; %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="844"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="845"/>
         <source>Non-HG %1 / %2</source>
         <translation>Не воспитанники %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="846"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="847"/>
         <source>Home-grown %1</source>
         <translation>Воспитанники страны %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="847"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="848"/>
         <source>Club-grown %1</source>
         <translation>Воспитанники клуба %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="849"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="850"/>
         <source>Goalkeepers %1 (min. %2)</source>
         <translation>Вратари %1 (мин. %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="852"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="853"/>
         <source>Non-EU %1 / %2</source>
         <translation>Не из ЕС %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="855"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="856"/>
         <source>Wages %1 / %2</source>
         <translation>Зарплаты %1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="859"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="860"/>
         <source>Wages %1</source>
         <translation>Зарплаты %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="860"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="861"/>
         <source>&lt;b&gt;List B&lt;/b&gt; (no place needed): %1 players</source>
         <translation>&lt;b&gt;Список B&lt;/b&gt; (место не нужно): игроков: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="861"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="862"/>
         <source>&lt;b&gt;%1&lt;/b&gt; (no place needed): %2 players</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; (место не нужно): игроков: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="868"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="869"/>
         <source>No squad list saved yet — the ticks match the recommendation.</source>
         <translation>Заявка ещё не сохранена — галочки соответствуют рекомендации.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="870"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="871"/>
         <source>No squad list saved yet.</source>
         <translation>Заявка ещё не сохранена.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="872"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="873"/>
         <source>Matches the saved squad list.</source>
         <translation>Совпадает с сохранённой заявкой.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="874"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="875"/>
         <source>Unsaved changes compared with the saved list: &lt;b&gt;%1&lt;/b&gt; newly registered, &lt;b&gt;%2&lt;/b&gt; deregistered.</source>
         <translation>Несохранённые изменения относительно сохранённой заявки: заявлено новых — &lt;b&gt;%1&lt;/b&gt;, отзаявлено — &lt;b&gt;%2&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="883"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="884"/>
         <source>Recommended but not registered: %1</source>
         <translation>Рекомендованы, но не заявлены: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="885"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="886"/>
         <source>Registered but not recommended: %1</source>
         <translation>Заявлены, но не рекомендованы: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="898"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="899"/>
         <source>%1: avg. starting XI DWRS %2 → %3 (%4)</source>
         <translation>%1: средний DWRS основного состава %2 → %3 (%4)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="902"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="903"/>
         <source>no loss</source>
         <translation>без потерь</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="905"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="906"/>
         <source>Cost of registration (without rules → with squad list):</source>
         <translation>Цена заявки (без правил → с заявкой):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="911"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="912"/>
         <source>No favorite tactic set — ranking from &apos;%1&apos;. Set them under Settings → Club.</source>
         <translation>Избранная тактика не задана — рейтинг по &apos;%1&apos;. Задайте её в Настройки → Клуб.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="915"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="916"/>
         <source>Too many players registered: %1 (at most %2).</source>
         <translation>Заявлено слишком много игроков: %1 (не более %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="919"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="920"/>
         <source>Too many non-home-grown players registered: %1 (at most %2).</source>
         <translation>Заявлено слишком много не-воспитанников: %1 (не более %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="923"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="924"/>
         <source>Too many players who are not club-grown registered: %1 (at most %2).</source>
         <translation>Заявлено слишком много игроков, не воспитанных клубом: %1 (не более %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="927"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="928"/>
         <source>Wage budget exceeded: %1 (at most %2).</source>
         <translation>Бюджет зарплат превышен: %1 (не более %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="930"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="931"/>
         <source>Too many non-EU players registered: %1 (at most %2).</source>
         <translation>Заявлено слишком много игроков не из ЕС: %1 (не более %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="934"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="935"/>
         <source>Registered although below the minimum wage of %1: %2 players.</source>
         <translation>Заявлены, хотя ниже минимальной зарплаты %1: игроков: %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="945"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="946"/>
         <source>the wage budget does not cover another player (%1 left).</source>
         <translation>бюджета зарплат не хватает ещё на одного игрока (осталось %1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="949"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="950"/>
         <source>only club-grown players may take them, and there are no more.</source>
         <translation>их могут занять только воспитанники клуба, а таких больше нет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="951"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="952"/>
         <source>only home-grown players may take them, and there are no more.</source>
         <translation>их могут занять только воспитанники страны, а таких больше нет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="953"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="954"/>
         <source>only EU players could take them, and there are no more.</source>
         <translation>их могли бы занять только игроки из ЕС, а таких больше нет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="955"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="956"/>
         <source>there are no more players in the pool.</source>
         <translation>в пуле больше нет игроков.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="956"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="957"/>
         <source>%1 places stay empty: %2</source>
         <translation>Пустых мест: %1: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="958"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="959"/>
         <source>%1 places are still free.</source>
         <translation>Свободных мест ещё: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="961"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="962"/>
         <source>Only %1 goalkeepers registered (wanted: %2).</source>
         <translation>Заявлено только %1 вратарей (нужно: %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="970"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="971"/>
         <source>U18 EU unclear (cut-off 1 January depending on birthday and in-game date, no EU nationality recognised, or age unknown), counts as needing a slot to be safe: %1. Set it via right-click → Registration.</source>
         <translation>U18 ЕС неясно (граница — 1 января в зависимости от дня рождения и игровой даты, гражданство ЕС не распознано или возраст неизвестен), на всякий случай считается, что нужно место: %1. Задайте через правый клик → Заявка.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="976"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="977"/>
         <source>U21 unclear (age 21 or unknown), counted as not U21 to be safe: %1. Set it via right-click → Registration.</source>
         <translation>U21 неясно (21 год или возраст неизвестен), на всякий случай считается не U21: %1. Задайте через правый клик → Заявка.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="987"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="988"/>
         <source>Still on the saved list but no longer needs a slot or has left the squad — removed on saving: %1</source>
         <translation>Ещё в сохранённой заявке, но место больше не нужно или игрок покинул состав — будет удалён при сохранении: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1082"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1083"/>
         <source>The selection breaks the registration rules (see warnings). Save anyway?</source>
         <translation>Выбор нарушает правила заявки (см. предупреждения). Всё равно сохранить?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1100"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1101"/>
         <source>The saved squad list is already up to date.</source>
         <translation>Сохранённая заявка уже актуальна.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1113"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1114"/>
         <source>Squad list saved (%1 players).</source>
         <translation>Заявка сохранена (игроков: %1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1191"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1192"/>
         <source>&lt;b&gt;Needs a slot now&lt;/b&gt; (no longer %1): %2</source>
         <translation>&lt;b&gt;Теперь нужно место&lt;/b&gt; (больше не %1): %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1194"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1195"/>
         <source>Not eligible without a tick: register and drop someone else instead, or leave out on purpose.</source>
         <translation>Без галочки не допускается: заявите его и уберите кого-то другого или намеренно не заявляйте.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1198"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1199"/>
         <source>&lt;b&gt;Now eligible without a slot&lt;/b&gt; (%1): %2 — this frees up slots.</source>
         <translation>&lt;b&gt;Теперь допускается без места&lt;/b&gt; (%1): %2 — это освобождает места.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1204"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1205"/>
         <source>The recommendation already accounts for this. Where tick and recommendation differ, the recommendation is marked orange in the table.</source>
         <translation>Рекомендация это уже учитывает. Где галочка и рекомендация различаются, рекомендация выделена оранжевым в таблице.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1207"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1208"/>
         <source>🔔 &lt;b&gt;Changed since the last save&lt;/b&gt;</source>
         <translation>🔔 &lt;b&gt;Изменилось с последнего сохранения&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1230"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1231"/>
         <source>Registered, but not recommended</source>
         <translation>Заявлен, но не рекомендован</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RegistrationPage.cpp" line="1231"/>
+        <location filename="../src/app/pages/RegistrationPage.cpp" line="1232"/>
         <source>Recommended, but not registered</source>
         <translation>Рекомендован, но не заявлен</translation>
     </message>
@@ -6894,141 +6894,141 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
 <context>
     <name>fm::RoleAnalysisPage</name>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="47"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="161"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="48"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="162"/>
         <source>Role Coverage</source>
         <translation>Покрытие ролей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="51"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="52"/>
         <source>Role:</source>
         <translation>Роль:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="63"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="91"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="297"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="64"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="92"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="298"/>
         <source>My Club</source>
         <translation>Мой клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="65"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="92"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="299"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="66"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="93"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="300"/>
         <source>Second Team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="67"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="300"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="68"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="301"/>
         <source>Scouted Players</source>
         <translation>Просмотренные игроки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="93"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="94"/>
         <source>Scouted</source>
         <translation>Просмотренные</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="161"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="162"/>
         <source>Scouting by Role</source>
         <translation>Скаутинг по ролям</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="238"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="239"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="240"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="241"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="242"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="243"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="243"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="244"/>
         <source>Personality</source>
         <translation>Характер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="248"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="249"/>
         <source>Left Foot</source>
         <translation>Левая нога</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="249"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="250"/>
         <source>Right Foot</source>
         <translation>Правая нога</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="250"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="251"/>
         <source>Height</source>
         <translation>Рост</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="253"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="254"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="254"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="255"/>
         <source>Market Value</source>
         <translation>Рыночная стоимость</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="257"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="258"/>
         <source>DWRS (absolute)</source>
         <translation>DWRS (абсолютный)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="263"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="264"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="294"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="295"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="297"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="299"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="298"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="300"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="304"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="305"/>
         <source>Strengths and weaknesses as %1</source>
         <translation>Сильные и слабые стороны как %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="345"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="346"/>
         <source>No players with this role in the selected pool.</source>
         <translation>В выбранном пуле нет игроков с этой ролью.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="353"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="356"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="354"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="357"/>
         <source>Strengths</source>
         <translation>Сильные стороны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="356"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="357"/>
         <source>No outstanding strengths for this role.</source>
         <translation>Для этой роли выдающихся сильных сторон нет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="363"/>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="366"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="364"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="367"/>
         <source>Weaknesses</source>
         <translation>Слабые стороны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="366"/>
+        <location filename="../src/app/pages/RoleAnalysisPage.cpp" line="367"/>
         <source>No notable weaknesses for this role.</source>
         <translation>Для этой роли заметных слабых сторон нет.</translation>
     </message>
@@ -7123,411 +7123,411 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
 <context>
     <name>fm::SettingsPage</name>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="213"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="214"/>
         <source>Explanation</source>
         <translation>Пояснение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="320"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2334"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2358"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="321"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2337"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2361"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="334"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="335"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="336"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
         <source>Save</source>
         <comment>save game</comment>
         <translation>Сохранение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="334"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="405"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="411"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="335"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="406"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="412"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="335"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="463"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="468"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="336"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="464"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="469"/>
         <source>National Team</source>
         <translation>Сборная</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="336"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="510"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="511"/>
         <source>Squad Registration</source>
         <translation>Заявка на сезон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="338"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="340"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="339"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
         <source>Data</source>
         <translation>Данные</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="552"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1795"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="338"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="553"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1798"/>
         <source>Import</source>
         <translation>Импорт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="338"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="720"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="339"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="721"/>
         <source>History and data freshness</source>
         <translation>История и актуальность данных</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="340"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="769"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="770"/>
         <source>Portraits and crests</source>
         <translation>Портреты и эмблемы</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="342"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="343"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="344"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="345"/>
         <source>Calculation</source>
         <translation>Расчёт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="859"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="342"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="860"/>
         <source>DWRS Rating</source>
         <translation>Оценка DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="342"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1104"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="343"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1107"/>
         <source>Squad and analysis</source>
         <translation>Состав и анализ</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="343"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1002"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1006"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="344"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1003"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1007"/>
         <source>Personalities</source>
         <translation>Характеры</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="344"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1177"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="345"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1180"/>
         <source>Training</source>
         <translation>Тренировки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="345"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="346"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="347"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="348"/>
         <source>Program</source>
         <translation>Программа</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="345"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1200"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="346"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1203"/>
         <source>Appearance</source>
         <translation>Внешний вид</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="346"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1321"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="347"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1324"/>
         <source>DWRS colours</source>
         <translation>Цвета DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="347"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1761"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="348"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1764"/>
         <source>Saves</source>
         <translation>Сохранения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="365"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="366"/>
         <source>Discard</source>
         <translation>Отменить</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="366"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="367"/>
         <source>Resets all unsaved changes on this page.</source>
         <translation>Сбрасывает все несохранённые изменения на этой странице.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="367"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="368"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="406"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="407"/>
         <source>Your club in this save: name and logo for the window header, the second team and the favorite tactics.</source>
         <translation>Ваш клуб в этом сохранении: название и логотип для заголовка окна, команда B и избранные тактики.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="416"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="417"/>
         <source>As it should appear in the header</source>
         <translation>Как он должен отображаться в заголовке</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="421"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="422"/>
         <source>My club</source>
         <translation>Мой клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="422"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="423"/>
         <source>Second team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="423"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="424"/>
         <source>Full club name</source>
         <translation>Полное название клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="424"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="425"/>
         <source>Stadium</source>
         <translation>Стадион</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="425"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="426"/>
         <source>Club country</source>
         <translation>Страна клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="426"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="427"/>
         <source>My club and second team come from the imported players. The second team (for example the reserves or U23) counts as part of your own squad, for loans and the youth XI, for instance. Club name and stadium appear in the window header. The club country is the three-letter nation code from the game; it drives the domestic filter in scouting.</source>
         <translation>Мой клуб и команда B берутся из импортированных игроков. Команда B (например, резерв или U23) считается частью вашего состава, например для аренд и молодёжного состава. Название клуба и стадион показываются в заголовке окна. Страна клуба — трёхбуквенный код страны из игры; по нему работает фильтр отечественных игроков в скаутинге.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="433"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1494"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1503"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1515"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="434"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1497"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1506"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1518"/>
         <source>Club logo</source>
         <translation>Логотип клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="434"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="435"/>
         <source>Shown in the window header and on the start screen. Applied immediately.</source>
         <translation>Показывается в заголовке окна и на стартовом экране. Применяется сразу.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="441"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="497"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="442"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="498"/>
         <source>Choose image …</source>
         <translation>Выбрать изображение …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="442"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="498"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="443"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="499"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="447"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="448"/>
         <source>Favourite Tactics</source>
         <translation>Избранные тактики</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="451"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="484"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="452"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="485"/>
         <source>Primary tactic</source>
         <translation>Основная тактика</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="452"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="485"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="453"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="486"/>
         <source>Secondary tactic</source>
         <translation>Запасная тактика</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="453"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="454"/>
         <source>The favorite tactics are preselected on Overview, Lineup, Squad and Transfers. The primary one sets the roles on the Development page.</source>
         <translation>Избранные тактики предварительно выбраны в разделах Обзор, Расстановка, Состав и Трансферы. Основная задаёт роли на странице Развитие.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="464"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="465"/>
         <source>Entering a team name turns on national team management.</source>
         <translation>Ввод названия команды включает управление сборной.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="471"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="472"/>
         <source>e.g. National team U21</source>
         <translation>например, Сборная U21</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="478"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="479"/>
         <source>99 = no age limit (senior national team); e.g. 21 for U21.</source>
         <translation>99 = без ограничения возраста (основная сборная); например, 21 для U21.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="481"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="482"/>
         <source>Team name</source>
         <translation>Название команды</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="482"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="483"/>
         <source>Country code</source>
         <translation>Код страны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="483"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="484"/>
         <source>Age limit</source>
         <translation>Возрастное ограничение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="483"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="484"/>
         <source>99 = none</source>
         <translation>99 = нет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="489"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="490"/>
         <source>Flag</source>
         <translation>Флаг</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="490"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="491"/>
         <source>Shown in the window header while you manage the national team. Applied immediately.</source>
         <translation>Показывается в заголовке окна, пока вы руководите сборной. Применяется сразу.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="511"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="512"/>
         <source>Rules the registration assistant checks the squad list against. Wage budget and minimum wage are set directly on the Squad Registration page.</source>
         <translation>Правила, по которым помощник заявки проверяет заявку. Бюджет зарплат и минимальная зарплата задаются прямо на странице «Заявка на сезон».</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="517"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="518"/>
         <source>No registration rules are available for this Football Manager version.</source>
         <translation>Для этой версии Football Manager правила заявки недоступны.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="521"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="522"/>
         <source>Registration rules</source>
         <translation>Правила заявки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="526"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="527"/>
         <source>Champions League / Europa League / Conference League</source>
         <translation>Лига чемпионов / Лига Европы / Лига конференций</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="530"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="531"/>
         <source>No rule requires it, but registering fewer than two goalkeepers is risky.</source>
         <translation>Ни одно правило этого не требует, но заявлять меньше двух вратарей рискованно.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="531"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="532"/>
         <source>League</source>
         <translation>Лига</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="532"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="533"/>
         <source>European cups</source>
         <translation>Еврокубки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="533"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="534"/>
         <source>Minimum goalkeepers</source>
         <translation>Минимум вратарей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="535"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="536"/>
         <source>Enables the home-grown / club-grown / U21 markings (edit player, right-click → Registration) and the registration assistant as soon as a competition requires a squad list. &apos;Default&apos; and leagues with 99 places (Bundesliga, Ligue 1, Austria) have no restriction: every player may play there. Checked are squad size and players trained in the country and at the club; the analyzer does not check limits for foreign or non-EU players. &apos;Default&apos; applies to every league whose rules are not stored yet. How to request more leagues is described in the README.</source>
         <translation>Включает отметки «воспитанник страны» / «воспитанник клуба» / U21 (изменить игрока, правый клик → Заявка) и помощника заявки, как только турнир требует заявку. «По умолчанию» и лиги с 99 местами (Бундеслига, Лига 1, Австрия) ограничений не имеют: там может играть любой игрок. Проверяются размер состава и игроки, подготовленные в стране и в клубе; лимиты на иностранцев и игроков не из ЕС анализатор не проверяет. «По умолчанию» действует для каждой лиги, правила которой ещё не сохранены. Как запросить другие лиги, описано в README.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="553"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="554"/>
         <source>Where player data comes from and how it is read.</source>
         <translation>Откуда берутся данные игроков и как они читаются.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="557"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2159"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="558"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2162"/>
         <source>Football Manager Version</source>
         <translation>Версия Football Manager</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="563"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="564"/>
         <source>%1 (not yet supported)</source>
         <translation>%1 (пока не поддерживается)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="570"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="571"/>
         <source>Version of this save</source>
         <translation>Версия этого сохранения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="571"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="572"/>
         <source>Determines how the player attributes are read from the export, which roles and tactics apply and how the attributes are weighted. The version is chosen when a save is created and is fixed as soon as it contains players. Football Manager 2024 and 2027 are supported.</source>
         <translation>Определяет, как атрибуты игроков читаются из экспорта, какие роли и тактики действуют и как взвешиваются атрибуты. Версия выбирается при создании сохранения и фиксируется, как только в нём появляются игроки. Поддерживаются Football Manager 2024 и 2027.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="576"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="577"/>
         <source>HTML/CSV export</source>
         <translation>Экспорт HTML/CSV</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="579"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="692"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="792"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="580"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="693"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="793"/>
         <source>Browse …</source>
         <translation>Обзор …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="580"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="581"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="581"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="582"/>
         <source>Open folder in the file manager</source>
         <translation>Открыть папку в файловом менеджере</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="582"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="583"/>
         <source>Default folder</source>
         <translation>Папка по умолчанию</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="583"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="584"/>
         <source>Start folder of the file dialog when uploading HTML and CSV exports. Empty = automatic: the game folder of the Football Manager version under &apos;Sports Interactive&apos; in the current user&apos;s Documents folder (if it exists).</source>
         <translation>Начальная папка диалога при загрузке экспортов HTML и CSV. Пусто = автоматически: папка игры нужной версии Football Manager в &apos;Sports Interactive&apos; в папке «Документы» текущего пользователя (если она есть).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="588"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="589"/>
         <source>Automatic (from the column headers)</source>
         <translation>Автоматически (по заголовкам столбцов)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="592"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="593"/>
         <source>Game language</source>
         <translation>Язык игры</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="593"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="594"/>
         <source>The language Football Manager runs in. The game writes column headers and values such as positions or foot strength in this language. It can differ from the language of the analyzer. Automatic recognises the language by the column headers; if the headers don&apos;t tell, English is assumed. Saves (.fm) don&apos;t depend on the language.</source>
         <translation>Язык, на котором работает Football Manager. Игра пишет на этом языке заголовки столбцов и значения, например позиции или силу ноги. Он может отличаться от языка анализатора. В автоматическом режиме язык определяется по заголовкам столбцов; если по ним не понять, считается английский. Сохранения (.fm) от языка не зависят.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="609"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="610"/>
         <source>Choose default folder for HTML/CSV import</source>
         <translation>Выберите папку по умолчанию для импорта HTML/CSV</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="627"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="628"/>
         <source>The folder %1 could not be created.</source>
         <translation>Не удалось создать папку %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="644"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="645"/>
         <source>No file could be copied to %1.</source>
         <translation>Не удалось скопировать ни одного файла в %1.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/SettingsPage.cpp" line="649"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="650"/>
         <source>%n files copied to %1:
 %2</source>
         <translation>
@@ -7540,32 +7540,32 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="654"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="655"/>
         <source>Football Manager 27</source>
         <translation>Football Manager 27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="655"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="656"/>
         <source>Game files for Football Manager 27.</source>
         <translation>Файлы игры для Football Manager 27.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="658"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="659"/>
         <source>Install views</source>
         <translation>Установить представления</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="659"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="660"/>
         <source>Install sample tactics</source>
         <translation>Установить примеры тактик</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="660"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="661"/>
         <source>Game files</source>
         <translation>Файлы игры</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="662"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="663"/>
         <source>Views: copies the bundled views (squad, player database, shortlist) into the &apos;views&apos; folder of Football Manager 27. In the game you load them from the list&apos;s views menu. Existing files with the same name are replaced, other views stay untouched.
 
 Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 and Counter Surge · 3-4-2-1) as game files into the &apos;tactics&apos; folder of Football Manager 27. In the game you load them in the tactics view via loading a tactic. They are already built into the analyzer; you create your own tactics in the tactic editor or import them.</source>
@@ -7574,785 +7574,785 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 Примеры тактик: копирует две встроенные тактики (Control Press · 4-2-3-1 и Counter Surge · 3-4-2-1) как файлы игры в папку &apos;tactics&apos; Football Manager 27. В игре их загружают на экране тактики через загрузку тактики. Они уже встроены в анализатор; свои тактики вы создаёте в редакторе тактик или импортируете.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="674"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="675"/>
         <source>FM27 views</source>
         <translation>Представления FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="678"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="679"/>
         <source>FM27 tactics</source>
         <translation>Тактики FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="681"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="682"/>
         <source>Attribute masking as in the game</source>
         <translation>Скрытие атрибутов как в игре</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="682"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="683"/>
         <source>Reading a save</source>
         <translation>Чтение сохранения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="683"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="684"/>
         <source>Applies when you read an FM27 save (.fm). When on, your squad, very well-known players and well-scouted players are exact; everyone else comes with ranges the analyzer makes itself. When off, all values are exact. Hidden values such as potential are never read.</source>
         <translation>Действует при чтении сохранения FM27 (.fm). Если включено, ваш состав, очень известные и хорошо просмотренные игроки точны; у всех остальных диапазоны, которые анализатор вычисляет сам. Если выключено, все значения точны. Скрытые значения, например потенциал, никогда не читаются.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="688"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="689"/>
         <source>Follow save live</source>
         <translation>Отслеживать сохранение в реальном времени</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="689"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="690"/>
         <source>Follow live</source>
         <translation>Отслеживать в реальном времени</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="691"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="692"/>
         <source>Choose an FM27 save (.fm)</source>
         <translation>Выберите сохранение FM27 (.fm)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="693"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="694"/>
         <source>Save file</source>
         <translation>Файл сохранения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="694"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="695"/>
         <source>While the Analyzer is open, it reads this save again automatically as soon as the game has saved it, autosaves included. It always takes the newest file of the career, including the versions “(v02)”, “(v03)”. If you save under a new name in the game, choose the new file here.</source>
         <translation>Пока анализатор открыт, он автоматически перечитывает это сохранение, как только игра его сохранила, включая автосохранения. Всегда берётся самый новый файл карьеры, включая версии «(v02)», «(v03)». Если в игре вы сохраняетесь под новым именем, выберите здесь новый файл.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="705"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="706"/>
         <source>Choose FM27 save</source>
         <translation>Выбрать сохранение FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="706"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="707"/>
         <source>FM27 saves (*.fm);;All files (*)</source>
         <translation>Сохранения FM27 (*.fm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="721"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="722"/>
         <source>What the analyzer keeps over time and when players count as outdated.</source>
         <translation>Что анализатор хранит со временем и когда игроки считаются устаревшими.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="726"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="727"/>
         <source>Player history</source>
         <translation>История игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="728"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="729"/>
         <source>Keep history for all players</source>
         <translation>Хранить историю для всех игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="729"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="730"/>
         <source>Scope</source>
         <translation>Охват</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="730"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="731"/>
         <source>When an FM27 save is read in, the analyzer keeps one state per in-game month of the attributes, average rating, value and wage, but only when something changed. Unticked, this applies to your squad, the second team, the shortlist, the national squad and players from your scouting. Ticked, to every player read in; the database grows considerably. The current season and the two before it stay monthly; older seasons are condensed to their end-of-season state.</source>
         <translation>При чтении сохранения FM27 анализатор хранит одно состояние на игровой месяц для атрибутов, средней оценки, стоимости и зарплаты, но только если что-то изменилось. Без галочки — для вашего состава, команды B, списка наблюдения, сборной и игроков из скаутинга. С галочкой — для каждого прочитанного игрока; база данных заметно растёт. Текущий сезон и два предыдущих остаются помесячными; более старые сезоны сжимаются до состояния на конец сезона.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="741"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="742"/>
         <source>Season start</source>
         <translation>Начало сезона</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="742"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="743"/>
         <source>From this day on the history counts a new season, for example for the season shown on the overview and when condensing old seasons. 1 July fits most European leagues; for leagues that play in the calendar year, use 1 January.</source>
         <translation>С этого дня история считает новый сезон, например для сезона в обзоре и при сжатии старых сезонов. 1 июля подходит для большинства европейских лиг; для лиг, играющих по календарному году, используйте 1 января.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="747"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="748"/>
         <source>Data freshness</source>
         <translation>Актуальность данных</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="753"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="754"/>
         <source>Outdated after missed full exports (Y)</source>
         <translation>Устаревший после пропущенных полных экспортов (Y)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="754"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="755"/>
         <source>Retired from age (X)</source>
         <translation>Retired с возраста (X)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="755"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="756"/>
         <source>An import with at least a quarter as many players as the last full export counts as a full export itself. Smaller exports (squad, shortlist, scouting) only refresh their own players. Anyone missing from the last Y full exports counts as stale and is hidden from matrices, suggestions and pools, except players of your club and the shortlist. If they are also at least X years old, they are shown as Retired.</source>
         <translation>Импорт, в котором не меньше четверти игроков последнего полного экспорта, сам считается полным экспортом. Меньшие экспорты (состав, список наблюдения, скаутинг) обновляют только своих игроков. Кто отсутствует в последних Y полных экспортах, считается устаревшим и скрывается из матриц, предложений и пулов, кроме игроков вашего клуба и списка наблюдения. Если ему к тому же не меньше X лет, он показывается как Retired.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="770"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="771"/>
         <source>Optional: player faces and club logos from installed graphics packs. Without this setting nothing changes.</source>
         <translation>Необязательно: лица игроков и логотипы клубов из установленных графических паков. Без этой настройки ничего не меняется.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="777"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="778"/>
         <source>Graphics folder</source>
         <translation>Папка graphics</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="778"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="779"/>
         <source>Use portraits and crests from the graphics folder</source>
         <translation>Использовать портреты и эмблемы из папки graphics</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="786"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="787"/>
         <source>Only useful if you have installed graphics packs (player faces, club logos) for Football Manager. The analyzer reads the mappings from the packs&apos; config.xml files and shows portraits by player ID and crests by club ID. Nothing in the graphics folder is changed.</source>
         <translation>Полезно, только если вы установили графические паки (лица игроков, логотипы клубов) для Football Manager. Анализатор читает соответствия из файлов config.xml паков и показывает портреты по ID игрока и эмблемы по ID клуба. В папке graphics ничего не меняется.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="793"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="794"/>
         <source>Rescan</source>
         <translation>Пересканировать</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="794"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="795"/>
         <source>Reads the folder again, e.g. after installing a new graphics pack.</source>
         <translation>Перечитывает папку, например после установки нового графического пака.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="796"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="797"/>
         <source>Folder</source>
         <translation>Папка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="809"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="810"/>
         <source>Choose crest …</source>
         <translation>Выбрать эмблему …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="810"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="811"/>
         <source>Club ID of my club</source>
         <translation>ID моего клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="812"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="813"/>
         <source>Exports contain no club IDs. Enter your club&apos;s ID or pick its crest in the logo pack (the number in the file name, e.g. 1234_club.png, is the ID). A club logo you chose yourself (Club page) takes precedence.</source>
         <translation>В экспортах нет ID клубов. Введите ID своего клуба или выберите его эмблему в паке логотипов (число в имени файла, например 1234_club.png, — это ID). Логотип клуба, выбранный вами (страница «Клуб»), имеет приоритет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="825"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="826"/>
         <source>Choose graphics folder</source>
         <translation>Выбрать папку graphics</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="833"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="834"/>
         <source>Choose your club&apos;s crest</source>
         <translation>Выберите эмблему своего клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="834"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="835"/>
         <source>Images (*.png *.jpg *.jpeg);;All files (*)</source>
         <translation>Изображения (*.png *.jpg *.jpeg);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="841"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="842"/>
         <source>Club ID</source>
         <translation>ID клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="842"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="843"/>
         <source>The file name contains no club ID. Please enter the ID by hand or choose the image as club logo on the Club page.</source>
         <translation>Имя файла не содержит ID клуба. Введите ID вручную или выберите изображение как логотип клуба на странице «Клуб».</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="860"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="861"/>
         <source>A rating profile defines how attributes enter the DWRS rating. Each save uses exactly one profile.</source>
         <translation>Профиль оценки определяет, как атрибуты входят в оценку DWRS. Каждое сохранение использует ровно один профиль.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="865"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="866"/>
         <source>This save&apos;s profile</source>
         <translation>Профиль этого сохранения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="873"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="874"/>
         <source>Switching the profile recalculates all ratings of the save in the background. The history shows the switch as a marker; no development is calculated across it. Older ratings stay stored unchanged.</source>
         <translation>Смена профиля пересчитывает все оценки сохранения в фоне. История показывает смену отметкой; развитие через неё не считается. Старые оценки сохраняются без изменений.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="878"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="879"/>
         <source>Rating profiles</source>
         <translation>Профили оценки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="879"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="880"/>
         <source>Edit drafts, save and exchange profiles.</source>
         <translation>Редактируйте черновики, сохраняйте профили и обменивайтесь ими.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="889"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="890"/>
         <source>The built-in profiles could not be loaded.</source>
         <translation>Не удалось загрузить встроенные профили.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="898"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="899"/>
         <source>Rating profile</source>
         <translation>Профиль оценки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="928"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="929"/>
         <source>Outfield players</source>
         <translation>Полевые игроки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="937"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="938"/>
         <source>Goalkeepers</source>
         <translation>Вратари</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="953"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="954"/>
         <source>Role Multipliers</source>
         <translation>Множители ролей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="959"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="960"/>
         <source>Key attributes</source>
         <translation>Ключевые атрибуты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="960"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="961"/>
         <source>Preferred attributes</source>
         <translation>Желательные атрибуты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="962"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="963"/>
         <source>Playing time weights</source>
         <translation>Веса игрового времени</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="963"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="964"/>
         <source>Weight per agreed playing time.</source>
         <translation>Вес для каждого оговорённого игрового времени.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="987"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="988"/>
         <source>Recalculation</source>
         <translation>Пересчёт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="988"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="989"/>
         <source>Recalculate all ratings</source>
         <translation>Пересчитать все оценки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="991"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="992"/>
         <source>Recalculates the ratings of all players in the active save with this save&apos;s profile. Unsaved changes on this page are not taken into account.</source>
         <translation>Пересчитывает оценки всех игроков активного сохранения с профилем этого сохранения. Несохранённые изменения на этой странице не учитываются.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1003"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1004"/>
         <source>Classification for talent score, analysis and filters, for this save&apos;s FM version.</source>
         <translation>Классификация для оценки таланта, анализа и фильтров для версии FM этого сохранения.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1009"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1010"/>
         <source>Personality</source>
         <translation>Характер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1015"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1016"/>
         <source>Restore standard</source>
         <translation>Восстановить стандарт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1083"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1086"/>
         <source>Good</source>
         <translation>Хороший</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1084"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1087"/>
         <source>Neutral</source>
         <translation>Нейтральный</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1085"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1088"/>
         <source>Bad</source>
         <translation>Плохой</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1097"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1098"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1100"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1101"/>
         <source>Classification</source>
         <translation>Классификация</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1105"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1108"/>
         <source>Thresholds for lineup, youth, loans and the gap analysis.</source>
         <translation>Пороги для расстановки, молодёжи, аренд и анализа пробелов.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1110"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1113"/>
         <source>Lineup</source>
         <translation>Расстановка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1121"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1124"/>
         <source>Natural position bonus</source>
         <translation>Бонус естественной позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1122"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1125"/>
         <source>In-possession share (FM27+)</source>
         <translation>Доля с мячом (FM27+)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1123"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1126"/>
         <source>From FM27 every tactic has one line-up in possession and one out of possession. A player&apos;s value is this share of the role in possession plus the rest of the role out of possession. Default 50 %.</source>
         <translation>С FM27 у каждой тактики одна расстановка с мячом и одна без мяча. Ценность игрока — эта доля роли с мячом плюс остаток роли без мяча. По умолчанию 50 %.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1130"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1133"/>
         <source>DWRS allowance for shorter paths</source>
         <translation>Допуск DWRS для более коротких путей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1131"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1134"/>
         <source>Maximum loss for the whole eleven compared with the original assignment. Also applies to the weighted selection score. 0 allows ties only. Within the allowance, manual side preferences come first, then short paths. The selected players stay the same.</source>
         <translation>Максимальная потеря для всей одиннадцати по сравнению с исходным распределением. Действует и для взвешенной оценки выбора. 0 допускает только равенство. В пределах допуска сначала учитываются ручные предпочтения сторон, затем короткие пути. Выбранные игроки остаются теми же.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1135"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1138"/>
         <source>Max. roles per depth player</source>
         <translation>Макс. ролей на игрока глубины</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1137"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1140"/>
         <source>Youth and loans</source>
         <translation>Молодёжь и аренды</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1149"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1152"/>
         <source>Youth: outfield players up to age</source>
         <translation>Молодёжь: полевые игроки до возраста</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1150"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1153"/>
         <source>Youth: goalkeepers up to age</source>
         <translation>Молодёжь: вратари до возраста</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1151"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1154"/>
         <source>Min. talent score for loan</source>
         <translation>Мин. оценка таланта для аренды</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1152"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1155"/>
         <source>Minimum age for loan</source>
         <translation>Минимальный возраст для аренды</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1153"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1156"/>
         <source>Youth XI loan only above age</source>
         <translation>Аренда из молодёжного состава только старше</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1155"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1158"/>
         <source>Gap Analysis</source>
         <translation>Анализ пробелов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1166"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1169"/>
         <source>Displacement threshold</source>
         <translation>Порог вытеснения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1167"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1170"/>
         <source>Dropoff threshold</source>
         <translation>Порог спада</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1168"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1171"/>
         <source>Wrong side penalty</source>
         <translation>Штраф за неверную сторону</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1178"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1181"/>
         <source>Which attributes train up to which age and how strongly. Drives the training recommendation.</source>
         <translation>Какие атрибуты тренируются до какого возраста и насколько сильно. Определяет рекомендацию по тренировкам.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1183"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1186"/>
         <source>Training profile</source>
         <translation>Профиль тренировок</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1187"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1190"/>
         <source>A band groups attributes that develop alike. Up to “fully trainable until” training works fully, then its effect drops linearly until “locked from”; “always” means never locked. The weight strengthens or weakens a band in the recommendation. Bands marked “Mentoring only” only appear as a mentoring note. Attributes without a band are not recommended. The profile belongs to this save.</source>
         <translation>Полоса объединяет атрибуты, которые развиваются одинаково. До «полностью тренируется до» тренировка действует полностью, затем её эффект линейно снижается до «заблокировано с»; «всегда» означает, что блокировки нет. Вес усиливает или ослабляет полосу в рекомендации. Полосы с отметкой «Только наставничество» появляются только как примечание о наставничестве. Атрибуты без полосы не рекомендуются. Профиль принадлежит этому сохранению.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1201"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1204"/>
         <source>Colors and club header of this save.</source>
         <translation>Цвета и шапка клуба этого сохранения.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1205"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1208"/>
         <source>Colour Scheme</source>
         <translation>Цветовая схема</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1213"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1216"/>
         <source>Night (dark)</source>
         <translation>Ночь (тёмная)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1214"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1217"/>
         <source>Day (light)</source>
         <translation>День (светлая)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1215"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1218"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1216"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1219"/>
         <source>Template</source>
         <translation>Шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1217"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1220"/>
         <source>Save as own template …</source>
         <translation>Сохранить как свой шаблон …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1219"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1222"/>
         <source>Saves the colors below (day and night) as your own template. Own templates are available in every save and are kept across updates.</source>
         <translation>Сохраняет цвета ниже (день и ночь) как ваш шаблон. Свои шаблоны доступны в каждом сохранении и сохраняются при обновлениях.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1221"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1224"/>
         <source>Delete template</source>
         <translation>Удалить шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1231"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1234"/>
         <source>A preset sets a calm anthracite base and uses only the club colours as accents (header, buttons, interaction). Colours below can then be freely adjusted — that switches to &apos;Custom&apos;.</source>
         <translation>Пресет задаёт спокойную антрацитовую основу и использует цвета клуба только как акценты (шапка, кнопки, взаимодействие). Цвета ниже затем можно свободно менять — это переключает на «Своя».</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1244"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1247"/>
         <source>Club header</source>
         <translation>Шапка клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1247"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1250"/>
         <source>Club colors with crest</source>
         <translation>Цвета клуба с эмблемой</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1248"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1251"/>
         <source>Single color (&quot;Header&quot; color)</source>
         <translation>Один цвет (цвет «Шапка»)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1249"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1252"/>
         <source>Style</source>
         <translation>Стиль</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1250"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1253"/>
         <source>Also show the crest as a subtle silhouette</source>
         <translation>Также показывать эмблему как неброский силуэт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1252"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1255"/>
         <source>The club header uses the &quot;Primary&quot; color as its surface and &quot;Interaction&quot; as a narrow stripe. If the colors are too light or too bright, the Analyzer darkens the surface just enough to keep name and stadium readable.</source>
         <translation>Шапка клуба использует цвет «Основной» как фон и «Взаимодействие» как узкую полосу. Если цвета слишком светлые или яркие, анализатор затемняет фон ровно настолько, чтобы название и стадион оставались читаемыми.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1262"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1265"/>
         <source>Colors</source>
         <translation>Цвета</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1263"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1266"/>
         <source>Click a color to open the color picker.</source>
         <translation>Нажмите на цвет, чтобы открыть выбор цвета.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1265"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1268"/>
         <source>Background</source>
         <translation>Фон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1266"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1269"/>
         <source>Panel / Cards</source>
         <translation>Панель / Карточки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1267"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1270"/>
         <source>Sidebar</source>
         <translation>Боковая панель</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1268"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1271"/>
         <source>Header</source>
         <translation>Шапка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1269"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1272"/>
         <source>Primary / Buttons</source>
         <translation>Основной / Кнопки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1270"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1273"/>
         <source>Interaction (tabs, sliders)</source>
         <translation>Взаимодействие (вкладки, ползунки)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1271"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1274"/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1277"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2130"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1280"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2133"/>
         <source>Night</source>
         <translation>Ночь</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1278"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2130"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1281"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2133"/>
         <source>Day</source>
         <translation>День</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1295"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1298"/>
         <source>Choose colour</source>
         <translation>Выбрать цвет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1322"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1325"/>
         <source>How ratings are coloured in tables, on the pitch and on the dashboard.</source>
         <translation>Как раскрашиваются оценки в таблицах, на поле и на панели.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1326"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1329"/>
         <source>Colour scheme</source>
         <translation>Цветовая схема</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1329"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1332"/>
         <source>Scheme</source>
         <translation>Схема</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1330"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1333"/>
         <source>Save as own scheme …</source>
         <translation>Сохранить как свою схему …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1331"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1334"/>
         <source>Own colour schemes are available in every save and survive updates.</source>
         <translation>Свои цветовые схемы доступны в каждом сохранении и сохраняются при обновлениях.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1333"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1410"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1336"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1413"/>
         <source>Delete scheme</source>
         <translation>Удалить схему</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1340"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1343"/>
         <source>&quot;Original&quot; is the rainbow of earlier versions. &quot;Rarity&quot; colours in tiers like items in role-playing games (Poor, Common, Uncommon, Rare, Epic, Legendary). &quot;Colour-blind friendly&quot; stays distinguishable with red-green colour blindness. Changing a colour or border below turns it into &quot;Custom&quot;; &quot;Save as own scheme&quot; keeps it. The Analyzer picks light or dark text automatically so it stays readable on every colour.</source>
         <translation>«Оригинал» — радуга прежних версий. «Редкость» раскрашивает по уровням, как предметы в ролевых играх (Плохой, Обычный, Необычный, Редкий, Эпический, Легендарный). «Для дальтоников» остаётся различимой при красно-зелёном дальтонизме. Изменение цвета или границы ниже превращает схему в «Свою»; «Сохранить как свою схему» сохраняет её. Анализатор сам выбирает светлый или тёмный текст, чтобы он оставался читаемым на любом цвете.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1347"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1350"/>
         <source>Bands and colours</source>
         <translation>Диапазоны и цвета</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1348"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1351"/>
         <source>From which value a colour applies, separately for outfield players and goalkeepers.</source>
         <translation>С какого значения действует цвет, отдельно для полевых игроков и вратарей.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1353"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1356"/>
         <source>A soft transition mixes the colours of neighbouring bands within this distance of the border, so that 71.5 and 72.5 no longer look completely different. Bands without fill are never mixed. Goalkeepers have their own borders because their rating uses a different basis.</source>
         <translation>Плавный переход смешивает цвета соседних диапазонов в пределах этого расстояния от границы, чтобы 71,5 и 72,5 не выглядели совсем разными. Диапазоны без заливки не смешиваются. У вратарей свои границы, потому что их оценка строится на другой основе.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1376"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1379"/>
         <source>%1 (own)</source>
         <translation>%1 (своя)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1379"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1397"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1382"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1400"/>
         <source>Own colour scheme</source>
         <translation>Своя цветовая схема</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1379"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1674"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1382"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1677"/>
         <source>Name:</source>
         <translation>Название:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1398"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1401"/>
         <source>The colour scheme could not be saved: %1</source>
         <translation>Не удалось сохранить цветовую схему: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1411"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1414"/>
         <source>Delete the colour scheme &quot;%1&quot;?</source>
         <translation>Удалить цветовую схему «%1»?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1436"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1439"/>
         <source>Custom</source>
         <translation>Своя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1452"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1455"/>
         <source>Will be read when you save.</source>
         <translation>Будет прочитано при сохранении.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1456"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1459"/>
         <source>Folder not found or without graphics packs (config.xml): %1</source>
         <translation>Папка не найдена или в ней нет графических паков (config.xml): %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1460"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1463"/>
         <source>Reading graphics packs…</source>
         <translation>Чтение графических паков…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1464"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1467"/>
         <source>%1 portraits and %2 club crests found.</source>
         <translation>Найдено портретов: %1, эмблем клубов: %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1467"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1470"/>
         <source>No portraits or crests found. Are the packs with their config.xml in this folder?</source>
         <translation>Портреты и эмблемы не найдены. Лежат ли паки с их config.xml в этой папке?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1480"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1483"/>
         <source>There is no crest for this club ID in the folder.</source>
         <translation>В папке нет эмблемы для этого ID клуба.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1487"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1490"/>
         <source>Choose club logo</source>
         <translation>Выбрать логотип клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1488"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1540"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1491"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1543"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp);;All files (*)</source>
         <translation>Изображения (*.png *.jpg *.jpeg *.bmp);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1495"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1547"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1498"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1550"/>
         <source>The file could not be loaded as an image.</source>
         <translation>Не удалось загрузить файл как изображение.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1504"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1507"/>
         <source>The logo could not be saved.
 %1</source>
         <translation>Не удалось сохранить логотип.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1516"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1519"/>
         <source>The logo could not be removed.
 %1</source>
         <translation>Не удалось удалить логотип.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1530"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1533"/>
         <source>(no logo)</source>
         <translation>(нет логотипа)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1539"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1542"/>
         <source>Choose national flag</source>
         <translation>Выбрать флаг страны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1546"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1554"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1566"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1549"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1557"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1569"/>
         <source>National flag</source>
         <translation>Флаг страны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1555"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1558"/>
         <source>The flag could not be saved.
 %1</source>
         <translation>Не удалось сохранить флаг.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1567"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1570"/>
         <source>The flag could not be removed.
 %1</source>
         <translation>Не удалось удалить флаг.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1581"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1584"/>
         <source>(no flag)</source>
         <translation>(нет флага)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1599"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1654"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1697"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1602"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1657"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1700"/>
         <source>Custom</source>
         <comment>league</comment>
         <translation>Своя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1602"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1605"/>
         <source>%1 (own)</source>
         <comment>league</comment>
         <translation>%1 (свой)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1630"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1633"/>
         <source>Custom (not saved)</source>
         <translation>Своя (не сохранена)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1647"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1650"/>
         <source>Save own color template</source>
         <translation>Сохранить свой цветовой шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1675"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1678"/>
         <source>League:</source>
         <translation>Лига:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1676"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1679"/>
         <source>A league files the template with the clubs of that league. &quot;Custom&quot; collects templates without a league. The same name in the same league replaces the template.</source>
         <translation>Лига относит шаблон к клубам этой лиги. «Своя» собирает шаблоны без лиги. То же название в той же лиге заменяет шаблон.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1701"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1724"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1704"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1727"/>
         <source>Color template</source>
         <translation>Цветовой шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1702"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1705"/>
         <source>The template could not be saved.
 
 %1</source>
@@ -8361,17 +8361,17 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1717"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1720"/>
         <source>Delete color template</source>
         <translation>Удалить цветовой шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1718"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1721"/>
         <source>Delete your template &quot;%1&quot;? Saves that use it keep their colors.</source>
         <translation>Удалить ваш шаблон «%1»? Сохранения, которые его используют, сохранят свои цвета.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1725"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1728"/>
         <source>The template could not be deleted.
 
 %1</source>
@@ -8380,168 +8380,168 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1762"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1765"/>
         <source>Switch, create or take over saves. These actions apply immediately.</source>
         <translation>Переключение, создание или перенос сохранений. Эти действия применяются сразу.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1767"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1770"/>
         <source>Active save</source>
         <translation>Активное сохранение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1769"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1772"/>
         <source>Switch</source>
         <translation>Переключить</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1778"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1801"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1781"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1804"/>
         <source>Database</source>
         <translation>База данных</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1781"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1784"/>
         <source>New save …</source>
         <translation>Новое сохранение …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1782"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1785"/>
         <source>Import legacy database …</source>
         <translation>Импортировать старую базу данных …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1796"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1799"/>
         <source>Activate imported database &apos;%1&apos; now?</source>
         <translation>Активировать импортированную базу данных &apos;%1&apos; сейчас?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1806"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1809"/>
         <source>Startup</source>
         <translation>Запуск</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1808"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1811"/>
         <source>Always open the last used save at startup</source>
         <translation>Всегда открывать последнее сохранение при запуске</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1814"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1817"/>
         <source>Unticked, the start screen with your saves appears at startup. Ticked, you can still bring it up by holding Shift while the app starts.</source>
         <translation>Без галочки при запуске появляется стартовый экран с вашими сохранениями. С галочкой его можно вызвать, удерживая Shift при запуске приложения.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1818"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1821"/>
         <source>Updates</source>
         <translation>Обновления</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1819"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1822"/>
         <source>Check for new versions at startup</source>
         <translation>Проверять наличие новых версий при запуске</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1820"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1823"/>
         <source>Include test versions</source>
         <translation>Включать тестовые версии</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1822"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1825"/>
         <source>Test versions come before a release, for trying out new features. They can still contain errors.</source>
         <translation>Тестовые версии выходят до релиза, чтобы опробовать новые функции. Они ещё могут содержать ошибки.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1830"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1833"/>
         <source>Check now</source>
         <translation>Проверить сейчас</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1843"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1846"/>
         <source>The check only asks GitHub for the latest version number and its release notes. No data about you, your saves or your players is sent. A new version is shown as a hint with its changes and a download button that opens the release page; nothing is installed automatically. Without the check the app makes no connection to the internet.</source>
         <translation>Проверка запрашивает у GitHub только номер последней версии и описание изменений. Никакие данные о вас, ваших сохранениях или игроках не отправляются. Новая версия показывается как подсказка с изменениями и кнопкой загрузки, которая открывает страницу релиза; ничего не устанавливается автоматически. Без проверки приложение не подключается к интернету.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1849"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1852"/>
         <source>Data folder</source>
         <translation>Папка данных</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1854"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1857"/>
         <source>Can be changed in bootstrap.ini.</source>
         <translation>Можно изменить в bootstrap.ini.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1865"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1868"/>
         <source>Version %1 · last checked %2</source>
         <translation>Версия %1 · последняя проверка %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1867"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1870"/>
         <source>Version %1</source>
         <translation>Версия %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1880"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1883"/>
         <source>Version %1 is available.</source>
         <translation>Доступна версия %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1887"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1890"/>
         <source>You are using the latest version (%1).</source>
         <translation>У вас последняя версия (%1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1891"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1894"/>
         <source>GitHub could not be reached. Please try again later.</source>
         <translation>Не удалось связаться с GitHub. Попробуйте позже.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1897"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1900"/>
         <source>Checking …</source>
         <translation>Проверка …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1906"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1909"/>
         <source>No profile active.</source>
         <translation>Нет активного профиля.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1906"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1909"/>
         <source>Active: %1</source>
         <translation>Активен: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1931"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1934"/>
         <source>The save contains players. Please create a new save for a different version.</source>
         <translation>В сохранении есть игроки. Создайте новое сохранение для другой версии.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2005"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2008"/>
         <source>Default (no restriction)</source>
         <translation>По умолчанию (без ограничений)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2038"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2041"/>
         <source>Weights for %1 saves.</source>
         <translation>Веса для сохранений %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2117"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2120"/>
         <source>Applies to the save “%1”</source>
         <translation>Действует для сохранения «%1»</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2129"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2132"/>
         <source>%1: text/background contrast only %2:1 (WCAG recommends at least 4.5:1)</source>
         <translation>%1: контраст текста и фона всего %2:1 (WCAG рекомендует не менее 4,5:1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2135"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2138"/>
         <source>Text/background contrast OK</source>
         <translation>Контраст текста и фона в порядке</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2335"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2338"/>
         <source>The settings could not be saved. The save keeps its previous state.
 
 %1</source>
@@ -8550,7 +8550,7 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2358"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2361"/>
         <source>Settings saved.</source>
         <translation>Настройки сохранены.</translation>
     </message>
@@ -8558,271 +8558,271 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 <context>
     <name>fm::SigningAdvisorTab</name>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="86"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="87"/>
         <source>⛔ Unfilled</source>
         <translation>⛔ Не занято</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="88"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="89"/>
         <source>🕳️⚠️ Hidden + Obvious</source>
         <translation>🕳️⚠️ Скрытый + Явный</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="90"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="91"/>
         <source>🕳️ Hidden</source>
         <translation>🕳️ Скрытый</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="92"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="93"/>
         <source>⚠️ Obvious</source>
         <translation>⚠️ Явный</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="119"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="120"/>
         <source>Budget (market value up to):</source>
         <translation>Бюджет (рыночная стоимость до):</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="124"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="125"/>
         <source> M</source>
         <translation> млн</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="125"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="126"/>
         <source>Highest market value of a candidate (lower end of the range as FM exports it). 0 = free transfers only.</source>
         <translation>Наибольшая рыночная стоимость кандидата (нижняя граница диапазона, как её экспортирует FM). 0 = только свободные агенты.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="128"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="129"/>
         <source>No limit</source>
         <translation>Без ограничения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="131"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="132"/>
         <source>Max age:</source>
         <translation>Макс. возраст:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="136"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="137"/>
         <source>Shortlist only</source>
         <translation>Только список наблюдения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="139"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="140"/>
         <source>How is this calculated?</source>
         <translation>Как это считается?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="140"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="141"/>
         <source>Show or hide the explanation</source>
         <translation>Показать или скрыть пояснение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="145"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="146"/>
         <source>For every position the best players of the filtered market are added to the squad on trial, and the starting XI and B-team are lined up again, provably optimally, each time (as on &apos;First team&apos;). &apos;XI +&apos; is how much the starting XI&apos;s total DWRS rises — with every knock-on effect: if a versatile player moves to a better position thanks to the newcomer, that counts too (column &apos;Knock-on&apos;). A position that merely looks weak, but for which the market offers nobody better, therefore does not end up on top. &apos;Better on market&apos; counts how many players of the filtered market are better in the role than your current one. Signings are calculated without an agreed playing time; &apos;Not for Sale&apos; players are left out.</source>
         <translation>Для каждой позиции лучшие игроки отфильтрованного рынка на пробу добавляются в состав, и каждый раз основной состав и команда B заново расставляются доказуемо оптимально (как в «Основной команде»). «XI +» показывает, насколько растёт суммарный DWRS основного состава — со всеми цепными эффектами: если универсальный игрок благодаря новичку переходит на лучшую позицию, это тоже учитывается (столбец «Цепной эффект»). Поэтому позиция, которая лишь выглядит слабой, но для которой рынок не предлагает никого лучше, не оказывается наверху. «Лучше на рынке» считает, сколько игроков отфильтрованного рынка лучше в этой роли, чем ваш текущий. Покупки считаются без оговорённого игрового времени; игроки «Не продаётся» исключены.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="170"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="209"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
         <source>Slot</source>
         <translation>Место</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="170"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="209"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
         <source>Role</source>
         <translation>Роль</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="170"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
         <source>Current</source>
         <translation>Текущий</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="170"/>
         <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="209"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
         <source>DWRS</source>
         <translation>DWRS</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
         <source>XI +</source>
         <translation>XI +</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="171"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
         <source>Best signing</source>
         <translation>Лучшая покупка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
         <source>Market Value</source>
         <translation>Рыночная стоимость</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
         <source>B-team +</source>
         <translation>Команда B +</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="172"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="173"/>
         <source>Better on market</source>
         <translation>Лучше на рынке</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="174"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="175"/>
         <source>Players of the filtered market who are better in the role than your current one — out of all who can play the position.</source>
         <translation>Игроки отфильтрованного рынка, которые лучше в этой роли, чем ваш текущий, — из всех, кто может играть на этой позиции.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="186"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="186"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="186"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="186"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="187"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
         <source>Wage</source>
         <translation>Зарплата</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="188"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
         <source>Personality</source>
         <translation>Характер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="189"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="190"/>
         <source>Knock-on</source>
         <translation>Цепной эффект</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="195"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="196"/>
         <source>Gap analysis: line-up anomalies</source>
         <translation>Анализ пробелов: аномалии расстановки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="196"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="197"/>
         <source>Starters clearly below the team median (obvious) or not in their best position or on their side (hidden) — without looking at the market.</source>
         <translation>Игроки основы заметно ниже медианы команды (явно) или не на лучшей позиции или не на своей стороне (скрыто) — без учёта рынка.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="209"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
         <source>Player</source>
         <translation>Игрок</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
         <source>Gap Score</source>
         <translation>Оценка пробела</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="210"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="211"/>
         <source>Why</source>
         <translation>Почему</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="212"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="213"/>
         <source>Starting XI</source>
         <translation>Основной состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="213"/>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="475"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="214"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="476"/>
         <source>B-Team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="349"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="350"/>
         <source>Please choose your club first (Overview or Settings).</source>
         <translation>Сначала выберите свой клуб (Обзор или Настройки).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="377"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="378"/>
         <source>Filtered market: %1 players, %2 of them simulated as a signing.</source>
         <translation>Отфильтрованный рынок: игроков: %1, из них как покупка смоделировано: %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="382"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="383"/>
         <source>With these filters the market offers nobody who improves the starting XI.</source>
         <translation>С этими фильтрами на рынке нет никого, кто улучшил бы основной состав.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="388"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="389"/>
         <source>Biggest lever: &lt;b&gt;%1 · %2&lt;/b&gt; — %3 (%4, %5) adds %6 DWRS to the starting XI.</source>
         <translation>Самый большой рычаг: &lt;b&gt;%1 · %2&lt;/b&gt; — %3 (%4, %5) добавляет основному составу %6 DWRS.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="400"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="401"/>
         <source>Then: %1.</source>
         <translation>Далее: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="431"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="432"/>
         <source>— unfilled —</source>
         <translation>— не занято —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="439"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="440"/>
         <source>nobody better</source>
         <translation>никого лучше</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="459"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="460"/>
         <source>%1 of %2</source>
         <translation>%1 из %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="474"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="475"/>
         <source>Squad</source>
         <translation>Состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="497"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="498"/>
         <source>For %1 (%2) the filtered market has nobody who improves the starting XI.</source>
         <translation>Для %1 (%2) на отфильтрованном рынке нет никого, кто улучшил бы основной состав.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="500"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="501"/>
         <source>Signing options for %1 (%2)</source>
         <translation>Варианты покупки для %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="553"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="554"/>
         <source>Thresholds — Hidden: %1 · Obvious: %2 · Wrong-side penalty: %3 (adjustable under Settings → Squad and analysis)</source>
         <translation>Пороги — скрытый: %1 · явный: %2 · штраф за неверную сторону: %3 (настраиваются в Настройки → Состав и анализ)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="577"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="578"/>
         <source>✅ No significant gaps found with the current thresholds.</source>
         <translation>✅ При текущих порогах значимых пробелов не найдено.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="579"/>
+        <location filename="../src/app/pages/SigningAdvisorTab.cpp" line="580"/>
         <source>%1 notable position(s) found — worst first.</source>
         <translation>Найдено заметных позиций: %1 — сначала худшие.</translation>
     </message>
@@ -8830,405 +8830,405 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 <context>
     <name>fm::SquadMatrixPage</name>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="118"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="119"/>
         <source>Squad Matrix</source>
         <translation>Матрица состава</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="124"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="125"/>
         <source>Tactic:</source>
         <translation>Тактика:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="128"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="129"/>
         <source>Extra details</source>
         <translation>Дополнительные сведения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="134"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="135"/>
         <source>Scouting</source>
         <translation>Скаутинг</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="135"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="136"/>
         <source>My Squad</source>
         <translation>Мой состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="154"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="161"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="155"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="162"/>
         <source>%1 years</source>
         <translation>%1 лет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="194"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="195"/>
         <source>No limit</source>
         <translation>Без ограничения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="227"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="228"/>
         <source>Squad Matrix – Scouting</source>
         <translation>Матрица состава – Скаутинг</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="227"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="228"/>
         <source>Squad Matrix – My Squad</source>
         <translation>Матрица состава – Мой состав</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="239"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="240"/>
         <source>Filter/Sorting:</source>
         <translation>Фильтр/сортировка:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="243"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="244"/>
         <source>Sort and filter by a role. A “Δ” column then shows how far the player is above or below the best player of your first team.</source>
         <translation>Сортировать и фильтровать по роли. Столбец «Δ» тогда показывает, насколько игрок выше или ниже лучшего игрока вашей основной команды.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="247"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="248"/>
         <source>Nation:</source>
         <translation>Страна:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="251"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="252"/>
         <source>Restrict by nationality (independent of the talent filter): your own country, foreigners or a specific nation — useful for registration rules.</source>
         <translation>Ограничить по гражданству (независимо от фильтра таланта): своя страна, иностранцы или конкретная страна — полезно для правил заявки.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="254"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="255"/>
         <source>Free agents only</source>
         <translation>Только свободные агенты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="256"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="257"/>
         <source>Free agents only: transfer value explicitly 0 or no club set (regardless of how the club is labelled). The value cap is ignored; sortable by role/talent.</source>
         <translation>Только свободные агенты: трансферная стоимость явно 0 или клуб не указан (как бы клуб ни был подписан). Ограничение стоимости игнорируется; можно сортировать по роли/таланту.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="260"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="261"/>
         <source>Hide retired/stale</source>
         <translation>Скрыть завершивших/устаревших</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="262"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="263"/>
         <source>Hides players whose club is set to &apos;Retired&apos; or who were missing from the latest full exports (except your own club and the shortlist).</source>
         <translation>Скрывает игроков, у которых клуб — &apos;Retired&apos; или которых не было в последних полных экспортах (кроме вашего клуба и списка наблюдения).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="271"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="272"/>
         <source>DWRS:</source>
         <translation>DWRS:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="282"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="283"/>
         <source>Age:</source>
         <translation>Возраст:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="293"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="294"/>
         <source>Max. Value:</source>
         <translation>Макс. стоимость:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="311"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="312"/>
         <source>Talent Filter</source>
         <translation>Фильтр таланта</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="316"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="317"/>
         <source>Nationality:</source>
         <translation>Гражданство:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="324"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="325"/>
         <source>Domestic</source>
         <translation>Отечественные</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="325"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="326"/>
         <source>Foreign</source>
         <translation>Иностранные</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="326"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="327"/>
         <source>Any</source>
         <translation>Любые</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="331"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="332"/>
         <source>Max. Age:</source>
         <translation>Макс. возраст:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="339"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="340"/>
         <source>Min. Det + Wor:</source>
         <translation>Мин. Реш + Раб:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="347"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="348"/>
         <source>Only good personalities</source>
         <translation>Только хорошие характеры</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="352"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="353"/>
         <source>Talent Score = best DWRS of the displayed roles + 2 per year below the age cap + (Det + WR − 20) / 4 + 3 (good) / − 5 (bad personality). A rough development estimate, not hidden potential ability. Attribute ranges use their midpoint; unknown attributes are neutral at 10. Compare players with the same roles and age caps.</source>
         <translation>Оценка таланта = лучший DWRS показанных ролей + 2 за каждый год до возрастного предела + (Реш + Раб − 20) / 4 + 3 (хороший) / − 5 (плохой характер). Грубая оценка развития, а не скрытый потенциал. Для диапазонов атрибутов берётся середина; неизвестные атрибуты нейтральны и равны 10. Сравнивайте игроков с одинаковыми ролями и возрастными пределами.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="364"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="365"/>
         <source>Attribute thresholds</source>
         <translation>Пороги атрибутов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="369"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="370"/>
         <source>Highlights players whose attribute reaches the threshold, e.g. Decisions for an AM(C) or Crossing for full-backs. Each threshold gets its own column, “Thresholds” counts the ones met. Uses the middle of the scouted range.</source>
         <translation>Выделяет игроков, у которых атрибут достигает порога, например Принятие решений для АП (Ц) или Навесы для крайних защитников. У каждого порога свой столбец, «Пороги» считает выполненные. Используется середина просмотренного диапазона.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="380"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="381"/>
         <source>+ Attribute</source>
         <translation>+ Атрибут</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="388"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="389"/>
         <source>Only show players who meet all thresholds</source>
         <translation>Показывать только игроков, выполняющих все пороги</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="394"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="395"/>
         <source>Scouted Players</source>
         <translation>Просмотренные игроки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="411"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="412"/>
         <source>Show:</source>
         <translation>Показать:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="419"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="420"/>
         <source>First team</source>
         <translation>Основная команда</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="420"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="421"/>
         <source>Second Team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="421"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="422"/>
         <source>Both</source>
         <translation>Обе</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="426"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="427"/>
         <source>Only players up to the youth age limits from the settings (outfield players and goalkeepers separately).</source>
         <translation>Только игроки в пределах молодёжных возрастов из настроек (полевые игроки и вратари отдельно).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="432"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1021"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="433"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1022"/>
         <source>My Club</source>
         <translation>Мой клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="445"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="446"/>
         <source>Search by name…</source>
         <translation>Поиск по имени…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="447"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1327"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1334"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="448"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1328"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1335"/>
         <source>Export CSV</source>
         <translation>Экспорт CSV</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="459"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="460"/>
         <source>Freshness</source>
         <translation>Актуальность</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="519"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="520"/>
         <source>★</source>
         <translation>★</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="527"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="542"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1038"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="528"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="543"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1039"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="550"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="551"/>
         <source>Data outdated: not seen in the last %1 full exports.</source>
         <translation>Данные устарели: игрока не было в последних полных экспортах (%1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="557"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="558"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="560"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1041"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1182"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="561"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1042"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1183"/>
         <source>Talent</source>
         <translation>Талант</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="574"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="575"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="576"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="577"/>
         <source>Personality</source>
         <translation>Характер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="586"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="587"/>
         <source>Club</source>
         <translation>Клуб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="587"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="607"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="588"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="608"/>
         <source>Market Value</source>
         <translation>Рыночная стоимость</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="596"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="597"/>
         <source>Wage</source>
         <translation>Зарплата</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="599"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="600"/>
         <source>Left Foot</source>
         <translation>Левая нога</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="601"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="602"/>
         <source>Right Foot</source>
         <translation>Правая нога</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="603"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="604"/>
         <source>Height</source>
         <translation>Рост</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="627"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="628"/>
         <source>Det</source>
         <translation>Реш</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="628"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="629"/>
         <source>Wor</source>
         <translation>Раб</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="646"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="647"/>
         <source>Thresholds</source>
         <translation>Пороги</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="698"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1180"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="699"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1181"/>
         <source>⌀ Requirements</source>
         <translation>⌀ Требования</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="709"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="710"/>
         <source>Mean DWRS in the required roles; for a bridge weighted with the in-possession share from the settings, as in Best XI.</source>
         <translation>Средний DWRS в требуемых ролях; для связки взвешен по доле с мячом из настроек, как в лучшем составе.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="714"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="757"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="715"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="758"/>
         <source>Δ %1 (%2)</source>
         <translation>Δ %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="730"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="731"/>
         <source>Difference to the value of the player the search was started for.</source>
         <translation>Разница со значением игрока, для которого запущен поиск.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="818"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="819"/>
         <source>All Roles</source>
         <translation>Все роли</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="854"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="855"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="856"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="867"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="857"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="868"/>
         <source>Domestic (%1)</source>
         <translation>Отечественные (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="857"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="858"/>
         <source>Foreigners</source>
         <translation>Иностранцы</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="866"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="867"/>
         <source>Domestic (country missing in settings)</source>
         <translation>Отечественные (страна не указана в настройках)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="876"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="877"/>
         <source>Youth only (up to %1, GK up to %2)</source>
         <translation>Только молодёжь (до %1, В до %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1024"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1025"/>
         <source>Players from %1 (Second Team, %2)</source>
         <translation>Игроки %1 (команда B, %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1026"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1027"/>
         <source>Players from %1 &amp; Second Team (%2)</source>
         <translation>Игроки %1 и команды B (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1028"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1029"/>
         <source>Players from %1 (%2)</source>
         <translation>Игроки %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1039"/>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1319"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1040"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1320"/>
         <source>Shortlist</source>
         <translation>Список наблюдения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1043"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1044"/>
         <source>Requirements (value)</source>
         <translation>Требования (значение)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1161"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1162"/>
         <source>Free Agents (%1)</source>
         <translation>Свободные агенты (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1162"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1163"/>
         <source>Scouted Players (%1)</source>
         <translation>Просмотренные игроки (%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1224"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1225"/>
         <source>Remove threshold</source>
         <translation>Удалить порог</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1329"/>
+        <location filename="../src/app/pages/SquadMatrixPage.cpp" line="1330"/>
         <source>CSV files (*.csv)</source>
         <translation>Файлы CSV (*.csv)</translation>
     </message>
@@ -9747,77 +9747,77 @@ A backup is created automatically in the “backups” folder first. You can bri
 <context>
     <name>fm::TrainingPlanPage</name>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="46"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="47"/>
         <source>Training Plan</source>
         <translation>План тренировок</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="50"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="51"/>
         <source>Tactic:</source>
         <translation>Тактика:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="55"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="56"/>
         <source>🔄 Refresh</source>
         <translation>🔄 Обновить</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="56"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="57"/>
         <source>Recompute squad, roles and recommendations (e.g. after changing roles).</source>
         <translation>Пересчитать состав, роли и рекомендации (например, после смены ролей).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="66"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="67"/>
         <source>First team</source>
         <translation>Основная команда</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="71"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="72"/>
         <source>Second team</source>
         <translation>Команда B</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="109"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="110"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="109"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="110"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="109"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="110"/>
         <source>Position</source>
         <translation>Позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="109"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="110"/>
         <source>Training role</source>
         <translation>Роль для тренировок</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="110"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="111"/>
         <source>Training methods (in order)</source>
         <translation>Методы тренировки (по порядку)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="136"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="137"/>
         <source>Role selectable from &lt;i&gt;positions ∩ tactic&lt;/i&gt; (saved). Method order = biggest DWRS gain first; rehab methods are not suggested. Click a column header to sort.</source>
         <translation>Роль выбирается из &lt;i&gt;позиции ∩ тактика&lt;/i&gt; (сохраняется). Порядок методов = сначала наибольший прирост DWRS; реабилитационные методы не предлагаются. Нажмите на заголовок столбца для сортировки.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="139"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="140"/>
         <source>⚠️ No club set. Pick &apos;My club&apos; under Settings → Club so your squad is shown.</source>
         <translation>⚠️ Клуб не задан. Выберите «Мой клуб» в Настройки → Клуб, чтобы показать ваш состав.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="158"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="159"/>
         <source>nothing worth training</source>
         <translation>тренировать нечего</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="232"/>
+        <location filename="../src/app/pages/TrainingPlanPage.cpp" line="233"/>
         <source>no role in this tactic</source>
         <translation>нет роли в этой тактике</translation>
     </message>

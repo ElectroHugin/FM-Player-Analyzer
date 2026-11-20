@@ -10,6 +10,7 @@
 #include "core/Database.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -290,7 +291,7 @@ void NationalDashboardPage::rebuildAnalysis()
                                 : QStringLiteral("–"),
                             player->averageRating));
         m_squadTable->setItem(row, 3, new QTableWidgetItem(player->club));
-        m_squadTable->setItem(row, 4, new QTableWidgetItem(player->positionRaw));
+        m_squadTable->setItem(row, 4, new QTableWidgetItem(GameTerms::positions(player->positionRaw)));
         ++row;
     }
     m_squadTable->setSortingEnabled(true);
@@ -440,7 +441,7 @@ void NationalDashboardPage::rebuildCallUps()
         cardLayout->addWidget(body);
         auto *footer = new QLabel(tr("Club: %1<br/>Positions: %2")
                                       .arg(player->club.toHtmlEscaped(),
-                                           player->positionRaw.toHtmlEscaped()),
+                                           GameTerms::positions(player->positionRaw).toHtmlEscaped()),
                                   card);
         footer->setObjectName(QStringLiteral("kpiCaption"));
         footer->setWordWrap(true);

@@ -1,6 +1,7 @@
 #include "PersonalityFilterWidget.h"
 
 #include "core/Definitions.h"
+#include "core/GameTerms.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -59,7 +60,8 @@ void PersonalityFilterWidget::rebuildSpecificMenu()
 {
     m_specificMenu->clear();
     for (const QString &personality : m_available) {
-        QAction *action = m_specificMenu->addAction(personality);
+        QAction *action =
+            m_specificMenu->addAction(GameTerms::text(QStringLiteral("personality"), personality));
         action->setCheckable(true);
         action->setChecked(m_specificChecked.contains(personality));
         connect(action, &QAction::toggled, this, [this, personality](bool checked) {

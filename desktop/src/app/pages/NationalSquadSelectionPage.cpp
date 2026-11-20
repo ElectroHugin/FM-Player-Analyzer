@@ -4,6 +4,7 @@
 #include "PageHelpers.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -26,7 +27,7 @@ QListWidgetItem *playerItem(const Player &player, QListWidget *list)
         QStringLiteral("%1 (%2)\n%3 | %4")
             .arg(player.name)
             .arg(player.age)
-            .arg(player.club, player.positionRaw),
+            .arg(player.club, GameTerms::positions(player.positionRaw)),
         list);
     item->setData(Qt::UserRole, player.uid);
     return item;

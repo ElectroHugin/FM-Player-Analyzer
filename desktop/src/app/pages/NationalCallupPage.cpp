@@ -10,6 +10,7 @@
 #include "core/PlayerStatus.h"
 #include "core/SquadBuilder.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QApplication>
 #include <QButtonGroup>
@@ -39,7 +40,7 @@ namespace {
 // Player display line for the result/injured lists.
 QString playerLine(const Player &p)
 {
-    return QStringLiteral("%1 (%2) — %3 | %4").arg(p.name).arg(p.age).arg(p.club, p.positionRaw);
+    return QStringLiteral("%1 (%2) — %3 | %4").arg(p.name).arg(p.age).arg(p.club, GameTerms::positions(p.positionRaw));
 }
 
 } // namespace

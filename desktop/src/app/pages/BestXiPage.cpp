@@ -12,6 +12,7 @@
 #include "core/SquadBuilder.h"
 #include "core/TalentEngine.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QCheckBox>
 #include <QFrame>
@@ -1297,7 +1298,7 @@ void BestXiPage::fillSurplusTable(QTableWidget *table,
         table->setItem(row, column++, nameItem);
         table->setItem(row, column++,
                        new NumericItem(QString::number(player->age), player->age));
-        table->setItem(row, column++, new QTableWidgetItem(player->positionRaw));
+        table->setItem(row, column++, new QTableWidgetItem(GameTerms::positions(player->positionRaw)));
         table->setItem(row, column++,
                        new QTableWidgetItem(bestRole.isEmpty()
                                                 ? QStringLiteral("–")

@@ -47,6 +47,7 @@
 #include "core/Utils.h"
 #include "core/Database.h"
 #include "core/Version.h"
+#include "core/GameTerms.h"
 
 #include <QAction>
 #include <QTimer>
@@ -1168,7 +1169,7 @@ void MainWindow::openPalette()
                     continue;
                 const Player &player = players.at(static_cast<size_t>(i));
                 found.append({tr("Players"), icon, player.name,
-                              QStringLiteral("%1 · %2").arg(player.club, player.positionRaw), {},
+                              QStringLiteral("%1 · %2").arg(player.club, GameTerms::positions(player.positionRaw)), {},
                               [this, uid = player.uid] {
                                   m_context.setPendingProfileUid(uid);
                                   navigateTo(QStringLiteral("player_profile"));

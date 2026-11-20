@@ -6,6 +6,7 @@
 #include "../widgets/PlayerTableModel.h"
 #include "core/RoleAssignment.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QComboBox>
 #include <QHBoxLayout>
@@ -155,7 +156,7 @@ void AssignRolesPage::setupColumns()
          [](const Player &p) { return getLastName(p.name); }, nullptr, {}},
         {tr("Age"), [](const Player &p) { return p.age; }, nullptr, nullptr,
          Qt::AlignRight | Qt::AlignVCenter},
-        {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}},
+        {tr("Position"), [](const Player &p) { return GameTerms::positions(p.positionRaw); }, nullptr, nullptr, {}},
         {tr("Club"), [](const Player &p) { return p.club; }, nullptr, nullptr, {}},
         makeFreshnessColumn(
             m_context.updateCounter(),
@@ -269,7 +270,7 @@ void AssignRolesPage::showEditorFor(const Player *player)
     m_editorUid = player->uid;
     m_editorTitle->setText(
         QStringLiteral("<b>%1</b> (%2)").arg(player->name.toHtmlEscaped(),
-                                             player->positionRaw.toHtmlEscaped()));
+                                             GameTerms::positions(player->positionRaw).toHtmlEscaped()));
     m_roleList->setEnabled(true);
 
     const QStringList currentRoles = m_pending.value(player->uid, player->assignedRoles);

@@ -82,7 +82,8 @@ double amountValue(QString text, const QString &language)
     const QString unit = match.captured(2).trimmed();
     if (unit.isEmpty())
         return value;
-    const bool italian = language == QLatin1String("it");
+    // Italian and Spanish write thousands as "m" (mila, mil).
+    const bool italian = language == QLatin1String("it") || language == QLatin1String("es");
     if (unit == QLatin1String("K") || unit == QString::fromUtf8("К")
         || (italian && unit == QLatin1String("m")))
         return value * 1e3;
@@ -129,7 +130,8 @@ QString periodSuffix(const QString &text, QString *rest)
     static const Suffix suffixes[] = {
         {"p/w", "p/w"}, {"p/m", "p/m"}, {"p/a", "p/a"}, {"p/y", "p/a"},
         {"/W.", "p/w"}, {"p/W", "p/w"}, {"/M.", "p/m"}, {"/J.", "p/a"},
-        {"p/s", "p/w"}, {"p/ sem.", "p/w"},
+        {"p/s", "p/w"}, {"p/ sem.", "p/w"}, {"por semana", "p/w"}, {"por mes", "p/m"},
+        {"por año", "p/a"},
         {"/周", "p/w"}, {"周薪", "p/w"}, {"每周", "p/w"},
         {"/月", "p/m"}, {"月薪", "p/m"}, {"/年", "p/a"}, {"年薪", "p/a"},
         {"/нед", "p/w"}, {"в/н", "p/w"}, {"в нед.", "p/w"},
@@ -151,7 +153,8 @@ QString periodSuffix(const QString &text, QString *rest)
 const QStringList &codes()
 {
     static const QStringList all = {QStringLiteral("en"), QStringLiteral("de"), QStringLiteral("fr"),
-                                    QStringLiteral("it"), QStringLiteral("zh_CN"), QStringLiteral("ru")};
+                                    QStringLiteral("it"), QStringLiteral("zh_CN"), QStringLiteral("ru"),
+                                    QStringLiteral("es")};
     return all;
 }
 
@@ -164,6 +167,7 @@ QString nativeName(const QString &code)
         {QStringLiteral("it"), QStringLiteral("Italiano")},
         {QStringLiteral("zh_CN"), QString::fromUtf8("简体中文")},
         {QStringLiteral("ru"), QString::fromUtf8("Русский")},
+        {QStringLiteral("es"), QString::fromUtf8("Español")},
     };
     return names.value(code, code);
 }

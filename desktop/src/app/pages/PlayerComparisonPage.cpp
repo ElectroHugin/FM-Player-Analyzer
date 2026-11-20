@@ -7,6 +7,7 @@
 #include "../widgets/Charts.h"
 #include "core/Constants.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QComboBox>
 #include <QFrame>
@@ -441,10 +442,10 @@ void PlayerComparisonPage::rebuildComparison()
     const QList<InfoRow> infoRows = {
         {tr("Age"), [](const Player &p) { return QString::number(p.age); }},
         {tr("Club"), [](const Player &p) { return p.club; }},
-        {tr("Position"), [](const Player &p) { return p.positionRaw; }},
-        {tr("Personality"), [](const Player &p) { return p.personality; }},
+        {tr("Position"), [](const Player &p) { return GameTerms::positions(p.positionRaw); }},
+        {tr("Personality"), [](const Player &p) { return GameTerms::text(QStringLiteral("personality"), p.personality); }},
         {tr("Height"), [](const Player &p) { return p.heightRaw; }},
-        {tr("Preferred Foot"), [](const Player &p) { return p.preferredFoot; }},
+        {tr("Preferred Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("preferred_foot"), p.preferredFoot); }},
         {tr("Wage"), [](const Player &p) { return p.wageRaw; }},
         {tr("Market Value"), [](const Player &p) { return p.transferValueRaw; }},
         {tr("Playing Time"), [](const Player &p) { return p.agreedPlayingTime; }},
@@ -485,7 +486,7 @@ void PlayerComparisonPage::rebuildComparison()
         ++row;
     }
     for (int attrIndex = 0; attrIndex < kAttrCount; ++attrIndex) {
-        rowLabels << attrNames()[attrIndex];
+        rowLabels << GameTerms::attribute(attrNames()[attrIndex]);
         int column = 0;
         for (const Player *player : players) {
             const int value = qRound(player->attrMean(attrIndex));

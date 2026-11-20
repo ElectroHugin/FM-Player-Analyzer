@@ -8,6 +8,7 @@
 #include "../widgets/PlayerTableModel.h"
 #include "core/RoleAnalysis.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QButtonGroup>
 #include <QComboBox>
@@ -239,14 +240,14 @@ void RoleAnalysisPage::rebuildTables()
              [](const Player &p) { return getLastName(p.name); }, nullptr, {}},
             {tr("Age"), [](const Player &p) { return p.age; }, nullptr, nullptr,
              Qt::AlignRight | Qt::AlignVCenter},
-            {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}},
-            {tr("Personality"), [](const Player &p) { return p.personality; }, nullptr,
+            {tr("Position"), [](const Player &p) { return GameTerms::positions(p.positionRaw); }, nullptr, nullptr, {}},
+            {tr("Personality"), [](const Player &p) { return GameTerms::text(QStringLiteral("personality"), p.personality); }, nullptr,
              [definitions](const Player &p) {
                  return personalityCellStyle(definitions->personalityCategory(p.personality));
              },
              {}},
-            {tr("Left Foot"), [](const Player &p) { return p.leftFoot; }, nullptr, nullptr, {}},
-            {tr("Right Foot"), [](const Player &p) { return p.rightFoot; }, nullptr, nullptr, {}},
+            {tr("Left Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.leftFoot); }, nullptr, nullptr, {}},
+            {tr("Right Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.rightFoot); }, nullptr, nullptr, {}},
             {tr("Height"), [](const Player &p) { return p.heightRaw; },
              [](const Player &p) { return p.heightCm; }, nullptr,
              Qt::AlignRight | Qt::AlignVCenter},

@@ -37,6 +37,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include "../widgets/TrainingProfileEditor.h"
+#include "core/GameTerms.h"
 #include <QStandardPaths>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -1017,7 +1018,7 @@ QWidget *SettingsPage::buildPersonalityPage()
     connect(reset, &QPushButton::clicked, this, [this] {
         for (int row = 0; row < m_personalityTable->rowCount(); ++row) {
             const QString category = personalityDefaults().value(
-                m_personalityTable->item(row, 0)->text(), QStringLiteral("neutral"));
+                m_personalityTable->item(row, 0)->data(Qt::UserRole).toString(), QStringLiteral("neutral"));
             for (int col = 1; col <= 2; ++col) {
                 if (m_personalityTable->isColumnHidden(col))
                     continue; // only the save's own FM version
@@ -1070,7 +1071,9 @@ void SettingsPage::refreshPersonalities()
     m_personalityTable->setEnabled(true);
     m_personalityTable->setRowCount(sorted.size());
     for (int row = 0; row < sorted.size(); ++row) {
-        auto *name = new QTableWidgetItem(sorted[row]);
+        // Shown in the UI language; the English name is the key.
+        auto *name = new QTableWidgetItem(GameTerms::text(QStringLiteral("personality"), sorted[row]));
+        name->setData(Qt::UserRole, sorted[row]);
         name->setFlags(name->flags() & ~Qt::ItemIsEditable);
         m_personalityTable->setItem(row, 0, name);
         for (int col = 1; col <= 2; ++col) {
@@ -2316,7 +2319,7 @@ void SettingsPage::saveAll()
                 if (combo->currentData() == combo->property("originalCategory"))
                     continue;
                 changed = true;
-                categories.insert(m_personalityTable->item(row, 0)->text(), combo->currentData().toString());
+                categories.insert(m_personalityTable->item(row, 0)->data(Qt::UserRole).toString(), combo->currentData().toString());
             }
             if (changed) {
                 root.insert(QStringLiteral("personalities"), categories);

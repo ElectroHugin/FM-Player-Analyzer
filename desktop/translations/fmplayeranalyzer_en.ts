@@ -4,7 +4,7 @@
 <context>
     <name>fm::BestXiPage</name>
     <message numerus="yes">
-        <location filename="../src/app/pages/BestXiPage.cpp" line="882"/>
+        <location filename="../src/app/pages/BestXiPage.cpp" line="883"/>
         <source>Adjusted by hand (%n players). DWRS change from the suggestion: %1.</source>
         <translation>
             <numerusform>Adjusted by hand (%n player). DWRS change from the suggestion: %1.</numerusform>
@@ -15,7 +15,7 @@
 <context>
     <name>fm::DashboardPage</name>
     <message numerus="yes">
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1258"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1259"/>
         <source>Compare with all %n</source>
         <translation>
             <numerusform>Compare with both</numerusform>
@@ -26,7 +26,7 @@
 <context>
     <name>fm::SettingsPage</name>
     <message numerus="yes">
-        <location filename="../src/app/pages/SettingsPage.cpp" line="649"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="650"/>
         <source>%n files copied to %1:
 %2</source>
         <translation>

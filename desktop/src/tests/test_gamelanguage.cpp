@@ -4,6 +4,8 @@
 #include <QTemporaryDir>
 
 #include "core/Database.h"
+#include "core/Definitions.h"
+#include "core/GameTerms.h"
 #include "core/GameLanguage.h"
 #include "core/HtmlImporter.h"
 #include "core/ImportTable.h"
@@ -107,6 +109,23 @@ QList<Sample> samples()
           QString::fromUtf8("€7250 - €8750周薪"), QString::fromUtf8("€680万 - €1100万"),
           QStringLiteral("6.80"), QString::fromUtf8("相当专业"), QStringLiteral("14"),
           QStringLiteral("13")}},
+        {QStringLiteral("es"),
+         {QStringLiteral("Unique ID"), QStringLiteral("Nombre"), QString::fromUtf8("Posición"),
+          QStringLiteral("Edad"), QStringLiteral("Club"), QString::fromUtf8("País"),
+          QStringLiteral("Altura"), QStringLiteral("Pierna buena"),
+          QStringLiteral("Pierna izquierda"), QStringLiteral("Pierna derecha"),
+          QStringLiteral("Trato con la prensa"), QStringLiteral("Tiempo de juego"),
+          QStringLiteral("Sueldo"), QStringLiteral("Valor de traspaso"),
+          QString::fromUtf8("Calificación"), QStringLiteral("Personalidad"),
+          QStringLiteral("Velocidad"), QString::fromUtf8("Anticipación")},
+         {QStringLiteral("9000001"), QStringLiteral("Test Player"),
+          QStringLiteral("DF (DI), CR (D), MC, ME (C)"), QStringLiteral("24"),
+          QStringLiteral("FC Test"), QStringLiteral("Alemania"), QStringLiteral("182 cm"),
+          QStringLiteral("Zurdo cerrado"), QStringLiteral("Muy fuerte"), QString::fromUtf8("Débil"),
+          QStringLiteral("Respetuoso con la prensa, Reservado"), QStringLiteral("Jugador importante"),
+          QStringLiteral("€7.25m - €8.75m por semana"), QStringLiteral("€6.8M - €11M"),
+          QStringLiteral("6,80"), QStringLiteral("Bastante profesional"), QStringLiteral("14"),
+          QStringLiteral("13")}},
         {QStringLiteral("ru"),
          {QStringLiteral("Unique ID"), QString::fromUtf8("Имя"), QString::fromUtf8("Позиции"),
           QString::fromUtf8("Возраст"), QString::fromUtf8("Клуб"), QString::fromUtf8("Страна"),
@@ -198,6 +217,8 @@ private slots:
                  QStringLiteral("€120M - €143M"));
         QCOMPARE(GameLanguage::moneyToEnglish(QString::fromUtf8("€7.7万/周"), QStringLiteral("zh_CN")),
                  QStringLiteral("€77K p/w"));
+        QCOMPARE(GameLanguage::moneyToEnglish(QStringLiteral("€77m - €95m por semana"), QStringLiteral("es")),
+                 QStringLiteral("€77K - €95K p/w"));
         QCOMPARE(GameLanguage::moneyToEnglish(QString::fromUtf8("€230К/нед"), QStringLiteral("ru")),
                  QStringLiteral("€230K p/w"));
         // Unknown texts stay as they are.
@@ -215,9 +236,36 @@ private slots:
         // Italian "M" is the defensive midfielder, "C" the midfielder.
         QCOMPARE(GameLanguage::positionsToEnglish(QStringLiteral("M, C (C), T (S)"), QStringLiteral("it")),
                  QStringLiteral("DM, M (C), AM (L)"));
+        // Spanish "MC" is the defensive midfielder, "ME" the midfielder; "D" right, "I" left.
+        QCOMPARE(GameLanguage::positionsToEnglish(QStringLiteral("DF (DI), MC, ME (C)"), QStringLiteral("es")),
+                 QStringLiteral("D (RL), DM, M (C)"));
         // Russian "П": midfielder as a position, right as a side.
         QCOMPARE(GameLanguage::positionsToEnglish(QString::fromUtf8("П (П)"), QStringLiteral("ru")),
                  QStringLiteral("M (R)"));
+    }
+
+    void gameTermsFollowTheUiLanguage()
+    {
+        // Display only: values stay English in the app, the UI shows the
+        // game's wording of the UI language.
+        Definitions::setDisplayLanguage(QStringLiteral("de"));
+        QCOMPARE(GameTerms::text(QStringLiteral("personality"), QStringLiteral("Driven")),
+                 QStringLiteral("Erfolgshungrig"));
+        QCOMPARE(GameTerms::text(QStringLiteral("foot_strength"), QStringLiteral("Fairly Strong")),
+                 QStringLiteral("Gut"));
+        QCOMPARE(GameTerms::text(QStringLiteral("personality"), QStringLiteral("Unknown")),
+                 QStringLiteral("Unknown"));
+        QCOMPARE(GameTerms::attribute(QStringLiteral("Teamwork")), QStringLiteral("Teamwork"));
+        QCOMPARE(GameTerms::attribute(QStringLiteral("Acceleration")), QStringLiteral("Antritt"));
+        QCOMPARE(GameTerms::attribute(QStringLiteral("One vs One")), QStringLiteral("Eins gegen Eins"));
+        QCOMPARE(GameTerms::positions(QStringLiteral("D (LC), WB (L)")),
+                 QStringLiteral("V (LZ), FV (L)"));
+        QCOMPARE(GameTerms::positions(QStringLiteral("D/WB/M (R), AM (C), GK")),
+                 QStringLiteral("V/FV/M (R), OM (Z), TW"));
+        Definitions::setDisplayLanguage(QStringLiteral("en"));
+        QCOMPARE(GameTerms::positions(QStringLiteral("D (LC)")), QStringLiteral("D (LC)"));
+        QCOMPARE(GameTerms::text(QStringLiteral("personality"), QStringLiteral("Driven")),
+                 QStringLiteral("Driven"));
     }
 
     void germanCsvImport()

@@ -7,8 +7,9 @@
 - Translating the app into more languages is now much easier: see [TRANSLATING.md](desktop/translations/TRANSLATING.md) or open a Translation issue.
 - Game terms (attributes, positions, foot strength, personalities, playing time and more) now follow the official texts of each language version of the game.
 - FM27 role names and abbreviations follow the interface language, worded as in that language version of the game (German: "Inverser Außenstürmer", "IAS"). Your tactics and settings stay as they are.
+- Player values follow the interface language the same way: attributes, personality, foot strength, preferred foot and positions (German: "Erfolgshungrig", "Sehr stark", "V (Z)").
 - For FM27 the import now offers the save game first. HTML/CSV exports still work as before.
-- HTML/CSV exports are read in every supported game language (English, German, French, Italian, Simplified Chinese, Russian). The language is recognised from the column headers; it can also be set under Settings → Import.
+- HTML/CSV exports are read in every supported game language (English, German, French, Italian, Simplified Chinese, Russian, Spanish). The language is recognised from the column headers; it can also be set under Settings → Import.
 - Optional update check, off by default: the app asks once whether it may look for new versions at startup. It only asks GitHub for the latest version number and sends no data about you or your saves.
 - A new version shows as a hint with its changes and a download button that opens the release page. Nothing is installed automatically; a version can be skipped.
 - Settings → Saves → Updates: switch the check on or off, include test versions, or check now.

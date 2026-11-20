@@ -8,6 +8,7 @@
 #include "core/Constants.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QApplication>
 #include <QComboBox>
@@ -543,7 +544,7 @@ void RegistrationPage::fillRegisteredTable()
         name->setData(Qt::UserRole, p->uid);
         m_registeredTable->setItem(row, 1, name);
         m_registeredTable->setItem(row, 2, new NumericItem(QString::number(p->age), p->age));
-        m_registeredTable->setItem(row, 3, new QTableWidgetItem(p->positionRaw));
+        m_registeredTable->setItem(row, 3, new QTableWidgetItem(GameTerms::positions(p->positionRaw)));
         m_registeredTable->setItem(row, 4, new QTableWidgetItem(p->club));
         if (p->registration.leagueBlocked)
             missing << p->name;
@@ -708,7 +709,7 @@ void RegistrationPage::fillTable(QTableWidget *table, const std::vector<Row> &ro
         nameItem->setData(Qt::UserRole, p.uid);
         table->setItem(row, ColName, nameItem);
         table->setItem(row, ColAge, new NumericItem(QString::number(p.age), p.age));
-        table->setItem(row, ColPosition, new NumericItem(p.positionRaw, entry.order));
+        table->setItem(row, ColPosition, new NumericItem(GameTerms::positions(p.positionRaw), entry.order));
         table->setItem(row, ColCategory, new QTableWidgetItem(categoryText(p)));
         table->setItem(row, ColNeed,
                        new NumericItem(tierText(entry.entry.tier),

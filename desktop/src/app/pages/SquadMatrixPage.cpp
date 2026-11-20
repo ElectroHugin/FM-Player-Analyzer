@@ -18,6 +18,7 @@
 #include "core/TalentEngine.h"
 #include "core/PlayerStatus.h"
 #include "core/Utils.h"
+#include "core/GameTerms.h"
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -571,9 +572,9 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     // right after name and age, so what is being searched for stays in view.
     const qsizetype focusIndex = columns.size();
     columns.append(
-        {tr("Position"), [](const Player &p) { return p.positionRaw; }, nullptr, nullptr, {}});
+        {tr("Position"), [](const Player &p) { return GameTerms::positions(p.positionRaw); }, nullptr, nullptr, {}});
     if (m_personalityKnown) {
-        columns.append({tr("Personality"), [](const Player &p) { return p.personality; },
+        columns.append({tr("Personality"), [](const Player &p) { return GameTerms::text(QStringLiteral("personality"), p.personality); },
                         nullptr,
                         [definitions](const Player &p) {
                             return personalityCellStyle(
@@ -596,9 +597,9 @@ QList<PlayerColumn> SquadMatrixPage::buildColumns(bool clubTable) const
     columns.append({tr("Wage"), [](const Player &p) { return p.wageRaw; }, nullptr, nullptr,
                     Qt::AlignRight | Qt::AlignVCenter});
     if (extraDetails) {
-        columns.append({tr("Left Foot"), [](const Player &p) { return p.leftFoot; }, nullptr,
+        columns.append({tr("Left Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.leftFoot); }, nullptr,
                         nullptr, {}});
-        columns.append({tr("Right Foot"), [](const Player &p) { return p.rightFoot; }, nullptr,
+        columns.append({tr("Right Foot"), [](const Player &p) { return GameTerms::text(QStringLiteral("foot_strength"), p.rightFoot); }, nullptr,
                         nullptr, {}});
         columns.append({tr("Height"), [](const Player &p) { return p.heightRaw; },
                         [](const Player &p) { return p.heightCm; }, nullptr,
@@ -1211,10 +1212,10 @@ void SquadMatrixPage::addAttributeRow(int attrIndex, int minimum)
     QList<int> order(kAttrCount);
     std::iota(order.begin(), order.end(), 0);
     std::sort(order.begin(), order.end(), [](int a, int b) {
-        return attrNames()[a].localeAwareCompare(attrNames()[b]) < 0;
+        return GameTerms::attribute(attrNames()[a]).localeAwareCompare(GameTerms::attribute(attrNames()[b])) < 0;
     });
     for (int index : order)
-        row.attribute->addItem(attrNames()[index], index);
+        row.attribute->addItem(GameTerms::attribute(attrNames()[index]), index);
     row.attribute->setCurrentIndex(std::max(0, row.attribute->findData(attrIndex)));
     row.minimum = new QSpinBox(rowWidget);
     row.minimum->setRange(1, 20);
@@ -1268,7 +1269,7 @@ void SquadMatrixPage::attributeThresholdsChanged()
     QStringList entries;
     for (const AttributeRow &row : m_attrRows) {
         entries << QStringLiteral("%1:%2")
-                       .arg(attrNames()[row.attribute->currentData().toInt()])
+                       .arg(GameTerms::attribute(attrNames()[row.attribute->currentData().toInt()]))
                        .arg(row.minimum->value());
     }
     Database &db = m_context.database();

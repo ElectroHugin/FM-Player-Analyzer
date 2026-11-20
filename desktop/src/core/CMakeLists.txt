@@ -53,6 +53,10 @@ add_library(fmcore STATIC
     GameLanguageData.cpp
     RoleTermsData.h
     RoleTermsData.cpp
+    GameTermsData.h
+    GameTermsData.cpp
+    GameTerms.h
+    GameTerms.cpp
     ImportSchema.h
     ImportSchema.cpp
     ImportTable.h
