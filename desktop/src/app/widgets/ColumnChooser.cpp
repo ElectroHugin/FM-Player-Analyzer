@@ -16,11 +16,13 @@ namespace {
 
 enum class Phase { None, Ip, Oop };
 
+// Role column headers end in the phase tag of the UI language ("WB-IP",
+// French "LO-AB"; see Definitions::roleLabel).
 Phase phaseOf(const QString &header)
 {
-    if (header.endsWith(QLatin1String("-IP")))
+    if (header.endsWith(QLatin1Char('-') + Definitions::phaseTag(QStringLiteral("ip"))))
         return Phase::Ip;
-    if (header.endsWith(QLatin1String("-OOP")))
+    if (header.endsWith(QLatin1Char('-') + Definitions::phaseTag(QStringLiteral("oop"))))
         return Phase::Oop;
     return Phase::None;
 }

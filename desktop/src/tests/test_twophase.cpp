@@ -627,6 +627,35 @@ private slots:
         QCOMPARE(plain.roleLabel(QStringLiteral("CM-S")), QStringLiteral("CM-S"));
     }
 
+    void roleNamesFollowTheUiLanguage()
+    {
+        // FM27 roles show the game's own wording of the UI language; ids stay
+        // English. A name the user changed is kept.
+        Definitions::setDisplayLanguage(QStringLiteral("de"));
+        QJsonObject phases{{QStringLiteral("IF"), QStringLiteral("ip")},
+                           {QStringLiteral("TW"), QStringLiteral("oop")},
+                           {QStringLiteral("FB-IP"), QStringLiteral("ip")},
+                           {QStringLiteral("W-IP"), QStringLiteral("ip")}};
+        QJsonObject roles{{QStringLiteral("IF"), QStringLiteral("Inside Forward")},
+                          {QStringLiteral("TW"), QStringLiteral("Tracking Winger")},
+                          {QStringLiteral("FB-IP"), QStringLiteral("Full-Back")},
+                          {QStringLiteral("W-IP"), QStringLiteral("My winger")}};
+        Definitions defs;
+        defs.setRoot(QJsonObject{
+            {QStringLiteral("player_roles"), QJsonObject{{QStringLiteral("Attack"), roles}}},
+            {QStringLiteral("role_phases"), phases}});
+        QCOMPARE(defs.roleDisplayMap().value(QStringLiteral("IF")),
+                 QString::fromUtf8("Inverser Außenstürmer (IP)"));
+        QCOMPARE(defs.roleDisplayMap().value(QStringLiteral("W-IP")), QStringLiteral("My winger (IP)"));
+        QCOMPARE(defs.roleLabel(QStringLiteral("TW")), QStringLiteral("MaF-OOP"));
+        QCOMPARE(defs.roleLabel(QStringLiteral("FB-IP")), QStringLiteral("AV-IP"));
+        QCOMPARE(Definitions::roleAbbreviation(QStringLiteral("IF")), QStringLiteral("IAS"));
+        // FM24 ids are untouched.
+        QCOMPARE(Definitions::roleAbbreviation(QStringLiteral("IF-S")), QStringLiteral("IF-S"));
+        Definitions::setDisplayLanguage(QStringLiteral("en"));
+        QCOMPARE(Definitions::roleAbbreviation(QStringLiteral("IF")), QStringLiteral("IF"));
+    }
+
     void signingAdvisorFollowsManualBridges()
     {
         // Left: IF with ball, WM without; right the same. Kai is the better

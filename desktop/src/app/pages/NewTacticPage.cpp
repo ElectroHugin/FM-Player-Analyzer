@@ -236,11 +236,7 @@ void NewTacticPage::showSlotMenu(PhaseEditor &editor, const QString &slot,
     menu.addSeparator();
     const int current = combo->currentIndex();
     for (int i = goalkeeper ? 0 : 1; i < combo->count(); ++i) {
-        QString role = combo->itemData(i).toString();
-        if (role.endsWith(QLatin1String("-IP")))
-            role.chop(3);
-        else if (role.endsWith(QLatin1String("-OOP")))
-            role.chop(4);
+        const QString role = Definitions::roleAbbreviation(combo->itemData(i).toString());
         auto *action = menu.addAction(QStringLiteral("%1  (%2)").arg(combo->itemText(i), role),
                                       this, [combo, i] { combo->setCurrentIndex(i); });
         action->setCheckable(true);

@@ -630,14 +630,14 @@ Detalles: %1</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/app/main.cpp" line="70"/>
+        <location filename="../src/app/main.cpp" line="75"/>
         <source>Startup failed:
 %1</source>
         <translation>Error al iniciar:
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/main.cpp" line="93"/>
+        <location filename="../src/app/main.cpp" line="98"/>
         <source>The last used save “%1” could not be opened:
 %2</source>
         <translation>No se pudo abrir la última partida usada “%1”:
@@ -1805,32 +1805,32 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
 <context>
     <name>fm::ColumnChooser</name>
     <message>
-        <location filename="../src/app/widgets/ColumnChooser.cpp" line="45"/>
+        <location filename="../src/app/widgets/ColumnChooser.cpp" line="47"/>
         <source>Columns…</source>
         <translation>Columnas…</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/ColumnChooser.cpp" line="46"/>
+        <location filename="../src/app/widgets/ColumnChooser.cpp" line="48"/>
         <source>Show or hide columns. Also by right-clicking the table header.</source>
         <translation>Mostrar u ocultar columnas. También con clic derecho en la cabecera de la tabla.</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/ColumnChooser.cpp" line="103"/>
+        <location filename="../src/app/widgets/ColumnChooser.cpp" line="105"/>
         <source>Show all columns</source>
         <translation>Mostrar todas las columnas</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/ColumnChooser.cpp" line="105"/>
+        <location filename="../src/app/widgets/ColumnChooser.cpp" line="107"/>
         <source>Restore default</source>
         <translation>Restaurar predeterminado</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/ColumnChooser.cpp" line="132"/>
+        <location filename="../src/app/widgets/ColumnChooser.cpp" line="134"/>
         <source>All in-possession roles (IP)</source>
         <translation>Todos los roles con posesión (CP)</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/ColumnChooser.cpp" line="133"/>
+        <location filename="../src/app/widgets/ColumnChooser.cpp" line="135"/>
         <source>All out-of-possession roles (OOP)</source>
         <translation>Todos los roles sin posesión (SP)</translation>
     </message>
@@ -1953,13 +1953,13 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="933"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="927"/>
         <source>In possession</source>
         <translation>Con posesión</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="409"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="934"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="928"/>
         <source>Out of possession</source>
         <translation>Sin posesión</translation>
     </message>
@@ -2000,7 +2000,7 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="502"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1213"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1207"/>
         <source>Age</source>
         <translation>Edad</translation>
     </message>
@@ -2151,124 +2151,124 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
         <translation>Once inicial %1 puntos DWRS (suma de los once).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="906"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="951"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="976"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="900"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="945"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="970"/>
         <source>free</source>
         <translation>libre</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="907"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="901"/>
         <source>The squad has no player for %1.</source>
         <translation>La plantilla no tiene jugador para %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="950"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="944"/>
         <source>IP: %1</source>
         <translation>CP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="952"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="946"/>
         <source>%1 in possession is empty.</source>
         <translation>%1 con posesión está vacío.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="965"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="959"/>
         <source>%1 (in possession %2, out of possession %3)</source>
         <translation>%1 (con posesión %2, sin posesión %3)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="975"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="969"/>
         <source>OOP: %1</source>
         <translation>SP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="977"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="971"/>
         <source>%1 out of possession is empty.</source>
         <translation>%1 sin posesión está vacío.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="986"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="980"/>
         <source>Large: the starter&apos;s DWRS in his role.</source>
         <translation>Grande: el DWRS del titular en su rol.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="988"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="982"/>
         <source>Large: the starter&apos;s value over both line-ups (%1 % in possession).</source>
         <translation>Grande: el valor del titular en ambas alineaciones (%1 % con posesión).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="992"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="986"/>
         <source>Small: how the starting XI changes if he is out. The tooltip shows the details.</source>
         <translation>Pequeño: cómo cambia el once inicial si él falta. La información emergente muestra los detalles.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1002"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="996"/>
         <source>“XI −4.0”: if the player is out, the best cover comes on (as in Best XI under “Squad depth: a starter is missing”), and the sum of DWRS of the whole starting XI drops by 4.0. “gap”: no squad player fills the place. Based on the whole club without long-term injured and without players marked as not registered, otherwise without competition rules; manual places from Best XI apply.</source>
         <translation>“XI −4.0”: si el jugador falta, entra la mejor cobertura (como en el Mejor XI en “Fondo de armario: falta un titular”) y la suma de DWRS de todo el once inicial baja 4,0. “hueco”: ningún jugador de la plantilla cubre el puesto. Basado en todo el club sin lesionados de larga duración ni jugadores marcados como no inscritos, por lo demás sin reglas de competición; se aplican los puestos manuales del Mejor XI.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1039"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1033"/>
         <source>In-game date · season %1</source>
         <translation>Fecha del juego · temporada %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1042"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1036"/>
         <source>State of the most recently read FM27 save</source>
         <translation>Estado de la última partida FM27 leída</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1049"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1043"/>
         <source>Players at %1 (%2)</source>
         <translation>Jugadores en %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1177"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1171"/>
         <source>Your squad is well set up. No clear reinforcements found within the filter criteria.</source>
         <translation>Tu plantilla está bien montada. No se encontraron refuerzos claros dentro de los criterios del filtro.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1198"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1192"/>
         <source>Upgrade for %1</source>
         <translation>Mejora para %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1209"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1203"/>
         <source>Rating</source>
         <translation>Calificación</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1209"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1203"/>
         <source>%1 % (your best %2 %)</source>
         <translation>%1 % (tu mejor %2 %)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1212"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1206"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1225"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1219"/>
         <source>Club: %1&lt;br/&gt;Positions: %2</source>
         <translation>Club: %1&lt;br/&gt;Posiciones: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1236"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1230"/>
         <source>Click for actions: profile, shortlist, comparison</source>
         <translation>Haz clic para acciones: perfil, preselección, comparación</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1242"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1236"/>
         <source>%1 (%2%)</source>
         <translation>%1 (%2%)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1257"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1251"/>
         <source>Compare with %1</source>
         <translation>Comparar con %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1264"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1258"/>
         <source>Compare with all %n</source>
         <translation>
             <numerusform>Comparar con %n jugador</numerusform>
@@ -2276,22 +2276,22 @@ Cambio de DWRS respecto a la asignación: once inicial %3 · equipo B %4. Margen
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1282"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1276"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>Elige una exportación de FM o una partida FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1284"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1278"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>Exportaciones de FM y partidas FM27 (*.html *.htm *.csv *.fm);;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1322"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1316"/>
         <source>Import failed</source>
         <translation>Error en la importación</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1323"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1317"/>
         <source>The file could not be imported.
 
 %1
@@ -2304,30 +2304,43 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
 Posibles causas: no hay columna &apos;UID&apos; o no es una exportación válida de Football Manager (HTML o CSV).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1338"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1332"/>
         <source>Import complete</source>
         <translation>Importación completada</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1346"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1340"/>
         <source>Tip: reading the save (.fm) directly is faster and needs no export.</source>
         <translation>Consejo: leer la partida (.fm) directamente es más rápido y no necesita exportación.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1348"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1342"/>
         <source>Show again next time</source>
         <translation>Volver a mostrar la próxima vez</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1407"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1414"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1401"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1408"/>
         <source>Departures</source>
         <translation>Salidas</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1415"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1409"/>
         <source>%1 player records updated.</source>
         <translation>%1 registros de jugadores actualizados.</translation>
+    </message>
+</context>
+<context>
+    <name>fm::Definitions</name>
+    <message>
+        <location filename="../src/core/Definitions.cpp" line="324"/>
+        <source>IP</source>
+        <translation>CP</translation>
+    </message>
+    <message>
+        <location filename="../src/core/Definitions.cpp" line="327"/>
+        <source>OOP</source>
+        <translation>SP</translation>
     </message>
 </context>
 <context>
@@ -4599,8 +4612,8 @@ El archivo original no se modifica.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/NewTacticPage.cpp" line="165"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="596"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="597"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="592"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="593"/>
         <source>Create New Tactic</source>
         <translation>Crear nueva táctica</translation>
     </message>
@@ -4625,182 +4638,182 @@ El archivo original no se modifica.</translation>
         <translation>Haz clic en un “+” para colocar un rol ahí, o haz clic en un rol para cambiarlo.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="251"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="247"/>
         <source>✕ Clear place</source>
         <translation>✕ Vaciar puesto</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="304"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="300"/>
         <source>— Unfilled —</source>
         <translation>— Sin ocupar —</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="405"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="401"/>
         <source>A tactic has two line-ups: one in possession and one out of possession, each with a goalkeeper and ten outfield players. The places do not have to match; the analyzer distributes the players later by itself. Click a “+” to place a role there, or click a role to change it. A template from the game makes it quicker.</source>
         <translation>Una táctica tiene dos alineaciones: una con posesión y otra sin posesión, cada una con un portero y diez jugadores de campo. Los puestos no tienen que coincidir; el analizador reparte después a los jugadores por sí solo. Haz clic en un “+” para colocar un rol ahí, o haz clic en un rol para cambiarlo. Una plantilla del juego lo agiliza.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="410"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="406"/>
         <source>Build your formation on the pitch below: click a “+” to place a role there, or click a role to change it — exactly one goalkeeper and ten outfield players.</source>
         <translation>Monta tu formación en el campo de abajo: haz clic en un “+” para colocar un rol ahí, o haz clic en un rol para cambiarlo; exactamente un portero y diez jugadores de campo.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="413"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="409"/>
         <source>2b. Line-up out of possession</source>
         <translation>2b. Alineación sin posesión</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="414"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="410"/>
         <source>2. Design formation</source>
         <translation>2. Diseñar la formación</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="415"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="411"/>
         <source>2a. Line-up in possession</source>
         <translation>2a. Alineación con posesión</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="447"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="443"/>
         <source>✅ 10 outfield players selected.</source>
         <translation>✅ 10 jugadores de campo seleccionados.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="448"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="444"/>
         <source>Outfield players selected: %1 / 10</source>
         <translation>Jugadores de campo seleccionados: %1 / 10</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="452"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="448"/>
         <source>&lt;b&gt;Full tactic name:&lt;/b&gt; &lt;code&gt;%1&lt;/code&gt;</source>
         <translation>&lt;b&gt;Nombre completo de la táctica:&lt;/b&gt; &lt;code&gt;%1&lt;/code&gt;</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="460"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="456"/>
         <source>in possession</source>
         <translation>con posesión</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="460"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="456"/>
         <source>out of possession</source>
         <translation>sin posesión</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="470"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="480"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="496"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="466"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="476"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="492"/>
         <source>New Tactic</source>
         <translation>Nueva táctica</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="471"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="467"/>
         <source>The line-up %1 needs exactly 10 outfield players (currently: %2).</source>
         <translation>La alineación %1 necesita exactamente 10 jugadores de campo (ahora: %2).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="474"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="470"/>
         <source>You must select exactly 10 outfield players (currently: %1).</source>
         <translation>Debes seleccionar exactamente 10 jugadores de campo (ahora: %1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="481"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="477"/>
         <source>Please choose a goalkeeper role %1.</source>
         <translation>Elige un rol de portero %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="482"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="478"/>
         <source>Please select a goalkeeper role.</source>
         <translation>Elige un rol de portero.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="496"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="492"/>
         <source>Save tactic</source>
         <translation>Guardar táctica</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="500"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="496"/>
         <source>Please provide both a formation name and a formation (e.g. 4-2-3-1).</source>
         <translation>Indica un nombre de formación y una formación (p. ej., 4-2-3-1).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="506"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="502"/>
         <source>A tactic named &apos;%1&apos; already exists. Please choose a different name.</source>
         <translation>Ya existe una táctica llamada &apos;%1&apos;. Elige otro nombre.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="543"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="539"/>
         <source>Tactic &apos;%1&apos; has been saved.</source>
         <translation>Se guardó la táctica &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="544"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="540"/>
         <source>Tactic &apos;%1&apos; has been created and is now available everywhere.</source>
         <translation>Se creó la táctica &apos;%1&apos; y ya está disponible en todas partes.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="563"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="559"/>
         <source>The tactics could not be saved: %1</source>
         <translation>No se pudieron guardar las tácticas: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="595"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="591"/>
         <source>Edit tactic: %1</source>
         <translation>Editar táctica: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="597"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="593"/>
         <source>Save Changes</source>
         <translation>Guardar cambios</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="663"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="669"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="675"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="659"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="665"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="671"/>
         <source>Rename tactic</source>
         <translation>Renombrar táctica</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="663"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="659"/>
         <source>New name for &apos;%1&apos;:</source>
         <translation>Nuevo nombre para &apos;%1&apos;:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="670"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="703"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="862"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="666"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="699"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="858"/>
         <source>A tactic named &apos;%1&apos; already exists.</source>
         <translation>Ya existe una táctica llamada &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="695"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="702"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="712"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="691"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="698"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="708"/>
         <source>Duplicate tactic</source>
         <translation>Duplicar táctica</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="695"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="691"/>
         <source>Name of the copy:</source>
         <translation>Nombre de la copia:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="697"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="693"/>
         <source> (copy)</source>
         <translation> (copia)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="724"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="730"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="741"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="720"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="726"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="737"/>
         <source>Delete tactic</source>
         <translation>Eliminar táctica</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="725"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="721"/>
         <source>The last tactic of a save cannot be deleted. Create or import another one first.</source>
         <translation>No se puede eliminar la última táctica de una partida. Crea o importa otra antes.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="731"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="727"/>
         <source>Delete tactic &apos;%1&apos; from this save?
 
 If it is a favourite, the favourite is reset; saved bridges of this tactic are removed. Updates do not restore it. If you may need it later, export it first.</source>
@@ -4809,44 +4822,44 @@ If it is a favourite, the favourite is reset; saved bridges of this tactic are r
 Si es una favorita, la favorita se restablece; se eliminan los enlaces guardados de esta táctica. Las actualizaciones no la recuperan. Si puede que la necesites más adelante, expórtala antes.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="759"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="768"/>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="773"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="755"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="764"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="769"/>
         <source>Export tactic</source>
         <translation>Exportar táctica</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="762"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="758"/>
         <source>Analyzer tactic (*.%1)</source>
         <translation>Táctica del analizador (*.%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="769"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="765"/>
         <source>The file %1 could not be written.</source>
         <translation>No se pudo escribir el archivo %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="774"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="770"/>
         <source>Tactic &apos;%1&apos; has been exported to %2.</source>
         <translation>La táctica &apos;%1&apos; se exportó a %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="780"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="776"/>
         <source>Import tactic</source>
         <translation>Importar táctica</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="784"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="780"/>
         <source>Analyzer tactic (*.%1);;All files (*)</source>
         <translation>Táctica del analizador (*.%1);;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="790"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="786"/>
         <source>The file %1 could not be read.</source>
         <translation>No se pudo leer el archivo %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="799"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="795"/>
         <source>The file is not a valid analyzer tactic file or is damaged.
 
 Details: %1</source>
@@ -4855,57 +4868,57 @@ Details: %1</source>
 Detalles: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="807"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="803"/>
         <source>The file comes from a newer version of the analyzer. Please update the analyzer to import it.</source>
         <translation>El archivo procede de una versión más reciente del analizador. Actualiza el analizador para importarlo.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="813"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="809"/>
         <source>The tactic &apos;%1&apos; belongs to %2, this save uses %3. Roles and slots of the FM versions do not match; import it into a save of the same version.</source>
         <translation>La táctica &apos;%1&apos; pertenece a %2 y esta partida usa %3. Los roles y puestos de las versiones de FM no coinciden; impórtala en una partida de la misma versión.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="820"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="816"/>
         <source>The tactic &apos;%1&apos; uses roles this save does not know and the file does not describe: %2</source>
         <translation>La táctica &apos;%1&apos; usa roles que esta partida no conoce y que el archivo no describe: %2</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="833"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="829"/>
         <source>New custom roles will be added as well: %1</source>
         <translation>También se añadirán nuevos roles personalizados: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="836"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="832"/>
         <source>These roles already exist here with other weights or positions; the save keeps its own version: %1</source>
         <translation>Estos roles ya existen aquí con otros pesos o posiciones; la partida conserva su propia versión: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="843"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="839"/>
         <source>There already is a tactic named &apos;%1&apos;.</source>
         <translation>Ya hay una táctica llamada &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="845"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="841"/>
         <source>Import under a new name</source>
         <translation>Importar con un nombre nuevo</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="846"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="842"/>
         <source>Replace existing</source>
         <translation>Reemplazar la existente</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="852"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="848"/>
         <source>Name of the imported tactic:</source>
         <translation>Nombre de la táctica importada:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="870"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="866"/>
         <source>Import tactic &apos;%1&apos;?</source>
         <translation>¿Importar la táctica &apos;%1&apos;?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/NewTacticPage.cpp" line="894"/>
+        <location filename="../src/app/pages/NewTacticPage.cpp" line="890"/>
         <source>Tactic &apos;%1&apos; has been imported.</source>
         <translation>Se importó la táctica &apos;%1&apos;.</translation>
     </message>
@@ -9595,38 +9608,38 @@ Antes se crea automáticamente una copia de seguridad en la carpeta “backups�
 <context>
     <name>fm::TacticPitchWidget</name>
     <message>
-        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="277"/>
-        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="541"/>
+        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="278"/>
+        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="533"/>
         <source>No data</source>
         <translation>Sin datos</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="488"/>
+        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="480"/>
         <source>empty</source>
         <translation>vacío</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="679"/>
+        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="665"/>
         <source>IP: %1</source>
         <translation>CP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="679"/>
+        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="665"/>
         <source>OOP: %1</source>
         <translation>SP: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="684"/>
+        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="670"/>
         <source>%1 empty in possession</source>
         <translation>%1 vacío con posesión</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="685"/>
+        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="671"/>
         <source>%1 empty out of possession</source>
         <translation>%1 vacío sin posesión</translation>
     </message>
     <message>
-        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="732"/>
+        <location filename="../src/app/widgets/TacticPitchWidget.cpp" line="718"/>
         <source>IP %1 · OOP %2</source>
         <translation>CP %1 · SP %2</translation>
     </message>
