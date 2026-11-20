@@ -188,7 +188,7 @@ MainWindow::MainWindow(AppContext &context, ThemeManager &theme, QWidget *parent
 
     m_importButton = new QPushButton(tr("Import"), headerBar);
     m_importButton->setObjectName(QStringLiteral("headerPrimary"));
-    m_importButton->setToolTip(tr("Import an FM export (Ctrl+I). You can also simply drop a "
+    m_importButton->setToolTip(tr("Read player data (Ctrl+I). You can also simply drop a "
                                   "file onto the window."));
     m_importButton->setCursor(Qt::PointingHandCursor);
     m_importButton->setFocusPolicy(Qt::NoFocus);
@@ -575,7 +575,7 @@ void MainWindow::buildMenuBar()
     switchAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
     fileMenu->addSeparator();
     auto *importAction =
-        fileMenu->addAction(tr("Import export …"), this, [this] { importExport({}); });
+        fileMenu->addAction(tr("Import player data …"), this, [this] { importExport({}); });
     importAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
     fileMenu->addSeparator();
     auto *quitAction = fileMenu->addAction(tr("Quit"), this, &QWidget::close);
@@ -1084,7 +1084,7 @@ void MainWindow::openPalette()
         entries.append({tr("Actions"), LineIcons::icon(icon, color, 18, dpr), title, shortcut,
                         foldForSearch(title), std::move(run)});
     };
-    action(QStringLiteral("upload"), tr("Import export …"), tr("Ctrl+I"),
+    action(QStringLiteral("upload"), tr("Import player data …"), tr("Ctrl+I"),
            [this] { importExport({}); });
     action(QStringLiteral("folder"), tr("Switch save …"), tr("Ctrl+O"),
            [this] { switchSave(); });
@@ -1200,9 +1200,16 @@ void MainWindow::switchSave()
 void MainWindow::importExport(QString filePath)
 {
     if (filePath.isEmpty()) {
-        filePath = QFileDialog::getOpenFileName(
-            this, tr("Choose an FM export or FM27 save"), m_context.htmlExportDir(),
-            tr("FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)"));
+        // Versions that read saves offer the save first; exports still work.
+        const QString versionId = m_context.fmVersionId();
+        const bool saves = fmDataVersion(versionId).importFormats.contains(QStringLiteral("fm"));
+        filePath = saves
+            ? QFileDialog::getOpenFileName(
+                  this, tr("Choose save"), AppConfig::defaultSavesDir(versionId),
+                  tr("Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)"))
+            : QFileDialog::getOpenFileName(
+                  this, tr("Choose an FM export or FM27 save"), m_context.htmlExportDir(),
+                  tr("FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)"));
         if (filePath.isEmpty())
             return;
     }

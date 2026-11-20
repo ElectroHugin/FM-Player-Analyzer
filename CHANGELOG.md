@@ -6,6 +6,8 @@
 - Texts that are not translated yet show in English.
 - Translating the app into more languages is now much easier: see [TRANSLATING.md](desktop/translations/TRANSLATING.md) or open a Translation issue.
 - Game terms (attributes, positions, foot strength, personalities, playing time and more) now follow the official texts of each language version of the game.
+- FM27 role names and abbreviations follow the interface language, worded as in that language version of the game (German: "Inverser Außenstürmer", "IAS"). Your tactics and settings stay as they are.
+- For FM27 the import now offers the save game first. HTML/CSV exports still work as before.
 - HTML/CSV exports are read in every supported game language (English, German, French, Italian, Simplified Chinese, Russian). The language is recognised from the column headers; it can also be set under Settings → Import.
 
 ## 2.3.1 – 2026-11-20

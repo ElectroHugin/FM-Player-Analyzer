@@ -274,10 +274,6 @@ QWidget *NewSaveWizard::buildImportPage()
     m_importResult->hide();
     layout->addWidget(m_importResult);
 
-    m_exportHint = new QLabel(page);
-    m_exportHint->setObjectName(QStringLiteral("kpiCaption"));
-    m_exportHint->setWordWrap(true);
-    layout->addWidget(m_exportHint);
     return page;
 }
 
@@ -314,11 +310,10 @@ void NewSaveWizard::goTo(int step)
             m_dropZone->setPrompt(tr("Drag your save here"),
                                   tr("%1 save (.fm), or click to choose it")
                                       .arg(SaveLibrary::shortVersionLabel(versionId)));
-            m_dropZone->setDialog(tr("Choose save"),
-                                  tr("Saves and exports (*.fm *.csv *.html *.htm);;All files (*)"));
+            m_dropZone->setDialog(
+                tr("Choose save"),
+                tr("Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)"));
             m_dropZone->setStartDir(AppConfig::defaultSavesDir(versionId));
-            m_exportHint->setText(tr("Optional: exports from FM View Exporter (CSV or HTML) can "
-                                     "be read here too."));
         } else {
             m_importIntro->setText(tr("Drop a player export from Football Manager here, "
                                       "for example your squad or a scouting list. You can "
@@ -326,9 +321,7 @@ void NewSaveWizard::goTo(int step)
             m_dropZone->setPrompt({}, {});
             m_dropZone->setDialog({}, {});
             m_dropZone->setStartDir(m_context.htmlExportDir());
-            m_exportHint->clear();
         }
-        m_exportHint->setVisible(readsSaves);
         m_dropZone->setFile(m_importFile);
         m_followCheck->setVisible(isSaveFile(m_importFile));
         break;

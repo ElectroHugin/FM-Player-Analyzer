@@ -632,7 +632,7 @@ void DashboardPage::updateImportSource()
     if (!m_importBox)
         return;
     const bool saves = readsSaves();
-    m_importBox->setTitle(saves ? tr("Read player data (save .fm, CSV or HTML)")
+    m_importBox->setTitle(saves ? tr("Read player data (save game)")
                                 : tr("Import new player data (FM export, HTML or CSV)"));
     const AppConfig &config = m_context.config();
     if (!saves) {
@@ -644,8 +644,8 @@ void DashboardPage::updateImportSource()
     } else if (config.saveTipDismissed()) {
         m_followStatus->hide();
     } else {
-        QString text = tr("Faster than an export: <a href=\"follow\">follow your save "
-                          "live</a>");
+        QString text = tr("Tip: <a href=\"follow\">follow your save live</a>, it is read "
+                          "again after every save in the game.");
         text.replace(QStringLiteral("<a href=\"follow\">"),
                      QStringLiteral("<a href=\"follow\" style=\"color:%1; text-decoration:none\">")
                          .arg(m_theme.accentText().name()));
@@ -1272,10 +1272,14 @@ void DashboardPage::rebuildSuggestions()
 
 void DashboardPage::chooseImportFile()
 {
-    const QString path = QFileDialog::getOpenFileName(
-        this, tr("Choose an FM export or FM27 save"),
-        readsSaves() ? AppConfig::defaultSavesDir(m_context.fmVersionId()) : m_context.htmlExportDir(),
-        tr("FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)"));
+    // Versions that read saves offer the save first; exports still work.
+    const QString path = readsSaves()
+        ? QFileDialog::getOpenFileName(
+              this, tr("Choose save"), AppConfig::defaultSavesDir(m_context.fmVersionId()),
+              tr("Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)"))
+        : QFileDialog::getOpenFileName(
+              this, tr("Choose an FM export or FM27 save"), m_context.htmlExportDir(),
+              tr("FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)"));
     if (path.isEmpty())
         return;
     m_filePathEdit->setText(path);

@@ -1899,6 +1899,7 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="292"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1278"/>
         <source>Choose save</source>
         <translation>Выбрать сохранение</translation>
     </message>
@@ -2087,18 +2088,18 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="635"/>
-        <source>Read player data (save .fm, CSV or HTML)</source>
-        <translation>Прочитать данные игроков (сохранение .fm, CSV или HTML)</translation>
+        <source>Read player data (save game)</source>
+        <translation>Загрузить данные игроков (сохранение)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="647"/>
+        <source>Tip: &lt;a href=&quot;follow&quot;&gt;follow your save live&lt;/a&gt;, it is read again after every save in the game.</source>
+        <translation>Совет: &lt;a href=&quot;follow&quot;&gt;отслеживайте сохранение в реальном времени&lt;/a&gt;, оно перечитывается после каждого сохранения в игре.</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="641"/>
         <source>Following “%1”: read again after every save in the game.</source>
         <translation>Отслеживается «%1»: перечитывается после каждого сохранения в игре.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="647"/>
-        <source>Faster than an export: &lt;a href=&quot;follow&quot;&gt;follow your save live&lt;/a&gt;</source>
-        <translation>Быстрее экспорта: &lt;a href=&quot;follow&quot;&gt;отслеживать сохранение в реальном времени&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../src/app/pages/DashboardPage.cpp" line="706"/>
@@ -2278,22 +2279,27 @@ DWRS change from the assignment: Starting XI %3 · B-Team %4. Allowance per team
         </translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1276"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1279"/>
+        <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
+        <translation>Сохранения (*.fm);;Списки игроков (*.csv *.html *.htm);;Все файлы (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1281"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>Выберите экспорт FM или сохранение FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1278"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1282"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>Экспорты FM и сохранения FM27 (*.html *.htm *.csv *.fm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1316"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1320"/>
         <source>Import failed</source>
         <translation>Ошибка импорта</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1317"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1321"/>
         <source>The file could not be imported.
 
 %1
@@ -2306,28 +2312,28 @@ Possible causes: no &apos;UID&apos; column, or not a valid Football Manager expo
 Возможные причины: нет столбца &apos;UID&apos; или это не корректный экспорт Football Manager (HTML или CSV).</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1332"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1336"/>
         <source>Import complete</source>
         <translation>Импорт завершён</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1340"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1344"/>
         <source>Tip: reading the save (.fm) directly is faster and needs no export.</source>
         <translation>Совет: чтение сохранения (.fm) напрямую быстрее и не требует экспорта.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1342"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1346"/>
         <source>Show again next time</source>
         <translation>Показать снова в следующий раз</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1401"/>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1408"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1405"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1412"/>
         <source>Departures</source>
         <translation>Уходы</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/DashboardPage.cpp" line="1409"/>
+        <location filename="../src/app/pages/DashboardPage.cpp" line="1413"/>
         <source>%1 player records updated.</source>
         <translation>Обновлено записей игроков: %1.</translation>
     </message>
@@ -3186,11 +3192,6 @@ You can change the folder later in the settings.</source>
         <translation>Импорт</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="191"/>
-        <source>Import an FM export (Ctrl+I). You can also simply drop a file onto the window.</source>
-        <translation>Импортировать экспорт FM (Ctrl+I). Можно также просто перетащить файл в окно.</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="228"/>
         <source>Later</source>
         <translation>Позже</translation>
@@ -3298,10 +3299,15 @@ You can change the folder later in the settings.</source>
         <translation>Сменить сохранение…</translation>
     </message>
     <message>
+        <location filename="../src/app/MainWindow.cpp" line="191"/>
+        <source>Read player data (Ctrl+I). You can also simply drop a file onto the window.</source>
+        <translation>Загрузить данные игроков (Ctrl+I). Файл можно также просто перетащить в окно.</translation>
+    </message>
+    <message>
         <location filename="../src/app/MainWindow.cpp" line="578"/>
         <location filename="../src/app/MainWindow.cpp" line="1087"/>
-        <source>Import export …</source>
-        <translation>Импорт экспорта…</translation>
+        <source>Import player data …</source>
+        <translation>Загрузить данные игроков …</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="581"/>
@@ -3404,12 +3410,22 @@ You can change the folder later in the settings.</source>
         <translation>Все сохранения…</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1204"/>
+        <location filename="../src/app/MainWindow.cpp" line="1208"/>
+        <source>Choose save</source>
+        <translation>Выбрать сохранение</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1209"/>
+        <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
+        <translation>Сохранения (*.fm);;Списки игроков (*.csv *.html *.htm);;Все файлы (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1211"/>
         <source>Choose an FM export or FM27 save</source>
         <translation>Выберите экспорт FM или сохранение FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1205"/>
+        <location filename="../src/app/MainWindow.cpp" line="1212"/>
         <source>FM exports and FM27 saves (*.html *.htm *.csv *.fm);;All files (*)</source>
         <translation>Экспорты FM и сохранения FM27 (*.html *.htm *.csv *.fm);;Все файлы (*)</translation>
     </message>
@@ -4358,7 +4374,7 @@ The original file is not modified.</source>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="85"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="310"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="306"/>
         <source>First import</source>
         <translation>Первый импорт</translation>
     </message>
@@ -4374,7 +4390,7 @@ The original file is not modified.</source>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="114"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="299"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="295"/>
         <source>Next</source>
         <translation>Далее</translation>
     </message>
@@ -4435,7 +4451,7 @@ The original file is not modified.</source>
     </message>
     <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="255"/>
-        <location filename="../src/app/NewSaveWizard.cpp" line="304"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="300"/>
         <source>Import</source>
         <translation>Импорт</translation>
     </message>
@@ -4455,57 +4471,52 @@ The original file is not modified.</source>
         <translation>Автоматически назначать подходящие роли новым игрокам</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="302"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="298"/>
         <source>Set up later</source>
         <translation>Настроить позже</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="304"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="300"/>
         <source>Done</source>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="310"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="306"/>
         <source>Read save</source>
         <translation>Прочитать сохранение</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="312"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="308"/>
         <source>Choose your save file from Football Manager. The analyzer reads it directly, quickly even for large databases.</source>
         <translation>Выберите файл сохранения Football Manager. Анализатор читает его напрямую и быстро, даже для больших баз данных.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="314"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="310"/>
         <source>Drag your save here</source>
         <translation>Перетащите сохранение сюда</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="315"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="311"/>
         <source>%1 save (.fm), or click to choose it</source>
         <translation>Сохранение %1 (.fm) или нажмите, чтобы выбрать</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="317"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="314"/>
         <source>Choose save</source>
         <translation>Выбрать сохранение</translation>
     </message>
     <message>
+        <location filename="../src/app/NewSaveWizard.cpp" line="315"/>
+        <source>Saves (*.fm);;Player lists (*.csv *.html *.htm);;All files (*)</source>
+        <translation>Сохранения (*.fm);;Списки игроков (*.csv *.html *.htm);;Все файлы (*)</translation>
+    </message>
+    <message>
         <location filename="../src/app/NewSaveWizard.cpp" line="318"/>
-        <source>Saves and exports (*.fm *.csv *.html *.htm);;All files (*)</source>
-        <translation>Сохранения и экспорты (*.fm *.csv *.html *.htm);;Все файлы (*)</translation>
-    </message>
-    <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="320"/>
-        <source>Optional: exports from FM View Exporter (CSV or HTML) can be read here too.</source>
-        <translation>Необязательно: здесь также можно прочитать экспорты из FM View Exporter (CSV или HTML).</translation>
-    </message>
-    <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="323"/>
         <source>Drop a player export from Football Manager here, for example your squad or a scouting list. You can import more exports at any time later.</source>
         <translation>Перетащите сюда экспорт игроков из Football Manager, например ваш состав или список скаутинга. Другие экспорты можно импортировать в любое время.</translation>
     </message>
     <message>
-        <location filename="../src/app/NewSaveWizard.cpp" line="399"/>
+        <location filename="../src/app/NewSaveWizard.cpp" line="392"/>
         <source>The file could not be imported: %1</source>
         <translation>Не удалось импортировать файл: %1</translation>
     </message>
@@ -7093,8 +7104,8 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="317"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2253"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2277"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2252"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2276"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
@@ -7136,19 +7147,19 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="334"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="549"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1793"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1792"/>
         <source>Import</source>
         <translation>Импорт</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="335"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="718"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="717"/>
         <source>History and data freshness</source>
         <translation>История и актуальность данных</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="337"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="767"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="766"/>
         <source>Portraits and crests</source>
         <translation>Портреты и эмблемы</translation>
     </message>
@@ -7162,26 +7173,26 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="338"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="857"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="856"/>
         <source>DWRS Rating</source>
         <translation>Оценка DWRS</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="339"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1102"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1101"/>
         <source>Squad and analysis</source>
         <translation>Состав и анализ</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="340"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1000"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1004"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="999"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1003"/>
         <source>Personalities</source>
         <translation>Характеры</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="341"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1175"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1174"/>
         <source>Training</source>
         <translation>Тренировки</translation>
     </message>
@@ -7194,19 +7205,19 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="342"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1198"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1197"/>
         <source>Appearance</source>
         <translation>Внешний вид</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="343"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1319"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1318"/>
         <source>DWRS colours</source>
         <translation>Цвета DWRS</translation>
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="344"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1759"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1758"/>
         <source>Saves</source>
         <translation>Сохранения</translation>
     </message>
@@ -7267,9 +7278,9 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="430"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1492"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1501"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1513"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1491"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1500"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1512"/>
         <source>Club logo</source>
         <translation>Логотип клуба</translation>
     </message>
@@ -7409,7 +7420,7 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="554"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2078"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2077"/>
         <source>Football Manager Version</source>
         <translation>Версия Football Manager</translation>
     </message>
@@ -7435,8 +7446,8 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="576"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="690"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="790"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="689"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="789"/>
         <source>Browse …</source>
         <translation>Обзор …</translation>
     </message>
@@ -7510,26 +7521,26 @@ On the test save the FM27 profile with 33 % predicts the average rating better t
     </message>
     <message>
         <location filename="../src/app/pages/SettingsPage.cpp" line="652"/>
-        <source>FM27 has no export of its own. The analyzer reads lists through the bundled views or reads the save directly.</source>
-        <translation>В FM27 нет собственного экспорта. Анализатор читает списки через встроенные представления или читает сохранение напрямую.</translation>
+        <source>Game files for Football Manager 27.</source>
+        <translation>Файлы игры для Football Manager 27.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="656"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="655"/>
         <source>Install views</source>
         <translation>Установить представления</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="657"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="656"/>
         <source>Install sample tactics</source>
         <translation>Установить примеры тактик</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="658"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="657"/>
         <source>Game files</source>
         <translation>Файлы игры</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="660"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="659"/>
         <source>Views: copies the bundled views (squad, player database, shortlist) into the &apos;views&apos; folder of Football Manager 27. In the game you load them from the list&apos;s views menu. Existing files with the same name are replaced, other views stay untouched.
 
 Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 and Counter Surge · 3-4-2-1) as game files into the &apos;tactics&apos; folder of Football Manager 27. In the game you load them in the tactics view via loading a tactic. They are already built into the analyzer; you create your own tactics in the tactic editor or import them.</source>
@@ -7538,785 +7549,785 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 Примеры тактик: копирует две встроенные тактики (Control Press · 4-2-3-1 и Counter Surge · 3-4-2-1) как файлы игры в папку &apos;tactics&apos; Football Manager 27. В игре их загружают на экране тактики через загрузку тактики. Они уже встроены в анализатор; свои тактики вы создаёте в редакторе тактик или импортируете.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="672"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="671"/>
         <source>FM27 views</source>
         <translation>Представления FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="676"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="675"/>
         <source>FM27 tactics</source>
         <translation>Тактики FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="679"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="678"/>
         <source>Attribute masking as in the game</source>
         <translation>Скрытие атрибутов как в игре</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="680"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="679"/>
         <source>Reading a save</source>
         <translation>Чтение сохранения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="681"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="680"/>
         <source>Applies when you read an FM27 save (.fm). When on, your squad, very well-known players and well-scouted players are exact; everyone else comes with ranges the analyzer makes itself. When off, all values are exact. Hidden values such as potential are never read.</source>
         <translation>Действует при чтении сохранения FM27 (.fm). Если включено, ваш состав, очень известные и хорошо просмотренные игроки точны; у всех остальных диапазоны, которые анализатор вычисляет сам. Если выключено, все значения точны. Скрытые значения, например потенциал, никогда не читаются.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="686"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="685"/>
         <source>Follow save live</source>
         <translation>Отслеживать сохранение в реальном времени</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="687"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="686"/>
         <source>Follow live</source>
         <translation>Отслеживать в реальном времени</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="689"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="688"/>
         <source>Choose an FM27 save (.fm)</source>
         <translation>Выберите сохранение FM27 (.fm)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="691"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="690"/>
         <source>Save file</source>
         <translation>Файл сохранения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="692"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="691"/>
         <source>While the Analyzer is open, it reads this save again automatically as soon as the game has saved it, autosaves included. It always takes the newest file of the career, including the versions “(v02)”, “(v03)”. If you save under a new name in the game, choose the new file here.</source>
         <translation>Пока анализатор открыт, он автоматически перечитывает это сохранение, как только игра его сохранила, включая автосохранения. Всегда берётся самый новый файл карьеры, включая версии «(v02)», «(v03)». Если в игре вы сохраняетесь под новым именем, выберите здесь новый файл.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="703"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="702"/>
         <source>Choose FM27 save</source>
         <translation>Выбрать сохранение FM27</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="704"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="703"/>
         <source>FM27 saves (*.fm);;All files (*)</source>
         <translation>Сохранения FM27 (*.fm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="719"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="718"/>
         <source>What the analyzer keeps over time and when players count as outdated.</source>
         <translation>Что анализатор хранит со временем и когда игроки считаются устаревшими.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="724"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="723"/>
         <source>Player history</source>
         <translation>История игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="726"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="725"/>
         <source>Keep history for all players</source>
         <translation>Хранить историю для всех игроков</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="727"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="726"/>
         <source>Scope</source>
         <translation>Охват</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="728"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="727"/>
         <source>When an FM27 save is read in, the analyzer keeps one state per in-game month of the attributes, average rating, value and wage, but only when something changed. Unticked, this applies to your squad, the second team, the shortlist, the national squad and players from your scouting. Ticked, to every player read in; the database grows considerably. The current season and the two before it stay monthly; older seasons are condensed to their end-of-season state.</source>
         <translation>При чтении сохранения FM27 анализатор хранит одно состояние на игровой месяц для атрибутов, средней оценки, стоимости и зарплаты, но только если что-то изменилось. Без галочки — для вашего состава, команды B, списка наблюдения, сборной и игроков из скаутинга. С галочкой — для каждого прочитанного игрока; база данных заметно растёт. Текущий сезон и два предыдущих остаются помесячными; более старые сезоны сжимаются до состояния на конец сезона.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="739"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="738"/>
         <source>Season start</source>
         <translation>Начало сезона</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="740"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="739"/>
         <source>From this day on the history counts a new season, for example for the season shown on the overview and when condensing old seasons. 1 July fits most European leagues; for leagues that play in the calendar year, use 1 January.</source>
         <translation>С этого дня история считает новый сезон, например для сезона в обзоре и при сжатии старых сезонов. 1 июля подходит для большинства европейских лиг; для лиг, играющих по календарному году, используйте 1 января.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="745"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="744"/>
         <source>Data freshness</source>
         <translation>Актуальность данных</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="751"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="750"/>
         <source>Outdated after missed full exports (Y)</source>
         <translation>Устаревший после пропущенных полных экспортов (Y)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="752"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="751"/>
         <source>Retired from age (X)</source>
         <translation>Retired с возраста (X)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="753"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="752"/>
         <source>An import with at least a quarter as many players as the last full export counts as a full export itself. Smaller exports (squad, shortlist, scouting) only refresh their own players. Anyone missing from the last Y full exports counts as stale and is hidden from matrices, suggestions and pools, except players of your club and the shortlist. If they are also at least X years old, they are shown as Retired.</source>
         <translation>Импорт, в котором не меньше четверти игроков последнего полного экспорта, сам считается полным экспортом. Меньшие экспорты (состав, список наблюдения, скаутинг) обновляют только своих игроков. Кто отсутствует в последних Y полных экспортах, считается устаревшим и скрывается из матриц, предложений и пулов, кроме игроков вашего клуба и списка наблюдения. Если ему к тому же не меньше X лет, он показывается как Retired.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="768"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="767"/>
         <source>Optional: player faces and club logos from installed graphics packs. Without this setting nothing changes.</source>
         <translation>Необязательно: лица игроков и логотипы клубов из установленных графических паков. Без этой настройки ничего не меняется.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="775"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="774"/>
         <source>Graphics folder</source>
         <translation>Папка graphics</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="776"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="775"/>
         <source>Use portraits and crests from the graphics folder</source>
         <translation>Использовать портреты и эмблемы из папки graphics</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="784"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="783"/>
         <source>Only useful if you have installed graphics packs (player faces, club logos) for Football Manager. The analyzer reads the mappings from the packs&apos; config.xml files and shows portraits by player ID and crests by club ID. Nothing in the graphics folder is changed.</source>
         <translation>Полезно, только если вы установили графические паки (лица игроков, логотипы клубов) для Football Manager. Анализатор читает соответствия из файлов config.xml паков и показывает портреты по ID игрока и эмблемы по ID клуба. В папке graphics ничего не меняется.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="791"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="790"/>
         <source>Rescan</source>
         <translation>Пересканировать</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="792"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="791"/>
         <source>Reads the folder again, e.g. after installing a new graphics pack.</source>
         <translation>Перечитывает папку, например после установки нового графического пака.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="794"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="793"/>
         <source>Folder</source>
         <translation>Папка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="807"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="806"/>
         <source>Choose crest …</source>
         <translation>Выбрать эмблему …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="808"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="807"/>
         <source>Club ID of my club</source>
         <translation>ID моего клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="810"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="809"/>
         <source>Exports contain no club IDs. Enter your club&apos;s ID or pick its crest in the logo pack (the number in the file name, e.g. 1234_club.png, is the ID). A club logo you chose yourself (Club page) takes precedence.</source>
         <translation>В экспортах нет ID клубов. Введите ID своего клуба или выберите его эмблему в паке логотипов (число в имени файла, например 1234_club.png, — это ID). Логотип клуба, выбранный вами (страница «Клуб»), имеет приоритет.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="823"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="822"/>
         <source>Choose graphics folder</source>
         <translation>Выбрать папку graphics</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="831"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="830"/>
         <source>Choose your club&apos;s crest</source>
         <translation>Выберите эмблему своего клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="832"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="831"/>
         <source>Images (*.png *.jpg *.jpeg);;All files (*)</source>
         <translation>Изображения (*.png *.jpg *.jpeg);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="839"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="838"/>
         <source>Club ID</source>
         <translation>ID клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="840"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="839"/>
         <source>The file name contains no club ID. Please enter the ID by hand or choose the image as club logo on the Club page.</source>
         <translation>Имя файла не содержит ID клуба. Введите ID вручную или выберите изображение как логотип клуба на странице «Клуб».</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="858"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="857"/>
         <source>A rating profile defines how attributes enter the DWRS rating. Each save uses exactly one profile.</source>
         <translation>Профиль оценки определяет, как атрибуты входят в оценку DWRS. Каждое сохранение использует ровно один профиль.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="863"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="862"/>
         <source>This save&apos;s profile</source>
         <translation>Профиль этого сохранения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="871"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="870"/>
         <source>Switching the profile recalculates all ratings of the save in the background. The history shows the switch as a marker; no development is calculated across it. Older ratings stay stored unchanged.</source>
         <translation>Смена профиля пересчитывает все оценки сохранения в фоне. История показывает смену отметкой; развитие через неё не считается. Старые оценки сохраняются без изменений.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="876"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="875"/>
         <source>Rating profiles</source>
         <translation>Профили оценки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="877"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="876"/>
         <source>Edit drafts, save and exchange profiles.</source>
         <translation>Редактируйте черновики, сохраняйте профили и обменивайтесь ими.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="887"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="886"/>
         <source>The built-in profiles could not be loaded.</source>
         <translation>Не удалось загрузить встроенные профили.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="896"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="895"/>
         <source>Rating profile</source>
         <translation>Профиль оценки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="926"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="925"/>
         <source>Outfield players</source>
         <translation>Полевые игроки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="935"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="934"/>
         <source>Goalkeepers</source>
         <translation>Вратари</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="951"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="950"/>
         <source>Role Multipliers</source>
         <translation>Множители ролей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="957"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="956"/>
         <source>Key attributes</source>
         <translation>Ключевые атрибуты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="958"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="957"/>
         <source>Preferred attributes</source>
         <translation>Желательные атрибуты</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="960"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="959"/>
         <source>Playing time weights</source>
         <translation>Веса игрового времени</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="961"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="960"/>
         <source>Weight per agreed playing time.</source>
         <translation>Вес для каждого оговорённого игрового времени.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="985"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="984"/>
         <source>Recalculation</source>
         <translation>Пересчёт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="986"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="985"/>
         <source>Recalculate all ratings</source>
         <translation>Пересчитать все оценки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="989"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="988"/>
         <source>Recalculates the ratings of all players in the active save with this save&apos;s profile. Unsaved changes on this page are not taken into account.</source>
         <translation>Пересчитывает оценки всех игроков активного сохранения с профилем этого сохранения. Несохранённые изменения на этой странице не учитываются.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1001"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1000"/>
         <source>Classification for talent score, analysis and filters, for this save&apos;s FM version.</source>
         <translation>Классификация для оценки таланта, анализа и фильтров для версии FM этого сохранения.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1007"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1006"/>
         <source>Personality</source>
         <translation>Характер</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1013"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1012"/>
         <source>Restore standard</source>
         <translation>Восстановить стандарт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1081"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1080"/>
         <source>Good</source>
         <translation>Хороший</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1082"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1081"/>
         <source>Neutral</source>
         <translation>Нейтральный</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1083"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1082"/>
         <source>Bad</source>
         <translation>Плохой</translation>
     </message>
     <message>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1094"/>
         <location filename="../src/app/pages/SettingsPage.cpp" line="1095"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1096"/>
         <source>Classification</source>
         <translation>Классификация</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1103"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1102"/>
         <source>Thresholds for lineup, youth, loans and the gap analysis.</source>
         <translation>Пороги для расстановки, молодёжи, аренд и анализа пробелов.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1108"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1107"/>
         <source>Lineup</source>
         <translation>Расстановка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1119"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1118"/>
         <source>Natural position bonus</source>
         <translation>Бонус естественной позиции</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1120"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1119"/>
         <source>In-possession share (FM27+)</source>
         <translation>Доля с мячом (FM27+)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1121"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1120"/>
         <source>From FM27 every tactic has one line-up in possession and one out of possession. A player&apos;s value is this share of the role in possession plus the rest of the role out of possession. Default 50 %.</source>
         <translation>С FM27 у каждой тактики одна расстановка с мячом и одна без мяча. Ценность игрока — эта доля роли с мячом плюс остаток роли без мяча. По умолчанию 50 %.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1128"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1127"/>
         <source>DWRS allowance for shorter paths</source>
         <translation>Допуск DWRS для более коротких путей</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1129"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1128"/>
         <source>Maximum loss for the whole eleven compared with the original assignment. Also applies to the weighted selection score. 0 allows ties only. Within the allowance, manual side preferences come first, then short paths. The selected players stay the same.</source>
         <translation>Максимальная потеря для всей одиннадцати по сравнению с исходным распределением. Действует и для взвешенной оценки выбора. 0 допускает только равенство. В пределах допуска сначала учитываются ручные предпочтения сторон, затем короткие пути. Выбранные игроки остаются теми же.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1133"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1132"/>
         <source>Max. roles per depth player</source>
         <translation>Макс. ролей на игрока глубины</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1135"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1134"/>
         <source>Youth and loans</source>
         <translation>Молодёжь и аренды</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1147"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1146"/>
         <source>Youth: outfield players up to age</source>
         <translation>Молодёжь: полевые игроки до возраста</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1148"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1147"/>
         <source>Youth: goalkeepers up to age</source>
         <translation>Молодёжь: вратари до возраста</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1149"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1148"/>
         <source>Min. talent score for loan</source>
         <translation>Мин. оценка таланта для аренды</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1150"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1149"/>
         <source>Minimum age for loan</source>
         <translation>Минимальный возраст для аренды</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1151"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1150"/>
         <source>Youth XI loan only above age</source>
         <translation>Аренда из молодёжного состава только старше</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1153"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1152"/>
         <source>Gap Analysis</source>
         <translation>Анализ пробелов</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1164"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1163"/>
         <source>Displacement threshold</source>
         <translation>Порог вытеснения</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1165"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1164"/>
         <source>Dropoff threshold</source>
         <translation>Порог спада</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1166"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1165"/>
         <source>Wrong side penalty</source>
         <translation>Штраф за неверную сторону</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1176"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1175"/>
         <source>Which attributes train up to which age and how strongly. Drives the training recommendation.</source>
         <translation>Какие атрибуты тренируются до какого возраста и насколько сильно. Определяет рекомендацию по тренировкам.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1181"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1180"/>
         <source>Training profile</source>
         <translation>Профиль тренировок</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1185"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1184"/>
         <source>A band groups attributes that develop alike. Up to “fully trainable until” training works fully, then its effect drops linearly until “locked from”; “always” means never locked. The weight strengthens or weakens a band in the recommendation. Bands marked “Mentoring only” only appear as a mentoring note. Attributes without a band are not recommended. The profile belongs to this save.</source>
         <translation>Полоса объединяет атрибуты, которые развиваются одинаково. До «полностью тренируется до» тренировка действует полностью, затем её эффект линейно снижается до «заблокировано с»; «всегда» означает, что блокировки нет. Вес усиливает или ослабляет полосу в рекомендации. Полосы с отметкой «Только наставничество» появляются только как примечание о наставничестве. Атрибуты без полосы не рекомендуются. Профиль принадлежит этому сохранению.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1199"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1198"/>
         <source>Colors and club header of this save.</source>
         <translation>Цвета и шапка клуба этого сохранения.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1203"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1202"/>
         <source>Colour Scheme</source>
         <translation>Цветовая схема</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1211"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1210"/>
         <source>Night (dark)</source>
         <translation>Ночь (тёмная)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1212"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1211"/>
         <source>Day (light)</source>
         <translation>День (светлая)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1213"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1212"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1214"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1213"/>
         <source>Template</source>
         <translation>Шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1215"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1214"/>
         <source>Save as own template …</source>
         <translation>Сохранить как свой шаблон …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1217"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1216"/>
         <source>Saves the colors below (day and night) as your own template. Own templates are available in every save and are kept across updates.</source>
         <translation>Сохраняет цвета ниже (день и ночь) как ваш шаблон. Свои шаблоны доступны в каждом сохранении и сохраняются при обновлениях.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1219"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1218"/>
         <source>Delete template</source>
         <translation>Удалить шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1229"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1228"/>
         <source>A preset sets a calm anthracite base and uses only the club colours as accents (header, buttons, interaction). Colours below can then be freely adjusted — that switches to &apos;Custom&apos;.</source>
         <translation>Пресет задаёт спокойную антрацитовую основу и использует цвета клуба только как акценты (шапка, кнопки, взаимодействие). Цвета ниже затем можно свободно менять — это переключает на «Своя».</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1242"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1241"/>
         <source>Club header</source>
         <translation>Шапка клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1245"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1244"/>
         <source>Club colors with crest</source>
         <translation>Цвета клуба с эмблемой</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1246"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1245"/>
         <source>Single color (&quot;Header&quot; color)</source>
         <translation>Один цвет (цвет «Шапка»)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1247"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1246"/>
         <source>Style</source>
         <translation>Стиль</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1248"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1247"/>
         <source>Also show the crest as a subtle silhouette</source>
         <translation>Также показывать эмблему как неброский силуэт</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1250"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1249"/>
         <source>The club header uses the &quot;Primary&quot; color as its surface and &quot;Interaction&quot; as a narrow stripe. If the colors are too light or too bright, the Analyzer darkens the surface just enough to keep name and stadium readable.</source>
         <translation>Шапка клуба использует цвет «Основной» как фон и «Взаимодействие» как узкую полосу. Если цвета слишком светлые или яркие, анализатор затемняет фон ровно настолько, чтобы название и стадион оставались читаемыми.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1260"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1259"/>
         <source>Colors</source>
         <translation>Цвета</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1261"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1260"/>
         <source>Click a color to open the color picker.</source>
         <translation>Нажмите на цвет, чтобы открыть выбор цвета.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1263"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1262"/>
         <source>Background</source>
         <translation>Фон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1264"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1263"/>
         <source>Panel / Cards</source>
         <translation>Панель / Карточки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1265"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1264"/>
         <source>Sidebar</source>
         <translation>Боковая панель</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1266"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1265"/>
         <source>Header</source>
         <translation>Шапка</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1267"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1266"/>
         <source>Primary / Buttons</source>
         <translation>Основной / Кнопки</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1268"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1267"/>
         <source>Interaction (tabs, sliders)</source>
         <translation>Взаимодействие (вкладки, ползунки)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1269"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1268"/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1275"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2049"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1274"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2048"/>
         <source>Night</source>
         <translation>Ночь</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1276"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2049"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1275"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2048"/>
         <source>Day</source>
         <translation>День</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1293"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1292"/>
         <source>Choose colour</source>
         <translation>Выбрать цвет</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1320"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1319"/>
         <source>How ratings are coloured in tables, on the pitch and on the dashboard.</source>
         <translation>Как раскрашиваются оценки в таблицах, на поле и на панели.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1324"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1323"/>
         <source>Colour scheme</source>
         <translation>Цветовая схема</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1327"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1326"/>
         <source>Scheme</source>
         <translation>Схема</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1328"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1327"/>
         <source>Save as own scheme …</source>
         <translation>Сохранить как свою схему …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1329"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1328"/>
         <source>Own colour schemes are available in every save and survive updates.</source>
         <translation>Свои цветовые схемы доступны в каждом сохранении и сохраняются при обновлениях.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1331"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1408"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1330"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1407"/>
         <source>Delete scheme</source>
         <translation>Удалить схему</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1338"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1337"/>
         <source>&quot;Original&quot; is the rainbow of earlier versions. &quot;Rarity&quot; colours in tiers like items in role-playing games (Poor, Common, Uncommon, Rare, Epic, Legendary). &quot;Colour-blind friendly&quot; stays distinguishable with red-green colour blindness. Changing a colour or border below turns it into &quot;Custom&quot;; &quot;Save as own scheme&quot; keeps it. The Analyzer picks light or dark text automatically so it stays readable on every colour.</source>
         <translation>«Оригинал» — радуга прежних версий. «Редкость» раскрашивает по уровням, как предметы в ролевых играх (Плохой, Обычный, Необычный, Редкий, Эпический, Легендарный). «Для дальтоников» остаётся различимой при красно-зелёном дальтонизме. Изменение цвета или границы ниже превращает схему в «Свою»; «Сохранить как свою схему» сохраняет её. Анализатор сам выбирает светлый или тёмный текст, чтобы он оставался читаемым на любом цвете.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1345"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1344"/>
         <source>Bands and colours</source>
         <translation>Диапазоны и цвета</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1346"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1345"/>
         <source>From which value a colour applies, separately for outfield players and goalkeepers.</source>
         <translation>С какого значения действует цвет, отдельно для полевых игроков и вратарей.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1351"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1350"/>
         <source>A soft transition mixes the colours of neighbouring bands within this distance of the border, so that 71.5 and 72.5 no longer look completely different. Bands without fill are never mixed. Goalkeepers have their own borders because their rating uses a different basis.</source>
         <translation>Плавный переход смешивает цвета соседних диапазонов в пределах этого расстояния от границы, чтобы 71,5 и 72,5 не выглядели совсем разными. Диапазоны без заливки не смешиваются. У вратарей свои границы, потому что их оценка строится на другой основе.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1374"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1373"/>
         <source>%1 (own)</source>
         <translation>%1 (своя)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1377"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1395"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1376"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1394"/>
         <source>Own colour scheme</source>
         <translation>Своя цветовая схема</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1377"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1672"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1376"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1671"/>
         <source>Name:</source>
         <translation>Название:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1396"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1395"/>
         <source>The colour scheme could not be saved: %1</source>
         <translation>Не удалось сохранить цветовую схему: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1409"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1408"/>
         <source>Delete the colour scheme &quot;%1&quot;?</source>
         <translation>Удалить цветовую схему «%1»?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1434"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1433"/>
         <source>Custom</source>
         <translation>Своя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1450"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1449"/>
         <source>Will be read when you save.</source>
         <translation>Будет прочитано при сохранении.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1454"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1453"/>
         <source>Folder not found or without graphics packs (config.xml): %1</source>
         <translation>Папка не найдена или в ней нет графических паков (config.xml): %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1458"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1457"/>
         <source>Reading graphics packs…</source>
         <translation>Чтение графических паков…</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1462"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1461"/>
         <source>%1 portraits and %2 club crests found.</source>
         <translation>Найдено портретов: %1, эмблем клубов: %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1465"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1464"/>
         <source>No portraits or crests found. Are the packs with their config.xml in this folder?</source>
         <translation>Портреты и эмблемы не найдены. Лежат ли паки с их config.xml в этой папке?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1478"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1477"/>
         <source>There is no crest for this club ID in the folder.</source>
         <translation>В папке нет эмблемы для этого ID клуба.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1485"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1484"/>
         <source>Choose club logo</source>
         <translation>Выбрать логотип клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1486"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1538"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1485"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1537"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp);;All files (*)</source>
         <translation>Изображения (*.png *.jpg *.jpeg *.bmp);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1493"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1545"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1492"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1544"/>
         <source>The file could not be loaded as an image.</source>
         <translation>Не удалось загрузить файл как изображение.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1502"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1501"/>
         <source>The logo could not be saved.
 %1</source>
         <translation>Не удалось сохранить логотип.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1514"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1513"/>
         <source>The logo could not be removed.
 %1</source>
         <translation>Не удалось удалить логотип.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1528"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1527"/>
         <source>(no logo)</source>
         <translation>(нет логотипа)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1537"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1536"/>
         <source>Choose national flag</source>
         <translation>Выбрать флаг страны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1544"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1552"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1564"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1543"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1551"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1563"/>
         <source>National flag</source>
         <translation>Флаг страны</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1553"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1552"/>
         <source>The flag could not be saved.
 %1</source>
         <translation>Не удалось сохранить флаг.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1565"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1564"/>
         <source>The flag could not be removed.
 %1</source>
         <translation>Не удалось удалить флаг.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1579"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1578"/>
         <source>(no flag)</source>
         <translation>(нет флага)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1597"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1652"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1695"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1596"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1651"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1694"/>
         <source>Custom</source>
         <comment>league</comment>
         <translation>Своя</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1600"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1599"/>
         <source>%1 (own)</source>
         <comment>league</comment>
         <translation>%1 (свой)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1628"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1627"/>
         <source>Custom (not saved)</source>
         <translation>Своя (не сохранена)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1645"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1644"/>
         <source>Save own color template</source>
         <translation>Сохранить свой цветовой шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1673"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1672"/>
         <source>League:</source>
         <translation>Лига:</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1674"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1673"/>
         <source>A league files the template with the clubs of that league. &quot;Custom&quot; collects templates without a league. The same name in the same league replaces the template.</source>
         <translation>Лига относит шаблон к клубам этой лиги. «Своя» собирает шаблоны без лиги. То же название в той же лиге заменяет шаблон.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1699"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1722"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1698"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1721"/>
         <source>Color template</source>
         <translation>Цветовой шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1700"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1699"/>
         <source>The template could not be saved.
 
 %1</source>
@@ -8325,17 +8336,17 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1715"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1714"/>
         <source>Delete color template</source>
         <translation>Удалить цветовой шаблон</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1716"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1715"/>
         <source>Delete your template &quot;%1&quot;? Saves that use it keep their colors.</source>
         <translation>Удалить ваш шаблон «%1»? Сохранения, которые его используют, сохранят свои цвета.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1723"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1722"/>
         <source>The template could not be deleted.
 
 %1</source>
@@ -8344,108 +8355,108 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1760"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1759"/>
         <source>Switch, create or take over saves. These actions apply immediately.</source>
         <translation>Переключение, создание или перенос сохранений. Эти действия применяются сразу.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1765"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1764"/>
         <source>Active save</source>
         <translation>Активное сохранение</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1767"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1766"/>
         <source>Switch</source>
         <translation>Переключить</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1776"/>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1799"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1775"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1798"/>
         <source>Database</source>
         <translation>База данных</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1779"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1778"/>
         <source>New save …</source>
         <translation>Новое сохранение …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1780"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1779"/>
         <source>Import legacy database …</source>
         <translation>Импортировать старую базу данных …</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1794"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1793"/>
         <source>Activate imported database &apos;%1&apos; now?</source>
         <translation>Активировать импортированную базу данных &apos;%1&apos; сейчас?</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1804"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1803"/>
         <source>Startup</source>
         <translation>Запуск</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1806"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1805"/>
         <source>Always open the last used save at startup</source>
         <translation>Всегда открывать последнее сохранение при запуске</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1812"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1811"/>
         <source>Unticked, the start screen with your saves appears at startup. Ticked, you can still bring it up by holding Shift while the app starts.</source>
         <translation>Без галочки при запуске появляется стартовый экран с вашими сохранениями. С галочкой его можно вызвать, удерживая Shift при запуске приложения.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1816"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1815"/>
         <source>Data folder</source>
         <translation>Папка данных</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1821"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1820"/>
         <source>Can be changed in bootstrap.ini.</source>
         <translation>Можно изменить в bootstrap.ini.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1833"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1832"/>
         <source>No profile active.</source>
         <translation>Нет активного профиля.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1833"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1832"/>
         <source>Active: %1</source>
         <translation>Активен: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1858"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1857"/>
         <source>The save contains players. Please create a new save for a different version.</source>
         <translation>В сохранении есть игроки. Создайте новое сохранение для другой версии.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1932"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1931"/>
         <source>Default (no restriction)</source>
         <translation>По умолчанию (без ограничений)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="1965"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="1964"/>
         <source>Weights for %1 saves.</source>
         <translation>Веса для сохранений %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2036"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2035"/>
         <source>Applies to the save “%1”</source>
         <translation>Действует для сохранения «%1»</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2048"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2047"/>
         <source>%1: text/background contrast only %2:1 (WCAG recommends at least 4.5:1)</source>
         <translation>%1: контраст текста и фона всего %2:1 (WCAG рекомендует не менее 4,5:1)</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2054"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2053"/>
         <source>Text/background contrast OK</source>
         <translation>Контраст текста и фона в порядке</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2254"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2253"/>
         <source>The settings could not be saved. The save keeps its previous state.
 
 %1</source>
@@ -8454,7 +8465,7 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/pages/SettingsPage.cpp" line="2277"/>
+        <location filename="../src/app/pages/SettingsPage.cpp" line="2276"/>
         <source>Settings saved.</source>
         <translation>Настройки сохранены.</translation>
     </message>
@@ -9309,8 +9320,8 @@ Sample tactics: copies the two bundled sample tactics (Control Press · 4-2-3-1 
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="357"/>
-        <source>Read in an export or an FM27 save game (.fm)</source>
-        <translation>Прочитайте экспорт или сохранение FM27 (.fm)</translation>
+        <source>Read in your save game (.fm)</source>
+        <translation>Прочитать ваше сохранение (.fm)</translation>
     </message>
     <message>
         <location filename="../src/app/StartScreen.cpp" line="358"/>
@@ -9976,7 +9987,7 @@ A backup is created automatically in the “backups” folder first. You can bri
     <name>fm::WelcomeWizard</name>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="158"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="708"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="707"/>
         <source>Welcome</source>
         <translation>Добро пожаловать</translation>
     </message>
@@ -10006,7 +10017,7 @@ A backup is created automatically in the “backups” folder first. You can bri
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="179"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="445"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="444"/>
         <source>Colours</source>
         <translation>Цвета</translation>
     </message>
@@ -10027,7 +10038,7 @@ A backup is created automatically in the “backups” folder first. You can bri
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="211"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="620"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="619"/>
         <source>Next</source>
         <translation>Далее</translation>
     </message>
@@ -10093,181 +10104,181 @@ A backup is created automatically in the “backups” folder first. You can bri
     </message>
     <message>
         <location filename="../src/app/WelcomeWizard.cpp" line="287"/>
-        <source>While the analyzer is open, it reads the save again every time the game saves, autosaves included. Faster than an export.</source>
-        <translation>Пока анализатор открыт, он перечитывает сохранение каждый раз, когда игра сохраняется, включая автосохранения. Быстрее, чем экспорт.</translation>
+        <source>While the analyzer is open, it reads the save again every time the game saves, autosaves included.</source>
+        <translation>Пока анализатор открыт, он перечитывает сохранение при каждом сохранении в игре, включая автосохранения.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="291"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="290"/>
         <source>Choose .fm file</source>
         <translation>Выбрать файл .fm</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="294"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="293"/>
         <source>Browse …</source>
         <translation>Обзор …</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="300"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="299"/>
         <source>Game save:</source>
         <translation>Сохранение игры:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="306"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="305"/>
         <source>Choose save</source>
         <translation>Выбрать сохранение</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="307"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="306"/>
         <source>Saves (*.fm);;All files (*)</source>
         <translation>Сохранения (*.fm);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="320"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="319"/>
         <source>What is this for?</source>
         <translation>Зачем это?</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="321"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="320"/>
         <source>The second team (for example the reserves or U23) counts as part of your own squad, for loans and the youth XI among others. Club name, stadium and logo appear in the window header. The club country drives the domestic filter in scouting and the trained-at-club rules of squad registration. The code is the three-letter nation code from the game.</source>
         <translation>Команда B (например, резерв или U23) считается частью вашего состава, в том числе для аренд и молодёжного состава. Название клуба, стадион и логотип показываются в заголовке окна. По стране клуба работают фильтр отечественных игроков в скаутинге и правила о воспитанниках клуба в заявке. Код — трёхбуквенный код страны из игры.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="346"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="345"/>
         <source>Favourite Tactics</source>
         <translation>Избранные тактики</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="365"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="364"/>
         <source>Primary Tactic:</source>
         <translation>Основная тактика:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="366"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="365"/>
         <source>Secondary Tactic:</source>
         <translation>Запасная тактика:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="368"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="367"/>
         <source>Preselected on Overview, Line-up, Squad and Transfers. The primary one sets the roles on the Development page. You create your own tactics under Tactics.</source>
         <translation>Предварительно выбраны в разделах Обзор, Расстановка, Состав и Трансферы. Основная задаёт роли на странице Развитие. Свои тактики вы создаёте в разделе Тактики.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="378"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="377"/>
         <source>In and out of possession</source>
         <translation>С мячом и без мяча</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="385"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="384"/>
         <source>In-possession share:</source>
         <translation>Доля с мячом:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="388"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="387"/>
         <source>What does the share mean?</source>
         <translation>Что означает доля?</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="389"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="388"/>
         <source>Every tactic has an in-possession and an out-of-possession line-up. A player&apos;s value is this share of their in-possession role plus the rest of their out-of-possession role. At 50 % both count the same; above that, possession counts more.</source>
         <translation>У каждой тактики есть расстановка с мячом и без мяча. Ценность игрока — эта доля его роли с мячом плюс остаток роли без мяча. При 50 % обе учитываются одинаково; выше — владение мячом важнее.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="405"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="404"/>
         <source>Squad registration</source>
         <translation>Заявка на сезон</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="410"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="409"/>
         <source>Default (no restriction)</source>
         <translation>По умолчанию (без ограничений)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="418"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="417"/>
         <source>Champions League / Europa League / Conference League</source>
         <translation>Лига чемпионов / Лига Европы / Лига конференций</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="422"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="421"/>
         <source>League:</source>
         <translation>Лига:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="423"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="422"/>
         <source>European competition:</source>
         <translation>Еврокубок:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="426"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="425"/>
         <source>What does this do?</source>
         <translation>Что это даёт?</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="427"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="426"/>
         <source>As soon as a competition requires a squad list, the Analyzer marks players trained in the nation and at the club and offers the registration assistant. &apos;Default&apos; has no restriction: every player is eligible.</source>
         <translation>Как только турнир требует заявку, анализатор отмечает игроков, подготовленных в стране и в клубе, и предлагает помощника заявки. «По умолчанию» без ограничений: допускается любой игрок.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="452"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="451"/>
         <source>Night (dark)</source>
         <translation>Ночь (тёмная)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="453"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="452"/>
         <source>Day (light)</source>
         <translation>День (светлая)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="454"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="453"/>
         <source>Club / colour preset:</source>
         <translation>Клуб / цветовой пресет:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="455"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="454"/>
         <source>Mode:</source>
         <translation>Режим:</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="457"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="456"/>
         <source>The preset colours the header, buttons and selection in the club colours. The base colours stay neutral. Finer adjustments are under Settings → Design.</source>
         <translation>Пресет окрашивает шапку, кнопки и выделение в цвета клуба. Базовые цвета остаются нейтральными. Более тонкие настройки — в Настройки → Оформление.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="469"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="468"/>
         <source>What else there is</source>
         <translation>Что ещё есть</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="471"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="470"/>
         <source>More settings</source>
         <translation>Другие настройки</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="472"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="471"/>
         <source>The settings also hold the national team (unlocks national management), portraits and crests from the game&apos;s graphics folder and, under Import, following an FM27 save live. Under DWRS weights and Squad and analysis you adjust how roles are rated and squads are built.</source>
         <translation>В настройках также есть сборная (включает управление сборной), портреты и эмблемы из папки graphics игры и в разделе «Импорт» — отслеживание сохранения FM27 в реальном времени. В разделах «Веса DWRS» и «Состав и анализ» настраивается, как оцениваются роли и собираются составы.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="533"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="532"/>
         <source>Custom</source>
         <translation>Своя</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="536"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="535"/>
         <source>%1 (own)</source>
         <translation>%1 (свой)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="569"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="568"/>
         <source>Keep current colours</source>
         <translation>Оставить текущие цвета</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="620"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="619"/>
         <source>Done</source>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="709"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="708"/>
         <source>The details could not be saved. The save keeps its previous state.
 
 %1</source>
@@ -10276,43 +10287,43 @@ A backup is created automatically in the “backups” folder first. You can bri
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="725"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="724"/>
         <source>Choose club logo</source>
         <translation>Выбрать логотип клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="726"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="725"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp);;All files (*)</source>
         <translation>Изображения (*.png *.jpg *.jpeg *.bmp);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="731"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="737"/>
-        <location filename="../src/app/WelcomeWizard.cpp" line="749"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="730"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="736"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="748"/>
         <source>Club logo</source>
         <translation>Логотип клуба</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="732"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="731"/>
         <source>The file could not be loaded as an image.</source>
         <translation>Не удалось загрузить файл как изображение.</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="738"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="737"/>
         <source>The logo could not be saved.
 %1</source>
         <translation>Не удалось сохранить логотип.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="750"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="749"/>
         <source>The logo could not be removed.
 %1</source>
         <translation>Не удалось удалить логотип.
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/WelcomeWizard.cpp" line="764"/>
+        <location filename="../src/app/WelcomeWizard.cpp" line="763"/>
         <source>(no logo)</source>
         <translation>(нет логотипа)</translation>
     </message>
