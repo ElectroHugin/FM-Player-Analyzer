@@ -785,7 +785,7 @@ const QHash<QString, QHash<QString, QString>> &fm27GameTerms()
             t.insert(QStringLiteral("attribute|Jumping Reach"), QStringLiteral("Alcance de salto"));
             t.insert(QStringLiteral("attribute|Kicking"), QStringLiteral("Saques de puerta"));
             t.insert(QStringLiteral("attribute|Leadership"), QStringLiteral("Liderazgo"));
-            t.insert(QStringLiteral("attribute|Long Shots"), QStringLiteral("Disparos lejanos"));
+            t.insert(QStringLiteral("attribute|Long Shots"), QStringLiteral("Tiros lejanos"));
             t.insert(QStringLiteral("attribute|Long Throws"), QStringLiteral("Saques largos"));
             t.insert(QStringLiteral("attribute|Marking"), QStringLiteral("Marcaje"));
             t.insert(QStringLiteral("attribute|Natural Fitness"), QString::fromUtf8("Recuperación física"));
@@ -861,12 +861,12 @@ const QHash<QString, QHash<QString, QString>> &fm27GameTerms()
             t.insert(QStringLiteral("personality|Very Ambitious"), QStringLiteral("Muy ambicioso"));
             t.insert(QStringLiteral("personality|Very Loyal"), QStringLiteral("Muy leal"));
             t.insert(QStringLiteral("playing_time|Backup"), QStringLiteral("Recambio"));
-            t.insert(QStringLiteral("playing_time|Breakthrough Prospect"), QStringLiteral("Promesa importante"));
-            t.insert(QStringLiteral("playing_time|Cup Goalkeeper"), QStringLiteral("Portero de copa"));
-            t.insert(QStringLiteral("playing_time|Domestic Cup Goalkeeper"), QStringLiteral("Portero de copas nacionales"));
+            t.insert(QStringLiteral("playing_time|Breakthrough Prospect"), QStringLiteral("Promesa casi en el primer equipo"));
+            t.insert(QStringLiteral("playing_time|Cup Goalkeeper"), QStringLiteral("Portero de competiciones de copa"));
+            t.insert(QStringLiteral("playing_time|Domestic Cup Goalkeeper"), QStringLiteral("Portero de copa nacional"));
             t.insert(QStringLiteral("playing_time|Emergency Backup"), QStringLiteral("Recambio de emergencia"));
             t.insert(QStringLiteral("playing_time|First-Choice Goalkeeper"), QStringLiteral("Primer portero"));
-            t.insert(QStringLiteral("playing_time|Fringe Player"), QStringLiteral("Jugador sobrante"));
+            t.insert(QStringLiteral("playing_time|Fringe Player"), QStringLiteral("Jugador secundario"));
             t.insert(QStringLiteral("playing_time|Future Prospect"), QStringLiteral("Futura promesa"));
             t.insert(QStringLiteral("playing_time|Impact Sub"), QStringLiteral("Revulsivo desde el banquillo"));
             t.insert(QStringLiteral("playing_time|Important Player"), QStringLiteral("Jugador importante"));
@@ -877,6 +877,13 @@ const QHash<QString, QHash<QString, QString>> &fm27GameTerms()
             t.insert(QStringLiteral("playing_time|Star Player"), QStringLiteral("Jugador estrella"));
             t.insert(QStringLiteral("playing_time|Surplus to Requirements"), QStringLiteral("No necesario"));
             t.insert(QStringLiteral("playing_time|Youngster"), QStringLiteral("Joven"));
+            t.insert(QStringLiteral("position_code|AM"), QStringLiteral("MP"));
+            t.insert(QStringLiteral("position_code|D"), QStringLiteral("DF"));
+            t.insert(QStringLiteral("position_code|DM"), QStringLiteral("MC"));
+            t.insert(QStringLiteral("position_code|GK"), QStringLiteral("POR"));
+            t.insert(QStringLiteral("position_code|M"), QStringLiteral("ME"));
+            t.insert(QStringLiteral("position_code|ST"), QStringLiteral("DL"));
+            t.insert(QStringLiteral("position_code|WB"), QStringLiteral("CR"));
             t.insert(QStringLiteral("position_name|Attacking Midfielder"), QStringLiteral("Mediapunta"));
             t.insert(QStringLiteral("position_name|Defender"), QStringLiteral("Defensa"));
             t.insert(QStringLiteral("position_name|Defensive Midfielder"), QStringLiteral("Mediocentro"));
@@ -895,6 +902,8 @@ const QHash<QString, QHash<QString, QString>> &fm27GameTerms()
             t.insert(QStringLiteral("registration|Home-Grown Status"), QString::fromUtf8("Situación de cantera"));
             t.insert(QStringLiteral("registration|Trained at club (0-21)"), QStringLiteral("Entrenado en el club (0-21)"));
             t.insert(QStringLiteral("registration|Trained in nation (15-21)"), QString::fromUtf8("Entrenado en el país (15-21)"));
+            t.insert(QStringLiteral("side_code|L"), QStringLiteral("I"));
+            t.insert(QStringLiteral("side_code|R"), QStringLiteral("D"));
             t.insert(QStringLiteral("side_name|Centre"), QStringLiteral("Centro"));
             t.insert(QStringLiteral("side_name|Left"), QStringLiteral("Izquierda"));
             t.insert(QStringLiteral("side_name|Right"), QStringLiteral("Derecha"));

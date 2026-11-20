@@ -6026,7 +6026,7 @@ En la partida de prueba, el perfil de FM27 con un 33 % predice la calificación 
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="234"/>
         <source>Long Shots</source>
-        <translation>Disparos lejanos</translation>
+        <translation>Tiros lejanos</translation>
     </message>
     <message>
         <location filename="../src/app/widgets/RatingProfileEditor.cpp" line="235"/>
